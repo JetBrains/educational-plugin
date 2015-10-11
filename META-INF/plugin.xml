@@ -1,17 +1,15 @@
 <idea-plugin version="2">
-    <id>com.yourcompany.unique.plugin.id</id>
-    <name>Plugin display name here</name>
+    <id>com.jetbrains.kotlin.edu</id>
+    <name>Educational plugin for Kotlin</name>
     <version>1.0</version>
     <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
 
     <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Education plugin for Kotlin language.
     ]]></description>
 
     <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
+
     ]]>
     </change-notes>
 
@@ -22,11 +20,15 @@
     <depends>com.jetbrains.edu.interactivelearning</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
+        <projectTemplatesFactory implementation="KtEduProjectTemplateFactory"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
         <StudyExecutor implementationClass="TestExecutor"/>
     </extensions>
+
+    <extensionPoints>
+        <extensionPoint name="KtEduProjectTemplateFactory" interface="KtEduProjectTemplateFactory"/>
+    </extensionPoints>
 
     <application-components>
         <!-- Add your application components here -->
