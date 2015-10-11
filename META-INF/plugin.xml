@@ -20,14 +20,14 @@
     <depends>com.jetbrains.edu.interactivelearning</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectTemplatesFactory implementation="KtEduProjectTemplateFactory"/>
+        <projectTemplatesFactory implementation="EduProjectTemplateFactory"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
         <StudyExecutor implementationClass="TestExecutor"/>
     </extensions>
 
     <extensionPoints>
-        <extensionPoint name="KtEduProjectTemplateFactory" interface="KtEduProjectTemplateFactory"/>
+        <extensionPoint name="EduProjectTemplate" interface="EduProjectTemplate"/>
     </extensionPoints>
 
     <application-components>
