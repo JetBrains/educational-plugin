@@ -20,15 +20,11 @@
     <depends>com.jetbrains.edu.interactivelearning</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectTemplatesFactory implementation="EduProjectTemplateFactory"/>
+        <projectTemplatesFactory implementation="com.jetbrains.edu.kotlin.KotlinEduProjectTemplateFactory"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
-        <StudyExecutor implementationClass="TestExecutor"/>
+        <StudyExecutor implementationClass="com.jetbrains.edu.kotlin.TestExecutor"/>
     </extensions>
-
-    <extensionPoints>
-        <extensionPoint name="EduProjectTemplate" interface="EduProjectTemplate"/>
-    </extensionPoints>
 
     <application-components>
         <!-- Add your application components here -->

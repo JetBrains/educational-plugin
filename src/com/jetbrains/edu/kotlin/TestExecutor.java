@@ -1,4 +1,4 @@
-//TODO: remove this class
+package com.jetbrains.edu.kotlin;//TODO: remove this class
 
 
 import com.intellij.execution.RunContentExecutor;

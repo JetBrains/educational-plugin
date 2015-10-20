@@ -1,0 +1,6 @@
+1) Закончить генерацию проекта
+2) Реализовать тестовые проекты на основе (PyEduProjectTemplate ModuleBuilder)
+3) Проверить один тестовый проект
+
+PyStudyInitialConfigurator
+StudyProjectGenerator -> addLoacalCourse()
