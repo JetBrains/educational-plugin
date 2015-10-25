@@ -25,7 +25,6 @@ import java.util.List;
 
 public class KotlinEduModuleBuilder extends JavaModuleBuilder {
 
-    private EduStepicConnector connector;
     private static  final Logger LOG = Logger.getInstance(KotlinEduModuleBuilder.class);
 
 //  TODO: delete myGenerator
@@ -82,10 +81,6 @@ public class KotlinEduModuleBuilder extends JavaModuleBuilder {
 //        }
 //        mySourcePaths.add(sourcePathInfo);
 //    }
-
-    public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
-        return modifyStep(settingsStep);
-    }
 
     private Module oldCommitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
         Module module = super.commitModule(project, model);
