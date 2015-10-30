@@ -2,6 +2,8 @@ package com.jetbrains.edu.kotlin;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.projectRoots.JavaSdk;
+import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkListCellRenderer;
@@ -38,8 +40,7 @@ public class KotlinSdkComboBox extends ComboboxWithBrowseButton {
     }
 
     public void updateSdkList(Sdk sdkToSelect, boolean selectAnySdk) {
-//      TODO: Find correct SDK name
-        final List<Sdk> sdkList = ProjectJdkTable.getInstance().getSdksOfType(UnknownSdkType.getInstance("CORRECT NAME"));
+        final List<Sdk> sdkList = ProjectJdkTable.getInstance().getSdksOfType(JavaSdk.getInstance());
         if (selectAnySdk && sdkList.size() > 0) {
             sdkToSelect = sdkList.get(0);
         }
