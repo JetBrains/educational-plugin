@@ -1,6 +1,9 @@
-1) Закончить генерацию проекта
-2) Реализовать тестовые проекты на основе (PyEduProjectTemplate ModuleBuilder)
-3) Проверить один тестовый проект
++ PyStudyInitialConfigurator (copy course in cache)
++ EmptyModuleBuilder instead of JavaModuleBuilder
+StudyRunAction - use run()
+StudyCheckAction - разобраться
+StudyExecutor - реализовать
+GeneralCommandLine - класс для работы с терминалом
 
-PyStudyInitialConfigurator
-StudyProjectGenerator -> addLoacalCourse()
+StartupManager, StudyProjectComponent - для SourceRoot (сначала добавить в отдельный action)
+test-helper.kt

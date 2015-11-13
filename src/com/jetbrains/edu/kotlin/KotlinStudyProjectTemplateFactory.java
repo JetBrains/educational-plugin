@@ -6,7 +6,7 @@ import com.intellij.platform.ProjectTemplatesFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class KotlinEduProjectTemplateFactory extends ProjectTemplatesFactory {
+public class KotlinStudyProjectTemplateFactory extends ProjectTemplatesFactory {
     public static final String GROUP_NAME = "Kotlin Education";
 
     @NotNull
@@ -18,6 +18,6 @@ public class KotlinEduProjectTemplateFactory extends ProjectTemplatesFactory {
     @NotNull
     @Override
     public ProjectTemplate[] createTemplates(@Nullable String group, WizardContext context) {
-        return new ProjectTemplate[] {new KotlinEduProjectTemplate()};
+        return new ProjectTemplate[] {new KotlinStudyProjectTemplate()};
     }
 }

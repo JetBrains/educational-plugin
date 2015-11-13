@@ -4,15 +4,14 @@ import com.intellij.ide.util.projectWizard.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.platform.ProjectTemplate;
-import com.jetbrains.edu.stepic.EduStepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class KotlinEduProjectTemplate implements ProjectTemplate {
+public class KotlinStudyProjectTemplate implements ProjectTemplate {
 
-    private static final Logger LOG = Logger.getInstance(KotlinEduProjectTemplate.class);
+    private static final Logger LOG = Logger.getInstance(KotlinStudyProjectTemplate.class);
     @NotNull
     @Override
     public String getName() {
@@ -33,7 +32,7 @@ public class KotlinEduProjectTemplate implements ProjectTemplate {
     @NotNull
     @Override
     public AbstractModuleBuilder createModuleBuilder() {
-        return new KotlinEduModuleBuilder();
+        return new KotlinStudyModuleBuilder();
     }
 
     @Nullable
