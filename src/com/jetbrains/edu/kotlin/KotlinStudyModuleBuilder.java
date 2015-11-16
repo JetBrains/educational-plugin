@@ -1,16 +1,19 @@
 package com.jetbrains.edu.kotlin;
 
-import com.intellij.ide.projectView.actions.MarkRootActionBase;
-import com.intellij.ide.util.projectWizard.*;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
+import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.ide.util.projectWizard.WizardInputField;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.ModifiableModuleModel;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -21,11 +24,8 @@ import com.jetbrains.edu.learning.ui.StudyNewProjectPanel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.framework.KotlinModuleSettingStep;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-
 
 import javax.swing.*;
 import java.io.File;
@@ -77,8 +77,8 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
     }
 
     public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
-//        return new KotlinModuleSettingStep(targetPlatform, this, settingsStep);
-        return modifyStep(settingsStep);
+        return new KotlinModuleSettingStep(targetPlatform, this, settingsStep);
+//        return modifyStep(settingsStep);
     }
 
     @Nullable
@@ -94,26 +94,6 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
                 System.out.println(lessonDir.getCanonicalPath());
                 //KotlinStudyUtils.markDirAsSourceRoot(lessonDir, project);
             }
-//            TODO: deal with NoDefClassError
-//            ConfigureKotlinInProjectUtils.showConfigureKotlinNotificationIfNeeded(project);
-
-//            TODO: used to Stepic
-//            final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper.py");
-//
-//            StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
-//                @Override
-//                public void run() {
-//                    final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
-//                    if (projectDir != null) {
-//                        try {
-//                            FileTemplateUtil.createFromTemplate(template, "test_helper.py", null, projectDir);
-//                        }
-//                        catch (Exception e) {
-//                            LOG.error("Failed to create test_helper", e);
-//                        }
-//                    }
-//                }
-//            });
         }
         return module;
     }
@@ -149,7 +129,6 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
 
     @Override
     public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
-        //super.setupRootModel(rootModel);
         Sdk sdk = mySdkComboBox.getSelectedSdk();
         if (sdk != null) {
             rootModel.setSdk(sdk);
