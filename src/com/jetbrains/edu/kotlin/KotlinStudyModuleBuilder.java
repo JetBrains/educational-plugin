@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.framework.KotlinModuleSettingStep;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 import javax.swing.*;
 import java.io.File;
@@ -38,17 +40,18 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
 
     private final StudyProjectGenerator studyProjectGenerator = new StudyProjectGenerator();
     private final KotlinSdkComboBox mySdkComboBox = new KotlinSdkComboBox();
-    private final TargetPlatform targetPlatform = null;//new JvmPlatform();
+    private final TargetPlatform targetPlatform = JvmPlatform.INSTANCE;
+    private Sdk mySdk;
 
     private String myBuilderName = "KotlinStudyModuleBuilder";
     private String myBuilderDescription = "Module builder for education Kotlin projects";
 
     private static final String DEFAULT_COURSE_NAME = "Introduction to Kotlin.zip";
-    private static final String COURSE_FOLDER = "couses";
+    private static final String COURSE_FOLDER = "courses";
 
     public KotlinStudyModuleBuilder() {
-        studyProjectGenerator.addLocalCourse(FileUtil.toSystemDependentName(
-                getCoursesRoot().getAbsolutePath() + "/" + DEFAULT_COURSE_NAME));
+        studyProjectGenerator.setSelectedCourse(studyProjectGenerator.addLocalCourse(FileUtil.toSystemDependentName(
+                getCoursesRoot().getAbsolutePath() + "/" + DEFAULT_COURSE_NAME)));
     }
 
     @Override
@@ -76,6 +79,10 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
         return KotlinStudyProjectTemplateFactory.GROUP_NAME;
     }
 
+    public Sdk getSdk() {
+        return mySdk;
+    }
+
     public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
         return new KotlinModuleSettingStep(targetPlatform, this, settingsStep);
 //        return modifyStep(settingsStep);
@@ -90,10 +97,18 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
             studyProjectGenerator.generateProject(project, baseDir);
             System.out.println(project.getBaseDir().getCanonicalPath());
             EduUtils.synchronize();
-            for (VirtualFile lessonDir: project.getBaseDir().getChildren()) {
-                System.out.println(lessonDir.getCanonicalPath());
-                //KotlinStudyUtils.markDirAsSourceRoot(lessonDir, project);
-            }
+
+            StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
+                @Override
+                public void run() {
+                    for (VirtualFile lessonDir: project.getBaseDir().getChildren()) {
+                        System.out.println(lessonDir.getName());
+                        String name = lessonDir.getName();
+                        if (lessonDir.isDirectory() && name != ".idea" && name != "Sandbox")
+                            KotlinStudyUtils.markDirAsSourceRoot(lessonDir, project);
+                    }
+                }
+            });
         }
         return module;
     }
@@ -129,9 +144,9 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
 
     @Override
     public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
-        Sdk sdk = mySdkComboBox.getSelectedSdk();
-        if (sdk != null) {
-            rootModel.setSdk(sdk);
+        mySdk = mySdkComboBox.getSelectedSdk();
+        if (mySdk != null) {
+            rootModel.setSdk(mySdk);
         }
         doAddContentEntry(rootModel);
     }
