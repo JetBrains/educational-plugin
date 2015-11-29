@@ -1,9 +1,0 @@
-+ PyStudyInitialConfigurator (copy course in cache)
-+ EmptyModuleBuilder instead of JavaModuleBuilder
-StudyRunAction - use run()
-StudyCheckAction - разобраться
-StudyExecutor - реализовать
-GeneralCommandLine - класс для работы с терминалом
-
-StartupManager, StudyProjectComponent - для SourceRoot (сначала добавить в отдельный action)
-test-helper.kt

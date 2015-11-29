@@ -22,6 +22,7 @@ import com.intellij.util.PathUtil;
 import com.jetbrains.edu.EduUtils;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.ui.StudyNewProjectPanel;
+import com.jetbrains.edu.stepic.CourseInfo;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,11 +48,13 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
     private String myBuilderDescription = "Module builder for education Kotlin projects";
 
     private static final String DEFAULT_COURSE_NAME = "Introduction to Kotlin.zip";
-    private static final String COURSE_FOLDER = "courses";
 
     public KotlinStudyModuleBuilder() {
-        studyProjectGenerator.setSelectedCourse(studyProjectGenerator.addLocalCourse(FileUtil.toSystemDependentName(
-                getCoursesRoot().getAbsolutePath() + "/" + DEFAULT_COURSE_NAME)));
+        CourseInfo courseInfo = studyProjectGenerator.addLocalCourse(FileUtil.toSystemDependentName(
+                getCoursesRoot().getAbsolutePath() + "/" + DEFAULT_COURSE_NAME));
+        if (courseInfo != null) {
+            studyProjectGenerator.setSelectedCourse(courseInfo);
+        }
     }
 
     @Override
@@ -79,10 +82,6 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
         return KotlinStudyProjectTemplateFactory.GROUP_NAME;
     }
 
-    public Sdk getSdk() {
-        return mySdk;
-    }
-
     public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
         return new KotlinModuleSettingStep(targetPlatform, this, settingsStep);
 //        return modifyStep(settingsStep);
@@ -104,7 +103,7 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
                     for (VirtualFile lessonDir: project.getBaseDir().getChildren()) {
                         System.out.println(lessonDir.getName());
                         String name = lessonDir.getName();
-                        if (lessonDir.isDirectory() && name != ".idea" && name != "Sandbox")
+                        if (lessonDir.isDirectory() && !name.equals(".idea"))
                             KotlinStudyUtils.markDirAsSourceRoot(lessonDir, project);
                     }
                 }
