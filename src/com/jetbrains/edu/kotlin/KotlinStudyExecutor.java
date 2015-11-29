@@ -2,58 +2,34 @@ package com.jetbrains.edu.kotlin;
 
 import com.intellij.execution.RunContentExecutor;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.filters.CompositeFilter;
 import com.intellij.execution.filters.ExceptionFilter;
-import com.intellij.execution.filters.Filter;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.facet.Facet;
-import com.intellij.facet.FacetConfiguration;
-import com.intellij.facet.FacetManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.edu.courseFormat.Task;
-import com.jetbrains.edu.learning.StudyLanguageManager;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.run.StudyExecutor;
 import com.jetbrains.edu.learning.run.StudyTestRunner;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.io.File;
-import java.util.List;
 
 
 public class KotlinStudyExecutor implements StudyExecutor {
+    private static final String JAVA_BIN = "/bin/java.exe";
 
-    public static Sdk findSdk(@Nullable Module module) {
-        if (module == null) return null;
-        final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-        if (sdk != null && sdk.getSdkType() instanceof JavaSdk) return sdk;
-        return null;
-    }
-
-    @Override
     public Sdk findSdk(@NotNull final Project project) {
-        return findSdk(ModuleManager.getInstance(project).getModules()[0]);
+        return KotlinStudyUtils.findSdk(project);
     }
 
     @Override
@@ -74,7 +50,10 @@ public class KotlinStudyExecutor implements StudyExecutor {
                                          @NotNull final String filePath,
                                          @NotNull final String sdkPath,
                                          @NotNull final Task currentTask) {
-        final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(currentTask);
+        String classPath = KotlinStudyUtils.classFromSource(project, filePath);
+        cmd.setExePath(sdkPath + FileUtil.toSystemDependentName(JAVA_BIN));
+        cmd.withParameters("-classpath", KotlinStudyUtils.filePath(classPath), classPath);
+        /*final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(currentTask);
         if (!userTests.isEmpty()) {
             StudyLanguageManager manager = StudyUtils.getLanguageManager(currentTask.getLesson().getCourse());
             if (manager != null) {
@@ -85,7 +64,7 @@ public class KotlinStudyExecutor implements StudyExecutor {
         }
         else {
             cmd.addParameter(filePath);
-        }
+        }*/
     }
 
     public void showNoSdkNotification(@NotNull final Project project) {

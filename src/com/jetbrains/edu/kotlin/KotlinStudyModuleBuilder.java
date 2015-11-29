@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.EduUtils;
-import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.ui.StudyNewProjectPanel;
 import com.jetbrains.edu.stepic.CourseInfo;
 import org.jetbrains.annotations.NonNls;
@@ -39,7 +38,7 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
 
     private static  final Logger LOG = Logger.getInstance(KotlinStudyModuleBuilder.class);
 
-    private final StudyProjectGenerator studyProjectGenerator = new StudyProjectGenerator();
+    private final KotlinStudyProjectGenerator studyProjectGenerator = new KotlinStudyProjectGenerator();
     private final KotlinSdkComboBox mySdkComboBox = new KotlinSdkComboBox();
     private final TargetPlatform targetPlatform = JvmPlatform.INSTANCE;
     private Sdk mySdk;
@@ -94,16 +93,13 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
         if (module != null) {
             final VirtualFile baseDir = project.getBaseDir();
             studyProjectGenerator.generateProject(project, baseDir);
-            System.out.println(project.getBaseDir().getCanonicalPath());
             EduUtils.synchronize();
 
             StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
                 @Override
                 public void run() {
                     for (VirtualFile lessonDir: project.getBaseDir().getChildren()) {
-                        System.out.println(lessonDir.getName());
-                        String name = lessonDir.getName();
-                        if (lessonDir.isDirectory() && !name.equals(".idea"))
+                        if (lessonDir.isDirectory() && !lessonDir.getName().equals(".idea"))
                             KotlinStudyUtils.markDirAsSourceRoot(lessonDir, project);
                     }
                 }

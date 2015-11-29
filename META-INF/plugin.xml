@@ -13,7 +13,6 @@
     ]]>
     </change-notes>
 
-    <!-- please see https://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
     <idea-version since-build="142"/>
 
     <depends>com.intellij.modules.lang</depends>
@@ -22,21 +21,16 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectTemplatesFactory implementation="com.jetbrains.edu.kotlin.KotlinStudyProjectTemplateFactory"/>
+        <directoryProjectGenerator implementation="com.jetbrains.edu.kotlin.KotlinStudyDirectoryProjectGenerator"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
-        <StudyExecutor implementationClass="com.jetbrains.edu.kotlin.KotlinStudyExecutor"/>
+        <StudyExecutor implementationClass="com.jetbrains.edu.kotlin.KotlinStudyExecutor" language="kotlin"/>
+        <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.KotlinStudyLanguageManager" language="kotlin"/>
     </extensions>
 
-    <application-components>
-
-    </application-components>
-
-    <project-components>
-        <!-- Add your project components here -->
-    </project-components>
-
     <actions>
-        <!-- Add your actions here -->
+        <action id="KotlinStudyCheckAction" class="com.jetbrains.edu.kotlin.KotlinStudyCheckAction"
+                text="KotlinStudyCheckTest"/>
     </actions>
 
 </idea-plugin>
