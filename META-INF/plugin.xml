@@ -29,6 +29,7 @@
     </extensions>
 
     <actions>
+        <!--<action overrides="true" id="СheckAction" class="com.jetbrains.edu.kotlin.KotlinStudyCheckAction"/>-->
         <action id="KotlinStudyCheckAction" class="com.jetbrains.edu.kotlin.KotlinStudyCheckAction"
                 text="KotlinStudyCheckTest"/>
     </actions>

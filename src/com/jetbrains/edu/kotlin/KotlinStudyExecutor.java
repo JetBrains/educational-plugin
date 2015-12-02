@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
@@ -26,10 +27,9 @@ import javax.swing.event.HyperlinkListener;
 
 
 public class KotlinStudyExecutor implements StudyExecutor {
-    private static final String JAVA_BIN = "/bin/java.exe";
 
     public Sdk findSdk(@NotNull final Project project) {
-        return KotlinStudyUtils.findSdk(project);
+        return ProjectRootManager.getInstance(project).getProjectSdk();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class KotlinStudyExecutor implements StudyExecutor {
                                          @NotNull final String sdkPath,
                                          @NotNull final Task currentTask) {
         String classPath = KotlinStudyUtils.classFromSource(project, filePath);
-        cmd.setExePath(sdkPath + FileUtil.toSystemDependentName(JAVA_BIN));
+        cmd.setExePath(sdkPath + FileUtil.toSystemDependentName(KotlinStudyUtils.getJavaExe()));
         cmd.withParameters("-classpath", KotlinStudyUtils.filePath(classPath), classPath);
         /*final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(currentTask);
         if (!userTests.isEmpty()) {

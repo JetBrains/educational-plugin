@@ -1,65 +1,85 @@
 package com.jetbrains.edu.kotlin;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.*;
+import com.intellij.execution.executors.DefaultRunExecutor;
+import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
+import com.intellij.execution.runners.ExecutionUtil;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.courseFormat.Course;
+import com.intellij.psi.util.PsiEditorUtil;
+import com.intellij.psi.util.PsiUtil;
 import com.jetbrains.edu.courseFormat.Task;
-import com.jetbrains.edu.learning.StudyLanguageManager;
-import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.run.StudyTestRunner;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.run.JetRunConfiguration;
+import org.jetbrains.kotlin.idea.run.JetRunConfigurationType;
 
 import java.io.File;
 
 
-public class KotlinStudyTestRunner  extends StudyTestRunner {
-    private static final String KOTLINPATH = "KOTLINPATH";
-    private static final String JAVA_BIN = "/bin/java.exe";
-    private static final Logger LOG = Logger.getInstance(KotlinStudyTestRunner .class.getName());
-    private final VirtualFile myClassDir;
+public class KotlinStudyTestRunner extends StudyTestRunner {
+    private static final Logger LOG = Logger.getInstance(KotlinStudyTestRunner.class);
 
-    public KotlinStudyTestRunner (@NotNull final Task task, @NotNull final VirtualFile taskDir) {
+    public KotlinStudyTestRunner(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
         super(task, taskDir);
-        VirtualFile projectDir = taskDir.getParent().getParent();
-        myClassDir = projectDir.findChild("out").findChild("production").findChild(projectDir.getName());
     }
 
     public Process createCheckProcess(@NotNull final Project project, @NotNull final String executablePath) throws ExecutionException {
-        final Sdk sdk = KotlinStudyUtils.findSdk(project);
-        Course course = myTask.getLesson().getCourse();
-        StudyLanguageManager manager = StudyUtils.getLanguageManager(course);
-        if (manager == null) {
-            LOG.info("Language manager is null for " + course.getLanguageById().getDisplayName());
+        final VirtualFile taskFileVF = VfsUtil.findFileByIoFile(new File(executablePath), false);
+        if (taskFileVF == null) {
             return null;
         }
-        final File testRunner = KotlinStudyUtils.classFromSource(project, new File(myTaskDir.getPath(), manager.getTestFileName()));
-        final GeneralCommandLine commandLine = new GeneralCommandLine();
-        commandLine.withWorkDirectory(myClassDir.getPath());
-//        final Map<String, String> env = commandLine.getEnvironment();
-//        final VirtualFile courseDir = project.getBaseDir();
-//        if (courseDir != null) {
-//            env.put(KOTLINPATH, courseDir.getPath());
-//        }
+
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                executeFile(taskFileVF, project);
+            }
+        });
+
+        Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
         if (sdk != null) {
-            String sdkPath = sdk.getHomePath();
-            if (sdkPath != null) {
-                commandLine.setExePath(sdkPath + JAVA_BIN);
-                commandLine.addParameter("-classpath");
-                commandLine.addParameter(myClassDir.getPath());
-                commandLine.addParameter(testRunner.getPath());
-//                File resourceFile = new File(course.getCourseDirectory());
-//                commandLine.addParameter(resourceFile.getPath());
-                commandLine.addParameter(FileUtil.toSystemDependentName(executablePath));
-                return commandLine.createProcess();
+            RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp", JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+            try {
+                ((JetRunConfiguration) temp.getConfiguration()).setRunClass("TestsKt");
+                RunProfileState state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(), ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());
+                JavaCommandLineState javaCmdLine = (JavaCommandLineState) state;
+                if (javaCmdLine == null) {
+                    return null;
+                }
+                JavaParameters javaParameters = javaCmdLine.getJavaParameters();
+                GeneralCommandLine fromJavaParameters = CommandLineBuilder.createFromJavaParameters(javaParameters, project, false);
+                return fromJavaParameters.createProcess();
+
+            } catch (ExecutionException e) {
+                LOG.error(e);
             }
         }
         return null;
     }
 
+    private void executeFile(@NotNull final VirtualFile taskFileVF, Project project) {
+        Editor selectedEditor = PsiEditorUtil.Service.getInstance().findEditorByPsiElement(PsiUtil.getPsiFile(project, taskFileVF));
+        if (selectedEditor != null) {
+            ConfigurationContext context = ConfigurationContext.getFromContext(DataManager.getInstance().
+                    getDataContext(selectedEditor.getComponent()));
+            RunnerAndConfigurationSettings configuration = context.getConfiguration();
+            if (configuration != null) {
+                ExecutionUtil.runConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance());
+            }
+        }
 
+
+    }
 }

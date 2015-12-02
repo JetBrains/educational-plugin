@@ -4,11 +4,8 @@ import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -21,6 +18,18 @@ import java.io.File;
 
 public class KotlinStudyUtils {
     private static  final Logger LOG = Logger.getInstance(KotlinStudyUtils.class);
+
+    private static final String JAVA_EXE = "/bin/java";
+
+    public static boolean isWindows() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return (os.indexOf( "win" ) >= 0);
+    }
+
+    public static String getJavaExe() {
+        if (isWindows()) return JAVA_EXE;
+        else return JAVA_EXE + ".exe";
+    }
 
     public static void commitAndSaveModel(final ModifiableRootModel model) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -54,17 +63,6 @@ public class KotlinStudyUtils {
         }
         entry.addSourceFolder(dir, false);
         commitAndSaveModel(model);
-    }
-
-    public static Sdk findSdk(@Nullable Module module) {
-        if (module == null) return null;
-        final Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
-        if (sdk != null && sdk.getSdkType() instanceof JavaSdk) return sdk;
-        return null;
-    }
-
-    public static Sdk findSdk(@NotNull final Project project) {
-        return findSdk(ModuleManager.getInstance(project).getModules()[0]);
     }
 
     public static String filePath(String file) {
