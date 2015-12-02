@@ -142,6 +142,8 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
         mySdk = mySdkComboBox.getSelectedSdk();
         if (mySdk != null) {
             rootModel.setSdk(mySdk);
+        } else {
+            rootModel.inheritSdk();
         }
         doAddContentEntry(rootModel);
     }
