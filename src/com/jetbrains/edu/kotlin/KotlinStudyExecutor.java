@@ -1,10 +1,16 @@
 package com.jetbrains.edu.kotlin;
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunContentExecutor;
-import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.*;
+import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.filters.ExceptionFilter;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -13,7 +19,6 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.edu.courseFormat.Task;
@@ -21,12 +26,16 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.run.StudyExecutor;
 import com.jetbrains.edu.learning.run.StudyTestRunner;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.run.JetRunConfiguration;
+import org.jetbrains.kotlin.idea.run.JetRunConfigurationType;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import java.util.List;
 
 
 public class KotlinStudyExecutor implements StudyExecutor {
+    private static final Logger LOG = Logger.getInstance(KotlinStudyExecutor.class);
 
     public Sdk findSdk(@NotNull final Project project) {
         return ProjectRootManager.getInstance(project).getProjectSdk();
@@ -50,21 +59,45 @@ public class KotlinStudyExecutor implements StudyExecutor {
                                          @NotNull final String filePath,
                                          @NotNull final String sdkPath,
                                          @NotNull final Task currentTask) {
-        String classPath = KotlinStudyUtils.classFromSource(project, filePath);
-        cmd.setExePath(sdkPath + FileUtil.toSystemDependentName(KotlinStudyUtils.getJavaExe()));
-        cmd.withParameters("-classpath", KotlinStudyUtils.filePath(classPath), classPath);
-        /*final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(currentTask);
-        if (!userTests.isEmpty()) {
-            StudyLanguageManager manager = StudyUtils.getLanguageManager(currentTask.getLesson().getCourse());
-            if (manager != null) {
-                cmd.addParameter(new File(project.getBaseDir().getPath(), manager.getUserTester()).getPath());
-                cmd.addParameter(sdkPath);
-                cmd.addParameter(filePath);
+        Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
+        if (sdk != null) {
+            RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp",
+                    JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
+            try {
+                String className = KotlinStudyUtils.getClassName(filePath);
+                ((JetRunConfiguration) temp.getConfiguration()).setRunClass(className);
+                RunProfileState state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(),
+                        ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());
+                JavaCommandLineState javaCmdLine = (JavaCommandLineState) state;
+                if (javaCmdLine == null) {
+                    return;
+                }
+                JavaParameters javaParameters = javaCmdLine.getJavaParameters();
+                GeneralCommandLine fromJavaParameters = CommandLineBuilder.createFromJavaParameters(javaParameters, project, false);
+                cmd.setExePath(fromJavaParameters.getExePath());
+                List<String> parameters = fromJavaParameters.getCommandLineList(fromJavaParameters.getExePath());
+                cmd.addParameters(parameters.subList(1, parameters.size()));
+                return;
+            } catch (ExecutionException e) {
+                LOG.error(e);
             }
         }
-        else {
-            cmd.addParameter(filePath);
-        }*/
+//
+//       String classPath = KotlinStudyUtils.getClassPath(project, filePath);
+//        cmd.setExePath(sdkPath + FileUtil.toSystemDependentName(KotlinStudyUtils.getJavaExe()));
+//        cmd.withParameters("-classpath", KotlinStudyUtils.filePath(classPath), classPath);
+//        /*final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(currentTask);
+//        if (!userTests.isEmpty()) {
+//            StudyLanguageManager manager = StudyUtils.getLanguageManager(currentTask.getLesson().getCourse());
+//            if (manager != null) {
+//                cmd.addParameter(new File(project.getBaseDir().getPath(), manager.getUserTester()).getPath());
+//                cmd.addParameter(sdkPath);
+//                cmd.addParameter(filePath);
+//            }
+//        }
+//        else {
+//            cmd.addParameter(filePath);
+//        }*/
     }
 
     public void showNoSdkNotification(@NotNull final Project project) {

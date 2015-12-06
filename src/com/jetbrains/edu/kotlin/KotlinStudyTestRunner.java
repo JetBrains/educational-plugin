@@ -37,6 +37,7 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
 
     public Process createCheckProcess(@NotNull final Project project, @NotNull final String executablePath) throws ExecutionException {
         final VirtualFile taskFileVF = VfsUtil.findFileByIoFile(new File(executablePath), false);
+
         if (taskFileVF == null) {
             return null;
         }
@@ -44,7 +45,7 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                executeFile(taskFileVF, project);
+                executeFile(VfsUtil.findFileByIoFile(new File(taskFileVF.getPath()), false), project);
             }
         });
 
@@ -52,7 +53,8 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
         if (sdk != null) {
             RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp", JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
             try {
-                ((JetRunConfiguration) temp.getConfiguration()).setRunClass("TestsKt");
+                String className = "tests.TestsKt;";//KotlinStudyUtils.getClassName(executablePath);
+                ((JetRunConfiguration) temp.getConfiguration()).setRunClass(className);
                 RunProfileState state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(), ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());
                 JavaCommandLineState javaCmdLine = (JavaCommandLineState) state;
                 if (javaCmdLine == null) {
@@ -61,7 +63,6 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
                 JavaParameters javaParameters = javaCmdLine.getJavaParameters();
                 GeneralCommandLine fromJavaParameters = CommandLineBuilder.createFromJavaParameters(javaParameters, project, false);
                 return fromJavaParameters.createProcess();
-
             } catch (ExecutionException e) {
                 LOG.error(e);
             }
@@ -79,7 +80,5 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
                 ExecutionUtil.runConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance());
             }
         }
-
-
     }
 }

@@ -70,19 +70,27 @@ public class KotlinStudyUtils {
         return FileUtil.toSystemDependentName(indFile.substring(0, indFile.lastIndexOf('/')));
     }
 
-    public static String classFromSource(@NotNull final Project project, String source) {
-        String extension = FileUtil.getExtension(source);
-        String classPath = FileUtil.toSystemIndependentName(project.getBasePath()) + "/out/production/" + project.getName() + "/";
-        String className = FileUtil.toSystemIndependentName(FileUtil.getNameWithoutExtension(source));
-        if (extension.equals("kt"))
+    public static String getClassName(String sourcePath) {
+        String className = FileUtil.toSystemIndependentName(FileUtil.getNameWithoutExtension(sourcePath));
+        if (FileUtil.getExtension(sourcePath).equals("kt"))
             className += "Kt";
+        String packageName = className.substring(0, className.lastIndexOf('/'));
+        packageName = packageName.substring(packageName.lastIndexOf('/') + 1) + ".";
         className = className.substring(className.lastIndexOf('/') + 1);
-        String res = FileUtil.toSystemDependentName(classPath + className + ".class");
+        className = className.substring(0, 1).toUpperCase() + className.substring(1);
+        return packageName + className;
+    }
+
+    public static String getClassPath(@NotNull final Project project, String sourcePath) {
+        String extension = FileUtil.getExtension(sourcePath);
+        String classPath = FileUtil.toSystemIndependentName(project.getBasePath()) + "/out/production/" + project.getName() + "/";
+        String className = getClassName(sourcePath) + ".class";
+        String res = FileUtil.toSystemDependentName(classPath + className);
         return res;
     }
 
-    public static File classFromSource(@NotNull final Project project, File source) {
-        File res = new File(classFromSource(project, FileUtil.toSystemIndependentName(source.getPath())));
+    public static File getClassPath(@NotNull final Project project, File source) {
+        File res = new File(getClassPath(project, FileUtil.toSystemIndependentName(source.getPath())));
         return res;
     }
 }
