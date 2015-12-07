@@ -22,7 +22,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectTemplatesFactory implementation="com.jetbrains.edu.kotlin.KotlinStudyProjectTemplateFactory"/>
         <directoryProjectGenerator implementation="com.jetbrains.edu.kotlin.KotlinStudyDirectoryProjectGenerator"/>
-        <!--<treeStructureProvider implementation="com.jetbrains.edu.kotlin.KotlinStudyTreeStructureProvider"/>-->
+        <treeStructureProvider implementation="com.jetbrains.edu.kotlin.KotlinStudyTreeStructureProvider"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
         <StudyExecutor implementationClass="com.jetbrains.edu.kotlin.KotlinStudyExecutor" language="kotlin"/>
@@ -30,7 +30,6 @@
     </extensions>
 
     <actions>
-        <!--<action overrides="true" id="СheckAction" class="com.jetbrains.edu.kotlin.KotlinStudyCheckAction"/>-->
         <action id="KotlinStudyCheckAction" class="com.jetbrains.edu.kotlin.KotlinStudyCheckAction"
                 text="KotlinStudyCheckTest"/>
     </actions>
