@@ -23,9 +23,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.edu.courseFormat.Task;
 import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.run.StudyExecutor;
 import com.jetbrains.edu.learning.run.StudyTestRunner;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.run.JetRunConfiguration;
 import org.jetbrains.kotlin.idea.run.JetRunConfigurationType;
 
@@ -82,22 +84,6 @@ public class KotlinStudyExecutor implements StudyExecutor {
                 LOG.error(e);
             }
         }
-//
-//       String classPath = KotlinStudyUtils.getClassPath(project, filePath);
-//        cmd.setExePath(sdkPath + FileUtil.toSystemDependentName(KotlinStudyUtils.getJavaExe()));
-//        cmd.withParameters("-classpath", KotlinStudyUtils.filePath(classPath), classPath);
-//        /*final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(currentTask);
-//        if (!userTests.isEmpty()) {
-//            StudyLanguageManager manager = StudyUtils.getLanguageManager(currentTask.getLesson().getCourse());
-//            if (manager != null) {
-//                cmd.addParameter(new File(project.getBaseDir().getPath(), manager.getUserTester()).getPath());
-//                cmd.addParameter(sdkPath);
-//                cmd.addParameter(filePath);
-//            }
-//        }
-//        else {
-//            cmd.addParameter(filePath);
-//        }*/
     }
 
     public void showNoSdkNotification(@NotNull final Project project) {
@@ -122,6 +108,12 @@ public class KotlinStudyExecutor implements StudyExecutor {
         balloonBuilder.setHideOnLinkClick(true);
         final Balloon balloon = balloonBuilder.createBalloon();
         StudyUtils.showCheckPopUp(project, balloon);
+    }
+
+    @Nullable
+    @Override
+    public StudyCheckAction getCheckAction() {
+        return new KotlinStudyCheckAction();
     }
 
 }
