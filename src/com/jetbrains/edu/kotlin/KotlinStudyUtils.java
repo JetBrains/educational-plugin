@@ -5,31 +5,28 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.BalloonBuilder;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.learning.StudyUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.io.File;
 
 public class KotlinStudyUtils {
     private static  final Logger LOG = Logger.getInstance(KotlinStudyUtils.class);
-
-    private static final String JAVA_EXE = "/bin/java";
-
-    public static boolean isWindows() {
-        String os = System.getProperty("os.name").toLowerCase();
-        return (os.indexOf( "win" ) >= 0);
-    }
-
-    public static String getJavaExe() {
-        if (isWindows()) return JAVA_EXE;
-        else return JAVA_EXE + ".exe";
-    }
 
     public static void commitAndSaveModel(final ModifiableRootModel model) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -65,32 +62,69 @@ public class KotlinStudyUtils {
         commitAndSaveModel(model);
     }
 
-    public static String filePath(String file) {
-        String indFile = FileUtil.toSystemIndependentName(file);
-        return FileUtil.toSystemDependentName(indFile.substring(0, indFile.lastIndexOf('/')));
+    public static String getPackageName(VirtualFile file, final Project project) {
+        String packageName = "";
+        VirtualFile cur = file.getParent();
+        while (!cur.getName().equals(project.getName())) {
+            packageName = cur.getName() + "." + packageName;
+            cur = cur.getParent();
+        }
+        return packageName;
     }
 
-    public static String getClassName(String sourcePath) {
+    public static String getPackageName(String classPath, final Project project) {
+        final VirtualFile taskFileVF = VfsUtil.findFileByIoFile(new File(classPath), false);
+        return getPackageName(taskFileVF, project);
+    }
+
+    public static String getClassName(String sourcePath, final Project project) {
         String className = FileUtil.toSystemIndependentName(FileUtil.getNameWithoutExtension(sourcePath));
         if (FileUtil.getExtension(sourcePath).equals("kt"))
             className += "Kt";
-        String packageName = className.substring(0, className.lastIndexOf('/'));
-        packageName = packageName.substring(packageName.lastIndexOf('/') + 1) + ".";
+//        String packageName = className.substring(0, className.lastIndexOf('/')); //getPackageName(file, project);//
+//        packageName = packageName.substring(packageName.lastIndexOf('/') + 1) + ".";
+        String packageName = getPackageName(sourcePath, project);
         className = className.substring(className.lastIndexOf('/') + 1);
         className = className.substring(0, 1).toUpperCase() + className.substring(1);
         return packageName + className;
     }
 
-    public static String getClassPath(@NotNull final Project project, String sourcePath) {
-        String extension = FileUtil.getExtension(sourcePath);
-        String classPath = FileUtil.toSystemIndependentName(project.getBasePath()) + "/out/production/" + project.getName() + "/";
-        String className = getClassName(sourcePath) + ".class";
-        String res = FileUtil.toSystemDependentName(classPath + className);
-        return res;
+    public static void showNotification(@NotNull final Project project, final String text) {
+        final BalloonBuilder balloonBuilder = JBPopupFactory.getInstance().
+                createHtmlTextBalloonBuilder(text, null,
+                        MessageType.WARNING.getPopupBackground(),
+                        null);
+        balloonBuilder.setHideOnLinkClick(true);
+        final Balloon balloon = balloonBuilder.createBalloon();
+        StudyUtils.showCheckPopUp(project, balloon);
     }
 
-    public static File getClassPath(@NotNull final Project project, File source) {
-        File res = new File(getClassPath(project, FileUtil.toSystemIndependentName(source.getPath())));
-        return res;
+    public static void showNoSdkNotification(@NotNull final Project project) {
+        final String text = "<html>No Java SDK configured for the project<br><a href=\"\">Configure SDK</a></html>";
+        final BalloonBuilder balloonBuilder = JBPopupFactory.getInstance().
+                createHtmlTextBalloonBuilder(text, null,
+                        MessageType.WARNING.getPopupBackground(),
+                        new HyperlinkListener() {
+                            @Override
+                            public void hyperlinkUpdate(HyperlinkEvent event) {
+                                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                                    ApplicationManager.getApplication()
+                                            .invokeLater(new Runnable() {
+                                                @Override
+                                                public void run() {
+//                                                    TODO: find project structure dialog
+                                                    ShowSettingsUtil.getInstance().showSettingsDialog(project, "Project SDK");
+                                                }
+                                            });
+                                }
+                            }
+                        });
+        balloonBuilder.setHideOnLinkClick(true);
+        final Balloon balloon = balloonBuilder.createBalloon();
+        StudyUtils.showCheckPopUp(project, balloon);
+    }
+
+    public static String getTestClass(VirtualFile taskFile, final Project project) {
+        return getPackageName(taskFile, project) + "tests.TestsKt";
     }
 }

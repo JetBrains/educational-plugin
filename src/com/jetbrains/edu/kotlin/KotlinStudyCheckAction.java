@@ -20,6 +20,8 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -58,7 +60,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
         }
         final Task task = studyState.getTask();
         Course course = task.getLesson().getCourse();
-        String className = "tests.TestsKt";
+        String className = KotlinStudyUtils.getTestClass(taskFileVF, project);
         ((JetRunConfiguration) settings.getConfiguration()).setRunClass(className);
         File resourceFile = new File(course.getCourseDirectory());
         ((JetRunConfiguration) settings.getConfiguration()).setProgramParameters(
@@ -73,10 +75,20 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
         if (taskFileVF == null || project == null) {
             return;
         }
+        Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
+        if (sdk == null) {
+            KotlinStudyUtils.showNoSdkNotification(project);
+            return;
+        }
 
         CompilerManager.getInstance(project).make(ModuleManager.getInstance(project).getModules()[0], new CompileStatusNotification() {
             @Override
             public void finished(boolean aborted, int errors, int warnings, CompileContext compileContext) {
+                if (errors != 0) {
+                    LOG.error("Compilation wasn't finished because of errors in the code");
+                    KotlinStudyUtils.showNotification(project, "Compilation wasn't finished because of your code contains errors. Please, fix it.");
+                    return;
+                }
                 RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp",
                         JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
                 setProcessParameters(project, temp, taskFileVF);

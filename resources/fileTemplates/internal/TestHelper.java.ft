@@ -33,7 +33,7 @@ public class TestHelper {
             windows.add(window_text);
         }
         in.close();
-        return (String[]) windows.toArray();
+        return windows.toArray(new String[windows.size()]);
     }
 
     public void failed() {

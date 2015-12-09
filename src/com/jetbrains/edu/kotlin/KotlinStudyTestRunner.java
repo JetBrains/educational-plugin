@@ -45,7 +45,8 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                executeFile(VfsUtil.findFileByIoFile(new File(taskFileVF.getPath()), false), project);
+                executeFile(taskFileVF, project);
+//                executeFile(VfsUtil.findFileByIoFile(new File(taskFileVF.getPath()), false), project);
             }
         });
 
@@ -53,7 +54,7 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
         if (sdk != null) {
             RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp", JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
             try {
-                String className = "tests.TestsKt;";//KotlinStudyUtils.getClassName(executablePath);
+                String className = KotlinStudyUtils.getTestClass(taskFileVF, project);
                 ((JetRunConfiguration) temp.getConfiguration()).setRunClass(className);
                 RunProfileState state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(), ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());
                 JavaCommandLineState javaCmdLine = (JavaCommandLineState) state;

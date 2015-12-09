@@ -9,20 +9,13 @@ import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.filters.ExceptionFilter;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.BalloonBuilder;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.edu.courseFormat.Task;
-import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.run.StudyExecutor;
 import com.jetbrains.edu.learning.run.StudyTestRunner;
@@ -31,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.run.JetRunConfiguration;
 import org.jetbrains.kotlin.idea.run.JetRunConfigurationType;
 
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.util.List;
 
 
@@ -66,7 +57,7 @@ public class KotlinStudyExecutor implements StudyExecutor {
             RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp",
                     JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
             try {
-                String className = KotlinStudyUtils.getClassName(filePath);
+                String className = KotlinStudyUtils.getClassName(filePath, project);
                 ((JetRunConfiguration) temp.getConfiguration()).setRunClass(className);
                 RunProfileState state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(),
                         ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());
@@ -84,30 +75,13 @@ public class KotlinStudyExecutor implements StudyExecutor {
                 LOG.error(e);
             }
         }
+        else {
+            showNoSdkNotification(project);
+        }
     }
 
     public void showNoSdkNotification(@NotNull final Project project) {
-        final String text = "<html>No Java SDK configured for the project<br><a href=\"\">Configure SDK</a></html>";
-        final BalloonBuilder balloonBuilder = JBPopupFactory.getInstance().
-                createHtmlTextBalloonBuilder(text, null,
-                        MessageType.WARNING.getPopupBackground(),
-                        new HyperlinkListener() {
-                            @Override
-                            public void hyperlinkUpdate(HyperlinkEvent event) {
-                                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                                    ApplicationManager.getApplication()
-                                            .invokeLater(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    ShowSettingsUtil.getInstance().showSettingsDialog(project, "Project SDK");
-                                                }
-                                            });
-                                }
-                            }
-                        });
-        balloonBuilder.setHideOnLinkClick(true);
-        final Balloon balloon = balloonBuilder.createBalloon();
-        StudyUtils.showCheckPopUp(project, balloon);
+        KotlinStudyUtils.showNoSdkNotification(project);
     }
 
     @Nullable
