@@ -16,13 +16,13 @@ import com.intellij.openapi.compiler.CompileStatusNotification;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
@@ -50,28 +50,10 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
 
     boolean checkInProgress = false;
 
-    private void setProcessParameters(Project project, RunnerAndConfigurationSettings settings, VirtualFile taskFileVF) {
-        final StudyEditor selectedEditor = StudyUtils.getSelectedStudyEditor(project);
-        if (selectedEditor == null) return;
-        final StudyState studyState = new StudyState(selectedEditor);
-        if (!studyState.isValid()) {
-            LOG.error("StudyCheckAction was invoked outside study editor");
-            return;
-        }
-        final Task task = studyState.getTask();
-        Course course = task.getLesson().getCourse();
-        String className = KotlinStudyUtils.getTestClass(taskFileVF, project);
-        ((JetRunConfiguration) settings.getConfiguration()).setRunClass(className);
-        File resourceFile = new File(course.getCourseDirectory());
-        ((JetRunConfiguration) settings.getConfiguration()).setProgramParameters(
-                "\"" + FileUtil.toSystemDependentName(resourceFile.getPath()) + "\" " +
-                        FileUtil.toSystemDependentName(taskFileVF.getPath()));
-    }
-
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
+        final Project project = e.getProject();
         final VirtualFile taskFileVF = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
-        final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
         if (taskFileVF == null || project == null) {
             return;
         }
@@ -81,7 +63,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
             return;
         }
 
-        CompilerManager.getInstance(project).make(ModuleManager.getInstance(project).getModules()[0], new CompileStatusNotification() {
+        CompilerManager.getInstance(project).compile(getFilesToCompile(project, taskFileVF), new CompileStatusNotification() {
             @Override
             public void finished(boolean aborted, int errors, int warnings, CompileContext compileContext) {
                 if (errors != 0) {
@@ -92,7 +74,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                 RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp",
                         JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
                 setProcessParameters(project, temp, taskFileVF);
-                RunProfileState state = null;
+                RunProfileState state;// = null;
                 try {
                     state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(), ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());
 
@@ -106,7 +88,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                     DumbService.getInstance(project).runWhenSmart(new Runnable() {
                         @Override
                         public void run() {
-                            JavaParameters javaParameters = null;
+                            JavaParameters javaParameters;// = null;
                             try {
                                 javaParameters = javaCmdLine.getJavaParameters();
                                 GeneralCommandLine fromJavaParameters = CommandLineBuilder.createFromJavaParameters(javaParameters, project, false);
@@ -123,6 +105,31 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                 }
             }
         });
+    }
+
+    private VirtualFile[] getFilesToCompile(Project project, VirtualFile taskFileVF) {
+        return new VirtualFile[] {
+                taskFileVF.getParent(),
+                VfsUtil.findFileByIoFile(new File(project.getBasePath() + FileUtil.toSystemDependentName("/util/TestHelper.java")), false)
+        };
+    }
+
+    private void setProcessParameters(Project project, RunnerAndConfigurationSettings settings, VirtualFile taskFileVF) {
+        final StudyEditor selectedEditor = StudyUtils.getSelectedStudyEditor(project);
+        if (selectedEditor == null) return;
+        final StudyState studyState = new StudyState(selectedEditor);
+        if (!studyState.isValid()) {
+            LOG.error("StudyCheckAction was invoked outside study editor");
+            return;
+        }
+        final Task task = studyState.getTask();
+        Course course = task.getLesson().getCourse();
+        String className = KotlinStudyUtils.getTestClass(taskFileVF, project);
+        ((JetRunConfiguration) settings.getConfiguration()).setRunClass(className);
+        File resourceFile = new File(course.getCourseDirectory());
+        ((JetRunConfiguration) settings.getConfiguration()).setProgramParameters(
+                "\"" + FileUtil.toSystemDependentName(resourceFile.getPath()) + "\" " +
+                        FileUtil.toSystemDependentName(taskFileVF.getPath()));
     }
 
     public void check(@NotNull final Project project, @NotNull final Process testProcess) {
