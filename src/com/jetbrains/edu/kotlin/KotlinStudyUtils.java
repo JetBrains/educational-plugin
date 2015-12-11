@@ -26,7 +26,9 @@ import javax.swing.event.HyperlinkListener;
 import java.io.File;
 
 public class KotlinStudyUtils {
-    private static  final Logger LOG = Logger.getInstance(KotlinStudyUtils.class);
+    private static final Logger LOG = Logger.getInstance(KotlinStudyUtils.class);
+
+    public static final String TEST_HELPER = "test_helper.kt";
 
     public static void commitAndSaveModel(final ModifiableRootModel model) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {

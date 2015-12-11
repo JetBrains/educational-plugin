@@ -14,7 +14,7 @@ public class KotlinStudyLanguageManager implements StudyLanguageManager {
     @NotNull
     @Override
     public String getTestHelperFileName() {
-        return "TestHelper.java";
+        return KotlinStudyUtils.TEST_HELPER;
     }
 
     @NotNull

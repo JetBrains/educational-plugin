@@ -110,7 +110,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
     private VirtualFile[] getFilesToCompile(Project project, VirtualFile taskFileVF) {
         return new VirtualFile[] {
                 taskFileVF.getParent(),
-                VfsUtil.findFileByIoFile(new File(project.getBasePath() + FileUtil.toSystemDependentName("/util/TestHelper.java")), false)
+                VfsUtil.findFileByIoFile(new File(project.getBasePath() + FileUtil.toSystemDependentName("/util/" + KotlinStudyUtils.TEST_HELPER)), false)
         };
     }
 

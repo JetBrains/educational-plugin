@@ -1,0 +1,91 @@
+package util
+
+import java.io.File
+import java.util.*
+
+class TestHelper constructor(private val args: Array<String>) {
+
+    public fun run_common_tests() {
+        test_is_initial_text()
+        test_answer_placeholders_text_deleted()
+    }
+
+    private fun test_is_initial_text(error_text: String = "You should modify the file") {
+        val path = args[args.size - 1]
+        val text = get_initial_text(path)
+        val file_text = get_file_text(path)
+        if (!text.equals(file_text))
+            passed()
+        else
+            failed(error_text)
+    }
+
+    private fun get_initial_text(path: String): String {
+        val course_lib = args[args.size - 2]
+        val sep = File.separatorChar;
+        val task_index = path.substringBeforeLast(sep).lastIndexOf(sep)
+        val index = path.substring(0, task_index).lastIndexOf(sep)
+        val relative_path = path.substring(index + 1)
+        val initial_file_path = course_lib + sep + relative_path
+        return get_file_text(initial_file_path)
+    }
+
+    private fun get_file_text(path: String): String {
+        println(path)
+        val file = File(path)
+        return file.readText()
+    }
+
+    private fun test_answer_placeholders_text_deleted(error_text: String = "Don't just delete task text") {
+        val windows = get_answer_placeholders()
+        for (window in windows) {
+            println(window)
+            if (window.length == 0) {
+                failed(error_text)
+                return
+            }
+        }
+        passed()
+    }
+
+    public fun get_answer_placeholders(): ArrayList<String> {
+        val prefix = "#educational_plugin_window = "
+        val path = args[args.size - 1]
+        val file_name_without_extension = get_name_without_extension(path)
+        val windows_path = file_name_without_extension + "_windows"
+        val windows = ArrayList<String>()
+        val file = File(windows_path)
+        var window_text = ""
+        var first = true
+        for (line in file.readLines()) {
+            if (line.startsWith(prefix)) {
+                if (!first)
+                    windows.add(window_text.trim())
+                else
+                    first = false
+                window_text = line.substring(prefix.length)
+            } else
+                window_text += line
+        }
+        windows.add(window_text.trim())
+        for (window in windows)
+            println("____|" + window)
+        return windows
+    }
+
+    public fun passed() {
+        println("#educational_plugin test OK")
+    }
+
+    public fun failed(message: String = "Please, reload the task and try again.") {
+        println("#educational_plugin FAILED + " + message)
+    }
+
+    private fun get_name_without_extension(name: String): String {
+        val i = name.lastIndexOf('.');
+        if (i != -1) {
+            return name.substring(0, i);
+        }
+        return name;
+    }
+}

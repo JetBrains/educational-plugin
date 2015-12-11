@@ -28,14 +28,14 @@ public class KotlinStudyProjectGenerator extends StudyProjectGenerator {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override
                     public void run() {
-                        final FileTemplate template = FileTemplateManager.getInstance(project1).getInternalTemplate("TestHelper.java");
+                        final FileTemplate template = FileTemplateManager.getInstance(project1).getInternalTemplate(KotlinStudyUtils.TEST_HELPER);
                         final PsiDirectory projectDir = PsiManager.getInstance(project1).findDirectory(baseDir1);
                         if (projectDir == null) return;
                         try {
-                            FileTemplateUtil.createFromTemplate(template, "TestHelper.java", null, projectDir.createSubdirectory("util"));
+                            FileTemplateUtil.createFromTemplate(template, KotlinStudyUtils.TEST_HELPER, null, projectDir.createSubdirectory("util"));
                         }
                         catch (Exception exception) {
-                            LOG.error("Can't copy fileTemplates.fileTemplates.TestHelper.java " + exception.getMessage());
+                            LOG.error("Can't copy fileTemplates.fileTemplates." + KotlinStudyUtils.TEST_HELPER + " " + exception.getMessage());
                         }
                     }
                 });
