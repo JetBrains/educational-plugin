@@ -81,8 +81,6 @@ public class KotlinStudyUtils {
         String className = FileUtil.toSystemIndependentName(FileUtil.getNameWithoutExtension(sourcePath));
         if (FileUtil.getExtension(sourcePath).equals("kt"))
             className += "Kt";
-//        String packageName = className.substring(0, className.lastIndexOf('/')); //getPackageName(file, project);//
-//        packageName = packageName.substring(packageName.lastIndexOf('/') + 1) + ".";
         String packageName = getPackageName(sourcePath, project);
         className = className.substring(className.lastIndexOf('/') + 1);
         className = className.substring(0, 1).toUpperCase() + className.substring(1);

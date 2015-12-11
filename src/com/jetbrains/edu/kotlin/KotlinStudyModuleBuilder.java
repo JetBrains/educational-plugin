@@ -4,7 +4,6 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.ide.util.projectWizard.WizardInputField;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -36,12 +35,9 @@ import java.util.List;
 
 public class KotlinStudyModuleBuilder extends ModuleBuilder {
 
-    private static  final Logger LOG = Logger.getInstance(KotlinStudyModuleBuilder.class);
-
     private final KotlinStudyProjectGenerator studyProjectGenerator = new KotlinStudyProjectGenerator();
     private final KotlinSdkComboBox mySdkComboBox = new KotlinSdkComboBox();
     private final TargetPlatform targetPlatform = JvmPlatform.INSTANCE;
-    private Sdk mySdk;
 
     private String myBuilderName = "KotlinStudyModuleBuilder";
     private String myBuilderDescription = "Module builder for education Kotlin projects";
@@ -139,7 +135,7 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
 
     @Override
     public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
-        mySdk = mySdkComboBox.getSelectedSdk();
+        Sdk mySdk = mySdkComboBox.getSelectedSdk();
         if (mySdk != null) {
             rootModel.setSdk(mySdk);
         } else {
@@ -152,7 +148,8 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
     @Override
     protected ContentEntry doAddContentEntry(ModifiableRootModel modifiableRootModel) {
         final String contentEntryPath = getContentEntryPath();
-        if (contentEntryPath == null) return null;
+        if (contentEntryPath == null)
+            return null;
         new File(contentEntryPath).mkdirs();
         final VirtualFile moduleContentRoot = LocalFileSystem.getInstance().refreshAndFindFileByPath(contentEntryPath.replace('\\', '/'));
         if (moduleContentRoot == null) return null;

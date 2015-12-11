@@ -15,14 +15,12 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class KotlinSdkComboBox extends ComboboxWithBrowseButton {
-    private Project myProject;
-
     public KotlinSdkComboBox() {
         getComboBox().setRenderer(new SdkListCellRenderer("<No Interpreter>", true));
         addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Sdk selectedSdk = getSelectedSdk();
-                final Project project = myProject != null ? myProject : ProjectManager.getInstance().getDefaultProject();
+                final Project project = ProjectManager.getInstance().getDefaultProject();
                 ProjectJdksEditor editor = new ProjectJdksEditor(selectedSdk, project, KotlinSdkComboBox.this);
                 if (editor.showAndGet()) {
                     selectedSdk = editor.getSelectedJdk();
@@ -39,7 +37,7 @@ public class KotlinSdkComboBox extends ComboboxWithBrowseButton {
             sdkToSelect = sdkList.get(0);
         }
         sdkList.add(0, null);
-        getComboBox().setModel(new DefaultComboBoxModel(sdkList.toArray(new Sdk[sdkList.size()])));
+        getComboBox().setModel(new DefaultComboBoxModel<Sdk>(sdkList.toArray(new Sdk[sdkList.size()])));
         getComboBox().setSelectedItem(sdkToSelect);
     }
 

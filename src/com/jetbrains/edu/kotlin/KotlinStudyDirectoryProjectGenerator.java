@@ -13,13 +13,11 @@ import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
-import com.jetbrains.edu.stepic.CourseInfo;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
 
 
 public class KotlinStudyDirectoryProjectGenerator implements DirectoryProjectGenerator {
@@ -80,31 +78,4 @@ public class KotlinStudyDirectoryProjectGenerator implements DirectoryProjectGen
     public void setValidationResult(ValidationResult validationResult) {
         myValidationResult = validationResult;
     }
-
-    public List<CourseInfo> getCourses() {
-        return myGenerator.getCourses(false);
-    }
-
-    public void setSelectedCourse(CourseInfo course) {
-        myGenerator.setSelectedCourse(course);
-    }
-
-    public StudyProjectGenerator getGenerator() {
-        return myGenerator;
-    }
-
-    /*@Nullable
-    @Override
-    public JPanel extendBasePanel() throws ProcessCanceledException {
-        StudyNewProjectPanel settingsPanel = new StudyNewProjectPanel(myGenerator);
-        settingsPanel.registerValidators(new FacetValidatorsManager() {
-            public void registerValidator(FacetEditorValidator validator, JComponent... componentsToWatch) {
-                throw new UnsupportedOperationException();
-            }
-            public void validate() {
-                fireStateChanged();
-            }
-        });
-        return settingsPanel.getContentPanel();
-    }*/
 }

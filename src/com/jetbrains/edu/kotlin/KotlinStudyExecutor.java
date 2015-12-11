@@ -41,8 +41,6 @@ public class KotlinStudyExecutor implements StudyExecutor {
 
     @Override
     public RunContentExecutor getExecutor(@NotNull final Project project, @NotNull final ProcessHandler handler) {
-//      TODO: find TracebackFilter
-//        return new RunContentExecutor(project, handler).withFilter(new PythonTracebackFilter(project));
         return new RunContentExecutor(project, handler).withFilter(new ExceptionFilter(GlobalSearchScope.allScope(project)));
     }
 
@@ -70,7 +68,6 @@ public class KotlinStudyExecutor implements StudyExecutor {
                 cmd.setExePath(fromJavaParameters.getExePath());
                 List<String> parameters = fromJavaParameters.getCommandLineList(fromJavaParameters.getExePath());
                 cmd.addParameters(parameters.subList(1, parameters.size()));
-                return;
             } catch (ExecutionException e) {
                 LOG.error(e);
             }

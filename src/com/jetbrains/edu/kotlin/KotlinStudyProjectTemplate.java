@@ -1,7 +1,6 @@
 package com.jetbrains.edu.kotlin;
 
-import com.intellij.ide.util.projectWizard.*;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.ide.util.projectWizard.AbstractModuleBuilder;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.platform.ProjectTemplate;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +10,6 @@ import javax.swing.*;
 
 public class KotlinStudyProjectTemplate implements ProjectTemplate {
 
-    private static final Logger LOG = Logger.getInstance(KotlinStudyProjectTemplate.class);
     @NotNull
     @Override
     public String getName() {

@@ -46,7 +46,6 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
             @Override
             public void run() {
                 executeFile(taskFileVF, project);
-//                executeFile(VfsUtil.findFileByIoFile(new File(taskFileVF.getPath()), false), project);
             }
         });
 
