@@ -88,4 +88,8 @@ class TestHelper constructor(private val args: Array<String>) {
         }
         return name;
     }
+
+    public fun <T> testEquals(a : T, b : T, message: String) {
+        if (a?.equals(b) as Boolean) passed() else failed(message)
+    }
 }
