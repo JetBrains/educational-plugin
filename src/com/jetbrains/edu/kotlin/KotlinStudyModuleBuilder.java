@@ -4,6 +4,7 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.ide.util.projectWizard.WizardInputField;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -18,6 +19,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
+import com.intellij.util.io.ZipUtil;
 import com.jetbrains.edu.EduUtils;
 import com.jetbrains.edu.learning.ui.StudyNewProjectPanel;
 import com.jetbrains.edu.stepic.CourseInfo;
@@ -30,11 +32,14 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class KotlinStudyModuleBuilder extends ModuleBuilder {
 
+    private static final Logger LOG = Logger.getInstance(KotlinStudyModuleBuilder.class);
     private final KotlinStudyProjectGenerator studyProjectGenerator = new KotlinStudyProjectGenerator();
     private final KotlinSdkComboBox mySdkComboBox = new KotlinSdkComboBox();
     private final TargetPlatform targetPlatform = JvmPlatform.INSTANCE;
@@ -94,7 +99,7 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
             StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
                 @Override
                 public void run() {
-                    for (VirtualFile lessonDir: project.getBaseDir().getChildren()) {
+                    for (VirtualFile lessonDir : project.getBaseDir().getChildren()) {
                         if (lessonDir.isDirectory() && !lessonDir.getName().equals(".idea"))
                             KotlinStudyUtils.markDirAsSourceRoot(lessonDir, project);
                     }
@@ -166,7 +171,24 @@ public class KotlinStudyModuleBuilder extends ModuleBuilder {
         if (jarPath.endsWith(".jar")) {
             final File jarFile = new File(jarPath);
             File pluginBaseDir = jarFile.getParentFile();
-            return new File(pluginBaseDir, "courses");
+            File coursesDir = new File(pluginBaseDir, "courses");
+            if (!coursesDir.exists()) {
+                if (!coursesDir.mkdir()) {
+                    LOG.info("Failed to create courses dir");
+                } else {
+                    try {
+                        ZipUtil.extract(jarFile, pluginBaseDir, new FilenameFilter() {
+                            @Override
+                            public boolean accept(File dir, String name) {
+                                return name.equals(DEFAULT_COURSE_NAME);
+                            }
+                        });
+                    } catch (IOException e) {
+                        LOG.info("Failed to extract default course", e);
+                    }
+                }
+            }
+            return coursesDir;
         }
         return new File(jarPath, "courses");
     }
