@@ -7,4 +7,4 @@
   * [Stepic connector](https://plugins.jetbrains.com/plugin/8019?pr=pycharm)
   * [Educational plugin core](https://plugins.jetbrains.com/plugin/7988?pr=pycharm)
   * [Kotlin plugin] (https://plugins.jetbrains.com/plugin/6954?pr=pycharm) (kotlin-runtime.jar and kotlin-plugin.jar)
-3. Install all the plugins listed above on your Intellij IDEA isnstance that launches with run configuration.
+3. Install all the plugins listed above on your Intellij IDEA instance that launches with run configuration.
