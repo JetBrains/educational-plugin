@@ -20,8 +20,7 @@
     <depends>org.jetbrains.kotlin</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectTemplatesFactory implementation="com.jetbrains.edu.kotlin.KotlinStudyProjectTemplateFactory"/>
-        <directoryProjectGenerator implementation="com.jetbrains.edu.kotlin.KotlinStudyDirectoryProjectGenerator"/>
+        <projectTemplatesFactory implementation="com.jetbrains.edu.core.EduProjectTemplateFactory"/>
         <treeStructureProvider implementation="com.jetbrains.edu.kotlin.KotlinStudyTreeStructureProvider"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">

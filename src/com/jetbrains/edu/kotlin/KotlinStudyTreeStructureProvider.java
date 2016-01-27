@@ -20,16 +20,16 @@ public class KotlinStudyTreeStructureProvider extends StudyTreeStructureProvider
                                                @NotNull Collection<AbstractTreeNode> children,
                                                ViewSettings settings) {
 
-        Collection<AbstractTreeNode> old_nodes = super.modify(parent, children, settings);
+        Collection<AbstractTreeNode> oldNodes = super.modify(parent, children, settings);
         Project project = parent.getProject();
         if (project == null) {
-            return old_nodes;
+            return oldNodes;
         }
         if (StudyTaskManager.getInstance(project).getCourse() == null) {
-            return old_nodes;
+            return oldNodes;
         }
         Collection<AbstractTreeNode> nodes = new ArrayList<AbstractTreeNode>();
-        for (AbstractTreeNode node: old_nodes) {
+        for (AbstractTreeNode node: oldNodes) {
             if (node.getValue() instanceof PsiDirectory) {
                 String name = ((PsiDirectory)node.getValue()).getName();
                 if (!name.equals(UTIL_DIR) && !name.equals(OUT_DIR)) {
