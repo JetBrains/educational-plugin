@@ -1,11 +1,15 @@
 package com.jetbrains.edu.core;
 
+import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
+import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ExternalLibraryDescriptor;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.List;
 
 public abstract class EduFromCourseModuleBuilder extends JavaModuleBuilder {
 
@@ -39,6 +44,13 @@ public abstract class EduFromCourseModuleBuilder extends JavaModuleBuilder {
                 }
             }
         });
-        return super.commitModule(project, model);
+        ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
+        List<String> defaultRoots = descriptor.getLibraryClassesRoots();
+        final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
+        Module module = super.commitModule(project, model);
+        if (module != null) {
+            ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.<String>emptyList());
+        }
+        return module;
     }
 }
