@@ -3,6 +3,8 @@ package com.jetbrains.edu.kotlin;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.application.ApplicationConfiguration;
+import com.intellij.execution.application.ApplicationConfigurationType;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
@@ -26,28 +28,31 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.FileContentUtil;
+import com.jetbrains.edu.core.EduIntellijUtils;
 import com.jetbrains.edu.courseFormat.Course;
 import com.jetbrains.edu.courseFormat.Task;
+import com.jetbrains.edu.learning.StudyLanguageManager;
 import com.jetbrains.edu.learning.StudyState;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.actions.StudyRunAction;
 import com.jetbrains.edu.learning.editor.StudyEditor;
 import com.jetbrains.edu.learning.run.StudyTestRunner;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.run.JetRunConfiguration;
-import org.jetbrains.kotlin.idea.run.JetRunConfigurationType;
+import org.jetbrains.kotlin.psi.KtClass;
 
 import java.io.File;
 import java.util.Arrays;
-
+import java.util.Collection;
 
 public class KotlinStudyCheckAction extends StudyCheckAction {
 
     private static final Logger LOG = Logger.getInstance(StudyRunAction.class.getName());
-    public static final String ACTION_ID = "KotlinStudyCheckAction";
-
     boolean checkInProgress = false;
 
     @Override
@@ -62,7 +67,18 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
             KotlinStudyUtils.showNoSdkNotification(project);
             return;
         }
-
+        final Course course = StudyTaskManager.getInstance(project).getCourse();
+        if (course == null) {
+            return;
+        }
+        StudyLanguageManager languageManager = StudyUtils.getLanguageManager(course);
+        if (languageManager == null) {
+            return;
+        }
+        final VirtualFile testsFile = taskFileVF.getParent().findChild(languageManager.getTestFileName());
+        if (testsFile == null) {
+            return;
+        }
         CompilerManager.getInstance(project).compile(getFilesToCompile(project, taskFileVF), new CompileStatusNotification() {
             @Override
             public void finished(boolean aborted, int errors, int warnings, CompileContext compileContext) {
@@ -71,12 +87,16 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                     KotlinStudyUtils.showNotification(project, "Compilation wasn't finished because of your code contains errors. Please, fix it.");
                     return;
                 }
-                RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp",
-                        JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
-                setProcessParameters(project, temp, taskFileVF);
-                RunProfileState state;// = null;
+                RunnerAndConfigurationSettings javaTemplateConfiguration = RunManager.getInstance(project).createRunConfiguration("javaTemplateConfiguration",
+                        ApplicationConfigurationType.getInstance().getConfigurationFactories()[0]);
+
+                setProcessParameters(project, javaTemplateConfiguration, taskFileVF, testsFile);
+                RunProfileState state;
                 try {
-                    state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(), ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());
+                    state = javaTemplateConfiguration.getConfiguration().
+                            getState(DefaultRunExecutor.getRunExecutorInstance(),
+                                    ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(),
+                                            javaTemplateConfiguration).build());
 
                     final JavaCommandLineState javaCmdLine = (JavaCommandLineState) state;
                     if (javaCmdLine == null) {
@@ -88,7 +108,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                     DumbService.getInstance(project).runWhenSmart(new Runnable() {
                         @Override
                         public void run() {
-                            JavaParameters javaParameters;// = null;
+                            JavaParameters javaParameters;
                             try {
                                 javaParameters = javaCmdLine.getJavaParameters();
                                 GeneralCommandLine fromJavaParameters = CommandLineBuilder.createFromJavaParameters(javaParameters, project, false);
@@ -96,7 +116,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                                 check(project, process);
 
                             } catch (ExecutionException e1) {
-                                e1.printStackTrace();
+                                LOG.error(e1);
                             }
                         }
                     });
@@ -108,28 +128,21 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
     }
 
     private VirtualFile[] getFilesToCompile(Project project, VirtualFile taskFileVF) {
-        return new VirtualFile[] {
+        return new VirtualFile[]{
                 taskFileVF.getParent(),
-                VfsUtil.findFileByIoFile(new File(project.getBasePath() + FileUtil.toSystemDependentName("/util/" + KotlinStudyUtils.TEST_HELPER)), false)
+                VfsUtil.findFileByIoFile(new File(project.getBasePath() + FileUtil.toSystemDependentName("/util/" + "EduTestRunner.java")), false)
         };
     }
 
-    private void setProcessParameters(Project project, RunnerAndConfigurationSettings settings, VirtualFile taskFileVF) {
-        final StudyEditor selectedEditor = StudyUtils.getSelectedStudyEditor(project);
-        if (selectedEditor == null) return;
-        final StudyState studyState = new StudyState(selectedEditor);
-        if (!studyState.isValid()) {
-            LOG.error("StudyCheckAction was invoked outside study editor");
-            return;
+    private void setProcessParameters(Project project, RunnerAndConfigurationSettings settings, VirtualFile taskFileVF, @NotNull VirtualFile testsFile) {
+        ApplicationConfiguration configuration = (ApplicationConfiguration) settings.getConfiguration();
+        configuration.setMainClassName(EduIntellijUtils.TEST_RUNNER);
+        PsiFile psiFile = PsiManager.getInstance(project).findFile(testsFile);
+        Collection<KtClass> ktClasses = PsiTreeUtil.findChildrenOfType(psiFile, KtClass.class);
+        for (KtClass ktClass : ktClasses) {
+            String name = ktClass.getName();
+            configuration.setProgramParameters(KotlinStudyUtils.getTestClass(taskFileVF, project) + name);
         }
-        final Task task = studyState.getTask();
-        Course course = task.getLesson().getCourse();
-        String className = KotlinStudyUtils.getTestClass(taskFileVF, project);
-        ((JetRunConfiguration) settings.getConfiguration()).setRunClass(className);
-        File resourceFile = new File(course.getCourseDirectory());
-        ((JetRunConfiguration) settings.getConfiguration()).setProgramParameters(
-                "\"" + FileUtil.toSystemDependentName(resourceFile.getPath()) + "\" " +
-                        FileUtil.toSystemDependentName(taskFileVF.getPath()));
     }
 
     public void check(@NotNull final Project project, @NotNull final Process testProcess) {

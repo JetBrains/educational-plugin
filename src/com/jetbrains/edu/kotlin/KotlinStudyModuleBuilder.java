@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 
 public class KotlinStudyModuleBuilder extends EduFromCourseModuleBuilder {
-
-    private final KotlinStudyProjectGenerator myStudyProjectGenerator = new KotlinStudyProjectGenerator();
-
+    private  final StudyProjectGenerator myGenerator = new StudyProjectGenerator();
     private static final String DEFAULT_COURSE_NAME = "Introduction to Kotlin.zip";
 
     @Override
@@ -33,16 +31,16 @@ public class KotlinStudyModuleBuilder extends EduFromCourseModuleBuilder {
 
     @Override
     protected StudyProjectGenerator getStudyProjectGenerator() {
-        return myStudyProjectGenerator;
+        return  myGenerator;
     }
 
     @Nullable
     @Override
     public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
-        CourseInfo courseInfo = myStudyProjectGenerator.addLocalCourse(FileUtil.toSystemDependentName(
+        CourseInfo courseInfo = myGenerator.addLocalCourse(FileUtil.toSystemDependentName(
                 EduIntellijUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME).getAbsolutePath() + "/" + DEFAULT_COURSE_NAME));
         if (courseInfo != null) {
-            myStudyProjectGenerator.setSelectedCourse(courseInfo);
+            myGenerator.setSelectedCourse(courseInfo);
         }
         return super.commitModule(project, model);
     }

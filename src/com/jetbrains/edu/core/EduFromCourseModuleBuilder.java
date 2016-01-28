@@ -3,6 +3,7 @@ package com.jetbrains.edu.core;
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -35,15 +36,6 @@ public abstract class EduFromCourseModuleBuilder extends JavaModuleBuilder {
     public Module commitModule(@NotNull final Project project, @Nullable ModifiableModuleModel model) {
         final VirtualFile baseDir = project.getBaseDir();
         getStudyProjectGenerator().generateProject(project, baseDir);
-        StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
-            @Override
-            public void run() {
-                for (VirtualFile lessonDir : project.getBaseDir().getChildren()) {
-                    if (lessonDir.isDirectory() && !lessonDir.getName().equals(".idea"))
-                        EduIntellijUtils.markDirAsSourceRoot(lessonDir, project);
-                }
-            }
-        });
         ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
         List<String> defaultRoots = descriptor.getLibraryClassesRoots();
         final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
@@ -51,6 +43,31 @@ public abstract class EduFromCourseModuleBuilder extends JavaModuleBuilder {
         if (module != null) {
             ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.<String>emptyList());
         }
+
+        StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
+            @Override
+            public void run() {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        EduIntellijUtils.addTemplate(project, baseDir, "EduTestRunner.java");
+                    }
+                });
+            }
+        });
+        StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
+            @Override
+            public void run() {
+                for (VirtualFile lessonDir : project.getBaseDir().getChildren()) {
+                    if (lessonDir.isDirectory() && !lessonDir.getName().equals(".idea"))
+                        EduIntellijUtils.markDirAsSourceRoot(lessonDir, project);
+                }
+                VirtualFile util = project.getBaseDir().findChild("util");
+                if (util != null) {
+                    EduIntellijUtils.markDirAsSourceRoot(util, project);
+                }
+            }
+        });
         return module;
     }
 }

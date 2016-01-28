@@ -1,5 +1,8 @@
 package com.jetbrains.edu.core;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -10,6 +13,8 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.ZipUtil;
 import com.jetbrains.edu.kotlin.KotlinStudyModuleBuilder;
@@ -23,6 +28,8 @@ import java.io.IOException;
 
 
 public class EduIntellijUtils {
+    public static final String TEST_RUNNER = "EduTestRunner";
+
     private static final Logger LOG = Logger.getInstance(EduIntellijUtils.class);
 
     private EduIntellijUtils() {
@@ -87,5 +94,23 @@ public class EduIntellijUtils {
         }
         entry.addSourceFolder(dir, false);
         commitAndSaveModel(model);
+    }
+
+
+    public static void addTemplate(@NotNull final Project project, @NotNull VirtualFile baseDir, @NotNull @NonNls final String templateName) {
+        final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(templateName);
+        final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
+        if (projectDir == null) return;
+        try {
+            PsiDirectory utilDir = projectDir.findSubdirectory("util");
+            if (utilDir == null) {
+                utilDir = projectDir.createSubdirectory("util");
+            }
+            FileTemplateUtil.createFromTemplate(template, templateName, null, utilDir);
+
+        } catch (Exception exception) {
+            LOG.error("Failed to create from file template ", exception);
+        }
+
     }
 }

@@ -83,6 +83,6 @@ public class KotlinStudyUtils {
     }
 
     public static String getTestClass(VirtualFile taskFile, final Project project) {
-        return getPackageName(taskFile, project) + "tests.TestsKt";
+        return getPackageName(taskFile, project) + "tests.";
     }
 }
