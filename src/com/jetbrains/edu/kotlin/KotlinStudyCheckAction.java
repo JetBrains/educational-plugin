@@ -185,7 +185,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
         Collection<KtClass> ktClasses = PsiTreeUtil.findChildrenOfType(psiFile, KtClass.class);
         for (KtClass ktClass : ktClasses) {
             String name = ktClass.getName();
-            configuration.setProgramParameters(KotlinStudyUtils.getTestClass(taskFileVF, project) + name);
+            configuration.setProgramParameters(KotlinStudyUtils.getTestClass(taskFileVF) + name);
         }
     }
 }

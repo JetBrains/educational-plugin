@@ -55,7 +55,7 @@ public class KotlinStudyExecutor implements StudyExecutor {
             RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp",
                     JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
             try {
-                String className = KotlinStudyUtils.getClassName(filePath, project);
+                String className = KotlinStudyUtils.getClassName(filePath);
                 ((JetRunConfiguration) temp.getConfiguration()).setRunClass(className);
                 RunProfileState state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(),
                         ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());

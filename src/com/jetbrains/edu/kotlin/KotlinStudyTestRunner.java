@@ -53,7 +53,7 @@ public class KotlinStudyTestRunner extends StudyTestRunner {
         if (sdk != null) {
             RunnerAndConfigurationSettings temp = RunManager.getInstance(project).createRunConfiguration("temp", JetRunConfigurationType.getInstance().getConfigurationFactories()[0]);
             try {
-                String className = KotlinStudyUtils.getTestClass(taskFileVF, project);
+                String className = KotlinStudyUtils.getTestClass(taskFileVF);
                 ((JetRunConfiguration) temp.getConfiguration()).setRunClass(className);
                 RunProfileState state = temp.getConfiguration().getState(DefaultRunExecutor.getRunExecutorInstance(), ExecutionEnvironmentBuilder.create(DefaultRunExecutor.getRunExecutorInstance(), temp).build());
                 JavaCommandLineState javaCmdLine = (JavaCommandLineState) state;

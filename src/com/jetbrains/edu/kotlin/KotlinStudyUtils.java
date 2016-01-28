@@ -20,28 +20,21 @@ import java.io.File;
 
 public class KotlinStudyUtils {
 
-    public static final String TEST_HELPER = "test_helper.kt";
-
-    public static String getPackageName(VirtualFile file, final Project project) {
-        String packageName = "";
+    public static String getPackageNamePrefix(VirtualFile file) {
         VirtualFile cur = file.getParent();
-        while (!cur.getName().equals(project.getName())) {
-            packageName = cur.getName() + "." + packageName;
-            cur = cur.getParent();
-        }
-        return packageName;
+        return cur.getName() + ".";
     }
 
-    public static String getPackageName(String classPath, final Project project) {
+    public static String getPackageNamePrefix(String classPath) {
         final VirtualFile taskFileVF = VfsUtil.findFileByIoFile(new File(classPath), false);
-        return getPackageName(taskFileVF, project);
+        return getPackageNamePrefix(taskFileVF);
     }
 
-    public static String getClassName(String sourcePath, final Project project) {
+    public static String getClassName(String sourcePath) {
         String className = FileUtil.toSystemIndependentName(FileUtil.getNameWithoutExtension(sourcePath));
         if (FileUtilRt.getExtension(sourcePath).equals("kt"))
             className += "Kt";
-        String packageName = getPackageName(sourcePath, project);
+        String packageName = getPackageNamePrefix(sourcePath);
         className = className.substring(className.lastIndexOf('/') + 1);
         className = className.substring(0, 1).toUpperCase() + className.substring(1);
         return packageName + className;
@@ -82,7 +75,7 @@ public class KotlinStudyUtils {
         StudyUtils.showCheckPopUp(project, balloon);
     }
 
-    public static String getTestClass(VirtualFile taskFile, final Project project) {
-        return getPackageName(taskFile, project) + "tests.";
+    public static String getTestClass(VirtualFile taskFile) {
+        return getPackageNamePrefix(taskFile) + "tests.";
     }
 }
