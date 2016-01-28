@@ -14,14 +14,14 @@ public class EduKotlinProjectTemplate implements ProjectTemplate {
     @NotNull
     @Override
     public String getName() {
-        return "Introduction to Kotlin";
+        return "Kotlin Koans";
     }
 
     @Nullable
     @Override
     public String getDescription() {
         //TODO: get correct course description
-        return "Introduction to Kotlin Course";
+        return "Kotlin Koans course. \n You can also try it <a href=\"http://try.kotl.in/koans\">online</a>";
     }
 
     @Override

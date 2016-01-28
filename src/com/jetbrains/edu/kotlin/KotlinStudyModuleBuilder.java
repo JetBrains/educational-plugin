@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 public class KotlinStudyModuleBuilder extends EduFromCourseModuleBuilder {
     private  final StudyProjectGenerator myGenerator = new StudyProjectGenerator();
-    private static final String DEFAULT_COURSE_NAME = "Introduction to Kotlin.zip";
+    private static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
 
     @Override
     public String getBuilderId() {
