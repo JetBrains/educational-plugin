@@ -1,0 +1,34 @@
+<idea-plugin version="2">
+  <id>com.jetbrains.edu.intellij</id>
+  <name>Edu IntelliJ</name>
+  <version>1.0</version>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+      Adds "Education" project group.
+    ]]></description>
+
+  <change-notes><![CDATA[
+    ]]>
+  </change-notes>
+
+  <idea-version since-build="143.0"/>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.jetbrains.edu.interactivelearning</depends>
+  <!--TODO: remove this dependency-->
+  <depends>org.jetbrains.kotlin</depends>
+
+  <extensionPoints>
+    <extensionPoint name="eduIntelliJProjectTemplate" interface="com.jetbrains.edu.intellij.EduIntelliJProjectTemplate"/>
+  </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+   <projectTemplatesFactory implementation="com.jetbrains.edu.intellij.EduIntelliJTemplateFactory"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
+    <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.intellij.EduCustomCourseProjectTemplate" order="last"/>
+  </extensions>
+
+</idea-plugin>

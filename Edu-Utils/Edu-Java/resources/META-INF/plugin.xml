@@ -1,0 +1,31 @@
+<idea-plugin version="2">
+  <id>com.jetbrains.edu.java</id>
+  <name>Edu Java</name>
+  <version>1.0</version>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+      Educational plugin for Java programming language
+    ]]></description>
+
+  <change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>
+    ]]>
+  </change-notes>
+
+  <idea-version since-build="143.0"/>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.jetbrains.edu.interactivelearning</depends>
+  <depends>com.jetbrains.edu.intellij</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+</idea-plugin>
