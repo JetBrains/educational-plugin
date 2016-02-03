@@ -26,14 +26,10 @@
     <extensions defaultExtensionNs="Edu">
         <StudyExecutor implementationClass="com.jetbrains.edu.kotlin.KotlinStudyExecutor" language="kotlin"/>
         <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.KotlinStudyLanguageManager" language="kotlin"/>
+        <studyToolWindowConfigurator implementation="com.jetbrains.edu.kotlin.KotlinStudyToolWindowConfigurator"/>
     </extensions>
     <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinProjectTemplate"/>
     </extensions>
-
-    <actions>
-        <action id="KotlinStudyCheckAction" class="com.jetbrains.edu.kotlin.KotlinStudyCheckAction"
-                text="KotlinStudyCheckTest"/>
-    </actions>
 
 </idea-plugin>
