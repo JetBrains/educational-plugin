@@ -16,11 +16,9 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.edu.courseFormat.Task;
-import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.run.StudyExecutor;
 import com.jetbrains.edu.learning.run.StudyTestRunner;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.run.JetRunConfiguration;
 import org.jetbrains.kotlin.idea.run.JetRunConfigurationType;
 
@@ -80,11 +78,4 @@ public class KotlinStudyExecutor implements StudyExecutor {
     public void showNoSdkNotification(@NotNull final Project project) {
         KotlinStudyUtils.showNoSdkNotification(project);
     }
-
-    @Nullable
-    @Override
-    public StudyCheckAction getCheckAction() {
-        return new KotlinStudyCheckAction();
-    }
-
 }
