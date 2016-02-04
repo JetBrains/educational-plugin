@@ -101,7 +101,9 @@ public class KotlinStudyToolWindowConfigurator implements StudyToolWindowConfigu
 
     @Override
     public boolean accept(@NotNull Project project) {
-        Course course = StudyTaskManager.getInstance(project).getCourse();
+        StudyTaskManager instance = StudyTaskManager.getInstance(project);
+        if (instance == null) return false;
+        Course course = instance.getCourse();
         return course != null && "PyCharm".equals(course.getCourseType()) && "kotlin".equals(course.getLanguage());
     }
 }
