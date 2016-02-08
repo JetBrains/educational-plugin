@@ -1,0 +1,32 @@
+<idea-plugin version="2">
+  <id>com.jetbrains.edu.coursecreator.intellij</id>
+  <name>Course Creator for IntelliJ IDEA</name>
+  <version>1.0</version>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+      Plugin for courses creation
+    ]]></description>
+
+  <change-notes><![CDATA[
+    ]]>
+  </change-notes>
+
+  <idea-version since-build="144.0"/>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.jetbrains.edu.intellij</depends>
+  <depends>com.jetbrains.edu.coursecreator</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+  <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
+    <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCCProjectTemplate" order="last"/>
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+  </actions>
+
+</idea-plugin>
