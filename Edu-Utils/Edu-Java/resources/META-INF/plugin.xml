@@ -24,6 +24,10 @@
     <!-- Add your extensions here -->
   </extensions>
 
+  <extensions defaultExtensionNs="Edu">
+    <studyToolWindowConfigurator implementation="com.jetbrains.edu.java.EduJavaStudyToolWindowConfigurator"/>
+  </extensions>
+
   <actions>
     <!-- Add your actions here -->
   </actions>

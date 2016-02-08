@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.java;
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -7,26 +7,26 @@ import com.intellij.util.containers.HashMap;
 import com.jetbrains.edu.courseFormat.Course;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyToolWindowConfigurator;
-import com.jetbrains.edu.learning.actions.*;
+import com.jetbrains.edu.learning.actions.StudyNextStudyTaskAction;
+import com.jetbrains.edu.learning.actions.StudyPreviousStudyTaskAction;
+import com.jetbrains.edu.learning.actions.StudyRefreshTaskFileAction;
+import com.jetbrains.edu.learning.actions.StudyShowHintAction;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class KotlinStudyToolWindowConfigurator implements StudyToolWindowConfigurator {
+public class EduJavaStudyToolWindowConfigurator implements StudyToolWindowConfigurator {
     @NotNull
     @Override
     public DefaultActionGroup getActionGroup(Project project) {
-        final DefaultActionGroup group = new DefaultActionGroup();
-        group.add(new KotlinStudyCheckAction());
+        DefaultActionGroup group = new DefaultActionGroup();
+        group.add(new EduJavaCheckAction());
         group.add(new StudyPreviousStudyTaskAction());
         group.add(new StudyNextStudyTaskAction());
         group.add(new StudyRefreshTaskFileAction());
         group.add(new StudyShowHintAction());
-        group.add(new StudyRunAction());
-        group.add(new StudyEditInputAction());
-        
         return group;
     }
 
@@ -38,9 +38,7 @@ public class KotlinStudyToolWindowConfigurator implements StudyToolWindowConfigu
 
     @NotNull
     @Override
-    public FileEditorManagerListener getFileEditorManagerListener(@NotNull final Project project, 
-                                                                  @NotNull final StudyToolWindow studyToolWindow) {
-
+    public FileEditorManagerListener getFileEditorManagerListener(@NotNull Project project, @NotNull StudyToolWindow studyToolWindow) {
         return EduIntellijUtils.getFileEditorManagerListener(studyToolWindow, project);
     }
 
@@ -55,6 +53,6 @@ public class KotlinStudyToolWindowConfigurator implements StudyToolWindowConfigu
         StudyTaskManager instance = StudyTaskManager.getInstance(project);
         if (instance == null) return false;
         Course course = instance.getCourse();
-        return course != null && "PyCharm".equals(course.getCourseType()) && "kotlin".equals(course.getLanguage());
+        return course != null && "PyCharm".equals(course.getCourseType()) && "JAVA".equals(course.getLanguage());
     }
 }
