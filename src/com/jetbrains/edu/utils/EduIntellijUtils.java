@@ -6,6 +6,9 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
+import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -17,6 +20,10 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.ZipUtil;
+import com.jetbrains.edu.courseFormat.Task;
+import com.jetbrains.edu.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,5 +118,61 @@ public class EduIntellijUtils {
             LOG.error("Failed to create from file template ", exception);
         }
 
+    }
+
+    private static class StudyFileEditorManagerListener implements FileEditorManagerListener {
+
+        private StudyToolWindow myStudyToolWindow;
+        private Project myProject;
+        private static final String EMPTY_TASK_TEXT = "Please, open any task to see task description";
+
+        public StudyFileEditorManagerListener(StudyToolWindow studyToolWindow, Project project) {
+            myStudyToolWindow = studyToolWindow;
+            myProject = project;
+        }
+
+        @Nullable
+        private Task getTask(@NotNull VirtualFile file) {
+            TaskFile taskFile = StudyUtils.getTaskFile(myProject, file);
+            if (taskFile != null) {
+                return taskFile.getTask();
+            }
+            else {
+                return null;
+            }
+        }
+
+        private void setTaskText(@Nullable final Task task, @Nullable final VirtualFile taskDirectory) {
+            String text = StudyUtils.getTaskTextFromTask(task, taskDirectory);
+            if (text == null) {
+                myStudyToolWindow.setTaskText(EMPTY_TASK_TEXT);
+                return;
+            }
+            myStudyToolWindow.setTaskText(text);
+        }
+
+        @Override
+        public void fileOpened(@NotNull FileEditorManager fileEditorManager, @NotNull VirtualFile file) {
+            Task task = getTask(file);
+            setTaskText(task, file.getParent());
+        }
+
+        @Override
+        public void fileClosed(@NotNull FileEditorManager fileEditorManager, @NotNull VirtualFile virtualFile) {
+            myStudyToolWindow.setTaskText(EMPTY_TASK_TEXT);
+        }
+
+        @Override
+        public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+            VirtualFile file = event.getNewFile();
+            if (file != null) {
+                Task task = getTask(file);
+                setTaskText(task, file.getParent());
+            }
+        }
+    }
+
+    public static FileEditorManagerListener getFileEditorManagerListener(StudyToolWindow studyToolWindow, Project project) {
+        return new StudyFileEditorManagerListener(studyToolWindow, project);
     }
 }
