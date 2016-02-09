@@ -25,7 +25,6 @@
         <treeStructureProvider implementation="com.jetbrains.edu.kotlin.KotlinStudyTreeStructureProvider"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
-        <StudyExecutor implementationClass="com.jetbrains.edu.kotlin.KotlinStudyExecutor" language="kotlin"/>
         <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.KotlinStudyLanguageManager" language="kotlin"/>
         <studyToolWindowConfigurator implementation="com.jetbrains.edu.kotlin.KotlinStudyToolWindowConfigurator"/>
     </extensions>
