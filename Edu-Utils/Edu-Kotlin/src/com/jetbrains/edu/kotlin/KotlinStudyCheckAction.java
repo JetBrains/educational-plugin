@@ -18,8 +18,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiFile;
@@ -39,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtClass;
 
-import java.io.File;
 import java.util.Collection;
 
 public class KotlinStudyCheckAction extends StudyCheckAction {
@@ -142,10 +139,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
 
     //TODO: refactor
     private VirtualFile[] getFilesToCompile(Project project, VirtualFile taskFileVF) {
-        return new VirtualFile[]{ taskFileVF.getParent(),
-                VfsUtil.findFileByIoFile(new File(project.getBasePath() +
-                        FileUtil.toSystemDependentName("/util/" + "EduTestRunner.java")), false)
-        };
+        return new VirtualFile[]{ taskFileVF.getParent(), project.getBaseDir().findChild("util")};
     }
 
 
