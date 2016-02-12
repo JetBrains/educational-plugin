@@ -9,3 +9,6 @@
   * [Kotlin plugin] (https://plugins.jetbrains.com/plugin/6954?pr=pycharm) (kotlin-runtime.jar and kotlin-plugin.jar)
   * Junit (idea_home/plugins/junit/lib/idea-junit.jar)
 3. Install all the plugins listed above on your Intellij IDEA instance that launches with run configuration.
+
+### Issue tracker
+Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetbrains.com/issues/EDU)
