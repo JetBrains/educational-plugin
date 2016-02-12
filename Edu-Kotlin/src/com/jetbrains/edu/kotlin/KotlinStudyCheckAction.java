@@ -18,6 +18,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiFile;
@@ -82,6 +83,10 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                 CompilerManager.getInstance(project).compile(getFilesToCompile(project, taskFileVF), (aborted, errors, warnings, compileContext) -> {
                     if (errors != 0) {
                         KotlinStudyUtils.showNotification(project, "Code has compilation errors");
+                        return;
+                    }
+                    if (aborted) {
+                        StudyCheckUtils.showTestResultPopUp("Compilation aborted", MessageType.WARNING.getPopupBackground(), project);
                         return;
                     }
                     RunnerAndConfigurationSettings javaTemplateConfiguration = produceRunConfiguration(project,
