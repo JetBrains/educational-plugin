@@ -35,6 +35,7 @@ import java.io.IOException;
 
 public class EduIntellijUtils {
     public static final String TEST_RUNNER = "EduTestRunner";
+    public static final String SRC = "src";
 
     private static final Logger LOG = Logger.getInstance(EduIntellijUtils.class);
 
@@ -108,12 +109,11 @@ public class EduIntellijUtils {
         final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
         if (projectDir == null) return;
         try {
-            PsiDirectory utilDir = projectDir.findSubdirectory("util");
-            if (utilDir == null) {
-                utilDir = projectDir.createSubdirectory("util");
-            }
-            FileTemplateUtil.createFromTemplate(template, templateName, null, utilDir);
-
+//            PsiDirectory utilDir = projectDir.findSubdirectory("util");
+//            if (utilDir == null) {
+//                utilDir = projectDir.createSubdirectory("util");
+//            }
+            FileTemplateUtil.createFromTemplate(template, templateName, null, projectDir);
         } catch (Exception exception) {
             LOG.error("Failed to create from file template ", exception);
         }
