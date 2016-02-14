@@ -13,6 +13,8 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -79,8 +81,11 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                 if (testsFile == null) {
                     return;
                 }
-
-                CompilerManager.getInstance(project).compile(getFilesToCompile(project, taskFileVF), (aborted, errors, warnings, compileContext) -> {
+                Module module = ModuleUtilCore.findModuleForFile(taskFileVF, project);
+                if (module == null) {
+                    return;
+                }
+                CompilerManager.getInstance(project).make(module,  (aborted, errors, warnings, compileContext) -> {
                     if (errors != 0) {
                         KotlinStudyUtils.showNotification(project, "Code has compilation errors");
                         return;
@@ -141,11 +146,11 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
     private RunnerAndConfigurationSettings produceRunConfiguration(Project project, String name, ConfigurationType type) {
         return RunManager.getInstance(project).createRunConfiguration(name, type.getConfigurationFactories()[0]);
     }
-
-    //TODO: refactor
-    private VirtualFile[] getFilesToCompile(Project project, VirtualFile taskFileVF) {
-        return new VirtualFile[]{ taskFileVF.getParent(), project.getBaseDir().findChild("util")};
-    }
+//
+//    //TODO: refactor
+//    private VirtualFile[] getFilesToCompile(Project project, VirtualFile taskFileVF) {
+//        return new VirtualFile[]{ taskFileVF.getParent(), project.getBaseDir().findChild("util")};
+//    }
 
 
     private void setProcessParameters(Project project, ApplicationConfiguration configuration,
@@ -155,7 +160,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
         Collection<KtClass> ktClasses = PsiTreeUtil.findChildrenOfType(psiFile, KtClass.class);
         for (KtClass ktClass : ktClasses) {
             String name = ktClass.getName();
-            configuration.setProgramParameters(KotlinStudyUtils.getTestClass(taskFileVF) + name);
+            configuration.setProgramParameters(name);
         }
     }
 }
