@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>com.jetbrains.edu.kotlin</id>
     <name>Edu Kotlin</name>
-    <version>1.0.3</version>
+    <version>1.0.6</version>
     <vendor>JetBrains</vendor>
 
     <description><![CDATA[
@@ -22,7 +22,7 @@
     <depends>com.jetbrains.edu.core</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <treeStructureProvider implementation="com.jetbrains.edu.kotlin.KotlinStudyTreeStructureProvider"/>
+        <treeStructureProvider implementation="com.jetbrains.edu.kotlin.KotlinStudyTreeStructureProvider" order="last"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
         <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.KotlinStudyLanguageManager" language="kotlin"/>
