@@ -156,6 +156,8 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
     private void setProcessParameters(Project project, ApplicationConfiguration configuration,
                                       VirtualFile taskFileVF, @NotNull VirtualFile testsFile) {
         configuration.setMainClassName(EduIntellijUtils.TEST_RUNNER);
+        Module module = ModuleUtilCore.findModuleForFile(taskFileVF, project);
+        configuration.setModule(module);
         PsiFile psiFile = PsiManager.getInstance(project).findFile(testsFile);
         Collection<KtClass> ktClasses = PsiTreeUtil.findChildrenOfType(psiFile, KtClass.class);
         for (KtClass ktClass : ktClasses) {
