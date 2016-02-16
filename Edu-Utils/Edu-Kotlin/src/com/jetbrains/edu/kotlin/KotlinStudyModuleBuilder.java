@@ -15,6 +15,7 @@ import com.intellij.openapi.project.DumbModePermission;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.Pair;
@@ -53,28 +54,34 @@ public class KotlinStudyModuleBuilder extends JavaModuleBuilder {
     @Override
     public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
         Module baseModule = super.commitModule(project, model);
-        KotlinProjectConfigurator configuratorByName = ConfigureKotlinInProjectUtilsKt.getConfiguratorByName("java");
-        Class<?> confClass = configuratorByName.getClass();
-        while (confClass != KotlinWithLibraryConfigurator.class) {
-            confClass = confClass.getSuperclass();
-        }
-        try {
-            String lib = FileUIUtils.createRelativePath(project, project.getBaseDir(), "lib");
+        StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
+            @Override
+            public void run() {
+                //TODO: find more appropriate way to do this
+                KotlinProjectConfigurator configuratorByName = ConfigureKotlinInProjectUtilsKt.getConfiguratorByName("java");
+                Class<?> confClass = configuratorByName.getClass();
+                while (confClass != KotlinWithLibraryConfigurator.class) {
+                    confClass = confClass.getSuperclass();
+                }
+                try {
+                    String lib = FileUIUtils.createRelativePath(project, project.getBaseDir(), "lib");
 
-            Method method = confClass.getDeclaredMethod("configureModuleWithLibrary", Module.class, String.class, String.class);
-            method.setAccessible(true);
-            for (Module module : ModuleManager.getInstance(project).getModules()) {
-                method.invoke(configuratorByName, module, lib, null);
+                    Method method = confClass.getDeclaredMethod("configureModuleWithLibrary", Module.class, String.class, String.class);
+                    method.setAccessible(true);
+                    for (Module module : ModuleManager.getInstance(project).getModules()) {
+                        method.invoke(configuratorByName, module, lib, null);
+                    }
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                configuratorByName.configure(project, Collections.emptyList());
             }
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        configuratorByName.configure(project, Collections.emptyList());
+        });
         return baseModule;
     }
 
