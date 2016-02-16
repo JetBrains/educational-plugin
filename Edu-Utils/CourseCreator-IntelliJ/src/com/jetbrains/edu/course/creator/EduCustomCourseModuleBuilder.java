@@ -1,11 +1,9 @@
-package com.jetbrains.edu.intellij;
+package com.jetbrains.edu.course.creator;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
-import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.jetbrains.edu.EduNames;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
@@ -13,8 +11,6 @@ import com.jetbrains.edu.stepic.CourseInfo;
 import com.jetbrains.edu.utils.EduFromCourseModuleBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.framework.KotlinModuleSettingStep;
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 
 import javax.swing.*;
 import java.io.File;
@@ -37,22 +33,22 @@ class EduCustomCourseModuleBuilder extends EduFromCourseModuleBuilder {
         return myGenerator;
     }
 
-    @Nullable
-    @Override
-    public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
-        if (mySelectedCourse != null) {
-            //TODO: get language from course info
-            File ourCoursesDir = new File(PathManager.getConfigPath(), "courses");
-            File courseDir = new File(ourCoursesDir, mySelectedCourse.getName());
-            if (courseDir.exists()) {
-                String language = getLanguage(courseDir);
-                if ("kotlin".equals(language)) {
-                    return new KotlinModuleSettingStep(JvmPlatform.INSTANCE, this, settingsStep);
-                }
-            }
-        }
-        return super.modifyProjectTypeStep(settingsStep);
-    }
+//    @Nullable
+//    @Override
+//    public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
+//        if (mySelectedCourse != null) {
+//            //TODO: get language from course info
+//            File ourCoursesDir = new File(PathManager.getConfigPath(), "courses");
+//            File courseDir = new File(ourCoursesDir, mySelectedCourse.getName());
+//            if (courseDir.exists()) {
+//                String language = getLanguage(courseDir);
+//                if ("kotlin".equals(language)) {
+//                    return new KotlinModuleSettingStep(JvmPlatform.INSTANCE, this, settingsStep);
+//                }
+//            }
+//        }
+//        return super.modifyProjectTypeStep(settingsStep);
+//    }
 
     private static String getLanguage(File courseDir) {
         File courseFile = new File(courseDir, EduNames.COURSE_META_FILE);

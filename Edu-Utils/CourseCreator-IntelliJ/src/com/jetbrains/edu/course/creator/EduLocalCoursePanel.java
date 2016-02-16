@@ -1,4 +1,4 @@
-package com.jetbrains.edu.intellij;
+package com.jetbrains.edu.course.creator;
 
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;

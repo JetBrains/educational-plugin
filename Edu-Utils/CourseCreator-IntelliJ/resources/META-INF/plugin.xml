@@ -23,6 +23,7 @@
   </extensions>
   <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCCProjectTemplate" order="last"/>
+    <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCustomCourseProjectTemplate"/>
   </extensions>
 
   <actions>
