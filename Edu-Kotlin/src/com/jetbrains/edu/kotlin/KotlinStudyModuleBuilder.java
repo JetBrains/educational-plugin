@@ -59,6 +59,10 @@ public class KotlinStudyModuleBuilder extends JavaModuleBuilder {
             public void run() {
                 //TODO: find more appropriate way to do this
                 KotlinProjectConfigurator configuratorByName = ConfigureKotlinInProjectUtilsKt.getConfiguratorByName("java");
+                if (configuratorByName == null) {
+                    LOG.info("Failed to find configurator");
+                    return;
+                }
                 Class<?> confClass = configuratorByName.getClass();
                 while (confClass != KotlinWithLibraryConfigurator.class) {
                     confClass = confClass.getSuperclass();
@@ -71,15 +75,10 @@ public class KotlinStudyModuleBuilder extends JavaModuleBuilder {
                     for (Module module : ModuleManager.getInstance(project).getModules()) {
                         method.invoke(configuratorByName, module, lib, null);
                     }
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                    LOG.info(e);
+                    configuratorByName.configure(project, Collections.emptyList());
                 }
-
-                configuratorByName.configure(project, Collections.emptyList());
             }
         });
         return baseModule;
