@@ -4,6 +4,8 @@ import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.ProjectWizardStepFactory;
 import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationsConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
@@ -58,6 +60,9 @@ public class KotlinStudyModuleBuilder extends JavaModuleBuilder {
             @Override
             public void run() {
                 //TODO: find more appropriate way to do this
+
+                NotificationsConfiguration.getNotificationsConfiguration().changeSettings("Configure Kotlin: info notification",
+                        NotificationDisplayType.NONE, true, false);
                 KotlinProjectConfigurator configuratorByName = ConfigureKotlinInProjectUtilsKt.getConfiguratorByName("java");
                 if (configuratorByName == null) {
                     LOG.info("Failed to find configurator");
@@ -78,6 +83,10 @@ public class KotlinStudyModuleBuilder extends JavaModuleBuilder {
                 } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                     LOG.info(e);
                     configuratorByName.configure(project, Collections.emptyList());
+                }
+                finally {
+                    NotificationsConfiguration.getNotificationsConfiguration().changeSettings("Configure Kotlin: info notification",
+                            NotificationDisplayType.STICKY_BALLOON, true, false);
                 }
             }
         });
