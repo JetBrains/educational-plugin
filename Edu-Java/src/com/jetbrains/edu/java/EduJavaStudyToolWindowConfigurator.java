@@ -1,45 +1,21 @@
 package com.jetbrains.edu.java;
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.HashMap;
 import com.jetbrains.edu.courseFormat.Course;
+import com.jetbrains.edu.learning.StudyBaseToolWindowConfigurator;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyToolWindowConfigurator;
-import com.jetbrains.edu.learning.actions.StudyNextStudyTaskAction;
-import com.jetbrains.edu.learning.actions.StudyPreviousStudyTaskAction;
-import com.jetbrains.edu.learning.actions.StudyRefreshTaskFileAction;
-import com.jetbrains.edu.learning.actions.StudyShowHintAction;
-import com.jetbrains.edu.learning.ui.StudyToolWindow;
-import com.jetbrains.edu.utils.EduIntellijUtils;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
-public class EduJavaStudyToolWindowConfigurator implements StudyToolWindowConfigurator {
+public class EduJavaStudyToolWindowConfigurator extends StudyBaseToolWindowConfigurator {
     @NotNull
     @Override
     public DefaultActionGroup getActionGroup(Project project) {
+        DefaultActionGroup baseGroup = super.getActionGroup(project);
         DefaultActionGroup group = new DefaultActionGroup();
         group.add(new EduJavaCheckAction());
-        group.add(new StudyPreviousStudyTaskAction());
-        group.add(new StudyNextStudyTaskAction());
-        group.add(new StudyRefreshTaskFileAction());
-        group.add(new StudyShowHintAction());
+        group.addAll(baseGroup);
         return group;
-    }
-
-    @NotNull
-    @Override
-    public HashMap<String, JPanel> getAdditionalPanels(Project project) {
-        return new HashMap<String, JPanel>();
-    }
-
-    @NotNull
-    @Override
-    public FileEditorManagerListener getFileEditorManagerListener(@NotNull Project project, @NotNull StudyToolWindow studyToolWindow) {
-        return EduIntellijUtils.getFileEditorManagerListener(studyToolWindow, project);
     }
 
     @NotNull
