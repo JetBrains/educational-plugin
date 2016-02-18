@@ -27,9 +27,6 @@ import java.io.IOException;
 
 
 public class EduIntellijUtils {
-    public static final String TEST_RUNNER = "EduTestRunner";
-    public static final String SRC = "src";
-
     private static final Logger LOG = Logger.getInstance(EduIntellijUtils.class);
 
     private EduIntellijUtils() {
