@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.jetbrains.edu.intellij</id>
   <name>Edu IntelliJ</name>
-  <version>1.0.3</version>
+  <version>1.0.5</version>
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[
@@ -12,7 +12,7 @@
     ]]>
   </change-notes>
 
-  <idea-version since-build="144"/>
+  <idea-version since-build="144.3891"/>
 
   <depends>com.intellij.modules.lang</depends>
 
