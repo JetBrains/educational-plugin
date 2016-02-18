@@ -29,7 +29,7 @@
         <studyToolWindowConfigurator implementation="com.jetbrains.edu.kotlin.KotlinStudyToolWindowConfigurator"/>
     </extensions>
     <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
-        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinProjectTemplate"/>
+        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate"/>
     </extensions>
 
 </idea-plugin>

@@ -35,7 +35,7 @@ import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckTask;
 import com.jetbrains.edu.learning.checker.StudyCheckUtils;
 import com.jetbrains.edu.learning.editor.StudyEditor;
-import com.jetbrains.edu.utils.EduIntellijUtils;
+import com.jetbrains.edu.utils.EduIntelliJNames;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtClass;
@@ -155,7 +155,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
 
     private void setProcessParameters(Project project, ApplicationConfiguration configuration,
                                       VirtualFile taskFileVF, @NotNull VirtualFile testsFile) {
-        configuration.setMainClassName(EduIntellijUtils.TEST_RUNNER);
+        configuration.setMainClassName(EduIntelliJNames.TEST_RUNNER_CLASS);
         Module module = ModuleUtilCore.findModuleForFile(taskFileVF, project);
         configuration.setModule(module);
         PsiFile psiFile = PsiManager.getInstance(project).findFile(testsFile);

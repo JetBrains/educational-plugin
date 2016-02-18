@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.utils.generation;
 
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
@@ -24,7 +24,7 @@ public class EduLessonModuleBuilder extends JavaModuleBuilder {
     private final Lesson myLesson;
     private final Module myUtilModule;
 
-    public EduLessonModuleBuilder(String moduleDir, Lesson lesson, Module utilModule) {
+    public EduLessonModuleBuilder(@NotNull String moduleDir, @NotNull Lesson lesson, @NotNull Module utilModule) {
         myLesson = lesson;
         myUtilModule = utilModule;
         String lessonName = EduNames.LESSON + lesson.getIndex();
@@ -41,11 +41,15 @@ public class EduLessonModuleBuilder extends JavaModuleBuilder {
             int visibleTaskIndex = i + 1;
             Task task = taskList.get(i);
             task.setIndex(visibleTaskIndex);
-            EduTaskModuleBuilder taskModuleBuilder = new EduTaskModuleBuilder(getModuleFileDirectory(), getName(), task, myUtilModule);
-            taskModuleBuilder.createModule(moduleModel);
+            createTaskModule(moduleModel, task);
         }
         return baseModule;
 
+    }
+
+    private void createTaskModule(@NotNull ModifiableModuleModel moduleModel, @NotNull Task task) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
+        EduTaskModuleBuilder taskModuleBuilder = new EduTaskModuleBuilder(getModuleFileDirectory(), getName(), task, myUtilModule);
+        taskModuleBuilder.createModule(moduleModel);
     }
 
     @Override

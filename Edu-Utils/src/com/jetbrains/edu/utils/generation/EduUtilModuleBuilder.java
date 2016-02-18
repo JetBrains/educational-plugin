@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.utils.generation;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class EduUtilModuleBuilder extends JavaModuleBuilder {
+class EduUtilModuleBuilder extends JavaModuleBuilder {
 
     public EduUtilModuleBuilder(String moduleDir) {
         setName("util");
@@ -52,22 +52,9 @@ public class EduUtilModuleBuilder extends JavaModuleBuilder {
             return baseModule;
         }
         Project project = baseModule.getProject();
-        StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
-            @Override
-            public void run() {
-                DumbService.getInstance(project).runWhenSmart(new Runnable() {
-                    @Override
-                    public void run() {
-                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java");
-                            }
-                        });
-                    }
-                });
-            }
-        });
+        StartupManager.getInstance(project).registerPostStartupActivity(() -> DumbService.getInstance(project).runWhenSmart(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+            EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java");
+        })));
         ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
         List<String> defaultRoots = descriptor.getLibraryClassesRoots();
         final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);

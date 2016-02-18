@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.utils.generation;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public class EduKotlinStudyProjectGenerator extends StudyProjectGenerator {
-    private static final Logger LOG = Logger.getInstance(EduKotlinStudyProjectGenerator.class);
+public class EduProjectGenerator extends StudyProjectGenerator {
+    private static final Logger LOG = Logger.getInstance(EduProjectGenerator.class);
 
     @Override
     public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir) {
@@ -25,6 +25,5 @@ public class EduKotlinStudyProjectGenerator extends StudyProjectGenerator {
         course.setUpToDate(true);
         StudyTaskManager.getInstance(project).setCourse(course);
         course.setCourseDirectory(new File(ourCoursesDir, mySelectedCourseInfo.getName()).getAbsolutePath());
-
     }
 }
