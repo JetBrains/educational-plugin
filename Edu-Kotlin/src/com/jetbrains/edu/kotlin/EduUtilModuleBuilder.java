@@ -9,6 +9,7 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ExternalLibraryDescriptor;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
@@ -54,10 +55,15 @@ public class EduUtilModuleBuilder extends JavaModuleBuilder {
         StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                DumbService.getInstance(project).runWhenSmart(new Runnable() {
                     @Override
                     public void run() {
-                        EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java");
+                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java");
+                            }
+                        });
                     }
                 });
             }
