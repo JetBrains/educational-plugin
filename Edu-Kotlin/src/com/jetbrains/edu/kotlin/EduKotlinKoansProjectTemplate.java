@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.idea.KotlinIcons;
 
 import javax.swing.*;
 
-public class EduKotlinProjectTemplate implements EduIntelliJProjectTemplate {
+public class EduKotlinKoansProjectTemplate implements EduIntelliJProjectTemplate {
 
     @NotNull
     @Override
@@ -20,7 +20,6 @@ public class EduKotlinProjectTemplate implements EduIntelliJProjectTemplate {
     @Nullable
     @Override
     public String getDescription() {
-        //TODO: get correct course description
         return "Kotlin Koans course. \n You can also try it <a href=\"http://try.kotl.in/koans\">online</a>";
     }
 
@@ -32,7 +31,7 @@ public class EduKotlinProjectTemplate implements EduIntelliJProjectTemplate {
     @NotNull
     @Override
     public AbstractModuleBuilder createModuleBuilder() {
-        return new KotlinStudyModuleBuilder();
+        return new EduKotlinKoansModuleBuilder();
     }
 
     @Nullable

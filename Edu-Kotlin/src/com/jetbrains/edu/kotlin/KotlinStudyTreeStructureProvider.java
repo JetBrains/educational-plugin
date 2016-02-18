@@ -12,7 +12,7 @@ import com.jetbrains.edu.courseFormat.Lesson;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.projectView.StudyDirectoryNode;
 import com.jetbrains.edu.learning.projectView.StudyTreeStructureProvider;
-import com.jetbrains.edu.utils.EduIntellijUtils;
+import com.jetbrains.edu.utils.EduIntelliJNames;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class KotlinStudyTreeStructureProvider extends StudyTreeStructureProvider
             for (AbstractTreeNode child : children) {
                 if (child instanceof PsiDirectoryNode) {
                     String name = ((PsiDirectoryNode) child).getValue().getName();
-                    if (EduIntellijUtils.SRC.equals(name)) {
+                    if (EduIntelliJNames.SRC.equals(name)) {
                         return super.modify(child, child.getChildren(), settings);
                     }
                 }
