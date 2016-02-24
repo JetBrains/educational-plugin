@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.psi.KtClass;
 
 import java.util.Collection;
 
-public class KotlinStudyCheckAction extends StudyCheckAction {
-    private static final Logger LOG = Logger.getInstance(KotlinStudyCheckAction.class);
+class EduKotlinCheckAction extends StudyCheckAction {
+    private static final Logger LOG = Logger.getInstance(EduKotlinCheckAction.class);
 
 
     @Override
@@ -66,7 +66,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                 VirtualFile taskFileVF = studyState.getVirtualFile();
                 Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
                 if (sdk == null) {
-                    KotlinStudyUtils.showNoSdkNotification(project);
+                    //TODO: create notification
                     return;
                 }
                 final Course course = StudyTaskManager.getInstance(project).getCourse();
@@ -87,7 +87,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                 }
                 CompilerManager.getInstance(project).make(module,  (aborted, errors, warnings, compileContext) -> {
                     if (errors != 0) {
-                        KotlinStudyUtils.showNotification(project, "Code has compilation errors");
+                        StudyCheckUtils.showTestResultPopUp("Code has compilation errors", MessageType.WARNING.getPopupBackground(), project);
                         return;
                     }
                     if (aborted) {
@@ -103,7 +103,7 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
                     RunProfileState state = getState(javaTemplateConfiguration);
 
                     if (state == null) {
-                        //exception is logged inside method
+                        //exception is logged inside getState method
                         return;
                     }
 
@@ -146,12 +146,6 @@ public class KotlinStudyCheckAction extends StudyCheckAction {
     private RunnerAndConfigurationSettings produceRunConfiguration(Project project, String name, ConfigurationType type) {
         return RunManager.getInstance(project).createRunConfiguration(name, type.getConfigurationFactories()[0]);
     }
-//
-//    //TODO: refactor
-//    private VirtualFile[] getFilesToCompile(Project project, VirtualFile taskFileVF) {
-//        return new VirtualFile[]{ taskFileVF.getParent(), project.getBaseDir().findChild("util")};
-//    }
-
 
     private void setProcessParameters(Project project, ApplicationConfiguration configuration,
                                       VirtualFile taskFileVF, @NotNull VirtualFile testsFile) {

@@ -27,7 +27,7 @@ public class KotlinStudyTreeStructureProvider extends StudyTreeStructureProvider
     public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
                                                @NotNull Collection<AbstractTreeNode> children,
                                                ViewSettings settings) {
-        if (parent instanceof KotlinDirectoryNode) {
+        if (parent instanceof EduKotlinDirectoryNode) {
             //this it task and we need to delete src folder etc
             for (AbstractTreeNode child : children) {
                 if (child instanceof PsiDirectoryNode) {
@@ -50,7 +50,7 @@ public class KotlinStudyTreeStructureProvider extends StudyTreeStructureProvider
         Collection<AbstractTreeNode> nodes = new ArrayList<AbstractTreeNode>();
         for (AbstractTreeNode node : oldNodes) {
             if (isTaskNode(node, course)) {
-                nodes.add(new KotlinDirectoryNode(project, (PsiDirectory) node.getValue(), settings));
+                nodes.add(new EduKotlinDirectoryNode(project, (PsiDirectory) node.getValue(), settings));
                 continue;
             }
 

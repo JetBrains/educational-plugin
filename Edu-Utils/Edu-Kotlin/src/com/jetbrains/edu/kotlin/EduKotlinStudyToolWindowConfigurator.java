@@ -7,13 +7,13 @@ import com.jetbrains.edu.learning.StudyBaseToolWindowConfigurator;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import org.jetbrains.annotations.NotNull;
 
-public class KotlinStudyToolWindowConfigurator extends StudyBaseToolWindowConfigurator {
+public class EduKotlinStudyToolWindowConfigurator extends StudyBaseToolWindowConfigurator {
     @NotNull
     @Override
     public DefaultActionGroup getActionGroup(Project project) {
         DefaultActionGroup baseGroup = super.getActionGroup(project);
         final DefaultActionGroup group = new DefaultActionGroup();
-        group.add(new KotlinStudyCheckAction());
+        group.add(new EduKotlinCheckAction());
         group.addAll(baseGroup);
         
         return group;
