@@ -4,7 +4,7 @@ import com.jetbrains.edu.learning.StudyLanguageManager;
 import org.jetbrains.annotations.NotNull;
 
 
-public class KotlinStudyLanguageManager implements StudyLanguageManager {
+public class EduKotlinStudyLanguageManager implements StudyLanguageManager {
     @NotNull
     @Override
     public String getTestFileName() {

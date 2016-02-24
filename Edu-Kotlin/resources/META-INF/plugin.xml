@@ -25,8 +25,8 @@
         <treeStructureProvider implementation="com.jetbrains.edu.kotlin.KotlinStudyTreeStructureProvider" order="last"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
-        <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.KotlinStudyLanguageManager" language="kotlin"/>
-        <studyToolWindowConfigurator implementation="com.jetbrains.edu.kotlin.KotlinStudyToolWindowConfigurator"/>
+        <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.EduKotlinStudyLanguageManager" language="kotlin"/>
+        <studyToolWindowConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinStudyToolWindowConfigurator"/>
     </extensions>
     <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate"/>

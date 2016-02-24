@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class KotlinDirectoryNode extends StudyDirectoryNode {
-    public KotlinDirectoryNode(@NotNull Project project, PsiDirectory value, ViewSettings viewSettings) {
+public class EduKotlinDirectoryNode extends StudyDirectoryNode {
+    public EduKotlinDirectoryNode(@NotNull Project project, PsiDirectory value, ViewSettings viewSettings) {
         super(project, value, viewSettings);
     }
 

@@ -56,8 +56,6 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
         StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
             @Override
             public void run() {
-                //TODO: find more appropriate way to do this
-
                 NotificationsConfiguration.getNotificationsConfiguration().changeSettings("Configure Kotlin: info notification",
                         NotificationDisplayType.NONE, true, false);
                 KotlinProjectConfigurator configuratorByName = ConfigureKotlinInProjectUtilsKt.getConfiguratorByName("java");
@@ -85,6 +83,9 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
                     NotificationsConfiguration.getNotificationsConfiguration().changeSettings("Configure Kotlin: info notification",
                             NotificationDisplayType.STICKY_BALLOON, true, false);
                 }
+
+                //TODO: uncomment this for new API
+//                KotlinJavaModuleConfigurator.getInstance().configureSilently(project);
             }
         });
     }
