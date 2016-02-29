@@ -5,18 +5,28 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.courseFormat.Course;
 import com.jetbrains.edu.learning.StudyBaseToolWindowConfigurator;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;
+import com.jetbrains.edu.learning.actions.StudyNextStudyTaskAction;
+import com.jetbrains.edu.learning.actions.StudyPreviousStudyTaskAction;
+import com.jetbrains.edu.learning.actions.StudyRefreshTaskFileAction;
 import org.jetbrains.annotations.NotNull;
 
 public class EduKotlinStudyToolWindowConfigurator extends StudyBaseToolWindowConfigurator {
     @NotNull
     @Override
     public DefaultActionGroup getActionGroup(Project project) {
-        DefaultActionGroup baseGroup = super.getActionGroup(project);
         final DefaultActionGroup group = new DefaultActionGroup();
         group.add(new EduKotlinCheckAction());
-        group.addAll(baseGroup);
-        
+        group.add(new StudyPreviousStudyTaskAction());
+        group.add(new StudyNextStudyTaskAction());
+        group.add(new StudyRefreshTaskFileAction());
+        StudyFillPlaceholdersAction fillPlaceholdersAction = new StudyFillPlaceholdersAction();
+        fillPlaceholdersAction.getTemplatePresentation().setIcon(EduKotlinIcons.FILL_PLACEHOLDERS_ICON);
+        fillPlaceholdersAction.getTemplatePresentation().setText("Fill Answer Placeholders");
+        group.add(fillPlaceholdersAction);
         return group;
+
+
     }
 
     @NotNull
