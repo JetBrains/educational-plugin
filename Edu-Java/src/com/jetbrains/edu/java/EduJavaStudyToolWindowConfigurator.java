@@ -12,9 +12,10 @@ public class EduJavaStudyToolWindowConfigurator extends StudyBaseToolWindowConfi
     @Override
     public DefaultActionGroup getActionGroup(Project project) {
         DefaultActionGroup baseGroup = super.getActionGroup(project);
-        DefaultActionGroup group = new DefaultActionGroup();
+        final DefaultActionGroup group = new DefaultActionGroup();
         group.add(new EduJavaCheckAction());
         group.addAll(baseGroup);
+
         return group;
     }
 
