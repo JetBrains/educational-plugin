@@ -17,16 +17,20 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>com.jetbrains.edu.intellij</depends>
   <depends>com.jetbrains.edu.coursecreator</depends>
-
+  <depends>JUnit</depends>
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+    <treeStructureProvider implementation="com.jetbrains.edu.course.creator.EduCCTreeStructureProvider" order="last"/>
   </extensions>
   <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
+    <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCustomCourseProjectTemplate" order="last"/>
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCCProjectTemplate" order="last"/>
-    <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCustomCourseProjectTemplate"/>
+  </extensions>
+  <extensions defaultExtensionNs="Edu">
+    <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduJavaCCLanguageManager" language="JAVA"/>
   </extensions>
 
   <actions>
+    <action overrides="true" class="com.intellij.openapi.actionSystem.EmptyAction" id="CreateTaskFile"/>
     <!-- Add your actions here -->
   </actions>
 

@@ -20,9 +20,9 @@ public class EduLocalCoursePanel {
     private StudyNewProjectPanel myPanel;
     private TextFieldWithBrowseButton myCourseArchivePath;
 
-    public EduLocalCoursePanel(final StudyProjectGenerator generator, EduCustomCourseModuleBuilder biulder) {
+    public EduLocalCoursePanel(final StudyProjectGenerator generator, EduCustomCourseModuleBuilder builder) {
         myGenerator = generator;
-        myBuilder = biulder;
+        myBuilder = builder;
         myCourseArchivePath.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
