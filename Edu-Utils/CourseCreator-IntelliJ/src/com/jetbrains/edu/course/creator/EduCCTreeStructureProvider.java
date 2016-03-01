@@ -5,7 +5,12 @@ import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.jetbrains.edu.EduNames;
 import com.jetbrains.edu.coursecreator.CCProjectService;
+import com.jetbrains.edu.coursecreator.projectView.CCStudentInvisibleFileNode;
 import com.jetbrains.edu.coursecreator.projectView.CCTreeStructureProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +42,19 @@ public class EduCCTreeStructureProvider extends CCTreeStructureProvider {
                 String name = ((PsiFileNode) child).getValue().getName();
                 if (name.contains(".iml")) {
                     continue;
+                }
+            }
+            Object value = child.getValue();
+            if (value instanceof PsiElement) {
+                PsiFile psiFile = ((PsiElement) value).getContainingFile();
+                if (psiFile != null) {
+                    VirtualFile virtualFile = psiFile.getVirtualFile();
+                    if (virtualFile.getParent() != null && virtualFile.getParent().getName().contains(EduNames.TASK)) {
+                        if (!CCProjectService.getInstance(project).isTaskFile(virtualFile)) {
+                            newNodes.add(new CCStudentInvisibleFileNode(project, psiFile, settings));
+                            continue;
+                        }
+                    }
                 }
             }
             newNodes.add(child);
