@@ -8,27 +8,27 @@
       Educational plugin for Java programming language
     ]]></description>
 
-  <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
-    ]]>
+  <change-notes>
   </change-notes>
 
-  <idea-version since-build="143.0"/>
+  <idea-version since-build="144.3891"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>com.jetbrains.edu.interactivelearning</depends>
   <depends>com.jetbrains.edu.intellij</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
+    <treeStructureProvider implementation="com.jetbrains.edu.utils.EduTreeStructureProvider" order="last"/>
   </extensions>
 
   <extensions defaultExtensionNs="Edu">
     <studyToolWindowConfigurator implementation="com.jetbrains.edu.java.EduJavaStudyToolWindowConfigurator"/>
   </extensions>
+  <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
+  </extensions>
 
   <actions>
+    <action id="EduJavaCheckAction" class="com.jetbrains.edu.java.EduJavaCheckAction" text="Edu Java Check"/>
     <!-- Add your actions here -->
   </actions>
 
