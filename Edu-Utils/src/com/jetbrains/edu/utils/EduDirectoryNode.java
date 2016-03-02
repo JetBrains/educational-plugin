@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.utils;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.ViewSettings;
@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class EduKotlinDirectoryNode extends StudyDirectoryNode {
-    public EduKotlinDirectoryNode(@NotNull Project project, PsiDirectory value, ViewSettings viewSettings) {
+public class EduDirectoryNode extends StudyDirectoryNode {
+    public EduDirectoryNode(@NotNull Project project, PsiDirectory value, ViewSettings viewSettings) {
         super(project, value, viewSettings);
     }
 

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.utils;
 
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
@@ -12,13 +12,12 @@ import com.jetbrains.edu.courseFormat.Lesson;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.projectView.StudyDirectoryNode;
 import com.jetbrains.edu.learning.projectView.StudyTreeStructureProvider;
-import com.jetbrains.edu.utils.EduIntelliJNames;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class KotlinStudyTreeStructureProvider extends StudyTreeStructureProvider {
+public class EduTreeStructureProvider extends StudyTreeStructureProvider {
     private static final String UTIL_DIR = "util";
     private static final String OUT_DIR = "out";
 
@@ -27,7 +26,7 @@ public class KotlinStudyTreeStructureProvider extends StudyTreeStructureProvider
     public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
                                                @NotNull Collection<AbstractTreeNode> children,
                                                ViewSettings settings) {
-        if (parent instanceof EduKotlinDirectoryNode) {
+        if (parent instanceof EduDirectoryNode) {
             //this it task and we need to delete src folder etc
             for (AbstractTreeNode child : children) {
                 if (child instanceof PsiDirectoryNode) {
@@ -50,7 +49,7 @@ public class KotlinStudyTreeStructureProvider extends StudyTreeStructureProvider
         Collection<AbstractTreeNode> nodes = new ArrayList<AbstractTreeNode>();
         for (AbstractTreeNode node : oldNodes) {
             if (isTaskNode(node, course)) {
-                nodes.add(new EduKotlinDirectoryNode(project, (PsiDirectory) node.getValue(), settings));
+                nodes.add(new EduDirectoryNode(project, (PsiDirectory) node.getValue(), settings));
                 continue;
             }
 
