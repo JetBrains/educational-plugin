@@ -32,4 +32,10 @@ public class EduJavaStudyToolWindowConfigurator extends StudyBaseToolWindowConfi
         Course course = instance.getCourse();
         return course != null && "PyCharm".equals(course.getCourseType()) && "JAVA".equals(course.getLanguage());
     }
+
+    @NotNull
+    @Override
+    public String getLanguageScriptUrl() {
+        return getClass().getResource("/code_mirror/clike.js").toExternalForm();
+    }
 }
