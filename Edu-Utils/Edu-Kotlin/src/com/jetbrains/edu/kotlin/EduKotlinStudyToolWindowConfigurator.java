@@ -25,8 +25,6 @@ public class EduKotlinStudyToolWindowConfigurator extends StudyBaseToolWindowCon
         fillPlaceholdersAction.getTemplatePresentation().setText("Fill Answer Placeholders");
         group.add(fillPlaceholdersAction);
         return group;
-
-
     }
 
     @NotNull
@@ -41,5 +39,11 @@ public class EduKotlinStudyToolWindowConfigurator extends StudyBaseToolWindowCon
         if (instance == null) return false;
         Course course = instance.getCourse();
         return course != null && "PyCharm".equals(course.getCourseType()) && "kotlin".equals(course.getLanguage());
+    }
+
+    @NotNull
+    @Override
+    public String getLanguageScriptUrl() {
+        return getClass().getResource("/code_mirror/clike.js").toExternalForm();
     }
 }
