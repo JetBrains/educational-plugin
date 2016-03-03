@@ -22,7 +22,7 @@
     <depends>com.jetbrains.edu.core</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <treeStructureProvider implementation="com.jetbrains.edu.kotlin.KotlinStudyTreeStructureProvider" order="last"/>
+        <treeStructureProvider implementation="com.jetbrains.edu.utils.EduTreeStructureProvider" order="last"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
         <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.EduKotlinStudyLanguageManager" language="kotlin"/>
