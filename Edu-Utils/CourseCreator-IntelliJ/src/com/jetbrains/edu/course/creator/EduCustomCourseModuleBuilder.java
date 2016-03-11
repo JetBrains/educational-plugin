@@ -12,7 +12,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.InvalidDataException;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
-import com.jetbrains.edu.stepic.CourseInfo;
+import com.jetbrains.edu.learning.stepic.CourseInfo;
 import com.jetbrains.edu.utils.generation.EduCourseModuleBuilder;
 import com.jetbrains.edu.utils.generation.EduProjectGenerator;
 import org.jdom.JDOMException;

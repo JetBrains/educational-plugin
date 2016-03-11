@@ -3,10 +3,10 @@ package com.jetbrains.edu.course.creator;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.ui.StudyNewProjectPanel;
-import com.jetbrains.edu.stepic.CourseInfo;
+import com.jetbrains.edu.learning.stepic.CourseInfo;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

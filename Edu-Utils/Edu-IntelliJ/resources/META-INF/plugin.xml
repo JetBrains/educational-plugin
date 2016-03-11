@@ -18,6 +18,7 @@
 
   <extensionPoints>
     <extensionPoint name="eduIntelliJProjectTemplate" interface="com.jetbrains.edu.intellij.EduIntelliJProjectTemplate"/>
+    <extensionPoint name="courseConfigurator" interface="com.jetbrains.edu.intellij.EduCourseConfigurator"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
