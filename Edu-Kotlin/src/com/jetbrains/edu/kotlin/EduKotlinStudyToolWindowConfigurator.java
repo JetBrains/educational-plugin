@@ -2,7 +2,7 @@ package com.jetbrains.edu.kotlin;
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.StudyBaseToolWindowConfigurator;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;

@@ -19,7 +19,6 @@
     <depends>com.jetbrains.edu.interactivelearning</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>com.jetbrains.edu.intellij</depends>
-    <depends>com.jetbrains.edu.core</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <treeStructureProvider implementation="com.jetbrains.edu.utils.EduTreeStructureProvider" order="last"/>
@@ -30,6 +29,7 @@
     </extensions>
     <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate"/>
+        <courseConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinCourseConfigurator"/>
     </extensions>
 
 </idea-plugin>
