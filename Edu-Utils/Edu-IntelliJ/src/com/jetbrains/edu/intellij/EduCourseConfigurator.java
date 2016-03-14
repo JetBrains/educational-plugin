@@ -5,6 +5,6 @@ import com.intellij.openapi.project.Project;
 import com.sun.istack.internal.NotNull;
 
 public interface EduCourseConfigurator {
-    LanguageExtension EP_NAME = new LanguageExtension("com.jetbrains.edu.intellij.courseConfigurator");
+    LanguageExtension<EduCourseConfigurator> EP_NAME = new LanguageExtension<EduCourseConfigurator>("com.jetbrains.edu.intellij.courseConfigurator");
     void configureModule(@NotNull final Project project);
 }

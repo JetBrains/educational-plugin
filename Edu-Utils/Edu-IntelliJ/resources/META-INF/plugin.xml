@@ -18,7 +18,9 @@
 
   <extensionPoints>
     <extensionPoint name="eduIntelliJProjectTemplate" interface="com.jetbrains.edu.intellij.EduIntelliJProjectTemplate"/>
-    <extensionPoint name="courseConfigurator" interface="com.jetbrains.edu.intellij.EduCourseConfigurator"/>
+    <extensionPoint qualifiedName="com.jetbrains.edu.intellij.courseConfigurator" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.intellij.EduCourseConfigurator"/>
+    </extensionPoint>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">

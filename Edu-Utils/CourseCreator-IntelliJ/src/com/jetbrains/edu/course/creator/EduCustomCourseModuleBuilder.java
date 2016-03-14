@@ -4,13 +4,16 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.ProjectWizardStepFactory;
 import com.intellij.ide.util.projectWizard.SettingsStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
+import com.intellij.lang.Language;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.InvalidDataException;
+import com.jetbrains.edu.intellij.EduCourseConfigurator;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.stepic.CourseInfo;
 import com.jetbrains.edu.utils.generation.EduCourseModuleBuilder;
@@ -26,6 +29,22 @@ class EduCustomCourseModuleBuilder extends EduCourseModuleBuilder {
     private EduProjectGenerator myGenerator = new EduProjectGenerator();
     //TODO: remove this after API change!!!
     private CourseInfo mySelectedCourse;
+
+    @Nullable
+    @Override
+    public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
+        String type = mySelectedCourse.getType();
+        String languageName = type.substring("pycharm ".length());
+        Language language = Language.findLanguageByID(languageName);
+        if (language != null) {
+            EduCourseConfigurator configurator = EduCourseConfigurator.EP_NAME.forLanguage(language);
+            if (configurator != null) {
+                configurator.configureModule(project);
+            }
+        }
+        return super.commitModule(project, model);
+    }
+
 
     @Nullable
     @Override
