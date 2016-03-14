@@ -17,7 +17,6 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>com.jetbrains.edu.intellij</depends>
   <depends>com.jetbrains.edu.coursecreator</depends>
-  <depends>com.jetbrains.edu.core</depends>
   <depends>com.jetbrains.edu.interactivelearning</depends>
   <depends>JUnit</depends>
 
