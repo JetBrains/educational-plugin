@@ -29,7 +29,7 @@
     </extensions>
     <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate"/>
-        <courseConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinCourseConfigurator"/>
+        <courseConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinCourseConfigurator" language="kotlin"/>
     </extensions>
 
 </idea-plugin>

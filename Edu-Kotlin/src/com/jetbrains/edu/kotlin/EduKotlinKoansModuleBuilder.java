@@ -37,13 +37,10 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
     @Override
     public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
         Module baseModule = super.commitModule(project, model);
-        configureKotlin(project);
+        new EduKotlinCourseConfigurator().configureModule(project);
         return baseModule;
     }
 
-    private void configureKotlin(@NotNull final Project project) {
-
-    }
 
     @Nullable
     @Override
