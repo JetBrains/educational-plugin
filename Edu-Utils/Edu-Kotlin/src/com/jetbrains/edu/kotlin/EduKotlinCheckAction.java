@@ -39,4 +39,10 @@ class EduKotlinCheckAction extends EduCheckAction {
             configuration.setProgramParameters(name);
         }
     }
+
+    @NotNull
+    @Override
+    public String getActionId() {
+        return "EduKotlinCheckAction";
+    }
 }

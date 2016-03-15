@@ -45,4 +45,10 @@ class EduJavaCheckAction extends EduCheckAction {
         configuration.setModule(module);
         configuration.setProgramParameters(testsFile.getNameWithoutExtension());
     }
+
+    @NotNull
+    @Override
+    public String getActionId() {
+        return "EduJavaCheckAction";
+    }
 }

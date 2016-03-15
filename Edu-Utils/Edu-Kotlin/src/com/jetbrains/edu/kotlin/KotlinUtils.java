@@ -1,9 +1,9 @@
 package com.jetbrains.edu.kotlin;
 
-import com.jetbrains.edu.courseFormat.Course;
-import com.jetbrains.edu.courseFormat.Lesson;
-import com.jetbrains.edu.courseFormat.StudyStatus;
-import com.jetbrains.edu.courseFormat.Task;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.Task;
 import org.jetbrains.annotations.NotNull;
 
 public class KotlinUtils {
