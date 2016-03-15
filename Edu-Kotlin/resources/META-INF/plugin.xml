@@ -22,10 +22,12 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <treeStructureProvider implementation="com.jetbrains.edu.utils.EduTreeStructureProvider" order="last"/>
+        <projectService serviceInterface="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"
+                        serviceImplementation="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
         <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.EduKotlinStudyLanguageManager" language="kotlin"/>
-        <studyToolWindowConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinStudyToolWindowConfigurator"/>
+        <studyPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator"/>
     </extensions>
     <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate"/>
