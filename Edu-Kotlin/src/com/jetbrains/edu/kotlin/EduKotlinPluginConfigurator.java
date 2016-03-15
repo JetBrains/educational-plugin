@@ -2,9 +2,9 @@ package com.jetbrains.edu.kotlin;
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.courseFormat.Course;
-import com.jetbrains.edu.courseFormat.StudyStatus;
-import com.jetbrains.edu.courseFormat.Task;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.Task;
 import com.jetbrains.edu.learning.StudyBasePluginConfigurator;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.actions.*;
@@ -15,15 +15,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EduKotlinPluginConfigurator extends StudyBasePluginConfigurator {
-    private Project myProject;
+//    private Project myProject;
     @NotNull
     @Override
     public DefaultActionGroup getActionGroup(Project project) {
         final DefaultActionGroup group = new DefaultActionGroup();
-        group.add(new EduKotlinCheckAction());
+        EduKotlinCheckAction checkAction = new EduKotlinCheckAction();
+        checkAction.getTemplatePresentation().setIcon(EduKotlinIcons.CHECK_TASK);
+        group.add(checkAction);
         group.add(new StudyPreviousStudyTaskAction());
         group.add(new StudyNextStudyTaskAction());
-        group.add(new StudyRefreshTaskFileAction());
+        StudyRefreshTaskFileAction resetTaskFile = new StudyRefreshTaskFileAction();
+        resetTaskFile.getTemplatePresentation().setIcon(EduKotlinIcons.RESET_TASK_FILE);
+        group.add(resetTaskFile);
         StudyFillPlaceholdersAction fillPlaceholdersAction = new StudyFillPlaceholdersAction();
         fillPlaceholdersAction.getTemplatePresentation().setIcon(EduKotlinIcons.FILL_PLACEHOLDERS_ICON);
         fillPlaceholdersAction.getTemplatePresentation().setText("Fill Answer Placeholders");
@@ -43,7 +47,7 @@ public class EduKotlinPluginConfigurator extends StudyBasePluginConfigurator {
         if (instance == null) return false;
         Course course = instance.getCourse();
         if (course != null && "PyCharm".equals(course.getCourseType()) && "kotlin".equals(course.getLanguage())) {
-            myProject = project;
+            //myProject = project;
             return true;
         }
         return false;
@@ -58,7 +62,8 @@ public class EduKotlinPluginConfigurator extends StudyBasePluginConfigurator {
     @Nullable
     @Override
     public ModifiableSettingsPanel getSettingsPanel() {
-        return new KotlinSettingsPanel(myProject);
+//        return new KotlinSettingsPanel(myProject);
+        return null;
     }
 
     @Nullable
@@ -103,14 +108,15 @@ public class EduKotlinPluginConfigurator extends StudyBasePluginConfigurator {
 
     @Override
     public boolean askToTweet(@NotNull Project project, Task solvedTask, StudyStatus statusBeforeCheck) {
-        StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
-        Course course = taskManager.getCourse();
-        if (course != null && course.getName().equals("Kotlin Koans")) {
-            KotlinStudyTwitterSettings kotlinStudyTwitterSettings = KotlinStudyTwitterSettings.getInstance(project);
-            return kotlinStudyTwitterSettings.askToTweet()
-                    && (statusBeforeCheck == StudyStatus.Unchecked || statusBeforeCheck == StudyStatus.Failed)
-                    && KotlinUtils.calculateTaskNumber(solvedTask) % 8 == 0;
-        }
+//        StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
+//        Course course = taskManager.getCourse();
+//        if (course != null && course.getName().equals("Kotlin Koans")) {
+//            KotlinStudyTwitterSettings kotlinStudyTwitterSettings = KotlinStudyTwitterSettings.getInstance(project);
+//            return kotlinStudyTwitterSettings.askToTweet()
+//                    && solvedTask.getStatus() == StudyStatus.Solved
+//                    && (statusBeforeCheck == StudyStatus.Unchecked || statusBeforeCheck == StudyStatus.Failed)
+//                    && KotlinUtils.calculateTaskNumber(solvedTask) % 8 == 0;
+//        }
         return false;
     }
 
