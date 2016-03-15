@@ -26,6 +26,7 @@
     <studyToolWindowConfigurator implementation="com.jetbrains.edu.java.EduJavaStudyToolWindowConfigurator"/>
   </extensions>
   <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
+    <courseConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaCourseConfigurator"/>
   </extensions>
 
   <actions>
