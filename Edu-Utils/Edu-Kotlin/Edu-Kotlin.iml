@@ -11,5 +11,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Edu-Utils" />
     <orderEntry type="module" module-name="Edu-IntelliJ" />
+    <orderEntry type="library" name="twitter4j-core-4.0.4" level="project" />
   </component>
 </module>
