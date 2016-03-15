@@ -38,7 +38,7 @@ public abstract class EduCheckAction extends StudyCheckAction {
     private static final Logger LOG = Logger.getInstance(EduCheckAction.class);
 
     @Override
-    protected void check(@NotNull Project project) {
+    public void check(@NotNull Project project) {
         ApplicationManager.getApplication().runWriteAction(() -> {
             CommandProcessor.getInstance().runUndoTransparentAction(() -> {
                 final StudyEditor selectedEditor = StudyUtils.getSelectedStudyEditor(project);
