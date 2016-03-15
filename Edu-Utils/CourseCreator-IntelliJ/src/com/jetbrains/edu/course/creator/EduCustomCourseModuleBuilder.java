@@ -37,7 +37,7 @@ class EduCustomCourseModuleBuilder extends EduCourseModuleBuilder {
         String languageName = type.substring("pycharm ".length());
         Language language = Language.findLanguageByID(languageName);
         if (language != null) {
-            EduCourseConfigurator configurator = EduCourseConfigurator.EP_NAME.forLanguage(language);
+            EduCourseConfigurator configurator = EduCourseConfigurator.INSTANCE.forLanguage(language);
             if (configurator != null) {
                 configurator.configureModule(project);
             }

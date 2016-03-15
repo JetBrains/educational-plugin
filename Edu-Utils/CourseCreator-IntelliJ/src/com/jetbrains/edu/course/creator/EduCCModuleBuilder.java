@@ -4,8 +4,11 @@ import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.util.projectWizard.*;
+import com.intellij.lang.Language;
+import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
@@ -16,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,12 +28,13 @@ import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.learning.core.EduNames;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.coursecreator.CCProjectService;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.ui.CCNewProjectPanel;
+import com.jetbrains.edu.intellij.EduCourseConfigurator;
+import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +47,8 @@ import java.util.List;
 import java.util.function.Function;
 
 class EduCCModuleBuilder extends JavaModuleBuilder {
-    CCNewProjectPanel myPanel = new CCNewProjectPanel();
+    private CCNewProjectPanel myPanel = new CCNewProjectPanel();
+    private ComboBox myLanguageComboBox = new ComboBox();
     private static final Logger LOG = Logger.getInstance(EduCCModuleBuilder.class);
 
     @Nullable
@@ -52,6 +58,18 @@ class EduCCModuleBuilder extends JavaModuleBuilder {
         Function<JTextField, String> getValue = JTextComponent::getText;
         getWizardInputField("ccname", "", "Name:", myPanel.getNameField(), getValue).addToSettings(settingsStep);
         getWizardInputField("ccauthor", "", "Author:", myPanel.getAuthorField(), getValue).addToSettings(settingsStep);
+
+        LanguageExtensionPoint[] extensions = new ExtensionPointName<LanguageExtensionPoint>(EduCourseConfigurator.EP_NAME).getExtensions();
+
+        for (LanguageExtensionPoint extension : extensions) {
+            String languageId = extension.getKey();
+            Language language = Language.findLanguageByID(languageId);
+            if (language == null) {
+                LOG.info("Language with id " + languageId + " not found");
+            }
+            myLanguageComboBox.addItem(new LanguageWrapper(language));
+        }
+        getWizardInputField("cclang", "", "Language:", myLanguageComboBox, comboBox -> (String) comboBox.getSelectedItem()).addToSettings(settingsStep);
         getWizardInputField("ccdescr", "", "Description:", myPanel.getDescriptionField(), JTextArea::getText).addToSettings(settingsStep);
         return javaSettingsStep;
     }
@@ -81,7 +99,8 @@ class EduCCModuleBuilder extends JavaModuleBuilder {
         course.setName(myPanel.getName());
         course.setAuthors(myPanel.getAuthors());
         course.setDescription(myPanel.getDescription());
-        course.setLanguage("JAVA");
+        LanguageWrapper wrapper = (LanguageWrapper) myLanguageComboBox.getSelectedItem();
+        course.setLanguage(wrapper.getLanguage().getID());
         service.setCourse(course);
 
         StartupManager.getInstance(project).registerPostStartupActivity(() -> {
@@ -157,5 +176,23 @@ class EduCCModuleBuilder extends JavaModuleBuilder {
                 return getValue.apply(component);
             }
         };
+    }
+
+
+    private class LanguageWrapper {
+        private final Language myLanguage;
+
+        LanguageWrapper(Language language) {
+            myLanguage = language;
+        }
+
+        Language getLanguage() {
+            return myLanguage;
+        }
+
+        @Override
+        public String toString() {
+            return myLanguage.getDisplayName();
+        }
     }
 }
