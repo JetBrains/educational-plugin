@@ -1,6 +1,7 @@
 package com.jetbrains.edu.kotlin;
 
 import com.intellij.openapi.ui.VerticalFlowLayout;
+import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.Task;
 import com.jetbrains.edu.learning.twitter.StudyTwitterUtils;
 import org.jetbrains.annotations.NotNull;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -26,6 +28,7 @@ public class KotlinTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPan
     }
 
     public void create(@NotNull Task solvedTask) {
+        add(new JLabel(UIUtil.toHtml("<b>Post your achievements to twitter!<b>\n")));
         myImageUrl = getMediaSourceForTask(solvedTask);
         addImageLabel();
 
@@ -34,7 +37,9 @@ public class KotlinTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPan
         add(myTwitterTextField);
 
         myRemainSymbolsLabel.setText(String.valueOf(140 - messageForTask.length()));
-        add(myRemainSymbolsLabel);
+        JPanel jPanel = new JPanel(new BorderLayout());
+        jPanel.add(myRemainSymbolsLabel, BorderLayout.EAST);
+        add(jPanel);
     }
 
     private void addImageLabel() {
