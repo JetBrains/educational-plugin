@@ -28,6 +28,8 @@
     <extensions defaultExtensionNs="Edu">
         <StudyLanguageManager implementationClass="com.jetbrains.edu.kotlin.EduKotlinStudyLanguageManager" language="kotlin"/>
         <studyPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator"/>
+        <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
+        <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
     </extensions>
     <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate"/>
