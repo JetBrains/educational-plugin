@@ -15,7 +15,7 @@ import java.net.URL;
 
 @SuppressWarnings("WeakerAccess")
 public class KotlinTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPanel {
-    private final JTextField myTwitterTextField;
+    private final JTextArea myTwitterTextField;
     private final JLabel myRemainSymbolsLabel;
     private URL myImageUrl;
     private String imageName = "";
@@ -23,7 +23,8 @@ public class KotlinTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPan
     public KotlinTwitterDialogPanel(@NotNull Task solvedTask) {
         setLayout(new VerticalFlowLayout());
         myRemainSymbolsLabel = new JLabel();
-        myTwitterTextField = new JTextField();
+        myTwitterTextField = new JTextArea();
+        myTwitterTextField.setLineWrap(true);
         create(solvedTask);
     }
 
@@ -65,6 +66,12 @@ public class KotlinTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPan
     @Override
     public InputStream getMediaSource() {
         return getClass().getResourceAsStream(imageName);
+    }
+
+    @Nullable
+    @Override
+    public String getMediaExtension() {
+        return "gif";
     }
 
     @Nullable
