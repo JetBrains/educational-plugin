@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>com.jetbrains.edu.coursecreator.intellij</id>
   <name>Course Creator for IntelliJ IDEA</name>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[
@@ -29,6 +29,7 @@
   </extensions>
   <extensions defaultExtensionNs="Edu">
     <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduJavaCCLanguageManager" language="JAVA"/>
+    <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduKotlinCCLanguageManager" language="kotlin"/>
   </extensions>
 
   <actions>
