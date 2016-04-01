@@ -61,6 +61,7 @@ class EduCCModuleBuilder extends JavaModuleBuilder {
 
         LanguageExtensionPoint[] extensions = new ExtensionPointName<LanguageExtensionPoint>(EduCourseConfigurator.EP_NAME).getExtensions();
 
+        myLanguageComboBox.removeAllItems();
         for (LanguageExtensionPoint extension : extensions) {
             String languageId = extension.getKey();
             Language language = Language.findLanguageByID(languageId);
