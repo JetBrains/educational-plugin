@@ -13,7 +13,7 @@ public class EduCCProjectTemplate implements EduIntelliJProjectTemplate {
     @NotNull
     @Override
     public String getName() {
-        return "Create Course";
+        return "Create a new course";
     }
 
     @Nullable
