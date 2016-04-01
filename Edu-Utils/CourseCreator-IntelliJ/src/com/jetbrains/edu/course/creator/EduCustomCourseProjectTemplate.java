@@ -13,7 +13,7 @@ class EduCustomCourseProjectTemplate implements EduIntelliJProjectTemplate {
     @NotNull
     @Override
     public String getName() {
-        return "Custom Course";
+        return "Load an existing course";
     }
 
     @Nullable
