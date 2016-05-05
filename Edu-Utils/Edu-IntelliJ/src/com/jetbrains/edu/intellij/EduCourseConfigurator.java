@@ -2,7 +2,7 @@ package com.jetbrains.edu.intellij;
 
 import com.intellij.lang.LanguageExtension;
 import com.intellij.openapi.project.Project;
-import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 public interface EduCourseConfigurator {
     String EP_NAME = "com.jetbrains.edu.intellij.courseConfigurator";
