@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.StudyBasePluginConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.settings.ModifiableSettingsPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,9 +40,4 @@ public class EduJavaStudyToolWindowConfigurator extends StudyBasePluginConfigura
         return getClass().getResource("/code_mirror/clike.js").toExternalForm();
     }
 
-    @Nullable
-    @Override
-    public ModifiableSettingsPanel getSettingsPanel() {
-        return null;
-    }
 }
