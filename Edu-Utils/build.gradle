@@ -93,3 +93,22 @@ project(':Edu-Java') {
     compile project (':Edu-IntelliJ')
   }
 }
+
+project(':Edu-Kotlin') {
+  sourceSets {
+    main {
+      java.srcDirs '../src'
+    }
+  }
+
+  compileJava.dependsOn(copyPlugins)
+
+  intellij {
+    pluginName 'Edu-Kotlin'
+    plugins 'Kotlin', 'junit'
+  }
+
+  dependencies {
+    compile project (':Edu-IntelliJ')
+  }
+}
