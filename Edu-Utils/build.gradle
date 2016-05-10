@@ -46,7 +46,7 @@ subprojects {
   repositories {
     ivy {
       ivyPattern      'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/teamcity-ivy.xml'
-      artifactPattern 'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/student-2.0.5-145.597.zip'
+      artifactPattern 'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/[artifact].zip'
     }
   }
 
@@ -56,12 +56,15 @@ subprojects {
   }
 
   dependencies {
-    corePlugins 'org:Educational_CorePlugins:lastSuccessful'
+    corePlugins ('org:Educational_CorePlugins:lastSuccessful')
     compile files(rootProject.projectDir.toString() + "/gradleBuild/student/classes")
   }
 
   task copyPlugins(type: Copy) {
-    from zipTree(configurations.corePlugins.singleFile)
+    configurations.corePlugins.each {
+      from zipTree(it)
+    }
+
     into rootProject.projectDir.toString() + "/gradleBuild"
   }
 }
@@ -111,4 +114,25 @@ project(':Edu-Kotlin') {
   dependencies {
     compile project (':Edu-IntelliJ')
   }
+}
+
+project(':CourseCreator-IntelliJ') {
+  sourceSets {
+    main {
+      java.srcDirs '../src'
+    }
+  }
+
+  compileJava.dependsOn(copyPlugins)
+  intellij {
+    pluginName 'CourseCreator-IntelliJ'
+    plugins 'junit'
+  }
+
+  dependencies {
+    compile project (':Edu-IntelliJ')
+    compile files(rootProject.projectDir.toString() + "/gradleBuild/course-creator/classes")
+    compile files(rootProject.projectDir.toString() + "/gradleBuild/student/classes")
+  }
+
 }
