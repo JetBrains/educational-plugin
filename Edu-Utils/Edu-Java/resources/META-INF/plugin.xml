@@ -11,7 +11,7 @@
   <change-notes>
   </change-notes>
 
-  <idea-version since-build="144.3891"/>
+  <idea-version since-build="162.75"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>com.jetbrains.edu.interactivelearning</depends>
