@@ -48,7 +48,7 @@ subprojects {
   repositories {
     ivy {
       ivyPattern      'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/teamcity-ivy.xml'
-      artifactPattern 'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/[artifact].zip'
+      artifactPattern 'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/[artifact].[ext]'
     }
   }
 
@@ -63,7 +63,7 @@ subprojects {
   }
 
   task copyPlugins(type: Copy) {
-    configurations.corePlugins.each {
+    configurations.corePlugins.filter{dep -> dep.name.endsWith(".zip")}.each{
       from zipTree(it)
     }
 
