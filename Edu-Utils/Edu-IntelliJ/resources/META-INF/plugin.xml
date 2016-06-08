@@ -12,9 +12,10 @@
     ]]>
   </change-notes>
 
-  <idea-version since-build="162.75"/>
+  <idea-version since-build="145"/>
 
   <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="android-dependencies.xml">com.intellij.modules.androidstudio</depends>
 
   <extensionPoints>
     <extensionPoint name="eduIntelliJProjectTemplate" interface="com.jetbrains.edu.intellij.EduIntelliJProjectTemplate"/>
@@ -26,5 +27,4 @@
   <extensions defaultExtensionNs="com.intellij">
    <projectTemplatesFactory implementation="com.jetbrains.edu.intellij.EduIntelliJTemplateFactory"/>
   </extensions>
-
 </idea-plugin>
