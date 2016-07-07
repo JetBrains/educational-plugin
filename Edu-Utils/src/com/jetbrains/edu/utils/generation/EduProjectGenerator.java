@@ -15,7 +15,7 @@ public class EduProjectGenerator extends StudyProjectGenerator {
 
     @Override
     public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir) {
-        final Course course = getCourse();
+        final Course course = getCourse(project);
         if (course == null) {
             LOG.warn("Failed to get course");
             return;
@@ -24,6 +24,6 @@ public class EduProjectGenerator extends StudyProjectGenerator {
         //when we update course we don't know anything about modules, so we create folders for lessons directly
         course.setUpToDate(true);
         StudyTaskManager.getInstance(project).setCourse(course);
-        course.setCourseDirectory(new File(ourCoursesDir, mySelectedCourseInfo.getName()).getAbsolutePath());
+        course.setCourseDirectory(new File(OUR_COURSES_DIR, mySelectedCourseInfo.getName()).getAbsolutePath());
     }
 }
