@@ -21,8 +21,8 @@ public class EduKotlinPluginConfigurator extends StudyBasePluginConfigurator {
         EduKotlinCheckAction checkAction = new EduKotlinCheckAction();
         checkAction.getTemplatePresentation().setIcon(EduKotlinIcons.CHECK_TASK);
         group.add(checkAction);
-        group.add(new StudyPreviousStudyTaskAction());
-        group.add(new StudyNextStudyTaskAction());
+        group.add(new StudyPreviousTaskAction());
+        group.add(new StudyNextTaskAction());
         StudyRefreshTaskFileAction resetTaskFile = new StudyRefreshTaskFileAction();
         resetTaskFile.getTemplatePresentation().setIcon(EduKotlinIcons.RESET_TASK_FILE);
         group.add(resetTaskFile);
@@ -44,7 +44,7 @@ public class EduKotlinPluginConfigurator extends StudyBasePluginConfigurator {
         StudyTaskManager instance = StudyTaskManager.getInstance(project);
         if (instance == null) return false;
         Course course = instance.getCourse();
-        return course != null && "PyCharm".equals(course.getCourseType()) && "kotlin".equals(course.getLanguage());
+        return course != null && "PyCharm".equals(course.getCourseType()) && "kotlin".equals(course.getLanguageID());
     }
 
     @NotNull
