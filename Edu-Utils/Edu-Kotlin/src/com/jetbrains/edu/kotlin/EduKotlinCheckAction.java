@@ -23,7 +23,11 @@ class EduKotlinCheckAction extends EduCheckAction {
     @Override
     protected VirtualFile getTestsFile(@NotNull StudyState studyState) {
         VirtualFile taskFileVF = studyState.getVirtualFile();
-        return taskFileVF.getParent().findChild("tests.kt");
+        VirtualFile testsFile = taskFileVF.getParent().findChild("tests.kt");
+        if (testsFile != null) {
+            return testsFile;
+        }
+        return taskFileVF.getParent().findChild("Tests.kt");
     }
 
 

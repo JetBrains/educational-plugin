@@ -32,9 +32,4 @@
     <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduKotlinCCLanguageManager" language="kotlin"/>
   </extensions>
 
-  <actions>
-    <action overrides="true" class="com.intellij.openapi.actionSystem.EmptyAction" id="CreateTaskFile"/>
-    <!-- Add your actions here -->
-  </actions>
-
 </idea-plugin>

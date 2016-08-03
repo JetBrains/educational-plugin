@@ -29,18 +29,22 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.coursecreator.CCProjectService;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.ui.CCNewProjectPanel;
 import com.jetbrains.edu.intellij.EduCourseConfigurator;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -95,14 +99,16 @@ class EduCCModuleBuilder extends JavaModuleBuilder {
 
         Project project = module.getProject();
 
-        final CCProjectService service = CCProjectService.getInstance(project);
         final Course course = new Course();
         course.setName(myPanel.getName());
-        course.setAuthors(myPanel.getAuthors());
+        course.setAuthorsAsString(myPanel.getAuthors());
         course.setDescription(myPanel.getDescription());
         LanguageWrapper wrapper = (LanguageWrapper) myLanguageComboBox.getSelectedItem();
         course.setLanguage(wrapper.getLanguage().getID());
-        service.setCourse(course);
+        course.setCourseMode(CCUtils.COURSE_MODE);
+        File courseDir = new File(StudyProjectGenerator.OUR_COURSES_DIR, myPanel.getName() + "-" + project.getName());
+        course.setCourseDirectory(courseDir.getPath());
+        StudyTaskManager.getInstance(project).setCourse(course);
 
         StartupManager.getInstance(project).registerPostStartupActivity(() -> {
             ApplicationManager.getApplication().runWriteAction(() -> {
