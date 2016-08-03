@@ -20,9 +20,6 @@ public class EduProjectGenerator extends StudyProjectGenerator {
             LOG.warn("Failed to get course");
             return;
         }
-        //need this not to update course
-        //when we update course we don't know anything about modules, so we create folders for lessons directly
-        course.setUpToDate(true);
         StudyTaskManager.getInstance(project).setCourse(course);
         course.setCourseDirectory(new File(OUR_COURSES_DIR, mySelectedCourseInfo.getName()).getAbsolutePath());
     }
