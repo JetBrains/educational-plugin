@@ -8,7 +8,7 @@ public class EduKotlinStudyLanguageManager implements StudyLanguageManager {
     @NotNull
     @Override
     public String getTestFileName() {
-        return "tests.kt";
+        return "Tests.kt";
     }
 
     @NotNull
