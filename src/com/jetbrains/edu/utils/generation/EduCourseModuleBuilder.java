@@ -12,8 +12,8 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.InvalidDataException;
-import com.jetbrains.edu.learning.StudyProjectComponent;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.stepic.CourseInfo;
@@ -49,7 +49,7 @@ public class EduCourseModuleBuilder extends JavaModuleBuilder {
         ApplicationManager.getApplication().invokeLater(
                 () -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
                         () -> ApplicationManager.getApplication().runWriteAction(() -> {
-                            StudyProjectComponent.getInstance(project).registerStudyToolWindow(course);
+                            StudyUtils.registerStudyToolWindow(course, project);
                         })));
     }
 
