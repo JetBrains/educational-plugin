@@ -32,4 +32,8 @@
     <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduKotlinCCLanguageManager" language="kotlin"/>
   </extensions>
 
+    <actions>
+        <action id="CreateTask" class="com.jetbrains.edu.course.creator.EduCCNewTaskAction" overrides="true"/>
+        <action id="CreateLesson" class="com.jetbrains.edu.course.creator.EduCCNewLessonAction" overrides="true"/>
+    </actions>
 </idea-plugin>

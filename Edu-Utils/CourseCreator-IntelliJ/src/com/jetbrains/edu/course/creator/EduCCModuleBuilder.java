@@ -2,42 +2,34 @@ package com.jetbrains.edu.course.creator;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
-import com.intellij.ide.projectView.actions.MarkRootActionBase;
-import com.intellij.ide.util.projectWizard.*;
+import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.ProjectWizardStepFactory;
+import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.ide.util.projectWizard.WizardInputField;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtensionPoint;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.DumbModePermission;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.roots.ExternalLibraryDescriptor;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileAdapter;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.coursecreator.CCProjectService;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.ui.CCNewProjectPanel;
 import com.jetbrains.edu.intellij.EduCourseConfigurator;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
+import com.jetbrains.edu.utils.generation.EduCourseModuleBuilder;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-class EduCCModuleBuilder extends JavaModuleBuilder {
+class EduCCModuleBuilder extends EduCourseModuleBuilder {
     private CCNewProjectPanel myPanel = new CCNewProjectPanel();
     private ComboBox myLanguageComboBox = new ComboBox();
     private static final Logger LOG = Logger.getInstance(EduCCModuleBuilder.class);
@@ -95,10 +87,7 @@ class EduCCModuleBuilder extends JavaModuleBuilder {
         List<String> defaultRoots = descriptor.getLibraryClassesRoots();
         final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
         ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.emptyList());
-
-
         Project project = module.getProject();
-
         final Course course = new Course();
         course.setName(myPanel.getName());
         course.setAuthorsAsString(myPanel.getAuthors());
@@ -108,56 +97,15 @@ class EduCCModuleBuilder extends JavaModuleBuilder {
         course.setCourseMode(CCUtils.COURSE_MODE);
         File courseDir = new File(StudyProjectGenerator.OUR_COURSES_DIR, myPanel.getName() + "-" + project.getName());
         course.setCourseDirectory(courseDir.getPath());
+        Lesson lesson = new Lesson();
+        Task task = new Task();
+        task.setName("task1");
+        lesson.addTask(task);
+        lesson.setName("lesson1");
+        course.addLesson(lesson);
+        course.initCourse(false);
         StudyTaskManager.getInstance(project).setCourse(course);
-
-        StartupManager.getInstance(project).registerPostStartupActivity(() -> {
-            ApplicationManager.getApplication().runWriteAction(() -> {
-                final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
-                if (projectDir == null) return;
-                PsiDirectory lessonDir = new CCCreateLesson().createItem(null, project, projectDir, course);
-                if (lessonDir == null) {
-                    return;
-                }
-                new CCCreateTask().createItem(null, project, lessonDir, course);
-            });
-        });
-
-
-        VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileAdapter() {
-            @Override
-            public void fileCreated(@NotNull VirtualFileEvent event) {
-                VirtualFile virtualFile = event.getFile();
-                Project projectForFile = ProjectUtil.guessProjectForContentFile(virtualFile);
-                if (projectForFile == null || CCProjectService.getInstance(projectForFile).getCourse() == null) {
-                    return;
-                }
-
-                if (isTask(virtualFile)) {
-                    markAsSourceRoot(virtualFile);
-                }
-            }
-
-            private void markAsSourceRoot(VirtualFile virtualFile) {
-                DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND, () -> ApplicationManager.getApplication().runWriteAction(() -> {
-                    final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-                    ContentEntry entry = MarkRootActionBase.findContentEntry(model, virtualFile);
-                    if (entry == null) {
-                        LOG.info("Failed to find contentEntry for archive folder");
-                        return;
-                    }
-                    entry.addSourceFolder(virtualFile, false);
-                    model.commit();
-                    module.getProject().save();
-
-                }));
-            }
-
-            private boolean isTask(VirtualFile virtualFile) {
-                return virtualFile.isDirectory() && virtualFile.getName().contains(EduNames.TASK) && virtualFile.getParent() != null &&
-                        virtualFile.getParent().getName().contains(EduNames.LESSON);
-            }
-        });
-
+        createCourseModuleContent(moduleModel, project, course);
         return module;
     }
 

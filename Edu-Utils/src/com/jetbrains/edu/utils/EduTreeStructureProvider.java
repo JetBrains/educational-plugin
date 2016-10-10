@@ -31,7 +31,7 @@ public class EduTreeStructureProvider extends StudyTreeStructureProvider {
             for (AbstractTreeNode child : children) {
                 if (child instanceof PsiDirectoryNode) {
                     String name = ((PsiDirectoryNode) child).getValue().getName();
-                    if (EduIntelliJNames.SRC.equals(name)) {
+                    if (EduNames.SRC.equals(name)) {
                         return super.modify(child, child.getChildren(), settings);
                     }
                 }

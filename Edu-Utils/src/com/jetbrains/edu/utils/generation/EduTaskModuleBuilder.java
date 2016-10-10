@@ -18,7 +18,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Task;
-import com.jetbrains.edu.utils.EduIntelliJNames;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +72,7 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
         if (moduleDir == null) {
             return false;
         }
-        VirtualFile src = moduleDir.findChild(EduIntelliJNames.SRC);
+        VirtualFile src = moduleDir.findChild(EduNames.SRC);
         if (src == null) {
             return false;
         }

@@ -36,6 +36,11 @@ public class EduCourseModuleBuilder extends JavaModuleBuilder {
             LOG.info("failed to generate course");
             return;
         }
+        createCourseModuleContent(moduleModel, project, course);
+    }
+
+    protected void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel, Project project, Course course)
+            throws IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
         String moduleDir = getModuleFileDirectory();
         if (moduleDir == null) {
             return;
@@ -46,21 +51,19 @@ public class EduCourseModuleBuilder extends JavaModuleBuilder {
 
         createLessonModules(moduleModel, course, moduleDir, utilModule);
 
-        ApplicationManager.getApplication().invokeLater(
-                () -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
-                        () -> ApplicationManager.getApplication().runWriteAction(() -> {
-                            StudyUtils.registerStudyToolWindow(course, project);
-                        })));
+        ApplicationManager.getApplication().invokeLater(() -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
+                () -> ApplicationManager.getApplication().runWriteAction(() -> StudyUtils.registerStudyToolWindow(course, project))));
     }
 
 
-    private void createLessonModules(@NotNull ModifiableModuleModel moduleModel, Course course, String moduleDir, Module utilModule) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
+    private void createLessonModules(@NotNull ModifiableModuleModel moduleModel, Course course, String moduleDir, Module utilModule)
+            throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
         List<Lesson> lessons = course.getLessons();
         for (int i = 0; i < lessons.size(); i++) {
             int lessonVisibleIndex = i + 1;
             Lesson lesson = lessons.get(i);
             lesson.setIndex(lessonVisibleIndex);
-            EduLessonModuleBuilder eduLessonModuleBuilder =  new EduLessonModuleBuilder(moduleDir, lesson, utilModule);
+            EduLessonModuleBuilder eduLessonModuleBuilder = new EduLessonModuleBuilder(moduleDir, lesson, utilModule);
             eduLessonModuleBuilder.createModule(moduleModel);
         }
     }
