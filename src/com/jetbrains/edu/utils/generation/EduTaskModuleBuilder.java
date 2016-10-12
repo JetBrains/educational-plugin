@@ -9,12 +9,17 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ExternalLibraryDescriptor;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiManager;
+import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Task;
@@ -46,7 +51,7 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
     @Override
     public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
         Module module = super.createModule(moduleModel);
-        if (!createTaskContent()) {
+        if (!createTask(module.getProject())) {
             LOG.info("Failed to copy task content");
             return module;
         }
@@ -62,7 +67,7 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
         ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.emptyList());
     }
 
-    private boolean createTaskContent() throws IOException {
+    private boolean createTask(Project project) throws IOException {
         Course course = myTask.getLesson().getCourse();
         String directory = getModuleFileDirectory();
         if (directory == null) {
@@ -76,10 +81,15 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
         if (src == null) {
             return false;
         }
-        String courseResourcesDirectory = course.getCourseDirectory();
-        String taskResourcesPath = FileUtil.join(courseResourcesDirectory, EduNames.LESSON + myTask.getLesson().getIndex(),
-                EduNames.TASK + myTask.getIndex());
-        FileUtil.copyDirContent(new File(taskResourcesPath), new File(src.getPath()));
+        if (StudyUtils.isStudentProject(project)) {
+            String courseResourcesDirectory = course.getCourseDirectory();
+            String taskResourcesPath = FileUtil.join(courseResourcesDirectory, EduNames.LESSON + myTask.getLesson().getIndex(),
+                    EduNames.TASK + myTask.getIndex());
+            FileUtil.copyDirContent(new File(taskResourcesPath), new File(src.getPath()));
+        } else {
+            PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(src);
+            CCUtils.createTaskContent(project, null, course, psiDirectory);
+        }
         return true;
     }
 }
