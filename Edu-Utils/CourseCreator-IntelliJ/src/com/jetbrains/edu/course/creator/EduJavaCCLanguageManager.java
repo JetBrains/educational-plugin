@@ -3,13 +3,19 @@ package com.jetbrains.edu.course.creator;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCLanguageManager;
+import com.jetbrains.edu.learning.core.EduNames;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
 public class EduJavaCCLanguageManager implements CCLanguageManager {
+
+    private static final String TEST_JAVA = "Test.java";
+
     @Nullable
     @Override
     public String getDefaultTaskFileExtension() {
@@ -41,4 +47,9 @@ public class EduJavaCCLanguageManager implements CCLanguageManager {
         return FileTemplateManager.getInstance(project).getInternalTemplate(name);
     }
 
+    @Override
+    public boolean isTestFile(VirtualFile file) {
+        String name = file.getName();
+        return TEST_JAVA.equals(name) || name.contains(FileUtil.getNameWithoutExtension(EduNames.TESTS_FILE)) && name.contains(EduNames.SUBTASK_MARKER);
+    }
 }
