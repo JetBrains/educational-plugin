@@ -21,7 +21,6 @@
     <depends>com.jetbrains.edu.intellij</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <treeStructureProvider implementation="com.jetbrains.edu.utils.EduTreeStructureProvider" order="last"/>
         <projectService serviceInterface="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"
                         serviceImplementation="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"/>
     </extensions>
