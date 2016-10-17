@@ -18,10 +18,6 @@
   <depends>com.jetbrains.edu.intellij</depends>
   <depends>com.intellij.modules.lang</depends>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <treeStructureProvider implementation="com.jetbrains.edu.utils.EduTreeStructureProvider" order="last"/>
-  </extensions>
-
   <extensions defaultExtensionNs="Edu">
     <studyPluginConfigurator implementation="com.jetbrains.edu.java.EduJavaStudyToolWindowConfigurator"/>
   </extensions>

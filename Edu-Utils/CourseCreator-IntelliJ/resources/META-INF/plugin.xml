@@ -20,9 +20,6 @@
   <depends>com.jetbrains.edu.interactivelearning</depends>
   <depends>JUnit</depends>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <treeStructureProvider implementation="com.jetbrains.edu.course.creator.EduCCTreeStructureProvider" order="last"/>
-  </extensions>
   <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCustomCourseProjectTemplate" order="last"/>
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCCProjectTemplate" order="last"/>
