@@ -20,6 +20,7 @@
 
   <extensions defaultExtensionNs="Edu">
     <studyPluginConfigurator implementation="com.jetbrains.edu.java.EduJavaStudyToolWindowConfigurator"/>
+    <StudyLanguageManager language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaStudyLanguageManager"/>
   </extensions>
   <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
     <courseConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaCourseConfigurator"/>
