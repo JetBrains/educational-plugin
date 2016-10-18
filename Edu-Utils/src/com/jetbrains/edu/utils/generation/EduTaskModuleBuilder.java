@@ -9,6 +9,7 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ExternalLibraryDescriptor;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
@@ -32,64 +33,66 @@ import java.util.Collections;
 import java.util.List;
 
 public class EduTaskModuleBuilder extends JavaModuleBuilder {
-    private static final Logger LOG = Logger.getInstance(EduTaskModuleBuilder.class);
-    private final Task myTask;
-    private final Module myUtilModule;
+  private static final Logger LOG = Logger.getInstance(EduTaskModuleBuilder.class);
+  private final Task myTask;
+  private final Module myUtilModule;
 
-    public EduTaskModuleBuilder(String moduleDir, @NotNull String name, @NotNull Task task, @NotNull Module utilModule) {
-        myTask = task;
-        myUtilModule = utilModule;
-        String taskName = EduNames.TASK + task.getIndex();
-        //module name like lessoni-taski
-        String moduleName = name + "-" + taskName;
-        setName(moduleName);
-        setModuleFilePath(FileUtil.join(moduleDir, taskName, moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION));
+  public EduTaskModuleBuilder(String moduleDir, @NotNull String name, @NotNull Task task, @NotNull Module utilModule) {
+    myTask = task;
+    myUtilModule = utilModule;
+    String taskName = EduNames.TASK + task.getIndex();
+    //module name like lessoni-taski
+    String moduleName = name + "-" + taskName;
+    setName(moduleName);
+    setModuleFilePath(FileUtil.join(moduleDir, taskName, moduleName + ModuleFileType.DOT_DEFAULT_EXTENSION));
+  }
+
+
+  @NotNull
+  @Override
+  public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
+    Module module = super.createModule(moduleModel);
+    if (!createTask(module.getProject())) {
+      LOG.info("Failed to copy task content");
+      return module;
     }
+    addJUnitLib(module);
+    ModuleRootModificationUtil.addDependency(module, myUtilModule);
+    return module;
+  }
 
+  private void addJUnitLib(Module module) {
+    ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
+    List<String> defaultRoots = descriptor.getLibraryClassesRoots();
+    final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
+    ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.emptyList());
+  }
 
-    @NotNull
-    @Override
-    public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
-        Module module = super.createModule(moduleModel);
-        if (!createTask(module.getProject())) {
-            LOG.info("Failed to copy task content");
-            return module;
-        }
-        addJUnitLib(module);
-        ModuleRootModificationUtil.addDependency(module, myUtilModule);
-        return module;
+  private boolean createTask(Project project) throws IOException {
+    Course course = myTask.getLesson().getCourse();
+    String directory = getModuleFileDirectory();
+    if (directory == null) {
+      return false;
     }
-
-    private void addJUnitLib(Module module) {
-        ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
-        List<String> defaultRoots = descriptor.getLibraryClassesRoots();
-        final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
-        ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.emptyList());
+    VirtualFile moduleDir = VfsUtil.findFileByIoFile(new File(directory), true);
+    if (moduleDir == null) {
+      return false;
     }
-
-    private boolean createTask(Project project) throws IOException {
-        Course course = myTask.getLesson().getCourse();
-        String directory = getModuleFileDirectory();
-        if (directory == null) {
-            return false;
-        }
-        VirtualFile moduleDir = VfsUtil.findFileByIoFile(new File(directory), true);
-        if (moduleDir == null) {
-            return false;
-        }
-        VirtualFile src = moduleDir.findChild(EduNames.SRC);
-        if (src == null) {
-            return false;
-        }
-        if (StudyUtils.isStudentProject(project)) {
-            String courseResourcesDirectory = course.getCourseDirectory();
-            String taskResourcesPath = FileUtil.join(courseResourcesDirectory, EduNames.LESSON + myTask.getLesson().getIndex(),
-                    EduNames.TASK + myTask.getIndex());
-            FileUtil.copyDirContent(new File(taskResourcesPath), new File(src.getPath()));
-        } else {
-            PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(src);
-            CCUtils.createTaskContent(project, null, course, psiDirectory);
-        }
-        return true;
+    VirtualFile src = moduleDir.findChild(EduNames.SRC);
+    if (src == null) {
+      return false;
     }
+    if (StudyUtils.isStudentProject(project)) {
+      String courseResourcesDirectory = course.getCourseDirectory();
+      String taskResourcesPath = FileUtil.join(courseResourcesDirectory, EduNames.LESSON + myTask.getLesson().getIndex(),
+          EduNames.TASK + myTask.getIndex());
+      FileUtil.copyDirContent(new File(taskResourcesPath), new File(src.getPath()));
+    } else {
+      DumbService.getInstance(project).runWhenSmart(() -> {
+        PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(src);
+        CCUtils.createTaskContent(project, null, course, psiDirectory);
+      });
+    }
+    return true;
+  }
 }
