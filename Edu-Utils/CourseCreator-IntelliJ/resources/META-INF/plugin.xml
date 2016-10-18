@@ -27,7 +27,6 @@
   <extensions defaultExtensionNs="Edu">
     <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduJavaCCLanguageManager" language="JAVA"/>
     <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduKotlinCCLanguageManager" language="kotlin"/>
-    <StudyLanguageManager language="JAVA" implementationClass="com.jetbrains.edu.course.creator.EduJavaStudyLanguageManager"/>
   </extensions>
 
     <actions>

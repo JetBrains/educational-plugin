@@ -1,13 +1,16 @@
-package com.jetbrains.edu.course.creator;
+package com.jetbrains.edu.java;
 
 import com.jetbrains.edu.learning.StudyLanguageManager;
 import org.jetbrains.annotations.NotNull;
 
 public class EduJavaStudyLanguageManager implements StudyLanguageManager {
+
+  public static final String TEST_JAVA = "Test.java";
+
   @NotNull
   @Override
   public String getTestFileName() {
-    return "Test.java";
+    return TEST_JAVA;
   }
 
   @NotNull

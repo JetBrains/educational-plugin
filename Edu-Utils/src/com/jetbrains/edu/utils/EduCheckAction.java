@@ -95,7 +95,8 @@ public abstract class EduCheckAction extends StudyCheckAction {
                     }
 
                     final JavaCommandLineState javaCmdLine = (JavaCommandLineState) state;
-                    FileDocumentManager.getInstance().saveAllDocuments();
+                    ApplicationManager.getApplication().invokeLater(() -> FileDocumentManager.getInstance().saveAllDocuments());
+
                     DumbService.getInstance(project).runWhenSmart(() -> {
                         try {
                             JavaParameters javaParameters;
