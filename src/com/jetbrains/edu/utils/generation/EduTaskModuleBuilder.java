@@ -85,7 +85,7 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
     if (StudyUtils.isStudentProject(project)) {
       String courseResourcesDirectory = course.getCourseDirectory();
       String taskResourcesPath = FileUtil.join(courseResourcesDirectory, EduNames.LESSON + myTask.getLesson().getIndex(),
-          EduNames.TASK + myTask.getIndex());
+          EduNames.TASK + myTask.getIndex(), EduNames.SRC);
       FileUtil.copyDirContent(new File(taskResourcesPath), new File(src.getPath()));
     } else {
       DumbService.getInstance(project).runWhenSmart(() -> {
