@@ -4,6 +4,7 @@ import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
@@ -11,6 +12,7 @@ import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.coursecreator.CCLanguageManager;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Task;
+import com.jetbrains.edu.utils.EduIntelliJNames;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +46,8 @@ public class EduJavaCCLanguageManager implements CCLanguageManager {
     @Override
     public boolean doNotPackFile(File pathname) {
         String name = pathname.getName();
-        return "out".equals(name) || ".idea".equals(name);
+        return "out".equals(name) || ".idea".equals(name) ||
+                "iml".equals(FileUtilRt.getExtension(name)) || EduIntelliJNames.TEST_RUNNER_FILE.equals(name);
     }
 
     private static FileTemplate getInternalTemplateByName(@NotNull final Project project, String name) {
@@ -63,7 +66,7 @@ public class EduJavaCCLanguageManager implements CCLanguageManager {
         if (taskDir == null) {
             return;
         }
-        int prevSubtaskIndex = task.getSubtaskNum() - 1;
+        int prevSubtaskIndex = task.getLastSubtaskIndex();
         PsiDirectory taskPsiDir = PsiManager.getInstance(project).findDirectory(taskDir);
         if (taskPsiDir == null) {
             return;
