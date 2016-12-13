@@ -19,12 +19,16 @@ class EduJavaCheckAction extends EduCheckAction {
     @Nullable
     @Override
     protected VirtualFile getTestsFile(@NotNull StudyState studyState) {
-        VirtualFile taskDir = studyState.getTaskDir();
         String testFileName = EduJavaStudyLanguageManager.TEST_JAVA;
         Task task = studyState.getTask();
         int activeSubtaskIndex = task.getActiveSubtaskIndex();
         if (task.hasSubtasks() && activeSubtaskIndex != 0) {
             testFileName = FileUtil.getNameWithoutExtension(testFileName) + EduNames.SUBTASK_MARKER + activeSubtaskIndex + "." + FileUtilRt.getExtension(EduJavaStudyLanguageManager.TEST_JAVA);
+        }
+        VirtualFile taskDir = studyState.getTaskDir();
+        VirtualFile srcDir = taskDir.findChild(EduNames.SRC);
+        if (srcDir != null) {
+            taskDir = srcDir;
         }
         VirtualFile virtualFile = taskDir.findChild(testFileName);
         if (virtualFile != null) {
