@@ -1,1 +1,20 @@
-include 'CourseCreator-IntelliJ', 'Edu-IntelliJ', 'Edu-Java', 'Edu-Kotlin'
+include 'Edu-IntelliJ', 'Edu-Java', 'Edu-Kotlin', 'CourseCreator-IntelliJ'
+def intellijCommunity = getIntellijCommunity()
+
+private static String getIntellijCommunity() {
+    try {
+        Properties properties = new Properties()
+        properties.load(new FileInputStream('local.properties'))
+        return properties.getProperty('intellijCommunity')
+    }
+    catch (ignored) {
+        return null
+    }
+}
+
+if (intellijCommunity != null) {
+    include "student"
+    project(":student").projectDir = new File(intellijCommunity, 'python/educational-core/student')
+    include "course-creator"
+    project(":course-creator").projectDir = new File(intellijCommunity, 'python/educational-core/course-creator')
+}

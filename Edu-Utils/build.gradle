@@ -1,129 +1,168 @@
-plugins {
-  id "org.jetbrains.intellij" version "0.0.39"
+buildscript {
+    ext.kotlin_version = '1.0.5'
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            url 'http://dl.bintray.com/jetbrains/intellij-plugin-service'
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.0-SNAPSHOT"
+    }
 }
+
+def intellijCommunity = getLocalProperty('intellijCommunity')
 
 subprojects {
 
-  apply plugin: 'java'
-  apply plugin: "org.jetbrains.intellij"
+    apply plugin: 'java'
+    apply plugin: "org.jetbrains.intellij"
+    apply plugin: 'kotlin'
 
-  tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+    tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 
-  sourceSets {
-    main {
-      java.srcDirs 'src'
-      resources.srcDir 'resources'
-    }
-    test {
-      java.srcDir 'test'
-    }
-  }
-
-  intellij {
-    version ideaVersion
-    updateSinceUntilBuild Boolean.valueOf(updateBuildNumber)
-    downloadSources Boolean.valueOf(downloadIdeaSources)
-    sandboxDirectory = new File(rootProject.projectDir, "gradleBuild/idea-sandbox")
-  }
-
-  afterEvaluate {
-    tasks.getByName('buildPlugin') {
-      archiveName = "$intellij.pluginName-$version-${buildNumber}.zip"
-    }
-  }
-
-  buildDir = new File(rootProject.projectDir, "gradleBuild/" + project.name)
-
-  repositories {
-    ivy {
-      ivyPattern      'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/teamcity-ivy.xml'
-      artifactPattern 'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/[artifact].[ext]'
-    }
-  }
-
-
-  configurations {
-    corePlugins
-  }
-
-  dependencies {
-    corePlugins ('org:Educational_CorePlugins:lastSuccessful')
-    compile files(rootProject.projectDir.toString() + "/gradleBuild/student/classes")
-  }
-
-  task copyPlugins(type: Copy) {
-    configurations.corePlugins.filter{dep -> dep.name.endsWith(".zip")}.each{
-      from zipTree(it)
+    sourceSets {
+        main {
+            java.srcDirs 'src'
+            resources.srcDir 'resources'
+        }
+        test {
+            java.srcDir 'test'
+        }
     }
 
-    into rootProject.projectDir.toString() + "/gradleBuild"
-  }
+    intellij {
+        String ideaPath = getLocalProperty('ideaPath')
+        if (ideaPath == null) {
+            version ideaVersion
+        } else {
+            localPath ideaPath
+        }
+        updateSinceUntilBuild Boolean.valueOf(updateBuildNumber)
+        downloadSources Boolean.valueOf(downloadIdeaSources)
+        sandboxDirectory = new File(rootProject.projectDir, "idea-sandbox")
+    }
+
+    afterEvaluate {
+        tasks.getByName('buildPlugin') {
+            archiveName = "$intellij.pluginName-$version-${buildNumber}.zip"
+        }
+        deployPlugins.dependsOn(tasks.getByName('buildPlugin') )
+
+    }
+
+    buildDir = new File(rootProject.projectDir, "gradleBuild/" + project.name)
+
+    if (intellijCommunity == null) {
+
+        repositories {
+            ivy {
+                ivyPattern 'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/teamcity-ivy.xml'
+                artifactPattern 'http://buildserver.labs.intellij.net/guestAuth/repository/download/Educational_CorePlugins/lastSuccessful/[artifact].[ext]'
+            }
+        }
+
+        configurations {
+            corePlugins
+        }
+
+        dependencies {
+            corePlugins('org:Educational_CorePlugins:lastSuccessful')
+            compile files(rootProject.projectDir.toString() + "/gradleBuild/student/classes")
+        }
+
+        task copyPlugins(type: Copy) {
+            configurations.corePlugins.filter { dep -> dep.name.endsWith(".zip") }.each {
+                from zipTree(it)
+            }
+
+            into rootProject.projectDir.toString() + "/gradleBuild"
+        }
+    }
+}
+
+task cleanPluginsDir(type: Delete) {
+    delete fileTree(dir: "$rootProject.projectDir/plugins")
+}
+
+task deployPlugins(type: Copy) {
+    dependsOn(cleanPluginsDir)
+    def root = rootProject.projectDir.toString()
+    def studentJar = "student-${version}.jar"
+    from root + "/gradleBuild/student/libs/" + studentJar
+    def courseCreatorJar = "course-creator-${version}.jar"
+    from root + "/gradleBuild/course-creator/libs/" + courseCreatorJar
+    into root + "/plugins"
+    rename { filename ->
+        filename.replace "$courseCreatorJar", "course-creator.jar"
+    }
+    rename { filename ->
+        filename.replace "$studentJar", "student.jar"
+    }
 }
 
 project(':Edu-IntelliJ') {
-  compileJava.dependsOn(copyPlugins)
+    if (intellijCommunity == null) {
+        compileJava.dependsOn(copyPlugins)
+    }
 
-  intellij {
-    pluginName 'Edu-IntelliJ'
-  }
+    intellij {
+        pluginName 'Edu-IntelliJ'
+    }
 
 }
 
 
-project(':Edu-Java') {
-  sourceSets {
-    main {
-      java.srcDirs '../src'
+defineProject('Edu-Java', 'junit')
+defineProject('Edu-Kotlin', 'junit', 'Kotlin')
+defineProject('CourseCreator-IntelliJ', 'junit')
+
+def defineProject(String name, String... pluginDependencies) {
+    def intellijCommunity = getLocalProperty('intellijCommunity')
+
+    project(':' + name) {
+        sourceSets {
+            main {
+                java.srcDirs '../src'
+            }
+        }
+
+        if (intellijCommunity == null) {
+            compileJava.dependsOn(copyPlugins)
+        }
+
+        intellij {
+            pluginName name
+            plugins pluginDependencies
+        }
+        dependencies {
+            compile project(':Edu-IntelliJ')
+            if (intellijCommunity != null) {
+                compile project(':course-creator') {
+                    dependencies {
+                        compile project(':student') {
+                            dependencies {
+                                compile fileTree(dir: 'lib', include: ['*.jar'])
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
-
-  compileJava.dependsOn(copyPlugins)
-
-  intellij {
-    pluginName 'Edu-Java'
-    plugins 'junit'
-  }
-  dependencies {
-    compile project (':Edu-IntelliJ')
-  }
 }
 
-project(':Edu-Kotlin') {
-  sourceSets {
-    main {
-      java.srcDirs '../src'
+private static String getLocalProperty(String name) {
+    Properties properties = new Properties()
+    try {
+        properties.load(new FileInputStream("local.properties"))
+        return properties.getProperty(name)
     }
-  }
-
-  compileJava.dependsOn(copyPlugins)
-
-  intellij {
-    pluginName 'Edu-Kotlin'
-    plugins 'Kotlin', 'junit'
-  }
-
-  dependencies {
-    compile project (':Edu-IntelliJ')
-  }
-}
-
-project(':CourseCreator-IntelliJ') {
-  sourceSets {
-    main {
-      java.srcDirs '../src'
+    catch (ignored) {
+        return null
     }
-  }
-
-  compileJava.dependsOn(copyPlugins)
-  intellij {
-    pluginName 'CourseCreator-IntelliJ'
-    plugins 'junit'
-  }
-
-  dependencies {
-    compile project (':Edu-IntelliJ')
-    compile files(rootProject.projectDir.toString() + "/gradleBuild/course-creator/classes")
-    compile files(rootProject.projectDir.toString() + "/gradleBuild/student/classes")
-  }
-
 }
