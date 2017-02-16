@@ -15,16 +15,13 @@
   <idea-version since-build="162.75"/>
 
   <depends>com.intellij.modules.lang</depends>
-  <depends>com.jetbrains.edu.intellij</depends>
   <depends>com.jetbrains.edu.coursecreator</depends>
   <depends>com.jetbrains.edu.interactivelearning</depends>
   <depends>JUnit</depends>
 
-  <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
+  <extensions defaultExtensionNs="Edu">
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCustomCourseProjectTemplate" order="last"/>
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCCProjectTemplate" order="last"/>
-  </extensions>
-  <extensions defaultExtensionNs="Edu">
     <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduJavaCCLanguageManager" language="JAVA"/>
     <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduKotlinCCLanguageManager" language="kotlin"/>
   </extensions>

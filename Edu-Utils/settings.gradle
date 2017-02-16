@@ -1,4 +1,4 @@
-include 'Edu-IntelliJ', 'Edu-Java', 'Edu-Kotlin', 'CourseCreator-IntelliJ'
+include 'Edu-Java', 'Edu-Kotlin', 'CourseCreator-IntelliJ'
 def intellijCommunity = getIntellijCommunity()
 
 private static String getIntellijCommunity() {
@@ -17,4 +17,6 @@ if (intellijCommunity != null) {
     project(":student").projectDir = new File(intellijCommunity, 'python/educational-core/student')
     include "course-creator"
     project(":course-creator").projectDir = new File(intellijCommunity, 'python/educational-core/course-creator')
+    include "edu-intellij"
+    project(":edu-intellij").projectDir = new File(intellijCommunity, 'python/educational-core/edu-intellij')
 }

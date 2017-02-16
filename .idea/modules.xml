@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Edu-Utils/CourseCreator-IntelliJ/CourseCreator-IntelliJ.iml" filepath="$PROJECT_DIR$/Edu-Utils/CourseCreator-IntelliJ/CourseCreator-IntelliJ.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Edu-Utils/Edu-IntelliJ/Edu-IntelliJ.iml" filepath="$PROJECT_DIR$/Edu-Utils/Edu-IntelliJ/Edu-IntelliJ.iml" />
       <module fileurl="file://$PROJECT_DIR$/Edu-Utils/Edu-Java/Edu-Java.iml" filepath="$PROJECT_DIR$/Edu-Utils/Edu-Java/Edu-Java.iml" />
       <module fileurl="file://$PROJECT_DIR$/Edu-Utils/Edu-Kotlin/Edu-Kotlin.iml" filepath="$PROJECT_DIR$/Edu-Utils/Edu-Kotlin/Edu-Kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/Edu-Utils/Edu-Utils.iml" filepath="$PROJECT_DIR$/Edu-Utils/Edu-Utils.iml" />
