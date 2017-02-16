@@ -15,7 +15,6 @@
 
   <depends>com.intellij.modules.lang</depends>
   <depends>com.jetbrains.edu.interactivelearning</depends>
-  <depends>com.jetbrains.edu.intellij</depends>
   <depends>com.intellij.modules.lang</depends>
 
   <extensions defaultExtensionNs="Edu">
