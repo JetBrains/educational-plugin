@@ -18,7 +18,6 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>com.jetbrains.edu.interactivelearning</depends>
     <depends>org.jetbrains.kotlin</depends>
-    <depends>com.jetbrains.edu.intellij</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceInterface="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"
@@ -30,7 +29,7 @@
         <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
     </extensions>
-    <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
+    <extensions defaultExtensionNs="Edu">
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate"/>
         <courseConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinCourseConfigurator" language="kotlin"/>
     </extensions>
