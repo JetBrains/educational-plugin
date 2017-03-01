@@ -3,7 +3,7 @@ package com.jetbrains.edu.course.creator;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.projectWizard.AbstractModuleBuilder;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.jetbrains.edu.intellij.EduIntelliJProjectTemplate;
+import com.jetbrains.edu.learning.intellij.EduIntelliJProjectTemplate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

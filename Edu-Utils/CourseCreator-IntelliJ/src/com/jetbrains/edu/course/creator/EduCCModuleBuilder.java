@@ -23,7 +23,7 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.InvalidDataException;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCNewProjectPanel;
-import com.jetbrains.edu.intellij.EduCourseConfigurator;
+import com.jetbrains.edu.learning.intellij.EduCourseConfigurator;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
