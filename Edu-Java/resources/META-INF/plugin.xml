@@ -16,12 +16,13 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>com.jetbrains.edu.interactivelearning</depends>
   <depends>com.intellij.modules.lang</depends>
+  <depends optional="true" config-file="course-creator.xml">com.jetbrains.edu.coursecreator</depends>
 
   <extensions defaultExtensionNs="Edu">
     <studyPluginConfigurator implementation="com.jetbrains.edu.java.EduJavaStudyToolWindowConfigurator"/>
     <StudyLanguageManager language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaStudyLanguageManager"/>
   </extensions>
-  <extensions defaultExtensionNs="com.jetbrains.edu.intellij">
+  <extensions defaultExtensionNs="Edu">
     <courseConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaCourseConfigurator"/>
   </extensions>
 
