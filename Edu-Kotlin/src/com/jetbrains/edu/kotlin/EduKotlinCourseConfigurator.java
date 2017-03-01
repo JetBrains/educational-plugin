@@ -11,7 +11,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.util.text.VersionComparatorUtil;
-import com.jetbrains.edu.intellij.EduCourseConfigurator;
+import com.jetbrains.edu.learning.intellij.EduCourseConfigurator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
