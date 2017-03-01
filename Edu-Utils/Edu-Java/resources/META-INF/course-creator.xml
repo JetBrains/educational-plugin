@@ -1,0 +1,3 @@
+<extensions defaultExtensionNs="Edu">
+    <CCLanguageManager implementationClass="com.jetbrains.edu.java.course.creator.EduJavaCCLanguageManager" language="JAVA"/>
+</extensions>

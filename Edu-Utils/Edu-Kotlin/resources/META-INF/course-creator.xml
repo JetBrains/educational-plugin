@@ -1,0 +1,4 @@
+<extensions defaultExtensionNs="Edu">
+    <CCLanguageManager implementationClass="com.jetbrains.edu.kotlin.course.creator.EduKotlinCCLanguageManager"
+                       language="kotlin"/>
+</extensions>

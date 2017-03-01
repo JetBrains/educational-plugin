@@ -18,6 +18,8 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>com.jetbrains.edu.interactivelearning</depends>
     <depends>org.jetbrains.kotlin</depends>
+    <depends optional="true" config-file="course-creator.xml">com.jetbrains.edu.coursecreator</depends>
+
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceInterface="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"

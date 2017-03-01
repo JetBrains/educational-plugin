@@ -22,8 +22,6 @@
   <extensions defaultExtensionNs="Edu">
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCustomCourseProjectTemplate" order="last"/>
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCCProjectTemplate" order="last"/>
-    <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduJavaCCLanguageManager" language="JAVA"/>
-    <CCLanguageManager implementationClass="com.jetbrains.edu.course.creator.EduKotlinCCLanguageManager" language="kotlin"/>
   </extensions>
 
     <actions>

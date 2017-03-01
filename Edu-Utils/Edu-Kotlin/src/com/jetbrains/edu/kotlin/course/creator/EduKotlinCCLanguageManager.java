@@ -1,4 +1,4 @@
-package com.jetbrains.edu.course.creator;
+package com.jetbrains.edu.kotlin.course.creator;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.openapi.project.Project;
