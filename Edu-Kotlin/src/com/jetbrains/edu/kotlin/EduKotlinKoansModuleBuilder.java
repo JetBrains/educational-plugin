@@ -15,7 +15,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.learning.stepic.CourseInfo;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import com.jetbrains.edu.utils.generation.EduCourseModuleBuilder;
-import com.jetbrains.edu.utils.generation.EduProjectGenerator;
+import com.jetbrains.edu.learning.intellij.generation.EduProjectGenerator;
+import com.jetbrains.edu.utils.generation.EduModuleBuilderUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +62,7 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
             return baseModule;
         }
 
-        createCourseFromCourseInfo(moduleModel, project, generator, courseInfo);
+        EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, courseInfo, getModuleFileDirectory());
         return baseModule;
     }
 

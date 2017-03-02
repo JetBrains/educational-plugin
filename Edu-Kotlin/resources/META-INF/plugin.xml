@@ -32,7 +32,7 @@
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
     </extensions>
     <extensions defaultExtensionNs="Edu">
-        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate"/>
+        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate" order="first"/>
         <courseConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinCourseConfigurator" language="kotlin"/>
     </extensions>
 
