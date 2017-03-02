@@ -11,7 +11,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.util.text.VersionComparatorUtil;
-import com.jetbrains.edu.learning.intellij.EduCourseConfigurator;
+import com.jetbrains.edu.utils.generation.EduCourseConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 
-public class EduKotlinCourseConfigurator implements EduCourseConfigurator {
+public class EduKotlinCourseConfigurator extends EduCourseConfiguratorBase {
     private static final Logger LOG = Logger.getInstance(EduKotlinCourseConfigurator.class);
 
     @Override

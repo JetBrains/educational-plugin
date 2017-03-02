@@ -20,7 +20,6 @@
   <depends>JUnit</depends>
 
   <extensions defaultExtensionNs="Edu">
-    <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCustomCourseProjectTemplate" order="last"/>
     <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCCProjectTemplate" order="last"/>
   </extensions>
 

@@ -1,6 +1,6 @@
 package com.jetbrains.edu.java;
 
-import com.jetbrains.edu.learning.intellij.EduCourseConfigurator;
+import com.jetbrains.edu.utils.generation.EduCourseConfiguratorBase;
 
-public class EduJavaCourseConfigurator implements EduCourseConfigurator {
+public class EduJavaCourseConfigurator extends EduCourseConfiguratorBase {
 }
