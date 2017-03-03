@@ -16,6 +16,7 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>com.jetbrains.edu.interactivelearning</depends>
   <depends>com.intellij.modules.lang</depends>
+  <depends>JUnit</depends>
   <depends optional="true" config-file="course-creator.xml">com.jetbrains.edu.coursecreator</depends>
 
   <extensions defaultExtensionNs="Edu">
