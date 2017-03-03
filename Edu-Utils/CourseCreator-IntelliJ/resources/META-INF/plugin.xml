@@ -17,14 +17,9 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>com.jetbrains.edu.coursecreator</depends>
   <depends>com.jetbrains.edu.interactivelearning</depends>
-  <depends>JUnit</depends>
 
-  <extensions defaultExtensionNs="Edu">
-    <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.course.creator.EduCCProjectTemplate" order="last"/>
-  </extensions>
-
-    <actions>
-        <action id="CreateTask" class="com.jetbrains.edu.course.creator.EduCCNewTaskAction" overrides="true"/>
-        <action id="CreateLesson" class="com.jetbrains.edu.course.creator.EduCCNewLessonAction" overrides="true"/>
-    </actions>
+  <actions>
+    <action id="CreateTask" class="com.jetbrains.edu.course.creator.EduCCNewTaskAction" overrides="true"/>
+    <action id="CreateLesson" class="com.jetbrains.edu.course.creator.EduCCNewLessonAction" overrides="true"/>
+  </actions>
 </idea-plugin>
