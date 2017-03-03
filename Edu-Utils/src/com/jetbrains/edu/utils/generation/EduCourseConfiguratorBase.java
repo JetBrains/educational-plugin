@@ -5,6 +5,7 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.intellij.EduCourseConfigurator;
 import com.jetbrains.edu.learning.stepic.CourseInfo;
@@ -22,6 +23,18 @@ public class EduCourseConfiguratorBase implements EduCourseConfigurator {
     try {
       EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, selectedCourse, moduleDir);
     } catch (JDOMException | ModuleWithNameAlreadyExists | ConfigurationException | IOException e) {
+      LOG.error(e);
+    }
+  }
+
+  @Override
+  public void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel,
+                                 @NotNull Project project,
+                                 @NotNull Course course,
+                                 @Nullable String moduleDir) {
+    try {
+      EduModuleBuilderUtils.createCourseModuleContent(moduleModel, project, course, moduleDir);
+    } catch (IOException | ModuleWithNameAlreadyExists | ConfigurationException | JDOMException e) {
       LOG.error(e);
     }
   }

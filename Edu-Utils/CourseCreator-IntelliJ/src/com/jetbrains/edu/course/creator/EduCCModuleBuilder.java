@@ -29,8 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.intellij.EduCourseConfigurator;
-import com.jetbrains.edu.utils.generation.EduCourseModuleBuilder;
-import com.jetbrains.edu.utils.generation.EduModuleBuilderUtils;
+import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,7 +105,12 @@ class EduCCModuleBuilder extends EduCourseModuleBuilder {
         course.addLesson(lesson);
         course.initCourse(false);
         StudyTaskManager.getInstance(project).setCourse(course);
-        EduModuleBuilderUtils.createCourseModuleContent(moduleModel, project, course, getModuleFileDirectory());
+        EduCourseConfigurator configurator = EduCourseConfigurator.INSTANCE.forLanguage(wrapper.getLanguage());
+        if (configurator == null) {
+            LOG.error("EduCourseConfigurator for language " + wrapper.getLanguage().getDisplayName() + " not found");
+            return module;
+        }
+        configurator.createCourseModuleContent(moduleModel, project, course, getModuleFileDirectory());
         return module;
     }
 
