@@ -27,7 +27,9 @@ public class EduKotlinCourseConfigurator extends EduCourseConfiguratorBase {
     private static final Logger LOG = Logger.getInstance(EduKotlinCourseConfigurator.class);
 
     @Override
-    public void configureModule(@NotNull Project project) {
+    public void configureModule(@NotNull Module module) {
+        super.configureModule(module);
+        Project project = module.getProject();
         StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
             @Override
             public void run() {
