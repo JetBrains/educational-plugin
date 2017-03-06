@@ -104,8 +104,8 @@ task deployPlugins(type: Copy) {
     }
 }
 
-defineProject('Edu-Java', 'junit', project(':student'), project(':course-creator'))
-defineProject('Edu-Kotlin', 'junit', 'Kotlin', project(':student'), project(':course-creator'))
+defineProject('Edu-Java', 'junit')
+defineProject('Edu-Kotlin', 'junit', 'Kotlin')
 
 def defineProject(String name, Object... pluginDependencies) {
     project(':' + name) {
@@ -118,7 +118,12 @@ def defineProject(String name, Object... pluginDependencies) {
         if (!project.hasProperty('intellijCommunity')) {
             compileJava.dependsOn(copyPlugins)
         }
-
+        else {
+            Object[] newDependencies = Arrays.copyOf(pluginDependencies, pluginDependencies.length + 2)
+            newDependencies[pluginDependencies.length] = project(':student')
+            newDependencies[pluginDependencies.length + 1] = project(':course-creator')
+            pluginDependencies = newDependencies
+        }
         intellij {
             pluginName name
             plugins pluginDependencies
