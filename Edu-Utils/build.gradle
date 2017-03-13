@@ -71,7 +71,8 @@ subprojects {
 
         dependencies {
             corePlugins('org:Educational_CorePlugins:lastSuccessful')
-            compile files(rootProject.projectDir.toString() + "/gradleBuild/student/classes")
+            compile fileTree(dir: rootProject.projectDir.toString() + "/gradleBuild/student/lib", include: ['*.jar'])
+            compile fileTree(dir: rootProject.projectDir.toString() + "/gradleBuild/course-creator/lib", include: ['*.jar'])
         }
 
         task copyPlugins(type: Copy) {
