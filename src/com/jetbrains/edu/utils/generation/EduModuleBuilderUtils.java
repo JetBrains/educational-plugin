@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
-import com.jetbrains.edu.learning.stepic.CourseInfo;
+import com.jetbrains.edu.learning.courseFormat.CourseInfo;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
