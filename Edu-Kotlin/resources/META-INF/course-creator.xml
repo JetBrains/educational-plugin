@@ -1,8 +1,0 @@
-<idea-plugin>
-    <extensions defaultExtensionNs="Edu">
-        <CCLanguageManager implementationClass="com.jetbrains.edu.kotlin.course.creator.EduKotlinCCLanguageManager"
-                           language="kotlin"/>
-        <CCLessonCreator implementationClass="com.jetbrains.edu.utils.creation.EduCCLessonCreatorBase" language="kotlin"/>
-        <CCTaskCreator implementationClass="com.jetbrains.edu.utils.creation.EduCCTaskCreatorBase" language="kotlin"/>
-    </extensions>
-</idea-plugin>
