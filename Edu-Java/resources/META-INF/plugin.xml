@@ -17,19 +17,15 @@
   <depends>com.jetbrains.edu.interactivelearning</depends>
   <depends>com.intellij.modules.lang</depends>
   <depends>JUnit</depends>
-  <depends optional="true" config-file="course-creator.xml">com.jetbrains.edu.coursecreator</depends>
+  <depends optional="true">com.jetbrains.edu.coursecreator</depends>
 
   <extensions defaultExtensionNs="Edu">
-    <studyPluginConfigurator implementation="com.jetbrains.edu.java.EduJavaStudyToolWindowConfigurator"/>
-    <StudyLanguageManager language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaStudyLanguageManager"/>
-  </extensions>
-  <extensions defaultExtensionNs="Edu">
     <courseConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaCourseConfigurator"/>
+    <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
   </extensions>
 
   <actions>
     <action id="EduJavaCheckAction" class="com.jetbrains.edu.java.EduJavaCheckAction" text="Edu Java Check"/>
-    <!-- Add your actions here -->
   </actions>
 
 </idea-plugin>
