@@ -19,7 +19,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -93,7 +93,8 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
     } else {
       DumbService.getInstance(project).runWhenSmart(() -> {
         PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(src);
-        CCUtils.createTaskContent(project, null, course, psiDirectory);
+        EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+        configurator.createTaskContent(project, null, psiDirectory);
       });
     }
     return true;
