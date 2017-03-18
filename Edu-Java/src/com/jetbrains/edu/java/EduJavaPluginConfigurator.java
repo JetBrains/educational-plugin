@@ -1,7 +1,16 @@
 package com.jetbrains.edu.java;
 
+import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
+import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
 import com.intellij.ide.IdeView;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.ModifiableModuleModel;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ExternalLibraryDescriptor;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -18,13 +27,19 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.Task;
 import com.jetbrains.edu.utils.EduCCCreationUtils;
 import com.jetbrains.edu.utils.EduIntelliJNames;
+import com.jetbrains.edu.utils.generation.EduModuleBuilderUtils;
+import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class EduJavaPluginConfigurator implements EduPluginConfigurator {
   static final String TEST_JAVA = "Test.java";
+  private static final Logger LOG = Logger.getInstance(EduJavaPluginConfigurator.class);
 
   @NotNull
   @Override
@@ -100,5 +115,25 @@ public class EduJavaPluginConfigurator implements EduPluginConfigurator {
     int nextSubtaskIndex = prevSubtaskIndex + 1;
     String nextSubtaskTestsClassName = getSubtaskTestsClassName(nextSubtaskIndex);
     JavaDirectoryService.getInstance().createClass(taskPsiDir, nextSubtaskTestsClassName);
+  }
+
+  @Override
+  public void configureModule(@NotNull Module module) {
+    ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
+    List<String> defaultRoots = descriptor.getLibraryClassesRoots();
+    final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
+    ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.emptyList());
+  }
+
+  @Override
+  public void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel,
+                                        @NotNull Project project,
+                                        @NotNull Course course,
+                                        @Nullable String moduleDir) {
+    try {
+      EduModuleBuilderUtils.createCourseModuleContent(moduleModel, project, course, moduleDir);
+    } catch (IOException | ModuleWithNameAlreadyExists | ConfigurationException | JDOMException e) {
+      LOG.error(e);
+    }
   }
 }

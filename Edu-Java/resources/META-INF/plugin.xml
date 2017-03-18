@@ -20,7 +20,6 @@
   <depends optional="true">com.jetbrains.edu.coursecreator</depends>
 
   <extensions defaultExtensionNs="Edu">
-    <courseConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaCourseConfigurator"/>
     <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
   </extensions>
 
