@@ -31,7 +31,7 @@
         <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate" order="first"/>
-        <courseConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinCourseConfigurator" language="kotlin"/>
+        <courseConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinLibConfigurator" language="kotlin"/>
     </extensions>
 
     <actions>
