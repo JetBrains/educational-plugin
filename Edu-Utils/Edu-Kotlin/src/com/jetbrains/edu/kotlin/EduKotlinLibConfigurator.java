@@ -9,9 +9,7 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.util.text.VersionComparatorUtil;
-import com.jetbrains.edu.utils.generation.EduCourseConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
@@ -23,29 +21,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 
-public class EduKotlinCourseConfigurator extends EduCourseConfiguratorBase {
-    private static final Logger LOG = Logger.getInstance(EduKotlinCourseConfigurator.class);
+public class EduKotlinLibConfigurator {
+  private static final Logger LOG = Logger.getInstance(EduKotlinLibConfigurator.class);
 
-    @Override
-    public void configureModule(@NotNull Module module) {
-        super.configureModule(module);
-        Project project = module.getProject();
-        StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
-            @Override
-            public void run() {
-
-                if (tryConfigureSilently(project)) {
-                    return;
-                }
-                if (!tryOldAPI(project)) {
-                    LOG.warn("Failed to configure kotlin lib for edu project");
-                }
-            }
-        });
+  public static void configureLib(@NotNull Project project) {
+    if (tryConfigureSilently(project)) {
+      return;
     }
+    if (!tryOldAPI(project)) {
+      LOG.warn("Failed to configure kotlin lib for edu project");
+    }
+  }
 
     //bad way to configure kotlin lib
-    private boolean tryOldAPI(Project project) {
+    private static boolean tryOldAPI(Project project) {
 
         String settingName = "Configure Kotlin: info notification";
         NotificationsConfiguration.getNotificationsConfiguration().changeSettings(settingName,
@@ -94,7 +83,7 @@ public class EduKotlinCourseConfigurator extends EduCourseConfiguratorBase {
 //        }
 //    }
 
-    private boolean configureWithoutCollector(Project project, Class<?> confClass, KotlinProjectConfigurator configurator, String lib) {
+    private static boolean configureWithoutCollector(Project project, Class<?> confClass, KotlinProjectConfigurator configurator, String lib) {
         try {
             Method method = confClass.getDeclaredMethod("configureModuleWithLibrary", Module.class, String.class, String.class);
             method.setAccessible(true);
@@ -108,7 +97,7 @@ public class EduKotlinCourseConfigurator extends EduCourseConfiguratorBase {
     }
 
     //should work since Kotlin 1.0.2
-    private boolean tryConfigureSilently(Project project) {
+    private static boolean tryConfigureSilently(Project project) {
         //TODO: uncomment this when nobody use kotlin plugin versions < 1.0.2
 //        KotlinJavaModuleConfigurator.getInstance().configureSilently(project);
 

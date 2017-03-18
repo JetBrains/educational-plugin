@@ -41,7 +41,7 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
         if (baseModule == null) {
             return null;
         }
-        new EduKotlinCourseConfigurator().configureModule(baseModule);
+        EduKotlinLibConfigurator.configureLib(baseModule.getProject());
         return baseModule;
     }
 
