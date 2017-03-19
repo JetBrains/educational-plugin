@@ -17,9 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -54,17 +52,7 @@ public class EduJavaPluginConfigurator implements EduPluginConfigurator {
 
   @Override
   public PsiDirectory createTask(@NotNull Project project, @NotNull StudyItem item, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduCCCreationUtils.createTask(project, item, view, parentDirectory, course);
-  }
-
-  @Override
-  public void createTaskContent(@NotNull Project project,
-                                @Nullable IdeView view,
-                                @NotNull PsiDirectory taskDirectory) {
-    StudyUtils.createFromTemplate(project, taskDirectory, "Task.java", view, false);
-    StudyUtils.createFromTemplate(project, taskDirectory, TEST_JAVA, view, false);
-    String taskDescriptionFileName = StudyUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat());
-    StudyUtils.createFromTemplate(project, taskDirectory, taskDescriptionFileName, view, false);
+    return EduCCCreationUtils.createTask(project, item, view, parentDirectory, "Task.java", TEST_JAVA);
   }
 
   @Override
