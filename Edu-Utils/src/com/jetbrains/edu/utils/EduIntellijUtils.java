@@ -123,7 +123,7 @@ public class EduIntellijUtils {
 
     }
 
-  public static PsiDirectory createTask(@NotNull Project project, @NotNull StudyItem item, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory,
+  public static PsiDirectory createTask(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory,
                                         @Nullable String taskFileName, @Nullable String testFileName) {
     String lessonDirName = parentDirectory.getName();
     NewModuleAction newModuleAction = new NewModuleAction();
@@ -132,7 +132,6 @@ public class EduIntellijUtils {
     if (lessonModule == null || utilModule == null) {
       return null;
     }
-    Task task = (Task) item;
     newModuleAction.createModuleFromWizard(project, null, new AbstractProjectWizard("", project, "") {
       @Override
       public StepSequence getSequence() {
