@@ -10,7 +10,6 @@ import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.Task;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
@@ -59,7 +58,7 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   }
 
   @Override
-  public PsiDirectory createTask(@NotNull Project project, @NotNull StudyItem item, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, item, view, parentDirectory, "Task.java", TEST_JAVA);
+  public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
+    return EduIntellijUtils.createTask(project, task, view, parentDirectory, "Task.java", TEST_JAVA);
   }
 }
