@@ -17,9 +17,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;
 import com.jetbrains.edu.learning.actions.StudyShowHintAction;
@@ -56,13 +54,7 @@ public class EduKotlinPluginConfigurator implements EduPluginConfigurator {
 
   @Override
   public PsiDirectory createTask(@NotNull Project project, @NotNull StudyItem item, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduCCCreationUtils.createTask(project, item, view, parentDirectory, course);
-  }
-
-  @Override
-  public void createTaskContent(@NotNull Project project, @Nullable IdeView view, @NotNull PsiDirectory taskDirectory) {
-    String taskDescriptionFileName = StudyUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat());
-    StudyUtils.createFromTemplate(project, taskDirectory, taskDescriptionFileName, view, false);
+    return EduCCCreationUtils.createTask(project, item, view, parentDirectory, null, null);
   }
 
   @Override
