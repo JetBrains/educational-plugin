@@ -105,9 +105,7 @@ public class EduKotlinPluginConfigurator implements EduPluginConfigurator {
     final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
     ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.emptyList());
     Project project = module.getProject();
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-      EduKotlinLibConfigurator.configureLib(project);
-    });
+    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> EduKotlinLibConfigurator.configureLib(project));
   }
 
   @Override
