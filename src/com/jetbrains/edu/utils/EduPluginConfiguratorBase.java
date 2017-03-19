@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.Task;
 import com.jetbrains.edu.utils.generation.EduLessonModuleBuilder;
 import com.jetbrains.edu.utils.generation.EduModuleBuilderUtils;
 import org.jdom.JDOMException;
@@ -36,10 +36,9 @@ import java.util.List;
 
 public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator {
   @Override
-  public PsiDirectory createLesson(@NotNull Project project, @NotNull StudyItem item, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory) {
+  public PsiDirectory createLessonContent(@NotNull Project project, @NotNull Lesson lesson, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory) {
     NewModuleAction newModuleAction = new NewModuleAction();
     String courseDirPath = parentDirectory.getVirtualFile().getPath();
-    Lesson lesson = (Lesson) item;
     Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduIntelliJNames.UTIL);
     if (utilModule == null) {
       return null;
@@ -59,8 +58,8 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
   }
 
   @Override
-  public PsiDirectory createTask(@NotNull Project project, @NotNull StudyItem item, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, item, view, parentDirectory, null, null);
+  public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
+    return EduIntellijUtils.createTask(project, task, view, parentDirectory, null, null);
   }
 
   @NotNull
