@@ -15,7 +15,7 @@
       `ideaPath` Path to your IJ community instance (it is advisable to use the same IntelliJ Idea instance as your IntelliJ Plugin Sdk)
 
 
-   Examples of local.properties content:
+   Examples:
       
 ```groovy
 intellijCommunity = /home/user/progs/intellijCommunity
