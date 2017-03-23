@@ -10,7 +10,7 @@ import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   }
 
   @Override
-  public void createTestsForNewSubtask(@NotNull Project project, @NotNull Task task) {
+  public void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       return;

@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyState;
 import com.jetbrains.edu.learning.core.EduNames;
-import com.jetbrains.edu.learning.courseFormat.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.utils.EduCheckAction;
 import com.jetbrains.edu.utils.EduIntelliJNames;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +21,8 @@ class EduJavaCheckAction extends EduCheckAction {
     protected VirtualFile getTestsFile(@NotNull StudyState studyState) {
         String testFileName = EduJavaPluginConfigurator.TEST_JAVA;
         Task task = studyState.getTask();
-        int activeSubtaskIndex = task.getActiveSubtaskIndex();
-        if (task.hasSubtasks() && activeSubtaskIndex != 0) {
+        if (task instanceof TaskWithSubtasks) {
+            int activeSubtaskIndex = ((TaskWithSubtasks) task).getActiveSubtaskIndex();
             testFileName = FileUtil.getNameWithoutExtension(testFileName) + EduNames.SUBTASK_MARKER + activeSubtaskIndex + "." + FileUtilRt.getExtension(EduJavaPluginConfigurator.TEST_JAVA);
         }
         VirtualFile taskDir = studyState.getTaskDir();

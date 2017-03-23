@@ -2,7 +2,7 @@ package com.jetbrains.edu.kotlin;
 
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.courseFormat.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.twitter.StudyTwitterUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

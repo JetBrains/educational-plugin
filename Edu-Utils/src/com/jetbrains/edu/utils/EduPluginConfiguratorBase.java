@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.utils.generation.EduLessonModuleBuilder;
 import com.jetbrains.edu.utils.generation.EduModuleBuilderUtils;
 import org.jdom.JDOMException;
