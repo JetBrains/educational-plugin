@@ -8,14 +8,14 @@
   * **Junit** (<idea_home>/plugins/junit/lib/idea-junit.jar)
 3. Clone sources of IntelliJ from [github](https://github.com/JetBrains/intellij-community/)
 4. Add sources of IntelliJ IDEA to your plugin sdk source roots.
-5. Create local.properties file with the following content:
+5. Edit gradle.properties file with the following content:
 
      `intellijCommunity` Path to your IntelliJ sources (downloaded on step 3)
 
       `ideaPath` Path to your IJ community instance (it is advisable to use the same IntelliJ Idea instance as your IntelliJ Plugin Sdk)
 
 
-   Examples of local.properties content:
+   Examples:
       
 ```groovy
 intellijCommunity = /home/user/progs/intellijCommunity
