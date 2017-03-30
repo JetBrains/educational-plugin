@@ -36,8 +36,7 @@ subprojects {
     intellij {
         if (project.hasProperty('ideaPath')) {
             localPath ideaPath
-        }
-        else {
+        } else {
             if (project.hasProperty('ideaVersion')) {
                 version ideaVersion
             }
@@ -71,8 +70,7 @@ subprojects {
 
         dependencies {
             corePlugins('org:Educational_CorePlugins:lastSuccessful')
-            compile fileTree(dir: rootProject.projectDir.toString() + "/gradleBuild/student/lib", include: ['*.jar'])
-            compile fileTree(dir: rootProject.projectDir.toString() + "/gradleBuild/course-creator/lib", include: ['*.jar'])
+            compile fileTree(dir: rootProject.projectDir.toString() + "/gradleBuild/educational-core/lib", include: ['*.jar'])
         }
 
         task copyPlugins(type: Copy) {
@@ -92,16 +90,11 @@ task cleanPluginsDir(type: Delete) {
 task deployPlugins(type: Copy) {
     dependsOn(cleanPluginsDir)
     def root = rootProject.projectDir.toString()
-    def studentJar = "student-${version}.jar"
-    from root + "/gradleBuild/student/libs/" + studentJar
-    def courseCreatorJar = "course-creator-${version}.jar"
-    from root + "/gradleBuild/course-creator/libs/" + courseCreatorJar
+    def coreJar = "educational-core-${version}.jar"
+    from root + "/gradleBuild/educational-core/libs/" + coreJar
     into root + "/plugins"
     rename { filename ->
-        filename.replace "$courseCreatorJar", "course-creator.jar"
-    }
-    rename { filename ->
-        filename.replace "$studentJar", "student.jar"
+        filename.replace "$coreJar", "educational-core.jar"
     }
 }
 
@@ -118,11 +111,9 @@ def defineProject(String name, Object... pluginDependencies) {
 
         if (!project.hasProperty('intellijCommunity')) {
             compileJava.dependsOn(copyPlugins)
-        }
-        else {
-            Object[] newDependencies = Arrays.copyOf(pluginDependencies, pluginDependencies.length + 2)
-            newDependencies[pluginDependencies.length] = project(':student')
-            newDependencies[pluginDependencies.length + 1] = project(':course-creator')
+        } else {
+            Object[] newDependencies = Arrays.copyOf(pluginDependencies, pluginDependencies.length + 1)
+            newDependencies[pluginDependencies.length] = project(':educational-core')
             pluginDependencies = newDependencies
         }
         intellij {
@@ -132,13 +123,9 @@ def defineProject(String name, Object... pluginDependencies) {
         }
         dependencies {
             if (project.hasProperty('intellijCommunity')) {
-                compile project(':course-creator') {
+                compile project(':educational-core') {
                     dependencies {
-                        compile project(':student') {
-                            dependencies {
-                                compile fileTree(dir: 'lib', include: ['*.jar'])
-                            }
-                        }
+                        compile fileTree(dir: 'lib', include: ['*.jar'])
                     }
                 }
             }

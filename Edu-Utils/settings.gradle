@@ -1,8 +1,6 @@
 include 'Edu-Java', 'Edu-Kotlin'
 
 if (hasProperty("intellijCommunity")) {
-    include "student"
-    project(":student").projectDir = new File(intellijCommunity, 'python/educational-core/student')
-    include "course-creator"
-    project(":course-creator").projectDir = new File(intellijCommunity, 'python/educational-core/course-creator')
+    include "educational-core"
+    project(":educational-core").projectDir = new File(intellijCommunity, 'python/educational-core')
 }
