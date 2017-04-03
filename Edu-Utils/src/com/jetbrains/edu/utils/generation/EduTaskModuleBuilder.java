@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,12 +60,6 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
   }
 
   protected void createTask(Project project, Course course, VirtualFile src) throws IOException {
-    String courseResourcesDirectory = course.getCourseDirectory();
-    String taskResourcesPath = FileUtil.join(courseResourcesDirectory, EduNames.LESSON + myTask.getLesson().getIndex(), EduNames.TASK + myTask.getIndex());
-    String srcResourcesPath = FileUtil.join(taskResourcesPath, EduNames.SRC);
-    if (new File(srcResourcesPath).exists()) {
-      taskResourcesPath = srcResourcesPath;
-    }
-    FileUtil.copyDirContent(new File(taskResourcesPath), new File(src.getPath()));
+    StudyGenerator.createTaskContent(myTask, src);
   }
 }

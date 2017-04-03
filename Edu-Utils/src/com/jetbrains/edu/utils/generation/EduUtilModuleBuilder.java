@@ -18,8 +18,10 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.utils.EduIntelliJNames;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import org.jdom.JDOMException;
@@ -29,41 +31,50 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 class EduUtilModuleBuilder extends JavaModuleBuilder {
 
-    public EduUtilModuleBuilder(String moduleDir) {
-        setName(EduIntelliJNames.UTIL);
-        setModuleFilePath(FileUtil.join(moduleDir, EduIntelliJNames.UTIL, EduIntelliJNames.UTIL + ModuleFileType.DOT_DEFAULT_EXTENSION));
-    }
+  private final Lesson myAdditionalMaterials;
 
-    @NotNull
-    @Override
-    public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
-        Module baseModule = super.createModule(moduleModel);
-        String directory = getModuleFileDirectory();
-        if (directory == null) {
-            return baseModule;
-        }
-        VirtualFile moduleDir = VfsUtil.findFileByIoFile(new File(directory), true);
-        if (moduleDir == null) {
-            return baseModule;
-        }
-        VirtualFile src = moduleDir.findChild(EduNames.SRC);
-        if (src == null) {
-            return baseModule;
-        }
-        Project project = baseModule.getProject();
-        StartupManager.getInstance(project).registerPostStartupActivity(() -> DumbService.getInstance(project).runWhenSmart(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-            EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java");
-        })));
-        ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
-        List<String> defaultRoots = descriptor.getLibraryClassesRoots();
-        final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
-        ModuleRootModificationUtil.addModuleLibrary(baseModule, descriptor.getPresentableName(), urls, Collections.<String>emptyList());
+  public EduUtilModuleBuilder(String moduleDir, Lesson additionalMaterials) {
+    myAdditionalMaterials = additionalMaterials;
+    setName(EduIntelliJNames.UTIL);
+    setModuleFilePath(FileUtil.join(moduleDir, EduIntelliJNames.UTIL, EduIntelliJNames.UTIL + ModuleFileType.DOT_DEFAULT_EXTENSION));
+  }
 
-        String courseDirectory = StudyTaskManager.getInstance(project).getCourse().getCourseDirectory();
-        FileUtil.copyDirContent(new File(courseDirectory, EduIntelliJNames.UTIL), new File(src.getPath()));
-        return baseModule;
+  @NotNull
+  @Override
+  public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
+    Module baseModule = super.createModule(moduleModel);
+    String directory = getModuleFileDirectory();
+    if (directory == null) {
+      return baseModule;
     }
+    VirtualFile moduleDir = VfsUtil.findFileByIoFile(new File(directory), true);
+    if (moduleDir == null) {
+      return baseModule;
+    }
+    VirtualFile src = moduleDir.findChild(EduNames.SRC);
+    if (src == null) {
+      return baseModule;
+    }
+    Project project = baseModule.getProject();
+    StartupManager.getInstance(project).registerPostStartupActivity(() -> DumbService.getInstance(project).runWhenSmart(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+      EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java");
+    })));
+    ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
+    List<String> defaultRoots = descriptor.getLibraryClassesRoots();
+    final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
+    ModuleRootModificationUtil.addModuleLibrary(baseModule, descriptor.getPresentableName(), urls, Collections.<String>emptyList());
+
+    final List<Task> taskList = myAdditionalMaterials.getTaskList();
+    if (taskList.size() == 1) {
+      final Task task = taskList.get(0);
+      for (Map.Entry<String, String> entry : task.getTestsText().entrySet()) {
+        StudyGenerator.createChildFile(project.getBaseDir(), entry.getKey(), entry.getValue());
+      }
+    }
+    return baseModule;
+  }
 }
