@@ -29,7 +29,6 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -75,8 +74,7 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
   }
 
   @Override
-  public boolean excludeFromArchive(@NotNull File pathname) {
-    String name = pathname.getName();
+  public boolean excludeFromArchive(@NotNull String name) {
     return "out".equals(name) || ".idea".equals(name) || "iml".equals(FileUtilRt.getExtension(name)) || EduIntelliJNames.TEST_RUNNER_FILE.equals(name);
   }
 

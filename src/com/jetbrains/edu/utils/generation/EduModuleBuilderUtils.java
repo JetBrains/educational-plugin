@@ -12,10 +12,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
-import com.jetbrains.edu.learning.courseFormat.CourseInfo;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,12 +33,12 @@ public class EduModuleBuilderUtils {
   public static void createCourseFromCourseInfo(@NotNull ModifiableModuleModel moduleModel,
                                          @NotNull Project project,
                                          @NotNull StudyProjectGenerator generator,
-                                         @NotNull CourseInfo courseInfo,
+                                         @NotNull Course course,
                                          @Nullable String moduleDir) throws JDOMException, ModuleWithNameAlreadyExists, ConfigurationException, IOException {
-    generator.setSelectedCourse(courseInfo);
+    generator.setSelectedCourse(course);
     generator.generateProject(project, project.getBaseDir());
 
-    Course course = StudyTaskManager.getInstance(project).getCourse();
+    course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
       LOG.info("failed to generate course");
       return;
@@ -52,7 +52,10 @@ public class EduModuleBuilderUtils {
       return;
     }
 
-    EduUtilModuleBuilder utilModuleBuilder = new EduUtilModuleBuilder(moduleDir);
+    final Lesson additionalMaterials = course.getLessons(true).stream().
+        filter(lesson -> EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).findFirst().orElse(null);
+
+    EduUtilModuleBuilder utilModuleBuilder = new EduUtilModuleBuilder(moduleDir, additionalMaterials);
     Module utilModule = utilModuleBuilder.createModule(moduleModel);
 
     createLessonModules(moduleModel, course, moduleDir, utilModule);
