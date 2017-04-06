@@ -18,6 +18,7 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.util.PathUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -74,7 +75,8 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
   }
 
   @Override
-  public boolean excludeFromArchive(@NotNull String name) {
+  public boolean excludeFromArchive(@NotNull String path) {
+    final String name = PathUtil.getFileName(path);
     return "out".equals(name) || ".idea".equals(name) || "iml".equals(FileUtilRt.getExtension(name)) || EduIntelliJNames.TEST_RUNNER_FILE.equals(name);
   }
 
