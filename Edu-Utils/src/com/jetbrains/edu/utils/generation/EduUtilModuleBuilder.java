@@ -68,11 +68,13 @@ class EduUtilModuleBuilder extends JavaModuleBuilder {
     final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
     ModuleRootModificationUtil.addModuleLibrary(baseModule, descriptor.getPresentableName(), urls, Collections.<String>emptyList());
 
-    final List<Task> taskList = myAdditionalMaterials.getTaskList();
-    if (taskList.size() == 1) {
-      final Task task = taskList.get(0);
-      for (Map.Entry<String, String> entry : task.getTestsText().entrySet()) {
-        StudyGenerator.createChildFile(project.getBaseDir(), entry.getKey(), entry.getValue());
+    if (myAdditionalMaterials != null) {
+      final List<Task> taskList = myAdditionalMaterials.getTaskList();
+      if (taskList.size() == 1) {
+        final Task task = taskList.get(0);
+        for (Map.Entry<String, String> entry : task.getTestsText().entrySet()) {
+          StudyGenerator.createChildFile(project.getBaseDir(), entry.getKey(), entry.getValue());
+        }
       }
     }
     return baseModule;
