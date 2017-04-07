@@ -1,5 +1,6 @@
 package com.jetbrains.edu.kotlin;
 
+import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.module.Module;
@@ -7,12 +8,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;
 import com.jetbrains.edu.learning.actions.StudyShowHintAction;
 import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.utils.EduIntellijUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
@@ -53,5 +59,10 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
     super.configureModule(module);
     Project project = module.getProject();
     StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> EduKotlinLibConfigurator.configureLib(project));
+  }
+
+  @Override
+  public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
+    return EduIntellijUtils.createTask(project, task, view, parentDirectory, "Task.kt", TESTS_KT);
   }
 }
