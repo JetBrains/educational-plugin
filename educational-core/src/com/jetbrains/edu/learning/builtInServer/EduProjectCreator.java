@@ -38,11 +38,11 @@ public class EduProjectCreator {
     return false;
   }
 
-  private boolean createCourseProject(@NotNull Course course) {
+  public boolean createCourseProject(@NotNull Course course) {
     return false;
   }
 
-  private boolean canCreateProject(@NotNull Course course) {
+  public boolean canCreateProject(@NotNull Course course) {
     return false;
   }
 }
