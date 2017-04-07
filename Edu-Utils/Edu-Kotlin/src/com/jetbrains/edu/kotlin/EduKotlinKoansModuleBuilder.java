@@ -24,49 +24,47 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-
 class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
-    private static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
-    private static final Logger LOG = Logger.getInstance(EduKotlinKoansModuleBuilder.class);
+  private static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
+  private static final Logger LOG = Logger.getInstance(EduKotlinKoansModuleBuilder.class);
 
-    @Override
-    public String getBuilderId() {
-        return "kotlin.edu.builder";
+  @Override
+  public String getBuilderId() {
+    return "kotlin.edu.builder";
+  }
+
+  @Nullable
+  @Override
+  public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
+    Module baseModule = super.commitModule(project, model);
+    if (baseModule == null) {
+      return null;
     }
+    EduKotlinLibConfigurator.configureLib(baseModule.getProject());
+    return baseModule;
+  }
 
-    @Nullable
-    @Override
-    public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
-        Module baseModule = super.commitModule(project, model);
-        if (baseModule == null) {
-            return null;
-        }
-        EduKotlinLibConfigurator.configureLib(baseModule.getProject());
-        return baseModule;
+  @Nullable
+  @Override
+  public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
+    return ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, Conditions.alwaysTrue());
+  }
+
+  @NotNull
+  @Override
+  public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
+    Module baseModule = super.createModule(moduleModel);
+    Project project = baseModule.getProject();
+    EduProjectGenerator generator = new EduProjectGenerator();
+    File courseRoot = EduIntellijUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, EduKotlinKoansModuleBuilder.class);
+    final Course course = generator.addLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
+    if (course == null) {
+      LOG.info("Failed to find course " + DEFAULT_COURSE_NAME);
+      return baseModule;
     }
-
-
-    @Nullable
-    @Override
-    public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
-        return ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, Conditions.alwaysTrue());
-    }
-
-    @NotNull
-    @Override
-    public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
-        Module baseModule = super.createModule(moduleModel);
-        Project project = baseModule.getProject();
-        EduProjectGenerator generator = new EduProjectGenerator();
-        File courseRoot = EduIntellijUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, EduKotlinKoansModuleBuilder.class);
-        final Course course = generator.addLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
-        if (course == null) {
-            LOG.info("Failed to find course " + DEFAULT_COURSE_NAME);
-            return baseModule;
-        }
-        course.setLanguage("kotlin");
-        EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, course, getModuleFileDirectory());
-        return baseModule;
-    }
+    course.setLanguage("kotlin");
+    EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, course, getModuleFileDirectory());
+    return baseModule;
+  }
 
 }
