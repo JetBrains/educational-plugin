@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.utils.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,6 +57,7 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
     }
     createTask(module.getProject(), course, src);
     ModuleRootModificationUtil.addDependency(module, myUtilModule);
+    EduIntellijUtils.addJUnit(module);
     return module;
   }
 
