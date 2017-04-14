@@ -17,14 +17,9 @@
   <depends>com.jetbrains.edu.interactivelearning</depends>
   <depends>com.intellij.modules.lang</depends>
   <depends>JUnit</depends>
-  <depends optional="true">com.jetbrains.edu.coursecreator</depends>
 
   <extensions defaultExtensionNs="Edu">
     <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
   </extensions>
-
-  <actions>
-    <action id="EduJavaCheckAction" class="com.jetbrains.edu.java.EduJavaCheckAction" text="Edu Java Check"/>
-  </actions>
 
 </idea-plugin>
