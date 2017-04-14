@@ -19,7 +19,6 @@
     <depends>com.jetbrains.edu.interactivelearning</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>JUnit</depends>
-    <depends optional="true">com.jetbrains.edu.coursecreator</depends>
 
 
     <extensions defaultExtensionNs="com.intellij">
@@ -31,11 +30,6 @@
         <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate" order="first"/>
-        <courseConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinLibConfigurator" language="kotlin"/>
     </extensions>
-
-    <actions>
-        <action class="com.jetbrains.edu.kotlin.EduKotlinCheckAction" id="EduKotlinCheckAction"/>
-    </actions>
 
 </idea-plugin>
