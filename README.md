@@ -33,7 +33,7 @@ deaPath=/Users/liana/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/c
 ./gradlew deployPlugins --refresh-dependencies
 ```
 7. Choose created *idea-sandbox* directory as Sandbox Home for your selected IntelliJ Plugin Sdk (It can be done via File/Project Structure/Sdks)
-8. Add *student.jar* and *course-creator.jar* from created directory *plugins* to classpath of your your selected IntelliJ Plugin Sdk (It can be done via File/Project Structure/Sdks)
+8. Add *educational-core.jar* from created directory *plugins* to classpath of your your selected IntelliJ Plugin Sdk (It can be done via File/Project Structure/Sdks)
 
 ### Notes
 *You can read more about plugin development in [IntelliJ Sdk Docs](http://www.jetbrains.org/intellij/sdk/docs/index.html)*
