@@ -38,7 +38,7 @@ deaPath=/Users/liana/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/c
 ### Notes
 *You can read more about plugin development in [IntelliJ Sdk Docs](http://www.jetbrains.org/intellij/sdk/docs/index.html)*
 
-You can run `deployPlugins` task every time you need to get the latest versions of student.jar and course-creator.jar. 
+You can run `deployPlugins` task every time you need to get the latest versions of educational-core.jar. 
 Appropriate branch should be selected in intellij-community repository.
 
 ### Issue tracker
