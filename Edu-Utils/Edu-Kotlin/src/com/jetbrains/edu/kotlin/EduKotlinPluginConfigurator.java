@@ -9,11 +9,12 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;
 import com.jetbrains.edu.learning.actions.StudyShowHintAction;
+import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
@@ -37,9 +38,10 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
     return TESTS_KT.equals(name) || LEGACY_TESTS_KT.equals(name) || name.contains(FileUtil.getNameWithoutExtension(TESTS_KT)) && name.contains(EduNames.SUBTASK_MARKER);
   }
 
+  @NotNull
   @Override
-  public StudyCheckAction getCheckAction() {
-    return new EduKotlinCheckAction();
+  public StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask pyCharmTask, @NotNull Project project) {
+    return new EduKotlinPyCharmTaskChecker(pyCharmTask, project);
   }
 
   @NotNull

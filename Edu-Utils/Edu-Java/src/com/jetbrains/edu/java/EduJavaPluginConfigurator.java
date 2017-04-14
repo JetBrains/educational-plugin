@@ -7,10 +7,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.learning.actions.StudyCheckAction;
+import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
@@ -23,11 +25,6 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   @Override
   public String getTestFileName() {
     return TEST_JAVA;
-  }
-
-  @Override
-  public StudyCheckAction getCheckAction() {
-    return new EduJavaCheckAction();
   }
 
   @Override
@@ -55,6 +52,12 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
     int nextSubtaskIndex = prevSubtaskIndex + 1;
     String nextSubtaskTestsClassName = getSubtaskTestsClassName(nextSubtaskIndex);
     JavaDirectoryService.getInstance().createClass(taskPsiDir, nextSubtaskTestsClassName);
+  }
+
+  @NotNull
+  @Override
+  public StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask pyCharmTask, @NotNull Project project) {
+    return new EduJavaPyCharmTaskChecker(pyCharmTask, project);
   }
 
   @Override
