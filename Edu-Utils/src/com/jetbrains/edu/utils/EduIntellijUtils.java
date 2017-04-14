@@ -1,5 +1,7 @@
 package com.jetbrains.edu.utils;
 
+import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
+import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
 import com.intellij.ide.IdeView;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -14,9 +16,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -36,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 
 public class EduIntellijUtils {
@@ -161,5 +163,11 @@ public class EduIntellijUtils {
     if (fileName != null) {
       StudyUtils.createFromTemplate(project, psiDirectory, fileName, view, false);
     }
+  }
+  public static void addJUnit(Module baseModule) {
+    ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
+    List<String> defaultRoots = descriptor.getLibraryClassesRoots();
+    final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
+    ModuleRootModificationUtil.addModuleLibrary(baseModule, descriptor.getPresentableName(), urls, Collections.emptyList());
   }
 }
