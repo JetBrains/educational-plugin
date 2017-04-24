@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 
 class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
-  private static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
+  public static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
   private static final Logger LOG = Logger.getInstance(EduKotlinKoansModuleBuilder.class);
 
   @Override
