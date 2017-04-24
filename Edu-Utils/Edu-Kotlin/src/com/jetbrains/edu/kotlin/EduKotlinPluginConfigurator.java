@@ -16,10 +16,15 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
@@ -67,4 +72,16 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
     return EduIntellijUtils.createTask(project, task, view, parentDirectory, "Task.kt", TESTS_KT);
   }
+
+  @Override
+  public List<String> getBundledCoursePaths() {
+    File bundledCourseRoot = EduIntellijUtils.getBundledCourseRoot(EduKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME, EduKotlinKoansModuleBuilder.class);
+    return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), EduKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME));
+  }
+
+  @Override
+  public EduCourseProjectGenerator getEduCourseProjectGenerator() {
+    return new EduKotlinCourseProjectGenerator();
+  }
+
 }
