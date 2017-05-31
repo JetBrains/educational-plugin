@@ -6,7 +6,6 @@ import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
@@ -34,19 +33,6 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
   @Override
   public StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask pyCharmTask, @NotNull Project project) {
     return new StudyTaskChecker<PyCharmTask>(pyCharmTask, project) {
-      // TODO: remove this
-      @Override
-      public void onTaskSolved(@NotNull String message) {
-        Messages.showInfoMessage(message, message);
-//        super.onTaskSolved(message);
-      }
-
-      //TODO: remove this
-      @Override
-      public void onTaskFailed(@NotNull String message) {
-        Messages.showInfoMessage(message, message);
-//        super.onTaskFailed(message);
-      }
 
       @Override
       public StudyCheckResult check() {
