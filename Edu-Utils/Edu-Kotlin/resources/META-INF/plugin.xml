@@ -38,4 +38,10 @@
             <implementation-class>com.jetbrains.edu.kotlin.EduKotlinAndroidApplicationComponent</implementation-class>
         </component>
     </application-components>
+    <actions>
+        <action id="WelcomeScreen.KotlinAndroidCourse" class="com.jetbrains.edu.kotlin.android.KotlinAndroidCourseAction">
+            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
+        </action>
+
+    </actions>
 </idea-plugin>
