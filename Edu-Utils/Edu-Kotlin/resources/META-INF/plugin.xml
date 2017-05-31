@@ -27,9 +27,15 @@
     </extensions>
     <extensions defaultExtensionNs="Edu">
         <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator" language="kotlin"/>
+        <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinAndroidPluginConfigurator" language="kotlin-android"/>
         <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate" order="first"/>
     </extensions>
 
+    <application-components>
+        <component>
+            <implementation-class>com.jetbrains.edu.kotlin.EduKotlinAndroidApplicationComponent</implementation-class>
+        </component>
+    </application-components>
 </idea-plugin>
