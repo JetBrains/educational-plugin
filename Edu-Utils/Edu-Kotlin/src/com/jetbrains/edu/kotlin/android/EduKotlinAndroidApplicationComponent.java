@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.kotlin.android;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.components.ApplicationComponent;

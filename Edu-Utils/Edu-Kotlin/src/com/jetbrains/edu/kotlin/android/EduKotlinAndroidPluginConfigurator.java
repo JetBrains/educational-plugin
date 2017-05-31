@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.kotlin.android;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -8,6 +8,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
+import com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
@@ -15,9 +16,12 @@ import com.jetbrains.edu.learning.checker.StudyTestsOutputParser;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.stepic.StepicUser;
+import com.jetbrains.edu.utils.EduIntellijUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigurator {
@@ -84,5 +88,12 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
         super.clearState();
       }
     };
+  }
+
+  @Override
+  public List<String> getBundledCoursePaths() {
+    File bundledCourseRoot = EduIntellijUtils.getBundledCourseRoot(KotlinAndroidCourseAction.DEFAULT_COURSE_PATH,
+        KotlinAndroidCourseAction.class);
+    return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), KotlinAndroidCourseAction.DEFAULT_COURSE_PATH));
   }
 }
