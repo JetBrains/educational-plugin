@@ -10,20 +10,27 @@ import com.android.tools.idea.ddms.adb.AdbService;
 import com.android.tools.idea.run.LaunchableAndroidDevice;
 import com.android.tools.idea.wizard.model.ModelWizardDialog;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.intellij.ProjectTopics;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
@@ -38,6 +45,7 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.utils.EduIntellijUtils;
+import org.jetbrains.android.sdk.AndroidSdkType;
 import org.jetbrains.android.sdk.AndroidSdkUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
@@ -140,8 +148,8 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
                                              @NotNull String commandLine) {
         final CapturingProcessHandler handler = new CapturingProcessHandler(testProcess, null, commandLine);
         final ProcessOutput output = ProgressManager.getInstance().hasProgressIndicator() ? handler
-            .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) :
-            handler.runProcess();
+          .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) :
+          handler.runProcess();
         List<String> stdoutLines = output.getStdoutLines();
         boolean buildSuccessful = false;
         for (String line : stdoutLines) {
@@ -171,7 +179,7 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
   @Override
   public List<String> getBundledCoursePaths() {
     File bundledCourseRoot = EduIntellijUtils.getBundledCourseRoot(KotlinAndroidCourseAction.DEFAULT_COURSE_PATH,
-        KotlinAndroidCourseAction.class);
+      KotlinAndroidCourseAction.class);
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), KotlinAndroidCourseAction.DEFAULT_COURSE_PATH));
   }
 
@@ -196,13 +204,30 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
     }
 
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() ->
-        {
-          try {
-            StudyGenerator.createTaskContent(task, dir);
-          } catch (IOException e) {
-            Logger.getInstance(EduPluginConfiguratorBase.class).error(e);
-          }
+      {
+        try {
+          StudyGenerator.createTaskContent(task, dir);
+          MessageBusConnection connect = project.getMessageBus().connect();
+          connect.subscribe(ProjectTopics.MODULES, new ModuleListener() {
+            @Override
+            public void moduleAdded(@NotNull Project project, @NotNull Module module) {
+              ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+                List<Sdk> androidSdks = ProjectJdkTable.getInstance().getSdksOfType(AndroidSdkType.getInstance());
+                if (!androidSdks.isEmpty()) {
+                  Sdk androidSdk = androidSdks.get(0);
+                  ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+                  modifiableModel.setSdk(androidSdk);
+                  modifiableModel.commit();
+                  module.getProject().save();
+                }
+              }));
+            }
+          });
+
+        } catch (IOException e) {
+          Logger.getInstance(EduPluginConfiguratorBase.class).error(e);
         }
+      }
     ));
   }
 
