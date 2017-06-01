@@ -132,3 +132,13 @@ def defineProject(String name, Object... pluginDependencies) {
         }
     }
 }
+
+project(":Edu-Kotlin") {
+    dependencies {
+        def androidLibraryPath = "${ideaPath}/Contents/plugins/android/lib"
+        compileOnly files("${androidLibraryPath}/sdk-common.jar",
+                          "${androidLibraryPath}/android.jar",
+                          "${androidLibraryPath}/sdk-tools.jar",
+                          "${androidLibraryPath}/sdklib.jar")
+    }
+}

@@ -1,13 +1,25 @@
 package com.jetbrains.edu.kotlin.android;
 
-import com.intellij.execution.ExecutionException;
+import com.android.ddmlib.AndroidDebugBridge;
+import com.android.ddmlib.IDevice;
+import com.android.sdklib.internal.avd.AvdInfo;
+import com.android.tools.idea.avdmanager.AvdManagerConnection;
+import com.android.tools.idea.avdmanager.AvdOptionsModel;
+import com.android.tools.idea.avdmanager.AvdWizardUtils;
+import com.android.tools.idea.ddms.adb.AdbService;
+import com.android.tools.idea.run.LaunchableAndroidDevice;
+import com.android.tools.idea.wizard.model.ModelWizardDialog;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,6 +37,7 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.utils.EduIntellijUtils;
+import org.jetbrains.android.sdk.AndroidSdkUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,17 +59,80 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
     return new StudyTaskChecker<PyCharmTask>(pyCharmTask, project) {
 
       @Override
-      public StudyCheckResult check() {
-        GeneralCommandLine cmd = new GeneralCommandLine();
-        String testsPath = FileUtil.join(FileUtil.toSystemDependentName(project.getBaseDir().getPath()), "edu-tests");
-        cmd.withWorkDirectory(testsPath);
-        cmd.setExePath(GRADLEW);
-        cmd.addParameter(CONNECTED_ANDROID_TEST);
+      public boolean validateEnvironment() {
         try {
+          if (startEmulatorIfExists()) {
+            return true;
+          }
+          Messages.showInfoMessage(project, "Android emulator is required to check tasks. New emulator will be created and launched. ", "Android Emulator not Found");
+          AvdOptionsModel avdOptionsModel = new AvdOptionsModel(null);
+          ModelWizardDialog dialog = AvdWizardUtils.createAvdWizard(null, project, avdOptionsModel);
+          if (dialog.showAndGet()) {
+            AvdInfo avd = avdOptionsModel.getCreatedAvd();
+            return launchEmulator(avd);
+          }
+        } catch (Exception e) {
+          // ignore
+        }
+        return false;
+      }
+
+      @Override
+      public StudyCheckResult check() {
+        try {
+          GeneralCommandLine cmd = new GeneralCommandLine();
+          String testsPath = FileUtil.join(FileUtil.toSystemDependentName(project.getBaseDir().getPath()), "edu-tests");
+          cmd.withWorkDirectory(testsPath);
+          cmd.setExePath(GRADLEW);
+          cmd.addParameter(CONNECTED_ANDROID_TEST);
           return getTestOutput(cmd.createProcess(), cmd.getCommandLineString());
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
           return new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH);
         }
+      }
+
+      private boolean startEmulatorIfExists() throws Exception {
+        AndroidDebugBridge bridge = AdbService.getInstance().getDebugBridge(AndroidSdkUtils.getAdb(project)).get();
+        IDevice[] devices = bridge.getDevices();
+        for (IDevice device : devices) {
+          if (device.isEmulator() && device.getAvdName() != null) {
+              return true; // there is running emulator
+          }
+        }
+
+        for (AvdInfo avd : AvdManagerConnection.getDefaultAvdManagerConnection().getAvds(false)) {
+          if (launchEmulator(avd)) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      private boolean launchEmulator(@NotNull AvdInfo avd) throws Exception {
+        if (avd.getStatus().equals(AvdInfo.AvdStatus.OK)) {
+          LaunchableAndroidDevice launchableAndroidDevice = new LaunchableAndroidDevice(avd);
+          IDevice device = ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.WithResult<IDevice, Exception>(project, "Launching Emulator", false) {
+              ListenableFuture<IDevice> future;
+
+              @Override
+              protected IDevice compute(@NotNull ProgressIndicator indicator) throws Exception {
+                  indicator.setIndeterminate(true);
+                  ApplicationManager.getApplication().invokeAndWait(() -> future = launchableAndroidDevice.launch(project));
+                  return future.get();
+              }
+
+              @Override
+              public void onCancel() {
+                  if (future != null) {
+                      future.cancel(true);
+                  }
+              }
+          });
+          if (device != null) {
+            return true;
+          }
+        }
+        return false;
       }
 
       private StudyCheckResult getTestOutput(@NotNull Process testProcess,
