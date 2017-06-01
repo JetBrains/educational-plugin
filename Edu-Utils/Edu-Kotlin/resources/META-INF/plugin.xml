@@ -31,6 +31,7 @@
         <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.kotlin.EduKotlinKoansProjectTemplate" order="first"/>
+        <checkListener implementation="com.jetbrains.edu.kotlin.android.EduKotlinStudyCheckListener"/>
     </extensions>
 
     <application-components>
