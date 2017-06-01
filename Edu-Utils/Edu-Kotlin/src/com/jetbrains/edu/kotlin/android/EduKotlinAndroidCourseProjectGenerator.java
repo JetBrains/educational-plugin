@@ -1,5 +1,6 @@
 package com.jetbrains.edu.kotlin.android;
 
+import com.android.tools.idea.gradle.util.GradleWrapper;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -19,6 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+
+import static com.android.tools.idea.gradle.util.Projects.getBaseDirPath;
 
 class EduKotlinAndroidCourseProjectGenerator implements EduCourseProjectGenerator {
   private Course myCourse;
@@ -83,6 +88,11 @@ class EduKotlinAndroidCourseProjectGenerator implements EduCourseProjectGenerato
 
   @Override
   public void afterProjectGenerated(@NotNull Project project) {
-
+    File projectPath = getBaseDirPath(project);
+    try {
+      GradleWrapper.create(projectPath);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
