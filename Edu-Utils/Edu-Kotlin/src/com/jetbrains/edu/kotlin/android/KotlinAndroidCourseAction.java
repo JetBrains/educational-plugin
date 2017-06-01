@@ -19,9 +19,9 @@ import java.io.File;
 
 public class KotlinAndroidCourseAction extends AnAction {
   public static final String DEFAULT_COURSE_NAME = "Kotlin Android Course";   // TODO: course name
-  public static final String DEFAULT_COURSE_PATH = "Course.zip";        // TODO: Real course
-  private String ANDROID_STUDIO = "AndroidStudio";                            // TODO: better way
-  private String COURSE_LANGUAGE = "kotlin";                                  // TODO: kotlin-android fake lang
+  public static final String DEFAULT_COURSE_PATH = "AndroidCourse.zip";
+  private String ANDROID_STUDIO = "AndroidStudio";                            // TODO: find better way
+  private String COURSE_LANGUAGE = EduKotlinAndroidApplicationComponent.LANGUAGE;
   private static final Logger LOG = Logger.getInstance(KotlinAndroidCourseAction.class);
 
   public KotlinAndroidCourseAction() {

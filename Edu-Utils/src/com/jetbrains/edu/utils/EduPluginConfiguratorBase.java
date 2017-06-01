@@ -80,7 +80,6 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
     return "out".equals(name) || ".idea".equals(name) || "iml".equals(FileUtilRt.getExtension(name)) || EduIntelliJNames.TEST_RUNNER_FILE.equals(name);
   }
 
-
   @Override
   public void configureModule(@NotNull Module module) {
     ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
@@ -88,7 +87,6 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
     final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
     ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.emptyList());
   }
-
 
   @Override
   public void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel,

@@ -5,11 +5,11 @@ import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class EduKotlinAndroidApplicationComponent implements ApplicationComponent {
+  public static String LANGUAGE = "kotlin-android";
+
   @Override
   public void initComponent() {
-    new Language("kotlin-android") {
-
-    };
+    new Language(LANGUAGE){};
   }
 
   @Override

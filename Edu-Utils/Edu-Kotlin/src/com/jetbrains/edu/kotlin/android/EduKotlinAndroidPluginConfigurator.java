@@ -4,22 +4,33 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyTestsOutputParser;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.utils.EduIntellijUtils;
+import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -81,5 +92,37 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
     File bundledCourseRoot = EduIntellijUtils.getBundledCourseRoot(KotlinAndroidCourseAction.DEFAULT_COURSE_PATH,
         KotlinAndroidCourseAction.class);
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), KotlinAndroidCourseAction.DEFAULT_COURSE_PATH));
+  }
+
+
+  @Override
+  public void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel,
+                                        @NotNull Project project,
+                                        @NotNull Course course,
+                                        @Nullable String moduleDir) {
+    final List<Lesson> lessons = course.getLessons();
+    final Task task = lessons.get(0).getTaskList().get(0);
+
+    if (moduleDir == null) {
+      Logger.getInstance(EduPluginConfiguratorBase.class).error("Can't find module dir ");
+      return;
+    }
+
+    final VirtualFile dir = VfsUtil.findFileByIoFile(new File(moduleDir), true);
+    if (dir == null) {
+      Logger.getInstance(EduPluginConfiguratorBase.class).error("Can't find module dir on file system " + moduleDir);
+      return;
+    }
+
+    try {
+      StudyGenerator.createTaskContent(task, dir);
+    } catch (IOException e) {
+      Logger.getInstance(EduPluginConfiguratorBase.class).error(e);
+    }
+  }
+
+  @Override
+  public EduCourseProjectGenerator getEduCourseProjectGenerator() {
+    return new EduKotlinAndroidCourseProjectGenerator();
   }
 }
