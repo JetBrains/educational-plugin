@@ -142,13 +142,17 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
           .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) :
           handler.runProcess();
         List<String> stdoutLines = output.getStdoutLines();
+        boolean buildSuccessful = false;
         for (String line : stdoutLines) {
           if (line.startsWith(BUILD_SUCCESSFUL)) {
-            return new StudyCheckResult(StudyStatus.Solved, StudyTestsOutputParser.CONGRATULATIONS);
+            buildSuccessful = true;
           }
         }
-        // TODO: informative error message
-        return new StudyCheckResult(StudyStatus.Failed, "Test Failed");
+        final StudyTestsOutputParser.TestsOutput testsOutput = StudyTestsOutputParser.getTestsOutput(output, false);
+        if (testsOutput.isSuccess() && !buildSuccessful) {
+          return new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH);
+        }
+        return new StudyCheckResult(testsOutput.isSuccess() ? StudyStatus.Solved : StudyStatus.Failed, testsOutput.getMessage());
       }
 
       @Override
