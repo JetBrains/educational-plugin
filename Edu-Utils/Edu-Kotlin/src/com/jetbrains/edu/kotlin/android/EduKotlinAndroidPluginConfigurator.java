@@ -15,6 +15,7 @@ import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.progress.ProgressManager;
@@ -96,7 +97,7 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
         IDevice[] devices = bridge.getDevices();
         for (IDevice device : devices) {
           if (device.isEmulator() && device.getAvdName() != null) {
-              return true; // there is running emulator
+            return true; // there is running emulator
           }
         }
 
@@ -112,21 +113,21 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
         if (avd.getStatus().equals(AvdInfo.AvdStatus.OK)) {
           LaunchableAndroidDevice launchableAndroidDevice = new LaunchableAndroidDevice(avd);
           IDevice device = ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.WithResult<IDevice, Exception>(project, "Launching Emulator", false) {
-              ListenableFuture<IDevice> future;
+            ListenableFuture<IDevice> future;
 
-              @Override
-              protected IDevice compute(@NotNull ProgressIndicator indicator) throws Exception {
-                  indicator.setIndeterminate(true);
-                  ApplicationManager.getApplication().invokeAndWait(() -> future = launchableAndroidDevice.launch(project));
-                  return future.get();
-              }
+            @Override
+            protected IDevice compute(@NotNull ProgressIndicator indicator) throws Exception {
+              indicator.setIndeterminate(true);
+              ApplicationManager.getApplication().invokeAndWait(() -> future = launchableAndroidDevice.launch(project));
+              return future.get();
+            }
 
-              @Override
-              public void onCancel() {
-                  if (future != null) {
-                      future.cancel(true);
-                  }
+            @Override
+            public void onCancel() {
+              if (future != null) {
+                future.cancel(true);
               }
+            }
           });
           if (device != null) {
             return true;
@@ -139,8 +140,8 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
                                              @NotNull String commandLine) {
         final CapturingProcessHandler handler = new CapturingProcessHandler(testProcess, null, commandLine);
         final ProcessOutput output = ProgressManager.getInstance().hasProgressIndicator() ? handler
-          .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) :
-          handler.runProcess();
+            .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) :
+            handler.runProcess();
         List<String> stdoutLines = output.getStdoutLines();
         boolean buildSuccessful = false;
         for (String line : stdoutLines) {
@@ -194,11 +195,15 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
       return;
     }
 
-    try {
-      StudyGenerator.createTaskContent(task, dir);
-    } catch (IOException e) {
-      Logger.getInstance(EduPluginConfiguratorBase.class).error(e);
-    }
+    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() ->
+        {
+          try {
+            StudyGenerator.createTaskContent(task, dir);
+          } catch (IOException e) {
+            Logger.getInstance(EduPluginConfiguratorBase.class).error(e);
+          }
+        }
+    ));
   }
 
   @Override
