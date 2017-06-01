@@ -101,7 +101,7 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
           }
         }
 
-        for (AvdInfo avd : AvdManagerConnection.getDefaultAvdManagerConnection().getAvds(false)) {
+        for (AvdInfo avd : AvdManagerConnection.getDefaultAvdManagerConnection().getAvds(true)) {
           if (launchEmulator(avd)) {
             return true;
           }
