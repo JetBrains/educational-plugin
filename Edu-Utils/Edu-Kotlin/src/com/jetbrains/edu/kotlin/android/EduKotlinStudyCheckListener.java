@@ -27,7 +27,7 @@ public class EduKotlinStudyCheckListener implements StudyCheckListener {
                     try {
                         VirtualFile child = testDir.findChild(propertiesFile.getName());
                         if (child != null) {
-                            child.delete(this);
+                            child.delete(EduKotlinStudyCheckListener.class);
                         }
                         VfsUtil.copy(this, propertiesFile, testDir);
                         VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
