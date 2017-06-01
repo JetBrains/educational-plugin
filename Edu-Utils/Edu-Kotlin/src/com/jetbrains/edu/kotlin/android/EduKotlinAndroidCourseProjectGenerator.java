@@ -94,5 +94,12 @@ class EduKotlinAndroidCourseProjectGenerator implements EduCourseProjectGenerato
     } catch (IOException e) {
       e.printStackTrace();
     }
+
+    File gradlew = new File(projectPath, "gradlew");
+    if (gradlew.exists() && !gradlew.canExecute()) {
+      if (!gradlew.setExecutable(true)) {
+
+      }
+    }
   }
 }
