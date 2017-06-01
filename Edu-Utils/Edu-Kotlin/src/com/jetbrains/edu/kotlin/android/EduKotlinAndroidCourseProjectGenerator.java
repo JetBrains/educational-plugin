@@ -3,6 +3,7 @@ package com.jetbrains.edu.kotlin.android;
 import com.android.tools.idea.gradle.util.GradleWrapper;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.DumbModePermission;
@@ -98,7 +99,7 @@ class EduKotlinAndroidCourseProjectGenerator implements EduCourseProjectGenerato
     File gradlew = new File(projectPath, "gradlew");
     if (gradlew.exists() && !gradlew.canExecute()) {
       if (!gradlew.setExecutable(true)) {
-
+        Logger.getInstance(EduKotlinAndroidCourseProjectGenerator.class).warn("Unable to make gradlew executable");
       }
     }
   }
