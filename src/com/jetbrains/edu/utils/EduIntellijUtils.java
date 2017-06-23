@@ -148,8 +148,6 @@ public class EduIntellijUtils {
             if (psiDirectory == null) {
               return;
             }
-            String taskDescriptionFileName = StudyUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat());
-            StudyUtils.createFromTemplate(project, psiDirectory, taskDescriptionFileName, view, false);
             createIfNotNull(project, psiDirectory, taskFileName, view);
             createIfNotNull(project, psiDirectory, testFileName, view);
           }
