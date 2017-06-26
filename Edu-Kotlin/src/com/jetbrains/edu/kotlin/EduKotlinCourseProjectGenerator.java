@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinIcons;
 
 import javax.swing.*;
 
@@ -33,7 +34,7 @@ class EduKotlinCourseProjectGenerator implements EduCourseProjectGenerator {
       @Nullable
       @Override
       public Icon getLogo() {
-        return null;
+        return KotlinIcons.SMALL_LOGO;
       }
 
       @Override
