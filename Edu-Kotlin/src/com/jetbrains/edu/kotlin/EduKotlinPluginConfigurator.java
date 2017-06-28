@@ -31,6 +31,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   static final String LEGACY_TESTS_KT = "tests.kt";
   static final String TESTS_KT = "Tests.kt";
   private EduKotlinCourseProjectGenerator myProjectGenerator = new EduKotlinCourseProjectGenerator();
+  private static final String TASK_KT = "Task.kt";
 
   @NotNull
   @Override
@@ -71,7 +72,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, task, view, parentDirectory, "Task.kt", TESTS_KT);
+    return EduIntellijUtils.createTask(project, task, view, parentDirectory, TASK_KT, TESTS_KT);
   }
 
   @Override
