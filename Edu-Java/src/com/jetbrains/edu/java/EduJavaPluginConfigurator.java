@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
+import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.utils.EduIntellijUtils;
 import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
@@ -20,11 +21,19 @@ import org.jetbrains.annotations.Nullable;
 
 public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   static final String TEST_JAVA = "Test.java";
+  private static final String TASK_JAVA = "Task.java";
+  private final EduJavaCourseProjectGenerator myProjectGenerator = new EduJavaCourseProjectGenerator();
 
   @NotNull
   @Override
   public String getTestFileName() {
     return TEST_JAVA;
+  }
+
+  @NotNull
+  @Override
+  public String getStepikDefaultLanguage() {
+    return "java8";
   }
 
   @Override
@@ -62,6 +71,11 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, task, view, parentDirectory, "Task.java", TEST_JAVA);
+    return EduIntellijUtils.createTask(project, task, view, parentDirectory, TASK_JAVA, TEST_JAVA);
+  }
+
+  @Override
+  public EduCourseProjectGenerator getEduCourseProjectGenerator() {
+    return myProjectGenerator;
   }
 }
