@@ -15,7 +15,10 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
+import com.jetbrains.edu.utils.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +40,7 @@ public class EduModuleBuilderUtils {
                                          @Nullable String moduleDir) throws JDOMException, ModuleWithNameAlreadyExists, ConfigurationException, IOException {
     generator.setSelectedCourse(course);
     generator.generateProject(project, project.getBaseDir());
+    updateAdaptiveCourseTaskFileNames(project, course);
 
     course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
@@ -74,6 +78,16 @@ public class EduModuleBuilderUtils {
       lesson.setIndex(lessonVisibleIndex);
       EduLessonModuleBuilder eduLessonModuleBuilder = new EduLessonModuleBuilder(moduleDir, lesson, utilModule);
       eduLessonModuleBuilder.createModule(moduleModel);
+    }
+  }
+
+  private static void updateAdaptiveCourseTaskFileNames(@NotNull Project project, @NotNull Course course) {
+    if (course.isAdaptive()) {
+      Lesson adaptiveLesson = course.getLessons().get(0);
+      Task task = adaptiveLesson.getTaskList().get(0);
+      for (TaskFile taskFile : task.getTaskFiles().values()) {
+        EduIntellijUtils.nameTaskFileAfterContainingClass(task, taskFile, project);
+      }
     }
   }
 }
