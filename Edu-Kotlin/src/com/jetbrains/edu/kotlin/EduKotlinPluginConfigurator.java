@@ -30,6 +30,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   static final String LEGACY_TESTS_KT = "tests.kt";
   static final String TESTS_KT = "Tests.kt";
+  private EduKotlinCourseProjectGenerator myProjectGenerator = new EduKotlinCourseProjectGenerator();
 
   @NotNull
   @Override
@@ -81,7 +82,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public EduCourseProjectGenerator getEduCourseProjectGenerator() {
-    return new EduKotlinCourseProjectGenerator();
+    return myProjectGenerator;
   }
 
 }
