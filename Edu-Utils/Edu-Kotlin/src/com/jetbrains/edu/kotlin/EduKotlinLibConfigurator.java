@@ -11,10 +11,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
-import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
-import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
-import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator;
+import org.jetbrains.kotlin.idea.configuration.*;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -57,8 +54,9 @@ public class EduKotlinLibConfigurator {
         }
 
         if (VersionComparatorUtil.compare(plugin.getVersion(), "1.0.1") > 0) {
-            // TODO: uncomment according Kotlin plugin release
-//            configureWithCollector(project, confClass, configuratorByName, lib);
+            if (configureWithCollector(project, confClass, configuratorByName, lib)) {
+              return true;
+            }
         } else {
             if (!configureWithoutCollector(project, confClass, configuratorByName, lib)) {
                 configuratorByName.configure(project, Collections.emptyList());
@@ -69,19 +67,19 @@ public class EduKotlinLibConfigurator {
         return true;
     }
 
-//    private boolean configureWithCollector(Project project, Class<?> confClass, KotlinProjectConfigurator configurator, String lib) {
-//        try {
-//            Method method = confClass.getDeclaredMethod("configureModuleWithLibrary", Module.class, String.class, String.class, NotificationMessageCollector.class);
-//            method.setAccessible(true);
-//            NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
-//            for (Module module : ModuleManager.getInstance(project).getModules()) {
-//                method.invoke(configurator, module, lib, null, collector);
-//            }
-//            return true;
-//        } catch (Exception e) {
-//            return false;
-//        }
-//    }
+    private static boolean configureWithCollector(Project project, Class<?> confClass, KotlinProjectConfigurator configurator, String lib) {
+        try {
+            Method method = confClass.getDeclaredMethod("configureModuleWithLibrary", Module.class, String.class, String.class, NotificationMessageCollector.class);
+            method.setAccessible(true);
+            NotificationMessageCollector collector = NotificationMessageCollectorKt.createConfigureKotlinNotificationCollector(project);
+            for (Module module : ModuleManager.getInstance(project).getModules()) {
+                method.invoke(configurator, module, lib, null, collector);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     private static boolean configureWithoutCollector(Project project, Class<?> confClass, KotlinProjectConfigurator configurator, String lib) {
         try {
