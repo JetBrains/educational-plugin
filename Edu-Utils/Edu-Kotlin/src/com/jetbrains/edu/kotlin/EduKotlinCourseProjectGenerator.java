@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.JavaSdkType;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -19,6 +20,8 @@ import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.FixedSizeButton;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.ui.ComboboxWithBrowseButton;
@@ -80,6 +83,16 @@ class EduKotlinCourseProjectGenerator implements EduCourseProjectGenerator {
           }
         });
         setJdk(project);
+        setCompilerOutput(project);
+
+      }
+
+      private void setCompilerOutput(@NotNull Project project) {
+        CompilerProjectExtension compilerProjectExtension = CompilerProjectExtension.getInstance(project);
+        String basePath = project.getBasePath();
+        if (compilerProjectExtension != null && basePath != null) {
+          compilerProjectExtension.setCompilerOutputUrl(VfsUtilCore.pathToUrl(FileUtilRt.toSystemDependentName(basePath)));
+        }
       }
 
       @NotNull
