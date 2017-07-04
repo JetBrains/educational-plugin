@@ -25,8 +25,13 @@ import java.io.File;
 import java.io.IOException;
 
 class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
-  public static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
+  static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
   private static final Logger LOG = Logger.getInstance(EduKotlinKoansModuleBuilder.class);
+  @Nullable private Course myCourse;
+
+  EduKotlinKoansModuleBuilder(@Nullable Course course) {
+    this.myCourse = course;
+  }
 
   @Override
   public String getBuilderId() {
@@ -56,14 +61,16 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
     Module baseModule = super.createModule(moduleModel);
     Project project = baseModule.getProject();
     EduProjectGenerator generator = new EduProjectGenerator();
-    File courseRoot = EduIntellijUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, EduKotlinKoansModuleBuilder.class);
-    final Course course = generator.addLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
-    if (course == null) {
-      LOG.info("Failed to find course " + DEFAULT_COURSE_NAME);
-      return baseModule;
+    if (myCourse == null) {
+      File courseRoot = EduIntellijUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, EduKotlinKoansModuleBuilder.class);
+      final Course course = generator.addLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
+      if (course == null) {
+        LOG.info("Failed to find course " + DEFAULT_COURSE_NAME);
+        return baseModule;
+      }
     }
-    course.setLanguage("kotlin");
-    EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, course, getModuleFileDirectory());
+    myCourse.setLanguage("kotlin");
+    EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, myCourse, getModuleFileDirectory());
     return baseModule;
   }
 
