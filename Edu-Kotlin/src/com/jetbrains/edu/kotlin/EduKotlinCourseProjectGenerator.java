@@ -79,7 +79,7 @@ class EduKotlinCourseProjectGenerator implements EduCourseProjectGenerator {
 
           @Override
           public ProjectBuilder getProjectBuilder() {
-            return new EduKotlinKoansModuleBuilder();
+            return new EduKotlinKoansModuleBuilder(myCourse);
           }
         });
         setJdk(project);
