@@ -47,16 +47,17 @@ public class EduIntellijUtils {
       final File jarFile = new File(jarPath);
       File pluginBaseDir = jarFile.getParentFile();
       File coursesDir = new File(pluginBaseDir, "courses");
+
       if (!coursesDir.exists()) {
         if (!coursesDir.mkdir()) {
           LOG.info("Failed to create courses dir");
-        } else {
-          try {
-            ZipUtil.extract(jarFile, pluginBaseDir, (dir, name) -> name.equals(courseName));
-          } catch (IOException e) {
-            LOG.info("Failed to extract default course", e);
-          }
+          return coursesDir;
         }
+      }
+      try {
+        ZipUtil.extract(jarFile, pluginBaseDir, (dir, name) -> name.equals(courseName));
+      } catch (IOException e) {
+        LOG.info("Failed to extract default course", e);
       }
       return coursesDir;
     }
