@@ -23,7 +23,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.ZipUtil;
-import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -41,88 +40,88 @@ import java.util.List;
 
 
 public class EduIntellijUtils {
-    private static final Logger LOG = Logger.getInstance(EduIntellijUtils.class);
+  private static final Logger LOG = Logger.getInstance(EduIntellijUtils.class);
 
-    private EduIntellijUtils() {
-    }
+  private EduIntellijUtils() {
+  }
 
-    public static File getBundledCourseRoot(final String courseName, Class clazz) {
-        @NonNls String jarPath = PathUtil.getJarPathForClass(clazz);
-        if (jarPath.endsWith(".jar")) {
-            final File jarFile = new File(jarPath);
-            File pluginBaseDir = jarFile.getParentFile();
-            File coursesDir = new File(pluginBaseDir, "courses");
-            if (!coursesDir.exists()) {
-                if (!coursesDir.mkdir()) {
-                    LOG.info("Failed to create courses dir");
-                } else {
-                    try {
-                        ZipUtil.extract(jarFile, pluginBaseDir, new FilenameFilter() {
-                            @Override
-                            public boolean accept(File dir, String name) {
-                                return name.equals(courseName);
-                            }
-                        });
-                    } catch (IOException e) {
-                        LOG.info("Failed to extract default course", e);
-                    }
-                }
-            }
-            return coursesDir;
+  public static File getBundledCourseRoot(final String courseName, Class clazz) {
+    @NonNls String jarPath = PathUtil.getJarPathForClass(clazz);
+    if (jarPath.endsWith(".jar")) {
+      final File jarFile = new File(jarPath);
+      File pluginBaseDir = jarFile.getParentFile();
+      File coursesDir = new File(pluginBaseDir, "courses");
+      if (!coursesDir.exists()) {
+        if (!coursesDir.mkdir()) {
+          LOG.info("Failed to create courses dir");
+        } else {
+          try {
+            ZipUtil.extract(jarFile, pluginBaseDir, new FilenameFilter() {
+              @Override
+              public boolean accept(File dir, String name) {
+                return name.equals(courseName);
+              }
+            });
+          } catch (IOException e) {
+            LOG.info("Failed to extract default course", e);
+          }
         }
-        return new File(jarPath, "courses");
+      }
+      return coursesDir;
     }
+    return new File(jarPath, "courses");
+  }
 
-    private static void commitAndSaveModel(final ModifiableRootModel model) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                model.commit();
-                model.getProject().save();
-            }
-        });
+  private static void commitAndSaveModel(final ModifiableRootModel model) {
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        model.commit();
+        model.getProject().save();
+      }
+    });
+  }
+
+  @Nullable
+  private static ModifiableRootModel getModel(@NotNull VirtualFile dir, @NotNull Project project) {
+    final Module module = ModuleUtilCore.findModuleForFile(dir, project);
+    if (module == null) {
+      LOG.info("Module for " + dir.getPath() + " was not found");
+      return null;
     }
+    return ModuleRootManager.getInstance(module).getModifiableModel();
+  }
 
-    @Nullable
-    private static ModifiableRootModel getModel(@NotNull VirtualFile dir, @NotNull Project project) {
-        final Module module = ModuleUtilCore.findModuleForFile(dir, project);
-        if (module == null) {
-            LOG.info("Module for " + dir.getPath() + " was not found");
-            return null;
-        }
-        return ModuleRootManager.getInstance(module).getModifiableModel();
+  static void markDirAsSourceRoot(@NotNull final VirtualFile dir, @NotNull final Project project) {
+    final ModifiableRootModel model = getModel(dir, project);
+    if (model == null) {
+      return;
     }
-
-    static void markDirAsSourceRoot(@NotNull final VirtualFile dir, @NotNull final Project project) {
-        final ModifiableRootModel model = getModel(dir, project);
-        if (model == null) {
-            return;
-        }
-        final ContentEntry entry = MarkRootActionBase.findContentEntry(model, dir);
-        if (entry == null) {
-            LOG.info("Content entry for " + dir.getPath() + " was not found");
-            return;
-        }
-        entry.addSourceFolder(dir, false);
-        commitAndSaveModel(model);
+    final ContentEntry entry = MarkRootActionBase.findContentEntry(model, dir);
+    if (entry == null) {
+      LOG.info("Content entry for " + dir.getPath() + " was not found");
+      return;
     }
+    entry.addSourceFolder(dir, false);
+    commitAndSaveModel(model);
+  }
 
 
-    public static void addTemplate(@NotNull final Project project, @NotNull VirtualFile baseDir, @NotNull @NonNls final String templateName) {
-        final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(templateName);
-        final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
-        if (projectDir == null) return;
-        try {
+  public static void addTemplate(@NotNull final Project project, @NotNull VirtualFile baseDir, @NotNull @NonNls final String templateName) {
+    final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(templateName);
+    final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
+    if (projectDir == null) return;
+    try {
 //            PsiDirectory utilDir = projectDir.findSubdirectory("util");
 //            if (utilDir == null) {
 //                utilDir = projectDir.createSubdirectory("util");
 //            }
-            FileTemplateUtil.createFromTemplate(template, templateName, null, projectDir);
-        } catch (Exception exception) {
-            LOG.error("Failed to create from file template ", exception);
-        }
-
+      FileTemplateUtil.createFromTemplate(template, templateName, null, projectDir);
+    } catch (Exception exception) {
+      LOG.error("Failed to create from file template ", exception);
     }
+
+  }
 
   public static PsiDirectory createTask(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory,
                                         @Nullable String taskFileName, @Nullable String testFileName) {
@@ -162,6 +161,7 @@ public class EduIntellijUtils {
       StudyUtils.createFromTemplate(project, psiDirectory, fileName, view, false);
     }
   }
+
   public static void addJUnit(Module baseModule) {
     ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
     List<String> defaultRoots = descriptor.getLibraryClassesRoots();
