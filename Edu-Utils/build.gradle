@@ -132,3 +132,14 @@ def defineProject(String name, Object... pluginDependencies) {
         }
     }
 }
+
+project(":Edu-Kotlin") {
+    dependencies {
+        if (project.hasProperty('androidPath')) {
+            compileOnly files("${androidPath}/sdk-common.jar",
+                    "${androidPath}/android.jar",
+                    "${androidPath}/sdk-tools.jar",
+                    "${androidPath}/sdklib.jar")
+        }
+    }
+}

@@ -29,6 +29,14 @@
         <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator" language="kotlin"/>
         <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
+        <pluginConfigurator language="edu-kotlin-android"
+                            implementationClass="com.jetbrains.edu.kotlin.android.EduKotlinAndroidPluginConfigurator"/>
     </extensions>
 
+    <application-components>
+        <component>
+            <implementation-class>com.jetbrains.edu.kotlin.android.EduKotlinAndroidApplicationComponent
+            </implementation-class>
+        </component>
+    </application-components>
 </idea-plugin>
