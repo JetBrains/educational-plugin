@@ -43,7 +43,7 @@ public class EduKotlinAndroidPluginConfigurator extends EduKotlinPluginConfigura
   @NotNull
   @Override
   public StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask pyCharmTask, @NotNull Project project) {
-    return new StudyTaskChecker<>(pyCharmTask, project);
+    return new EduKotlinAndroidChecker(pyCharmTask, project);
   }
 
   @Override

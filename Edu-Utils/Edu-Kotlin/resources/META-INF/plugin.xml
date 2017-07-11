@@ -31,6 +31,7 @@
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
         <pluginConfigurator language="edu-kotlin-android"
                             implementationClass="com.jetbrains.edu.kotlin.android.EduKotlinAndroidPluginConfigurator"/>
+        <checkListener implementation="com.jetbrains.edu.kotlin.android.EduKotlinStudyCheckListener"/>
     </extensions>
 
     <application-components>
