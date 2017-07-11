@@ -51,6 +51,7 @@ class EduKotlinAndroidCourseProjectGenerator implements EduCourseProjectGenerato
         EduProjectGenerator generator = new EduProjectGenerator();
         generator.setSelectedCourse(myCourse);
         generator.generateProject(project, project.getBaseDir());
+        myCourse.setCourseType("Tutorial");
 
         EduPluginConfigurator.INSTANCE.
           forLanguage(myCourse.getLanguageById()).createCourseModuleContent(ModuleManager.getInstance(project).getModifiableModel(),
