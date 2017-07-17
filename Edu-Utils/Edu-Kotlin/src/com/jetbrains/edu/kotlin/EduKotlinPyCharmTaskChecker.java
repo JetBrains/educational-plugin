@@ -3,6 +3,7 @@ package com.jetbrains.edu.kotlin;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -27,6 +28,12 @@ public class EduKotlinPyCharmTaskChecker extends EduPyCharmTasksChecker {
     VirtualFile taskDir = myTask.getTaskDir(myProject);
     if (taskDir == null) {
       return null;
+    }
+    for (String testFileName : myTask.getTestsText().keySet()) {
+      VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, testFileName);
+      if (testFile != null) {
+        return testFile;
+      }
     }
     VirtualFile testsFile = taskDir.findChild(EduKotlinPluginConfigurator.LEGACY_TESTS_KT);
     if (testsFile != null) {
