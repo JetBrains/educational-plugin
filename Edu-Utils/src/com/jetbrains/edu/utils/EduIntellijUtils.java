@@ -162,7 +162,9 @@ public class EduIntellijUtils {
             }
             else {
               createFromTemplate(project, psiDirectory, taskFileName, view, false);
-              createFromTemplate(project, psiDirectory, taskFileName, view, false);
+              if (testFileName != null) {
+                createFromTemplate(project, psiDirectory, testFileName, view, false);
+              }
             }
           }
         };
