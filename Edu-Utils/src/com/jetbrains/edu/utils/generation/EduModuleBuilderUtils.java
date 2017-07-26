@@ -1,17 +1,13 @@
 package com.jetbrains.edu.utils.generation;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.DumbModePermission;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -63,9 +59,6 @@ public class EduModuleBuilderUtils {
     Module utilModule = utilModuleBuilder.createModule(moduleModel);
 
     createLessonModules(moduleModel, course, moduleDir, utilModule);
-
-    ApplicationManager.getApplication().invokeLater(() -> DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_BACKGROUND,
-      () -> ApplicationManager.getApplication().runWriteAction(() -> StudyUtils.registerStudyToolWindow(course, project))));
   }
 
 
