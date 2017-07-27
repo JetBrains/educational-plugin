@@ -6,7 +6,6 @@ import com.intellij.ide.IdeView;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
-import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
 import com.intellij.ide.util.newProjectWizard.StepSequence;
@@ -14,6 +13,7 @@ import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -198,22 +198,26 @@ public class EduIntellijUtils {
       return;
     }
     task.getTaskFiles().remove(taskFile.name);
-    taskFile.name = publicClassName(project, taskFile) + "." + language.getAssociatedFileType().getDefaultExtension();
+    taskFile.name = publicClassName(project, taskFile, language.getAssociatedFileType()) + "." + language.getAssociatedFileType().getDefaultExtension();
     task.taskFiles.put(taskFile.name, taskFile);
   }
 
   @NotNull
-  private static String publicClassName(@NotNull Project project, @NotNull TaskFile taskFile) {
+  private static String publicClassName(@NotNull Project project, @NotNull TaskFile taskFile, @NotNull LanguageFileType fileType) {
     String fileName = "Main";
-    PsiJavaFile fileFromText = (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText("dummy.java", JavaFileType.INSTANCE, taskFile.text);
-    PsiClass[] classes = fileFromText.getClasses();
-    for (PsiClass aClass : classes) {
-      boolean isPublic = aClass.hasModifierProperty(PsiModifier.PUBLIC);
-      if (isPublic && aClass.getName() != null) {
-        fileName = aClass.getName();
-        break;
+    PsiFile file = PsiFileFactory.getInstance(project).createFileFromText(taskFile.name, fileType, taskFile.text);
+    if (file instanceof PsiClassOwner) {
+      PsiClassOwner fileFromText = (PsiClassOwner) file;
+      PsiClass[] classes = fileFromText.getClasses();
+      for (PsiClass aClass : classes) {
+        boolean isPublic = aClass.hasModifierProperty(PsiModifier.PUBLIC);
+        if (isPublic && aClass.getName() != null) {
+          fileName = aClass.getName();
+          break;
+        }
       }
     }
+
     return fileName;
   }
 
