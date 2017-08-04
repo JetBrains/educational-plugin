@@ -22,4 +22,9 @@
     <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
   </extensions>
 
+  <extensions defaultExtensionNs="com.intellij">
+    <renameHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
+  </extensions>
+
 </idea-plugin>
