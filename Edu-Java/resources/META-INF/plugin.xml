@@ -1,0 +1,30 @@
+<idea-plugin version="2">
+  <id>com.jetbrains.edu.java</id>
+  <name>Edu Java</name>
+  <version>1.0.2</version>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+      Educational plugin for Java programming language
+    ]]></description>
+
+  <change-notes>
+  </change-notes>
+
+  <idea-version since-build="162.75"/>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.jetbrains.edu.interactivelearning</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JUnit</depends>
+
+  <extensions defaultExtensionNs="Edu">
+    <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <renameHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
+  </extensions>
+
+</idea-plugin>
