@@ -1,0 +1,34 @@
+<idea-plugin version="2">
+    <id>com.jetbrains.edu.kotlin</id>
+    <name>Edu Kotlin</name>
+    <version>1.0.11</version>
+    <vendor>JetBrains</vendor>
+
+    <description><![CDATA[
+      Education plugin for Kotlin programming language
+    ]]></description>
+
+    <change-notes><![CDATA[
+
+    ]]>
+    </change-notes>
+
+    <idea-version since-build="162.75"/>
+
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.jetbrains.edu.interactivelearning</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>JUnit</depends>
+
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectService serviceInterface="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"
+                        serviceImplementation="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"/>
+    </extensions>
+    <extensions defaultExtensionNs="Edu">
+        <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator" language="kotlin"/>
+        <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
+        <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
+    </extensions>
+
+</idea-plugin>
