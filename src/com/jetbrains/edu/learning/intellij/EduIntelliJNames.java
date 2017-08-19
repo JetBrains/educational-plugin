@@ -1,4 +1,4 @@
-package com.jetbrains.edu.utils;
+package com.jetbrains.edu.learning.intellij;
 
 public class EduIntelliJNames {
     public static final String TEST_RUNNER_CLASS = "EduTestRunner";

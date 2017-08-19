@@ -1,4 +1,4 @@
-package com.jetbrains.edu.utils;
+package com.jetbrains.edu.learning.intellij;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
@@ -24,8 +24,8 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.utils.generation.EduLessonModuleBuilder;
-import com.jetbrains.edu.utils.generation.EduModuleBuilderUtils;
+import com.jetbrains.edu.learning.intellij.generation.EduLessonModuleBuilder;
+import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

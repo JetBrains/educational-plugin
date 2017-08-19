@@ -1,4 +1,4 @@
-package com.jetbrains.edu.utils;
+package com.jetbrains.edu.learning.intellij;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunManager;

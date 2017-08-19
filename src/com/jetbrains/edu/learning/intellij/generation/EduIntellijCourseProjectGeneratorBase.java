@@ -1,4 +1,4 @@
-package com.jetbrains.edu.utils.generation;
+package com.jetbrains.edu.learning.intellij.generation;
 
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.application.ApplicationManager;

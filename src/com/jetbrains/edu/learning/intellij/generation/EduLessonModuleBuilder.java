@@ -1,4 +1,4 @@
-package com.jetbrains.edu.utils.generation;
+package com.jetbrains.edu.learning.intellij.generation;
 
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;

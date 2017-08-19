@@ -1,4 +1,4 @@
-package com.jetbrains.edu.utils.generation;
+package com.jetbrains.edu.learning.intellij.generation;
 
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
@@ -18,8 +18,8 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
-import com.jetbrains.edu.utils.EduIntelliJNames;
-import com.jetbrains.edu.utils.EduIntellijUtils;
+import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
+import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 

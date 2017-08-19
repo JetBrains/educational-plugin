@@ -1,0 +1,50 @@
+buildscript {
+    ext.kotlin_version = '1.1.4-2'
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
+            url 'http://dl.bintray.com/jetbrains/intellij-plugin-service'
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.0-SNAPSHOT"
+    }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: "org.jetbrains.intellij"
+
+sourceSets {
+    main {
+        java.srcDirs 'src'
+        kotlin.srcDirs 'src'
+        resources.srcDirs 'resources'
+    }
+
+    test {
+        java.srcDirs 'testSrc'
+    }
+}
+
+intellij {
+    pluginName 'Educational Plugin'
+    localPath '/Users/liana/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-1/173.1689/IntelliJ IDEA 2017.3 EAP.app/Contents/'
+    updateSinceUntilBuild true
+    downloadSources false
+    plugins 'junit'
+}
+
+dependencies {
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+}
+
+
