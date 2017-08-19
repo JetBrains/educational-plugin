@@ -23,6 +23,7 @@
   <depends optional="true" config-file="android-dependencies.xml">com.intellij.modules.androidstudio</depends>
   <depends optional="true" config-file="edu-intellij.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="java.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
 
   <project-components>
     <component>

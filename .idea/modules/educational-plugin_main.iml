@@ -18,7 +18,6 @@
           <option name="pluginClasspaths">
             <array />
           </option>
-          <option name="version" value="true" />
         </compilerArguments>
       </configuration>
     </facet>
@@ -29,6 +28,10 @@
     <content url="file://$MODULE_DIR$/../../Edu-Java">
       <sourceFolder url="file://$MODULE_DIR$/../../Edu-Java/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../../Edu-Java/resources" type="java-resource" />
+    </content>
+    <content url="file://$MODULE_DIR$/../../Edu-Kotlin">
+      <sourceFolder url="file://$MODULE_DIR$/../../Edu-Kotlin/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../../Edu-Kotlin/resources" type="java-resource" />
     </content>
     <content url="file://$MODULE_DIR$/../../resources">
       <sourceFolder url="file://$MODULE_DIR$/../../resources" type="java-resource" />
@@ -45,6 +48,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/twitter4j-core-4.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library>
+        <CLASSES>
+          <root url="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/lib/tools.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -224,10 +236,29 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" scope="RUNTIME">
-      <library>
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="Gradle: org.jetbrains.plugins:Kotlin:IU-173.1689">
         <CLASSES>
-          <root url="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/lib/tools.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/allopen-compiler-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/allopen-ide-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/android-extensions-compiler.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/android-extensions-ide.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/android-lint.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/javaslang-2.0.6.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/javax.inject.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/jps/kotlin-jps-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-gradle-tooling.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-reflect.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-runtime.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-script-runtime.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlinx-coroutines-core.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlinx-coroutines-jdk8.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/markdown.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/noarg-compiler-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/noarg-ide-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/sam-with-receiver-compiler-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/sam-with-receiver-ide-plugin.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

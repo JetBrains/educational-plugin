@@ -118,8 +118,14 @@ public class StudyProjectGenerator {
     if (force) {
       myCourses = execCancelable(() -> EduStepicConnector.getCourses(StudySettings.getInstance().getUser()));
     }
-    if (myCourses == null || myCourses.isEmpty() || (myCourses.size() == 1 && myCourses.contains(Course.INVALID_COURSE))) {
-      myCourses = getBundledCourses();
+    List<Course> bundledCourses = getBundledCourses();
+    if (bundledCourses != null) {
+      for (Course bundledCourse : bundledCourses) {
+        if (myCourses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
+          continue;
+        }
+        myCourses.add(bundledCourse);
+      }
     }
     sortCourses(myCourses);
     return myCourses;

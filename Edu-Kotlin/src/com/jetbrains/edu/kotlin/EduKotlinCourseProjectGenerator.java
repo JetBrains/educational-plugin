@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
-import com.jetbrains.edu.utils.generation.EduIntellijCourseProjectGeneratorBase;
+import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGeneratorBase;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

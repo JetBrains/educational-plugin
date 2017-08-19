@@ -208,6 +208,34 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
+      <library name="Gradle: org.jetbrains.plugins:Kotlin:IU-173.1689">
+        <CLASSES>
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/allopen-compiler-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/allopen-ide-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/android-extensions-compiler.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/android-extensions-ide.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/android-lint.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/javaslang-2.0.6.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/javax.inject.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/jps/kotlin-jps-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-gradle-tooling.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-reflect.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-runtime.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlin-script-runtime.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlinx-coroutines-core.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/kotlinx-coroutines-jdk8.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/markdown.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/noarg-compiler-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/noarg-ide-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/sam-with-receiver-compiler-plugin.jar!/" />
+          <root url="jar://$APPLICATION_HOME_DIR$/plugins/Kotlin/lib/sam-with-receiver-ide-plugin.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
       <library name="Gradle: org.jetbrains.plugins:junit:IU-173.1689">
         <CLASSES>
           <root url="jar://$APPLICATION_HOME_DIR$/plugins/junit/lib/idea-junit.jar!/" />
