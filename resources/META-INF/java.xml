@@ -1,0 +1,15 @@
+<idea-plugin>
+
+    <depends>com.intellij.modules.lang</depends>
+    <depends>JUnit</depends>
+
+    <extensions defaultExtensionNs="Edu">
+        <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <renameHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
+        <refactoring.moveHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
+    </extensions>
+</idea-plugin>
+

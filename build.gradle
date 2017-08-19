@@ -25,9 +25,9 @@ apply plugin: "org.jetbrains.intellij"
 
 sourceSets {
     main {
-        java.srcDirs 'src'
+        java.srcDirs 'src', 'Edu-Java/src'
         kotlin.srcDirs 'src'
-        resources.srcDirs 'resources'
+        resources.srcDirs 'resources', 'Edu-Java/resources'
     }
 
     test {

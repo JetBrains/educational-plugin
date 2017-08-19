@@ -13,9 +13,9 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
+import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
+import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
-import com.jetbrains.edu.utils.EduIntellijUtils;
-import com.jetbrains.edu.utils.EduPluginConfiguratorBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

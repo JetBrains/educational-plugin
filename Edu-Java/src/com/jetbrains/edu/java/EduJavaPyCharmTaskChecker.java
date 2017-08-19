@@ -9,12 +9,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.utils.EduIntelliJNames;
-import com.jetbrains.edu.utils.EduPyCharmTasksChecker;
+import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
+import com.jetbrains.edu.learning.intellij.EduPyCharmTasksChecker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EduJavaPyCharmTaskChecker extends EduPyCharmTasksChecker{
+public class EduJavaPyCharmTaskChecker extends EduPyCharmTasksChecker {
   public EduJavaPyCharmTaskChecker(@NotNull PyCharmTask task, @NotNull Project project) {
     super(task, project);
   }

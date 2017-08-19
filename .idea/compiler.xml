@@ -12,6 +12,8 @@
       <entry name="!?*.clj" />
     </wildcardResourcePatterns>
     <bytecodeTargetLevel>
+      <module name="Edu-Java_main" target="1.8" />
+      <module name="Edu-Java_test" target="1.8" />
       <module name="educational-plugin_main" target="1.8" />
       <module name="educational-plugin_test" target="1.8" />
     </bytecodeTargetLevel>
