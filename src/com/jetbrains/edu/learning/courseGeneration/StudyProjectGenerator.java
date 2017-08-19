@@ -121,7 +121,7 @@ public class StudyProjectGenerator {
     List<Course> bundledCourses = getBundledCourses();
     if (bundledCourses != null) {
       for (Course bundledCourse : bundledCourses) {
-        if (myCourses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
+        if (bundledCourse == null || myCourses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
           continue;
         }
         myCourses.add(bundledCourse);

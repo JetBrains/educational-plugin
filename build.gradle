@@ -25,9 +25,9 @@ apply plugin: "org.jetbrains.intellij"
 
 sourceSets {
     main {
-        java.srcDirs 'src', 'Edu-Java/src', 'Edu-Kotlin/src'
+        java.srcDirs 'src', 'Edu-Java/src', 'Edu-Kotlin/src', 'Edu-Python/src'
         kotlin.srcDirs 'src'
-        resources.srcDirs 'resources', 'Edu-Java/resources', 'Edu-Kotlin/resources'
+        resources.srcDirs 'resources', 'Edu-Java/resources', 'Edu-Kotlin/resources', 'Edu-Python/src'
     }
 
     test {
@@ -37,10 +37,10 @@ sourceSets {
 
 intellij {
     pluginName 'Educational Plugin'
-    localPath '/Users/liana/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-1/173.1689/IntelliJ IDEA 2017.3 EAP.app/Contents/'
+    localPath '/Users/liana/Library/Application Support/JetBrains/Toolbox/apps/IDEA-U/ch-0/172.3757.52/IntelliJ IDEA.app/Contents/'
     updateSinceUntilBuild true
     downloadSources false
-    plugins 'junit', 'Kotlin'
+    plugins 'junit', 'Kotlin', 'Pythonid:2017.2.172.3544.47'
 }
 
 dependencies {

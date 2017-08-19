@@ -200,7 +200,11 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
   @Override
   public LabeledComponent<JComponent> getLanguageSettingsComponent(@NotNull Course selectedCourse) {
     final Project project = ProjectManager.getInstance().getDefaultProject();
-    final List<Sdk> sdks = PyConfigurableInterpreterList.getInstance(project).getAllPythonSdks();
+    PyConfigurableInterpreterList instance = PyConfigurableInterpreterList.getInstance(project);
+    if (instance == null) {
+      return null;
+    }
+    final List<Sdk> sdks = instance.getAllPythonSdks();
     VirtualEnvProjectFilter.removeAllAssociated(sdks);
     // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
     ProjectJdkImpl fakeSdk = createFakeSdk(selectedCourse);

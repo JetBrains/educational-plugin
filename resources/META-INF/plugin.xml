@@ -24,6 +24,7 @@
   <depends optional="true" config-file="edu-intellij.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="java.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
+  <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
 
   <project-components>
     <component>

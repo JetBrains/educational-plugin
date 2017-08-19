@@ -1,23 +1,8 @@
-<!--suppress XmlUnboundNsPrefix -->
-<idea-plugin allow-bundled-update="true">
-  <id>com.jetbrains.python.edu.interactivelearning.python</id>
-  <name>Edu Python</name>
-  <version>4.1-IJ2017.3-1</version>
-  <idea-version since-build="173.1" until-build="173.*" />
-  <description><![CDATA[
-      Educational plugin for Python programming language
-      ]]></description>
-  <vendor>JetBrains</vendor>
-
-  <change-notes><![CDATA[
-
-      ]]>
-  </change-notes>
+<idea-plugin>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.python</depends>
-  <depends>com.jetbrains.edu.interactivelearning</depends>
-  
+
   <extensions defaultExtensionNs="com.intellij">
     <localInspection shortName="PyStudyInterpreterInspection" bundle="com.jetbrains.python.PyBundle" key="INSP.NAME.invalid.interpreter" groupKey="INSP.GROUP.python" enabledByDefault="true"  level="WARNING" implementationClass="com.jetbrains.edu.learning.PyStudyInterpreterInspection"/>
 
