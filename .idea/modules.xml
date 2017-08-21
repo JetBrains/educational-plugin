@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/educational-plugin.iml" filepath="$PROJECT_DIR$/.idea/modules/educational-plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/educational-plugin_main.iml" filepath="$PROJECT_DIR$/.idea/modules/educational-plugin_main.iml" group="educational-plugin" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/educational-plugin_test.iml" filepath="$PROJECT_DIR$/.idea/modules/educational-plugin_test.iml" group="educational-plugin" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Educational_plugin.iml" filepath="$PROJECT_DIR$/.idea/modules/Educational_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Educational_plugin_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Educational_plugin_main.iml" group="Educational_plugin" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Educational_plugin_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Educational_plugin_test.iml" group="Educational_plugin" />
     </modules>
   </component>
 </project>
