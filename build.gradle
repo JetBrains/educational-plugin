@@ -48,6 +48,9 @@ intellij {
 
 task configurePyCharmTask {
     doLast {
+        if (!project.hasProperty("pycharmPath")) {
+            throw new InvalidUserDataException("Path to PyCharm installed locally is needed\nDefine \"pycharmPath\" property")
+        }
         intellij.sandboxDirectory pycharmSandbox
         intellij.alternativeIdePath pycharmPath
     }
