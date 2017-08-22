@@ -1,5 +1,6 @@
 buildscript {
     ext.pythonPluginVersion = pythonPluginVersion
+    ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
 }
 
 plugins {
@@ -25,7 +26,7 @@ version = pluginVersion
 sourceSets {
     main {
         java.srcDirs 'src', 'Edu-Java/src', 'Edu-Kotlin/src', 'Edu-Python/src'
-        resources.srcDirs 'resources', 'Edu-Java/resources', 'Edu-Kotlin/resources', 'Edu-Python/src'
+        resources.srcDirs 'resources', 'Edu-Java/resources', 'Edu-Kotlin/resources', 'Edu-Python/resources'
     }
 
     test {
@@ -47,7 +48,14 @@ intellij {
 
 task configurePyCharmTask {
     doLast {
+        intellij.sandboxDirectory pycharmSandbox
         intellij.alternativeIdePath pycharmPath
+    }
+}
+
+task removePyCharm(type: Delete) {
+    doLast {
+        file(pycharmSandbox + File.separator + "plugins" + File.separator + "python-ce").deleteDir()
     }
 }
 
@@ -56,6 +64,9 @@ task runPyCharm {
     dependsOn configurePyCharmTask
     dependsOn runIde
 }
+
+// we need this so as not to install python plugin on PyCharm
+prepareSandbox.finalizedBy(removePyCharm)
 
 idea {
     project {
