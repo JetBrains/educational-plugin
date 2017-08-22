@@ -8,6 +8,15 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.1.4-2"
 }
 
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+    compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
+}
+
 
 group = 'org.jetbrains.edu'
 version = pluginVersion
