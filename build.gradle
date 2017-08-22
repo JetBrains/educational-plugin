@@ -40,7 +40,9 @@ intellij {
     } else if (project.hasProperty("ideaPath")) {
         localPath ideaPath
     }
-    patchPluginXml.sinceBuild = '172.3544'
+    if (project.hasProperty("customSinceBuild")) {
+        patchPluginXml.sinceBuild = customSinceBuild
+    }
     updateSinceUntilBuild true
     downloadSources false
     plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
