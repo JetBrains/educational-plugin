@@ -6,6 +6,7 @@ plugins {
     id "org.jetbrains.intellij" version "0.2.16"
     id "java"
     id("org.jetbrains.kotlin.jvm") version "1.1.4-2"
+    id "idea"
 }
 
 repositories {
@@ -56,6 +57,10 @@ task runPyCharm {
     dependsOn runIde
 }
 
-dependencies {
-    compile fileTree(dir: 'lib', include: ['*.jar'])
+idea {
+    project {
+        jdkName = 1.8
+        languageLevel = 1.8
+        vcs = 'Git'
+    }
 }
