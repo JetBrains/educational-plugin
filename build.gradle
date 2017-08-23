@@ -64,6 +64,7 @@ intellij {
     }
     updateSinceUntilBuild true
     downloadSources false
+    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
 }
 
 task configurePyCharmTask {
