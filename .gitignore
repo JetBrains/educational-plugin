@@ -20,10 +20,10 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
-
+!.idea/runConfigurations/*
 .idea/
 build/
-Edu-Java/build/
-Edu-Kotlin/build/
-Edu-Python/build/
-educational-core/build/
+.gradle/
+Edu-Java/classes/
+Edu-Kotlin/classes/
+Edu-Python/classes/
