@@ -1,38 +1,57 @@
 buildscript {
     ext.pythonPluginVersion = pythonPluginVersion
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.4-2"
+    }
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.2.16"
+    id "org.jetbrains.intellij" version "0.2.16" apply false
     id "java"
-    id("org.jetbrains.kotlin.jvm") version "1.1.4-2"
     id "idea"
-}
-
-repositories {
-    mavenCentral()
-}
-
-
-dependencies {
-    compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
 }
 
 
 group = 'org.jetbrains.edu'
 version = pluginVersion
 
-sourceSets {
-    main {
-        java.srcDirs 'src', 'Edu-Java/src', 'Edu-Kotlin/src', 'Edu-Python/src'
-        resources.srcDirs 'resources', 'Edu-Java/resources', 'Edu-Kotlin/resources', 'Edu-Python/resources'
+allprojects {
+    apply plugin: "org.jetbrains.intellij"
+    apply plugin: "java"
+    apply plugin: "kotlin"
+
+
+    tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+    targetCompatibility = '1.8'
+    sourceCompatibility = '1.8'
+
+    repositories {
+        mavenCentral()
     }
 
-    test {
-        java.srcDirs 'testSrc'
+    intellij {
+        if (project.hasProperty("ideaVersion")) {
+            version ideaVersion
+        } else if (project.hasProperty("ideaPath")) {
+            localPath ideaPath
+        }
+    }
+
+    // see https://youtrack.jetbrains.com/issue/KT-19737
+    compileKotlin.destinationDir = compileJava.destinationDir
+
+    dependencies {
+        compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
     }
 }
+
+
 
 intellij {
     if (project.hasProperty("ideaVersion")) {
@@ -45,7 +64,6 @@ intellij {
     }
     updateSinceUntilBuild true
     downloadSources false
-    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
 }
 
 task configurePyCharmTask {
@@ -72,6 +90,54 @@ task runPyCharm {
 
 // we need this so as not to install python plugin on PyCharm
 prepareSandbox.finalizedBy(removePyCharm)
+
+subprojects {
+    sourceSets {
+        main {
+            java.srcDirs 'src'
+            resources.srcDirs 'resources'
+            kotlin.srcDirs 'src'
+        }
+
+        test {
+            java.srcDirs 'testSrc'
+        }
+    }
+
+    project.tasks.getByPath("runIde").enabled false
+    project.tasks.getByPath("prepareSandbox").enabled false
+}
+
+sourceSets {
+    main {
+        resources.srcDirs 'resources'
+    }
+}
+configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]) {
+    dependencies {
+        compile project(':educational-core')
+    }
+}
+
+configure([project(':educational-core'), project(':Edu-Java')]) {
+    intellij.plugins 'junit'
+}
+
+configure(project(':Edu-Kotlin')) {
+    intellij.plugins 'junit', 'Kotlin'
+}
+
+configure(project(':Edu-Python')) {
+    intellij.plugins "PythonCore:$pythonPluginVersion"
+}
+
+
+runIde.systemProperty("-Didea.is.internal", "true")
+runIde.systemProperty("-ea", "")
+
+dependencies {
+    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java')
+}
 
 idea {
     project {

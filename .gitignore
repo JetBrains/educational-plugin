@@ -22,3 +22,8 @@
 hs_err_pid*
 
 .idea/
+build/
+Edu-Java/build/
+Edu-Kotlin/build/
+Edu-Python/build/
+educational-core/build/
