@@ -1,5 +1,4 @@
 <idea-plugin>
-
     <depends>com.intellij.modules.lang</depends>
     <depends>JUnit</depends>
 

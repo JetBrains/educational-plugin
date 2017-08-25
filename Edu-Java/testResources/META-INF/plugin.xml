@@ -1,0 +1,4 @@
+<idea-plugin>
+    <id>com.jetbrains.edu.java</id>
+    <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
+</idea-plugin>

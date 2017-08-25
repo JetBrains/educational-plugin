@@ -1,0 +1,4 @@
+<idea-plugin>
+    <id>com.jetbrains.edu.python</id>
+    <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
+</idea-plugin>

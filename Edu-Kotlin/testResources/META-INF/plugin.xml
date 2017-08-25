@@ -1,0 +1,4 @@
+<idea-plugin>
+    <id>com.jetbrains.edu.kotlin</id>
+    <depends optional="true" config-file="Edu-Kotlin.xml">com.intellij.modules.java</depends>
+</idea-plugin>

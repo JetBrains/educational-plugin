@@ -77,6 +77,18 @@ task configurePyCharmTask {
     }
 }
 
+task copyXmls(type:Copy) {
+    def resultingMetaInf = "${sourceSets.main.output.resourcesDir}/META-INF"
+
+    for (def subProject : project.subprojects) {
+        from "${subProject.name}/resources/META-INF"
+        into resultingMetaInf
+        include "*.xml"
+    }
+}
+
+jar.dependsOn(copyXmls)
+
 task removePyCharm(type: Delete) {
     doLast {
         file(pycharmSandbox + File.separator + "plugins" + File.separator + "python-ce").deleteDir()
@@ -102,6 +114,8 @@ subprojects {
 
         test {
             java.srcDirs 'testSrc'
+            resources.srcDirs 'resources', 'testResources'
+
         }
     }
 
@@ -114,6 +128,7 @@ sourceSets {
         resources.srcDirs 'resources'
     }
 }
+
 configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]) {
     dependencies {
         compile project(':educational-core')
@@ -131,7 +146,6 @@ configure(project(':Edu-Kotlin')) {
 configure(project(':Edu-Python')) {
     intellij.plugins "PythonCore:$pythonPluginVersion"
 }
-
 
 runIde.systemProperty("-Didea.is.internal", "true")
 runIde.systemProperty("-ea", "")
