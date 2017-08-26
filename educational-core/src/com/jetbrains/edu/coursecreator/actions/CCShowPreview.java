@@ -155,8 +155,8 @@ public class CCShowPreview extends DumbAwareAction {
     createdEditor.setCaretVisible(false);
     createdEditor.setCaretEnabled(false);
     showPreviewFrame.setComponent(labeledEditor);
-    showPreviewFrame.setSize(new Dimension(500, 500));
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      showPreviewFrame.setSize(new Dimension(500, 500));
       showPreviewFrame.show();
     }
   }
