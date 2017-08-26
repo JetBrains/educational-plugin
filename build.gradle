@@ -15,11 +15,31 @@ plugins {
     id "org.jetbrains.intellij" version "0.2.16" apply false
     id "java"
     id "idea"
+    id "de.undercouch.download" version "3.2.0"
 }
 
 
 group = 'org.jetbrains.edu'
 version = pluginVersion
+
+import de.undercouch.gradle.tasks.download.Download
+
+
+task downloadJavaFx(type: Download) {
+    onlyIfNewer true
+    overwrite false
+    src javafx
+    dest "${project.buildDir}/javafx.zip"
+}
+
+task prepareJavaFx(type: Copy) {
+    def javafxFile = file("${project.buildDir}/javafx.zip")
+    onlyIf { javafxFile.exists() }
+    from zipTree(javafxFile)
+    into file("${project.buildDir}/javafx")
+}
+
+prepareJavaFx.dependsOn downloadJavaFx
 
 allprojects {
     apply plugin: "org.jetbrains.intellij"
@@ -48,9 +68,11 @@ allprojects {
 
     dependencies {
         compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
+        if (file("${rootProject.buildDir}/javafx").exists()) {
+            compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
+        }
     }
 }
-
 
 
 intellij {
@@ -77,7 +99,7 @@ task configurePyCharmTask {
     }
 }
 
-task copyXmls(type:Copy) {
+task copyXmls(type: Copy) {
     def resultingMetaInf = "${sourceSets.main.output.resourcesDir}/META-INF"
 
     for (def subProject : project.subprojects) {
