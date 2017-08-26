@@ -20,7 +20,8 @@ plugins {
 
 
 group = 'org.jetbrains.edu'
-version = pluginVersion
+def buildNumber = System.getenv("BUILD_NUMBER")
+version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
 import de.undercouch.gradle.tasks.download.Download
 
