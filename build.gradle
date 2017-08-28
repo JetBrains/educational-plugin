@@ -164,6 +164,16 @@ configure([project(':educational-core'), project(':Edu-Java')]) {
 
 configure(project(':Edu-Kotlin')) {
     intellij.plugins 'junit', 'Kotlin'
+
+
+    task createTwitterProperties() {
+        def twitterFile = file("${projectDir}/resources/twitter/kotlin_koans/oauth_twitter.properties")
+        Properties props = new Properties()
+        props.setProperty("consumerKey", consumerKey)
+        props.setProperty("consumerSecret", consumerSecret)
+        props.store(twitterFile.newWriter(), null)
+    }
+    processResources.dependsOn(createTwitterProperties)
 }
 
 configure(project(':Edu-Python')) {
