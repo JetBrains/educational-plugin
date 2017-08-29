@@ -67,11 +67,13 @@ import java.util.concurrent.TimeUnit;
 public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
   implements EduCourseProjectGenerator {
   private static final Logger LOG = Logger.getInstance(PyStudyDirectoryProjectGenerator.class.getName());
+  public static final PyDetectedSdk PLACEHOLDER_SDK = new PyDetectedSdk("placeholderSdk");
   private final StudyProjectGenerator myGenerator;
   private static final String NO_PYTHON_INTERPRETER = "<html><u>Add</u> python interpreter.</html>";
   private final boolean isLocal;
   public ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
-  private PyNewProjectSettings mySettings = (PyNewProjectSettings)getProjectSettings();
+  private PyNewProjectSettings mySettings = new PyNewProjectSettings();
+
 
   @SuppressWarnings("unused") // used on startup
   public PyStudyDirectoryProjectGenerator() {
@@ -167,7 +169,7 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
   public void afterProjectGenerated(@NotNull Project project) {
     Sdk sdk = mySettings.getSdk();
 
-    if (sdk == null) {
+    if (sdk == PLACEHOLDER_SDK) {
       createAndAddVirtualEnv(project, mySettings);
       sdk = mySettings.getSdk();
     }
@@ -427,5 +429,13 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
       }
     }
     return baseSdk != null ? baseSdk : baseSdks.iterator().next();
+  }
+
+  @Override
+  public Object getProjectSettings() {
+    if (mySettings.getSdk() == null) {
+      mySettings.setSdk(PLACEHOLDER_SDK);
+    }
+    return mySettings;
   }
 }
