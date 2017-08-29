@@ -90,7 +90,7 @@ intellij {
     plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
 }
 
-task configurePyCharmTask {
+task configurePyCharm {
     doLast {
         if (!project.hasProperty("pycharmPath")) {
             throw new InvalidUserDataException("Path to PyCharm installed locally is needed\nDefine \"pycharmPath\" property")
@@ -116,12 +116,6 @@ task removePyCharm(type: Delete) {
     doLast {
         file(pycharmSandbox + File.separator + "plugins" + File.separator + "python-ce").deleteDir()
     }
-}
-
-// task for running pycharm with plugins locally
-task runPyCharm {
-    dependsOn configurePyCharmTask
-    dependsOn runIde
 }
 
 // we need this so as not to install python plugin on PyCharm

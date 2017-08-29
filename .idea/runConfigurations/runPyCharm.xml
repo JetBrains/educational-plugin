@@ -11,7 +11,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="runPyCharm" />
+          <option value="configurePyCharm" />
+          <option value="runIde" />
         </list>
       </option>
       <option name="vmOptions" value="" />
