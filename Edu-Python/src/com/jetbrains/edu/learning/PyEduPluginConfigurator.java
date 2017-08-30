@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
-import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.python.PythonModuleTypeBase;
 import org.jetbrains.annotations.NotNull;
@@ -168,7 +167,7 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
 
   @Override
   public List<String> getBundledCoursePaths() {
-    File bundledCourseRoot = EduIntellijUtils.getBundledCourseRoot(COURSE_NAME, PyEduPluginConfigurator.class);
+    File bundledCourseRoot = StudyUtils.getBundledCourseRoot(COURSE_NAME, PyEduPluginConfigurator.class);
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), COURSE_NAME));
   }
 

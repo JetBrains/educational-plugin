@@ -47,8 +47,10 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
 import com.intellij.util.DocumentUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.io.ZipUtil;
 import com.intellij.util.text.MarkdownUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.core.EduAnswerPlaceholderDeleteHandler;
@@ -67,6 +69,7 @@ import com.jetbrains.edu.learning.ui.StudyStepicUserWidget;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import com.jetbrains.edu.learning.ui.StudyToolWindowFactory;
 import com.petebevin.markdown.MarkdownProcessor;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -744,5 +747,32 @@ public class StudyUtils {
       StepicUser user = dialog.getStepicUser();
       StudySettings.getInstance().setUser(user);
     }
+  }
+
+  public static File getBundledCourseRoot(final String courseName, Class clazz) {
+      @NonNls String jarPath = PathUtil.getJarPathForClass(clazz);
+      if (jarPath.endsWith(".jar")) {
+          final File jarFile = new File(jarPath);
+          File pluginBaseDir = jarFile.getParentFile();
+          File coursesDir = new File(pluginBaseDir, "courses");
+          if (!coursesDir.exists()) {
+              if (!coursesDir.mkdir()) {
+                  LOG.info("Failed to create courses dir");
+              } else {
+                  try {
+                      ZipUtil.extract(jarFile, pluginBaseDir, new FilenameFilter() {
+                          @Override
+                          public boolean accept(File dir, String name) {
+                              return name.equals(courseName);
+                          }
+                      });
+                  } catch (IOException e) {
+                      LOG.info("Failed to extract default course", e);
+                  }
+              }
+          }
+          return coursesDir;
+      }
+      return new File(jarPath, "courses");
   }
 }

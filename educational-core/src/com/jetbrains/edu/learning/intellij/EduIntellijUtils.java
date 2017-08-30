@@ -23,8 +23,6 @@ import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.util.PathUtil;
-import com.intellij.util.io.ZipUtil;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -35,8 +33,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -50,34 +46,7 @@ public class EduIntellijUtils {
     private EduIntellijUtils() {
     }
 
-    public static File getBundledCourseRoot(final String courseName, Class clazz) {
-        @NonNls String jarPath = PathUtil.getJarPathForClass(clazz);
-        if (jarPath.endsWith(".jar")) {
-            final File jarFile = new File(jarPath);
-            File pluginBaseDir = jarFile.getParentFile();
-            File coursesDir = new File(pluginBaseDir, "courses");
-            if (!coursesDir.exists()) {
-                if (!coursesDir.mkdir()) {
-                    LOG.info("Failed to create courses dir");
-                } else {
-                    try {
-                        ZipUtil.extract(jarFile, pluginBaseDir, new FilenameFilter() {
-                            @Override
-                            public boolean accept(File dir, String name) {
-                                return name.equals(courseName);
-                            }
-                        });
-                    } catch (IOException e) {
-                        LOG.info("Failed to extract default course", e);
-                    }
-                }
-            }
-            return coursesDir;
-        }
-        return new File(jarPath, "courses");
-    }
-
-    private static void commitAndSaveModel(final ModifiableRootModel model) {
+  private static void commitAndSaveModel(final ModifiableRootModel model) {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
