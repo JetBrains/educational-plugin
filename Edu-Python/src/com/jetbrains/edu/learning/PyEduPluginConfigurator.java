@@ -17,7 +17,6 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.intellij.util.PathUtil;
 import com.jetbrains.edu.learning.checker.PyStudyTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -27,9 +26,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.python.PythonModuleTypeBase;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -169,16 +168,8 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
 
   @Override
   public List<String> getBundledCoursePaths() {
-    @NonNls String jarPath = PathUtil.getJarPathForClass(PyEduPluginConfigurator.class);
-
-    if (jarPath.endsWith(".jar")) {
-      final File jarFile = new File(jarPath);
-
-      File pluginBaseDir = jarFile.getParentFile();
-      return Collections.singletonList(new File(new File(pluginBaseDir, "courses"), COURSE_NAME).getPath());
-    }
-
-    return Collections.singletonList(new File(new File(jarPath, "courses"), COURSE_NAME).getPath());
+    File bundledCourseRoot = EduIntellijUtils.getBundledCourseRoot(COURSE_NAME, PyEduPluginConfigurator.class);
+    return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), COURSE_NAME));
   }
 
   @Override
