@@ -750,29 +750,25 @@ public class StudyUtils {
   }
 
   public static File getBundledCourseRoot(final String courseName, Class clazz) {
-      @NonNls String jarPath = PathUtil.getJarPathForClass(clazz);
-      if (jarPath.endsWith(".jar")) {
-          final File jarFile = new File(jarPath);
-          File pluginBaseDir = jarFile.getParentFile();
-          File coursesDir = new File(pluginBaseDir, "courses");
-          if (!coursesDir.exists()) {
-              if (!coursesDir.mkdir()) {
-                  LOG.info("Failed to create courses dir");
-              } else {
-                  try {
-                      ZipUtil.extract(jarFile, pluginBaseDir, new FilenameFilter() {
-                          @Override
-                          public boolean accept(File dir, String name) {
-                              return name.equals(courseName);
-                          }
-                      });
-                  } catch (IOException e) {
-                      LOG.info("Failed to extract default course", e);
-                  }
-              }
-          }
+    @NonNls String jarPath = PathUtil.getJarPathForClass(clazz);
+    if (jarPath.endsWith(".jar")) {
+      final File jarFile = new File(jarPath);
+      File pluginBaseDir = jarFile.getParentFile();
+      File coursesDir = new File(pluginBaseDir, "courses");
+
+      if (!coursesDir.exists()) {
+        if (!coursesDir.mkdir()) {
+          LOG.info("Failed to create courses dir");
           return coursesDir;
+        }
       }
-      return new File(jarPath, "courses");
+      try {
+        ZipUtil.extract(jarFile, pluginBaseDir, (dir, name) -> name.equals(courseName));
+      } catch (IOException e) {
+        LOG.info("Failed to extract default course", e);
+      }
+      return coursesDir;
+    }
+    return new File(jarPath, "courses");
   }
 }
