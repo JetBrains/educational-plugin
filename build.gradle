@@ -68,9 +68,7 @@ allprojects {
 
     dependencies {
         compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
-        if (file("${rootProject.buildDir}/javafx").exists()) {
-            compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
-        }
+        compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
     }
 }
 
