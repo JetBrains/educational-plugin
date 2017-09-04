@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.ui.StudyStepicUserWidget;
 import org.jetbrains.annotations.Nullable;
 
-@State(name = "StepicUpdateSettings", storages = @Storage("other.xml"))
+@State(name = "EduSettings", storages = @Storage("other.xml"))
 public class StudySettings implements PersistentStateComponent<StudySettings> {
   public static final Topic<StudySettingsListener> SETTINGS_CHANGED = Topic.create("Edu.UserSet", StudySettingsListener.class);
   private StepicUser myUser;
