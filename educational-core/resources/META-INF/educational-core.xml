@@ -15,6 +15,9 @@
         <component>
             <implementation-class>com.jetbrains.edu.learning.stepic.EduStepicUpdater</implementation-class>
         </component>
+        <component>
+            <implementation-class>com.jetbrains.edu.learning.EduInitializationComponent</implementation-class>
+        </component>
     </application-components>
 
     <extensionPoints>
