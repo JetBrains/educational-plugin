@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepic;
 
 import com.intellij.ide.AppLifecycleListener;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.Application;
@@ -10,6 +11,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.text.DateFormatUtil;
+import com.jetbrains.edu.learning.EduInitializationComponent;
 import com.jetbrains.edu.learning.StudySettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -85,6 +87,9 @@ public class EduStepicUpdater {
   }
 
   private static boolean checkNeeded() {
+    if (!PropertiesComponent.getInstance().isValueSet(EduInitializationComponent.CONFLICTING_PLUGINS_DISABLED)) {
+      return false;
+    }
     long timeToNextCheck = StudySettings.getInstance().getLastTimeChecked() + CHECK_INTERVAL - System.currentTimeMillis();
     return timeToNextCheck <= 0;
   }
