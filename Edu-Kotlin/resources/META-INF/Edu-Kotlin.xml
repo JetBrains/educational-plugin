@@ -8,7 +8,8 @@
         <projectService serviceInterface="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"
                         serviceImplementation="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"/>
     </extensions>
-    <extensions defaultExtensionNs="Edu">
+
+    <extensions defaultExtensionNs="Educational">
         <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator" language="kotlin"/>
         <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>

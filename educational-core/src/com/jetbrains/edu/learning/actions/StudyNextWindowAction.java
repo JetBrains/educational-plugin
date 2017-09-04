@@ -13,7 +13,7 @@ import java.util.List;
  * move caret to next task window
  */
 public class StudyNextWindowAction extends StudyWindowNavigationAction {
-  public static final String ACTION_ID = "NextWindow";
+  public static final String ACTION_ID = "Educational.NextPlaceholder";
   public static final String SHORTCUT = "ctrl shift pressed PERIOD";
   public static final String SHORTCUT2 = "ctrl pressed ENTER";
 

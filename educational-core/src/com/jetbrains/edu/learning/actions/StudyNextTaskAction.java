@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class StudyNextTaskAction extends StudyTaskNavigationAction {
 
-  public static final String ACTION_ID = "NextTaskAction";
+  public static final String ACTION_ID = "Educational.NextTask";
   public static final String SHORTCUT = "ctrl pressed PERIOD";
 
   public StudyNextTaskAction() {

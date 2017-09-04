@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 public interface EduPluginConfigurator {
-  String EP_NAME = "Edu.pluginConfigurator";
+  String EP_NAME = "Educational.pluginConfigurator";
   LanguageExtension<EduPluginConfigurator> INSTANCE = new LanguageExtension<>(EP_NAME);
 
   @NotNull

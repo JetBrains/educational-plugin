@@ -39,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 
 public class StudyRefreshTaskFileAction extends StudyActionWithShortcut {
-  public static final String ACTION_ID = "RefreshTaskAction";
+  public static final String ACTION_ID = "Educational.RefreshTaskFile";
   public static final String SHORTCUT = "ctrl shift pressed X";
   private static final Logger LOG = Logger.getInstance(StudyRefreshTaskFileAction.class.getName());
   private static final String TEXT = "Reset Task File";

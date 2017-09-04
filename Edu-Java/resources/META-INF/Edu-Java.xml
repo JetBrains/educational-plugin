@@ -2,21 +2,18 @@
     <depends>com.intellij.modules.lang</depends>
     <depends>JUnit</depends>
 
-    <extensions defaultExtensionNs="Edu">
+    <extensions defaultExtensionNs="Educational">
         <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
+        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.learning.intellij.localCourses.EduCustomCourseProjectTemplate"/>
+
+        <!--educator-->
+        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.coursecreator.intellij.EduCCProjectTemplate"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
         <renameHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
         <refactoring.moveHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="com.intellij">
         <projectTemplatesFactory implementation="com.jetbrains.edu.learning.intellij.EduIntelliJTemplateFactory"/>
-    </extensions>
-    <extensions defaultExtensionNs="Edu">
-        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.learning.intellij.localCourses.EduCustomCourseProjectTemplate"/>
-        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.coursecreator.intellij.EduCCProjectTemplate"/>
     </extensions>
 </idea-plugin>
 

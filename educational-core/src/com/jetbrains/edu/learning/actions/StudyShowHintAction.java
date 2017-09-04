@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 public class StudyShowHintAction extends StudyActionWithShortcut {
-  public static final String ACTION_ID = "ShowHintAction";
+  public static final String ACTION_ID = "Educational.ShowHint";
   public static final String SHORTCUT = "ctrl pressed 7";
 
   public StudyShowHintAction() {

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * @see com.jetbrains.edu.learning.twitter.StudyTwitterAction
  * */
 public interface StudyTwitterPluginConfigurator {
-  ExtensionPointName<StudyTwitterPluginConfigurator> EP_NAME = ExtensionPointName.create("Edu.studyTwitterPluginConfigurator");
+  ExtensionPointName<StudyTwitterPluginConfigurator> EP_NAME = ExtensionPointName.create("Educational.studyTwitterPluginConfigurator");
 
   /**
    * To implement tweeting you should register you app in twitter. For registered application twitter provide

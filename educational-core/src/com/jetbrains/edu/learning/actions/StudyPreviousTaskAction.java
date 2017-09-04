@@ -12,7 +12,7 @@ public class StudyPreviousTaskAction extends StudyTaskNavigationAction {
     super("Previous Task","Navigate to the previous task", AllIcons.Actions.Back);
   }
 
-  public static final String ACTION_ID = "PreviousTaskAction";
+  public static final String ACTION_ID = "Educational.PreviousTask";
   public static final String SHORTCUT = "ctrl pressed COMMA";
 
   @Override

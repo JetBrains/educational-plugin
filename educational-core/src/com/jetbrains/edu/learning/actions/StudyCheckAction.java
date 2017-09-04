@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class StudyCheckAction extends StudyActionWithShortcut {
   public static final String SHORTCUT = "ctrl alt pressed ENTER";
-  public static final String ACTION_ID = "Edu.Check";
+  public static final String ACTION_ID = "Educational.Check";
   private static final String TEXT = "Check Task";
   public static final String FAILED_CHECK_LAUNCH = "Failed to launch checking";
 
