@@ -31,7 +31,7 @@ class EduInitializationComponent : ApplicationComponent {
     }
 
     override fun initComponent() {
-        if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED)) {
+        if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED) || ApplicationManager.getApplication().isUnitTestMode) {
             return
         }
         var disabledPlugins = disablePlugins()
