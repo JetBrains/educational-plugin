@@ -1,6 +1,7 @@
 buildscript {
     ext.pythonPluginVersion = pythonPluginVersion
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
+    ext.studioSandbox = project.buildDir.absolutePath + File.separator + "studio-sandbox"
     repositories {
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -94,6 +95,16 @@ task configurePyCharm {
         }
         intellij.sandboxDirectory pycharmSandbox
         intellij.alternativeIdePath pycharmPath
+    }
+}
+
+task configureAndroidStudio {
+    doLast {
+        if (!project.hasProperty("androidStudioPath")) {
+            throw new InvalidUserDataException("Path to Android Studio installed locally is needed\nDefine \"androidStudioPath\" property")
+        }
+        intellij.sandboxDirectory studioSandbox
+        intellij.alternativeIdePath androidStudioPath
     }
 }
 
