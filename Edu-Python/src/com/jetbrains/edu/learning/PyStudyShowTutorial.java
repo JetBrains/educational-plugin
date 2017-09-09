@@ -10,6 +10,7 @@ import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
+import com.intellij.util.PlatformUtils;
 
 public class PyStudyShowTutorial extends AbstractProjectComponent {
 
@@ -23,7 +24,7 @@ public class PyStudyShowTutorial extends AbstractProjectComponent {
 
   @Override
   public void projectOpened() {
-    if (PropertiesComponent.getInstance().isValueSet(POPUP_SHOWN)) {
+    if (PropertiesComponent.getInstance().isValueSet(POPUP_SHOWN) || !PlatformUtils.isPyCharmEducational()) {
       return;
     }
     ApplicationManager.getApplication().invokeLater((DumbAwareRunnable)() -> ApplicationManager.getApplication().runWriteAction(
