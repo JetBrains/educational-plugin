@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.util.PlatformUtils;
 import icons.EducationalCoreIcons;
 
 import static com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.COURSE_CREATOR_ENABLED;
@@ -29,6 +30,6 @@ public class PyCCCreateCourseAction extends AnAction {
   @Override
   public void update(AnActionEvent e) {
     Presentation presentation = e.getPresentation();
-    presentation.setEnabledAndVisible(PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED));
+    presentation.setEnabledAndVisible(PlatformUtils.isPyCharm() && PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED));
   }
 }
