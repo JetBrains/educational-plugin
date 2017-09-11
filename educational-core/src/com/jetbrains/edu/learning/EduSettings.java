@@ -12,14 +12,14 @@ import com.jetbrains.edu.learning.ui.StudyStepicUserWidget;
 import org.jetbrains.annotations.Nullable;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
-public class StudySettings implements PersistentStateComponent<StudySettings> {
+public class EduSettings implements PersistentStateComponent<EduSettings> {
   public static final Topic<StudySettingsListener> SETTINGS_CHANGED = Topic.create("Edu.UserSet", StudySettingsListener.class);
   private StepicUser myUser;
   public long LAST_TIME_CHECKED = 0;
   private boolean myEnableTestingFromSamples = false;
   public boolean myShouldUseJavaFx = StudyUtils.hasJavaFx();
 
-  public StudySettings() {
+  public EduSettings() {
   }
 
   public long getLastTimeChecked() {
@@ -32,17 +32,17 @@ public class StudySettings implements PersistentStateComponent<StudySettings> {
 
   @Nullable
   @Override
-  public StudySettings getState() {
+  public EduSettings getState() {
     return this;
   }
 
   @Override
-  public void loadState(StudySettings state) {
+  public void loadState(EduSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 
-  public static StudySettings getInstance() {
-    return ServiceManager.getService(StudySettings.class);
+  public static EduSettings getInstance() {
+    return ServiceManager.getService(EduSettings.class);
   }
 
   @Nullable

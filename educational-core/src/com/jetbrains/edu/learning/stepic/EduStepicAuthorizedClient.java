@@ -4,7 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.diagnostic.Logger;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -36,11 +36,11 @@ public class EduStepicAuthorizedClient {
       return ourClient;
     }
 
-    StudySettings studySettings = StudySettings.getInstance();
+    EduSettings eduSettings = EduSettings.getInstance();
 
-    assert studySettings.getUser() != null: "User must not be null";
+    assert eduSettings.getUser() != null: "User must not be null";
 
-    StepicUser stepicUser = studySettings.getUser();
+    StepicUser stepicUser = eduSettings.getUser();
     assert stepicUser != null;
 
     if (!EduStepicClient.isTokenUpToDate(stepicUser.getAccessToken())) {

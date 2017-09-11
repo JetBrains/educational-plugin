@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
@@ -72,7 +72,7 @@ public class EduAdaptiveStepicConnector {
         return null;
       }
 
-      StepicUser user = StudySettings.getInstance().getUser();
+      StepicUser user = EduSettings.getInstance().getUser();
       if (user == null) {
         LOG.warn("User is null");
         return null;
@@ -239,7 +239,7 @@ public class EduAdaptiveStepicConnector {
     }
 
     indicator.checkCanceled();
-    final StepicUser user = StudySettings.getInstance().getUser();
+    final StepicUser user = EduSettings.getInstance().getUser();
     if (user == null) {
       LOG.warn("Can't get next recommendation: user is null");
       ApplicationManager.getApplication().invokeLater(() -> StudyUtils.showErrorPopupOnToolbar(project,

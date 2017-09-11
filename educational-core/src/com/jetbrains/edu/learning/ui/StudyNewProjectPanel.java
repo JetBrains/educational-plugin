@@ -25,7 +25,7 @@ import com.intellij.ui.AncestorListenerAdapter;
 import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
@@ -193,7 +193,7 @@ public class StudyNewProjectPanel extends JPanel implements PanelWithAnchor {
               }
               else if (LOGIN_TO_STEPIC.equals(selectedValue)) {
                 EduStepicConnector.doAuthorize(() -> showLoginDialog());
-                StepicUser stepicUser = StudySettings.getInstance().getUser();
+                StepicUser stepicUser = EduSettings.getInstance().getUser();
                 if (stepicUser != null) {
                   ProgressManager.getInstance().runProcessWithProgressSynchronously(
                     () -> myGenerator.setEnrolledCoursesIds(EduAdaptiveStepicConnector.getEnrolledCoursesIds(stepicUser)),
@@ -219,7 +219,7 @@ public class StudyNewProjectPanel extends JPanel implements PanelWithAnchor {
     OAuthDialog dialog = new OAuthDialog();
     if (dialog.showAndGet()) {
       StepicUser stepicUser = dialog.getStepicUser();
-      StudySettings.getInstance().setUser(stepicUser);
+      EduSettings.getInstance().setUser(stepicUser);
       setOK();
     }
   }

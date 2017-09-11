@@ -49,6 +49,8 @@ class EduInitializationComponent : ApplicationComponent {
 
             Messages.showInfoMessage(message, restartInfo)
             ApplicationManager.getApplication().restart()
+        } else {
+            PropertiesComponent.getInstance().setValue(CONFLICTING_PLUGINS_DISABLED, "true")
         }
 
     }
@@ -64,7 +66,6 @@ class EduInitializationComponent : ApplicationComponent {
                 PluginManagerCore.disablePlugin(id)
             }
         }
-        PropertiesComponent.getInstance().setValue(CONFLICTING_PLUGINS_DISABLED, "true")
         return disabledPlugins
     }
 }

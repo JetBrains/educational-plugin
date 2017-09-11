@@ -12,7 +12,7 @@ import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -31,7 +31,7 @@ public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
 
 
   public StudyStepicUserWidget() {
-    StepicUser user = StudySettings.getInstance().getUser();
+    StepicUser user = EduSettings.getInstance().getUser();
     Icon icon = user == null ? EducationalCoreIcons.StepikOff : EducationalCoreIcons.Stepik;
     myComponent = new JLabel(icon);
 
@@ -39,7 +39,7 @@ public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
       @Override
       public boolean onClick(@NotNull MouseEvent e, int clickCount) {
         Point point = new Point(0, 0);
-        StepicUserComponent component = new StepicUserComponent(StudySettings.getInstance().getUser());
+        StepicUserComponent component = new StepicUserComponent(EduSettings.getInstance().getUser());
         final Dimension dimension = component.getPreferredSize();
         point = new Point(point.x - dimension.width, point.y - dimension.height);
         component.showComponent(new RelativePoint(e.getComponent(), point));
@@ -70,7 +70,7 @@ public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
   }
 
   public void update() {
-    StepicUser user = StudySettings.getInstance().getUser();
+    StepicUser user = EduSettings.getInstance().getUser();
     Icon icon = user == null ? EducationalCoreIcons.StepikOff : EducationalCoreIcons.Stepik;
     myComponent.setIcon(icon);
   }
@@ -124,7 +124,7 @@ public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
       return new HyperlinkAdapter() {
         @Override
         protected void hyperlinkActivated(HyperlinkEvent e) {
-          StudySettings.getInstance().setUser(null);
+          EduSettings.getInstance().setUser(null);
           myPopup.cancel();
         }
       };
