@@ -20,7 +20,7 @@ import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -62,7 +62,7 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements EduCourse
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
         return StudyUtils.execCancelable(() -> EduStepicConnector.enrollToCourse(((RemoteCourse)myCourse).getId(),
-                StudySettings.getInstance().getUser()));
+                EduSettings.getInstance().getUser()));
       }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
     }
     return true;

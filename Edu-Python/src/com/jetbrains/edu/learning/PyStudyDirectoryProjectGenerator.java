@@ -284,8 +284,8 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
       @Override
       public void mouseClicked(MouseEvent e) {
         if (isCourseAdaptiveAndNotLogged()) {
-          StudySettings studySettings = StudySettings.getInstance();
-          StepicUser oldUser = studySettings.getUser();
+          EduSettings eduSettings = EduSettings.getInstance();
+          StepicUser oldUser = eduSettings.getUser();
 
           EduStepicConnector.doAuthorize(() -> mySettingsPanel.showLoginDialog());
 
@@ -293,10 +293,10 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
             .runProcessWithProgressSynchronously(() -> {
                                                    ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
                                                    StepicUser user = StudyUtils.execCancelable(() -> {
-                                                     StepicUser newUser = studySettings.getUser();
+                                                     StepicUser newUser = eduSettings.getUser();
                                                      while (newUser == null || newUser.equals(oldUser)) {
                                                        TimeUnit.MILLISECONDS.sleep(500);
-                                                       newUser = studySettings.getUser();
+                                                       newUser = eduSettings.getUser();
                                                      }
                                                      myGenerator.setEnrolledCoursesIds(EduAdaptiveStepicConnector.getEnrolledCoursesIds(newUser));
 
@@ -355,7 +355,7 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
         ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
           return StudyUtils.execCancelable(() -> EduStepicConnector.enrollToCourse(((RemoteCourse)course).getId(),
-                                                                                   StudySettings.getInstance().getUser()));
+                                                                                   EduSettings.getInstance().getUser()));
         }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
       }
       return true;

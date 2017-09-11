@@ -12,7 +12,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.text.DateFormatUtil;
 import com.jetbrains.edu.learning.EduInitializationComponent;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class EduStepicUpdater {
       @Override
       public void appFrameCreated(String[] commandLineArgs, @NotNull Ref<Boolean> willOpenProject) {
 
-        long timeToNextCheck = StudySettings.getInstance().getLastTimeChecked() + CHECK_INTERVAL - System.currentTimeMillis();
+        long timeToNextCheck = EduSettings.getInstance().getLastTimeChecked() + CHECK_INTERVAL - System.currentTimeMillis();
         if (timeToNextCheck <= 0) {
           myCheckRunnable.run();
         }
@@ -54,13 +54,13 @@ public class EduStepicUpdater {
     ActionCallback callback = new ActionCallback();
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       final List<Course> courses = EduStepicConnector.getCourses(null);
-      StudySettings.getInstance().setLastTimeChecked(System.currentTimeMillis());
+      EduSettings.getInstance().setLastTimeChecked(System.currentTimeMillis());
 
       if (!courses.isEmpty()) {
         List<Course> updated = new ArrayList<>();
         for (Course course : courses) {
           if (course instanceof RemoteCourse && ((RemoteCourse)course).getUpdateDate().
-                                                after(new Date(StudySettings.getInstance().getLastTimeChecked()))) {
+                                                after(new Date(EduSettings.getInstance().getLastTimeChecked()))) {
             updated.add(course);
           }
         }
@@ -90,7 +90,7 @@ public class EduStepicUpdater {
     if (!PropertiesComponent.getInstance().isValueSet(EduInitializationComponent.CONFLICTING_PLUGINS_DISABLED)) {
       return false;
     }
-    long timeToNextCheck = StudySettings.getInstance().getLastTimeChecked() + CHECK_INTERVAL - System.currentTimeMillis();
+    long timeToNextCheck = EduSettings.getInstance().getLastTimeChecked() + CHECK_INTERVAL - System.currentTimeMillis();
     return timeToNextCheck <= 0;
   }
 }

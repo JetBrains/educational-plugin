@@ -745,7 +745,7 @@ public class StudyUtils {
     OAuthDialog dialog = new OAuthDialog();
     if (dialog.showAndGet()) {
       StepicUser user = dialog.getStepicUser();
-      StudySettings.getInstance().setUser(user);
+      EduSettings.getInstance().setUser(user);
     }
   }
 

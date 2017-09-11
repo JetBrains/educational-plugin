@@ -15,7 +15,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudySerializationUtils;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -145,7 +145,7 @@ public class CCStepicConnector {
   }
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
-    boolean isAuthorized = StudySettings.getInstance().getUser() != null;
+    boolean isAuthorized = EduSettings.getInstance().getUser() != null;
     if (!isAuthorized) {
       showStepicNotification(project, NotificationType.ERROR, failedActionName);
       return false;

@@ -26,7 +26,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -184,8 +184,8 @@ public class EduCoursesPanel extends JPanel {
       @Override
       public void mouseClicked(MouseEvent e) {
         if (!isLoggedIn() && myErrorLabel.isVisible()) {
-          ApplicationManager.getApplication().getMessageBus().connect().subscribe(StudySettings.SETTINGS_CHANGED, () -> {
-            StepicUser user = StudySettings.getInstance().getUser();
+          ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
+            StepicUser user = EduSettings.getInstance().getUser();
             if (user != null) {
               ApplicationManager.getApplication().invokeLater(() -> {
                 Course selectedCourse = myCoursesList.getSelectedValue();
@@ -243,7 +243,7 @@ public class EduCoursesPanel extends JPanel {
   }
 
   private static boolean isLoggedIn() {
-    return StudySettings.getInstance().getUser() != null;
+    return EduSettings.getInstance().getUser() != null;
   }
 
   private void updateAdvancedSettings(Course selectedCourse) {

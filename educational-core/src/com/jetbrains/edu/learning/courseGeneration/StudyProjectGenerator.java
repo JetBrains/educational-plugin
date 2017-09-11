@@ -16,11 +16,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.StudySerializationUtils;
-import com.jetbrains.edu.learning.StudySettings;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -50,7 +47,7 @@ public class StudyProjectGenerator {
   }
 
   public boolean isLoggedIn() {
-    final StepicUser user = StudySettings.getInstance().getUser();
+    final StepicUser user = EduSettings.getInstance().getUser();
     return user != null;
   }
 
@@ -116,7 +113,7 @@ public class StudyProjectGenerator {
   // Supposed to be called under progress
   public List<Course> getCourses(boolean force) {
     if (force) {
-      myCourses = execCancelable(() -> EduStepicConnector.getCourses(StudySettings.getInstance().getUser()));
+      myCourses = execCancelable(() -> EduStepicConnector.getCourses(EduSettings.getInstance().getUser()));
     }
     List<Course> bundledCourses = getBundledCourses();
     if (bundledCourses != null) {

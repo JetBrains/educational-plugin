@@ -25,7 +25,7 @@ import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.AppIcon;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.stepic.EduStepicAuthorizedClient;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
@@ -172,7 +172,7 @@ public class EduStepikRestService extends RestService {
       if (code != null) {
         StepicUser stepicUser = EduStepicAuthorizedClient.login(code, EduStepicConnector.getOAuthRedirectUrl());
         if (stepicUser != null) {
-          StudySettings.getInstance().setUser(stepicUser);
+          EduSettings.getInstance().setUser(stepicUser);
           sendHtmlResponse(request, context, "/oauthResponsePages/okPage.html");
           showStepicNotification(NotificationType.INFORMATION,
                                  "Logged in as " + stepicUser.getFirstName() + " " + stepicUser.getLastName());

@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.CCEditHintAction
-import com.jetbrains.edu.learning.StudySettings
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.StudyUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -26,7 +26,7 @@ open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
   protected var isEditingMode = false
 
   init {
-    if (StudyUtils.hasJavaFx() && StudySettings.getInstance().shouldUseJavaFx()) {
+    if (StudyUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
       studyToolWindow = StudyJavaFxToolWindow()
     }
     else {

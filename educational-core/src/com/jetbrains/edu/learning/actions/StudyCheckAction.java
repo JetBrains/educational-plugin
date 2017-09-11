@@ -16,7 +16,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.StudyCheckListener;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
@@ -168,7 +168,7 @@ public class StudyCheckAction extends StudyActionWithShortcut {
     }
 
     private StudyCheckResult checkOnRemote() {
-      return myChecker.checkOnRemote(StudySettings.getInstance().getUser());
+      return myChecker.checkOnRemote(EduSettings.getInstance().getUser());
     }
   }
 }

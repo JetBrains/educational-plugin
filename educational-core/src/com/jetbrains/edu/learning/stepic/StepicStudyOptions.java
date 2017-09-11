@@ -21,7 +21,7 @@ import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
-import com.jetbrains.edu.learning.StudySettings;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.settings.StudyOptionsProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,10 +57,10 @@ public class StepicStudyOptions implements StudyOptionsProvider {
 
       @Override
       protected void hyperlinkActivated(HyperlinkEvent e) {
-        ApplicationManager.getApplication().getMessageBus().connect().subscribe(StudySettings.SETTINGS_CHANGED, () -> {
-          StepicUser user = StudySettings.getInstance().getUser();
+        ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
+          StepicUser user = EduSettings.getInstance().getUser();
           if (user != null && !user.equals(myStepicUser)) {
-            StudySettings.getInstance().setUser(myStepicUser);
+            EduSettings.getInstance().setUser(myStepicUser);
             myStepicUser = user;
             updateLoginLabels(myStepicUser);
           }
@@ -90,7 +90,7 @@ public class StepicStudyOptions implements StudyOptionsProvider {
 
   @Override
   public void reset() {
-    final StudySettings stepikSettings = StudySettings.getInstance();
+    final EduSettings stepikSettings = EduSettings.getInstance();
     myEnableTestingFromSamples.setSelected(stepikSettings.isEnableTestingFromSamples());
     updateLoginLabels(stepikSettings.getUser());
   }
@@ -135,7 +135,7 @@ public class StepicStudyOptions implements StudyOptionsProvider {
 
   @Override
   public void apply() throws ConfigurationException {
-    final StudySettings stepikSettings = StudySettings.getInstance();
+    final EduSettings stepikSettings = EduSettings.getInstance();
     if (isTestingFromSamplesEnabled() != stepikSettings.isEnableTestingFromSamples()) {
       stepikSettings.setEnableTestingFromSamples(isTestingFromSamplesEnabled());
     }
@@ -161,7 +161,7 @@ public class StepicStudyOptions implements StudyOptionsProvider {
   }
 
   public boolean isModified() {
-    final StudySettings stepikSettings = StudySettings.getInstance();
+    final EduSettings stepikSettings = EduSettings.getInstance();
     boolean isTestOptionModified = !isTestingFromSamplesEnabled() == stepikSettings.isEnableTestingFromSamples();
     final StepicUser user = stepikSettings.getUser();
 
