@@ -83,6 +83,7 @@ intellij {
     if (project.hasProperty("customSinceBuild")) {
         patchPluginXml.sinceBuild = customSinceBuild
     }
+    pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
     plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
