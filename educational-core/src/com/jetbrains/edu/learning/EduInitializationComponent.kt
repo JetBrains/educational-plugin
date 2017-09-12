@@ -13,6 +13,10 @@ import java.util.*
 
 
 class EduInitializationComponent : ApplicationComponent {
+    override fun disposeComponent() {}
+
+    override fun getComponentName() = "Educational.InitializationComponent"
+
     companion object {
         @JvmField
         val IDS = arrayOf(

@@ -9,6 +9,7 @@ import com.intellij.openapi.project.ex.ProjectManagerEx;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -29,5 +30,21 @@ public class PyStudyInitialConfigurator implements ApplicationComponent {
       FileUtil.delete(courses);
       propertiesComponent.setValue(CONFIGURED_V40, "true");
     }
+  }
+
+  @Override
+  public void initComponent() {
+
+  }
+
+  @Override
+  public void disposeComponent() {
+
+  }
+
+  @NotNull
+  @Override
+  public String getComponentName() {
+    return "Educational.InitialConfigurator";
   }
 }
