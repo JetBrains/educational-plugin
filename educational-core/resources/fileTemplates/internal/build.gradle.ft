@@ -1,0 +1,77 @@
+buildscript {
+    ext.kotlin_version = '1.1.4-3'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+group 'com.kotlin.koans'
+version '1.0-SNAPSHOT'
+
+class MyListener implements TestListener {
+
+    @Override
+    void beforeSuite(TestDescriptor suite) {
+
+    }
+
+    @Override
+    void afterSuite(TestDescriptor suite, TestResult result) {
+    }
+
+    @Override
+    void beforeTest(TestDescriptor testDescriptor) {
+
+    }
+
+    public void afterTest(TestDescriptor test, TestResult result) {
+        if (result.resultType == TestResult.ResultType.FAILURE) {
+            println("#educational_plugin FAILED + " + result.exception.message);
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'kotlin'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+        testCompile project(':util')
+    }
+
+    compileKotlin.destinationDir = compileJava.destinationDir
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
+    sourceSets {
+        main {
+            kotlin.srcDir 'src'
+            java.srcDir 'src'
+        }
+        test {
+            kotlin.srcDir 'test'
+        }
+    }
+
+    test.outputs.upToDateWhen { false }
+
+    gradle.addListener(new MyListener())
+}

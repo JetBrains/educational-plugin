@@ -19,6 +19,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -266,5 +267,9 @@ public class EduUtils {
         return confirmationPolicy;
       }
     }.execute();
+  }
+
+  public static boolean isAndroidStudio() {
+    return "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
   }
 }

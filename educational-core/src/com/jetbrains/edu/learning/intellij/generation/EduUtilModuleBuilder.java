@@ -13,24 +13,24 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 class EduUtilModuleBuilder extends JavaModuleBuilder {
 
-  private final Lesson myAdditionalMaterials;
+  @Nullable
+  private final Task myAdditionalMaterials;
 
-  public EduUtilModuleBuilder(String moduleDir, Lesson additionalMaterials) {
+  public EduUtilModuleBuilder(String moduleDir, @Nullable Task additionalMaterials) {
     myAdditionalMaterials = additionalMaterials;
     setName(EduIntelliJNames.UTIL);
     setModuleFilePath(FileUtil.join(moduleDir, EduIntelliJNames.UTIL, EduIntelliJNames.UTIL + ModuleFileType.DOT_DEFAULT_EXTENSION));
@@ -57,13 +57,9 @@ class EduUtilModuleBuilder extends JavaModuleBuilder {
     EduIntellijUtils.addJUnit(baseModule);
 
     if (myAdditionalMaterials != null) {
-      final List<Task> taskList = myAdditionalMaterials.getTaskList();
-      if (taskList.size() == 1) {
-        final Task task = taskList.get(0);
-        for (Map.Entry<String, String> entry : task.getTestsText().entrySet()) {
+      for (Map.Entry<String, String> entry : myAdditionalMaterials.getTestsText().entrySet()) {
           StudyGenerator.createChildFile(project.getBaseDir(), entry.getKey(), entry.getValue());
         }
-      }
     }
     return baseModule;
   }

@@ -1,0 +1,26 @@
+rootProject.name = 'koans.test'
+
+def lessons = rootProject.projectDir.listFiles(new FilenameFilter() {
+    @Override
+    boolean accept(File dir, String name) {
+        return dir.isDirectory() && name.startsWith("lesson")
+    }
+})
+
+for (lesson in lessons) {
+    includeLesson(lesson)
+}
+
+def includeLesson(File lessonDir) {
+    def tasks = lessonDir.listFiles(new FilenameFilter() {
+        @Override
+        boolean accept(File dir, String name) {
+            return dir.isDirectory() && name.startsWith("task")
+        }
+    })
+    for (task in tasks) {
+        include "${lessonDir.name}:${task.name}"
+    }
+}
+
+include 'util'
