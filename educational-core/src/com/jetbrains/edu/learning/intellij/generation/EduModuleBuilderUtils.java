@@ -8,7 +8,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -51,13 +50,8 @@ public class EduModuleBuilderUtils {
     if (moduleDir == null) {
       return;
     }
-
-    final Lesson additionalMaterials = course.getLessons(true).stream().
-        filter(lesson -> EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).findFirst().orElse(null);
-
-    EduUtilModuleBuilder utilModuleBuilder = new EduUtilModuleBuilder(moduleDir, additionalMaterials);
+    EduUtilModuleBuilder utilModuleBuilder = new EduUtilModuleBuilder(moduleDir, course.getAdditionalMaterialsTask());
     Module utilModule = utilModuleBuilder.createModule(moduleModel);
-
     createLessonModules(moduleModel, course, moduleDir, utilModule);
   }
 

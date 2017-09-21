@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.courseGeneration;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -97,22 +100,22 @@ public class StudyGenerator {
     }
   }
 
-  public static void createChildFile(@NotNull VirtualFile taskDir, @NotNull String name, @NotNull String text) throws IOException {
+  public static void createChildFile(@NotNull VirtualFile parentDir, @NotNull String name, @NotNull String text) throws IOException {
     String newDirectories = null;
     String fileName = name;
-    VirtualFile dir = taskDir;
+    VirtualFile dir = parentDir;
     if (name.contains("/")) {
       int pos = name.lastIndexOf("/");
       fileName = name.substring(pos + 1);
       newDirectories = name.substring(0, pos);
     }
     if (newDirectories != null) {
-      dir = VfsUtil.createDirectoryIfMissing(taskDir, newDirectories);
+      dir = VfsUtil.createDirectoryIfMissing(parentDir, newDirectories);
     }
     if (dir != null) {
       VirtualFile virtualTaskFile = dir.findChild(fileName);
       if (virtualTaskFile == null) {
-        virtualTaskFile = dir.createChildData(taskDir, fileName);
+        virtualTaskFile = dir.createChildData(parentDir, fileName);
       }
       if (EduUtils.isImage(name)) {
         virtualTaskFile.setBinaryContent(Base64.decodeBase64(text));
@@ -121,5 +124,10 @@ public class StudyGenerator {
         VfsUtil.saveText(virtualTaskFile, text);
       }
     }
+  }
+
+  public static void createFromInternalTemplate(@NotNull Project project, @NotNull VirtualFile parentDir, @NotNull String name) throws IOException {
+    FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(name);
+    createChildFile(parentDir, name, template.getText());
   }
 }
