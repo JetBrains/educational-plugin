@@ -8,6 +8,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -217,5 +218,14 @@ public class Course {
   @Override
   public String toString() {
     return getName();
+  }
+
+  @Nullable
+  public Task getAdditionalMaterialsTask() {
+    final Lesson additionalMaterials = getLessons(true).stream().
+      filter(lesson -> EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).
+      findFirst().
+      orElse(null);
+    return additionalMaterials == null ? null : additionalMaterials.getTaskList().get(0);
   }
 }

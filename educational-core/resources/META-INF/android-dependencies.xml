@@ -1,4 +1,5 @@
 <idea-plugin>
+  <depends>org.jetbrains.android</depends>
   <actions>
     <action id="Educational.StartLearn" class="com.jetbrains.edu.learning.intellij.android.EduStartLearningAction" text="Start Learning"
             description="Create New Educational Project">
