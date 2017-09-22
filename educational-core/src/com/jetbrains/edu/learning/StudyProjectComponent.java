@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning;
 
+import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
@@ -80,6 +82,7 @@ public class StudyProjectComponent implements ProjectComponent {
 
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
+        ProjectView.getInstance(myProject).changeView(ProjectViewPane.ID);
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course == null) {
           LOG.warn("Opened project is with null course");
