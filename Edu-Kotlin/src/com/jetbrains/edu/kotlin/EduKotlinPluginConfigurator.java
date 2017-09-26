@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -44,7 +45,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   @NotNull
   @Override
   public StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask pyCharmTask, @NotNull Project project) {
-    return new EduKotlinPyCharmTaskChecker(pyCharmTask, project);
+    return EduUtils.isAndroidStudio() ? new EduKotlinAndroidPyCharmTaskChecker(pyCharmTask, project) : new EduKotlinPyCharmTaskChecker(pyCharmTask, project);
   }
 
   @NotNull
