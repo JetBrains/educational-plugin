@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -11,24 +10,21 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.ui.*;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
-import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
@@ -39,37 +35,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EduCoursesPanel extends JPanel {
   private static final Set<String> FEATURED_COURSES = ContainerUtil.newLinkedHashSet("Adaptive Python", "Introduction to Python", "Kotlin Koans");
   private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
-  public static final Color COLOR = new Color(70, 130, 180, 70);
   private static final Logger LOG = Logger.getInstance(EduCoursesPanel.class);
+
   private JPanel myMainPanel;
   private JPanel myCourseListPanel;
-  private JPanel myCoursePanel;
-  private JPanel myAdvancedSettingsPlaceholder;
-  private JPanel myAdvancedSettings;
   private FilterComponent mySearchField;
-  private JEditorPane myDescriptionTextArea;
-  private JBLabel myCourseNameLabel;
-  private JPanel myTagsPanel;
-  private JBScrollPane myInfoScroll;
   private JBLabel myErrorLabel;
   private JSplitPane mySplitPane;
   private JPanel mySplitPaneRoot;
   private JBList<Course> myCoursesList;
-  private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
+  private EduCoursePanel myCoursePanel;
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
 
@@ -79,20 +65,10 @@ public class EduCoursesPanel extends JPanel {
     initUI();
   }
 
-
   private void initUI() {
     GuiUtils.replaceJSplitPaneWithIDEASplitter(mySplitPaneRoot, true);
     mySplitPane.setDividerLocation(0.5);
     mySplitPane.setResizeWeight(0.5);
-    myCourseNameLabel.setBorder(JBUI.Borders.empty(20, 10, 5, 10));
-    Font labelFont = UIUtil.getLabelFont();
-    myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
-    myTagsPanel.setBorder(JBUI.Borders.empty(0, 10));
-    myDescriptionTextArea.setBorder(JBUI.Borders.empty(20, 10, 10, 10));
-    myDescriptionTextArea.setEditorKit(UIUtil.getHTMLEditorKit());
-    myDescriptionTextArea.setEditable(false);
-    myDescriptionTextArea.setPreferredSize(JBUI.size(myCoursePanel.getPreferredSize()));
-    myInfoScroll.setBorder(null);
     myCoursesList = new JBList<>();
     myCourses = getCourses();
     updateModel(myCourses, null);
@@ -129,7 +105,6 @@ public class EduCoursesPanel extends JPanel {
         return component;
       }
     });
-    myLocationField = createLocationComponent();
     myCoursesList.addListSelectionListener(new ListSelectionListener() {
       @Override
       public void valueChanged(ListSelectionEvent e) {
@@ -171,15 +146,8 @@ public class EduCoursesPanel extends JPanel {
     toolbarDecoratorPanel.setBorder(null);
     myCoursesList.setBorder(null);
     myCourseListPanel.add(toolbarDecoratorPanel, BorderLayout.CENTER);
-    Border border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 0, 1, 1);
-    myCoursePanel.setBorder(border);
     myCourseListPanel.setBorder(JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 1, 1, 1));
-    HideableDecorator decorator = new HideableDecorator(myAdvancedSettingsPlaceholder, "Advanced Settings", false);
-    decorator.setContentComponent(myAdvancedSettings);
-    myAdvancedSettings.setBorder(JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0));
     myCoursesList.setBackground(LIST_COLOR);
-    myDescriptionTextArea.setBackground(UIUtil.getPanelBackground());
-    myAdvancedSettingsPlaceholder.setVisible(false);
     myErrorLabel.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
@@ -227,8 +195,7 @@ public class EduCoursesPanel extends JPanel {
   }
 
   private void updateCourseInfoPanel(Course selectedCourse) {
-    updateCourseDescriptionPanel(selectedCourse);
-    updateAdvancedSettings(selectedCourse);
+    myCoursePanel.bindCourse(selectedCourse);
     if (!isLoggedIn()) {
       myErrorLabel.setVisible(true);
       myErrorLabel.setText(
@@ -244,79 +211,6 @@ public class EduCoursesPanel extends JPanel {
 
   private static boolean isLoggedIn() {
     return EduSettings.getInstance().getUser() != null;
-  }
-
-  private void updateAdvancedSettings(Course selectedCourse) {
-    myAdvancedSettingsPlaceholder.setVisible(true);
-    myLocationField.getComponent().setText(nameToLocation(selectedCourse.getName()));
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(selectedCourse.getLanguageById());
-    if (configurator == null) {
-      return;
-    }
-    EduCourseProjectGenerator generator = configurator.getEduCourseProjectGenerator();
-    if (generator == null) {
-      return;
-    }
-    LabeledComponent<JComponent> component = generator.getLanguageSettingsComponent(selectedCourse);
-    myAdvancedSettings.removeAll();
-    myAdvancedSettings.add(myLocationField, BorderLayout.NORTH);
-    if (component != null) {
-      myAdvancedSettings.add(component, BorderLayout.SOUTH);
-      UIUtil.mergeComponentsWithAnchor(myLocationField, component);
-    }
-    myAdvancedSettings.revalidate();
-    myAdvancedSettings.repaint();
-  }
-
-  private void updateCourseDescriptionPanel(@Nullable Course selectedCourse) {
-    if (selectedCourse == null) {
-      myInfoScroll.setVisible(false);
-      myAdvancedSettingsPlaceholder.setVisible(false);
-      return;
-    }
-    myInfoScroll.setVisible(true);
-    String courseName = selectedCourse.getName();
-    String description = selectedCourse.getDescription();
-    myCourseNameLabel.setText(courseName);
-    myTagsPanel.removeAll();
-    addTags(myTagsPanel, selectedCourse);
-    myTagsPanel.revalidate();
-    myTagsPanel.repaint();
-    StringBuilder builder = new StringBuilder();
-    List<StepicUser> authors = selectedCourse.getAuthors();
-    if (!authors.isEmpty()) {
-      builder.append("<b>Instructor");
-      if (authors.size() > 1) {
-        builder.append("s");
-      }
-      builder.append("</b>: ");
-      List<String> fullNames = getAuthorFullNames(authors);
-      builder.append(StringUtil.join(fullNames, ", "));
-      builder.append("<br><br>");
-    }
-    builder.append(description.replace("\n", "<br>"));
-    myDescriptionTextArea.setText(UIUtil.toHtml(builder.toString()));
-  }
-
-  private static List<String> getAuthorFullNames(List<StepicUser> authors) {
-    return authors.stream().
-          map(user -> StringUtil.join(Arrays.asList(user.getFirstName(), user.getLastName()), " "))
-          .collect(Collectors.toList());
-  }
-
-  private static void addTags(JPanel tagsPanel, @NotNull Course course) {
-    for (String tag : getTags(course)) {
-      tagsPanel.add(createTagLabel(tag));
-    }
-  }
-
-  private static JLabel createTagLabel(String tagText) {
-    Border emptyBorder = JBUI.Borders.empty(3, 5);
-    JBLabel label = new JBLabel(tagText);
-    label.setOpaque(true);
-    label.setBorder(emptyBorder);
-    label.setBackground(new JBColor(COLOR, COLOR));
-    return label;
   }
 
   private static int getWeight(@NotNull Course course) {
@@ -337,7 +231,7 @@ public class EduCoursesPanel extends JPanel {
     if (myCoursesList.getItemsCount() > 0) {
       myCoursesList.setSelectedIndex(0);
     } else {
-      updateCourseDescriptionPanel(null);
+      myCoursePanel.clearContent();
     }
     if (courseToSelect == null) {
       return;
@@ -377,12 +271,12 @@ public class EduCoursesPanel extends JPanel {
     if (course.getName().toLowerCase().contains(filter)) {
       return true;
     }
-    for (String tag : getTags(course)) {
+    for (String tag : CourseUtils.getTags(course)) {
       if (tag.toLowerCase().contains(filter)) {
         return true;
       }
     }
-    for (String authorName : getAuthorFullNames(course.getAuthors())) {
+    for (String authorName : CourseUtils.getAuthorFullNames(course)) {
       if (authorName.toLowerCase().contains(filter)) {
         return true;
       }
@@ -400,21 +294,8 @@ public class EduCoursesPanel extends JPanel {
     return projectGenerator == null ? null : projectGenerator.getDirectoryProjectGenerator();
   }
 
-  private static LabeledComponent<TextFieldWithBrowseButton> createLocationComponent() {
-    TextFieldWithBrowseButton field = new TextFieldWithBrowseButton();
-    field.addBrowseFolderListener("Select Course Location", "Select course location", null,
-                                  FileChooserDescriptorFactory.createSingleFolderDescriptor());
-    return LabeledComponent.create(field, "Location", BorderLayout.WEST);
-  }
-
-  @NotNull
-  private static String nameToLocation(@NotNull String courseName) {
-    String name = FileUtil.sanitizeFileName(courseName);
-    return FileUtil.findSequentNonexistentFile(new File(ProjectUtil.getBaseDir()), name, "").getAbsolutePath();
-  }
-
   public String getLocationString() {
-    return myLocationField.getComponent().getText();
+    return myCoursePanel.getLocationString();
   }
 
   @Override
@@ -447,14 +328,5 @@ public class EduCoursesPanel extends JPanel {
 
   public interface CourseValidationListener {
     void validationStatusChanged(boolean canStartCourse);
-  }
-
-  private static List<String> getTags(@NotNull Course course) {
-    List<String> tags = new ArrayList<>();
-    tags.add(course.getLanguageById().getDisplayName());
-    if (course.isAdaptive()) {
-      tags.add(EduNames.ADAPTIVE);
-    }
-    return tags;
   }
 }
