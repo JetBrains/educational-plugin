@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checker;
 
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -11,6 +12,8 @@ public class StudyTestsOutputParser {
   private static final String TEST_FAILED = "FAILED + ";
   private static final String CONGRATS_MESSAGE = "CONGRATS_MESSAGE ";
   public static final String CONGRATULATIONS = "Congratulations!";
+  private static final String COMPILATION_ERROR = "Compilation error";
+  public static final String COMPILATION_FAILED_MESSAGE = "Compilation failed";
 
   public static class TestsOutput {
     private final boolean isSuccess;
@@ -32,6 +35,10 @@ public class StudyTestsOutputParser {
 
   @NotNull
   public static TestsOutput getTestsOutput(@NotNull final ProcessOutput processOutput, final boolean isAdaptive) {
+    //gradle prints compilation failures to error stream
+    if (hasCompilationErrors(processOutput)) {
+      return new TestsOutput(false, COMPILATION_FAILED_MESSAGE);
+    }
     String congratulations = CONGRATULATIONS;
     final List<String> lines = processOutput.getStdoutLines();
     for (int i = 0; i < lines.size(); i++) {
@@ -68,5 +75,9 @@ public class StudyTestsOutputParser {
     }
 
     return new TestsOutput(true, congratulations);
+  }
+
+  private static boolean hasCompilationErrors(@NotNull ProcessOutput processOutput) {
+    return ContainerUtil.find(processOutput.getStderrLines(), line -> line.contains(COMPILATION_ERROR)) != null;
   }
 }
