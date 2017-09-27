@@ -39,7 +39,7 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements EduCourse
   private JdkComboBox myJdkComboBox;
   private ProjectSdksModel myModel;
 
-  @Nullable
+  @NotNull
   @Override
   public Object getProjectSettings() {
     return new Object();
