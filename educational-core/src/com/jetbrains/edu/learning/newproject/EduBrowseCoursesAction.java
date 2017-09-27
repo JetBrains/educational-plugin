@@ -9,7 +9,6 @@ import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.EduCoursesPanel;
-import com.jetbrains.edu.learning.newproject.ui.EduCreateNewProjectDialog;
 import icons.EducationalCoreIcons;
 
 public class EduBrowseCoursesAction extends AnAction {
@@ -28,17 +27,18 @@ public class EduBrowseCoursesAction extends AnAction {
     EduCoursesPanel panel = new EduCoursesPanel();
     DialogBuilder dialogBuilder = new DialogBuilder().title("Select Course").centerPanel(panel);
     dialogBuilder.addOkAction().setText("Join");
-    panel.addCourseValidationListener(new EduCoursesPanel.CourseValidationListener() {
-      @Override
-      public void validationStatusChanged(boolean canStartCourse) {
-        dialogBuilder.setOkActionEnabled(canStartCourse);
-      }
-    });
+    panel.addCourseValidationListener(dialogBuilder::setOkActionEnabled);
     dialogBuilder.setOkOperation(() -> {
       dialogBuilder.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
       Course course = panel.getSelectedCourse();
       String location = panel.getLocationString();
-      EduCreateNewProjectDialog.createProject(EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById()).getEduCourseProjectGenerator(), course, location);
+      EduPluginConfigurator pluginConfigurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+      if (pluginConfigurator != null) {
+        EduCourseProjectGenerator projectGenerator = pluginConfigurator.getEduCourseProjectGenerator();
+        if (projectGenerator != null) {
+          projectGenerator.createProject(course, location);
+        }
+      }
     });
     dialogBuilder.show();
   }

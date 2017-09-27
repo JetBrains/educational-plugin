@@ -431,6 +431,7 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
     return baseSdk != null ? baseSdk : baseSdks.iterator().next();
   }
 
+  @NotNull
   @Override
   public Object getProjectSettings() {
     if (mySettings.getSdk() == null) {
