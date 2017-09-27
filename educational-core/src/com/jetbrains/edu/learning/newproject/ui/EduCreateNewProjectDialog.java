@@ -16,19 +16,14 @@
 package com.jetbrains.edu.learning.newproject.ui;
 
 import com.intellij.facet.ui.ValidationResult;
-import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.DirectoryProjectGenerator;
-import com.intellij.util.Function;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -81,25 +76,13 @@ public class EduCreateNewProjectDialog extends DialogWrapper {
       return;
     }
     EduCourseProjectGenerator projectGenerator = configurator.getEduCourseProjectGenerator();
-    ValidationResult result = projectGenerator.validate();
-    if (!result.isOk()) {
-      myPanel.setError(result.getErrorMessage());
-      return;
+    if (projectGenerator != null) {
+      ValidationResult result = projectGenerator.validate();
+      if (!result.isOk()) {
+        myPanel.setError(result.getErrorMessage());
+        return;
+      }
+      projectGenerator.createProject(myCourse, myPanel.getLocationPath());
     }
-    createProject(projectGenerator, myCourse, myPanel.getLocationPath());
-  }
-
-  public static void createProject(@NotNull EduCourseProjectGenerator projectGenerator, @NotNull Course course, @NotNull String location) {
-    projectGenerator.setCourse(course);
-    if (!projectGenerator.beforeProjectGenerated()) {
-      return;
-    }
-    DirectoryProjectGenerator directoryProjectGenerator = projectGenerator.getDirectoryProjectGenerator();
-    Function<VirtualFile, Object> settings = file -> projectGenerator.getProjectSettings();
-    Project createdProject = AbstractNewProjectStep.doGenerateProject(null, location, directoryProjectGenerator, settings);
-    if (createdProject == null) {
-      return;
-    }
-    projectGenerator.afterProjectGenerated(createdProject);
   }
 }

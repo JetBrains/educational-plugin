@@ -163,6 +163,7 @@ public interface EduPluginConfigurator {
     return Collections.emptyList();
   }
 
+  @Nullable
   default EduCourseProjectGenerator getEduCourseProjectGenerator() {
     return null;
   }
