@@ -8,7 +8,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.4-2"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.51"
     }
 }
 
@@ -64,8 +64,13 @@ allprojects {
         }
     }
 
-    // see https://youtrack.jetbrains.com/issue/KT-19737
-    compileKotlin.destinationDir = compileJava.destinationDir
+    compileKotlin {
+        // see https://youtrack.jetbrains.com/issue/KT-19737
+        destinationDir = compileJava.destinationDir
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
 
     dependencies {
         compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
