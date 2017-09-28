@@ -34,10 +34,6 @@
       <add-to-group group-id="Educational.Educator.ProjectView" anchor="last"/>
     </action>
     <action class="com.jetbrains.edu.coursecreator.PyCCChangeCourseInfo" id="Educational.Educator.ChangeCourseInfo" overrides="true"/>
-    <action id="Educational.Educator.NewPythonCourse" class="com.jetbrains.edu.coursecreator.PyCCCreateCourseAction">
-      <add-to-group group-id="WelcomeScreen.QuickStart" anchor="after" relative-to-action="Educational.BrowseCourses"/>
-      <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.BrowseCourses"/>
-    </action>
 
   </actions>
 
