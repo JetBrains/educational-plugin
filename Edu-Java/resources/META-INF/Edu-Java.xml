@@ -5,9 +5,6 @@
     <extensions defaultExtensionNs="Educational">
         <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
         <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.learning.intellij.localCourses.EduCustomCourseProjectTemplate"/>
-
-        <!--educator-->
-        <eduIntelliJProjectTemplate implementation="com.jetbrains.edu.coursecreator.intellij.EduCCProjectTemplate"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">

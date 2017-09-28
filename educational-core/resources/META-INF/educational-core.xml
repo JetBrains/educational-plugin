@@ -91,6 +91,11 @@
         </action>
 
         <!--educator actions-->
+        <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction">
+            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="after" relative-to-action="Educational.BrowseCourses"/>
+            <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.BrowseCourses"/>
+        </action>
+
         <action id="Educational.Educator.CreateLesson" class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
         </action>
