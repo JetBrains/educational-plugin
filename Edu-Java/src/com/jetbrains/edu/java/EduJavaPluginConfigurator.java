@@ -1,6 +1,5 @@
 package com.jetbrains.edu.java;
 
-import com.intellij.ide.IdeView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -17,7 +16,6 @@ import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   static final String TEST_JAVA = "Test.java";
@@ -70,8 +68,9 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   }
 
   @Override
-  public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, task, view, parentDirectory, TASK_JAVA, TEST_JAVA);
+  public VirtualFile createTaskContent(@NotNull Project project, @NotNull Task task,
+                                       @NotNull VirtualFile parentDirectory, @NotNull Course course) {
+    return EduIntellijUtils.createTask(project, task, parentDirectory, TASK_JAVA, TEST_JAVA);
   }
 
   @Override

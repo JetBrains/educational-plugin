@@ -5,7 +5,6 @@ import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -13,8 +12,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.ui.CCNewProjectPanel;
@@ -22,6 +19,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
@@ -60,29 +58,27 @@ public class PyCCProjectGenerator extends PythonProjectGenerator<PyNewProjectSet
     EduUsagesCollector.projectTypeCreated(CCUtils.COURSE_MODE);
     final CCProjectComponent component = project.getComponent(CCProjectComponent.class);
     component.registerListener();
-    final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
-    if (projectDir == null) return;
     new WriteCommandAction.Simple(project) {
       @Override
       protected void run() throws Throwable {
 
-        createTestHelper(project, projectDir);
+        createTestHelper(project, baseDir);
 
-        PsiDirectory lessonDir = new CCCreateLesson().createItem(null, project, projectDir, course);
+        VirtualFile lessonDir = new CCCreateLesson().createItem(project, baseDir, course, false);
         if (lessonDir == null) {
           LOG.error("Failed to create lesson");
           return;
         }
-        new CCCreateTask().createItem(null, project, lessonDir, course);
+        new CCCreateTask().createItem(project, lessonDir, course, false);
       }
     }.execute();
   }
 
-  private static void createTestHelper(@NotNull Project project, PsiDirectory projectDir) {
+  private static void createTestHelper(@NotNull Project project, VirtualFile projectDir) {
     final FileTemplate template =
       FileTemplateManager.getInstance(project).getInternalTemplate(FileUtil.getNameWithoutExtension(EduNames.TEST_HELPER));
     try {
-      FileTemplateUtil.createFromTemplate(template, EduNames.TEST_HELPER, null, projectDir);
+      StudyGenerator.createChildFile(projectDir, EduNames.TEST_HELPER, template.getText());
     }
     catch (Exception ignored) {
     }

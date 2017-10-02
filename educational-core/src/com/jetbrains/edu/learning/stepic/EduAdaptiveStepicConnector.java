@@ -18,8 +18,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -300,12 +298,7 @@ public class EduAdaptiveStepicConnector {
     }
 
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      PsiDirectory directory = PsiManager.getInstance(project).findDirectory(lessonDir);
-      if (directory == null) {
-        return;
-      }
-
-      EduPluginConfigurator.INSTANCE.forLanguage(language).createTaskContent(project, task, null, directory, task.getLesson().getCourse());
+      EduPluginConfigurator.INSTANCE.forLanguage(language).createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
     }));
   }
 
@@ -331,13 +324,8 @@ public class EduAdaptiveStepicConnector {
 
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {
-        PsiDirectory directory = PsiManager.getInstance(project).findDirectory(lessonDir);
-        if (directory == null) {
-          return;
-        }
-
         removeOldProjectFiles(lessonDir, task.getIndex());
-        EduPluginConfigurator.INSTANCE.forLanguage(language).createTaskContent(project, task, null, directory, task.getLesson().getCourse());
+        EduPluginConfigurator.INSTANCE.forLanguage(language).createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
       }
       catch (IOException e) {
         LOG.warn(e.getMessage());

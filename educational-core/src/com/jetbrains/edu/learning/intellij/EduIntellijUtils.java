@@ -2,10 +2,8 @@ package com.jetbrains.edu.learning.intellij;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
-import com.intellij.ide.IdeView;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
 import com.intellij.ide.util.newProjectWizard.StepSequence;
@@ -83,21 +81,14 @@ public class EduIntellijUtils {
 
     public static void addTemplate(@NotNull final Project project, @NotNull VirtualFile baseDir, @NotNull @NonNls final String templateName) {
         final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(templateName);
-        final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
-        if (projectDir == null) return;
         try {
-//            PsiDirectory utilDir = projectDir.findSubdirectory("util");
-//            if (utilDir == null) {
-//                utilDir = projectDir.createSubdirectory("util");
-//            }
-            FileTemplateUtil.createFromTemplate(template, templateName, null, projectDir);
-        } catch (Exception exception) {
+          StudyGenerator.createChildFile(baseDir, templateName, template.getText());
+        } catch (IOException exception) {
             LOG.error("Failed to create from file template ", exception);
         }
-
     }
 
-  public static PsiDirectory createTask(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory,
+  public static VirtualFile createTask(@NotNull Project project, @NotNull Task task, @NotNull VirtualFile parentDirectory,
                                         @Nullable String taskFileName, @Nullable String testFileName) {
     String lessonDirName = parentDirectory.getName();
     NewModuleAction newModuleAction = new NewModuleAction();
@@ -114,32 +105,26 @@ public class EduIntellijUtils {
 
       @Override
       public ProjectBuilder getProjectBuilder() {
-        return new EduTaskModuleBuilder(parentDirectory.getVirtualFile().getPath(), lessonDirName, task, utilModule) {
+        return new EduTaskModuleBuilder(parentDirectory.getPath(), lessonDirName, task, utilModule) {
           @Override
           protected void createTask(Project project, Course course, VirtualFile src) throws IOException {
-            PsiDirectory psiDirectory = PsiManager.getInstance(project).findDirectory(src);
-            if (psiDirectory == null) {
-              return;
-            }
-
             if (taskFileName == null) {
               return;
             }
 
             if (course.isAdaptive()) {
               createFromText(project, taskFileName, task);
-            }
-            else {
-              createFromTemplate(project, psiDirectory, taskFileName, view, false);
+            } else {
+              createFromTemplate(project, src, taskFileName);
               if (testFileName != null) {
-                createFromTemplate(project, psiDirectory, testFileName, view, false);
+                createFromTemplate(project, src, testFileName);
               }
             }
           }
         };
       }
     });
-    return parentDirectory.findSubdirectory(EduNames.LESSON + task.getLesson().getIndex() + "-" + EduNames.TASK + task.getIndex());
+    return parentDirectory.findChild(EduNames.LESSON + task.getLesson().getIndex() + "-" + EduNames.TASK + task.getIndex());
   }
 
   private static void createFromText(@NotNull Project project, @Nullable String taskFileName, @NotNull Task task) {

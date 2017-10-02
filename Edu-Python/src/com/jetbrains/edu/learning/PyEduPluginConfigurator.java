@@ -1,10 +1,8 @@
 package com.jetbrains.edu.learning;
 
-import com.intellij.ide.IdeView;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
-import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -14,6 +12,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
@@ -58,28 +57,30 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
   }
 
   @Override
-  public PsiDirectory createTaskContent(@NotNull Project project,
-                                        @NotNull Task task,
-                                        @Nullable IdeView view,
-                                        @NotNull PsiDirectory parentDirectory,
-                                        @NotNull Course course) {
-    final Ref<PsiDirectory> taskDirectory = new Ref<>();
+  public VirtualFile createTaskContent(@NotNull Project project,
+                                       @NotNull Task task,
+                                       @NotNull VirtualFile parentDirectory,
+                                       @NotNull Course course) {
+    final Ref<VirtualFile> taskDirectory = new Ref<>();
     ApplicationManager.getApplication().runWriteAction(() -> {
       String taskDirName = EduNames.TASK + task.getIndex();
-      taskDirectory.set(DirectoryUtil.createSubdirectories(taskDirName, parentDirectory, "\\/"));
+      try {
+        taskDirectory.set(VfsUtil.createDirectoryIfMissing(parentDirectory, taskDirName));
+      } catch (IOException e) {
+        LOG.error("Failed to create task directory", e);
+      }
       if (taskDirectory.isNull()) return;
 
       if (course.isAdaptive() && !task.getTaskFiles().isEmpty()) {
         createTaskFilesFromText(task, taskDirectory.get());
-      }
-      else {
-        createFilesFromTemplates(project, view, taskDirectory.get());
+      } else {
+        createFilesFromTemplates(project, taskDirectory.get());
       }
     });
     return taskDirectory.get();
   }
 
-  private static void createTaskFilesFromText(@NotNull Task task, @Nullable PsiDirectory taskDirectory) {
+  private static void createTaskFilesFromText(@NotNull Task task, @Nullable VirtualFile taskDirectory) {
     if (taskDirectory == null) {
       LOG.warn("Task directory is null. Cannot create task files");
       return;
@@ -87,7 +88,7 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
 
     for (TaskFile file : task.getTaskFiles().values()) {
       try {
-        StudyGenerator.createTaskFile(taskDirectory.getVirtualFile(), file);
+        StudyGenerator.createTaskFile(taskDirectory, file);
       }
       catch (IOException e) {
         LOG.warn(e.getMessage());
@@ -96,10 +97,9 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
   }
 
   private static void createFilesFromTemplates(@NotNull Project project,
-                                               @Nullable IdeView view,
-                                               @NotNull PsiDirectory taskDirectory) {
-    StudyUtils.createFromTemplate(project, taskDirectory, TASK_PY, view, false);
-    StudyUtils.createFromTemplate(project, taskDirectory, TESTS_PY, view, false);
+                                               @NotNull VirtualFile taskDirectory) {
+    StudyUtils.createFromTemplate(project, taskDirectory, TASK_PY);
+    StudyUtils.createFromTemplate(project, taskDirectory, TESTS_PY);
   }
 
   @Override

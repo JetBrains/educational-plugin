@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.intellij;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
-import com.intellij.ide.IdeView;
 import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
 import com.intellij.ide.util.newProjectWizard.StepSequence;
 import com.intellij.ide.util.projectWizard.ProjectBuilder;
@@ -17,7 +16,7 @@ import com.intellij.openapi.roots.ExternalLibraryDescriptor;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.psi.PsiDirectory;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -36,9 +35,9 @@ import java.util.List;
 
 public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator {
   @Override
-  public PsiDirectory createLessonContent(@NotNull Project project, @NotNull Lesson lesson, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory) {
+  public VirtualFile createLessonContent(@NotNull Project project, @NotNull Lesson lesson, @NotNull VirtualFile parentDirectory) {
     NewModuleAction newModuleAction = new NewModuleAction();
-    String courseDirPath = parentDirectory.getVirtualFile().getPath();
+    String courseDirPath = parentDirectory.getPath();
     Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduIntelliJNames.UTIL);
     if (utilModule == null) {
       return null;
@@ -54,12 +53,13 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
         return new EduLessonModuleBuilder(courseDirPath, lesson, utilModule);
       }
     });
-    return parentDirectory.findSubdirectory(EduNames.LESSON + lesson.getIndex());
+    return parentDirectory.findChild(EduNames.LESSON + lesson.getIndex());
   }
 
   @Override
-  public PsiDirectory createTaskContent(@NotNull Project project, @NotNull Task task, @Nullable IdeView view, @NotNull PsiDirectory parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, task, view, parentDirectory, null, null);
+  public VirtualFile createTaskContent(@NotNull Project project, @NotNull Task task,
+                                       @NotNull VirtualFile parentDirectory, @NotNull Course course) {
+    return EduIntellijUtils.createTask(project, task, parentDirectory, null, null);
   }
 
   @NotNull
