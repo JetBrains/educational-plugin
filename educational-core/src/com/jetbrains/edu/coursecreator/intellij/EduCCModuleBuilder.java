@@ -19,6 +19,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.components.JBScrollPane;
@@ -116,12 +117,12 @@ class EduCCModuleBuilder extends EduCourseModuleBuilder {
         if (baseDir == null) {
           return;
         }
-        PsiDirectory lessonDir = new CCCreateLesson().createItem(null, project, baseDir, course);
+        VirtualFile lessonDir = new CCCreateLesson().createItem(project, project.getBaseDir(), course, false);
         if (lessonDir == null) {
           LOG.error("Failed to create lesson");
           return;
         }
-        new CCCreateTask().createItem(null, project, lessonDir, course);
+        new CCCreateTask().createItem(project, lessonDir, course, false);
       }
     }.execute());
     return module;

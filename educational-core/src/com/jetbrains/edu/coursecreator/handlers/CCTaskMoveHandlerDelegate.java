@@ -68,7 +68,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     if (course == null || !CCUtils.isCourseCreator(project)) {
       return false;
     }
-    return EduUtils.getTask(sourceDirectory, course) != null;
+    return EduUtils.getTask(sourceDirectory.getVirtualFile(), course) != null;
   }
 
   @Override
@@ -96,7 +96,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     if (course == null) {
       return;
     }
-    final Task taskToMove = EduUtils.getTask(sourceDirectory, course);
+    final Task taskToMove = EduUtils.getTask(sourceDirectory.getVirtualFile(), course);
     if (taskToMove == null) {
       return;
     }
@@ -116,7 +116,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
       if (lessonDir == null) {
         return;
       }
-      Task targetTask = EduUtils.getTask(targetDir, course);
+      Task targetTask = EduUtils.getTask(targetDir.getVirtualFile(), course);
       if (targetTask == null) {
         return;
       }
