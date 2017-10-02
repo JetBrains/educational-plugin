@@ -1,9 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions;
 
-import com.intellij.ide.IdeView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
@@ -29,7 +27,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase {
 
   @Nullable
   @Override
-  protected PsiDirectory getParentDir(@NotNull Project project, @NotNull Course course, @NotNull PsiDirectory directory) {
+  protected VirtualFile getParentDir(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile directory) {
     if (isAddedAsLast(directory, project, course)) {
       return directory;
     }
@@ -56,12 +54,11 @@ public class CCCreateTask extends CCCreateStudyItemActionBase {
 
   @Override
   @Nullable
-  protected PsiDirectory createItemDir(@NotNull final Project project, @NotNull final StudyItem item,
-                                       @Nullable final IdeView view, @NotNull final PsiDirectory parentDirectory,
-                                       @NotNull final Course course) {
+  protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final StudyItem item,
+                                      @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
     EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
     if (configurator != null) {
-      return configurator.createTaskContent(project, (Task)item, view, parentDirectory, course);
+      return configurator.createTaskContent(project, (Task)item, parentDirectory, course);
     }
     return null;
   }
@@ -76,7 +73,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase {
 
   @Nullable
   @Override
-  protected StudyItem getParentItem(@NotNull Course course, @NotNull PsiDirectory directory) {
+  protected StudyItem getParentItem(@NotNull Course course, @NotNull VirtualFile directory) {
     Task task = (Task)getThresholdItem(course, directory);
     if (task == null) {
       return course.getLesson(directory.getName());
@@ -86,12 +83,12 @@ public class CCCreateTask extends CCCreateStudyItemActionBase {
 
   @Nullable
   @Override
-  protected StudyItem getThresholdItem(@NotNull Course course, @NotNull PsiDirectory sourceDirectory) {
+  protected StudyItem getThresholdItem(@NotNull Course course, @NotNull VirtualFile sourceDirectory) {
     return EduUtils.getTask(sourceDirectory, course);
   }
 
   @Override
-  protected boolean isAddedAsLast(@NotNull PsiDirectory sourceDirectory,
+  protected boolean isAddedAsLast(@NotNull VirtualFile sourceDirectory,
                                   @NotNull Project project,
                                   @NotNull Course course) {
     return course.getLesson(sourceDirectory.getName()) != null;

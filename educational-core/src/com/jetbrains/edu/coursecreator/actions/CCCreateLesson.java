@@ -1,10 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions;
 
-import com.intellij.ide.IdeView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.Function;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -24,8 +21,8 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase {
 
   @Nullable
   @Override
-  protected PsiDirectory getParentDir(@NotNull Project project, @NotNull Course course, @NotNull PsiDirectory directory) {
-    return PsiManager.getInstance(project).findDirectory(project.getBaseDir());
+  protected VirtualFile getParentDir(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile directory) {
+    return project.getBaseDir();
   }
 
   @Override
@@ -45,14 +42,13 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase {
 
   @Override
   @Nullable
-  protected PsiDirectory createItemDir(@NotNull final Project project, @NotNull final StudyItem item,
-                                    @Nullable final IdeView view, @NotNull final PsiDirectory parentDirectory,
-                                    @NotNull final Course course) {
+  protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final StudyItem item,
+                                      @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
     EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return null;
     }
-    return configurator.createLessonContent(project, (Lesson)item, view, parentDirectory);
+    return configurator.createLessonContent(project, (Lesson)item, parentDirectory);
   }
 
   @Override
@@ -62,21 +58,21 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase {
 
   @Nullable
   @Override
-  protected StudyItem getParentItem(@NotNull Course course, @NotNull PsiDirectory directory) {
+  protected StudyItem getParentItem(@NotNull Course course, @NotNull VirtualFile directory) {
     return null;
   }
 
   @Nullable
   @Override
-  protected StudyItem getThresholdItem(@NotNull final Course course, @NotNull final PsiDirectory sourceDirectory) {
+  protected StudyItem getThresholdItem(@NotNull final Course course, @NotNull final VirtualFile sourceDirectory) {
     return course.getLesson(sourceDirectory.getName());
   }
 
   @Override
-  protected boolean isAddedAsLast(@NotNull PsiDirectory sourceDirectory,
+  protected boolean isAddedAsLast(@NotNull VirtualFile sourceDirectory,
                                   @NotNull Project project,
                                   @NotNull Course course) {
-    return sourceDirectory.getVirtualFile().equals(project.getBaseDir());
+    return sourceDirectory.equals(project.getBaseDir());
   }
 
   @Override

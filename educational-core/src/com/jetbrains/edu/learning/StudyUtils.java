@@ -62,6 +62,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.editor.StudyEditor;
 import com.jetbrains.edu.learning.stepic.OAuthDialog;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -646,23 +647,16 @@ public class StudyUtils {
   }
 
   public static void createFromTemplate(@NotNull Project project,
-                                        @NotNull PsiDirectory taskDirectory,
-                                        @NotNull String name,
-                                        @Nullable IdeView view,
-                                        boolean open) {
+                                        @NotNull VirtualFile taskDirectory,
+                                        @NotNull String name) {
     FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(name);
     if (template == null) {
       LOG.info("Template " + name + " wasn't found");
       return;
     }
     try {
-      final PsiElement file = FileTemplateUtil.createFromTemplate(template, name, null, taskDirectory);
-      if (view != null && open) {
-        EditorHelper.openInEditor(file, false);
-        view.selectElement(file);
-      }
-    }
-    catch (Exception e) {
+      StudyGenerator.createChildFile(taskDirectory, name, template.getText());
+    } catch (IOException e) {
       LOG.error(e);
     }
   }

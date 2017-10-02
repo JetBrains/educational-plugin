@@ -18,7 +18,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.StudyUtils;
@@ -228,8 +227,8 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Task getTask(@NotNull final PsiDirectory directory, @NotNull final Course course) {
-    PsiDirectory lessonDir = directory.getParent();
+  public static Task getTask(@NotNull final VirtualFile directory, @NotNull final Course course) {
+    VirtualFile lessonDir = directory.getParent();
     if (lessonDir == null) {
       return null;
     }
