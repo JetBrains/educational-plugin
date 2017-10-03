@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.StudyState;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
@@ -89,7 +88,7 @@ public class PyStudyTaskChecker extends StudyTaskChecker<PyCharmTask> {
           continue;
         }
         final Course course = myTask.getLesson().getCourse();
-        if (course != null && EduNames.STUDY.equals(course.getCourseMode())) {
+        if (course != null && course.isStudy()) {
           CommandProcessor.getInstance().runUndoTransparentAction(
             () -> ApplicationManager.getApplication().runWriteAction(
               () -> PyStudySmartChecker.runSmartTestProcess(taskDir, new PyStudyTestRunner(myTask, taskDir), name, taskFile, myProject)));
@@ -115,7 +114,7 @@ public class PyStudyTaskChecker extends StudyTaskChecker<PyCharmTask> {
     StudyCheckResult result = check();
     final Course course = StudyTaskManager.getInstance(myProject).getCourse();
     StudyStatus status = result.getStatus();
-    if (user != null && course != null && EduNames.STUDY.equals(course.getCourseMode()) && status != StudyStatus.Unchecked) {
+    if (user != null && course != null && course.isStudy() && status != StudyStatus.Unchecked) {
       EduStepicConnector.postSolution(myTask, status == StudyStatus.Solved, myProject);
     }
     return result;

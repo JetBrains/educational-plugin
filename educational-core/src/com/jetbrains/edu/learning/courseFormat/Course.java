@@ -206,6 +206,10 @@ public class Course {
     return false;
   }
 
+  public boolean isStudy() {
+    return EduNames.STUDY.equals(courseMode);
+  }
+
   public void sortLessons() {
     Collections.sort(lessons, EduUtils.INDEX_COMPARATOR);
   }

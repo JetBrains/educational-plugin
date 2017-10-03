@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.StudyState;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -45,7 +44,7 @@ public class StudyFillPlaceholdersAction extends AnAction {
 
       Course course = StudyTaskManager.getInstance(project).getCourse();
       Presentation presentation = e.getPresentation();
-      if (course != null && !EduNames.STUDY.equals(course.getCourseMode())) {
+      if (course != null && !course.isStudy()) {
         presentation.setEnabled(false);
         presentation.setVisible(true);
         return;
