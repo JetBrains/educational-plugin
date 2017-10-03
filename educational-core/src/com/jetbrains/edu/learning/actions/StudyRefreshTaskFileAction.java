@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduAnswerPlaceholderPainter;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
@@ -173,7 +172,7 @@ public class StudyRefreshTaskFileAction extends StudyActionWithShortcut {
         return;
       }
       presentation.setText(task instanceof PyCharmTask ? TEXT : RESET_TASK);
-      if (!EduNames.STUDY.equals(course.getCourseMode())) {
+      if (!course.isStudy()) {
         presentation.setVisible(true);
         presentation.setEnabled(false);
       }
