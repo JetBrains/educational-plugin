@@ -7,9 +7,7 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -55,9 +53,7 @@ class EduUtilModuleBuilder extends JavaModuleBuilder {
       return baseModule;
     }
     Project project = baseModule.getProject();
-    StartupManager.getInstance(project).registerPostStartupActivity(() -> DumbService.getInstance(project).runWhenSmart(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java");
-    })));
+    ApplicationManager.getApplication().runWriteAction(() -> EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java"));
     EduIntellijUtils.addJUnit(baseModule);
 
     if (myAdditionalMaterials != null) {

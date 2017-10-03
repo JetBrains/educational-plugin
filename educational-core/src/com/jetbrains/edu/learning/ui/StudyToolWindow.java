@@ -40,7 +40,6 @@ import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.StudyFileEditorManagerListener;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
@@ -89,7 +88,7 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
     panel.add(taskInfoPanel, BorderLayout.CENTER);
 
     final JPanel courseProgress = createCourseProgress(project);
-    if (isToolwindow && course != null && !course.isAdaptive() && EduNames.STUDY.equals(course.getCourseMode())) {
+    if (isToolwindow && course != null && !course.isAdaptive() && course.isStudy()) {
       panel.add(courseProgress, BorderLayout.SOUTH);
     }
 

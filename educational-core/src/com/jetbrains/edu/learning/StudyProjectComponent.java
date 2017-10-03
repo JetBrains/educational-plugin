@@ -352,7 +352,7 @@ public class StudyProjectComponent implements ProjectComponent {
       final VirtualFile createdFile = event.getFile();
       final VirtualFile taskDir = StudyUtils.getTaskDir(createdFile);
       final Course course = StudyTaskManager.getInstance(myProject).getCourse();
-      if (course == null || !EduNames.STUDY.equals(course.getCourseMode())) {
+      if (course == null || !course.isStudy()) {
         return;
       }
       if (taskDir != null && taskDir.getName().contains(EduNames.TASK)) {

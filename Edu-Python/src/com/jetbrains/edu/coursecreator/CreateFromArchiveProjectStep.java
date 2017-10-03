@@ -6,7 +6,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive;
-import com.jetbrains.edu.learning.PyStudyDirectoryProjectGenerator;
+import com.jetbrains.edu.learning.PyDirectoryProjectGenerator;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -24,7 +24,7 @@ class CreateFromArchiveProjectStep extends PyCharmNewProjectStep {
 
     private final Project myProject;
     private final Module myModule;
-    private PyStudyDirectoryProjectGenerator myGenerator = new PyStudyDirectoryProjectGenerator(true);
+    private PyDirectoryProjectGenerator myGenerator = new PyDirectoryProjectGenerator(true);
 
     public MyCustomization(Project project,
                            Module module) {
@@ -56,7 +56,7 @@ class CreateFromArchiveProjectStep extends PyCharmNewProjectStep {
         StudyProjectGenerator generator = myGenerator.getGenerator();
         Course course = generator.addLocalCourse(path);
         assert course != null;
-        generator.setSelectedCourse(course);
+        myGenerator.setCourse(course);
       }
       return myGenerator;
     }

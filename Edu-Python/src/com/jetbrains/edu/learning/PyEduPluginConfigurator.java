@@ -42,7 +42,7 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
   private static final Logger LOG = Logger.getInstance(PyEduPluginConfigurator.class);
   private static final String COURSE_NAME = "Introduction to Python.zip";
   private static final String TASK_PY = "task.py";
-  private PyStudyDirectoryProjectGenerator myGenerator = new PyStudyDirectoryProjectGenerator();
+  private PyDirectoryProjectGenerator myGenerator = new PyDirectoryProjectGenerator();
 
   @NotNull
   @Override

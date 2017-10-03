@@ -1,11 +1,8 @@
 package com.jetbrains.edu.learning;
 
-import com.intellij.ide.IdeView;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.util.EditorHelper;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -396,7 +393,7 @@ public class StudyUtils {
       return false;
     }
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null || !EduNames.STUDY.equals(course.getCourseMode())) {
+    if (course == null || !course.isStudy()) {
       return false;
     }
 
@@ -453,7 +450,7 @@ public class StudyUtils {
 
   public static boolean isStudentProject(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    return course != null && EduNames.STUDY.equals(course.getCourseMode());
+    return course != null && course.isStudy();
   }
 
   public static boolean hasJavaFx() {

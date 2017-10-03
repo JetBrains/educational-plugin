@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import com.jetbrains.edu.learning.stepic.EduStepicNames;
@@ -57,7 +56,7 @@ public class RemoteCourse extends Course {
 
   public boolean isUpToDate() {
     if (id == 0) return true;
-    if (!EduNames.STUDY.equals(courseMode)) return true;
+    if (!isStudy()) return true;
 
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(new Backgroundable(null, "Updating Course") {
       @Override

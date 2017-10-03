@@ -6,7 +6,6 @@ import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -23,18 +22,20 @@ import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.BooleanFunction;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
+import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
@@ -60,27 +61,30 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
+public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
   implements EduCourseProjectGenerator {
-  private static final Logger LOG = Logger.getInstance(PyStudyDirectoryProjectGenerator.class.getName());
-  public static final PyDetectedSdk PLACEHOLDER_SDK = new PyDetectedSdk("placeholderSdk");
-  private final StudyProjectGenerator myGenerator;
+  private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
+  private static final PyDetectedSdk PLACEHOLDER_SDK = new PyDetectedSdk("placeholderSdk");
   private static final String NO_PYTHON_INTERPRETER = "<html><u>Add</u> python interpreter.</html>";
-  private final boolean isLocal;
-  public ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
-  private PyNewProjectSettings mySettings = new PyNewProjectSettings();
 
+  private final StudyProjectGenerator myGenerator;
+  private final boolean isLocal;
+
+  private ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
+  private PyNewProjectSettings mySettings = new PyNewProjectSettings();
+  private Course myCourse;
 
   @SuppressWarnings("unused") // used on startup
-  public PyStudyDirectoryProjectGenerator() {
+  public PyDirectoryProjectGenerator() {
     this(false);
   }
 
-  public PyStudyDirectoryProjectGenerator(boolean isLocal) {
+  public PyDirectoryProjectGenerator(boolean isLocal) {
     this.isLocal = isLocal;
     myGenerator = new StudyProjectGenerator();
     myGenerator.addSettingsStateListener(new StudyProjectGenerator.SettingsListener() {
@@ -104,26 +108,50 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
     return PythonIcons.Python.Python_logo;
   }
 
-
   @Override
   public void configureProject(@NotNull final Project project, @NotNull final VirtualFile baseDir,
                                @NotNull PyNewProjectSettings settings,
                                @NotNull Module module,
                                @Nullable PyProjectSynchronizer synchronizer) {
-    myGenerator.generateProject(project, baseDir);
-    createTestHelper(project, baseDir);
+    Course course = myCourse;
+    if (course == null) {
+      LOG.warn("Course is null");
+      Messages.showWarningDialog("Some problems occurred while creating the course", "Error in Course Creation");
+      return;
+    }
+
+    if (course.isStudy()) {
+      myGenerator.setSelectedCourse(course);
+      myGenerator.generateProject(project, baseDir);
+      ApplicationManager.getApplication().runWriteAction(() -> createTestHelper(project, baseDir));
+    } else {
+      configureNewCourseProject(project, baseDir, course);
+    }
+  }
+
+  private void configureNewCourseProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Course course) {
+    StudyTaskManager.getInstance(project).setCourse(course);
+    StudyUtils.registerStudyToolWindow(course, project);
+
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      createTestHelper(project, baseDir);
+      VirtualFile lessonDir = new CCCreateLesson().createItem(project, baseDir, course, false);
+      if (lessonDir == null) {
+        LOG.error("Failed to create lesson");
+        return;
+      }
+      new CCCreateTask().createItem(project, lessonDir, course, false);
+    });
   }
 
   private static void createTestHelper(@NotNull Project project, @NotNull VirtualFile baseDir) {
     final String testHelper = EduNames.TEST_HELPER;
     if (baseDir.findChild(testHelper) != null) return;
     final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
-    final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
-    if (projectDir == null) return;
     try {
-      FileTemplateUtil.createFromTemplate(template, testHelper, null, projectDir);
+      StudyGenerator.createChildFile(project.getBaseDir(), testHelper, template.getText());
     }
-    catch (Exception exception) {
+    catch (IOException exception) {
       LOG.error("Can't copy test_helper.py " + exception.getMessage());
     }
   }
@@ -332,7 +360,7 @@ public class PyStudyDirectoryProjectGenerator extends PythonProjectGenerator<PyN
   }
 
   public void setCourse(@NotNull Course course) {
-    myGenerator.setSelectedCourse(course);
+    myCourse = course;
   }
 
   public StudyProjectGenerator getGenerator() {

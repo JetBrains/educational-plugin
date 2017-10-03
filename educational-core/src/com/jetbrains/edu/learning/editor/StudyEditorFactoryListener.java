@@ -18,7 +18,6 @@ import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduDocumentListener;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -81,7 +80,7 @@ public class StudyEditorFactoryListener implements EditorFactoryListener {
 
         if (!taskFile.getAnswerPlaceholders().isEmpty()) {
           StudyNavigator.navigateToFirstAnswerPlaceholder(editor, taskFile);
-          boolean isStudyProject = EduNames.STUDY.equals(course.getCourseMode());
+          boolean isStudyProject = course.isStudy();
           StudyUtils.drawAllAnswerPlaceholders(editor, taskFile);
           if (isStudyProject) {
             editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
