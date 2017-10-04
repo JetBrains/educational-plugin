@@ -41,20 +41,13 @@ import java.util.Collections;
 import java.util.function.Function;
 
 class EduCCModuleBuilder extends EduCourseModuleBuilder {
-  private CCNewProjectPanel myPanel = new CCNewProjectPanel();
-  private ComboBox myLanguageComboBox = new ComboBox();
+  private CCNewProjectPanel myPanel;
+  private ComboBox myLanguageComboBox;
   private static final Logger LOG = Logger.getInstance(EduCCModuleBuilder.class);
 
-  @Nullable
-  @Override
-  public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
-    ModuleWizardStep javaSettingsStep =
-      ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, Conditions.alwaysTrue());
-    Function<JTextField, String> getValue = JTextComponent::getText;
-    getWizardInputField("ccname", "", "Name:", myPanel.getNameField(), getValue).addToSettings(settingsStep);
-    getWizardInputField("ccauthor", "", "Author:", myPanel.getAuthorField(), getValue).addToSettings(settingsStep);
-
-    myLanguageComboBox.removeAllItems();
+  public EduCCModuleBuilder() {
+    myPanel = new CCNewProjectPanel();
+    myLanguageComboBox = new ComboBox();
     for (LanguageExtensionPoint extension : Extensions.<LanguageExtensionPoint>getExtensions(EduPluginConfigurator.EP_NAME, null)) {
       String languageId = extension.getKey();
       Language language = Language.findLanguageByID(languageId);
@@ -64,6 +57,16 @@ class EduCCModuleBuilder extends EduCourseModuleBuilder {
       }
       myLanguageComboBox.addItem(new LanguageWrapper(language));
     }
+  }
+
+  @Nullable
+  @Override
+  public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
+    ModuleWizardStep javaSettingsStep =
+      ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, Conditions.alwaysTrue());
+    Function<JTextField, String> getValue = JTextComponent::getText;
+    getWizardInputField("ccname", "", "Name:", myPanel.getNameField(), getValue).addToSettings(settingsStep);
+    getWizardInputField("ccauthor", "", "Author:", myPanel.getAuthorField(), getValue).addToSettings(settingsStep);
     getWizardInputField("cclang", "", "Language:", myLanguageComboBox, comboBox -> (String) comboBox.getSelectedItem())
       .addToSettings(settingsStep);
     JTextArea descriptionField = myPanel.getDescriptionField();
