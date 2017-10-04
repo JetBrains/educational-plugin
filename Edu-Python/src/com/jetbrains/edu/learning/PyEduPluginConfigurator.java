@@ -74,7 +74,7 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
       if (course.isAdaptive() && !task.getTaskFiles().isEmpty()) {
         createTaskFilesFromText(task, taskDirectory.get());
       } else {
-        createFilesFromTemplates(project, taskDirectory.get());
+        createFilesFromTemplates(project, task, taskDirectory.get());
       }
     });
     return taskDirectory.get();
@@ -97,9 +97,11 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
   }
 
   private static void createFilesFromTemplates(@NotNull Project project,
+                                               @NotNull Task task,
                                                @NotNull VirtualFile taskDirectory) {
     StudyUtils.createFromTemplate(project, taskDirectory, TASK_PY);
     StudyUtils.createFromTemplate(project, taskDirectory, TESTS_PY);
+    task.addTaskFile(TASK_PY, task.taskFiles.size());
   }
 
   @Override

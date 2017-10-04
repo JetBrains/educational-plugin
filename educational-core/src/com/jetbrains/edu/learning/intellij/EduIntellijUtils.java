@@ -116,6 +116,7 @@ public class EduIntellijUtils {
               createFromText(project, taskFileName, task);
             } else {
               createFromTemplate(project, src, taskFileName);
+              task.addTaskFile(taskFileName, task.taskFiles.size());
               if (testFileName != null) {
                 createFromTemplate(project, src, testFileName);
               }
