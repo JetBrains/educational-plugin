@@ -540,9 +540,11 @@ public class StudyUtils {
 
   public static String convertToHtml(@NotNull String content) {
     ArrayList<String> lines = ContainerUtil.newArrayList(content.split("\n|\r|\r\n"));
+    if ((content.contains("<h") && content.contains("</h")) || (content.contains("<code>") && content.contains("</code>"))) {
+      return content;
+    }
     MarkdownUtil.replaceHeaders(lines);
     MarkdownUtil.replaceCodeBlock(lines);
-
     return new MarkdownProcessor().markdown(StringUtil.join(lines, "\n"));
   }
 
