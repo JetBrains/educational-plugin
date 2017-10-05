@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EduCoursesPanel extends JPanel {
-  private static final Set<String> FEATURED_COURSES = ContainerUtil.newHashSet("Introduction to Python", "Adaptive Python");
+  private static final Set<String> FEATURED_COURSES = ContainerUtil.newLinkedHashSet("Adaptive Python", "Introduction to Python", "Kotlin Koans");
   private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
   public static final Color COLOR = new Color(70, 130, 180, 70);
   private static final Logger LOG = Logger.getInstance(EduCoursesPanel.class);
