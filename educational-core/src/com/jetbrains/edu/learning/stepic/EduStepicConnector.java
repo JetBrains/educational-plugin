@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.LanguageExtensionPoint;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -15,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -213,6 +215,11 @@ public class EduStepicConnector {
     for (LanguageExtensionPoint extension : extensions) {
       String languageId = extension.getKey();
       supportedLanguages.add(languageId);
+    }
+
+    //disable java courses in AS
+    if (EduUtils.isAndroidStudio() && courseInfo.getLanguageById() == JavaLanguage.INSTANCE) {
+      return false;
     }
 
     if (courseInfo.isAdaptive()) {
