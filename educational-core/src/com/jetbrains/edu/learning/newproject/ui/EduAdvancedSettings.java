@@ -8,7 +8,6 @@ import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
 
 public class EduAdvancedSettings extends JPanel {
@@ -23,10 +22,6 @@ public class EduAdvancedSettings extends JPanel {
     HideableDecorator decorator = new HideableDecorator(this, "Advanced Settings", false);
     decorator.setContentComponent(myAdvancedSettings);
     myAdvancedSettings.setBorder(JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0));
-  }
-
-  public void setSettingComponents(LabeledComponent... settings) {
-    setSettingsComponents(Arrays.asList(settings));
   }
 
   public void setSettingsComponents(List<LabeledComponent> settings) {
