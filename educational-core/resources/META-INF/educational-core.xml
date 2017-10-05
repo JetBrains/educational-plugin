@@ -105,6 +105,8 @@
 
         <action id="Educational.Educator.ChangeCourseInfo" class="com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo"/>
 
+        <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
+
         <group id="Educational.Educator.AddSubtask">
             <action class="com.jetbrains.edu.coursecreator.actions.CCNewSubtaskAction" id="Educational.Educator.NewStep"/>
             <separator/>
@@ -127,6 +129,7 @@
             <action id="Educational.Educator.PushLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson"/>
             <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
             <reference id="Educational.Educator.ChangeCourseInfo"/>
+            <reference id="Educational.Educator.CreateCoursePreview"/>
             <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
         </group>
 
@@ -136,6 +139,7 @@
             <reference id="Educational.Educator.PackCourse"/>
             <reference id="Educational.Educator.PushLesson"/>
             <reference id="Educational.Educator.PushCourse"/>
+            <reference id="Educational.Educator.CreateCoursePreview"/>
             <add-to-group group-id="FileMenu" relative-to-action="FileMainSettingsGroup" anchor="before"/>
         </group>
 

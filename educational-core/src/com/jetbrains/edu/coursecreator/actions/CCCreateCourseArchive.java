@@ -5,11 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -70,10 +70,12 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getData(CommonDataKeys.PROJECT);
-    final Module module = e.getData(LangDataKeys.MODULE);
-    if (project == null || module == null) {
-      return;
-    }
+    if (project == null) return;
+    final VirtualFile baseDir = project.getBaseDir();
+    if (baseDir == null) return;
+    Module module = ModuleUtil.findModuleForFile(baseDir, project);
+    if (module == null) return;
+
     CreateCourseArchiveDialog dlg = new CreateCourseArchiveDialog(project, this);
     dlg.show();
     if (dlg.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
