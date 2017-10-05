@@ -28,11 +28,6 @@
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
 
-    <!--educator actions-->
-    <action class="com.jetbrains.edu.coursecreator.PyCCCreateProjectFromArchive" id="Educational.Educator.CreateProjectFromArchive">
-      <add-to-group group-id="Educational.Educator.File" anchor="last"/>
-      <add-to-group group-id="Educational.Educator.ProjectView" anchor="last"/>
-    </action>
     <action class="com.jetbrains.edu.coursecreator.PyCCChangeCourseInfo" id="Educational.Educator.ChangeCourseInfo" overrides="true"/>
 
   </actions>
