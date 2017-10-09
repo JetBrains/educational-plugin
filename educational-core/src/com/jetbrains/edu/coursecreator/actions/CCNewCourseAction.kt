@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.COURSE_CREATOR_ENABLED
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 
-class CCNewCourseAction : AnAction("Create New Course", "Create new educational course", AllIcons.Actions.Stub) {
+class CCNewCourseAction : AnAction("Create New Course", "Create new educational course", AllIcons.General.Add) {
 
   override fun actionPerformed(e: AnActionEvent) {
     CCNewCourseDialog().show()
