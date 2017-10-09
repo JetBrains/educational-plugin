@@ -13,18 +13,16 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.HideableDecorator
-import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.CCFlags
 import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
@@ -42,8 +40,7 @@ class CCNewCoursePanel : JPanel() {
   private val myAuthorField: JBTextField = JBTextField()
   private val myDescriptionTextArea: JTextArea = JTextArea()
 
-  private val myAdvancedSettingsPlaceholder: JPanel = JPanel(BorderLayout())
-  private val myAdvancedSettings: JPanel = JPanel(BorderLayout())
+  private val myAdvancedSettings: EduAdvancedSettings = EduAdvancedSettings()
   private val myPathField: PathField = PathField()
   private val myLocationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
 
@@ -74,17 +71,12 @@ class CCNewCoursePanel : JPanel() {
     myTitleField.complementaryTextField = myPathField
     myPathField.complementaryTextField = myTitleField
 
-    val decorator = HideableDecorator(myAdvancedSettingsPlaceholder, "Advanced Settings", false)
-    decorator.setContentComponent(myAdvancedSettings)
-    myAdvancedSettings.border = JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0)
-    myAdvancedSettingsPlaceholder.add(myAdvancedSettings, BorderLayout.CENTER)
-
     myErrorLabel.border = JBUI.Borders.emptyTop(8)
     myErrorLabel.foreground = MessageType.ERROR.titleForeground
 
     val bottomPanel = JPanel(BorderLayout())
     bottomPanel.add(myErrorLabel, BorderLayout.SOUTH)
-    bottomPanel.add(myAdvancedSettingsPlaceholder, BorderLayout.NORTH)
+    bottomPanel.add(myAdvancedSettings, BorderLayout.NORTH)
 
     add(myPanel, BorderLayout.NORTH)
     add(bottomPanel, BorderLayout.SOUTH)
@@ -183,14 +175,8 @@ class CCNewCoursePanel : JPanel() {
 
     val configurator = EduPluginConfigurator.INSTANCE.forLanguage(language) ?: return
     val labeledComponent = configurator.languageSettingsComponent(language)
-    myAdvancedSettings.removeAll()
-    myAdvancedSettings.add(myLocationField, BorderLayout.NORTH)
-    if (labeledComponent != null) {
-      myAdvancedSettings.add(labeledComponent, BorderLayout.SOUTH)
-      UIUtil.mergeComponentsWithAnchor(myLocationField, labeledComponent)
-    }
-    myAdvancedSettings.revalidate()
-    myAdvancedSettings.repaint()
+    val settings = listOfNotNull(myLocationField, labeledComponent)
+    myAdvancedSettings.setSettingsComponents(settings)
   }
 
   private fun collectSupportedLanguages() {
