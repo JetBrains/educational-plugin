@@ -294,8 +294,13 @@ public class EduCoursesPanel extends JPanel {
     return projectGenerator == null ? null : projectGenerator.getDirectoryProjectGenerator();
   }
 
+  @NotNull
   public String getLocationString() {
-    return myCoursePanel.getLocationString();
+    String locationString = myCoursePanel.getLocationString();
+    // We use `myCoursePanel` with location field
+    // so `myCoursePanel.getLocationString()` must return not null value
+    assert locationString != null;
+    return locationString;
   }
 
   @Override
