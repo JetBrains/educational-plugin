@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.actions;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -17,6 +18,8 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.StudyHint;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
@@ -25,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.List;
 
 public class StudyShowHintAction extends StudyActionWithShortcut {
   public static final String ACTION_ID = "Educational.ShowHint";
@@ -91,13 +95,41 @@ public class StudyShowHintAction extends StudyActionWithShortcut {
     final Project project = e.getProject();
     if (project != null) {
       final Course course = StudyTaskManager.getInstance(project).getCourse();
+      Presentation presentation = e.getPresentation();
       if (course != null && course.isAdaptive()) {
-        e.getPresentation().setEnabled(false);
+        presentation.setEnabled(false);
         return;
+      }
+      StudyUtils.updateAction(e);
+      if (!presentation.isEnabled()) {
+        return;
+      }
+      if (StudyUtils.isStudentProject(project)) {
+        presentation.setEnabledAndVisible(hasHints(project));
       }
     }
     
-    StudyUtils.updateAction(e);
+  }
+
+  private boolean hasHints(@NotNull Project project) {
+    Task currentTask = StudyUtils.getCurrentTask(project);
+    if (currentTask == null) {
+      return false;
+    }
+    for (TaskFile taskFile : currentTask.getTaskFiles().values()) {
+      List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
+      if (!placeholders.isEmpty()) {
+        for (AnswerPlaceholder placeholder : placeholders) {
+          List<String> hints = placeholder.getHints();
+          if (!hints.isEmpty()) {
+            if (hints.size() != 1 || !hints.get(0).isEmpty()) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
   }
 
   @NotNull
