@@ -18,11 +18,13 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EduCoursePanel extends JPanel {
@@ -36,15 +38,22 @@ public class EduCoursePanel extends JPanel {
   private JPanel myTagsPanel;
   private JBScrollPane myInfoScroll;
 
+  @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
 
+  // Used in `EduCoursesPanel` in initializing code generated for form
+  @SuppressWarnings("unused")
   public EduCoursePanel() {
-    setLayout(new BorderLayout());
-    add(myCoursePanel, BorderLayout.CENTER);
-    initUI();
+    this(true);
   }
 
-  private void initUI() {
+  public EduCoursePanel(boolean isLocationFieldNeeded) {
+    setLayout(new BorderLayout());
+    add(myCoursePanel, BorderLayout.CENTER);
+    initUI(isLocationFieldNeeded);
+  }
+
+  private void initUI(boolean isLocationFieldNeeded) {
     myCourseNameLabel.setBorder(JBUI.Borders.empty(20, 10, 5, 10));
     Font labelFont = UIUtil.getLabelFont();
     myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
@@ -61,7 +70,9 @@ public class EduCoursePanel extends JPanel {
     myDescriptionTextArea.setBackground(UIUtil.getPanelBackground());
     myAdvancedSettings.setVisible(false);
 
-    myLocationField = createLocationComponent();
+    if (isLocationFieldNeeded) {
+      myLocationField = createLocationComponent();
+    }
   }
 
   public void bindCourse(@NotNull Course course) {
@@ -74,8 +85,9 @@ public class EduCoursePanel extends JPanel {
     myAdvancedSettings.setVisible(false);
   }
 
+  @Nullable
   public String getLocationString() {
-    return myLocationField.getComponent().getText();
+    return myLocationField == null ? null : myLocationField.getComponent().getText();
   }
 
   private void updateCourseDescriptionPanel(@NotNull Course course) {
@@ -112,8 +124,9 @@ public class EduCoursePanel extends JPanel {
   }
 
   private void updateAdvancedSettings(@NotNull Course course) {
-    myAdvancedSettings.setVisible(true);
-    myLocationField.getComponent().setText(nameToLocation(course.getName()));
+    if (myLocationField != null) {
+      myLocationField.getComponent().setText(nameToLocation(course.getName()));
+    }
     EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return;
@@ -122,11 +135,21 @@ public class EduCoursePanel extends JPanel {
     if (generator == null) {
       return;
     }
+
+    List<LabeledComponent> settingsComponents = new ArrayList<>();
+    if (myLocationField != null) {
+      settingsComponents.add(myLocationField);
+    }
     LabeledComponent<JComponent> component = generator.getLanguageSettingsComponent(course);
     if (component != null) {
-      myAdvancedSettings.setSettingComponents(myLocationField, component);
+      settingsComponents.add(component);
+    }
+
+    if (settingsComponents.isEmpty()) {
+      myAdvancedSettings.setVisible(false);
     } else {
-      myAdvancedSettings.setSettingComponents(myLocationField);
+      myAdvancedSettings.setVisible(true);
+      myAdvancedSettings.setSettingsComponents(settingsComponents);
     }
   }
 
