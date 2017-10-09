@@ -14,6 +14,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -78,19 +79,27 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     if (dlg.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
       return;
     }
-    createCourseArchive(project, module, myZipName, myLocationDir, true);
-    EduUsagesCollector.createdCourseArchive();
+    boolean isSuccessful = createCourseArchive(project, module, myZipName, myLocationDir, true);
+    if (isSuccessful) {
+      EduUsagesCollector.createdCourseArchive();
+    } else {
+      Messages.showErrorDialog("Can not create archive for current course", "Failed to Create Course Archive");
+    }
   }
 
-  public static void createCourseArchive(final Project project, Module module, String zipName, String locationDir, boolean showMessage) {
+  /**
+   * @return true if course archive was created successfully, false otherwise
+   */
+  public static boolean createCourseArchive(final Project project, Module module, String zipName, String locationDir, boolean showMessage) {
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) return;
+    if (course == null) return false;
     final VirtualFile baseDir = project.getBaseDir();
     VirtualFile archiveFolder = CCUtils.generateFolder(project, module, zipName);
     if (archiveFolder == null) {
-      return;
+      return false;
     }
 
+    final Ref<Boolean> isCreationSuccessful = Ref.create();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
@@ -99,10 +108,16 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         replaceAnswerFilesWithTaskFiles(courseCopy);
         courseCopy.sortLessons();
         createAdditionalFiles(courseCopy);
-        generateJson(archiveFolder, courseCopy);
-        VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
-        packCourse(archiveFolder, locationDir, zipName, showMessage);
-        synchronize(project);
+        try {
+          generateJson(archiveFolder, courseCopy);
+          VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
+          packCourse(archiveFolder, locationDir, zipName, showMessage);
+          synchronize(project);
+          isCreationSuccessful.set(true);
+        } catch (IOException e) {
+          LOG.error("Failed to create course archive", e);
+          isCreationSuccessful.set(false);
+        }
       }
 
       private void createAdditionalFiles(Course course) {
@@ -165,6 +180,8 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         return testFiles;
       }
     });
+
+    return isCreationSuccessful.get();
   }
 
   private static void synchronize(@NotNull final Project project) {
@@ -172,15 +189,14 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     ProjectView.getInstance(project).refresh();
   }
 
-  private static void packCourse(@NotNull final VirtualFile baseDir, String locationDir, String zipName, boolean showMessage) {
-    try {
-      final File zipFile = new File(locationDir, zipName + ".zip");
-      ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
-      VirtualFile[] courseFiles = baseDir.getChildren();
+  private static void packCourse(@NotNull final VirtualFile baseDir, String locationDir,
+                                    String zipName, boolean showMessage) throws IOException {
+    final File zipFile = new File(locationDir, zipName + ".zip");
+    VirtualFile[] courseFiles = baseDir.getChildren();
+    try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)))) {
       for (VirtualFile file : courseFiles) {
         ZipUtil.addFileOrDirRecursively(zos, null, new File(file.getPath()), file.getName(), null, null);
       }
-      zos.close();
       if (showMessage) {
         ApplicationManager.getApplication().invokeLater(
           () -> Messages.showInfoMessage("Course archive was saved to " + zipFile.getPath(),
@@ -188,35 +204,15 @@ public class CCCreateCourseArchive extends DumbAwareAction {
 
       }
     }
-    catch (IOException e1) {
-      LOG.error(e1);
-    }
   }
 
-  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-  private static void generateJson(VirtualFile parentDir, Course course) {
+  private static void generateJson(VirtualFile parentDir, Course course) throws IOException {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
       registerTypeAdapter(Task.class, new StudySerializationUtils.Json.TaskAdapter()).create();
     final String json = gson.toJson(course);
     final File courseJson = new File(parentDir.getPath(), EduNames.COURSE_META_FILE);
-    OutputStreamWriter outputStreamWriter = null;
-    try {
-      outputStreamWriter = new OutputStreamWriter(new FileOutputStream(courseJson), "UTF-8");
+    try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(courseJson), "UTF-8")) {
       outputStreamWriter.write(json);
-    }
-    catch (Exception e) {
-      Messages.showErrorDialog(e.getMessage(), "Failed to Generate Json");
-      LOG.info(e);
-    }
-    finally {
-      try {
-        if (outputStreamWriter != null) {
-          outputStreamWriter.close();
-        }
-      }
-      catch (IOException e1) {
-        //close silently
-      }
     }
   }
 }
