@@ -8,8 +8,6 @@ import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.HideableDecorator;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
@@ -32,8 +30,7 @@ public class EduCoursePanel extends JPanel {
   private static final Color COLOR = new Color(70, 130, 180, 70);
 
   private JPanel myCoursePanel;
-  private JPanel myAdvancedSettingsPlaceholder;
-  private JPanel myAdvancedSettings;
+  private EduAdvancedSettings myAdvancedSettings;
   private JEditorPane myDescriptionTextArea;
   private JBLabel myCourseNameLabel;
   private JPanel myTagsPanel;
@@ -61,12 +58,8 @@ public class EduCoursePanel extends JPanel {
     Border border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 0, 1, 1);
     myCoursePanel.setBorder(border);
 
-    HideableDecorator decorator = new HideableDecorator(myAdvancedSettingsPlaceholder, "Advanced Settings", false);
-    decorator.setContentComponent(myAdvancedSettings);
-    myAdvancedSettings.setBorder(JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0));
-
     myDescriptionTextArea.setBackground(UIUtil.getPanelBackground());
-    myAdvancedSettingsPlaceholder.setVisible(false);
+    myAdvancedSettings.setVisible(false);
 
     myLocationField = createLocationComponent();
   }
@@ -78,7 +71,7 @@ public class EduCoursePanel extends JPanel {
 
   public void clearContent() {
     myInfoScroll.setVisible(false);
-    myAdvancedSettingsPlaceholder.setVisible(false);
+    myAdvancedSettings.setVisible(false);
   }
 
   public String getLocationString() {
@@ -119,7 +112,7 @@ public class EduCoursePanel extends JPanel {
   }
 
   private void updateAdvancedSettings(@NotNull Course course) {
-    myAdvancedSettingsPlaceholder.setVisible(true);
+    myAdvancedSettings.setVisible(true);
     myLocationField.getComponent().setText(nameToLocation(course.getName()));
     EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
     if (configurator == null) {
@@ -130,14 +123,11 @@ public class EduCoursePanel extends JPanel {
       return;
     }
     LabeledComponent<JComponent> component = generator.getLanguageSettingsComponent(course);
-    myAdvancedSettings.removeAll();
-    myAdvancedSettings.add(myLocationField, BorderLayout.NORTH);
     if (component != null) {
-      myAdvancedSettings.add(component, BorderLayout.SOUTH);
-      UIUtil.mergeComponentsWithAnchor(myLocationField, component);
+      myAdvancedSettings.setSettingComponents(myLocationField, component);
+    } else {
+      myAdvancedSettings.setSettingComponents(myLocationField);
     }
-    myAdvancedSettings.revalidate();
-    myAdvancedSettings.repaint();
   }
 
   @NonNull
