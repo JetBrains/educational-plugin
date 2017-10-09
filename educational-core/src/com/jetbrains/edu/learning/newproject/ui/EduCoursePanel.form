@@ -10,19 +10,10 @@
       <size top="2" left="4" bottom="2" right="4"/>
     </border>
     <children>
-      <grid id="e1c40" binding="myAdvancedSettingsPlaceholder" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <component id="e1c40" class="com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings" binding="myAdvancedSettings">
         <constraints border-constraint="South"/>
         <properties/>
-        <border type="none"/>
-        <children>
-          <grid id="c19f6" binding="myAdvancedSettings" layout-manager="BorderLayout" hgap="0" vgap="0">
-            <constraints border-constraint="Center"/>
-            <properties/>
-            <border type="none"/>
-            <children/>
-          </grid>
-        </children>
-      </grid>
+      </component>
       <scrollpane id="323c9" class="com.intellij.ui.components.JBScrollPane" binding="myInfoScroll">
         <constraints border-constraint="Center"/>
         <properties/>
