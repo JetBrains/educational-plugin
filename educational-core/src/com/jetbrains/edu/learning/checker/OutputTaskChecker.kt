@@ -81,11 +81,11 @@ class OutputTaskChecker(task: OutputTask, project: Project) : StudyTaskChecker<O
     val outputPatternFile = myTask.getTaskDir(myProject)?.findChild(OUTPUT_PATTERN_NAME)
                             ?: return StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH)
     val expectedOutput = VfsUtil.loadText(outputPatternFile)
-    var outputString = output.joinToString("\n")
+    var outputString = output.joinToString("")
     if (outputString.isEmpty()) {
       outputString = "<no output>"
     }
-    if (expectedOutput == outputString) {
+    if (expectedOutput.dropLastLineBreak() == outputString.dropLastLineBreak()) {
       return StudyCheckResult(StudyStatus.Solved, StudyTestsOutputParser.CONGRATULATIONS)
     }
     return StudyCheckResult(StudyStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
@@ -102,4 +102,6 @@ class OutputTaskChecker(task: OutputTask, project: Project) : StudyTaskChecker<O
   override fun clearState() {
     StudyCheckUtils.drawAllPlaceholders(myProject, myTask)
   }
+
+  private fun String.dropLastLineBreak() : String = if (this.endsWith('\n')) this.dropLast(1) else this
 }
