@@ -86,7 +86,7 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase {
   }
 
   @Override
-  protected StudyItem createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
+  public StudyItem createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
     Lesson lesson = new Lesson();
     lesson.setName(name);
     lesson.setCourse(course);

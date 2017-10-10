@@ -7,8 +7,15 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
+import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
+import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGeneratorBase;
@@ -60,6 +67,13 @@ class EduKotlinCourseProjectGenerator extends EduIntellijCourseProjectGeneratorB
       ApplicationManager.getApplication().runWriteAction(() -> {
         try {
           StudyTaskManager.getInstance(project).setCourse(myCourse);
+          if (CCUtils.isCourseCreator(project)) {
+            Lesson lesson = (Lesson)new CCCreateLesson().createAndInitItem(myCourse, null, EduNames.LESSON + 1, 1);
+            Task task = (Task)new CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1);
+            lesson.addTask(task);
+            myCourse.getLessons(true).add(lesson);
+            initTask(task);
+          }
           myCourse.initCourse(false);
           EduGradleModuleGenerator.createCourseContent(project, myCourse, baseDir.getPath());
         } catch (IOException e) {
@@ -73,5 +87,14 @@ class EduKotlinCourseProjectGenerator extends EduIntellijCourseProjectGeneratorB
     public ValidationResult validate(@NotNull String s) {
       return ValidationResult.OK;
     }
+  }
+
+  static void initTask(@NotNull Task task) {
+    TaskFile taskFile = new TaskFile();
+    taskFile.setTask(task);
+    taskFile.name  = EduKotlinPluginConfigurator.TASK_KT;
+    taskFile.text = "write your task text here";
+    task.addTaskFile(taskFile);
+    task.getTestsText().put(EduKotlinPluginConfigurator.TESTS_KT, "write your test here");
   }
 }
