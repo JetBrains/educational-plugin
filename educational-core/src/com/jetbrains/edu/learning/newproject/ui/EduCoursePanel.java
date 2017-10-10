@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -94,6 +95,15 @@ public class EduCoursePanel extends JPanel {
   @Nullable
   public String getLocationString() {
     return myLocationField == null ? null : myLocationField.getComponent().getText();
+  }
+
+  public void addLocationFieldDocumentListener(@NotNull DocumentListener listener) {
+    if (myLocationField != null) {
+      myLocationField.getComponent()
+              .getTextField()
+              .getDocument()
+              .addDocumentListener(listener);
+    }
   }
 
   private void setTextAreaAttributes(JEditorPane textArea, int leftMargin) {
