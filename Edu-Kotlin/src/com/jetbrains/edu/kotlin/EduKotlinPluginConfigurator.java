@@ -1,6 +1,9 @@
 package com.jetbrains.edu.kotlin;
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
+import com.intellij.openapi.externalSystem.model.ProjectSystemId;
+import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
@@ -12,14 +15,17 @@ import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
+import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,6 +75,25 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   @Override
   public VirtualFile createTaskContent(@NotNull Project project, @NotNull Task task,
                                        @NotNull VirtualFile parentDirectory, @NotNull Course course) {
+    if (EduUtils.isAndroidStudio()) {
+      try {
+        //TODO: do we have util method for this?
+        TaskFile taskFile = new TaskFile();
+        taskFile.setTask(task);
+        taskFile.name  = "Task.kt";
+        taskFile.text = "write your task text here";
+        task.addTaskFile(taskFile);
+        task.getTestsText().put(TESTS_KT, "write your test here");
+        EduGradleModuleGenerator.createTaskModule(parentDirectory, task);
+
+        //TODO: is there better way?
+        ExternalSystemUtil.refreshProjects(new ImportSpecBuilder(project, new ProjectSystemId("GRADLE")));
+        return parentDirectory.findChild(EduNames.TASK + task.getIndex());
+      } catch (IOException e) {
+        LOG.error("Failed to create task");
+        return null;
+      }
+    }
     return EduIntellijUtils.createTask(project, task, parentDirectory, TASK_KT, TESTS_KT);
   }
 
