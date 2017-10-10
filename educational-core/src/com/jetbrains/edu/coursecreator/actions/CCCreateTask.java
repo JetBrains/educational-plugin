@@ -107,7 +107,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase {
   }
 
   @Override
-  protected StudyItem createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
+  public StudyItem createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
     final Task task = new PyCharmTask(name);
     task.setIndex(index);
     if (parentItem == null) {
