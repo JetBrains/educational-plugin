@@ -10,47 +10,51 @@
       <size top="2" left="4" bottom="2" right="4"/>
     </border>
     <children>
-      <component id="e1c40" class="com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings" binding="myAdvancedSettings">
-        <constraints border-constraint="South"/>
-        <properties/>
-      </component>
-      <scrollpane id="323c9" class="com.intellij.ui.components.JBScrollPane" binding="myInfoScroll">
+      <grid id="d6214" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="d6214" layout-manager="BorderLayout" hgap="0" vgap="0">
-            <constraints/>
+          <grid id="2b5af" layout-manager="BorderLayout" hgap="0" vgap="0">
+            <constraints border-constraint="North"/>
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="2b5af" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <component id="9fa0e" class="com.intellij.ui.components.JBLabel" binding="myCourseNameLabel">
                 <constraints border-constraint="North"/>
+                <properties>
+                  <horizontalAlignment value="2"/>
+                </properties>
+              </component>
+              <grid id="97d3d" binding="myTagsPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
+                <constraints border-constraint="Center"/>
                 <properties/>
                 <border type="none"/>
-                <children>
-                  <component id="9fa0e" class="com.intellij.ui.components.JBLabel" binding="myCourseNameLabel">
-                    <constraints border-constraint="North"/>
-                    <properties>
-                      <horizontalAlignment value="2"/>
-                    </properties>
-                  </component>
-                  <grid id="97d3d" binding="myTagsPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="0">
-                    <constraints border-constraint="Center"/>
-                    <properties/>
-                    <border type="none"/>
-                    <children/>
-                  </grid>
-                </children>
+                <children/>
               </grid>
+              <component id="456t7" class="javax.swing.JEditorPane" binding="myInstructorField">
+                <constraints border-constraint="South"/>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+          <scrollpane id="323c9" class="com.intellij.ui.components.JBScrollPane" binding="myInfoScroll">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
               <component id="5fbab" class="javax.swing.JEditorPane" binding="myDescriptionTextArea">
                 <constraints border-constraint="Center"/>
                 <properties/>
               </component>
             </children>
-          </grid>
+          </scrollpane>
+          <component id="e1c40" class="com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings" binding="myAdvancedSettings">
+            <constraints border-constraint="South"/>
+            <properties/>
+          </component>
         </children>
-      </scrollpane>
+      </grid>
     </children>
   </grid>
 </form>

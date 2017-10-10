@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui;
 
-import com.android.annotations.NonNull;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -30,13 +29,16 @@ import java.util.List;
 public class EduCoursePanel extends JPanel {
 
   private static final Color COLOR = new Color(70, 130, 180, 70);
+  private static final int HORIZONTAL_MARGIN = 10;
 
   private JPanel myCoursePanel;
-  private EduAdvancedSettings myAdvancedSettings;
-  private JEditorPane myDescriptionTextArea;
   private JBLabel myCourseNameLabel;
   private JPanel myTagsPanel;
+  private JEditorPane myInstructorField;
   private JBScrollPane myInfoScroll;
+  private JEditorPane myDescriptionTextArea;
+
+  private EduAdvancedSettings myAdvancedSettings;
 
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
@@ -54,20 +56,27 @@ public class EduCoursePanel extends JPanel {
   }
 
   private void initUI(boolean isLocationFieldNeeded) {
-    myCourseNameLabel.setBorder(JBUI.Borders.empty(20, 10, 5, 10));
+    myCourseNameLabel.setBorder(JBUI.Borders.empty(20, HORIZONTAL_MARGIN, 5, HORIZONTAL_MARGIN));
     Font labelFont = UIUtil.getLabelFont();
     myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
-    myTagsPanel.setBorder(JBUI.Borders.empty(0, 10));
-    myDescriptionTextArea.setBorder(JBUI.Borders.empty(20, 10, 10, 10));
+
+    myTagsPanel.setBorder(JBUI.Borders.empty(0, HORIZONTAL_MARGIN));
+
+    myInstructorField.setBorder(JBUI.Borders.empty(15, HORIZONTAL_MARGIN, 0, HORIZONTAL_MARGIN));
+    myInstructorField.setEditorKit(UIUtil.getHTMLEditorKit());
+    myInstructorField.setEditable(false);
+    myInstructorField.setBackground(UIUtil.getPanelBackground());
+
+    myDescriptionTextArea.setBorder(JBUI.Borders.empty(15, HORIZONTAL_MARGIN, 10, HORIZONTAL_MARGIN));
     myDescriptionTextArea.setEditorKit(UIUtil.getHTMLEditorKit());
     myDescriptionTextArea.setEditable(false);
-    myDescriptionTextArea.setPreferredSize(JBUI.size(myCoursePanel.getPreferredSize()));
+    myDescriptionTextArea.setBackground(UIUtil.getPanelBackground());
+
     myInfoScroll.setBorder(null);
 
     Border border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 0, 1, 1);
     myCoursePanel.setBorder(border);
 
-    myDescriptionTextArea.setBackground(UIUtil.getPanelBackground());
     myAdvancedSettings.setVisible(false);
 
     if (isLocationFieldNeeded) {
@@ -76,13 +85,13 @@ public class EduCoursePanel extends JPanel {
   }
 
   public void bindCourse(@NotNull Course course) {
+    myCoursePanel.setVisible(true);
     updateCourseDescriptionPanel(course);
     updateAdvancedSettings(course);
   }
 
   public void clearContent() {
-    myInfoScroll.setVisible(false);
-    myAdvancedSettings.setVisible(false);
+    myCoursePanel.setVisible(false);
   }
 
   @Nullable
@@ -91,29 +100,37 @@ public class EduCoursePanel extends JPanel {
   }
 
   private void updateCourseDescriptionPanel(@NotNull Course course) {
-    myInfoScroll.setVisible(true);
     myCourseNameLabel.setText(course.getName());
-    myDescriptionTextArea.setText(htmlDescription(course));
     updateTags(course);
+    String instructorText = htmlInstructorText(course);
+    if (instructorText == null) {
+      myInstructorField.setPreferredSize(JBUI.size(0, 0));
+    } else {
+      myInstructorField.setPreferredSize(null);
+      myInstructorField.setText(instructorText);
+    }
+    myDescriptionTextArea.setText(htmlDescription(course));
+  }
+
+  @Nullable
+  private String htmlInstructorText(@NotNull Course course) {
+    StringBuilder builder = new StringBuilder();
+    List<StepicUser> authors = course.getAuthors();
+    if (authors.isEmpty()) return null;
+    builder.append("<b>Instructor");
+    if (authors.size() > 1) {
+      builder.append("s");
+    }
+    builder.append("</b>: ");
+    List<String> fullNames = CourseUtils.getAuthorFullNames(course);
+    builder.append(StringUtil.join(fullNames, ", "));
+    return UIUtil.toHtml(builder.toString());
   }
 
   @NotNull
   private String htmlDescription(@NotNull Course course) {
-    StringBuilder builder = new StringBuilder();
-    List<StepicUser> authors = course.getAuthors();
-    if (!authors.isEmpty()) {
-      builder.append("<b>Instructor");
-      if (authors.size() > 1) {
-        builder.append("s");
-      }
-      builder.append("</b>: ");
-      List<String> fullNames = CourseUtils.getAuthorFullNames(course);
-      builder.append(StringUtil.join(fullNames, ", "));
-      builder.append("<br><br>");
-    }
     String description = course.getDescription() != null ? course.getDescription() : "";
-    builder.append(description.replace("\n", "<br>"));
-    return UIUtil.toHtml(builder.toString());
+    return UIUtil.toHtml(description.replace("\n", "<br>"));
   }
 
   private void updateTags(@NotNull Course course) {
@@ -153,7 +170,7 @@ public class EduCoursePanel extends JPanel {
     }
   }
 
-  @NonNull
+  @NotNull
   private static LabeledComponent<TextFieldWithBrowseButton> createLocationComponent() {
     TextFieldWithBrowseButton field = new TextFieldWithBrowseButton();
     field.addBrowseFolderListener("Select Course Location", "Select course location", null,
@@ -173,7 +190,7 @@ public class EduCoursePanel extends JPanel {
     }
   }
 
-  @NonNull
+  @NotNull
   private static JLabel createTagLabel(String tagText) {
     Border emptyBorder = JBUI.Borders.empty(3, 5);
     JBLabel label = new JBLabel(tagText);
