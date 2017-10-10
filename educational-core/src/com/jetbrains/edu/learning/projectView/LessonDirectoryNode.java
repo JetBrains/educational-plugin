@@ -9,7 +9,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
@@ -60,7 +62,8 @@ public class LessonDirectoryNode extends StudyDirectoryNode {
         return null;
       }
       VirtualFile srcDir = directory.getVirtualFile().findChild(EduNames.SRC);
-      if (srcDir != null) {
+      boolean isCourseCreatorStudioProject = EduUtils.isAndroidStudio() && CCUtils.isCourseCreator(myProject);
+      if (srcDir != null && !isCourseCreatorStudioProject) {
         directory = PsiManager.getInstance(myProject).findDirectory(srcDir);
         if (directory == null) {
           return null;
