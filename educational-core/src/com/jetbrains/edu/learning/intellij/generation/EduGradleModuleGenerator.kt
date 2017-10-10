@@ -52,8 +52,9 @@ object EduGradleModuleGenerator {
     }
 
 
+    @JvmStatic
     @Throws(IOException::class)
-    private fun createTaskModule(lessonDir: VirtualFile, task: Task) {
+    fun createTaskModule(lessonDir: VirtualFile, task: Task) {
         val taskDirName = EduNames.TASK + task.index
         val (src, test) = EduGradleModuleGenerator.createModule(lessonDir, taskDirName)
         for (taskFile in task.getTaskFiles().values) {
