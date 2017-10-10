@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.JBColor;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
@@ -18,7 +19,11 @@ import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 public class CCCourseDirectoryNode extends CourseDirectoryNode {
+  private static final Collection<String> NAMES_TO_IGNORE = ContainerUtil.newHashSet("build.gradle",
+    "settings.gradle", "local.properties", "gradlew", "gradlew.bat");
 
   public CCCourseDirectoryNode(@NotNull Project project,
                                PsiDirectory value,
@@ -37,6 +42,9 @@ public class CCCourseDirectoryNode extends CourseDirectoryNode {
     if (childNode instanceof PsiFileNode) {
       VirtualFile virtualFile = ((PsiFileNode)childNode).getVirtualFile();
       if (virtualFile == null) {
+        return null;
+      }
+      if (NAMES_TO_IGNORE.contains(virtualFile.getName())) {
         return null;
       }
       if (FileUtilRt.getExtension(virtualFile.getName()).equals("iml")) {
