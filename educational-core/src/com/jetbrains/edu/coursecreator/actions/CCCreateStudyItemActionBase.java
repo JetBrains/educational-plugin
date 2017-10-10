@@ -155,7 +155,7 @@ public abstract class CCCreateStudyItemActionBase extends DumbAwareAction {
 
   protected abstract String getItemName();
 
-  protected abstract StudyItem createAndInitItem(@NotNull final Course course,
+  public abstract StudyItem createAndInitItem(@NotNull final Course course,
                                                  @Nullable final StudyItem parentItem,
                                                  String name,
                                                  int index);
