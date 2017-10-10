@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -36,6 +37,9 @@ import java.util.List;
 public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator {
   @Override
   public VirtualFile createLessonContent(@NotNull Project project, @NotNull Lesson lesson, @NotNull VirtualFile parentDirectory) {
+    if (EduUtils.isAndroidStudio()) {
+      return EduPluginConfigurator.super.createLessonContent(project, lesson, parentDirectory);
+    }
     NewModuleAction newModuleAction = new NewModuleAction();
     String courseDirPath = parentDirectory.getPath();
     Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduIntelliJNames.UTIL);
