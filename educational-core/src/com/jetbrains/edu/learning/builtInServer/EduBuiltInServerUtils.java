@@ -20,14 +20,19 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.newproject.ui.EduCreateNewProjectDialog;
-import com.jetbrains.edu.learning.newproject.ui.EduCreateNewStepikProjectDialog;
+import com.jetbrains.edu.learning.newproject.ui.EduCreateNewStepikCourseDialog;
+import com.jetbrains.edu.learning.stepic.EduStepicAuthorizedClient;
+import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -39,11 +44,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.StudyUtils.execCancelable;
 import static com.jetbrains.edu.learning.StudyUtils.navigateToStep;
 import static com.jetbrains.edu.learning.core.EduNames.STUDY_PROJECT_XML_PATH;
 import static com.jetbrains.edu.learning.stepic.EduStepicNames.STEP_ID;
 
 public class EduBuiltInServerUtils {
+
+  private static final Logger LOG = Logger.getInstance(EduBuiltInServerUtils.class);
+
   public static boolean focusOpenProject(int courseId, int stepId) {
     Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : openProjects) {
@@ -148,13 +157,36 @@ public class EduBuiltInServerUtils {
 
   public static boolean createProject(int courseId, int stepId) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      PropertiesComponent.getInstance().setValue(STEP_ID, stepId, 0);
-      EduCreateNewProjectDialog createNewProjectDlg = new EduCreateNewStepikProjectDialog(courseId);
-      createNewProjectDlg.show();
+      Project defaultProject = ProjectManager.getInstance().getDefaultProject();
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        execCancelable(() -> {
+          try {
+            StepicUser user = EduStepicAuthorizedClient.getCurrentUser();
+            Course course = EduStepicConnector.getCourseFromStepik(user, courseId);
+            showDialog(course, stepId);
+          } catch (IOException e) {
+            LOG.warn("Tried to create a project for course with id=" + courseId, e);
+          }
+          return null;
+        });
+      }, "Getting Course", true, defaultProject);
     });
 
     return true;
   }
+
+  private static void showDialog(@Nullable Course course, int stepId) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      if (course != null) {
+        PropertiesComponent.getInstance().setValue(STEP_ID, stepId, 0);
+        new EduCreateNewStepikCourseDialog(course).show();
+      } else {
+        Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course");
+      }
+    });
+  }
+
   @NotNull
   private static StudyTaskManager getDefaultTaskManager() {
     Project defaultProject = ProjectManager.getInstance().getDefaultProject();
