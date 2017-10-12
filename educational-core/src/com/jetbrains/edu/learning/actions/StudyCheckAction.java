@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.actions;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -16,6 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.StudyCheckListener;
@@ -82,6 +84,21 @@ public class StudyCheckAction extends StudyActionWithShortcut {
     if (presentation.isEnabled()) {
       updateDescription(e);
       presentation.setEnabled(!myCheckInProgress.get());
+      return;
+    }
+    Project project = e.getProject();
+    if (project == null) {
+      return;
+    }
+    if (!CCUtils.isCourseCreator(project)) {
+      return;
+    }
+    VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
+    if (virtualFile == null) {
+      return;
+    }
+    if (CCUtils.isTestsFile(project, virtualFile)) {
+      presentation.setEnabledAndVisible(true);
     }
   }
 
