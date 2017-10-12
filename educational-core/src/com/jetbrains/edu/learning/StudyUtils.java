@@ -234,9 +234,9 @@ public class StudyUtils {
    */
   public static void showCheckPopUp(@NotNull final Project project, @NotNull final Balloon balloon) {
     final StudyEditor studyEditor = getSelectedStudyEditor(project);
-    assert studyEditor != null;
-
-    balloon.show(computeLocation(studyEditor.getEditor()), Balloon.Position.above);
+    Editor editor = studyEditor != null ? studyEditor.getEditor() : FileEditorManager.getInstance(project).getSelectedTextEditor();
+    assert editor != null;
+    balloon.show(computeLocation(editor), Balloon.Position.above);
     Disposer.register(project, balloon);
   }
 
