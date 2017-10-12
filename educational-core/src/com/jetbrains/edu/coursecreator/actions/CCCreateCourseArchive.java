@@ -159,6 +159,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       }
 
       private void addTestsToTask(Task task) {
+        task.getTestsText().clear();
         final List<VirtualFile> testFiles = getTestFiles(task, project);
         for (VirtualFile file : testFiles) {
           try {
@@ -176,9 +177,17 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         if (taskDir == null) {
           return testFiles;
         }
-        testFiles.addAll(Arrays.stream(taskDir.getChildren())
-                           .filter(file -> StudyUtils.isTestsFile(project, file.getName()))
-                           .collect(Collectors.toList()));
+        if (EduUtils.isAndroidStudio()) {
+          VirtualFile testDir = taskDir.getParent().findChild(EduNames.TEST);
+          if (testDir == null) {
+            return testFiles;
+          }
+          testFiles.addAll(Arrays.asList(testDir.getChildren()));
+        } else {
+          testFiles.addAll(Arrays.stream(taskDir.getChildren())
+            .filter(file -> StudyUtils.isTestsFile(project, file.getName()))
+            .collect(Collectors.toList()));
+        }
         return testFiles;
       }
     });
