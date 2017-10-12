@@ -441,7 +441,30 @@ public class StudyUtils {
   @Nullable
   public static Task getCurrentTask(@NotNull final Project project) {
     final TaskFile taskFile = getSelectedTaskFile(project);
-    return taskFile != null ? taskFile.getTask() : null;
+    if (taskFile != null) {
+      return taskFile.getTask();
+    }
+    return !EduUtils.isAndroidStudio() ? null : findTaskFromTestFiles(project);
+  }
+
+  @Nullable
+  private static Task findTaskFromTestFiles(@NotNull Project project) {
+    for (VirtualFile testFile : FileEditorManager.getInstance(project).getSelectedFiles()) {
+      VirtualFile parentDir = testFile.getParent();
+      if (EduNames.TEST.equals(parentDir.getName())) {
+        VirtualFile srcDir = parentDir.getParent().findChild(EduNames.SRC);
+        if (srcDir == null) {
+          return null;
+        }
+        for (VirtualFile file : srcDir.getChildren()) {
+          TaskFile taskFile = getTaskFile(project, file);
+          if (taskFile != null) {
+            return taskFile.getTask();
+          }
+        }
+      }
+    }
+    return null;
   }
 
   public static boolean isStudyProject(@NotNull Project project) {
