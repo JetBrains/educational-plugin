@@ -93,8 +93,8 @@ class EduKotlinCourseProjectGenerator extends EduIntellijCourseProjectGeneratorB
     TaskFile taskFile = new TaskFile();
     taskFile.setTask(task);
     taskFile.name  = EduKotlinPluginConfigurator.TASK_KT;
-    taskFile.text = "write your task text here";
+    taskFile.text = EduUtils.getTextFromInternalTemplate(EduKotlinPluginConfigurator.TASK_KT);
     task.addTaskFile(taskFile);
-    task.getTestsText().put(EduKotlinPluginConfigurator.TESTS_KT, "write your test here");
+    task.getTestsText().put(EduKotlinPluginConfigurator.TESTS_KT, EduUtils.getTextFromInternalTemplate(EduKotlinPluginConfigurator.TESTS_KT));
   }
 }

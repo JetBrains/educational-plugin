@@ -1,3 +1,9 @@
+import org.junit.Assert
+import org.junit.Test
+
 class Test {
-    // put your test here
+    @Test fun testSolution() {
+        //TODO: implement your test here
+        Assert.assertTrue("Tests not implemented fot the task", false)
+    }
 }

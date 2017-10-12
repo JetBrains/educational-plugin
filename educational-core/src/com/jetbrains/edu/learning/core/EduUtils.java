@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.core;
 
 import com.intellij.ide.SaveAndSyncHandler;
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -271,5 +273,15 @@ public class EduUtils {
 
   public static boolean isAndroidStudio() {
     return "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
+  }
+
+  @Nullable
+  public static String getTextFromInternalTemplate(@NotNull String templateName) {
+    FileTemplate template = FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName);
+    if (template == null) {
+      LOG.info("Failed to obtain internal template: " + templateName);
+      return null;
+    }
+    return template.getText();
   }
 }
