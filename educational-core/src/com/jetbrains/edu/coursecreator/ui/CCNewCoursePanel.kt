@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
@@ -21,6 +22,7 @@ import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduPluginConfigurator
+import com.jetbrains.edu.learning.core.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings
 import java.awt.BorderLayout
@@ -181,19 +183,24 @@ class CCNewCoursePanel : JPanel() {
 
   private fun collectSupportedLanguages() {
     Extensions.getExtensions<LanguageExtensionPoint<EduPluginConfigurator>>(EduPluginConfigurator.EP_NAME, null)
-            .mapNotNull { extension ->
-              val languageId = extension.key
-              val language = Language.findLanguageByID(languageId)
-              if (language == null) {
-                LOG.info("Language with id $languageId not found")
-                null
-              } else {
-                val logo = extension.instance.eduCourseProjectGenerator?.directoryProjectGenerator?.logo
-                LanguageData(language, logo)
-              }
-            }
+            .mapNotNull { extension -> obtainLanguageData(extension) }
             .sortedBy { (language, _) -> language.displayName }
             .forEach { myLanguageComboBox.addItem(it) }
+  }
+
+  private fun obtainLanguageData(extension: LanguageExtensionPoint<EduPluginConfigurator>): LanguageData? {
+    val languageId = extension.key
+    val language = Language.findLanguageByID(languageId)
+    if (language == null) {
+      LOG.info("Language with id $languageId not found")
+      return null
+    }
+    if (language == JavaLanguage.INSTANCE && EduUtils.isAndroidStudio()) {
+      // there should be no Java support in AS
+      return null
+    }
+    val logo = extension.instance.eduCourseProjectGenerator?.directoryProjectGenerator?.logo
+    return LanguageData(language, logo)
   }
 
   private fun EduPluginConfigurator.languageSettingsComponent(language: Language): LabeledComponent<JComponent>? {
