@@ -90,7 +90,7 @@ public class EduCoursePanel extends JPanel {
     updateAdvancedSettings(course);
   }
 
-  public void clearContent() {
+  public void hideContent() {
     myCoursePanel.setVisible(false);
   }
 
@@ -122,8 +122,7 @@ public class EduCoursePanel extends JPanel {
       builder.append("s");
     }
     builder.append("</b>: ");
-    List<String> fullNames = CourseUtils.getAuthorFullNames(course);
-    builder.append(StringUtil.join(fullNames, ", "));
+    builder.append(StringUtil.join(course.getAuthorFullNames(), ", "));
     return UIUtil.toHtml(builder.toString());
   }
 
@@ -185,7 +184,7 @@ public class EduCoursePanel extends JPanel {
   }
 
   private static void addTags(JPanel tagsPanel, @NotNull Course course) {
-    for (String tag : CourseUtils.getTags(course)) {
+    for (String tag : course.getTags()) {
       tagsPanel.add(createTagLabel(tag));
     }
   }
