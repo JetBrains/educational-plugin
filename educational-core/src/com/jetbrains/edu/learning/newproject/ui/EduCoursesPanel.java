@@ -231,7 +231,7 @@ public class EduCoursesPanel extends JPanel {
     if (myCoursesList.getItemsCount() > 0) {
       myCoursesList.setSelectedIndex(0);
     } else {
-      myCoursePanel.clearContent();
+      myCoursePanel.hideContent();
     }
     if (courseToSelect == null) {
       return;
@@ -271,12 +271,12 @@ public class EduCoursesPanel extends JPanel {
     if (course.getName().toLowerCase().contains(filter)) {
       return true;
     }
-    for (String tag : CourseUtils.getTags(course)) {
+    for (String tag : course.getTags()) {
       if (tag.toLowerCase().contains(filter)) {
         return true;
       }
     }
-    for (String authorName : CourseUtils.getAuthorFullNames(course)) {
+    for (String authorName : course.getAuthorFullNames()) {
       if (authorName.toLowerCase().contains(filter)) {
         return true;
       }
