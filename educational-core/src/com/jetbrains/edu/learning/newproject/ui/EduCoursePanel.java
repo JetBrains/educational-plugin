@@ -30,6 +30,7 @@ public class EduCoursePanel extends JPanel {
 
   private static final Color COLOR = new Color(70, 130, 180, 70);
   private static final int HORIZONTAL_MARGIN = 10;
+  private static final int LARGE_HORIZONTAL_MARGIN = 15;
 
   private JPanel myCoursePanel;
   private JBLabel myCourseNameLabel;
@@ -43,38 +44,34 @@ public class EduCoursePanel extends JPanel {
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
 
-  // Used in `EduCoursesPanel` in initializing code generated for form
-  @SuppressWarnings("unused")
-  public EduCoursePanel() {
-    this(true);
-  }
-
-  public EduCoursePanel(boolean isLocationFieldNeeded) {
+  public EduCoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
     setLayout(new BorderLayout());
     add(myCoursePanel, BorderLayout.CENTER);
-    initUI(isLocationFieldNeeded);
+    initUI(isIndependentPanel, isLocationFieldNeeded);
   }
 
-  private void initUI(boolean isLocationFieldNeeded) {
-    myCourseNameLabel.setBorder(JBUI.Borders.empty(20, HORIZONTAL_MARGIN, 5, HORIZONTAL_MARGIN));
+  private void initUI(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
+    int leftMargin;
+    if (isIndependentPanel) {
+      leftMargin = LARGE_HORIZONTAL_MARGIN;
+    } else {
+      leftMargin = HORIZONTAL_MARGIN;
+    }
+
+    myCourseNameLabel.setBorder(JBUI.Borders.empty(20, leftMargin, 5, HORIZONTAL_MARGIN));
     Font labelFont = UIUtil.getLabelFont();
     myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
 
-    myTagsPanel.setBorder(JBUI.Borders.empty(0, HORIZONTAL_MARGIN));
+    myTagsPanel.setBorder(JBUI.Borders.empty(0, leftMargin, 0, HORIZONTAL_MARGIN));
 
-    myInstructorField.setBorder(JBUI.Borders.empty(15, HORIZONTAL_MARGIN, 0, HORIZONTAL_MARGIN));
-    myInstructorField.setEditorKit(UIUtil.getHTMLEditorKit());
-    myInstructorField.setEditable(false);
-    myInstructorField.setBackground(UIUtil.getPanelBackground());
-
-    myDescriptionTextArea.setBorder(JBUI.Borders.empty(15, HORIZONTAL_MARGIN, 10, HORIZONTAL_MARGIN));
-    myDescriptionTextArea.setEditorKit(UIUtil.getHTMLEditorKit());
-    myDescriptionTextArea.setEditable(false);
-    myDescriptionTextArea.setBackground(UIUtil.getPanelBackground());
+    setTextAreaAttributes(myInstructorField, leftMargin);
+    setTextAreaAttributes(myDescriptionTextArea, leftMargin);
 
     myInfoScroll.setBorder(null);
 
-    Border border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 0, 1, 1);
+    // We want to show left part of border only if panel is independent
+    int leftBorder = isIndependentPanel ? 1 : 0;
+    Border border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, leftBorder, 1, 1);
     myCoursePanel.setBorder(border);
 
     myAdvancedSettings.setVisible(false);
@@ -97,6 +94,13 @@ public class EduCoursePanel extends JPanel {
   @Nullable
   public String getLocationString() {
     return myLocationField == null ? null : myLocationField.getComponent().getText();
+  }
+
+  private void setTextAreaAttributes(JEditorPane textArea, int leftMargin) {
+    textArea.setBorder(JBUI.Borders.empty(15, leftMargin, 10, HORIZONTAL_MARGIN));
+    textArea.setEditorKit(UIUtil.getHTMLEditorKit());
+    textArea.setEditable(false);
+    textArea.setBackground(UIUtil.getPanelBackground());
   }
 
   private void updateCourseDescriptionPanel(@NotNull Course course) {

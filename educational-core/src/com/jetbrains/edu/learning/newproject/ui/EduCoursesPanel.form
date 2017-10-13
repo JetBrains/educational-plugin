@@ -57,7 +57,7 @@
                       </component>
                     </children>
                   </grid>
-                  <nested-form id="9b92a" form-file="com/jetbrains/edu/learning/newproject/ui/EduCoursePanel.form" binding="myCoursePanel">
+                  <nested-form id="9b92a" form-file="com/jetbrains/edu/learning/newproject/ui/EduCoursePanel.form" binding="myCoursePanel" custom-create="true">
                     <constraints>
                       <splitpane position="right"/>
                     </constraints>
