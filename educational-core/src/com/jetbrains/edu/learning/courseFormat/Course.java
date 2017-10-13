@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -227,5 +228,22 @@ public class Course {
       findFirst().
       orElse(null);
     return additionalMaterials == null ? null : additionalMaterials.getTaskList().get(0);
+  }
+
+  @NotNull
+  public List<String> getAuthorFullNames() {
+    return authors.stream()
+            .map(user -> StringUtil.join(Arrays.asList(user.getFirstName(), user.getLastName()), " "))
+            .collect(Collectors.toList());
+  }
+
+  @NotNull
+  public List<String> getTags() {
+    List<String> tags = new ArrayList<>();
+    tags.add(getLanguageById().getDisplayName());
+    if (isAdaptive()) {
+      tags.add(EduNames.ADAPTIVE);
+    }
+    return tags;
   }
 }
