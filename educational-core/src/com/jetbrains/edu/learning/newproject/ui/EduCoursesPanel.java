@@ -247,6 +247,7 @@ public class EduCoursesPanel extends JPanel {
   }
 
   private void createUIComponents() {
+    myCoursePanel = new EduCoursePanel(false, true);
     mySearchField = new FilterComponent("Edu.NewCourse", 5, true) {
       @Override
       public void filter() {

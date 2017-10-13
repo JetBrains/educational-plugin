@@ -5,9 +5,8 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.PathUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
@@ -26,13 +25,13 @@ class CCCreateCoursePreviewDialog(
         private val myConfigurator: EduPluginConfigurator
 ) : DialogWrapper(true) {
 
-  private val myPanel: EduCoursePanel = EduCoursePanel(false).apply {
-    preferredSize = JBUI.size(400, 350)
-    minimumSize = JBUI.size(400, 350)
+  private val myPanel: EduCoursePanel = EduCoursePanel(true, false).apply {
+    preferredSize = JBUI.size(WIDTH, HEIGHT)
+    minimumSize = JBUI.size(WIDTH, HEIGHT)
   }
 
   init {
-    title = "Create Course Preview"
+    title = "Course Preview"
     setOKButtonText("Create")
     myPanel.bindCourse(myCourse)
     init()
@@ -55,23 +54,26 @@ class CCCreateCoursePreviewDialog(
         try {
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
           myConfigurator.eduCourseProjectGenerator?.createProject(course, location.absolutePath)
+          close(OK_EXIT_CODE)
         } catch (e: IOException) {
           LOG.error("Failed to create tmp dir for course preview", e)
-          showErrorDialog()
+          showErrorMessage()
         } finally {
           RecentProjectsManager.getInstance().lastProjectCreationLocation = lastProjectCreationLocation
         }
       }
     } else {
-      showErrorDialog()
+      showErrorMessage()
     }
-    close(OK_EXIT_CODE)
   }
 
-  private fun showErrorDialog() = Messages.showErrorDialog("Can not create course preview", "Failed to Create Course Preview")
+  private fun showErrorMessage() = updateErrorInfo(listOf(ValidationInfo("Can not create course preview")))
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CCCreateCoursePreviewDialog::class.java)
+
+    private const val WIDTH: Int = 370
+    private const val HEIGHT: Int = 330
 
     private val PREVIEW_FOLDER_PREFIX: String = "course_preview"
   }
