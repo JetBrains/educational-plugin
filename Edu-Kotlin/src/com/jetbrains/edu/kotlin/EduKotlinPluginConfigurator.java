@@ -1,8 +1,9 @@
 package com.jetbrains.edu.kotlin;
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -75,17 +76,17 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   public VirtualFile createTaskContent(@NotNull Project project, @NotNull Task task,
                                        @NotNull VirtualFile parentDirectory, @NotNull Course course) {
     if (EduUtils.isAndroidStudio()) {
-      try {
-        EduKotlinCourseProjectGenerator.initTask(task);
-        EduGradleModuleGenerator.createTaskModule(parentDirectory, task);
+      EduKotlinCourseProjectGenerator.initTask(task);
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        try {
+          EduGradleModuleGenerator.createTaskModule(parentDirectory, task);
+        } catch (IOException e) {
+          LOG.error("Failed to create task");
+        }
+      });
 
-        //TODO: is there better way?
-        ExternalSystemUtil.refreshProjects(new ImportSpecBuilder(project, new ProjectSystemId("GRADLE")));
-        return parentDirectory.findChild(EduNames.TASK + task.getIndex());
-      } catch (IOException e) {
-        LOG.error("Failed to create task");
-        return null;
-      }
+      ExternalSystemUtil.refreshProjects(project, new ProjectSystemId("GRADLE"), true, ProgressExecutionMode.MODAL_SYNC);
+      return parentDirectory.findChild(EduNames.TASK + task.getIndex());
     }
     return EduIntellijUtils.createTask(project, task, parentDirectory, TASK_KT, TESTS_KT);
   }
