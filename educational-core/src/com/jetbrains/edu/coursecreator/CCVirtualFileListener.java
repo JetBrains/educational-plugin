@@ -99,7 +99,7 @@ public class CCVirtualFileListener extends VirtualFileAdapter {
     }
   }
 
-  private static void deleteLesson(@NotNull final Course course, @NotNull final VirtualFile removedLessonFile, Project project) {
+  public static void deleteLesson(@NotNull final Course course, @NotNull final VirtualFile removedLessonFile, Project project) {
     Lesson removedLesson = course.getLesson(removedLessonFile.getName());
     if (removedLesson == null) {
       return;
