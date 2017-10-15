@@ -160,6 +160,15 @@ sourceSets {
     }
 }
 
+configure(project(':educational-core')) {
+
+    task downloadColorFile(type: Download) {
+        overwrite false
+        src 'https://raw.githubusercontent.com/ozh/github-colors/master/colors.json'
+        dest "${projectDir}/resources/languageColors/colors.json"
+    }
+}
+
 configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]) {
     dependencies {
         compile project(':educational-core')
