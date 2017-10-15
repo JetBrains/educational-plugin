@@ -7,13 +7,13 @@ import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,6 @@ import java.util.List;
 
 public class EduCoursePanel extends JPanel {
 
-  private static final Color COLOR = new Color(70, 130, 180, 70);
   private static final int HORIZONTAL_MARGIN = 10;
   private static final int LARGE_HORIZONTAL_MARGIN = 15;
 
@@ -198,18 +197,18 @@ public class EduCoursePanel extends JPanel {
   }
 
   private static void addTags(JPanel tagsPanel, @NotNull Course course) {
-    for (String tag : course.getTags()) {
+    for (Tag tag : course.getTags()) {
       tagsPanel.add(createTagLabel(tag));
     }
   }
 
   @NotNull
-  private static JLabel createTagLabel(String tagText) {
+  private static JLabel createTagLabel(Tag tag) {
     Border emptyBorder = JBUI.Borders.empty(3, 5);
-    JBLabel label = new JBLabel(tagText);
+    JBLabel label = new JBLabel(tag.getText());
     label.setOpaque(true);
     label.setBorder(emptyBorder);
-    label.setBackground(new JBColor(COLOR, COLOR));
+    label.setBackground(tag.getColor());
     return label;
   }
 }
