@@ -1,13 +1,21 @@
 <idea-plugin>
-  <depends>org.jetbrains.android</depends>
-  <actions>
-    <action id="Educational.StartLearn" class="com.jetbrains.edu.learning.intellij.android.EduStartLearningAction" text="Start Learning"
-            description="Create New Educational Project">
-      <add-to-group group-id="WelcomeScreen.QuickStart" anchor="last"/>
-      <add-to-group group-id="FileMenu" anchor="last"/>
-    </action>
-    <action class="com.jetbrains.edu.coursecreator.actions.studio.CCDeleteTask" id="Educational.Educator.CCDeleteTask" use-shortcut-of="$Delete">
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="Educational.Educator.ProjectView"/>
-    </action>
-  </actions>
+    <depends>org.jetbrains.android</depends>
+    <actions>
+        <action id="Educational.StartLearn" class="com.jetbrains.edu.learning.intellij.android.EduStartLearningAction"
+                text="Start Learning"
+                description="Create New Educational Project">
+            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="last"/>
+            <add-to-group group-id="FileMenu" anchor="last"/>
+        </action>
+        <action class="com.jetbrains.edu.coursecreator.actions.studio.CCDeleteTask"
+                id="Educational.Educator.CCDeleteTask" use-shortcut-of="$Delete">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+                          relative-to-action="Educational.Educator.ProjectView"/>
+        </action>
+        <action class="com.jetbrains.edu.coursecreator.actions.studio.CCDeleteLesson"
+                id="Educational.Educator.CCDeleteLesson" use-shortcut-of="$Delete">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+                          relative-to-action="Educational.Educator.ProjectView"/>
+        </action>
+    </actions>
 </idea-plugin>
