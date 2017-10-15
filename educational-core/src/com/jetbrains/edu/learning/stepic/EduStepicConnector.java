@@ -6,11 +6,13 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
@@ -21,15 +23,19 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.bootstrap.HttpServer;
+import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,8 +43,11 @@ import org.jetbrains.builtInWebServer.BuiltInServerOptions;
 import org.jetbrains.ide.BuiltInServerManager;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.*;
 
 import static com.jetbrains.edu.learning.stepic.EduStepicNames.PYCHARM_PREFIX;
@@ -463,12 +472,20 @@ public class EduStepicConnector {
 
   @NotNull
   public static String getOAuthRedirectUrl() {
-    int port = BuiltInServerManager.getInstance().getPort();
+    if (EduUtils.isAndroidStudio()) {
+      CustomServerAuthorizer customServerAuthorizer = new CustomServerAuthorizer();
+      int port = customServerAuthorizer.startServer();
+      if (port != -1) {
+        return "http://localhost:" + port;
+      }
+    } else {
+      int port = BuiltInServerManager.getInstance().getPort();
 
-    // according to https://confluence.jetbrains.com/display/IDEADEV/Remote+communication
-    int defaultPort = BuiltInServerOptions.getInstance().builtInServerPort;
-    if (port >= defaultPort && port < (defaultPort + 20)) {
-      return "http://localhost:" + port + "/api/" + EduStepicNames.OAUTH_SERVICE_NAME;
+      // according to https://confluence.jetbrains.com/display/IDEADEV/Remote+communication
+      int defaultPort = BuiltInServerOptions.getInstance().builtInServerPort;
+      if (port >= defaultPort && port < (defaultPort + 20)) {
+        return "http://localhost:" + port + "/api/" + EduStepicNames.OAUTH_SERVICE_NAME;
+      }
     }
 
     return EduStepicNames.EXTERNAL_REDIRECT_URL;
@@ -523,5 +540,107 @@ public class EduStepicConnector {
       LOG.warn("Failed getting section: " + lessonId);
     }
     return new Lesson();
+  }
+
+
+  private static class CustomServerAuthorizer {
+    private static final int DEFAULT_AUTH_SERVER_PORT = 36656;
+    private static final int PORT_TO_TRY_NUMBER = 10;
+    private HttpServer myServer;
+
+    private int startServer() {
+      int port = -1;
+      for (int i = 0; i < PORT_TO_TRY_NUMBER; i++) {
+        if (available(DEFAULT_AUTH_SERVER_PORT + i)) {
+          port = DEFAULT_AUTH_SERVER_PORT + i;
+          break;
+        }
+      }
+      if (port != -1) {
+        SocketConfig socketConfig = SocketConfig.custom()
+                .setSoTimeout(15000)
+                .setTcpNoDelay(true)
+                .build();
+        myServer = ServerBootstrap.bootstrap()
+                .setListenerPort(port)
+                .setServerInfo("Edu Tools Auth Server")
+                .registerHandler("*", new MyContextHandler())
+                .setSocketConfig(socketConfig)
+                .create();
+        try {
+          myServer.start();
+        }
+        catch (IOException e) {
+          LOG.warn(e.getMessage());
+          return -1;
+        }
+      }
+
+      return port;
+    }
+
+    private boolean available(int port) {
+      try (Socket ignored = new Socket("localhost", port)) {
+        return false;
+      }
+      catch (IOException ignored) {
+        return true;
+      }
+    }
+
+
+    private class MyContextHandler implements HttpRequestHandler {
+
+      private void stopServerInNewThread() {
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+          try {
+            LOG.info("Stopping server");
+            myServer.stop();
+            LOG.info("Server stopped");
+          }
+          catch (Exception e) {
+            LOG.warn(e.getMessage());
+          }
+        });
+      }
+
+      @Override
+      public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws HttpException, IOException {
+        LOG.info("Handling auth response");
+
+        try {
+          List<NameValuePair> parse = URLEncodedUtils.parse(new URI(httpRequest.getRequestLine().getUri()), "UTF-8");
+          for (NameValuePair pair : parse) {
+            if (pair.getName().equals("code")) {
+              String code = pair.getValue();
+              StepicUser stepicUser = EduStepicAuthorizedClient.login(code, "http://localhost:" + myServer.getLocalPort());
+              if (stepicUser != null) {
+                EduSettings.getInstance().setUser(stepicUser);
+                sendResponse(httpResponse, "/oauthResponsePages/okPage.html");
+              }
+              else {
+                sendResponse(httpResponse, "/oauthResponsePages/errorPage.html");
+              }
+              break;
+            }
+          }
+        }
+        catch (URISyntaxException e) {
+          LOG.warn(e.getMessage());
+          sendResponse(httpResponse, "/oauthResponsePages/errorPage.html");
+        }
+        finally {
+          stopServerInNewThread();
+        }
+      }
+
+      private void sendResponse(HttpResponse httpResponse, String pageAddress) throws IOException {
+        InputStream pageTemplateStream = getClass().getResourceAsStream(pageAddress);
+        String pageTemplate = StreamUtil.readText(pageTemplateStream, Charset.forName("UTF-8"));
+        String pageWithProductName = pageTemplate.replaceAll("%IDE_NAME", ApplicationNamesInfo.getInstance().getFullProductName());
+        httpResponse.setHeader("Content-Type", "text/html");
+        httpResponse.setEntity(new StringEntity(pageWithProductName));
+      }
+    }
   }
 }
