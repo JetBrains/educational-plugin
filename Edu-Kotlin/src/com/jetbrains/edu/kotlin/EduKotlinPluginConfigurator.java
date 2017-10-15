@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,6 +38,9 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   static final String TESTS_KT = "Tests.kt";
   private EduKotlinCourseProjectGenerator myProjectGenerator = new EduKotlinCourseProjectGenerator();
   static final String TASK_KT = "Task.kt";
+  private final Collection<String> NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
+    "gradlew", "gradlew.bat", "local.properties", "gradle.properties", "build.gradle"
+    , "settings.gradle", "gradle-wrapper.jar", "gradle-wrapper.properties");
 
   @NotNull
   @Override
@@ -46,6 +52,16 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   public boolean isTestFile(VirtualFile file) {
     String name = file.getName();
     return TESTS_KT.equals(name) || LEGACY_TESTS_KT.equals(name) || name.contains(FileUtil.getNameWithoutExtension(TESTS_KT)) && name.contains(EduNames.SUBTASK_MARKER);
+  }
+
+  @Override
+  public boolean excludeFromArchive(@NotNull String path) {
+    boolean excluded = super.excludeFromArchive(path);
+    if (!EduUtils.isAndroidStudio() || excluded) {
+      return excluded;
+    }
+    return path.contains("build") || NAMES_TO_EXCLUDE.contains(PathUtil.getFileName(path));
+
   }
 
   @NotNull
