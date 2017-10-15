@@ -6,5 +6,8 @@
       <add-to-group group-id="WelcomeScreen.QuickStart" anchor="last"/>
       <add-to-group group-id="FileMenu" anchor="last"/>
     </action>
+    <action class="com.jetbrains.edu.coursecreator.actions.studio.CCDeleteTask" id="Educational.Educator.CCDeleteTask" use-shortcut-of="$Delete">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="Educational.Educator.ProjectView"/>
+    </action>
   </actions>
 </idea-plugin>

@@ -109,7 +109,7 @@ public class CCVirtualFileListener extends VirtualFileAdapter {
     course.removeLesson(removedLesson);
   }
 
-  private static void deleteTask(@NotNull final Course course, @NotNull final VirtualFile removedTask) {
+  public static void deleteTask(@NotNull final Course course, @NotNull final VirtualFile removedTask) {
     VirtualFile lessonDir = removedTask.getParent();
     if (lessonDir == null || !lessonDir.getName().contains(EduNames.LESSON)) {
       return;
