@@ -34,4 +34,8 @@ public class EducationalCoreIcons {
   public static final Icon TaskDescription = load("/icons/com/jetbrains/edu/learning/TaskDescription.png"); // 13x13
   public static final Icon TaskProbl = load("/icons/com/jetbrains/edu/learning/TaskProbl.png"); // 16x16
   public static final Icon WatchInput = load("/icons/com/jetbrains/edu/learning/WatchInput.png"); // 24x24
+  public static final Icon Student = load("/icons/com/jetbrains/edu/student.png"); // 180x180
+  public static final Icon StudentHover = load("/icons/com/jetbrains/edu/studentHover.png"); // 180x180
+  public static final Icon Teacher = load("/icons/com/jetbrains/edu/teacher.png"); // 180x180
+  public static final Icon TeacherHover = load("/icons/com/jetbrains/edu/teacherHover.png"); // 180x180
 }

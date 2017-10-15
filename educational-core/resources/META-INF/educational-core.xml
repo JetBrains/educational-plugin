@@ -19,6 +19,9 @@
             <implementation-class>com.jetbrains.edu.learning.EduInitializationComponent</implementation-class>
         </component>
         <component>
+            <implementation-class>com.jetbrains.edu.learning.EduSelectRoleComponent</implementation-class>
+        </component>
+        <component>
             <implementation-class>com.jetbrains.edu.learning.stepic.EduCourseUpdater</implementation-class>
         </component>
     </application-components>
