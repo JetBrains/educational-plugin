@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
@@ -272,8 +273,8 @@ public class EduCoursesPanel extends JPanel {
     if (course.getName().toLowerCase().contains(filter)) {
       return true;
     }
-    for (String tag : course.getTags()) {
-      if (tag.toLowerCase().contains(filter)) {
+    for (Tag tag : course.getTags()) {
+      if (tag.getText().toLowerCase().contains(filter)) {
         return true;
       }
     }

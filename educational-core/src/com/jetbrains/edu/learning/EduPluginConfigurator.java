@@ -12,6 +12,7 @@ import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.JBColor;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -170,5 +171,19 @@ public interface EduPluginConfigurator {
 
   default ModuleType getModuleType() {
     return StdModuleTypes.JAVA;
+  }
+
+  /**
+   * Gets tag color for configurator language.
+   *
+   * If it returns null then color for configurator language will be taken
+   * from educational-core/resources/languageColors/colors.json.
+   * Original color list can be found <a href="https://github.com/ozh/github-colors/blob/master/colors.json">here</a>
+   *
+   * @return tag color for configurator language
+   */
+  @Nullable
+  default JBColor languageTagColor() {
+    return null;
   }
 }
