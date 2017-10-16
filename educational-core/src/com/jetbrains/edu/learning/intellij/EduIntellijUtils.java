@@ -48,7 +48,7 @@ public class EduIntellijUtils {
           return;
         }
 
-        if (course.isAdaptive()) {
+        if (course.isStudy()) {
           createFromText(project, taskFileName, task);
         } else {
           createFromTemplate(project, src, taskFileName);

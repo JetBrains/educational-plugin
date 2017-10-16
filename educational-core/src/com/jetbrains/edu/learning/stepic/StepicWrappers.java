@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepic;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.internal.LinkedTreeMap;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -52,7 +51,7 @@ public class StepicWrappers {
     @Expose List<List<String>> samples;
     @Expose Integer executionMemoryLimit;
     @Expose Integer executionTimeLimit;
-    @Expose LinkedTreeMap codeTemplates;
+    @Expose Map<String, String> codeTemplates;
     @SerializedName("format_version")
     @Expose public int formatVersion = 3;
     @SerializedName("last_subtask_index")

@@ -336,7 +336,7 @@ public class CCStepicConnector {
     for (Integer sectionId : sections) {
       final StepicWrappers.Section section = StepicConnector.getSection(sectionId);
       if (section != null && StepicNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
-        final List<Lesson> lessons = StepicConnector.getLessons(sectionId);
+        final List<Lesson> lessons = StepicConnector.getLessons(course, sectionId);
         lessons.stream().
                 filter(lesson -> StepicNames.PYCHARM_ADDITIONAL.equals(lesson.getName()))
                 .findFirst()
