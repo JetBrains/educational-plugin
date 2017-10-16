@@ -12,13 +12,20 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DefaultProjectFactory;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.OnePixelDivider;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.ui.popup.PopupStep;
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ui.JBUI;
@@ -40,6 +47,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -83,38 +91,12 @@ public class CoursesPanel extends JPanel {
     ColoredListCellRenderer<Course> renderer = getCourseRenderer();
     myCoursesList.setCellRenderer(renderer);
     myCoursesList.addListSelectionListener(e -> processSelectionChanged());
-    DefaultActionGroup group = new DefaultActionGroup(new AnAction("Import Course", "import local course", AllIcons.ToolbarDecorator.Import) {
-      @Override
-      public void actionPerformed(AnActionEvent e) {
-        final FileChooserDescriptor fileChooser = new FileChooserDescriptor(true, false, false, true, false, false) {
-          @Override
-          public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-            return file.isDirectory() || EduUtils.isZip(file.getName());
-          }
-
-          @Override
-          public boolean isFileSelectable(VirtualFile file) {
-            return EduUtils.isZip(file.getName());
-          }
-
-        };
-        FileChooser.chooseFile(fileChooser, null, VfsUtil.getUserHomeDir(),
-                               file -> {
-                                 String fileName = file.getPath();
-                                 Course course = EduUtils.getLocalCourse(fileName);
-                                 if (course != null) {
-                                   EduUsagesCollector.courseArchiveImported();
-                                   myCourses.add(course);
-                                   updateModel(myCourses, course.getName());
-                                 } else {
-                                   Messages.showErrorDialog("Selected archive doesn't contain a valid course", "Failed to Add Local Course");
-                                 }
-                               });
-      }
-    });
 
     ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(myCoursesList).
-      disableAddAction().disableRemoveAction().disableUpDownActions().setActionGroup(group).setToolbarPosition(ActionToolbarPosition.BOTTOM);
+      disableAddAction().disableRemoveAction().disableUpDownActions().setToolbarPosition(ActionToolbarPosition.BOTTOM);
+    DefaultActionGroup group = new DefaultActionGroup(new ImportCourseAction());
+    toolbarDecorator.setActionGroup(group);
+
     JPanel toolbarDecoratorPanel = toolbarDecorator.createPanel();
     toolbarDecoratorPanel.setBorder(null);
     myCoursesList.setBorder(null);
@@ -125,20 +107,8 @@ public class CoursesPanel extends JPanel {
       @Override
       public void mouseClicked(MouseEvent e) {
         if (!isLoggedIn() && myErrorLabel.isVisible()) {
-          ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
-            StepicUser user = EduSettings.getInstance().getUser();
-            if (user != null) {
-              ApplicationManager.getApplication().invokeLater(() -> {
-                Course selectedCourse = myCoursesList.getSelectedValue();
-                List<Course> courses = EduUtils.getCoursesUnderProgress();
-                myCourses = courses != null ? courses : Lists.newArrayList();
-                updateModel(myCourses, selectedCourse.getName());
-                myErrorLabel.setVisible(false);
-                notifyListeners(true);
-              }, ModalityState.any());
-            }
-          });
-          StepicConnector.doAuthorize(() -> EduUtils.showOAuthDialog());
+          addLoginListener(CoursesPanel.this::updateCoursesList);
+          StepicConnector.doAuthorize(EduUtils::showOAuthDialog);
         }
       }
 
@@ -158,6 +128,28 @@ public class CoursesPanel extends JPanel {
     });
 
     processSelectionChanged();
+  }
+
+  private static void addLoginListener(Runnable... postLoginActions) {
+    ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
+      StepicUser user = EduSettings.getInstance().getUser();
+      if (user != null) {
+        ApplicationManager.getApplication().invokeLater(() -> {
+          for (Runnable action : postLoginActions) {
+            action.run();
+          }
+        }, ModalityState.any());
+      }
+    });
+  }
+
+  private void updateCoursesList() {
+    Course selectedCourse = myCoursesList.getSelectedValue();
+    List<Course> courses = EduUtils.getCoursesUnderProgress();
+    myCourses = courses != null ? courses : Lists.newArrayList();
+    updateModel(myCourses, selectedCourse.getName());
+    myErrorLabel.setVisible(false);
+    notifyListeners(true);
   }
 
   @NotNull
@@ -372,5 +364,131 @@ public class CoursesPanel extends JPanel {
 
   public static Set<String> getFilterParts(String filter) {
     return new HashSet<>(Arrays.asList(filter.toLowerCase().split(" ")));
+  }
+
+  class ImportCourseAction extends AnAction {
+
+    public ImportCourseAction() {
+      super("Import Course", "Import local or Stepik course", AllIcons.ToolbarDecorator.Import);
+    }
+
+    @Override
+    public void actionPerformed(AnActionEvent e) {
+      String localCourseOption = "Import local course";
+      String stepikCourseOption = "Import Stepik course";
+
+      BaseListPopupStep<String> popupStep = new BaseListPopupStep<String>(null, Arrays.asList(localCourseOption, stepikCourseOption)) {
+
+        @Override
+        public PopupStep onChosen(String selectedValue, boolean finalChoice) {
+          return doFinalStep(() -> {
+            if (localCourseOption.equals(selectedValue)) {
+              importLocalCourse();
+            }
+            else if (stepikCourseOption.equals(selectedValue)) {
+              if (EduSettings.getInstance().getUser() == null) {
+                int result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik", "Log in", "Cancel", null);
+                if (result == Messages.OK) {
+                  addLoginListener(CoursesPanel.this::updateCoursesList,  () -> importStepikCourse());
+                  StepicConnector.doAuthorize(EduUtils::showOAuthDialog);
+                }
+              }
+              else {
+                importStepikCourse();
+              }
+            }
+          });
+        }
+      };
+
+      ListPopup listPopup = JBPopupFactory.getInstance().createListPopup(popupStep);
+      Icon icon = getTemplatePresentation().getIcon();
+      Component component = e.getInputEvent().getComponent();
+
+      RelativePoint relativePoint = new RelativePoint(component, new Point(icon.getIconWidth() + 6, 0));
+      listPopup.show(relativePoint);
+    }
+
+    private void importLocalCourse() {
+      final FileChooserDescriptor fileChooser = new FileChooserDescriptor(true, false, false, true, false, false) {
+        @Override
+        public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+          return file.isDirectory() || EduUtils.isZip(file.getName());
+        }
+
+        @Override
+        public boolean isFileSelectable(VirtualFile file) {
+          return EduUtils.isZip(file.getName());
+        }
+
+      };
+      FileChooser.chooseFile(fileChooser, null, VfsUtil.getUserHomeDir(),
+              file -> {
+                String fileName = file.getPath();
+                Course course = EduUtils.getLocalCourse(fileName);
+                if (course != null) {
+                  EduUsagesCollector.courseArchiveImported();
+                  myCourses.add(course);
+                  updateModel(myCourses, course.getName());
+                }
+                else {
+                  Messages.showErrorDialog("Selected archive doesn't contain a valid course", "Failed to Add Local Course");
+                }
+              });
+    }
+
+    private void importStepikCourse() {
+      ImportStepikCourseDialog dialogWrapper = new ImportStepikCourseDialog();
+      if (dialogWrapper.showAndGet()) {
+        String courseLink = dialogWrapper.courseLink();
+        StepicUser user = EduSettings.getInstance().getUser();
+        assert user != null;
+        try {
+          RemoteCourse course = (RemoteCourse) StepicConnector.getCourseByLink(user, courseLink);
+          List<Language> languages = getLanguagesUnderProgress(course);
+
+          if (languages == null || languages.isEmpty()) {
+            Messages.showErrorDialog("No supported languages available for the course", "Failed to Import Course");
+            return;
+          }
+          if (course == null) {
+            showFailedToAddCourseNotification();
+            return;
+          }
+          Language language;
+          if (languages.size() == 1) {
+            language = languages.get(0);
+          }
+          else {
+            ChooseStepikCourseLanguageDialog chooseLanguageDialog = new ChooseStepikCourseLanguageDialog(languages, course.getName());
+            if (chooseLanguageDialog.showAndGet()) {
+              language = chooseLanguageDialog.selectedLanguage();
+            }
+            else {
+              return;
+            }
+          }
+          course.setType("pycharm2 " + language.getID());
+          course.setLanguage(language.getID());
+          myCourses.add(course);
+          updateModel(myCourses, course.getName());
+        }
+        catch (IOException e) {
+          LOG.warn(e.getMessage());
+          showFailedToAddCourseNotification();
+        }
+      }
+    }
+
+    private List<Language> getLanguagesUnderProgress(RemoteCourse course) {
+      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        return EduUtils.execCancelable(() -> StepicConnector.getSupportedLanguages(course));
+      }, "Getting Available Languages", true, DefaultProjectFactory.getInstance().getDefaultProject() );
+    }
+
+    private void showFailedToAddCourseNotification() {
+      Messages.showErrorDialog("Cannot add course from Stepik, please check if link is correct", "Failed to Add Stepik Course");
+    }
   }
 }

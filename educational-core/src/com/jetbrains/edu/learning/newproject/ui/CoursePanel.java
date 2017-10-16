@@ -11,6 +11,7 @@ import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.FilterComponent;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.PathUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduConfigurator;
@@ -204,7 +205,11 @@ public class CoursePanel extends JPanel {
 
   @NotNull
   private static String nameToLocation(@NotNull String courseName) {
-    String name = FileUtil.sanitizeFileName(courseName);
+    String name = courseName;
+    if (!PathUtil.isValidFileName(name)) {
+      name = FileUtil.sanitizeFileName(name);
+    }
+
     return FileUtil.findSequentNonexistentFile(new File(ProjectUtil.getBaseDir()), name, "").getAbsolutePath();
   }
 
