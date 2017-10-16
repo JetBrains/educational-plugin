@@ -14,11 +14,13 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGeneratorBase;
+import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,6 +75,12 @@ class EduKotlinCourseProjectGenerator extends EduIntellijCourseProjectGeneratorB
             lesson.addTask(task);
             myCourse.getLessons(true).add(lesson);
             initTask(task);
+          }
+          if (myCourse instanceof RemoteCourse) {
+            myCourse = EduStepicConnector.getCourse(project, (RemoteCourse) myCourse);
+            if (myCourse == null) {
+              LOG.error("Failed to get course from stepik");
+            }
           }
           myCourse.initCourse(false);
           EduGradleModuleGenerator.createCourseContent(project, myCourse, baseDir.getPath());
