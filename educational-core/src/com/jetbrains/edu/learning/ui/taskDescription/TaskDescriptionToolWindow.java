@@ -262,16 +262,16 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     JPanel contentPanel = new JPanel();
     contentPanel.setBackground(JBColor.WHITE);
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
-    contentPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-    contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+    contentPanel.add(Box.createRigidArea(JBUI.size(new Dimension(10, 0))));
+    contentPanel.add(Box.createRigidArea(JBUI.size(new Dimension(0, 10))));
     myCourseProgressBar = new CourseProgressBar(0, 20, 10);
 
     myStatisticLabel = new JLabel("", SwingConstants.LEFT);
     contentPanel.add(myStatisticLabel);
     contentPanel.add(myCourseProgressBar);
 
-    contentPanel.setPreferredSize(new Dimension(100, 60));
-    contentPanel.setMinimumSize(new Dimension(300, 40));
+    contentPanel.setPreferredSize(JBUI.size(new Dimension(100, 60)));
+    contentPanel.setMinimumSize(JBUI.size(new Dimension(300, 40)));
     updateCourseProgress(project);
     return contentPanel;
   }

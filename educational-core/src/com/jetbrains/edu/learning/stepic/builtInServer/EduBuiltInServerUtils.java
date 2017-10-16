@@ -163,7 +163,7 @@ public class EduBuiltInServerUtils {
         execCancelable(() -> {
           try {
             StepicUser user = StepicAuthorizedClient.getCurrentUser();
-            Course course = StepicConnector.getCourseFromStepik(user, courseId);
+            Course course = StepicConnector.getCourseFromStepik(user, courseId, true);
             showDialog(course, stepId);
           } catch (IOException e) {
             LOG.warn("Tried to create a project for course with id=" + courseId, e);

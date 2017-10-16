@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepic;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.BrowserUtil;
+import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
@@ -15,9 +16,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -39,9 +38,7 @@ import org.jetbrains.ide.BuiltInServerManager;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.*;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -135,7 +132,7 @@ public class StepicConnector {
       }
     }
     catch (IOException e) {
-      LOG.warn("Could not retrieve task with id=" + taskId);
+      LOG.warn("Could not retrieve an update date for a task with id=" + taskId);
     }
 
     return null;
@@ -169,10 +166,11 @@ public class StepicConnector {
   }
 
   @Nullable
-  public static Course getCourseFromStepik(@Nullable StepicUser user, int courseId) throws IOException {
+  public static Course getCourseFromStepik(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) throws IOException {
     final URI url;
     try {
-      url = new URIBuilder(StepicNames.COURSES + "/" + courseId).addParameter("is_idea_compatible", "true")
+      url = new URIBuilder(StepicNames.COURSES + "/" + courseId)
+        .addParameter("is_idea_compatible", String.valueOf(isIdeaCompatible))
         .build();
     }
     catch (URISyntaxException e) {
@@ -213,6 +211,37 @@ public class StepicConnector {
         result.add(info);
       }
     }
+  }
+
+  public static Course getCourseByLink(@NotNull StepicUser user, @NotNull String link) throws IOException {
+    int courseId;
+    try {
+      courseId = Integer.parseInt(link);
+    }
+    catch (NumberFormatException e) {
+      courseId = getCourseIdFromLink(link);
+    }
+    if (courseId != -1) {
+      return getCourseFromStepik(user, courseId, false);
+    }
+    return null;
+  }
+
+  public static int getCourseIdFromLink(@NotNull String link) {
+    try {
+      URL url = new URL(link);
+      String[] pathParts = url.getPath().split("/");
+      for (int i = 0; i < pathParts.length; i++) {
+        String part = pathParts[i];
+        if (part.equals("course") && i + 1 < pathParts.length) {
+          return Integer.parseInt(pathParts[i + 1]);
+        }
+      }
+    }
+    catch (MalformedURLException | NumberFormatException e) {
+      LOG.warn(e.getMessage());
+    }
+    return -1;
   }
 
   private static void setCourseLanguage(RemoteCourse info) {
@@ -261,9 +290,7 @@ public class StepicConnector {
     if (!lessons.isEmpty()) return remoteCourse;
     if (!remoteCourse.isAdaptive()) {
       try {
-        for (Integer section : remoteCourse.getSections()) {
-          remoteCourse.addLessons(getLessons(section));
-        }
+        remoteCourse.addLessons(getLessons(remoteCourse, remoteCourse.getSections()));
         return remoteCourse;
       }
       catch (IOException e) {
@@ -284,32 +311,138 @@ public class StepicConnector {
     return null;
   }
 
-  public static List<Lesson> getLessons(int sectionId) throws IOException {
-    final StepicWrappers.SectionContainer
-      sectionContainer = getFromStepik(StepicNames.SECTIONS + String.valueOf(sectionId),
-                                       StepicWrappers.SectionContainer.class);
-    List<Integer> unitIds = sectionContainer.sections.get(0).units;
+  public static List<Lesson> getLessons(RemoteCourse remoteCourse, List<Integer> sections) throws IOException {
+    String[] sectionIds = sections.stream().map(id -> String.valueOf(id)).toArray(String[]::new);
+    try {
+      String[] unitIds = getUnitsIds(sectionIds);
+      if (unitIds.length > 0) {
+        return getLessonsFromUnits(remoteCourse, unitIds);
+      }
+    }
+    catch (URISyntaxException e) {
+      LOG.warn(e.getMessage());
+    }
+
+    return Collections.emptyList();
+  }
+
+  public static List<Lesson> getLessons(RemoteCourse remoteCourse, int sectionId) throws IOException {
+    final StepicWrappers.SectionContainer sectionContainer = getFromStepik(StepicNames.SECTIONS + String.valueOf(sectionId),
+            StepicWrappers.SectionContainer.class);
+    if (sectionContainer.sections.isEmpty()) {
+      return Collections.emptyList();
+    }
+    StepicWrappers.Section firstSection = sectionContainer.sections.get(0);
+    String[] unitIds = firstSection.units.stream().map(id -> String.valueOf(id)).toArray(String[]::new);
+
+    return new ArrayList<>(getLessonsFromUnits(remoteCourse, unitIds));
+  }
+
+  private static String[] getUnitsIds(String[] sectionIds) throws IOException, URISyntaxException {
+    StepicWrappers.SectionContainer sectionContainer = multipleRequestToStepik(StepicNames.SECTIONS, sectionIds, StepicWrappers.SectionContainer.class);
+    if (sectionContainer != null && sectionContainer.sections != null) {
+      return sectionContainer.sections.stream()
+              .map(section -> section.units)
+              .flatMap(unitList -> unitList.stream())
+              .map(unit -> String.valueOf(unit))
+              .toArray(String[]::new);
+    }
+    else {
+      return new String[]{};
+    }
+  }
+
+  @Nullable
+  private static StepicWrappers.LessonContainer getLessonContainer(String[] unitIds) throws IOException, URISyntaxException {
+    StepicWrappers.UnitContainer unitContainer = multipleRequestToStepik(StepicNames.UNITS, unitIds, StepicWrappers.UnitContainer.class);
+    if (unitContainer == null) {
+      return null;
+    }
+    String[] lessonIds = unitContainer.units.stream().map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
+    return multipleRequestToStepik(StepicNames.LESSONS, lessonIds, StepicWrappers.LessonContainer.class);
+  }
+
+  private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds) throws IOException {
     final List<Lesson> lessons = new ArrayList<>();
-    for (Integer unitId : unitIds) {
-      StepicWrappers.UnitContainer unit =
-          getFromStepik(StepicNames.UNITS + "/" + String.valueOf(unitId), StepicWrappers.UnitContainer.class);
-      int lessonID = unit.units.get(0).lesson;
-      StepicWrappers.LessonContainer lessonContainer =
-          getFromStepik(StepicNames.LESSONS + String.valueOf(lessonID), StepicWrappers.LessonContainer.class);
-      Lesson lesson = lessonContainer.lessons.get(0);
-      lesson.taskList = new ArrayList<>();
-      for (int stepId : lesson.steps) {
-        final Task task = createTask(stepId);
-        if (task != null) {
-          lesson.addTask(task);
+    try {
+      StepicWrappers.LessonContainer lessonContainer = getLessonContainer(unitIds);
+      if (lessonContainer == null) {
+        return lessons;
+      }
+      for (Lesson lesson : lessonContainer.lessons) {
+        String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
+        StepicWrappers.StepContainer stepContainer = multipleRequestToStepik(StepicNames.STEPS, stepIds, StepicWrappers.StepContainer.class);
+        if (stepContainer == null) {
+          continue;
+        }
+        for (int i = 0; i < stepContainer.steps.size(); i++) {
+          StepicWrappers.StepSource step = stepContainer.steps.get(i);
+          Integer stepId = Integer.valueOf(stepIds[i]);
+          StepicUser user = EduSettings.getInstance().getUser();
+          StepikTaskBuilder builder = new StepikTaskBuilder(remoteCourse, step, stepId, user == null ? -1 : user.getId());
+          if (builder.isSupported(step.block.name)) {
+            final Task task = builder.createTask(step.block.name);
+            if (task != null) {
+              lesson.addTask(task);
+            }
+          }
+        }
+        if (!lesson.taskList.isEmpty()) {
+          lessons.add(lesson);
         }
       }
-      if (!lesson.taskList.isEmpty()) {
-        lessons.add(lesson);
-      }
+    }
+    catch (URISyntaxException e) {
+      LOG.warn(e.getMessage());
     }
 
     return lessons;
+  }
+
+  public static List<Language> getSupportedLanguages(RemoteCourse remoteCourse) {
+    List<Language> languages = new ArrayList<>();
+    try {
+      Map<String, String> codeTemplates = getFirstCodeTemplates(remoteCourse);
+      for (String languageName : codeTemplates.keySet()) {
+        String id = StepikLanguages.langOfName(languageName).getId();
+        Language language = Language.findLanguageByID(id);
+        if (language != null) {
+          languages.add(language);
+        }
+      }
+    }
+    catch (IOException | URISyntaxException  e) {
+      LOG.warn(e.getMessage());
+    }
+
+    return languages;
+  }
+
+  @NotNull
+  private static Map<String, String> getFirstCodeTemplates(@NotNull RemoteCourse remoteCourse) throws IOException, URISyntaxException {
+    String[] unitsIds = getUnitsIds(remoteCourse.getSections().stream().map(section -> String.valueOf(section)).toArray(String[]::new));
+    StepicWrappers.LessonContainer lessonContainer = getLessonContainer(unitsIds);
+    if (lessonContainer != null) {
+      for (Lesson lesson : lessonContainer.lessons) {
+        String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
+        StepicWrappers.StepContainer stepContainer = multipleRequestToStepik(StepicNames.STEPS, stepIds, StepicWrappers.StepContainer.class);
+        if (stepContainer == null) {
+          break;
+        }
+
+        for (StepicWrappers.StepSource stepSource : stepContainer.steps) {
+          StepicWrappers.Step step = stepSource.block;
+          if (step != null && step.name.equals("code") && step.options != null) {
+            Map<String, String> codeTemplates = step.options.codeTemplates;
+            if (codeTemplates != null) {
+              return codeTemplates;
+            }
+          }
+        }
+      }
+    }
+
+    return Collections.emptyMap();
   }
 
   private static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
@@ -320,47 +453,6 @@ public class StepicConnector {
     }
     return StepicClient.getFromStepic(link, container);
   }
-
-  @Nullable
-  public static Task createTask(int stepicId) throws IOException {
-    final StepicWrappers.StepSource step = getStep(stepicId);
-    final StepicWrappers.Step block = step.block;
-    if (!block.name.startsWith(PYCHARM_PREFIX)) {
-      LOG.error("Got a block with non-pycharm prefix: " + block.name + " for step: " + stepicId);
-      return null;
-    }
-    final int lastSubtaskIndex = block.options.lastSubtaskIndex;
-    Task task = new EduTask();
-    if (lastSubtaskIndex != 0) {
-      task = createTaskWithSubtasks(lastSubtaskIndex);
-    }
-    task.setStepId(stepicId);
-    task.setUpdateDate(step.update_date);
-    task.setName(block.options != null ? block.options.title : (PYCHARM_PREFIX + CURRENT_VERSION));
-
-    if (block.options.test != null) {
-      for (StepicWrappers.FileWrapper wrapper : block.options.test) {
-        task.addTestsTexts(wrapper.name, wrapper.text);
-      }
-    }
-    if (block.options.text != null) {
-      for (StepicWrappers.FileWrapper wrapper : block.options.text) {
-        task.addTaskText(wrapper.name, wrapper.text);
-      }
-    } else {
-      task.addTaskText(EduNames.TASK, block.text);
-    }
-
-    task.taskFiles = new HashMap<>();      // TODO: it looks like we don't need taskFiles as map anymore
-    if (block.options.files != null) {
-      for (TaskFile taskFile : block.options.files) {
-        addPlaceholdersTexts(taskFile);
-        task.taskFiles.put(taskFile.name, taskFile);
-      }
-    }
-    return task;
-  }
-
 
   /**
    * Parses solution from Stepik.
@@ -435,29 +527,6 @@ public class StepicConnector {
       LOG.warn(e.getMessage());
     }
     return Collections.emptyList();
-  }
-
-  private static void addPlaceholdersTexts(TaskFile file) {
-    final String fileText = file.text;
-    final List<AnswerPlaceholder> placeholders = file.getAnswerPlaceholders();
-    for (AnswerPlaceholder placeholder : placeholders) {
-      final AnswerPlaceholderSubtaskInfo info = placeholder.getActiveSubtaskInfo();
-      if (info == null) {
-        continue;
-      }
-      final int offset = placeholder.getOffset();
-      final int length = placeholder.getLength();
-      if (fileText.length() > offset + length) {
-        info.setPlaceholderText(fileText.substring(offset, offset + length));
-      }
-    }
-  }
-
-  @NotNull
-  private static Task createTaskWithSubtasks(int lastSubtaskIndex) {
-    TaskWithSubtasks task = new TaskWithSubtasks();
-    task.setLastSubtaskIndex(lastSubtaskIndex);
-    return task;
   }
 
   public static StepicWrappers.StepSource getStep(int step) throws IOException {

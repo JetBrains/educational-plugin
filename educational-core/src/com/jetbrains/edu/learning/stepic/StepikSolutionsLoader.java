@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -121,7 +122,9 @@ public class StepikSolutionsLoader implements Disposable{
       if (progressIndicator == null || !progressIndicator.isCanceled()) {
           Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
           boolean isSolved = task.getStatus() == CheckStatus.Solved;
-          loadSolution(myProject, task, isSolved);
+          if (!(task instanceof TheoryTask)) {
+            loadSolution(myProject, task, isSolved);
+          }
           countDownLatch.countDown();
         });
         myFutures.put(task.getStepId(), future);
@@ -170,7 +173,7 @@ public class StepikSolutionsLoader implements Disposable{
       for (int j = 0; j < sublist.size(); j++) {
         Boolean isSolved = taskStatuses[j];
         Task task = allTasks[j];
-        if (isSolved != null && isToUpdate(isSolved, task.getStatus(), task.getStepId())) {
+        if (!(task instanceof TheoryTask) && isSolved != null && isToUpdate(isSolved, task.getStatus(), task.getStepId())) {
           CheckStatus checkStatus = isSolved ? CheckStatus.Solved : CheckStatus.Failed;
           task.setStatus(checkStatus);
           tasksToUpdate.add(task);
@@ -259,7 +262,7 @@ public class StepikSolutionsLoader implements Disposable{
   private static String loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
     List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
     if (solutionFiles.isEmpty()) {
-      task.setStatus(CheckStatus.Unchecked);
+//      task.setStatus(CheckStatus.Unchecked);
       return "";
     }
     task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
