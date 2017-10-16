@@ -15,7 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
@@ -148,11 +150,30 @@ public class GeneratorUtils {
 
     if (course.isAdaptive() && !EduUtils.isCourseValid(course)) {
       Messages.showWarningDialog("There is no recommended tasks for this adaptive course",
-          "Error in Course Creation");
+              "Error in Course Creation");
       return course;
+    }
+    if (updateTaskFilesNeed(course)) {
+      updateJavaCodeTaskFileNames(project, course);
     }
     StudyTaskManager.getInstance(project).setCourse(course);
     return course;
+  }
+
+  private static boolean updateTaskFilesNeed(@NotNull final Course course) {
+    return course instanceof RemoteCourse && course.isStudy() && "JAVA".equals(course.getLanguageID());
+  }
+
+  private static void updateJavaCodeTaskFileNames(@NotNull Project project, @NotNull Course course) {
+    for (Lesson lesson : course.getLessons()) {
+      for (Task task : lesson.getTaskList()) {
+        if (task instanceof CodeTask) {
+          for (TaskFile taskFile : task.getTaskFiles().values()) {
+            EduIntellijUtils.nameTaskFileAfterContainingClass(task, taskFile, project);
+          }
+        }
+      }
+    }
   }
 
   private static RemoteCourse getCourseFromStepic(@NotNull Project project, RemoteCourse selectedCourse) {
