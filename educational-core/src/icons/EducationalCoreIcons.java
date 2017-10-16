@@ -15,6 +15,7 @@ public class EducationalCoreIcons {
 
   public static final Icon CheckTask = load("/icons/com/jetbrains/edu/learning/CheckTask.png"); // 16x16
   public static final Icon Course = load("/icons/com/jetbrains/edu/learning/Course.png"); // 16x16
+  public static final Icon CreateNewCourse = load("/icons/com/jetbrains/edu/learning/CreateNewCourse.png"); // 16x16
   public static final Icon CourseCreationProjectType = load("/icons/com/jetbrains/edu/learning/CourseCreationProjectType.png"); // 16x16
   public static final Icon CourseProgress = load("/icons/com/jetbrains/edu/learning/CourseProgress.png"); // 13x13
   public static final Icon EducationalProjectType = load("/icons/com/jetbrains/edu/learning/EducationalProjectType.png"); // 16x16
