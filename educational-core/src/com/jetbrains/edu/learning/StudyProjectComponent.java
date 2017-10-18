@@ -44,6 +44,8 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.editor.StudyEditorFactoryListener;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.EduStepicNames;
+import com.jetbrains.edu.learning.stepic.StudyStepikSolutionsLoader;
 import com.jetbrains.edu.learning.ui.StudyStepicUserWidget;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import com.jetbrains.edu.learning.ui.StudyToolWindowFactory;
@@ -93,6 +95,10 @@ public class StudyProjectComponent implements ProjectComponent {
           updateAvailable(course);
         }
 
+        if (EduSettings.getInstance().getUser() != null) {
+          loadSolutionsFromStepik(course);
+        }
+
         StudyUtils.registerStudyToolWindow(course, myProject);
         addStepicWidget();
         selectStep(course);
@@ -119,15 +125,29 @@ public class StudyProjectComponent implements ProjectComponent {
     });
   }
 
+  private void loadSolutionsFromStepik(@NotNull Course course) {
+    if (!(course instanceof RemoteCourse) || !((RemoteCourse) course).isLoadSolutions()) return;
+    if (PropertiesComponent.getInstance(myProject).getBoolean(EduStepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
+      PropertiesComponent.getInstance(myProject).setValue(EduStepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
+      return;
+    }
+    StudyStepikSolutionsLoader studyStepikSolutionsLoader = StudyStepikSolutionsLoader.getInstance(myProject);
+    try {
+      List<Task> tasksToUpdate = studyStepikSolutionsLoader.tasksToUpdateUnderProgress();
+      studyStepikSolutionsLoader.loadSolutionsInBackground(tasksToUpdate);
+    }
+    catch (Exception e) {
+      LOG.warn(e.getMessage());
+    }
+  }
+
   private void addStepicWidget() {
     StudyStepicUserWidget widget = StudyUtils.getStepicWidget();
-    if (widget == null) {
-      StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
-      statusBar.addWidget(new StudyStepicUserWidget(), "before Position");
+    StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
+    if (widget != null) {
+      statusBar.removeWidget(StudyStepicUserWidget.ID);
     }
-    else {
-      widget.update();
-    }
+    statusBar.addWidget(new StudyStepicUserWidget(myProject), "before Position");
   }
 
   private void selectStep(@NotNull Course course) {

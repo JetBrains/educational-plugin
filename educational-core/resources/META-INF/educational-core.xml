@@ -87,7 +87,6 @@
             <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
         </action>
 
-
         <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.EduBrowseCoursesAction">
             <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
             <add-to-group group-id="FileMenu" anchor="first"/>
@@ -203,6 +202,7 @@
         <typedHandler implementation="com.jetbrains.edu.learning.StudyTypeHandlerDelegate"
                       order="first, before completionAutoPopup"/>
         <httpRequestHandler implementation="com.jetbrains.edu.learning.builtInServer.EduStepikRestService"/>
+        <projectService serviceImplementation="com.jetbrains.edu.learning.stepic.StudyStepikSolutionsLoader" />
 
         <!--for educators-->
         <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>

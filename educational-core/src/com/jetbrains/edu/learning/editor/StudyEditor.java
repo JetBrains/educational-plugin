@@ -1,10 +1,12 @@
 package com.jetbrains.edu.learning.editor;
 
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.components.JBLoadingPanel;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduDocumentListener;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -41,5 +43,12 @@ public class StudyEditor extends PsiAwareTextEditorImpl {
       document.removeDocumentListener(listener);
     }
     myDocumentListeners.remove(document);
+  }
+
+  public void showLoadingPanel() {
+    JBLoadingPanel component = getComponent();
+    ((EditorImpl)getEditor()).setViewer(true);
+    component.setLoadingText("Loading solution");
+    component.startLoading();
   }
 }

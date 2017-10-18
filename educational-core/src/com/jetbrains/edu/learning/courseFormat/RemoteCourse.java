@@ -27,6 +27,7 @@ public class RemoteCourse extends Course {
   private Boolean isUpToDate = true;
   @Expose private boolean isAdaptive = false;
   @Expose @SerializedName("is_public") boolean isPublic;
+  @Expose private boolean myLoadSolutions = true; // disabled for reset courses
 
   public String getType() {
     return myType;
@@ -122,5 +123,13 @@ public class RemoteCourse extends Course {
 
   public boolean isPublic() {
     return isPublic;
+  }
+
+  public boolean isLoadSolutions() {
+    return myLoadSolutions;
+  }
+
+  public void setLoadSolutions(boolean myLoadSolutions) {
+    this.myLoadSolutions = myLoadSolutions;
   }
 }
