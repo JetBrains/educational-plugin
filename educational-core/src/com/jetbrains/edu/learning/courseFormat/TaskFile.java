@@ -159,4 +159,13 @@ public class TaskFile {
     }
     return false;
   }
+
+  public boolean isValid(@NotNull String text) {
+    int length = text.length();
+    List<AnswerPlaceholder> placeholders = getAnswerPlaceholders();
+    for (AnswerPlaceholder placeholder : placeholders) {
+      if (!placeholder.isValid(length)) return false;
+    }
+    return true;
+  }
 }
