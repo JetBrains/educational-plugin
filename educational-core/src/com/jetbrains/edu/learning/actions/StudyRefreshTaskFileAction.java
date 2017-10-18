@@ -118,7 +118,7 @@ public class StudyRefreshTaskFileAction extends StudyActionWithShortcut {
     Disposer.register(project, balloon);
   }
 
-  private static void resetAnswerPlaceholders(TaskFile selectedTaskFile, Project project) {
+  static void resetAnswerPlaceholders(TaskFile selectedTaskFile, Project project) {
     final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
     for (AnswerPlaceholder answerPlaceholder : selectedTaskFile.getActivePlaceholders()) {
       answerPlaceholder.reset();
@@ -127,8 +127,8 @@ public class StudyRefreshTaskFileAction extends StudyActionWithShortcut {
   }
 
 
-  private static void resetDocument(@NotNull final Document document,
-                                       @NotNull final TaskFile taskFile) {
+  static void resetDocument(@NotNull final Document document,
+                            @NotNull final TaskFile taskFile) {
     StudyUtils.deleteGuardedBlocks(document);
     taskFile.setTrackChanges(false);
     clearDocument(document);
