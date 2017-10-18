@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -22,6 +23,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -322,5 +324,22 @@ public abstract class Task implements StudyItem {
 
   public void saveTaskText(String text) {
     taskTexts.put(getTaskDescriptionName(), text);
+  }
+
+  public boolean isValid(@NotNull Project project) {
+    VirtualFile taskDir = getTaskDir(project);
+    if (taskDir == null) return false;
+    for (TaskFile taskFile : getTaskFiles().values()) {
+      VirtualFile file = taskDir.findFileByRelativePath(taskFile.name);
+      if (file == null) return false;
+      try {
+        String text = VfsUtil.loadText(file);
+        if (!taskFile.isValid(text)) return false;
+      }
+      catch (IOException e) {
+        return false;
+      }
+    }
+    return true;
   }
 }

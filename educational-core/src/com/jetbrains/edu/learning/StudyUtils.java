@@ -306,6 +306,7 @@ public class StudyUtils {
     editor.getMarkupModel().removeAllHighlighters();
     final Project project = editor.getProject();
     if (project == null) return;
+    if (!taskFile.isValid(editor.getDocument().getText())) return;
     final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
       final JBColor color = taskManager.getColor(answerPlaceholder);
@@ -595,7 +596,7 @@ public class StudyUtils {
     final Editor editor = studyEditor.getEditor();
     IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
     final List<AnswerPlaceholder> placeholders = studyEditor.getTaskFile().getActivePlaceholders();
-    if (placeholders.isEmpty()) return;
+    if (placeholders.isEmpty() || !studyEditor.getTaskFile().isValid(editor.getDocument().getText())) return;
     final AnswerPlaceholder placeholder = placeholders.get(0);
     Pair<Integer, Integer> offsets = getPlaceholderOffsets(placeholder, editor.getDocument());
     editor.getSelectionModel().setSelection(offsets.first, offsets.second);

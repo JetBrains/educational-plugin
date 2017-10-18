@@ -57,6 +57,7 @@ public class StudyRefreshTaskFileAction extends StudyActionWithShortcut {
         return;
       }
       refreshFile(studyState, project);
+      studyEditor.validateTaskFile();
     }));
   }
 
