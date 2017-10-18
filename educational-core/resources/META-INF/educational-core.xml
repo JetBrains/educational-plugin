@@ -82,9 +82,8 @@
                 text="Switch Task Description Panel">
         </action>
 
-        <action id="Educational.Stepik.UpdateRecommendation" popup="true"
-                class="com.jetbrains.edu.learning.actions.StudyUpdateRecommendationAction">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
+        <action id="Educational.ResetCourse" popup="true" class="com.jetbrains.edu.learning.actions.StudyResetCourseAction">
+            <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
         </action>
 
         <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.EduBrowseCoursesAction">
