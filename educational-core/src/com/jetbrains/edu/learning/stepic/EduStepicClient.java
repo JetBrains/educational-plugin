@@ -12,6 +12,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
@@ -37,6 +38,7 @@ import java.util.List;
 public class EduStepicClient {
   private static final Logger LOG = Logger.getInstance(EduStepicClient.class.getName());
   private static CloseableHttpClient ourClient;
+  private static final int TIMEOUT_SECONDS = 10;
 
   private EduStepicClient() {
   }
@@ -56,6 +58,7 @@ public class EduStepicClient {
   static <T> T getFromStepic(String link, final Class<T> container, @NotNull final CloseableHttpClient client) throws IOException {
     if (!link.startsWith("/")) link = "/" + link;
     final HttpGet request = new HttpGet(EduStepicNames.STEPIC_API_URL + link);
+    addTimeout(request);
 
     final CloseableHttpResponse response = client.execute(request);
     final StatusLine statusLine = response.getStatusLine();
@@ -66,6 +69,16 @@ public class EduStepicClient {
       throw new IOException("Stepic returned non 200 status code " + responseString);
     }
     return deserializeStepicResponse(container, responseString);
+  }
+
+  private static void addTimeout(@NotNull HttpGet request) {
+    int connectionTimeoutMs = TIMEOUT_SECONDS * 1000;
+    RequestConfig requestConfig = RequestConfig.custom()
+            .setConnectionRequestTimeout(connectionTimeoutMs)
+            .setConnectTimeout(connectionTimeoutMs)
+            .setSocketTimeout(connectionTimeoutMs)
+            .build();
+    request.setConfig(requestConfig);
   }
 
   static <T> T deserializeStepicResponse(Class<T> container, String responseString) {
