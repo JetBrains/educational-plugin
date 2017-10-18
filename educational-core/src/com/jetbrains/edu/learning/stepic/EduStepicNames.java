@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepic;
 
 public class EduStepicNames {
+  public static final String ARE_SOLUTIONS_UPDATED_PROPERTY = "Educational.StepikSolutionUpdated";
   public static final String STEPIC_URL = "https://stepik.org";
   public static final String TOKEN_URL = STEPIC_URL + "/oauth2/token/";
   public static final String STEPIC_API_URL = STEPIC_URL + "/api";
@@ -17,6 +18,7 @@ public class EduStepicNames {
   public static final String CURRENT_USER = "/stepics/1";
   public static final String COURSES = "/courses";
   public static final String STEPS = "/steps/";
+  public static final String PROGRESS = "/progresses/";
   public static final String SECTIONS = "/sections/";
   public static final String ENROLLMENTS = "/enrollments";
   public static final String PYCHARM_PREFIX = "pycharm";

@@ -71,8 +71,8 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
       }
       if (taskDirectory.isNull()) return;
 
-      if (course.isAdaptive() && !task.getTaskFiles().isEmpty()) {
-        createTaskFilesFromText(task, taskDirectory.get());
+      if (StudyUtils.isStudentProject(project) && !task.getTaskFiles().isEmpty()) {
+        createFilesFromText(task, taskDirectory.get());
       } else {
         createFilesFromTemplates(project, task, taskDirectory.get());
       }
@@ -80,19 +80,20 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
     return taskDirectory.get();
   }
 
-  private static void createTaskFilesFromText(@NotNull Task task, @Nullable VirtualFile taskDirectory) {
+  private static void createFilesFromText(@NotNull Task task, @Nullable VirtualFile taskDirectory) {
     if (taskDirectory == null) {
       LOG.warn("Task directory is null. Cannot create task files");
       return;
     }
 
-    for (TaskFile file : task.getTaskFiles().values()) {
-      try {
+    try {
+      for (TaskFile file : task.getTaskFiles().values()) {
         StudyGenerator.createTaskFile(taskDirectory, file);
       }
-      catch (IOException e) {
-        LOG.warn(e.getMessage());
-      }
+      StudyGenerator.createTestFiles(taskDirectory, task);
+    }
+    catch (IOException e) {
+      LOG.warn(e.getMessage());
     }
   }
 
