@@ -12,10 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
@@ -176,11 +173,12 @@ public class StepicWrappers {
     List<Lesson> lessons;
   }
 
-  static class StepSource {
-    @Expose Step block;
-    @Expose int position = 0;
-    @Expose int lesson = 0;
-    Date update_date;
+  public static class StepSource {
+    @Expose public Step block;
+    @Expose public int position = 0;
+    @Expose public int lesson = 0;
+    @Expose public String progress;
+    public Date update_date;
 
     public StepSource(Project project, Task task, int lesson) {
       this.lesson = lesson;
@@ -346,9 +344,9 @@ public class StepicWrappers {
     List<AttemptWrapper.Attempt> attempts;
   }
 
-  static class SolutionFile {
-    String name;
-    String text;
+  public static class SolutionFile {
+    public String name;
+    public String text;
 
     public SolutionFile(String name, String text) {
       this.name = name;
@@ -360,6 +358,10 @@ public class StepicWrappers {
     List<StepicUser> users;
   }
 
+  static class SubmissionsWrapper {
+    Submission[] submissions;
+  }
+
   static class SubmissionWrapper {
     Submission submission;
 
@@ -367,24 +369,24 @@ public class StepicWrappers {
     public SubmissionWrapper(int attempt, String score, ArrayList<SolutionFile> files) {
       submission = new Submission(score, attempt, files);
     }
+  }
 
-    static class Submission {
-      int attempt;
-      private final Reply reply;
+  static class Submission {
+    int attempt;
+    public final Reply reply;
 
-      public Submission(String score, int attempt, ArrayList<SolutionFile> files) {
-        reply = new Reply(files, score);
-        this.attempt = attempt;
-      }
+    public Submission(String score, int attempt, ArrayList<SolutionFile> files) {
+      reply = new Reply(files, score);
+      this.attempt = attempt;
+    }
 
-      static class Reply {
-        String score;
-        List<SolutionFile> solution;
+    static class Reply {
+      String score;
+      List<SolutionFile> solution;
 
-        public Reply(ArrayList<SolutionFile> files, String score) {
-          this.score = score;
-          solution = files;
-        }
+      public Reply(ArrayList<SolutionFile> files, String score) {
+        this.score = score;
+        solution = files;
       }
     }
   }
@@ -536,5 +538,14 @@ public class StepicWrappers {
     public String getRefreshToken() {
       return refreshToken;
     }
+  }
+
+  static class ProgressContainer {
+    class Progress {
+      boolean isPassed;
+    }
+
+    List<Progress> progresses;
+
   }
 }

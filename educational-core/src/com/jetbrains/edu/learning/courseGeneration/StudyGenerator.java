@@ -76,7 +76,7 @@ public class StudyGenerator {
     createChildFile(taskDir, name, taskFile.text);
   }
 
-  private static void createTestFiles(@NotNull VirtualFile taskDir, @NotNull Task task) throws IOException {
+  public static void createTestFiles(@NotNull VirtualFile taskDir, @NotNull Task task) throws IOException {
     final Map<String, String> tests = task.getTestsText();
     createFiles(taskDir, tests);
   }

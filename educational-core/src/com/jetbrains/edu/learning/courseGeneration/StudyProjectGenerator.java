@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.facet.ui.ValidationResult;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -17,14 +18,15 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.EduStepicNames;
 import com.jetbrains.edu.learning.stepic.StepicUser;
+import com.jetbrains.edu.learning.stepic.StudyStepikSolutionsLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,6 +87,12 @@ public class StudyProjectGenerator {
       StudyUtils.registerStudyToolWindow(course, project);
       StudyUtils.openFirstTask(course, project);
       EduUsagesCollector.projectTypeCreated(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
+
+      if (course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
+        StudyStepikSolutionsLoader studyStepikSolutionsLoader = StudyStepikSolutionsLoader.getInstance(project);
+        studyStepikSolutionsLoader.loadSolutions(ProgressManager.getGlobalProgressIndicator(), course);
+        PropertiesComponent.getInstance(project).setValue(EduStepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
+      }
     });
   }
 

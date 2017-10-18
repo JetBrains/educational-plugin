@@ -749,7 +749,7 @@ public class StudyUtils {
   }
 
   @Nullable
-  static StudyStepicUserWidget getStepicWidget() {
+  public static StudyStepicUserWidget getStepicWidget() {
     JFrame frame = WindowManager.getInstance().findVisibleFrame();
     if (frame instanceof IdeFrameImpl) {
       return (StudyStepicUserWidget)((IdeFrameImpl)frame).getStatusBar().getWidget(StudyStepicUserWidget.ID);

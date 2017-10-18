@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.StudyNavigator;
 import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
+import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import icons.EducationalCoreIcons;
 
 public class StudyUpdateRecommendationAction extends DumbAwareAction {
@@ -46,7 +47,7 @@ public class StudyUpdateRecommendationAction extends DumbAwareAction {
 
     if (lastRecommendationOnStepik != null && lastRecommendationOnStepik.getStepId() != lastRecommendationInCourse.getStepId()) {
       lastRecommendationOnStepik.initTask(adaptiveLesson, false);
-      EduAdaptiveStepicConnector.replaceCurrentTask(project, lastRecommendationOnStepik, adaptiveLesson);
+      EduStepicConnector.replaceCurrentTask(project, lastRecommendationOnStepik, adaptiveLesson);
       ApplicationManager.getApplication().invokeLater(() -> {
         VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
         ProjectView.getInstance(project).refresh();
