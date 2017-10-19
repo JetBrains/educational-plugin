@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.facet.ui.FacetEditorValidator;
-import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -10,9 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DefaultProjectFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -25,7 +21,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.BooleanFunction;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
@@ -35,10 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
-import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.ui.StudyNewProjectPanel;
 import com.jetbrains.python.configuration.VirtualEnvProjectFilter;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.newProject.PythonProjectGenerator;
@@ -54,12 +46,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
   implements EduCourseProjectGenerator<PyNewProjectSettings> {
@@ -69,14 +58,12 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
 
   private final Course myCourse;
   private final StudyProjectGenerator myGenerator;
-  private final boolean isLocal;
 
   private ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
   private PyNewProjectSettings mySettings = new PyNewProjectSettings();
 
-  public PyDirectoryProjectGenerator(@NotNull Course course, boolean isLocal) {
+  public PyDirectoryProjectGenerator(@NotNull Course course) {
     myCourse = course;
-    this.isLocal = isLocal;
     myGenerator = new StudyProjectGenerator();
     myGenerator.addSettingsStateListener(new StudyProjectGenerator.SettingsListener() {
       @Override
@@ -240,80 +227,6 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     myValidationResult = validationResult;
   }
 
-  @Nullable
-  @Override
-  public JPanel extendBasePanel() throws ProcessCanceledException {
-    StudyNewProjectPanel mySettingsPanel = new StudyNewProjectPanel(myGenerator, isLocal);
-    mySettingsPanel.registerValidators(new FacetValidatorsManager() {
-      public void registerValidator(FacetEditorValidator validator, JComponent... componentsToWatch) {
-        throw new UnsupportedOperationException();
-      }
-
-      public void validate() {
-        ApplicationManager.getApplication().invokeLater(() -> fireStateChanged());
-      }
-    });
-
-    addErrorLabelMouseListener(new MouseAdapter() {
-      private boolean isCourseAdaptiveAndNotLogged() {
-        Course course = myGenerator.getSelectedCourse();
-        return course != null && course.isAdaptive() && !myGenerator.isLoggedIn();
-      }
-
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (isCourseAdaptiveAndNotLogged()) {
-          EduSettings eduSettings = EduSettings.getInstance();
-          StepicUser oldUser = eduSettings.getUser();
-
-          EduStepicConnector.doAuthorize(() -> mySettingsPanel.showLoginDialog());
-
-          ProgressManager.getInstance()
-            .runProcessWithProgressSynchronously(() -> {
-                                                   ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-                                                   StepicUser user = StudyUtils.execCancelable(() -> {
-                                                     StepicUser newUser = eduSettings.getUser();
-                                                     while (newUser == null || newUser.equals(oldUser)) {
-                                                       TimeUnit.MILLISECONDS.sleep(500);
-                                                       newUser = eduSettings.getUser();
-                                                     }
-                                                     myGenerator.setEnrolledCoursesIds(EduAdaptiveStepicConnector.getEnrolledCoursesIds(newUser));
-
-
-                                                     return newUser;
-                                                   });
-
-                                                   if (user != null) {
-                                                     mySettingsPanel.setOK();
-                                                   }
-                                                 }, "Authorizing",
-                                                 true,
-                                                 DefaultProjectFactory.getInstance().getDefaultProject());
-        }
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent e) {
-        if (isCourseAdaptiveAndNotLogged()) {
-          e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        }
-      }
-
-      @Override
-      public void mouseExited(MouseEvent e) {
-        if (isCourseAdaptiveAndNotLogged()) {
-          e.getComponent().setCursor(Cursor.getDefaultCursor());
-        }
-      }
-    });
-
-    return mySettingsPanel;
-  }
-
-  public StudyProjectGenerator getGenerator() {
-    return myGenerator;
-  }
-
   @Override
   public boolean hideInterpreter() {
     return true;
@@ -407,13 +320,4 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   protected abstract List<Sdk> getAllSdks(@NotNull Project project);
   @NotNull
   protected abstract ComboboxWithBrowseButton getInterpreterComboBox(@NotNull Project project, @NotNull List<Sdk> registeredSdks, @Nullable Sdk fakeSdk);
-
-  @NotNull
-  public static PyDirectoryProjectGenerator getInstance(@NotNull Course course, boolean isLocal) {
-    if (PlatformUtils.isPyCharm() || PlatformUtils.isCLion()) {
-      return new PyCharmPyDirectoryProjectGenerator(course, isLocal);
-    } else {
-      return new IDEAPyDirectoryProjectGenerator(course, isLocal);
-    }
-  }
 }
