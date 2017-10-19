@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 
-internal class IDEAPyDirectoryProjectGenerator(course: Course, isLocal: Boolean) : PyDirectoryProjectGenerator(course, isLocal) {
+internal class IDEAPyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {
 
   override fun addSdk(project: Project, sdk: Sdk) {
     SdkConfigurationUtil.addSdk(sdk)
