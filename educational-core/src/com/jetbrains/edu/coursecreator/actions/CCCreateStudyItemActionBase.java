@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class CCCreateStudyItemActionBase extends DumbAwareAction {
+public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
 
   public CCCreateStudyItemActionBase(String text, String description, Icon icon) {
     super(text, description, icon);
@@ -79,7 +79,7 @@ public abstract class CCCreateStudyItemActionBase extends DumbAwareAction {
   public VirtualFile createItem(@NotNull final Project project, @NotNull final VirtualFile sourceDirectory,
                                 @NotNull final Course course, boolean shouldShowInputDialog) {
     StudyItem parentItem = getParentItem(course, sourceDirectory);
-    final StudyItem item = getItem(sourceDirectory, project, course, parentItem, shouldShowInputDialog);
+    final Item item = getItem(sourceDirectory, project, course, parentItem, shouldShowInputDialog);
     if (item == null) {
       return null;
     }
@@ -94,15 +94,15 @@ public abstract class CCCreateStudyItemActionBase extends DumbAwareAction {
     return createItemDir(project, item, parentDir, course);
   }
 
-  protected abstract void addItem(@NotNull final Course course, @NotNull final StudyItem item);
+  protected abstract void addItem(@NotNull final Course course, @NotNull final Item item);
 
   protected abstract Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item);
 
-  protected abstract VirtualFile createItemDir(@NotNull final Project project, @NotNull final StudyItem item,
+  protected abstract VirtualFile createItemDir(@NotNull final Project project, @NotNull final Item item,
                                                @NotNull final VirtualFile parentDirectory, @NotNull final Course course);
 
   @Nullable
-  protected StudyItem getItem(@NotNull final VirtualFile sourceDirectory,
+  protected Item getItem(@NotNull final VirtualFile sourceDirectory,
                               @NotNull final Project project,
                               @NotNull final Course course,
                               @Nullable StudyItem parentItem,
@@ -155,8 +155,8 @@ public abstract class CCCreateStudyItemActionBase extends DumbAwareAction {
 
   protected abstract String getItemName();
 
-  public abstract StudyItem createAndInitItem(@NotNull final Course course,
-                                                 @Nullable final StudyItem parentItem,
-                                                 String name,
-                                                 int index);
+  public abstract Item createAndInitItem(@NotNull final Course course,
+                                         @Nullable final StudyItem parentItem,
+                                         String name,
+                                         int index);
 }

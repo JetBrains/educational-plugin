@@ -12,7 +12,7 @@ import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CCCreateLesson extends CCCreateStudyItemActionBase {
+public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
   public static final String TITLE = "Create New " + EduNames.LESSON_TITLED;
 
   public CCCreateLesson() {
@@ -26,8 +26,8 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase {
   }
 
   @Override
-  protected void addItem(@NotNull Course course, @NotNull StudyItem item) {
-    course.addLesson(((Lesson)item));
+  protected void addItem(@NotNull Course course, @NotNull Lesson item) {
+    course.addLesson(item);
   }
 
   @Override
@@ -42,13 +42,13 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase {
 
   @Override
   @Nullable
-  protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final StudyItem item,
+  protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Lesson item,
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
     EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return null;
     }
-    return configurator.createLessonContent(project, (Lesson)item, parentDirectory);
+    return configurator.createLessonContent(project, item, parentDirectory);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase {
   }
 
   @Override
-  public StudyItem createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
+  public Lesson createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
     Lesson lesson = new Lesson();
     lesson.setName(name);
     lesson.setCourse(course);
