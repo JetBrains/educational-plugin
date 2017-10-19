@@ -1,14 +1,16 @@
 package com.jetbrains.edu.learning.intellij.generation
 
 import com.android.SdkConstants
-import com.android.tools.idea.gradle.util.GradleWrapper
+import com.android.tools.idea.gradle.util.GradleUtil
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
+import com.intellij.util.ReflectionUtil
 import com.jetbrains.edu.learning.core.EduNames
+import com.jetbrains.edu.learning.core.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -16,6 +18,7 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator
 import com.jetbrains.edu.learning.intellij.EduIntelliJNames
 import java.io.File
 import java.io.IOException
+import java.lang.reflect.InvocationTargetException
 
 object EduGradleModuleGenerator {
     private val LOG = Logger.getInstance(EduModuleBuilderUtils::class.java)
@@ -87,8 +90,27 @@ object EduGradleModuleGenerator {
     }
 
     private fun createGradleWrapper(moduleDirPath: String) {
-        val projectDirPath = File(FileUtil.toSystemDependentName(moduleDirPath))
-        GradleWrapper.create(projectDirPath)
+        try {
+            val projectDirPath = File(FileUtil.toSystemDependentName(moduleDirPath))
+            if (!EduUtils.isAndroidStudio()) {
+                GradleUtil.createGradleWrapper(projectDirPath)
+                return
+            }
+            // GradleWrapper#create(File)
+            // android studio sources don't match idea android plugin sources
+            // and we need this code to compile with IJ and work with AS, so we have to use reflection
+            val aClass = Class.forName("com.android.tools.idea.gradle.util.GradleWrapper")
+            val method = ReflectionUtil.getDeclaredMethod(aClass, "create", File::class.java)
+            method?.invoke(null, projectDirPath)
+        } catch (e: ClassNotFoundException) {
+            LOG.error(FAILED_MESSAGE, e)
+        } catch (e: IllegalAccessException) {
+            LOG.error(FAILED_MESSAGE, e)
+        } catch (e: InvocationTargetException) {
+            LOG.error(FAILED_MESSAGE, e)
+        } catch (e: IOException) {
+            LOG.error(FAILED_MESSAGE, e)
+        }
     }
 
     @JvmStatic
