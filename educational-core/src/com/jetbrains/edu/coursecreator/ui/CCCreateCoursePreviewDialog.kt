@@ -30,6 +30,8 @@ class CCCreateCoursePreviewDialog(
     minimumSize = JBUI.size(WIDTH, HEIGHT)
   }
 
+  private var myFailedToCreatePreview = false
+
   init {
     title = "Course Preview"
     setOKButtonText("Create")
@@ -45,7 +47,6 @@ class CCCreateCoursePreviewDialog(
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path
     val isSuccessful = CCCreateCourseArchive.createCourseArchive(myProject, myModule, archiveName, locationDir, false)
-
     if (isSuccessful) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), archiveName + ".zip")
       val course = StudyProjectGenerator.getCourse(archivePath)
@@ -57,17 +58,21 @@ class CCCreateCoursePreviewDialog(
           close(OK_EXIT_CODE)
         } catch (e: IOException) {
           LOG.error("Failed to create tmp dir for course preview", e)
-          showErrorMessage()
+          myFailedToCreatePreview = true
+          initValidation()
         } finally {
           RecentProjectsManager.getInstance().lastProjectCreationLocation = lastProjectCreationLocation
         }
       }
     } else {
-      showErrorMessage()
+      myFailedToCreatePreview = true
+      initValidation()
     }
   }
 
-  private fun showErrorMessage() = updateErrorInfo(listOf(ValidationInfo("Can not create course preview")))
+  override fun doValidate(): ValidationInfo? {
+    return if (!myFailedToCreatePreview) null else ValidationInfo("Can not create course preview")
+  }
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CCCreateCoursePreviewDialog::class.java)
