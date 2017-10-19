@@ -47,8 +47,8 @@ public class KoansAndroidProjectGenerator extends EduIntellijCourseProjectGenera
       try {
         StudyTaskManager.getInstance(project).setCourse(myCourse);
         if (CCUtils.isCourseCreator(project)) {
-          Lesson lesson = (Lesson)new CCCreateLesson().createAndInitItem(myCourse, null, EduNames.LESSON + 1, 1);
-          Task task = (Task)new CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1);
+          Lesson lesson = new CCCreateLesson().createAndInitItem(myCourse, null, EduNames.LESSON + 1, 1);
+          Task task = new CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1);
           lesson.addTask(task);
           myCourse.getLessons(true).add(lesson);
           initTask(task);
