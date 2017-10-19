@@ -9,7 +9,7 @@ import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 import com.jetbrains.python.configuration.VirtualEnvProjectFilter
 import com.jetbrains.python.newProject.steps.PythonSdkChooserCombo
 
-internal class PyCharmPyDirectoryProjectGenerator(course: Course, isLocal: Boolean) : PyDirectoryProjectGenerator(course, isLocal) {
+internal class PyCharmPyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {
 
   override fun getAllSdks(): List<Sdk> {
     // New python API passes default project into `ServiceManager.getService` if project argument is null

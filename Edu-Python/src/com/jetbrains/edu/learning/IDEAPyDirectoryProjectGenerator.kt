@@ -19,7 +19,7 @@ import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.PythonSdkUpdater
 
-internal class IDEAPyDirectoryProjectGenerator(course: Course, isLocal: Boolean) : PyDirectoryProjectGenerator(course, isLocal) {
+internal class IDEAPyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {
 
   override fun getAllSdks(): List<Sdk> =
           ProjectJdkTable.getInstance().getSdksOfType(PythonSdkType.getInstance())
