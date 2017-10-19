@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.python.PythonModuleTypeBase;
+import com.jetbrains.python.newProject.PyNewProjectSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,14 +36,13 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class PyEduPluginConfigurator implements EduPluginConfigurator {
+public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProjectSettings> {
   public static final String PYTHON_3 = "3.x";
   public static final String PYTHON_2 = "2.x";
   private static final String TESTS_PY = "tests.py";
   private static final Logger LOG = Logger.getInstance(PyEduPluginConfigurator.class);
   private static final String COURSE_NAME = "Introduction to Python.zip";
   private static final String TASK_PY = "task.py";
-  private PyDirectoryProjectGenerator myGenerator = PyDirectoryProjectGenerator.getInstance(false);
 
   @NotNull
   @Override
@@ -175,8 +175,8 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator {
   }
 
   @Override
-  public EduCourseProjectGenerator getEduCourseProjectGenerator() {
-    return myGenerator;
+  public EduCourseProjectGenerator<PyNewProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
+    return PyDirectoryProjectGenerator.getInstance(course, false);
   }
 
   public ModuleType getModuleType() {

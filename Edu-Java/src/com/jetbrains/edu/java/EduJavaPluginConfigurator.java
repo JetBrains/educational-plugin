@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   static final String TEST_JAVA = "Test.java";
   private static final String TASK_JAVA = "Task.java";
-  private final EduJavaCourseProjectGenerator myProjectGenerator = new EduJavaCourseProjectGenerator();
 
   @NotNull
   @Override
@@ -74,7 +73,7 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   }
 
   @Override
-  public EduCourseProjectGenerator getEduCourseProjectGenerator() {
-    return myProjectGenerator;
+  public EduCourseProjectGenerator<Object> getEduCourseProjectGenerator(@NotNull Course course) {
+    return new EduJavaCourseProjectGenerator(course);
   }
 }

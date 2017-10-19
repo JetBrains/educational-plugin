@@ -4,11 +4,12 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.containers.ContainerUtil
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 import com.jetbrains.python.configuration.VirtualEnvProjectFilter
 import com.jetbrains.python.newProject.steps.PythonSdkChooserCombo
 
-internal class PyCharmPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryProjectGenerator(isLocal) {
+internal class PyCharmPyDirectoryProjectGenerator(course: Course, isLocal: Boolean) : PyDirectoryProjectGenerator(course, isLocal) {
 
   override fun getAllSdks(): List<Sdk> {
     // New python API passes default project into `ServiceManager.getService` if project argument is null

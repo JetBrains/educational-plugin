@@ -30,7 +30,7 @@ abstract class EduBaseIntellijModuleBuilder : JavaModuleBuilder() {
 
   open protected val course: Course? get() = null
 
-  protected fun pluginConfigurator(course: Course): EduPluginConfigurator? {
+  protected fun pluginConfigurator(course: Course): EduPluginConfigurator<*>? {
     val language = course.languageById
     if (language == null) {
       LOG.error("Can't find language by ${course.languageID}")

@@ -20,42 +20,61 @@ import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.platform.DirectoryProjectGenerator;
-import com.jetbrains.edu.learning.courseFormat.Course;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public interface EduCourseProjectGenerator {
-  @NotNull
-  DirectoryProjectGenerator getDirectoryProjectGenerator();
+public interface EduCourseProjectGenerator<S> extends DirectoryProjectGenerator<S> {
 
   @NotNull
-  Object getProjectSettings();
+  S getProjectSettings();
 
-  void setCourse(@NotNull Course course);
+  @NotNull
+  default ValidationResult validate() {
+    return ValidationResult.OK;
+  }
 
-  ValidationResult validate();
+  default boolean beforeProjectGenerated() {
+    return true;
+  }
 
-  boolean beforeProjectGenerated();
-
-  void afterProjectGenerated(@NotNull Project project);
+  default void afterProjectGenerated(@NotNull Project project) {
+  }
 
   @Nullable
-  default LabeledComponent<JComponent> getLanguageSettingsComponent(@NotNull Course selectedCourse) {
+  default LabeledComponent<JComponent> getLanguageSettingsComponent() {
     return null;
   }
 
-  default void createProject(@NotNull Course course, @NotNull String location) {
-    setCourse(course);
+  default void createCourseProject(@NotNull String location) {
     if (!beforeProjectGenerated()) {
       return;
     }
-    DirectoryProjectGenerator directoryProjectGenerator = getDirectoryProjectGenerator();
-    Project createdProject = AbstractNewProjectStep.doGenerateProject(null, location, directoryProjectGenerator, getProjectSettings());
+    Project createdProject = AbstractNewProjectStep.doGenerateProject(null, location, this, getProjectSettings());
     if (createdProject == null) {
       return;
     }
     afterProjectGenerated(createdProject);
+  }
+
+  @Nls
+  @NotNull
+  @Override
+  default String getName() {
+    return "";
+  }
+
+  @Nullable
+  @Override
+  default Icon getLogo() {
+    return null;
+  }
+
+  @NotNull
+  @Override
+  default ValidationResult validate(@NotNull String s) {
+    return ValidationResult.OK;
   }
 }

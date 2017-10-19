@@ -34,7 +34,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator {
+public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator<Object> {
   @Override
   public VirtualFile createLessonContent(@NotNull Project project, @NotNull Lesson lesson, @NotNull VirtualFile parentDirectory) {
     if (EduUtils.isAndroidStudio()) {

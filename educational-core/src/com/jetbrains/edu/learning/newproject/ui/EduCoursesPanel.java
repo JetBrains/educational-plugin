@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.newproject.ui;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -288,12 +289,17 @@ public class EduCoursesPanel extends JPanel {
 
   @Nullable
   private static DirectoryProjectGenerator getGenerator(@NotNull Course course) {
-    EduCourseProjectGenerator projectGenerator =
-      EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById()).getEduCourseProjectGenerator();
-    if (projectGenerator == null) {
-      LOG.info("project generator is null, language: " + course.getLanguageById().getDisplayName());
+    Language language = course.getLanguageById();
+    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(language);
+    if (configurator == null) {
+      LOG.info("plugin configurator is null, language: " + language.getDisplayName());
+      return null;
     }
-    return projectGenerator == null ? null : projectGenerator.getDirectoryProjectGenerator();
+    EduCourseProjectGenerator projectGenerator = configurator.getEduCourseProjectGenerator(course);
+    if (projectGenerator == null) {
+      LOG.info("project generator is null, language: " + language.getDisplayName());
+    }
+    return projectGenerator;
   }
 
   @NotNull

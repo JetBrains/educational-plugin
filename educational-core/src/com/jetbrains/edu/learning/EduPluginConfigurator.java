@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public interface EduPluginConfigurator {
+public interface EduPluginConfigurator<S> {
   String EP_NAME = "Educational.pluginConfigurator";
   LanguageExtension<EduPluginConfigurator> INSTANCE = new LanguageExtension<>(EP_NAME);
 
@@ -165,7 +165,7 @@ public interface EduPluginConfigurator {
   }
 
   @Nullable
-  default EduCourseProjectGenerator getEduCourseProjectGenerator() {
+  default EduCourseProjectGenerator<S> getEduCourseProjectGenerator(@NotNull Course course) {
     return null;
   }
 
