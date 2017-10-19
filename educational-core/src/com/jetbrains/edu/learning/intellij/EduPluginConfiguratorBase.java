@@ -2,9 +2,6 @@ package com.jetbrains.edu.learning.intellij;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
-import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
-import com.intellij.ide.util.newProjectWizard.StepSequence;
-import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
@@ -14,7 +11,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ExternalLibraryDescriptor;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
-import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
@@ -40,23 +36,12 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
     if (EduUtils.isAndroidStudio()) {
       return EduPluginConfigurator.super.createLessonContent(project, lesson, parentDirectory);
     }
-    NewModuleAction newModuleAction = new NewModuleAction();
     String courseDirPath = parentDirectory.getPath();
     Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduIntelliJNames.UTIL);
     if (utilModule == null) {
       return null;
     }
-    newModuleAction.createModuleFromWizard(project, null, new AbstractProjectWizard("", project, "") {
-      @Override
-      public StepSequence getSequence() {
-        return null;
-      }
-
-      @Override
-      public ProjectBuilder getProjectBuilder() {
-        return new EduLessonModuleBuilder(courseDirPath, lesson, utilModule);
-      }
-    });
+    EduModuleBuilderUtils.createModule(project, new EduLessonModuleBuilder(courseDirPath, lesson, utilModule), "");
     return parentDirectory.findChild(EduNames.LESSON + lesson.getIndex());
   }
 
