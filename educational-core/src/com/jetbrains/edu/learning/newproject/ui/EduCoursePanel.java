@@ -160,7 +160,7 @@ public class EduCoursePanel extends JPanel {
     if (configurator == null) {
       return;
     }
-    EduCourseProjectGenerator generator = configurator.getEduCourseProjectGenerator();
+    EduCourseProjectGenerator<?> generator = configurator.getEduCourseProjectGenerator(course);
     if (generator == null) {
       return;
     }
@@ -169,7 +169,7 @@ public class EduCoursePanel extends JPanel {
     if (myLocationField != null) {
       settingsComponents.add(myLocationField);
     }
-    LabeledComponent<JComponent> component = generator.getLanguageSettingsComponent(course);
+    LabeledComponent<JComponent> component = generator.getLanguageSettingsComponent();
     if (component != null) {
       settingsComponents.add(component);
     }
