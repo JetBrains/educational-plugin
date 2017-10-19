@@ -20,10 +20,8 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.BooleanFunction;
 import com.intellij.util.PlatformUtils;
@@ -63,18 +61,20 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
-  implements EduCourseProjectGenerator {
+  implements EduCourseProjectGenerator<PyNewProjectSettings> {
+
   private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
   private static final String NO_PYTHON_INTERPRETER = "<html><u>Add</u> python interpreter.</html>";
 
+  private final Course myCourse;
   private final StudyProjectGenerator myGenerator;
   private final boolean isLocal;
 
   private ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
   private PyNewProjectSettings mySettings = new PyNewProjectSettings();
-  private Course myCourse;
 
-  public PyDirectoryProjectGenerator(boolean isLocal) {
+  public PyDirectoryProjectGenerator(@NotNull Course course, boolean isLocal) {
+    myCourse = course;
     this.isLocal = isLocal;
     myGenerator = new StudyProjectGenerator();
     myGenerator.addSettingsStateListener(new StudyProjectGenerator.SettingsListener() {
@@ -103,34 +103,27 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
                                @NotNull PyNewProjectSettings settings,
                                @NotNull Module module,
                                @Nullable PyProjectSynchronizer synchronizer) {
-    Course course = myCourse;
-    if (course == null) {
-      LOG.warn("Course is null");
-      Messages.showWarningDialog("Some problems occurred while creating the course", "Error in Course Creation");
-      return;
-    }
-
-    if (course.isStudy()) {
-      myGenerator.setSelectedCourse(course);
+    if (myCourse.isStudy()) {
+      myGenerator.setSelectedCourse(myCourse);
       myGenerator.generateProject(project, baseDir);
       ApplicationManager.getApplication().runWriteAction(() -> createTestHelper(project, baseDir));
     } else {
-      configureNewCourseProject(project, baseDir, course);
+      configureNewCourseProject(project, baseDir);
     }
   }
 
-  private void configureNewCourseProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Course course) {
-    StudyTaskManager.getInstance(project).setCourse(course);
-    StudyUtils.registerStudyToolWindow(course, project);
+  private void configureNewCourseProject(@NotNull Project project, @NotNull VirtualFile baseDir) {
+    StudyTaskManager.getInstance(project).setCourse(myCourse);
+    StudyUtils.registerStudyToolWindow(myCourse, project);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       createTestHelper(project, baseDir);
-      VirtualFile lessonDir = new CCCreateLesson().createItem(project, baseDir, course, false);
+      VirtualFile lessonDir = new CCCreateLesson().createItem(project, baseDir, myCourse, false);
       if (lessonDir == null) {
         LOG.error("Failed to create lesson");
         return;
       }
-      new CCCreateTask().createItem(project, lessonDir, course, false);
+      new CCCreateTask().createItem(project, lessonDir, myCourse, false);
     });
   }
 
@@ -148,10 +141,6 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
 
   @NotNull
   @Override
-  public DirectoryProjectGenerator getDirectoryProjectGenerator() {
-    return this;
-  }
-
   public ValidationResult validate() {
     final List<Sdk> sdks = getAllSdks();
 
@@ -196,9 +185,9 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
 
   @Nullable
   @Override
-  public LabeledComponent<JComponent> getLanguageSettingsComponent(@NotNull Course selectedCourse) {
+  public LabeledComponent<JComponent> getLanguageSettingsComponent() {
     // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
-    ProjectJdkImpl fakeSdk = createFakeSdk(selectedCourse);
+    ProjectJdkImpl fakeSdk = createFakeSdk(myCourse);
 
     ComboboxWithBrowseButton combo = getInterpreterComboBox(fakeSdk);
     if (SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
@@ -302,10 +291,6 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     return mySettingsPanel;
   }
 
-  public void setCourse(@NotNull Course course) {
-    myCourse = course;
-  }
-
   public StudyProjectGenerator getGenerator() {
     return myGenerator;
   }
@@ -393,7 +378,7 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
 
   @NotNull
   @Override
-  public Object getProjectSettings() {
+  public PyNewProjectSettings getProjectSettings() {
     return mySettings;
   }
 
@@ -408,11 +393,11 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   protected abstract ComboboxWithBrowseButton getInterpreterComboBox(@Nullable Sdk fakeSdk);
 
   @NotNull
-  public static PyDirectoryProjectGenerator getInstance(boolean isLocal) {
+  public static PyDirectoryProjectGenerator getInstance(@NotNull Course course, boolean isLocal) {
     if (PlatformUtils.isPyCharm() || PlatformUtils.isCLion()) {
-      return new PyCharmPyDirectoryProjectGenerator(isLocal);
+      return new PyCharmPyDirectoryProjectGenerator(course, isLocal);
     } else {
-      return new IDEAPyDirectoryProjectGenerator(isLocal);
+      return new IDEAPyDirectoryProjectGenerator(course, isLocal);
     }
   }
 }
