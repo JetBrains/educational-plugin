@@ -195,7 +195,11 @@ class CCNewCoursePanel : JPanel() {
       LOG.info("Language with id $languageId not found")
       return null
     }
-    if (language == JavaLanguage.INSTANCE && EduUtils.isAndroidStudio()) {
+    // Order of conditions is important here
+    // because some IDEs (for example PyCharm) don't have `JavaLanguage` class in classpath
+    // and if we try to load `JavaLanguage` we will get `java.lang.NoClassDefFoundError`.
+    // But we are sure that AndroidStudio has `JavaLanguage` class in its classpath.
+    if (EduUtils.isAndroidStudio() && language == JavaLanguage.INSTANCE) {
       // there should be no Java support in AS
       return null
     }
