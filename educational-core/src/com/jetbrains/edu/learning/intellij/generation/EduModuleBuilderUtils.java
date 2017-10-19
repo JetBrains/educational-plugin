@@ -1,11 +1,16 @@
 package com.jetbrains.edu.learning.intellij.generation;
 
+import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
+import com.intellij.ide.util.newProjectWizard.StepSequence;
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
+import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.InvalidDataException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -76,5 +81,23 @@ public class EduModuleBuilderUtils {
         EduIntellijUtils.nameTaskFileAfterContainingClass(task, taskFile, project);
       }
     }
+  }
+
+  @Nullable
+  public static Module createModule(@NotNull Project project, @NotNull ModuleBuilder moduleBuilder,
+                                    @NotNull String defaultPath) {
+    AbstractProjectWizard projectWizard = new AbstractProjectWizard("", project, defaultPath) {
+
+      @Override
+      public StepSequence getSequence() {
+        return null;
+      }
+
+      @Override
+      public ProjectBuilder getProjectBuilder() {
+        return moduleBuilder;
+      }
+    };
+    return new NewModuleAction().createModuleFromWizard(project, null, projectWizard);
   }
 }

@@ -1,8 +1,5 @@
 package com.jetbrains.edu.learning.intellij.generation;
 
-import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
-import com.intellij.ide.util.newProjectWizard.StepSequence;
-import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.DefaultLogger;
 import com.intellij.openapi.diagnostic.Logger;
@@ -17,7 +14,6 @@ import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
-import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.FixedSizeButton;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -104,18 +100,7 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements EduCourse
       LOG.warn(String.format("Can't create course %s - corresponding module builder is null", myCourse.getName()));
       return;
     }
-    AbstractProjectWizard projectWizard = new AbstractProjectWizard("", project, project.getBaseDir().getPath()) {
-      @Override
-      public StepSequence getSequence() {
-        return null;
-      }
-
-      @Override
-      public ProjectBuilder getProjectBuilder() {
-        return moduleBuilder;
-      }
-    };
-    new NewModuleAction().createModuleFromWizard(project, null, projectWizard);
+    EduModuleBuilderUtils.createModule(project, moduleBuilder, project.getBaseDir().getPath());
   }
 
   @Nullable
