@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.checker.PyStudyTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -176,7 +177,11 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProje
 
   @Override
   public EduCourseProjectGenerator<PyNewProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
-    return PyDirectoryProjectGenerator.getInstance(course, false);
+    if (PlatformUtils.isPyCharm() || PlatformUtils.isCLion()) {
+      return new PyCharmPyDirectoryProjectGenerator(course);
+    } else {
+      return new IDEAPyDirectoryProjectGenerator(course);
+    }
   }
 
   public ModuleType getModuleType() {
