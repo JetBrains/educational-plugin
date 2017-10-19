@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 
-public class CCCreateTask extends CCCreateStudyItemActionBase {
+public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   public static final String TITLE = "Create New " + EduNames.TASK_TITLED;
 
   public CCCreateTask() {
@@ -35,11 +35,8 @@ public class CCCreateTask extends CCCreateStudyItemActionBase {
   }
 
   @Override
-  protected void addItem(@NotNull Course course, @NotNull StudyItem item) {
-    if (item instanceof Task) {
-      Task task = (Task)item;
-      task.getLesson().addTask(task);
-    }
+  protected void addItem(@NotNull Course course, @NotNull Task item) {
+    item.getLesson().addTask(item);
   }
 
   @Override
@@ -54,11 +51,11 @@ public class CCCreateTask extends CCCreateStudyItemActionBase {
 
   @Override
   @Nullable
-  protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final StudyItem item,
+  protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Task item,
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
     EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
     if (configurator != null) {
-      return configurator.createTaskContent(project, (Task)item, parentDirectory, course);
+      return configurator.createTaskContent(project, item, parentDirectory, course);
     }
     return null;
   }
@@ -107,7 +104,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase {
   }
 
   @Override
-  public StudyItem createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
+  public Task createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
     final Task task = new PyCharmTask(name);
     task.setIndex(index);
     if (parentItem == null) {
