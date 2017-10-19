@@ -26,9 +26,9 @@ public class EduBrowseCoursesAction extends AnAction {
       String location = panel.getLocationString();
       EduPluginConfigurator pluginConfigurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
       if (pluginConfigurator != null) {
-        EduCourseProjectGenerator projectGenerator = pluginConfigurator.getEduCourseProjectGenerator();
+        EduCourseProjectGenerator projectGenerator = pluginConfigurator.getEduCourseProjectGenerator(course);
         if (projectGenerator != null) {
-          projectGenerator.createProject(course, location);
+          projectGenerator.createCourseProject(location);
         }
       }
     });

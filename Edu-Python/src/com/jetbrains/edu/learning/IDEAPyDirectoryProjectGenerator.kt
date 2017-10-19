@@ -10,10 +10,11 @@ import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.Condition
 import com.intellij.ui.ComboboxWithBrowseButton
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 
-internal class IDEAPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryProjectGenerator(isLocal) {
+internal class IDEAPyDirectoryProjectGenerator(course: Course, isLocal: Boolean) : PyDirectoryProjectGenerator(course, isLocal) {
 
   override fun addSdk(project: Project, sdk: Sdk) {
     SdkConfigurationUtil.addSdk(sdk)
@@ -49,7 +50,7 @@ internal class IDEAPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryPr
 
     val comboBoxWithBrowseButton = ComboboxWithBrowseButton(comboBox)
     val setupButton = comboBoxWithBrowseButton.button
-    comboBox.setSetupButton(setupButton, null, model, comboBox.getModel().getSelectedItem() as JdkComboBox.JdkComboBoxItem, null, false)
+    comboBox.setSetupButton(setupButton, null, model, comboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem, null, false)
     return comboBoxWithBrowseButton
   }
 

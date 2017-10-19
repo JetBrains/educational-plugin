@@ -22,7 +22,7 @@ class CCCreateCoursePreviewDialog(
         private val myProject: Project,
         private val myModule: Module,
         private val myCourse: Course,
-        private val myConfigurator: EduPluginConfigurator
+        private val myConfigurator: EduPluginConfigurator<*>
 ) : DialogWrapper(true) {
 
   private val myPanel: EduCoursePanel = EduCoursePanel(true, false).apply {
@@ -54,7 +54,7 @@ class CCCreateCoursePreviewDialog(
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
         try {
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
-          myConfigurator.eduCourseProjectGenerator?.createProject(course, location.absolutePath)
+          myConfigurator.getEduCourseProjectGenerator(course)?.createCourseProject(location.absolutePath)
           close(OK_EXIT_CODE)
         } catch (e: IOException) {
           LOG.error("Failed to create tmp dir for course preview", e)

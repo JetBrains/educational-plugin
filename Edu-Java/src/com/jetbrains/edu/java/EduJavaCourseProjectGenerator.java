@@ -6,6 +6,7 @@ import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGeneratorBase;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
@@ -20,6 +21,11 @@ import java.io.IOException;
 
 public class EduJavaCourseProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
 
+  public EduJavaCourseProjectGenerator(@NotNull Course course) {
+    super(course);
+  }
+
+  @NotNull
   @Override
   protected EduCourseModuleBuilder studyModuleBuilder() {
     return new EduCourseModuleBuilder() {
@@ -38,7 +44,7 @@ public class EduJavaCourseProjectGenerator extends EduIntellijCourseProjectGener
 
   @Nullable
   @Override
-  protected Icon getLogo() {
+  public Icon getLogo() {
     return EducationalCoreIcons.JavaLogo;
   }
 }

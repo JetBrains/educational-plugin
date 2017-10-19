@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
@@ -35,8 +36,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   static final String LEGACY_TESTS_KT = "tests.kt";
   static final String TESTS_KT = "Tests.kt";
-  private EduKotlinCourseProjectGenerator myProjectGenerator = new EduKotlinCourseProjectGenerator();
-  static final String TASK_KT = "Task.kt";
+  private static final String TASK_KT = "Task.kt";
   private final Collection<String> NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
     "gradlew", "gradlew.bat", "local.properties", "gradle.properties", "build.gradle"
     , "settings.gradle", "gradle-wrapper.jar", "gradle-wrapper.properties");
@@ -91,7 +91,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   public VirtualFile createTaskContent(@NotNull Project project, @NotNull Task task,
                                        @NotNull VirtualFile parentDirectory, @NotNull Course course) {
     if (EduUtils.isAndroidStudio()) {
-      EduKotlinCourseProjectGenerator.initTask(task);
+      initTask(task);
       ApplicationManager.getApplication().runWriteAction(() -> {
         try {
           EduGradleModuleGenerator.createTaskModule(parentDirectory, task);
@@ -113,7 +113,17 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   }
 
   @Override
-  public EduCourseProjectGenerator getEduCourseProjectGenerator() {
-    return myProjectGenerator;
+  public EduCourseProjectGenerator<Object> getEduCourseProjectGenerator(@NotNull Course course) {
+    return EduUtils.isAndroidStudio() ? new KoansAndroidProjectGenerator(course)
+            : new EduKotlinCourseProjectGenerator(course);
+  }
+
+  static void initTask(@NotNull Task task) {
+    TaskFile taskFile = new TaskFile();
+    taskFile.setTask(task);
+    taskFile.name  = TASK_KT;
+    taskFile.text = EduUtils.getTextFromInternalTemplate(TASK_KT);
+    task.addTaskFile(taskFile);
+    task.getTestsText().put(TESTS_KT, EduUtils.getTextFromInternalTemplate(TESTS_KT));
   }
 }

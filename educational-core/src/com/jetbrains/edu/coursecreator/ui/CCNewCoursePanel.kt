@@ -24,6 +24,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.core.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator
 import com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings
 import java.awt.BorderLayout
 import java.awt.Component
@@ -48,7 +49,8 @@ class CCNewCoursePanel : JPanel() {
 
   private val myErrorLabel = JBLabel()
 
-  private lateinit var mySelectedLanguage: Language
+  private val myCourse: Course = Course().apply { courseMode = CCUtils.COURSE_MODE }
+  private var myProjectGenerator: EduCourseProjectGenerator<*>? = null
 
   private var myValidationListener: ValidationListener? = null
 
@@ -104,16 +106,19 @@ class CCNewCoursePanel : JPanel() {
     collectSupportedLanguages()
   }
 
-  val course: Course
-    get() {
-      val course = Course()
-      course.name = myTitleField.text
-      course.description = myDescriptionTextArea.text
-      course.setAuthorsAsString(StringUtil.splitByLines(myAuthorField.text.orEmpty()))
-      course.language = mySelectedLanguage.id
-      course.courseMode = CCUtils.COURSE_MODE
-      return course
-    }
+  // We return generator instance instead of new course object
+  // because `myProjectGenerator` holds state of `languageSettingsComponent`
+  // and if we return just course object and create new instance of EduCourseProjectGenerator
+  // we will lose the state of language settings (for example, selected sdk version).
+  val projectGenerator: EduCourseProjectGenerator<*>? get() {
+    // It's a small hack.
+    // We know that `myProjectGenerator` contains reference at `myCourse`
+    // So if we update state of course we will update state of generator at the same time.
+    myCourse.name = myTitleField.text
+    myCourse.description = myDescriptionTextArea.text
+    myCourse.setAuthorsAsString(StringUtil.splitByLines(myAuthorField.text.orEmpty()))
+    return myProjectGenerator
+  }
 
   val locationString: String get() = myLocationField.component.text
 
@@ -164,8 +169,6 @@ class CCNewCoursePanel : JPanel() {
   }
 
   private fun onLanguageSelected(language: Language) {
-    mySelectedLanguage = language
-
     val courseName = "${language.displayName.capitalize()} Course"
     val file = FileUtil.findSequentNonexistentFile(File(ProjectUtil.getBaseDir()), courseName, "")
     if (!myTitleField.isChangedByUser) {
@@ -176,19 +179,22 @@ class CCNewCoursePanel : JPanel() {
     }
 
     val configurator = EduPluginConfigurator.INSTANCE.forLanguage(language) ?: return
-    val labeledComponent = configurator.languageSettingsComponent(language)
+    myCourse.language = language.id
+    myProjectGenerator = configurator.getEduCourseProjectGenerator(myCourse)
+
+    val labeledComponent = myProjectGenerator?.languageSettingsComponent
     val settings = listOfNotNull(myLocationField, labeledComponent)
     myAdvancedSettings.setSettingsComponents(settings)
   }
 
   private fun collectSupportedLanguages() {
-    Extensions.getExtensions<LanguageExtensionPoint<EduPluginConfigurator>>(EduPluginConfigurator.EP_NAME, null)
+    Extensions.getExtensions<LanguageExtensionPoint<EduPluginConfigurator<*>>>(EduPluginConfigurator.EP_NAME, null)
             .mapNotNull { extension -> obtainLanguageData(extension) }
             .sortedBy { (language, _) -> language.displayName }
             .forEach { myLanguageComboBox.addItem(it) }
   }
 
-  private fun obtainLanguageData(extension: LanguageExtensionPoint<EduPluginConfigurator>): LanguageData? {
+  private fun obtainLanguageData(extension: LanguageExtensionPoint<EduPluginConfigurator<*>>): LanguageData? {
     val languageId = extension.key
     val language = Language.findLanguageByID(languageId)
     if (language == null) {
@@ -203,15 +209,11 @@ class CCNewCoursePanel : JPanel() {
       // there should be no Java support in AS
       return null
     }
-    val logo = extension.instance.eduCourseProjectGenerator?.directoryProjectGenerator?.logo
+    // TODO: 'getLogo' should depend on language only
+    val tmpCourse = Course()
+    tmpCourse.language = language.id
+    val logo = extension.instance.getEduCourseProjectGenerator(tmpCourse)?.logo
     return LanguageData(language, logo)
-  }
-
-  private fun EduPluginConfigurator.languageSettingsComponent(language: Language): LabeledComponent<JComponent>? {
-    // TODO: 'getLanguageSettingsComponent' should depend on language only
-    val course = Course()
-    course.language = language.id
-    return eduCourseProjectGenerator?.getLanguageSettingsComponent(course)
   }
 
   companion object {
