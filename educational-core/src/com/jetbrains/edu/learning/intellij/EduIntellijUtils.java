@@ -5,9 +5,6 @@ import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
-import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
-import com.intellij.ide.util.newProjectWizard.StepSequence;
-import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -17,7 +14,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -26,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduTaskModuleBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +33,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.jetbrains.edu.learning.StudyUtils.createFromTemplate;
-
 
 public class EduIntellijUtils {
     private static final Logger LOG = Logger.getInstance(EduIntellijUtils.class);
@@ -91,40 +87,30 @@ public class EduIntellijUtils {
   public static VirtualFile createTask(@NotNull Project project, @NotNull Task task, @NotNull VirtualFile parentDirectory,
                                         @Nullable String taskFileName, @Nullable String testFileName) {
     String lessonDirName = parentDirectory.getName();
-    NewModuleAction newModuleAction = new NewModuleAction();
     Module lessonModule = ModuleManager.getInstance(project).findModuleByName(lessonDirName);
     Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduIntelliJNames.UTIL);
     if (lessonModule == null || utilModule == null) {
       return null;
     }
-    newModuleAction.createModuleFromWizard(project, null, new AbstractProjectWizard("", project, "") {
+    EduTaskModuleBuilder moduleBuilder = new EduTaskModuleBuilder(parentDirectory.getPath(), lessonDirName, task, utilModule) {
       @Override
-      public StepSequence getSequence() {
-        return null;
-      }
+      protected void createTask(Project project, Course course, VirtualFile src) throws IOException {
+        if (taskFileName == null) {
+          return;
+        }
 
-      @Override
-      public ProjectBuilder getProjectBuilder() {
-        return new EduTaskModuleBuilder(parentDirectory.getPath(), lessonDirName, task, utilModule) {
-          @Override
-          protected void createTask(Project project, Course course, VirtualFile src) throws IOException {
-            if (taskFileName == null) {
-              return;
-            }
-
-            if (course.isAdaptive()) {
-              createFromText(project, taskFileName, task);
-            } else {
-              createFromTemplate(project, src, taskFileName);
-              task.addTaskFile(taskFileName, task.taskFiles.size());
-              if (testFileName != null) {
-                createFromTemplate(project, src, testFileName);
-              }
-            }
+        if (course.isAdaptive()) {
+          createFromText(project, taskFileName, task);
+        } else {
+          createFromTemplate(project, src, taskFileName);
+          task.addTaskFile(taskFileName, task.taskFiles.size());
+          if (testFileName != null) {
+            createFromTemplate(project, src, testFileName);
           }
-        };
+        }
       }
-    });
+    };
+    EduModuleBuilderUtils.createModule(project, moduleBuilder, "");
     return parentDirectory.findChild(EduNames.LESSON + task.getLesson().getIndex() + "-" + EduNames.TASK + task.getIndex());
   }
 
