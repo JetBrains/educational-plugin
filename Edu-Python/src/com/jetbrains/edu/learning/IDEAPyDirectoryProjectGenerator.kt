@@ -10,6 +10,7 @@ import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.Condition
 import com.intellij.ui.ComboboxWithBrowseButton
+import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 
 internal class IDEAPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryProjectGenerator(isLocal) {
@@ -40,7 +41,7 @@ internal class IDEAPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryPr
     val sdkTypeIdFilter = Condition<SdkTypeId> { it == PythonSdkType.getInstance() || it == FakePythonSdkType }
     val sdkFilter = JdkComboBox.getSdkFilter(sdkTypeIdFilter)
     val comboBox = JdkComboBox(model, sdkTypeIdFilter, sdkFilter, sdkTypeIdFilter, true)
-    comboBox.addActionListener { onSdkSelected(comboBox.selectedJdk) }
+    comboBox.addActionListener { onSdkSelected(comboBox) }
 
     if (fakeSdk != null) {
       comboBox.selectedJdk = fakeSdk
@@ -50,5 +51,16 @@ internal class IDEAPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryPr
     val setupButton = comboBoxWithBrowseButton.button
     comboBox.setSetupButton(setupButton, null, model, comboBox.getModel().getSelectedItem() as JdkComboBox.JdkComboBoxItem, null, false)
     return comboBoxWithBrowseButton
+  }
+
+  private fun onSdkSelected(comboBox: JdkComboBox) {
+    var selectedSdk = comboBox.selectedJdk
+    if (selectedSdk == null) {
+      val selectedItem = comboBox.selectedItem
+      if (selectedItem is JdkComboBox.SuggestedJdkItem) {
+        selectedSdk = PyDetectedSdk(selectedItem.path)
+      }
+    }
+    onSdkSelected(selectedSdk)
   }
 }
