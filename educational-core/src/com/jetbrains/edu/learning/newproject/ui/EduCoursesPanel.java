@@ -16,7 +16,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
@@ -30,15 +29,12 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -81,10 +77,10 @@ public class EduCoursesPanel extends JPanel {
       @Override
       public void customize(JList list, Course value, int index, boolean selected, boolean hasFocus) {
         setText(value.getName());
-        DirectoryProjectGenerator generator = getGenerator(value);
-        if (generator != null) {
+        Icon logo = getLogo(value);
+        if (logo != null) {
           boolean isPrivate = value instanceof RemoteCourse && !((RemoteCourse)value).isPublic();
-          setIcon(isPrivate ? getPrivateCourseIcon(generator.getLogo()) : generator.getLogo());
+          setIcon(isPrivate ? getPrivateCourseIcon(logo) : logo);
           setToolTipText(isPrivate ? "Private course" : "");
         }
       }
@@ -107,12 +103,7 @@ public class EduCoursesPanel extends JPanel {
         return component;
       }
     });
-    myCoursesList.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        processSelectionChanged();
-      }
-    });
+    myCoursesList.addListSelectionListener(e -> processSelectionChanged());
     DefaultActionGroup group = new DefaultActionGroup(new AnAction("Import Course", "import local course", AllIcons.ToolbarDecorator.Import) {
       @Override
       public void actionPerformed(AnActionEvent e) {
@@ -288,18 +279,14 @@ public class EduCoursesPanel extends JPanel {
   }
 
   @Nullable
-  private static DirectoryProjectGenerator getGenerator(@NotNull Course course) {
+  private static Icon getLogo(@NotNull Course course) {
     Language language = course.getLanguageById();
     EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(language);
     if (configurator == null) {
       LOG.info("plugin configurator is null, language: " + language.getDisplayName());
       return null;
     }
-    EduCourseProjectGenerator projectGenerator = configurator.getEduCourseProjectGenerator(course);
-    if (projectGenerator == null) {
-      LOG.info("project generator is null, language: " + language.getDisplayName());
-    }
-    return projectGenerator;
+    return configurator.getLogo();
   }
 
   @NotNull

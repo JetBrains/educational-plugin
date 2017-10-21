@@ -20,9 +20,7 @@ import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGe
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinIcons;
 
-import javax.swing.*;
 import java.io.IOException;
 
 import static com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator.initTask;
@@ -33,12 +31,6 @@ public class KoansAndroidProjectGenerator extends EduIntellijCourseProjectGenera
 
   public KoansAndroidProjectGenerator(@NotNull Course course) {
     super(course);
-  }
-
-  @Nullable
-  @Override
-  public Icon getLogo() {
-    return KotlinIcons.SMALL_LOGO;
   }
 
   @Override
