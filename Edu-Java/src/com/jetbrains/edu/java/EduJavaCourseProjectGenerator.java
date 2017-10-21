@@ -11,12 +11,9 @@ import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGeneratorBase;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduProjectGenerator;
-import icons.EducationalCoreIcons;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class EduJavaCourseProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
@@ -40,11 +37,5 @@ public class EduJavaCourseProjectGenerator extends EduIntellijCourseProjectGener
         return baseModule;
       }
     };
-  }
-
-  @Nullable
-  @Override
-  public Icon getLogo() {
-    return EducationalCoreIcons.JavaLogo;
   }
 }

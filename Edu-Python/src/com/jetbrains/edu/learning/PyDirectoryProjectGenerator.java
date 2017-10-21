@@ -79,12 +79,6 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     return "Educational";
   }
 
-  @Nullable
-  @Override
-  public Icon getLogo() {
-    return PythonIcons.Python.Python_logo;
-  }
-
   @Override
   public void configureProject(@NotNull final Project project, @NotNull final VirtualFile baseDir,
                                @NotNull PyNewProjectSettings settings,

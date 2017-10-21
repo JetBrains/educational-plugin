@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -184,6 +185,18 @@ public interface EduPluginConfigurator<S> {
    */
   @Nullable
   default JBColor languageTagColor() {
+    return null;
+  }
+
+  /**
+   * Returns icon for configurator language.
+   * This icon is used in places where course is associated with language.
+   * For example, 'Browse Courses' and 'Create New Course' dialogs.
+   *
+   * @return 16x16 icon or null, if no icon is available
+   */
+  @Nullable
+  default Icon getLogo() {
     return null;
   }
 }
