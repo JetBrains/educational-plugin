@@ -29,9 +29,11 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.python.PythonModuleTypeBase;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
+import icons.PythonIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -205,5 +207,11 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProje
         LOG.error("Can't copy test_helper.py " + exception.getMessage());
       }
     });
+  }
+
+  @Nullable
+  @Override
+  public Icon getLogo() {
+    return PythonIcons.Python.Python_logo;
   }
 }
