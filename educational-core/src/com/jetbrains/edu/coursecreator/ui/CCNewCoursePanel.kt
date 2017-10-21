@@ -209,11 +209,7 @@ class CCNewCoursePanel : JPanel() {
       // there should be no Java support in AS
       return null
     }
-    // TODO: 'getLogo' should depend on language only
-    val tmpCourse = Course()
-    tmpCourse.language = language.id
-    val logo = extension.instance.getEduCourseProjectGenerator(tmpCourse)?.logo
-    return LanguageData(language, logo)
+    return LanguageData(language, extension.instance.logo)
   }
 
   companion object {

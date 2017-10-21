@@ -25,7 +25,10 @@ import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinIcons;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -116,6 +119,12 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   public EduCourseProjectGenerator<Object> getEduCourseProjectGenerator(@NotNull Course course) {
     return EduUtils.isAndroidStudio() ? new KoansAndroidProjectGenerator(course)
             : new EduKotlinCourseProjectGenerator(course);
+  }
+
+  @Nullable
+  @Override
+  public Icon getLogo() {
+    return KotlinIcons.SMALL_LOGO;
   }
 
   static void initTask(@NotNull Task task) {
