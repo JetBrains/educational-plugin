@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -105,10 +106,12 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
   public void projectOpened() {
     migrateIfNeeded();
-    if (CCUtils.isCourseCreator(myProject)) {
-      registerListener();
-      EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE);
-    }
+    StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
+      if (CCUtils.isCourseCreator(myProject)) {
+        registerListener();
+        EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE);
+      }
+    });
   }
 
   public void registerListener() {
