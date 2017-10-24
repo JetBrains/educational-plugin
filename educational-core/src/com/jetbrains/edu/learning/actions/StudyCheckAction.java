@@ -94,7 +94,7 @@ public class StudyCheckAction extends StudyActionWithShortcut {
       return;
     }
     VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
-    if (virtualFile == null) {
+    if (virtualFile == null || FileEditorManager.getInstance(project).getSelectedTextEditor() == null) {
       return;
     }
     if (CCUtils.isTestsFile(project, virtualFile)) {
