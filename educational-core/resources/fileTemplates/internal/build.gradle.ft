@@ -31,7 +31,7 @@ class MyListener implements TestListener {
 
     public void afterTest(TestDescriptor test, TestResult result) {
         if (result.resultType == TestResult.ResultType.FAILURE) {
-            println("#educational_plugin FAILED + " + result.exception.message);
+            println("#educational_plugin FAILED + " + (result.exception.message ?: "Wrong answer"));
         }
     }
 }
