@@ -18,10 +18,10 @@ abstract class DeleteStudyItem(text: String) : DumbAwareAction(text) {
     val project = e.project!!
     val virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(dataContext)!!
     val course = StudyTaskManager.getInstance(project).course!!
-    deleteItem(course, virtualFile, project)
     ApplicationManager.getApplication().runWriteAction({
       CommandProcessor.getInstance().executeCommand(project, {virtualFile.delete(DeleteStudyItem::class.java)}, "", Object())
     })
+    deleteItem(course, virtualFile, project)
   }
 
   override fun update(e: AnActionEvent?) {
