@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,13 +33,13 @@ public class CCNewSubtaskAction extends DumbAwareAction {
   public void actionPerformed(AnActionEvent e) {
     DataContext dataContext = e.getDataContext();
     VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
-    Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
-    if (virtualFile == null || project == null || editor == null) {
-      return;
-    }
+    assert virtualFile != null;
+    assert project != null;
+
     Task task = StudyUtils.getTaskForFile(project, virtualFile);
-    if (task == null) return;
+    assert task != null;
+
     if (!(task instanceof TaskWithSubtasks)) {
       // We want dump current tool window editor state to task
       // before it will be converted to TaskWithSubtasks
