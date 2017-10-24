@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions.studio
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -18,7 +19,9 @@ abstract class DeleteStudyItem(text: String) : DumbAwareAction(text) {
     val virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(dataContext)!!
     val course = StudyTaskManager.getInstance(project).course!!
     deleteItem(course, virtualFile, project)
-    ApplicationManager.getApplication().runWriteAction({ virtualFile.delete(DeleteStudyItem::class.java) })
+    ApplicationManager.getApplication().runWriteAction({
+      CommandProcessor.getInstance().executeCommand(project, {virtualFile.delete(DeleteStudyItem::class.java)}, "", Object())
+    })
   }
 
   override fun update(e: AnActionEvent?) {
