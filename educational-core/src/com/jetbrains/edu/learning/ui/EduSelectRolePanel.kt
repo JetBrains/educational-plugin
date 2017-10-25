@@ -36,13 +36,13 @@ class EduSelectRolePanel : JPanel() {
       }
     })
     studentPanel.add(myStudent)
-    studentPanel.add(JLabel("Student", SwingConstants.CENTER))
+    studentPanel.add(JLabel("Learner", SwingConstants.CENTER))
     add(studentPanel)
 
     teacher.preferredSize = Dimension(iconSize, iconSize)
     val teacherPanel = JPanel(VerticalFlowLayout())
     teacherPanel.add(teacher)
-    teacherPanel.add(JLabel("Teacher", SwingConstants.CENTER))
+    teacherPanel.add(JLabel("Educator", SwingConstants.CENTER))
     teacher.addMouseListener(object : MouseAdapter() {
       override fun mouseClicked(e: MouseEvent?) {
         PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
