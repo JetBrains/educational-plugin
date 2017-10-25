@@ -9,7 +9,6 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.StudyUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder
 
@@ -31,7 +30,6 @@ class CCModuleBuilder(private val myCourse: Course) : EduCourseModuleBuilder() {
     }
 
     StudyTaskManager.getInstance(project).course = myCourse
-    StudyUtils.registerStudyToolWindow(myCourse, project)
     configurator.createCourseModuleContent(moduleModel, project, myCourse, moduleFileDirectory)
 
     // If we drop `registerPostStartupActivity` modules will not be created
