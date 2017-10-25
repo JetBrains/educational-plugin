@@ -45,6 +45,10 @@ public class CCNewSubtaskAction extends DumbAwareAction {
     Task task = StudyUtils.getTaskForFile(project, virtualFile);
     if (task == null) return;
     if (!(task instanceof TaskWithSubtasks)) {
+      // We want dump current tool window editor state to task
+      // before it will be converted to TaskWithSubtasks
+      StudyUtils.saveToolWindowTextIfNeeded(project);
+
       task = convertToTaskWithSubtasks(task, project);
     }
     addSubtask((TaskWithSubtasks)task, project);
