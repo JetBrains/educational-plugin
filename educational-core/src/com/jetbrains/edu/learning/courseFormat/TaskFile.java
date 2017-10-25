@@ -162,7 +162,7 @@ public class TaskFile {
 
   public boolean isValid(@NotNull String text) {
     int length = text.length();
-    List<AnswerPlaceholder> placeholders = getAnswerPlaceholders();
+    List<AnswerPlaceholder> placeholders = getActivePlaceholders();
     for (AnswerPlaceholder placeholder : placeholders) {
       if (!placeholder.isValid(length)) return false;
     }
