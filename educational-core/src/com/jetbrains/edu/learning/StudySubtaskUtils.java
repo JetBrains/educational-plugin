@@ -89,6 +89,11 @@ public class StudySubtaskUtils {
       }
     }
     transformTestFile(project, toSubtaskIndex, taskDir);
+
+    // We want to dump current tool window editor state to subtask
+    // before we will switch subtask
+    StudyUtils.saveToolWindowTextIfNeeded(project);
+
     task.setActiveSubtaskIndex(toSubtaskIndex);
     updateUI(project, task, !CCUtils.isCourseCreator(project) && navigateToTask);
     if (CCUtils.isCourseCreator(project)) {
@@ -166,12 +171,10 @@ public class StudySubtaskUtils {
     ProjectView.getInstance(project).refresh();
     StudyToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
     if (toolWindow != null) {
-      String text = task.getTaskDescription();
-      if (text == null) {
+      if (task.getTaskDescription() == null) {
         task.addTaskText(task.getTaskDescriptionName(), CCUtils.TASK_DESCRIPTION_TEXT);
-        text = CCUtils.TASK_DESCRIPTION_TEXT;
       }
-      toolWindow.setTaskText(text, project);
+      toolWindow.setCurrentTask(project, task);
     }
     if (navigateToTask) {
       StudyNavigator.navigateToTask(project, task);

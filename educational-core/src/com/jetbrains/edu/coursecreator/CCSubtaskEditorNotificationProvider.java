@@ -219,17 +219,27 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
         EditorNotifications.getInstance(myProject).updateNotifications(file);
       }
       if (lastSubtaskIndex == 1) {
-        convertToTask();
+        convertToTask(mySubtaskIndex);
       }
       return FINAL_CHOICE;
     }
 
-    private void convertToTask() {
+    private void convertToTask(int removingSubtaskIndex) {
       final Lesson lesson = myTask.getLesson();
       final List<Task> list = lesson.getTaskList();
       final int i = list.indexOf(myTask);
       final Task task = new PyCharmTask();
       task.copyTaskParameters(myTask);
+
+      // We convert TaskWithSubtasks to PyCharm task only
+      // when myTask has two subtasks and we want to remove one of them.
+      // So `1 - removingSubtaskIndex` is index of subtask we want to copy.
+      int copyingSubtaskIndex = 1 - removingSubtaskIndex;
+      String subtaskFileName = EduNames.TASK + EduNames.SUBTASK_MARKER + copyingSubtaskIndex;
+      String subtaskText = task.getTaskTexts().get(subtaskFileName);
+      task.getTaskTexts().clear();
+      task.addTaskText(EduNames.TASK, subtaskText);
+
       for (TaskFile taskFile : task.getTaskFiles().values()) {
         taskFile.setTask(task);
       }

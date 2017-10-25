@@ -178,15 +178,10 @@ public class StudyUtils {
   }
 
   public static void updateToolWindows(@NotNull final Project project) {
-     final StudyToolWindow studyToolWindow = getStudyToolWindow(project);
+    final StudyToolWindow studyToolWindow = getStudyToolWindow(project);
     if (studyToolWindow != null) {
-      String taskText = getTaskText(project);
-      if (taskText != null) {
-        studyToolWindow.setTaskText(taskText, project);
-      }
-      else {
-        LOG.warn("Task text is null");
-      }
+      Task task = getTaskForCurrentSelectedFile(project);
+      studyToolWindow.updateTask(project, task);
       studyToolWindow.updateCourseProgress(project);
     }
   }
@@ -446,6 +441,19 @@ public class StudyUtils {
       return taskFile.getTask();
     }
     return !EduUtils.isAndroidStudio() ? null : findTaskFromTestFiles(project);
+  }
+
+  @Nullable
+  public static Task getTaskForCurrentSelectedFile(@NotNull Project project) {
+    VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
+    Task task = null;
+    for (VirtualFile file : files) {
+      task = getTaskForFile(project, file);
+      if (task != null) {
+        break;
+      }
+    }
+    return task;
   }
 
   @Nullable
@@ -787,5 +795,19 @@ public class StudyUtils {
       return coursesDir;
     }
     return new File(jarPath, "courses");
+  }
+
+  /**
+   * Save current description into task if `StudyToolWindow` in editing mode
+   * and exit from this mode. Otherwise do nothing.
+   *
+   * @param project current project
+   */
+  public static void saveToolWindowTextIfNeeded(@NotNull Project project) {
+    StudyToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
+    StudyToolWindow.StudyToolWindowMode toolWindowMode = StudyTaskManager.getInstance(project).getToolWindowMode();
+    if (toolWindow != null && toolWindowMode == StudyToolWindow.StudyToolWindowMode.EDITING) {
+      toolWindow.leaveEditingMode(project);
+    }
   }
 }

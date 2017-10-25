@@ -34,6 +34,7 @@ import com.intellij.ui.JBCardLayout;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.util.ui.JBUI;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskTextAction;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
@@ -66,6 +67,9 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
   private JLabel myStatisticLabel;
   private StudyProgressBar myStudyProgressBar;
   private EditorEx myEditor;
+
+  private Task myCurrentTask = null;
+  private int myCurrentSubtaskIndex = -1;
 
   public StudyToolWindow() {
     super(true, true);
@@ -101,16 +105,7 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
     if (isToolwindow) {
       project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new StudyFileEditorManagerListener(this, project));
       Task task = StudyUtils.getCurrentTask(project);
-      if (task == null) {
-        setEmptyText(project);
-        return;
-      }
-      String taskDescription = task.getTaskDescription();
-      if (taskDescription == null) {
-        setEmptyText(project);
-        return;
-      }
-      setTaskText(taskDescription, project);
+      setCurrentTask(project, task);
     }
   }
 
@@ -181,44 +176,58 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
     return group;
   }
 
-  public void setTaskText(@NotNull String text, @NotNull Project project) {
-    if (StudyTaskManager.getInstance(project).isTurnEditingMode()) {
-      enterEditingMode(project);
-      StudyTaskManager.getInstance(project).setTurnEditingMode(false);
-    }
-    if (StudyTaskManager.getInstance(project).getToolWindowMode() == StudyToolWindowMode.EDITING) {
-      enterEditingMode(project);
-    }
-    else {
-      setText(text);
-    }
-  }
-
   public abstract void setText(@NotNull String text);
   
   public void updateFonts(@NotNull Project project) {
     
   }
 
-  public void setEmptyText(@NotNull Project project) {
-    if (StudyTaskManager.getInstance(project).getToolWindowMode() == StudyToolWindowMode.EDITING) {
-      mySplitPane.setFirstComponent(myContentPanel);
-      StudyTaskManager.getInstance(project).setTurnEditingMode(true);
-    }
-    setTaskText(EMPTY_TASK_TEXT, project);
-  }
-
   public enum StudyToolWindowMode {
     TEXT, EDITING
   }
 
+  public void updateTask(@NotNull Project project, @Nullable Task task) {
+    if (myCurrentTask != task) {
+      setCurrentTask(project, task);
+    } else {
+      setTaskText(myCurrentTask);
+    }
+  }
 
-  public void enterEditingMode(Project project) {
-    Task task = StudyUtils.getCurrentTask(project);
-    assert task != null;
-    String taskDescription = task.getTaskDescription(false);
+  public void setCurrentTask(@NotNull Project project, @Nullable Task task) {
+    int subtaskIndex = -1;
+    if (task instanceof TaskWithSubtasks) {
+      subtaskIndex = ((TaskWithSubtasks) task).getActiveSubtaskIndex();
+    }
+    if (myCurrentTask != null && myCurrentTask == task && myCurrentSubtaskIndex == subtaskIndex) return;
+    if (StudyTaskManager.getInstance(project).getToolWindowMode() == StudyToolWindowMode.EDITING) {
+      // Dump current description into file and leave editing mode
+      leaveEditingMode(project);
+    }
+
+    setTaskText(task);
+    myCurrentTask = task;
+    myCurrentSubtaskIndex = subtaskIndex;
+  }
+
+  private void setTaskText(@Nullable Task task) {
+    String descriptionText;
+    if (task != null) {
+      descriptionText = task.getTaskDescription();
+      if (descriptionText == null) {
+        descriptionText = CCUtils.TASK_DESCRIPTION_TEXT;
+      }
+    } else {
+      descriptionText = EMPTY_TASK_TEXT;
+    }
+    setText(descriptionText);
+  }
+
+  public void enterEditingMode(@NotNull Project project) {
+    assert myCurrentTask != null;
+    String taskDescription = myCurrentTask.getTaskDescription(false);
     final EditorFactory factory = EditorFactory.getInstance();
-    Document document = factory.createDocument(taskDescription);
+    Document document = factory.createDocument(taskDescription == null ? CCUtils.TASK_DESCRIPTION_TEXT : taskDescription);
     WebBrowserManager.getInstance().setShowBrowserHover(false);
     String extension = CCSettings.getInstance().useHtmlAsDefaultTaskFormat() ? "html" : "md";
     myEditor = (EditorEx)factory.createEditor(document, project, FileTypeRegistry.getInstance().getFileTypeByExtension(extension), false);
@@ -243,11 +252,11 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
   }
 
 
-  public void leaveEditingMode(Project project) {
-    Task task = StudyUtils.getCurrentTask(project);
-    assert task != null;
-    task.saveTaskText(myEditor.getDocument().getText());
-    EditorFactory.getInstance().releaseEditor(myEditor);
+  public void leaveEditingMode(@NotNull Project project) {
+    if (myCurrentTask != null && myEditor != null) {
+      myCurrentTask.saveTaskText(myEditor.getDocument().getText());
+      EditorFactory.getInstance().releaseEditor(myEditor);
+    }
     WebBrowserManager.getInstance().setShowBrowserHover(true);
     mySplitPane.setFirstComponent(myContentPanel);
     StudyTaskManager.getInstance(project).setToolWindowMode(StudyToolWindowMode.TEXT);
