@@ -34,7 +34,7 @@ class EduSelectRoleComponent : ApplicationComponent {
     val dialog = DialogBuilder()
     val panel = EduSelectRolePanel()
     dialog.setPreferredFocusComponent(panel.getStudentButton())
-    dialog.title("Are you Student or Teacher?").centerPanel(panel)
+    dialog.title("Are you a Learner or an Educator?").centerPanel(panel)
     dialog.addOkAction().setText("Start using EduTools")
     dialog.show()
   }
