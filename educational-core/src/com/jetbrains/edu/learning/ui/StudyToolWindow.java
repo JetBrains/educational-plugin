@@ -18,6 +18,7 @@ package com.jetbrains.edu.learning.ui;
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -227,17 +228,18 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
     assert myCurrentTask != null;
     String taskDescription = myCurrentTask.getTaskDescription(false);
     final EditorFactory factory = EditorFactory.getInstance();
-    Document document = factory.createDocument(taskDescription == null ? CCUtils.TASK_DESCRIPTION_TEXT : taskDescription);
-    WebBrowserManager.getInstance().setShowBrowserHover(false);
-    String extension = CCSettings.getInstance().useHtmlAsDefaultTaskFormat() ? "html" : "md";
-    myEditor = (EditorEx)factory.createEditor(document, project, FileTypeRegistry.getInstance().getFileTypeByExtension(extension), false);
-    Disposer.register(project, new Disposable() {
-      public void dispose() {
+    CommandProcessor.getInstance().runUndoTransparentAction(() -> {
+      Document document = factory.createDocument(taskDescription == null ? CCUtils.TASK_DESCRIPTION_TEXT : taskDescription);
+      WebBrowserManager.getInstance().setShowBrowserHover(false);
+      String extension = CCSettings.getInstance().useHtmlAsDefaultTaskFormat() ? "html" : "md";
+      myEditor = (EditorEx)factory.createEditor(document, project, FileTypeRegistry.getInstance().getFileTypeByExtension(extension), false);
+      Disposer.register(project, () -> {
         if (!myEditor.isDisposed()) {
           factory.releaseEditor(myEditor);
         }
-      }
+      });
     });
+
     JComponent editorComponent = myEditor.getComponent();
     editorComponent.setBorder(new EmptyBorder(10, 20, 0, 10));
     editorComponent.setBackground(EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground());
@@ -254,8 +256,10 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
 
   public void leaveEditingMode(@NotNull Project project) {
     if (myCurrentTask != null && myEditor != null) {
-      myCurrentTask.saveTaskText(myEditor.getDocument().getText());
-      EditorFactory.getInstance().releaseEditor(myEditor);
+      CommandProcessor.getInstance().runUndoTransparentAction(() -> {
+        myCurrentTask.saveTaskText(myEditor.getDocument().getText());
+        EditorFactory.getInstance().releaseEditor(myEditor);
+      });
     }
     WebBrowserManager.getInstance().setShowBrowserHover(true);
     mySplitPane.setFirstComponent(myContentPanel);
