@@ -117,7 +117,7 @@ public class StudyShowHintAction extends StudyActionWithShortcut {
       return false;
     }
     for (TaskFile taskFile : currentTask.getTaskFiles().values()) {
-      List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
+      List<AnswerPlaceholder> placeholders = taskFile.getActivePlaceholders();
       if (!placeholders.isEmpty()) {
         for (AnswerPlaceholder placeholder : placeholders) {
           List<String> hints = placeholder.getHints();
