@@ -301,6 +301,6 @@ public class AnswerPlaceholder {
 
   boolean isValid(int textLength) {
     int end = getOffset() + getLength();
-    return getOffset() > 0 && textLength > 0 && end <= textLength;
+    return getOffset() >= 0 && getLength() > 0 && end <= textLength;
   }
 }
