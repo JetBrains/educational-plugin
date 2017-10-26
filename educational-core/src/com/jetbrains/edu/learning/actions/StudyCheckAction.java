@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.checker.StudyCheckUtils;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.StudyEditor;
@@ -149,7 +150,7 @@ public class StudyCheckAction extends StudyActionWithShortcut {
       indicator.setIndeterminate(true);
       myCheckInProgress.set(true);
       boolean isRemote = myTask.getLesson().getCourse() instanceof RemoteCourse;
-      myResult = isRemote && !(myChecker instanceof EduPyCharmTasksChecker) ? checkOnRemote() : myChecker.check();
+      myResult = isRemote && !(myTask instanceof PyCharmTask) ? checkOnRemote() : myChecker.check();
     }
 
     @Override
