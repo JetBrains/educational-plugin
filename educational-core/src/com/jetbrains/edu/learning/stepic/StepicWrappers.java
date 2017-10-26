@@ -12,7 +12,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
@@ -121,8 +124,9 @@ public class StepicWrappers {
       return testFiles;
     }
     if (!(task instanceof TaskWithSubtasks)) {
-      VirtualFile testFile = taskDir.findChild(configurator.getTestFileName());
-      testFiles.add(testFile);
+      testFiles.addAll(Arrays.stream(taskDir.getChildren())
+          .filter(configurator::isTestFile)
+          .collect(Collectors.toList()));
       return testFiles;
     }
     testFiles.addAll(Arrays.stream(taskDir.getChildren())
