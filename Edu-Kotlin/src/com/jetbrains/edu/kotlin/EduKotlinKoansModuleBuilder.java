@@ -40,17 +40,6 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
 
   @Nullable
   @Override
-  public Module commitModule(@NotNull Project project, @Nullable ModifiableModuleModel model) {
-    Module baseModule = super.commitModule(project, model);
-    if (baseModule == null) {
-      return null;
-    }
-    EduKotlinLibConfigurator.configureLib(baseModule.getProject());
-    return baseModule;
-  }
-
-  @Nullable
-  @Override
   public ModuleWizardStep modifySettingsStep(@NotNull SettingsStep settingsStep) {
     return ProjectWizardStepFactory.getInstance().createJavaSettingsStep(settingsStep, this, Conditions.alwaysTrue());
   }
@@ -74,4 +63,9 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
     return baseModule;
   }
 
+  @Nullable
+  @Override
+  protected Course getCourse() {
+    return myCourse;
+  }
 }
