@@ -14,6 +14,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduSettings;
@@ -40,8 +42,10 @@ import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.StudyUtils.showOAuthDialog;
 
@@ -239,13 +243,26 @@ public class CCStepicConnector {
     final Lesson lesson = task.getLesson();
     final int lessonId = lesson.getId();
 
+    VirtualFile taskDir = task.getTaskDir(project);
+    if (taskDir == null) return -1;
+
     final HttpPut request = new HttpPut(EduStepicNames.STEPIC_API_URL + "/step-sources/" + String.valueOf(task.getStepId()));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
       registerTypeAdapter(AnswerPlaceholder.class, new StudySerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final Language language = lesson.getCourse().getLanguageById();
       final EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(language);
-      task.addTestsTexts(configurator.getTestFileName(), task.getTestsText(project));
+
+      List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren()).filter(configurator::isTestFile)
+                                                 .collect(Collectors.toList());
+      for (VirtualFile file : testFiles) {
+        try {
+          task.addTestsTexts(file.getName(), VfsUtilCore.loadText(file));
+        }
+        catch (IOException e) {
+          LOG.warn("Failed to load text " + file.getName());
+        }
+      }
       final String requestBody = gson.toJson(new StepicWrappers.StepSourceWrapper(project, task, lessonId));
       request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
