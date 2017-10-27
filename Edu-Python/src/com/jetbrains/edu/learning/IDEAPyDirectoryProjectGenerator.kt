@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModel
@@ -9,22 +11,20 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.util.Condition
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
+import com.jetbrains.python.sdk.PythonSdkUpdater
 
 internal class IDEAPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryProjectGenerator(isLocal) {
 
-  override fun addSdk(project: Project, sdk: Sdk) {
-    SdkConfigurationUtil.addSdk(sdk)
-  }
-
-  override fun getAllSdks(project: Project): List<Sdk> =
+  override fun getAllSdks(): List<Sdk> =
           ProjectJdkTable.getInstance().getSdksOfType(PythonSdkType.getInstance())
 
-  // We ignore `registeredSdks` here because `ProjectSdksModel` collects sdk list itself.
-  // So we should just add fake sdk into it
-  override fun getInterpreterComboBox(project: Project, registeredSdks: List<Sdk>, fakeSdk: Sdk?): ComboboxWithBrowseButton {
+  override fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
+    val project = ProjectManager.getInstance().defaultProject
     val model = ProjectSdksModel()
     model.reset(project)
     if (fakeSdk != null) {
@@ -51,6 +51,19 @@ internal class IDEAPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryPr
     val setupButton = comboBoxWithBrowseButton.button
     comboBox.setSetupButton(setupButton, null, model, comboBox.getModel().getSelectedItem() as JdkComboBox.JdkComboBoxItem, null, false)
     return comboBoxWithBrowseButton
+  }
+
+  override fun updateSdkIfNeeded(project: Project, sdk: Sdk?): Sdk? {
+    return if (sdk is PyDetectedSdk) {
+      val name = sdk.name
+      val sdkHome = WriteAction.compute<VirtualFile, RuntimeException> { LocalFileSystem.getInstance().refreshAndFindFileByPath(name) }
+      val newSdk = SdkConfigurationUtil.createAndAddSDK(sdkHome.path, PythonSdkType.getInstance())
+      if (newSdk != null) {
+        PythonSdkUpdater.updateOrShowError(newSdk, null, project, null)
+        SdkConfigurationUtil.addSdk(newSdk)
+      }
+      newSdk
+    } else sdk
   }
 
   private fun onSdkSelected(comboBox: JdkComboBox) {
