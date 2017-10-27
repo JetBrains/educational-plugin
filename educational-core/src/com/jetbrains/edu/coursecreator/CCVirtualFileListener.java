@@ -99,7 +99,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
     }
   }
 
-  public static void deleteLesson(@NotNull final Course course, @NotNull final VirtualFile removedLessonFile, Project project) {
+  private static void deleteLesson(@NotNull final Course course, @NotNull final VirtualFile removedLessonFile, Project project) {
     Lesson removedLesson = course.getLesson(removedLessonFile.getName());
     if (removedLesson == null) {
       return;
@@ -109,7 +109,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
     course.removeLesson(removedLesson);
   }
 
-  public static void deleteTask(@NotNull final Course course, @NotNull final VirtualFile removedTask) {
+  private static void deleteTask(@NotNull final Course course, @NotNull final VirtualFile removedTask) {
     VirtualFile lessonDir = removedTask.getParent();
     if (lessonDir == null || !lessonDir.getName().contains(EduNames.LESSON)) {
       return;
