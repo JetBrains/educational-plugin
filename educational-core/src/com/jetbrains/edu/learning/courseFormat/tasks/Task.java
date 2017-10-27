@@ -2,16 +2,12 @@ package com.jetbrains.edu.learning.courseFormat.tasks;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.intellij.lang.Language;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -208,24 +204,6 @@ public abstract class Task implements StudyItem {
 
   public String getTaskDescriptionName() {
     return EduNames.TASK;
-  }
-
-  @NotNull
-  public String getTestsText(@NotNull final Project project) {
-    final Course course = getLesson().getCourse();
-    final Language language = course.getLanguageById();
-    final EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(language);
-    final VirtualFile taskDir = getTaskDir(project);
-    if (taskDir != null) {
-      final VirtualFile file = taskDir.findChild(configurator.getTestFileName());
-      if (file == null) return "";
-      final Document document = FileDocumentManager.getInstance().getDocument(file);
-      if (document != null) {
-        return document.getImmutableCharSequence().toString();
-      }
-    }
-
-    return "";
   }
 
   @Override
