@@ -74,6 +74,10 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   private PyNewProjectSettings mySettings = new PyNewProjectSettings();
   private Course myCourse;
 
+  // Some python API has been changed while 2017.3 (first version of python plugin with new API is 2017.3.173.3415.6).
+  // To prevent exceptions because of it we should check if it is new API or not.
+  protected final boolean myHasOldPythonApi;
+
   public PyDirectoryProjectGenerator(boolean isLocal) {
     this.isLocal = isLocal;
     myGenerator = new StudyProjectGenerator();
@@ -83,6 +87,22 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
         setValidationResult(result);
       }
     });
+    myHasOldPythonApi = hasOldPythonApi();
+  }
+
+  private boolean hasOldPythonApi() {
+    try {
+      // `com.jetbrains.python.sdk.PySdkExtKt` is part of new python API
+      // so we can use it to determine if it is new python API or not.
+      // This way looks easier than check version because
+      // there are different IDE with python support: PyCharm C/P/EDU and other IDEs with python plugin
+      // and we have to use separate way to check API version for each case.
+      Class.forName("com.jetbrains.python.sdk.PySdkExtKt");
+      return false;
+    } catch (ClassNotFoundException e) {
+      LOG.warn("Current python API is old");
+      return true;
+    }
   }
 
   @Nls
@@ -197,6 +217,14 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   @Nullable
   @Override
   public LabeledComponent<JComponent> getLanguageSettingsComponent(@NotNull Course selectedCourse) {
+    // It is rather hard to support python interpreter combobox
+    // and virtual env creation using old API
+    // so we decided to turn off it in this case.
+    if (myHasOldPythonApi) {
+      LOG.warn("We won't show interpreter combobox because current python API is old");
+      return null;
+    }
+
     // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
     ProjectJdkImpl fakeSdk = createFakeSdk(selectedCourse);
 

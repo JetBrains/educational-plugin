@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.containers.ContainerUtil
@@ -10,7 +11,12 @@ import com.jetbrains.python.newProject.steps.PythonSdkChooserCombo
 internal class PyCharmPyDirectoryProjectGenerator(isLocal: Boolean) : PyDirectoryProjectGenerator(isLocal) {
 
   override fun getAllSdks(): List<Sdk> {
-    return PyConfigurableInterpreterList.getInstance(null).allPythonSdks
+    // New python API passes default project into `ServiceManager.getService` if project argument is null
+    // but old API passes project argument into `ServiceManager.getService` directly
+    // and doesn't support null argument
+    // so if we use old API we should pass default project manually
+    val project = if (myHasOldPythonApi) ProjectManager.getInstance().defaultProject else null
+    return PyConfigurableInterpreterList.getInstance(project).allPythonSdks
   }
 
   override fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
