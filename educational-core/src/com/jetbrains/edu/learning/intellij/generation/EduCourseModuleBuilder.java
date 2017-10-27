@@ -1,12 +1,11 @@
 package com.jetbrains.edu.learning.intellij.generation;
 
-import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.roots.ModifiableRootModel;
 
 import java.util.Collections;
 
-public class EduCourseModuleBuilder extends JavaModuleBuilder {
+public class EduCourseModuleBuilder extends EduBaseIntellijModuleBuilder {
 
   @Override
   public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {

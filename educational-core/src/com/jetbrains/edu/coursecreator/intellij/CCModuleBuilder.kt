@@ -7,27 +7,19 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.startup.StartupManager
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
-import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder
 
 class CCModuleBuilder(private val myCourse: Course) : EduCourseModuleBuilder() {
 
+  override val course: Course? get() = myCourse
+
   override fun createModule(moduleModel: ModifiableModuleModel): Module {
     val module = super.createModule(moduleModel)
     val project = module.project
 
-    val language = myCourse.languageById
-    if (language == null) {
-      LOG.error("Can't find language by ${myCourse.languageID}")
-      return module
-    }
-    val configurator = EduPluginConfigurator.INSTANCE.forLanguage(language)
-    if (configurator == null) {
-      LOG.error("EduPluginConfigurator for language ${language.displayName} not found")
-      return module
-    }
+    val configurator = pluginConfigurator(myCourse) ?: return module
 
     StudyTaskManager.getInstance(project).course = myCourse
     configurator.createCourseModuleContent(moduleModel, project, myCourse, moduleFileDirectory)

@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.intellij.generation;
 
 import com.intellij.ide.highlighter.ModuleFileType;
-import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
@@ -16,15 +15,15 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
-import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 
 
-public class EduTaskModuleBuilder extends JavaModuleBuilder {
+public class EduTaskModuleBuilder extends EduBaseIntellijModuleBuilder {
   private final Task myTask;
   private final Module myUtilModule;
 
@@ -58,11 +57,16 @@ public class EduTaskModuleBuilder extends JavaModuleBuilder {
     }
     createTask(module.getProject(), course, src);
     ModuleRootModificationUtil.addDependency(module, myUtilModule);
-    EduIntellijUtils.addJUnit(module);
     return module;
   }
 
   protected void createTask(Project project, Course course, VirtualFile src) throws IOException {
     StudyGenerator.createTaskContent(myTask, src);
+  }
+
+  @Nullable
+  @Override
+  protected Course getCourse() {
+    return myTask.getLesson().getCourse();
   }
 }

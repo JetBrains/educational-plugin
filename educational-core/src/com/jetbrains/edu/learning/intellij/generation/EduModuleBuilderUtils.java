@@ -45,18 +45,18 @@ public class EduModuleBuilderUtils {
     createCourseModuleContent(moduleModel, project, course, moduleDir);
   }
 
-  public static void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel, Project project, Course course, String moduleDir)
+  public static void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel, @NotNull Project project, Course course, String moduleDir)
     throws IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
     if (moduleDir == null) {
       return;
     }
     EduUtilModuleBuilder utilModuleBuilder = new EduUtilModuleBuilder(moduleDir, course.getAdditionalMaterialsTask());
-    Module utilModule = utilModuleBuilder.createModule(moduleModel);
-    createLessonModules(moduleModel, course, moduleDir, utilModule);
+    Module utilModule = utilModuleBuilder.createAndCommitIfNeeded(project, moduleModel, false);
+    createLessonModules(project, moduleModel, course, moduleDir, utilModule);
   }
 
 
-  private static void createLessonModules(@NotNull ModifiableModuleModel moduleModel, Course course, String moduleDir, Module utilModule)
+  private static void createLessonModules(@NotNull Project project, @NotNull ModifiableModuleModel moduleModel, Course course, String moduleDir, Module utilModule)
     throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
     List<Lesson> lessons = course.getLessons();
     for (int i = 0; i < lessons.size(); i++) {
@@ -64,7 +64,7 @@ public class EduModuleBuilderUtils {
       Lesson lesson = lessons.get(i);
       lesson.setIndex(lessonVisibleIndex);
       EduLessonModuleBuilder eduLessonModuleBuilder = new EduLessonModuleBuilder(moduleDir, lesson, utilModule);
-      eduLessonModuleBuilder.createModule(moduleModel);
+      eduLessonModuleBuilder.createAndCommitIfNeeded(project, moduleModel, false);
     }
   }
 
