@@ -7,7 +7,6 @@ import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMo
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
@@ -85,7 +84,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   public void configureModule(@NotNull Module module) {
     super.configureModule(module);
     Project project = module.getProject();
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> EduKotlinLibConfigurator.configureLib(project));
+    EduKotlinLibConfigurator.configureLib(project);
   }
 
   @Override
