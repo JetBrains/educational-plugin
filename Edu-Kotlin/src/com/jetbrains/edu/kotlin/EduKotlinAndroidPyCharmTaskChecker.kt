@@ -9,12 +9,15 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.JdkBundle
 import com.jetbrains.edu.kotlin.EduKotlinPyCharmTaskChecker.FAILED_TO_LAUNCH
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.StudyCheckAction
 import com.jetbrains.edu.learning.checker.StudyCheckResult
 import com.jetbrains.edu.learning.checker.StudyCheckUtils
 import com.jetbrains.edu.learning.checker.StudyTaskChecker
 import com.jetbrains.edu.learning.courseFormat.StudyStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask
+import com.jetbrains.edu.learning.stepic.EduStepicConnector
+import com.jetbrains.edu.learning.stepic.StepicUser
 
 
 class EduKotlinAndroidPyCharmTaskChecker(task: PyCharmTask, project: Project) : StudyTaskChecker<PyCharmTask>(task, project) {
@@ -39,6 +42,16 @@ class EduKotlinAndroidPyCharmTaskChecker(task: PyCharmTask, project: Project) : 
             Logger.getInstance(EduKotlinPyCharmTaskChecker::class.java).info(StudyCheckAction.FAILED_CHECK_LAUNCH, e)
             FAILED_TO_LAUNCH
         }
+    }
 
+    //copy-pasted from PyStudyTaskChecker
+    override fun checkOnRemote(user: StepicUser?): StudyCheckResult {
+        val result = check()
+        val course = StudyTaskManager.getInstance(myProject).course
+        val status = result.status
+        if (user != null && course != null && course.isStudy && status != StudyStatus.Unchecked) {
+            EduStepicConnector.postSolution(myTask, status == StudyStatus.Solved, myProject)
+        }
+        return result
     }
 }
