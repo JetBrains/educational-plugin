@@ -23,12 +23,13 @@ public class EduBrowseCoursesAction extends AnAction {
     dialogBuilder.setOkOperation(() -> {
       dialogBuilder.getDialogWrapper().close(DialogWrapper.OK_EXIT_CODE);
       Course course = panel.getSelectedCourse();
+      Object projectSettings = panel.getProjectSettings();
       String location = panel.getLocationString();
       EduPluginConfigurator pluginConfigurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
       if (pluginConfigurator != null) {
         EduCourseProjectGenerator projectGenerator = pluginConfigurator.getEduCourseProjectGenerator(course);
         if (projectGenerator != null) {
-          projectGenerator.createCourseProject(location);
+          projectGenerator.createCourseProject(location, projectSettings);
         }
       }
     });

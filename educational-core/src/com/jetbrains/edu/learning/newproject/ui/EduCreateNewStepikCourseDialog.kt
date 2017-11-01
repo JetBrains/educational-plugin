@@ -26,12 +26,12 @@ class EduCreateNewStepikCourseDialog(private val myCourse: Course) : DialogWrapp
 
   override fun doOKAction() {
     val location = myPanel.locationString
+    val projectSettings = myPanel.projectSettings
     val language = myCourse.languageById
     if (language != null) {
       EduPluginConfigurator.INSTANCE.forLanguage(language)
               ?.getEduCourseProjectGenerator(myCourse)
-              ?.createCourseProject(location)
-
+              ?.createCourseProject(location, projectSettings)
     }
     close(OK_EXIT_CODE)
   }

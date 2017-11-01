@@ -14,7 +14,6 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,6 +39,7 @@ public class EduCoursePanel extends JPanel {
   private JEditorPane myDescriptionTextArea;
 
   private EduAdvancedSettings myAdvancedSettings;
+  private EduPluginConfigurator.LanguageSettings<?> myLanguageSettings;
 
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
@@ -94,6 +94,10 @@ public class EduCoursePanel extends JPanel {
   @Nullable
   public String getLocationString() {
     return myLocationField == null ? null : myLocationField.getComponent().getText();
+  }
+
+  public Object getProjectSettings() {
+    return myLanguageSettings.getSettings();
   }
 
   public void addLocationFieldDocumentListener(@NotNull DocumentListener listener) {
@@ -160,16 +164,13 @@ public class EduCoursePanel extends JPanel {
     if (configurator == null) {
       return;
     }
-    EduCourseProjectGenerator<?> generator = configurator.getEduCourseProjectGenerator(course);
-    if (generator == null) {
-      return;
-    }
+    myLanguageSettings = configurator.getLanguageSettings();
 
     List<LabeledComponent> settingsComponents = new ArrayList<>();
     if (myLocationField != null) {
       settingsComponents.add(myLocationField);
     }
-    LabeledComponent<JComponent> component = generator.getLanguageSettingsComponent();
+    LabeledComponent<JComponent> component = myLanguageSettings.getLanguageSettingsComponent(course);
     if (component != null) {
       settingsComponents.add(component);
     }

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
+import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +78,7 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   }
 
   @Override
-  public EduCourseProjectGenerator<Object> getEduCourseProjectGenerator(@NotNull Course course) {
+  public EduCourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
     return new EduJavaCourseProjectGenerator(course);
   }
 

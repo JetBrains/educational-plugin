@@ -24,7 +24,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.core.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator
 import com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings
 import java.awt.BorderLayout
 import java.awt.Component
@@ -50,7 +49,7 @@ class CCNewCoursePanel : JPanel() {
   private val myErrorLabel = JBLabel()
 
   private val myCourse: Course = Course().apply { courseMode = CCUtils.COURSE_MODE }
-  private var myProjectGenerator: EduCourseProjectGenerator<*>? = null
+  private lateinit var myLanguageSettings: EduPluginConfigurator.LanguageSettings<*>
 
   private var myValidationListener: ValidationListener? = null
 
@@ -106,20 +105,13 @@ class CCNewCoursePanel : JPanel() {
     collectSupportedLanguages()
   }
 
-  // We return generator instance instead of new course object
-  // because `myProjectGenerator` holds state of `languageSettingsComponent`
-  // and if we return just course object and create new instance of EduCourseProjectGenerator
-  // we will lose the state of language settings (for example, selected sdk version).
-  val projectGenerator: EduCourseProjectGenerator<*>? get() {
-    // It's a small hack.
-    // We know that `myProjectGenerator` contains reference at `myCourse`
-    // So if we update state of course we will update state of generator at the same time.
+  val course: Course get() {
     myCourse.name = myTitleField.text
     myCourse.description = myDescriptionTextArea.text
     myCourse.setAuthorsAsString(StringUtil.splitByLines(myAuthorField.text.orEmpty()))
-    return myProjectGenerator
+    return myCourse
   }
-
+  val projectSettings: Any get() = myLanguageSettings.settings
   val locationString: String get() = myLocationField.component.text
 
   fun setValidationListener(listener: ValidationListener?) {
@@ -180,10 +172,9 @@ class CCNewCoursePanel : JPanel() {
 
     val configurator = EduPluginConfigurator.INSTANCE.forLanguage(language) ?: return
     myCourse.language = language.id
-    myProjectGenerator = configurator.getEduCourseProjectGenerator(myCourse)
+    myLanguageSettings = configurator.languageSettings
 
-    val labeledComponent = myProjectGenerator?.languageSettingsComponent
-    val settings = listOfNotNull(myLocationField, labeledComponent)
+    val settings = listOfNotNull(myLocationField, myLanguageSettings.getLanguageSettingsComponent(myCourse))
     myAdvancedSettings.setSettingsComponents(settings)
   }
 

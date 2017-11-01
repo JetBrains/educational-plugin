@@ -18,7 +18,6 @@ package com.jetbrains.edu.learning.newproject;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.platform.DirectoryProjectGenerator;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -29,9 +28,6 @@ import javax.swing.*;
 public interface EduCourseProjectGenerator<S> extends DirectoryProjectGenerator<S> {
 
   @NotNull
-  S getProjectSettings();
-
-  @NotNull
   default ValidationResult validate() {
     return ValidationResult.OK;
   }
@@ -40,23 +36,18 @@ public interface EduCourseProjectGenerator<S> extends DirectoryProjectGenerator<
     return true;
   }
 
-  default void afterProjectGenerated(@NotNull Project project) {
+  default void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
   }
 
-  @Nullable
-  default LabeledComponent<JComponent> getLanguageSettingsComponent() {
-    return null;
-  }
-
-  default void createCourseProject(@NotNull String location) {
+  default void createCourseProject(@NotNull String location, @NotNull S projectSettings) {
     if (!beforeProjectGenerated()) {
       return;
     }
-    Project createdProject = AbstractNewProjectStep.doGenerateProject(null, location, this, getProjectSettings());
+    Project createdProject = AbstractNewProjectStep.doGenerateProject(null, location, this, projectSettings);
     if (createdProject == null) {
       return;
     }
-    afterProjectGenerated(createdProject);
+    afterProjectGenerated(createdProject, projectSettings);
   }
 
   @Nls
