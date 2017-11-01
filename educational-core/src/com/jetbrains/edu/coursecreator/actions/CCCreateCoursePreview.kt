@@ -6,7 +6,7 @@ import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
-import com.jetbrains.edu.learning.EduPluginConfigurator
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager
 import com.jetbrains.edu.learning.StudyTaskManager
 
 class CCCreateCoursePreview : DumbAwareAction("Create Course Preview") {
@@ -17,7 +17,7 @@ class CCCreateCoursePreview : DumbAwareAction("Create Course Preview") {
     val module = ModuleUtil.findModuleForFile(projectDir, project) ?: return
     val currentCourse = StudyTaskManager.getInstance(project).course ?: return
     val language = currentCourse.languageById ?: return
-    val configurator = EduPluginConfigurator.INSTANCE.forLanguage(language) ?: return
+    val configurator = EduPluginConfiguratorManager.forLanguage(language) ?: return
 
     CCCreateCoursePreviewDialog(project, module, currentCourse, configurator).show()
   }

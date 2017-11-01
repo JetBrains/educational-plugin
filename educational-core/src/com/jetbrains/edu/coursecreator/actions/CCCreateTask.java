@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -53,7 +54,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   @Nullable
   protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Task item,
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator != null) {
       return configurator.createTaskContent(project, item, parentDirectory, course);
     }
