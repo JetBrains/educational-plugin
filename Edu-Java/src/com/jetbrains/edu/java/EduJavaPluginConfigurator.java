@@ -8,6 +8,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -86,5 +87,10 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   @Override
   public Icon getLogo() {
     return EducationalCoreIcons.JavaLogo;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return !EduUtils.isAndroidStudio();
   }
 }

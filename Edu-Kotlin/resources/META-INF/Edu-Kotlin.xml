@@ -11,6 +11,7 @@
 
     <extensions defaultExtensionNs="Educational">
         <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator" language="kotlin"/>
+        <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.android.EduKotlinAndroidPluginConfigurator" language="kotlin"/>
         <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
     </extensions>

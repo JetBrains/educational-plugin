@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -44,7 +45,7 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
   @Nullable
   protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Lesson item,
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return null;
     }

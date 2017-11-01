@@ -17,10 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudySerializationUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -251,7 +248,7 @@ public class CCStepicConnector {
       registerTypeAdapter(AnswerPlaceholder.class, new StudySerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final Language language = lesson.getCourse().getLanguageById();
-      final EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(language);
+      final EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(language);
 
       List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren()).filter(configurator::isTestFile)
                                                  .collect(Collectors.toList());
