@@ -13,14 +13,9 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.BooleanFunction;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -38,13 +33,10 @@ import com.jetbrains.python.remote.PyProjectSynchronizer;
 import com.jetbrains.python.sdk.PyDetectedSdk;
 import com.jetbrains.python.sdk.PySdkExtKt;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import icons.PythonIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -59,7 +51,6 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   private final StudyProjectGenerator myGenerator;
 
   private ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
-  private PyNewProjectSettings mySettings = new PyNewProjectSettings();
 
   // Some python API has been changed while 2017.3 (first version of python plugin with new API is 2017.3.173.3415.6).
   // To prevent exceptions because of it we should check if it is new API or not.
@@ -68,12 +59,7 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   public PyDirectoryProjectGenerator(@NotNull Course course) {
     myCourse = course;
     myGenerator = new StudyProjectGenerator();
-    myGenerator.addSettingsStateListener(new StudyProjectGenerator.SettingsListener() {
-      @Override
-      public void stateChanged(ValidationResult result) {
-        setValidationResult(result);
-      }
-    });
+    myGenerator.addSettingsStateListener(this::setValidationResult);
     myHasOldPythonApi = hasOldPythonApi();
   }
 
@@ -173,57 +159,15 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   }
 
   @Override
-  public void afterProjectGenerated(@NotNull Project project) {
-    Sdk sdk = mySettings.getSdk();
+  public void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
+    Sdk sdk = settings.getSdk();
 
     if (sdk != null && sdk.getSdkType() == FakePythonSdkType.INSTANCE) {
-      createAndAddVirtualEnv(project, mySettings);
-      sdk = mySettings.getSdk();
+      createAndAddVirtualEnv(project, settings);
+      sdk = settings.getSdk();
     }
     sdk = updateSdkIfNeeded(project, sdk);
     SdkConfigurationUtil.setDirectoryProjectSdk(project, sdk);
-  }
-
-  @Nullable
-  @Override
-  public LabeledComponent<JComponent> getLanguageSettingsComponent() {
-    // It is rather hard to support python interpreter combobox
-    // and virtual env creation using old API
-    // so we decided to turn off it in this case.
-    if (myHasOldPythonApi) {
-      LOG.warn("We won't show interpreter combobox because current python API is old");
-      return null;
-    }
-
-    // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
-    ProjectJdkImpl fakeSdk = createFakeSdk(myCourse);
-
-    ComboboxWithBrowseButton combo = getInterpreterComboBox(fakeSdk);
-    if (SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
-      combo.putClientProperty("JButton.buttonType", null);
-    }
-    combo.setButtonIcon(PythonIcons.Python.InterpreterGear);
-    return LabeledComponent.create(combo, "Interpreter", BorderLayout.WEST);
-  }
-
-  protected void onSdkSelected(@Nullable Sdk sdk) {
-    mySettings.setSdk(sdk);
-  }
-
-  @Nullable
-  private static ProjectJdkImpl createFakeSdk(@NotNull Course selectedCourse) {
-    String fakeSdkPath = getBaseSdk(selectedCourse);
-    if (fakeSdkPath == null) {
-      return null;
-    }
-    PythonSdkFlavor flavor = PythonSdkFlavor.getApplicableFlavors(false).get(0);
-    String prefix = flavor.getName() + " ";
-    String versionString = flavor.getVersionString(fakeSdkPath);
-    if (versionString == null || !versionString.contains(prefix)) {
-      return null;
-    }
-    String name = "new virtual env " + versionString.substring(prefix.length());
-    return new ProjectJdkImpl(name, FakePythonSdkType.INSTANCE);
   }
 
   public void setValidationResult(ValidationResult validationResult) {
@@ -282,7 +226,7 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     }
   }
 
-  private static String getBaseSdk(@NotNull final Course course) {
+  static String getBaseSdk(@NotNull final Course course) {
     LanguageLevel baseLevel = LanguageLevel.PYTHON36;
     final String version = course.getLanguageVersion();
     if (PyEduPluginConfigurator.PYTHON_2.equals(version)) {
@@ -311,12 +255,6 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     return baseSdk != null ? baseSdk : baseSdks.iterator().next();
   }
 
-  @NotNull
-  @Override
-  public PyNewProjectSettings getProjectSettings() {
-    return mySettings;
-  }
-
   @Nullable
   protected Sdk updateSdkIfNeeded(@NotNull Project project, @Nullable Sdk sdk) {
     return sdk;
@@ -324,6 +262,4 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
 
   @NotNull
   protected abstract List<Sdk> getAllSdks();
-  @NotNull
-  protected abstract ComboboxWithBrowseButton getInterpreterComboBox(@Nullable Sdk fakeSdk);
 }

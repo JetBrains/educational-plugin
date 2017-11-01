@@ -33,6 +33,7 @@ class EduCreateNewStepikCoursePanel : JPanel(BorderLayout()) {
 
   // '!!' is safe here because `myCoursePanel` has location field
   val locationString: String get() = myCoursePanel.locationString!!
+  val projectSettings: Any get() = myCoursePanel.projectSettings
 
   fun bindCourse(course: Course) {
     myCoursePanel.bindCourse(course)

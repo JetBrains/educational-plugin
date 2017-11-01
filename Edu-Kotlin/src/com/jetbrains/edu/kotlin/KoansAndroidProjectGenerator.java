@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGeneratorBase;
@@ -34,7 +35,8 @@ public class KoansAndroidProjectGenerator extends EduIntellijCourseProjectGenera
   }
 
   @Override
-  public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir, @Nullable Object o, @NotNull Module module) {
+  public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir,
+                              @NotNull JdkProjectSettings settings, @NotNull Module module) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
         StudyTaskManager.getInstance(project).setCourse(myCourse);
