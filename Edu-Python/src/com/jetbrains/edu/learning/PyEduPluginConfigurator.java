@@ -177,9 +177,19 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProje
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), COURSE_NAME));
   }
 
+  @NotNull
+  @Override
+  public LanguageSettings<PyNewProjectSettings> getLanguageSettings() {
+    if (isPyCharmOrCLion()) {
+      return new PyCharmPyLanguageSettings();
+    } else {
+      return new IDEAPyLanguageSettings();
+    }
+  }
+
   @Override
   public EduCourseProjectGenerator<PyNewProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
-    if (PlatformUtils.isPyCharm() || PlatformUtils.isCLion()) {
+    if (isPyCharmOrCLion()) {
       return new PyCharmPyDirectoryProjectGenerator(course);
     } else {
       return new IDEAPyDirectoryProjectGenerator(course);
@@ -213,5 +223,9 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProje
   @Override
   public Icon getLogo() {
     return PythonIcons.Python.Python_logo;
+  }
+
+  private boolean isPyCharmOrCLion() {
+    return PlatformUtils.isPyCharm() || PlatformUtils.isCLion();
   }
 }

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.ui.DialogWrapper
+import com.jetbrains.edu.learning.EduPluginConfigurator
 import javax.swing.JComponent
 
 class CCNewCourseDialog : DialogWrapper(true) {
@@ -21,8 +22,15 @@ class CCNewCourseDialog : DialogWrapper(true) {
   override fun createCenterPanel(): JComponent = myPanel
 
   override fun doOKAction() {
+    val course = myPanel.course
+    val projectSettings = myPanel.projectSettings
     val location = myPanel.locationString
-    myPanel.projectGenerator?.createCourseProject(location)
+    val language = course.languageById
+    if (language != null) {
+      EduPluginConfigurator.INSTANCE.forLanguage(language)
+              ?.getEduCourseProjectGenerator(course)
+              ?.createCourseProject(location, projectSettings)
+    }
     close(OK_EXIT_CODE)
   }
 }

@@ -298,6 +298,11 @@ public class EduCoursesPanel extends JPanel {
     return locationString;
   }
 
+  @NotNull
+  public Object getProjectSettings() {
+    return myCoursePanel.getProjectSettings();
+  }
+
   @Override
   public Dimension getPreferredSize() {
     return JBUI.size(600, 400);
