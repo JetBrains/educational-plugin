@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator<Object> {
+public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator<JdkProjectSettings> {
   @Override
   public VirtualFile createLessonContent(@NotNull Project project, @NotNull Lesson lesson, @NotNull VirtualFile parentDirectory) {
     if (EduUtils.isAndroidStudio()) {
@@ -89,5 +89,11 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
     } catch (IOException | ModuleWithNameAlreadyExists | ConfigurationException | JDOMException e) {
       Logger.getInstance(EduPluginConfiguratorBase.class).error(e);
     }
+  }
+
+  @NotNull
+  @Override
+  public LanguageSettings<JdkProjectSettings> getLanguageSettings() {
+    return new JdkLanguageSettings();
   }
 }

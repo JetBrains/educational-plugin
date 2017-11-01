@@ -10,6 +10,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
@@ -165,6 +166,13 @@ public interface EduPluginConfigurator<S> {
     return Collections.emptyList();
   }
 
+  /**
+   * @return object responsible for language settings
+   * @see LanguageSettings
+   */
+  @NotNull
+  LanguageSettings<S> getLanguageSettings();
+
   @Nullable
   default EduCourseProjectGenerator<S> getEduCourseProjectGenerator(@NotNull Course course) {
     return null;
@@ -198,5 +206,31 @@ public interface EduPluginConfigurator<S> {
   @Nullable
   default Icon getLogo() {
     return null;
+  }
+
+  /**
+   * Main interface responsible for course project language settings such as JDK or interpreter
+   *
+   * @param <S> container type holds project settings state
+   */
+  interface LanguageSettings<S> {
+
+    /**
+     * Returns UI component that allows user to select course project settings such as project JDK or interpreter.
+     *
+     * @param course course of creating project
+     * @return UI component with project settings. Can be null
+     */
+    @Nullable
+    LabeledComponent<JComponent> getLanguageSettingsComponent(@NotNull Course course);
+
+    /**
+     * Returns project settings associated with state of language settings UI component.
+     * It should be passed into project generator to set chosen settings in course project.
+     *
+     * @return project settings object
+     */
+    @NotNull
+    S getSettings();
   }
 }

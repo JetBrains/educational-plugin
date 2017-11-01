@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
+import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
@@ -116,7 +117,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   }
 
   @Override
-  public EduCourseProjectGenerator<Object> getEduCourseProjectGenerator(@NotNull Course course) {
+  public EduCourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
     return EduUtils.isAndroidStudio() ? new KoansAndroidProjectGenerator(course)
             : new EduKotlinCourseProjectGenerator(course);
   }

@@ -15,13 +15,9 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.BooleanFunction;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -31,7 +27,6 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
-import com.jetbrains.python.configuration.VirtualEnvProjectFilter;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -39,13 +34,10 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.remote.PyProjectSynchronizer;
 import com.jetbrains.python.sdk.*;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import icons.PythonIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -60,17 +52,11 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   private final StudyProjectGenerator myGenerator;
 
   private ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
-  private PyNewProjectSettings mySettings = new PyNewProjectSettings();
 
   public PyDirectoryProjectGenerator(@NotNull Course course) {
     myCourse = course;
     myGenerator = new StudyProjectGenerator();
-    myGenerator.addSettingsStateListener(new StudyProjectGenerator.SettingsListener() {
-      @Override
-      public void stateChanged(ValidationResult result) {
-        setValidationResult(result);
-      }
-    });
+    myGenerator.addSettingsStateListener(this::setValidationResult);
   }
 
   @Nls
@@ -155,12 +141,12 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   }
 
   @Override
-  public void afterProjectGenerated(@NotNull Project project) {
-    Sdk sdk = mySettings.getSdk();
+  public void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
+    Sdk sdk = settings.getSdk();
 
     if (sdk != null && sdk.getSdkType() == FakePythonSdkType.INSTANCE) {
-      createAndAddVirtualEnv(project, mySettings);
-      sdk = mySettings.getSdk();
+      createAndAddVirtualEnv(project, settings);
+      sdk = settings.getSdk();
     }
     if (sdk instanceof PyDetectedSdk) {
       sdk = addDetectedSdk(sdk, project);
@@ -178,43 +164,6 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     }
 
     return sdk;
-  }
-
-  @Nullable
-  @Override
-  public LabeledComponent<JComponent> getLanguageSettingsComponent() {
-    final Project project = ProjectManager.getInstance().getDefaultProject();
-    final List<Sdk> sdks = getAllSdks(project);
-    VirtualEnvProjectFilter.removeAllAssociated(sdks);
-    // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
-    ProjectJdkImpl fakeSdk = createFakeSdk(myCourse);
-
-    ComboboxWithBrowseButton combo = getInterpreterComboBox(project, sdks, fakeSdk);
-    if (SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
-      combo.putClientProperty("JButton.buttonType", null);
-    }
-    combo.setButtonIcon(PythonIcons.Python.InterpreterGear);
-    return LabeledComponent.create(combo, "Interpreter", BorderLayout.WEST);
-  }
-
-  protected void onSdkSelected(@Nullable Sdk sdk) {
-    mySettings.setSdk(sdk);
-  }
-
-  @Nullable
-  private static ProjectJdkImpl createFakeSdk(@NotNull Course selectedCourse) {
-    String fakeSdkPath = getBaseSdk(selectedCourse);
-    if (fakeSdkPath == null) {
-      return null;
-    }
-    PythonSdkFlavor flavor = PythonSdkFlavor.getApplicableFlavors(false).get(0);
-    String prefix = flavor.getName() + " ";
-    String versionString = flavor.getVersionString(fakeSdkPath);
-    if (versionString == null || !versionString.contains(prefix)) {
-      return null;
-    }
-    String name = "new virtual env " + versionString.substring(prefix.length());
-    return new ProjectJdkImpl(name, FakePythonSdkType.INSTANCE);
   }
 
   public void setValidationResult(ValidationResult validationResult) {
@@ -274,7 +223,7 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     }
   }
 
-  private static String getBaseSdk(@NotNull final Course course) {
+  static String getBaseSdk(@NotNull final Course course) {
     LanguageLevel baseLevel = LanguageLevel.PYTHON30;
     final String version = course.getLanguageVersion();
     if (PyEduPluginConfigurator.PYTHON_2.equals(version)) {
@@ -303,15 +252,7 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     return baseSdk != null ? baseSdk : baseSdks.iterator().next();
   }
 
-  @NotNull
-  @Override
-  public PyNewProjectSettings getProjectSettings() {
-    return mySettings;
-  }
-
   protected abstract void addSdk(@NotNull Project project, @NotNull Sdk sdk);
   @NotNull
   protected abstract List<Sdk> getAllSdks(@NotNull Project project);
-  @NotNull
-  protected abstract ComboboxWithBrowseButton getInterpreterComboBox(@NotNull Project project, @NotNull List<Sdk> registeredSdks, @Nullable Sdk fakeSdk);
 }
