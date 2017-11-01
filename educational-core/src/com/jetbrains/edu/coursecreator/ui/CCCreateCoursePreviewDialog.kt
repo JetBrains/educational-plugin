@@ -22,7 +22,7 @@ class CCCreateCoursePreviewDialog(
         private val myProject: Project,
         private val myModule: Module,
         private val myCourse: Course,
-        private val myConfigurator: EduPluginConfigurator<Any>
+        private val myConfigurator: EduPluginConfigurator<*>
 ) : DialogWrapper(true) {
 
   private val myPanel: EduCoursePanel = EduCoursePanel(true, false).apply {

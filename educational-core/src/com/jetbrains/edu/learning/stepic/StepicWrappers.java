@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -117,7 +118,7 @@ public class StepicWrappers {
   private static List<VirtualFile> getTestFiles(@NotNull Task task, @NotNull Project project) {
     final Course course = task.getLesson().getCourse();
     final Language language = course.getLanguageById();
-    final EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(language);
+    final EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(language);
     List<VirtualFile> testFiles = new ArrayList<>();
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {

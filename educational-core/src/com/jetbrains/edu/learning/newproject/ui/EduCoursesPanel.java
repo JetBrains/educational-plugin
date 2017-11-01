@@ -23,6 +23,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -281,7 +282,7 @@ public class EduCoursesPanel extends JPanel {
   @Nullable
   private static Icon getLogo(@NotNull Course course) {
     Language language = course.getLanguageById();
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(language);
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(language);
     if (configurator == null) {
       LOG.info("plugin configurator is null, language: " + language.getDisplayName());
       return null;

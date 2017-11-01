@@ -1,11 +1,11 @@
 package com.jetbrains.edu.learning.languageColors
 
-import com.google.gson.*
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.intellij.lang.Language
 import com.intellij.ui.ColorUtil
-import com.jetbrains.edu.learning.EduPluginConfigurator
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager
 import java.awt.Color
 
 object LanguageColorManager {
@@ -20,7 +20,7 @@ object LanguageColorManager {
   }
 
   operator fun get(language: Language): Color? {
-    val tagColor = EduPluginConfigurator.INSTANCE.forLanguage(language)?.languageTagColor()
+    val tagColor = EduPluginConfiguratorManager.forLanguage(language)?.languageTagColor()
     return if (tagColor != null) {
       tagColor
     } else {

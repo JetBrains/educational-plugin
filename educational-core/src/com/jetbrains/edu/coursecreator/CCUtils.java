@@ -20,6 +20,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.util.Function;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -199,7 +200,7 @@ public class CCUtils {
     if (language == null) {
       return false;
     }
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(language);
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(language);
     if (configurator == null) {
       return false;
     }
@@ -257,7 +258,7 @@ public class CCUtils {
   @Nullable
   public static Lesson createAdditionalLesson(Course course, Project project) {
     final VirtualFile baseDir = project.getBaseDir();
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
 
     final Lesson lesson = new Lesson();
     lesson.setName(EduNames.PYCHARM_ADDITIONAL);

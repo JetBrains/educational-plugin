@@ -38,10 +38,7 @@ import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskTextAction;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.StudyFileEditorManagerListener;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
@@ -169,7 +166,7 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
       LOG.warn("Course is null");
       return group;
     }
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator != null) {
       group.addAll(configurator.getTaskDescriptionActionGroup());
     }
