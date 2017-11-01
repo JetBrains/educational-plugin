@@ -39,7 +39,12 @@ public interface EduCourseProjectGenerator<S> extends DirectoryProjectGenerator<
   default void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
   }
 
-  default void createCourseProject(@NotNull String location, @NotNull S projectSettings) {
+  // 'projectSettings' must have S type but due to some reasons:
+  //  * We don't know generic parameter of EduPluginConfigurator after it was gotten through extension point mechanism
+  //  * Kotlin and Java do type erasure a little bit differently
+  // we use Object instead of S and cast to S when it needed
+  @SuppressWarnings("unchecked")
+  default void createCourseProject(@NotNull String location, @NotNull Object projectSettings) {
     if (!beforeProjectGenerated()) {
       return;
     }
@@ -47,7 +52,7 @@ public interface EduCourseProjectGenerator<S> extends DirectoryProjectGenerator<
     if (createdProject == null) {
       return;
     }
-    afterProjectGenerated(createdProject, projectSettings);
+    afterProjectGenerated(createdProject, (S) projectSettings);
   }
 
   @Nls

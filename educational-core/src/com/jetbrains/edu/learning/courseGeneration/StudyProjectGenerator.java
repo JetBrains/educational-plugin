@@ -8,7 +8,6 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -185,8 +184,8 @@ public class StudyProjectGenerator {
   @Nullable
   public List<Course> getBundledCourses() {
     final ArrayList<Course> courses = new ArrayList<>();
-    final LanguageExtensionPoint<EduPluginConfigurator>[] extensions = Extensions.getExtensions(EduPluginConfigurator.EP_NAME, null);
-    for (LanguageExtensionPoint<EduPluginConfigurator> extension : extensions) {
+    final List<LanguageExtensionPoint<EduPluginConfigurator<?>>> extensions = EduPluginConfiguratorManager.allExtensions();
+    for (LanguageExtensionPoint<EduPluginConfigurator<?>> extension : extensions) {
       final EduPluginConfigurator configurator = extension.getInstance();
       final List<String> paths = configurator.getBundledCoursePaths();
       for (String path : paths) {

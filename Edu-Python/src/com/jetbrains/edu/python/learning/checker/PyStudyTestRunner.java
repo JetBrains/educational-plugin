@@ -2,16 +2,19 @@ package com.jetbrains.edu.python.learning.checker;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.python.learning.PyEduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
+import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.sdk.PythonSdkType;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +22,7 @@ import java.io.File;
 import java.util.Map;
 
 class PyStudyTestRunner {
+  private static final Logger LOG = Logger.getInstance(PyStudyTestRunner.class);
   private static final String PYTHONPATH = "PYTHONPATH";
   @NotNull private final Task myTask;
   @NotNull private final VirtualFile myTaskDir;
@@ -31,7 +35,11 @@ class PyStudyTestRunner {
 
   Process createCheckProcess(@NotNull final Project project, @NotNull final String executablePath) throws ExecutionException {
     final Sdk sdk = PythonSdkType.findPythonSdk(ModuleManager.getInstance(project).getModules()[0]);
-    PyEduPluginConfigurator configurator = new PyEduPluginConfigurator();
+    EduPluginConfigurator<?> configurator = EduPluginConfiguratorManager.forLanguage(PythonLanguage.getInstance());
+    if (configurator == null) {
+      LOG.warn("Plugin configurator for Python is null");
+      return null;
+    }
     String testsFileName = configurator.getTestFileName();
     if (myTask instanceof TaskWithSubtasks) {
       testsFileName = FileUtil.getNameWithoutExtension(testsFileName);

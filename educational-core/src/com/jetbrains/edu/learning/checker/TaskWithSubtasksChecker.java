@@ -8,6 +8,7 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -25,7 +26,7 @@ public class TaskWithSubtasksChecker extends StudyTaskChecker<TaskWithSubtasks> 
   public TaskWithSubtasksChecker(@NotNull TaskWithSubtasks task,
                                  @NotNull Project project) {
     super(task, project);
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(myTask.getLesson().getCourse().getLanguageById());
+    EduPluginConfigurator<?> configurator = EduPluginConfiguratorManager.forLanguage(myTask.getLesson().getCourse().getLanguageById());
     if (configurator != null) {
       myPyCharmTaskChecker  = configurator.getPyCharmTaskChecker(task, project);
     }

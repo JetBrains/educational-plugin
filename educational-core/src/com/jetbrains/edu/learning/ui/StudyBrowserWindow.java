@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.navigation.StudyNavigator;
@@ -135,7 +136,7 @@ public class StudyBrowserWindow extends JFrame {
     if (course == null) {
       return;
     }
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
       Platform.runLater(() -> myEngine.loadContent(content));
     }

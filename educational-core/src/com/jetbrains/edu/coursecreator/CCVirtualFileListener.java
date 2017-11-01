@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -45,7 +46,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
 
     String taskRelativePath = StudyUtils.pathRelativeToTask(createdFile);
 
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator != null && configurator.excludeFromArchive(createdFile.getPath())) {
       return;
     }

@@ -156,7 +156,7 @@ public class StudySubtaskUtils {
     if (course == null) {
       return null;
     }
-    EduPluginConfigurator configurator = EduPluginConfigurator.INSTANCE.forLanguage(course.getLanguageById());
+    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return null;
     }
