@@ -221,6 +221,7 @@
         <editorNotificationProvider
                 implementation="com.jetbrains.edu.coursecreator.CCSubtaskEditorNotificationProvider"/>
         <editorTabTitleProvider implementation="com.jetbrains.edu.coursecreator.CCTestsTabTitleProvider"/>
+        <typedHandler implementation="com.jetbrains.edu.learning.RemovePlaceholderOnTypingHandler" id="clearPlaceholdersHandler"/>
     </extensions>
 
     <extensions defaultExtensionNs="Educational">
