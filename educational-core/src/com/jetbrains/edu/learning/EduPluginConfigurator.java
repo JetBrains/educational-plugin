@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
+import com.jetbrains.edu.learning.actions.StudyCompareWithAnswerAction;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -139,7 +140,8 @@ public interface EduPluginConfigurator<Settings> {
       StudyPreviousTaskAction.ACTION_ID,
       StudyNextTaskAction.ACTION_ID,
       StudyRefreshTaskFileAction.ACTION_ID,
-      StudyShowHintAction.ACTION_ID
+      StudyShowHintAction.ACTION_ID,
+      StudyCompareWithAnswerAction.ACTION_ID
     };
     ActionManager actionManager = ActionManager.getInstance();
     Arrays.stream(ids)
