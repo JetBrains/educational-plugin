@@ -1,13 +1,11 @@
 package com.jetbrains.edu.kotlin;
 
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
@@ -51,17 +49,6 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   @Override
   public StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask pyCharmTask, @NotNull Project project) {
     return new EduKotlinPyCharmTaskChecker(pyCharmTask, project);
-  }
-
-  @NotNull
-  @Override
-  public DefaultActionGroup getTaskDescriptionActionGroup() {
-    DefaultActionGroup taskDescriptionActionGroup = super.getTaskDescriptionActionGroup();
-    StudyFillPlaceholdersAction fillPlaceholdersAction = new StudyFillPlaceholdersAction();
-    fillPlaceholdersAction.getTemplatePresentation().setIcon(EduKotlinIcons.FILL_PLACEHOLDERS_ICON);
-    fillPlaceholdersAction.getTemplatePresentation().setText("Fill Answer Placeholders");
-    taskDescriptionActionGroup.add(fillPlaceholdersAction);
-    return taskDescriptionActionGroup;
   }
 
   @Override

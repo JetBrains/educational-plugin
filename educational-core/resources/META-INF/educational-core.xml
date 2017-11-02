@@ -58,6 +58,9 @@
         <action id="Educational.RefreshTaskFile" class="com.jetbrains.edu.learning.actions.StudyRefreshTaskFileAction"
                 text="Reset Task File"
                 description="Refresh current task"/>
+        <action id="Educational.CompareWithAnswer" class="com.jetbrains.edu.learning.actions.StudyCompareWithAnswerAction"
+                text="Compare with Answer"
+                description="Compare your solution with answer"/>
         <action id="Educational.RefreshAnswerPlaceholder" class="com.jetbrains.edu.learning.actions.StudyRefreshAnswerPlaceholder"
                 text="Refresh Answer Placeholder">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
@@ -68,10 +71,6 @@
         <action id="Educational.ShowHint" class="com.jetbrains.edu.learning.actions.StudyShowHintAction"
                 text="Show Hint for Answer Placeholder"
                 description="Show hint for answer placeholder"/>
-        <action id="Educational.FillAnswerPlaceholders" class="com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction"
-                text="Fill Answer Placeholders">
-            <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
-        </action>
         <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction"
                 text="Enable Course Creator Features">
             <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
