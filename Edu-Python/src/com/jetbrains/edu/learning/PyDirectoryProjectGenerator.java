@@ -86,7 +86,6 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
 
   private void configureNewCourseProject(@NotNull Project project, @NotNull VirtualFile baseDir) {
     StudyTaskManager.getInstance(project).setCourse(myCourse);
-    StudyUtils.registerStudyToolWindow(myCourse, project);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       createTestHelper(project, baseDir);
