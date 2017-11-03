@@ -4,44 +4,44 @@
   <depends>com.intellij.modules.python</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection shortName="PyStudyInterpreterInspection" bundle="com.jetbrains.python.PyBundle" key="INSP.NAME.invalid.interpreter" groupKey="INSP.GROUP.python" enabledByDefault="true"  level="WARNING" implementationClass="com.jetbrains.edu.learning.PyStudyInterpreterInspection"/>
+    <localInspection shortName="PyStudyInterpreterInspection" bundle="com.jetbrains.python.PyBundle" key="INSP.NAME.invalid.interpreter" groupKey="INSP.GROUP.python" enabledByDefault="true"  level="WARNING" implementationClass="com.jetbrains.edu.python.learning.PyStudyInterpreterInspection"/>
 
     <localInspection shortName="PyStudyLanguageLevelInspection" suppressId="PyStudyLanguageLevelInspection" enabledByDefault="true"
-                     level="WARNING" implementationClass="com.jetbrains.edu.learning.PyStudyLanguageLevelInspection"
+                     level="WARNING" implementationClass="com.jetbrains.edu.python.learning.PyStudyLanguageLevelInspection"
                      displayName="Unsupported language level for a course" groupName="Inspection.Study.Python"/>
-    <configurationType implementation="com.jetbrains.edu.coursecreator.run.PyCCRunTestsConfigurationType"/>
-    <runConfigurationProducer implementation="com.jetbrains.edu.coursecreator.run.PyCCRunTestsConfigurationProducer"/>
+    <configurationType implementation="com.jetbrains.edu.python.coursecreator.run.PyCCRunTestsConfigurationType"/>
+    <runConfigurationProducer implementation="com.jetbrains.edu.python.coursecreator.run.PyCCRunTestsConfigurationProducer"/>
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">
-    <inspectionExtension implementation="com.jetbrains.edu.learning.highlighting.PyStudyInspectionExtension"/>
-    <importResolver implementation="com.jetbrains.edu.learning.PyStudyImportResolver"/>
+    <inspectionExtension implementation="com.jetbrains.edu.python.learning.highlighting.PyStudyInspectionExtension"/>
+    <importResolver implementation="com.jetbrains.edu.python.learning.PyStudyImportResolver"/>
   </extensions>
 
 
   <extensions defaultExtensionNs="Educational">
-    <pluginConfigurator implementationClass="com.jetbrains.edu.learning.PyEduPluginConfigurator" language="Python"/>
+    <pluginConfigurator implementationClass="com.jetbrains.edu.python.learning.PyEduPluginConfigurator" language="Python"/>
   </extensions>
 
   <actions>
-    <action id="Educational.WatchTutorial" class="com.jetbrains.edu.learning.actions.PyStudyWatchTutorialAction">
+    <action id="Educational.WatchTutorial" class="com.jetbrains.edu.python.learning.actions.PyStudyWatchTutorialAction">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
 
-    <action class="com.jetbrains.edu.coursecreator.PyCCChangeCourseInfo" id="Educational.Educator.ChangeCourseInfo" overrides="true"/>
+    <action class="com.jetbrains.edu.python.coursecreator.PyCCChangeCourseInfo" id="Educational.Educator.ChangeCourseInfo" overrides="true"/>
 
   </actions>
 
   <project-components>
     <component>
-      <implementation-class>com.jetbrains.edu.learning.PyStudyShowTutorial</implementation-class>
-      <interface-class>com.jetbrains.edu.learning.PyStudyShowTutorial</interface-class>
+      <implementation-class>com.jetbrains.edu.python.learning.PyStudyShowTutorial</implementation-class>
+      <interface-class>com.jetbrains.edu.python.learning.PyStudyShowTutorial</interface-class>
     </component>
   </project-components>
 
   <application-components>
     <component>
-      <implementation-class>com.jetbrains.edu.learning.PyStudyInitialConfigurator</implementation-class>
+      <implementation-class>com.jetbrains.edu.python.learning.PyStudyInitialConfigurator</implementation-class>
       <headless-implementation-class/>
     </component>
   </application-components>
