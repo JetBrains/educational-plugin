@@ -87,28 +87,30 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements EduCourse
   }
 
   protected void setJdk(@NotNull Project project, @NotNull JdkProjectSettings settings) {
-    ProjectSdksModel model = settings.getModel();
-    JdkComboBox.JdkComboBoxItem selectedItem = settings.getJdkItem();
+    final Sdk jdk = getJdk(settings);
 
-    final Sdk jdk;
-    if (selectedItem == null) {
-      jdk = null;
-    } else if (selectedItem instanceof JdkComboBox.SuggestedJdkItem) {
-      SdkType type = ((JdkComboBox.SuggestedJdkItem) selectedItem).getSdkType();
-      String path = ((JdkComboBox.SuggestedJdkItem) selectedItem).getPath();
-      Ref<Sdk> jdkRef = new Ref<>();
-      model.addSdk(type, path, jdkRef::set);
-      try {
-        model.apply();
-      } catch (ConfigurationException e) {
-        LOG.error(e);
-      }
-      jdk = jdkRef.get();
-    } else {
-      jdk = selectedItem.getJdk();
+    // Try to apply model, i.e. commit changes from sdk model into ProjectJdkTable
+    try {
+      settings.getModel().apply();
+    } catch (ConfigurationException e) {
+      LOG.error(e);
     }
 
     ApplicationManager.getApplication().runWriteAction(() -> ProjectRootManager.getInstance(project).setProjectSdk(jdk));
+  }
+
+  @Nullable
+  private Sdk getJdk(@NotNull JdkProjectSettings settings) {
+    JdkComboBox.JdkComboBoxItem selectedItem = settings.getJdkItem();
+    if (selectedItem == null) return null;
+    if (selectedItem instanceof JdkComboBox.SuggestedJdkItem) {
+      SdkType type = ((JdkComboBox.SuggestedJdkItem) selectedItem).getSdkType();
+      String path = ((JdkComboBox.SuggestedJdkItem) selectedItem).getPath();
+      Ref<Sdk> jdkRef = new Ref<>();
+      settings.getModel().addSdk(type, path, jdkRef::set);
+      return jdkRef.get();
+    }
+    return selectedItem.getJdk();
   }
 
   protected void setCompilerOutput(@NotNull Project project) {
