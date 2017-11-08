@@ -222,7 +222,9 @@ public interface EduPluginConfigurator<S> {
      * @return UI component with project settings. Can be null
      */
     @Nullable
-    LabeledComponent<JComponent> getLanguageSettingsComponent(@NotNull Course course);
+    default LabeledComponent<JComponent> getLanguageSettingsComponent(@NotNull Course course) {
+      return null;
+    }
 
     /**
      * Returns project settings associated with state of language settings UI component.
