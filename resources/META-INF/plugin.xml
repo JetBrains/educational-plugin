@@ -2,8 +2,8 @@
     <id>com.jetbrains.edu</id>
     <name>EduTools</name>
     <description><![CDATA[
-      This plugin allows to learn and teach programming languages and technologies
-      directly inside JetBrains IDEs based on IntelliJ Platform
+      With EduTools plugin you can learn and teach programming languages such as Kotlin, Java, Python
+      through code practicing tasks just inside JetBrains IDEs based on IntelliJ Platform
       ]]></description>
     <vendor>JetBrains</vendor>
 
