@@ -8,6 +8,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
+import com.jetbrains.edu.learning.StudyUtils
 import com.jetbrains.edu.learning.core.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -104,8 +105,8 @@ object EduGradleModuleGenerator {
 
         createGradleWrapper(moduleDirPath)
         File(FileUtil.toSystemDependentName(project.basePath!!), "gradlew").setExecutable(true)
-        StudyGenerator.createFromInternalTemplate(project, moduleDir, SdkConstants.FN_BUILD_GRADLE)
-        StudyGenerator.createFromInternalTemplate(project, moduleDir, SdkConstants.FN_SETTINGS_GRADLE)
+        StudyUtils.createFromTemplate(project, course.languageById, moduleDir, SdkConstants.FN_BUILD_GRADLE)
+        StudyUtils.createFromTemplate(project, course.languageById, moduleDir, SdkConstants.FN_SETTINGS_GRADLE)
 
         createUtilModule(course, moduleDir)
     }

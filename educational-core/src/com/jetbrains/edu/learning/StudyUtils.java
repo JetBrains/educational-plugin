@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -59,7 +61,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.editor.StudyEditor;
 import com.jetbrains.edu.learning.stepic.OAuthDialog;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -678,17 +679,33 @@ public class StudyUtils {
   }
 
   public static void createFromTemplate(@NotNull Project project,
+                                        @NotNull Language language,
                                         @NotNull VirtualFile taskDirectory,
-                                        @NotNull String name) {
-    FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(name);
+                                        @NotNull String templateName) {
+    createFromTemplate(project, language, taskDirectory, templateName, templateName);
+  }
+
+  public static void createFromTemplate(@NotNull Project project,
+                                        @NotNull Language language,
+                                        @NotNull VirtualFile taskDirectory,
+                                        @NotNull String templateName,
+                                        @NotNull String newFileName) {
+    FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(templateName);
     if (template == null) {
-      LOG.info("Template " + name + " wasn't found");
+      LOG.info("Template " + templateName + " wasn't found");
       return;
     }
     try {
-      StudyGenerator.createChildFile(taskDirectory, name, template.getText());
-    } catch (IOException e) {
-      LOG.error(e);
+      final PsiDirectory taskPsiDirectory = PsiManager.getInstance(project).findDirectory(taskDirectory);
+      if (taskPsiDirectory != null) {
+        FileTemplateUtil.createFromTemplate(
+                template,
+                newFileName,
+                EduPluginConfigurator.INSTANCE.forLanguage(language).getFileTemplateProperties(),
+                taskPsiDirectory);
+      }
+    } catch (Exception e) {
+      LOG.error("Failed to create from file template ", e);
     }
   }
   public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {

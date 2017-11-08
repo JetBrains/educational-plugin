@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.intellij.generation;
 
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
+import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
@@ -12,6 +13,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
@@ -53,7 +55,7 @@ class EduUtilModuleBuilder extends JavaModuleBuilder {
       return baseModule;
     }
     Project project = baseModule.getProject();
-    ApplicationManager.getApplication().runWriteAction(() -> EduIntellijUtils.addTemplate(project, src, "EduTestRunner.java"));
+    ApplicationManager.getApplication().runWriteAction(() -> StudyUtils.createFromTemplate(project, JavaLanguage.INSTANCE, src, "EduTestRunner.java"));
     EduIntellijUtils.addJUnit(baseModule);
 
     if (myAdditionalMaterials != null) {

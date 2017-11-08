@@ -1,8 +1,5 @@
 package com.jetbrains.edu.learning;
 
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -11,8 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -197,17 +192,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       if (testHelper != null) {
         StudyUtils.deleteFile(testHelper);
       }
-      final FileTemplate template =
-        FileTemplateManager.getInstance(myProject).getInternalTemplate(FileUtil.getNameWithoutExtension(EduNames.TEST_HELPER));
-      try {
-        final PsiDirectory projectDir = PsiManager.getInstance(myProject).findDirectory(baseDir);
-        if (projectDir != null) {
-          FileTemplateUtil.createFromTemplate(template, EduNames.TEST_HELPER, null, projectDir);
-        }
-      }
-      catch (Exception e) {
-        LOG.warn("Failed to create new test helper");
-      }
+      StudyUtils.createFromTemplate(myProject, myCourse.getLanguageById(), baseDir, FileUtil.getNameWithoutExtension(EduNames.TEST_HELPER), EduNames.TEST_HELPER);
     }));
   }
 
