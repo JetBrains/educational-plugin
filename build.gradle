@@ -88,6 +88,7 @@ intellij {
     if (project.hasProperty("customSinceBuild")) {
         patchPluginXml.sinceBuild = customSinceBuild
     }
+    patchPluginXml.changeNotes file("changes.html").getText()
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
