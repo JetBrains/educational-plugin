@@ -151,7 +151,7 @@ public class StudySubtaskUtils {
   }
 
   @Nullable
-  private static String getTestFileName(@NotNull Project project, int subtaskIndex) {
+  public static String getTestFileName(@NotNull Project project, int subtaskIndex) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
       return null;
