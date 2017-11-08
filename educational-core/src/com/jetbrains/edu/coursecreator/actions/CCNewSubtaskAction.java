@@ -112,7 +112,7 @@ public class CCNewSubtaskAction extends DumbAwareAction {
     }
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null || "kotlin".equals(course.getLanguageID())) {
+    if (course == null) {
       return;
     }
 

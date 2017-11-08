@@ -1,5 +1,9 @@
 package com.jetbrains.edu.kotlin;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
@@ -9,6 +13,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.StudyUtils;
@@ -20,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
@@ -41,6 +48,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   static final String LEGACY_TESTS_KT = "tests.kt";
   static final String TESTS_KT = "Tests.kt";
+  static final String KT_EXTENSION = ".kt";
   private static final String TASK_KT = "Task.kt";
   private final Collection<String> NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
     "gradlew", "gradlew.bat", "local.properties", "gradle.properties", "build.gradle"
@@ -109,6 +117,41 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
       return parentDirectory.findChild(EduNames.TASK + task.getIndex());
     }
     return EduIntellijUtils.createTask(project, task, parentDirectory, TASK_KT, TESTS_KT);
+  }
+
+  @Override
+  public void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
+    VirtualFile taskDir = task.getTaskDir(project);
+    if (taskDir == null) {
+      return;
+    }
+    int prevSubtaskIndex = task.getLastSubtaskIndex();
+    PsiDirectory taskPsiDir = PsiManager.getInstance(project).findDirectory(taskDir);
+    if (taskPsiDir == null) {
+      return;
+    }
+    int nextSubtaskIndex = prevSubtaskIndex + 1;
+    String nextSubtaskFileName = getSubtaskFileName(TESTS_KT, nextSubtaskIndex);
+
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        FileTemplate testsTemplate = FileTemplateManager.getInstance(project).getInternalTemplate(TESTS_KT);
+        if (testsTemplate == null) {
+          return;
+        }
+        Properties properties = new Properties();
+        properties.setProperty("TEST_CLASS_NAME", "Test" + EduNames.SUBTASK_MARKER + nextSubtaskIndex);
+        FileTemplateUtil.createFromTemplate(testsTemplate, nextSubtaskFileName, properties, taskPsiDir);
+      }
+      catch (Exception e) {
+        LOG.error(e);
+      }
+    });
+  }
+
+  @NotNull
+  public static String getSubtaskFileName(@NotNull String original, int subTaskIndex) {
+    return FileUtil.getNameWithoutExtension(original) + EduNames.SUBTASK_MARKER + subTaskIndex + EduKotlinPluginConfigurator.KT_EXTENSION;
   }
 
   @Nullable

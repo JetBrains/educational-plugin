@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
 import com.jetbrains.edu.learning.intellij.EduPyCharmTasksChecker;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
@@ -23,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtClass;
 
 import java.util.Collection;
+
+import static com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator.getSubtaskFileName;
 
 public class EduKotlinPyCharmTaskChecker extends EduPyCharmTasksChecker {
 
@@ -39,17 +42,34 @@ public class EduKotlinPyCharmTaskChecker extends EduPyCharmTasksChecker {
     if (taskDir == null) {
       return null;
     }
-    for (String testFileName : myTask.getTestsText().keySet()) {
-      VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, testFileName);
-      if (testFile != null) {
-        return testFile;
+    if (myTask instanceof TaskWithSubtasks) {
+      int subTaskIndex = ((TaskWithSubtasks) myTask).getActiveSubtaskIndex();
+      for (String testFileName : myTask.getTestsText().keySet()) {
+        String subTaskFileName = getSubtaskFileName(testFileName, subTaskIndex);
+        VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, subTaskFileName);
+        if (testFile != null) {
+          return testFile;
+        }
       }
+      VirtualFile testsFile = taskDir.findChild(getSubtaskFileName(EduKotlinPluginConfigurator.LEGACY_TESTS_KT, subTaskIndex));
+      if (testsFile != null) {
+        return testsFile;
+      }
+      return taskDir.findChild(getSubtaskFileName(EduKotlinPluginConfigurator.TESTS_KT, subTaskIndex));
     }
-    VirtualFile testsFile = taskDir.findChild(EduKotlinPluginConfigurator.LEGACY_TESTS_KT);
-    if (testsFile != null) {
-      return testsFile;
+    else {
+      for (String testFileName : myTask.getTestsText().keySet()) {
+        VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, testFileName);
+        if (testFile != null) {
+          return testFile;
+        }
+      }
+      VirtualFile testsFile = taskDir.findChild(EduKotlinPluginConfigurator.LEGACY_TESTS_KT);
+      if (testsFile != null) {
+        return testsFile;
+      }
+      return taskDir.findChild(EduKotlinPluginConfigurator.TESTS_KT);
     }
-    return taskDir.findChild(EduKotlinPluginConfigurator.TESTS_KT);
   }
 
   @Override
