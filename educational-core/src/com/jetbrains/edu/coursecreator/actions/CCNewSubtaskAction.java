@@ -107,11 +107,6 @@ public class CCNewSubtaskAction extends DumbAwareAction {
       return;
     }
 
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null || "kotlin".equals(course.getLanguageID())) {
-      return;
-    }
-
     if (StudyUtils.getTaskForFile(project, virtualFile) != null || StudyUtils.getTask(project, virtualFile) != null) {
       presentation.setEnabledAndVisible(true);
     }
