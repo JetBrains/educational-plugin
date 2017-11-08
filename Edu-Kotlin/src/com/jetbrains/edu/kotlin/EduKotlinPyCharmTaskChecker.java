@@ -8,12 +8,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
 import com.jetbrains.edu.learning.intellij.EduPyCharmTasksChecker;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
@@ -38,6 +40,11 @@ public class EduKotlinPyCharmTaskChecker extends EduPyCharmTasksChecker {
     VirtualFile taskDir = myTask.getTaskDir(myProject);
     if (taskDir == null) {
       return null;
+    }
+    if (myTask instanceof TaskWithSubtasks) {
+      int subTaskIndex = ((TaskWithSubtasks) myTask).getActiveSubtaskIndex();
+      String testFileName = StudySubtaskUtils.getTestFileName(myProject, subTaskIndex);
+      return testFileName != null ? taskDir.findChild(testFileName) : null;
     }
     for (String testFileName : myTask.getTestsText().keySet()) {
       VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, testFileName);
