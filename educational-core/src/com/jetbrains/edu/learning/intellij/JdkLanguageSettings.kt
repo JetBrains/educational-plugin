@@ -25,10 +25,10 @@ internal class JdkLanguageSettings : EduPluginConfigurator.LanguageSettings<JdkP
     val jdkComboBox = JdkComboBox(myModel, sdkTypeFilter, Conditions.alwaysTrue(), sdkTypeFilter, true)
     val comboboxWithBrowseButton = ComboboxWithBrowseButton(jdkComboBox)
     val setupButton = comboboxWithBrowseButton.button
-    jdkComboBox.setSetupButton(setupButton, null, myModel, jdkComboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem, null, false)
-    myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem)
+    jdkComboBox.setSetupButton(setupButton, null, myModel, jdkComboBox.selectedItem, null, false)
+    myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem)
     jdkComboBox.addItemListener {
-      myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem)
+      myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem)
     }
     return LabeledComponent.create(comboboxWithBrowseButton, "Jdk", BorderLayout.WEST)
   }
