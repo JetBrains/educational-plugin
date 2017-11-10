@@ -56,6 +56,38 @@ public class EduUsagesCollector extends UsagesCollector {
     advanceKey("courseArchive");
   }
 
+  public static void inCourseLinkClicked() {
+    advanceKey("inCourseLink");
+  }
+
+  public static void externalLinkClicked() {
+    advanceKey("externalLink");
+  }
+
+  public static void stepikLinkClicked() {
+    advanceKey("stepikLinkClicked");
+  }
+
+  public static void progressFromWidget() {
+    advanceKey("progressFromWidget");
+  }
+
+  public static void progressOnGenerateCourse() {
+    advanceKey("progressOnGenerateCourse");
+  }
+
+  public static void loginFromWidget() {
+    advanceKey("loginFromWidget");
+  }
+
+  public static void logoutFromWidget() {
+    advanceKey("logoutFromWidget");
+  }
+
+  public static void loginFromSettings() {
+    advanceKey("loginFromSettings");
+  }
+
   @NotNull
   @Override
   public Set<UsageDescriptor> getUsages() {
