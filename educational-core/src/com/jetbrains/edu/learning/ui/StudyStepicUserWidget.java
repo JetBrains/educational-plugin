@@ -10,10 +10,10 @@ import com.intellij.openapi.wm.IconLikeCustomStatusBarWidget;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudySyncCourseAction;
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import icons.EducationalCoreIcons;
@@ -76,39 +76,43 @@ public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
   }
 
   private static Icon getWidgetIcon(@Nullable StepicUser user) {
-      return user == null ? EducationalCoreIcons.StepikOff : EducationalCoreIcons.Stepik;
-      }
+    return user == null ? EducationalCoreIcons.StepikOff : EducationalCoreIcons.Stepik;
+  }
 
-      private ListPopup createPopup(@Nullable StepicUser user, @NotNull Project project) {
-        String loginText = "Log in ";
-      String logOutText = "Log out";
-        String syncCourseStep = "Synchronize course";
-        String userActionStep = user == null ? loginText : logOutText;
-        ArrayList<String > steps = new ArrayList<>();
-        if (user != null && StudySyncCourseAction.isAvailable(project)) {
-          steps.add(syncCourseStep);
-        }
-        steps.add(userActionStep);
+  private ListPopup createPopup(@Nullable StepicUser user, @NotNull Project project) {
+    String loginText = "Log in ";
+    String logOutText = "Log out";
+    String syncCourseStep = "Synchronize course";
+    String userActionStep = user == null ? loginText : logOutText;
+    ArrayList<String> steps = new ArrayList<>();
+    if (user != null && StudySyncCourseAction.isAvailable(project)) {
+      steps.add(syncCourseStep);
+    }
+    steps.add(userActionStep);
 
-        BaseListPopupStep stepikStep = new BaseListPopupStep<String>(null, steps) {
-        @Override
+    BaseListPopupStep stepikStep = new BaseListPopupStep<String>(null, steps) {
+      @Override
       public PopupStep onChosen(String selectedValue, boolean finalChoice) {
-    return doFinalStep(() -> {
-if (syncCourseStep.equals(selectedValue)) {
-    StudySyncCourseAction.doUpdate(project);
-    } else {
-      if (loginText.equals(selectedValue)) {
-          EduStepicConnector.doAuthorize( StudyUtils::showOAuthDialog);
+        return doFinalStep(() -> {
+          if (syncCourseStep.equals(selectedValue)) {
+            EduUsagesCollector.progressFromWidget();
+            StudySyncCourseAction.doUpdate(project);
           }
-        else if (logOutText.equals(selectedValue)) {
-          EduSettings.getInstance().setUser(null);
+          else {
+            if (loginText.equals(selectedValue)) {
+              EduUsagesCollector.loginFromWidget();
+              EduStepicConnector.doAuthorize(StudyUtils::showOAuthDialog);
+            }
+            else if (logOutText.equals(selectedValue)) {
+              EduUsagesCollector.logoutFromWidget();
+              EduSettings.getInstance().setUser(null);
+            }
           }
-        }
-      });
-    }
-};
+        });
+      }
+    };
     return JBPopupFactory.getInstance().createListPopup(stepikStep);
-    }
+  }
 
   @Override
   public JComponent getComponent() {

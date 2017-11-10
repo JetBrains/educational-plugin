@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.sun.webkit.dom.ElementImpl;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
@@ -239,16 +240,22 @@ public class StudyBrowserWindow extends JFrame {
           if (hrefAttribute != null) {
             final Matcher matcher = IN_COURSE_LINK.matcher(hrefAttribute);
             if (matcher.matches()) {
+              EduUsagesCollector.inCourseLinkClicked();
               final String lessonName = matcher.group(1);
               final String taskName = matcher.group(2);
               StudyNavigator.navigateToTask(myProject, lessonName, taskName);
             }
             else {
+              EduUsagesCollector.externalLinkClicked();
               myEngine.setJavaScriptEnabled(true);
               myEngine.getLoadWorker().cancel();
               final String href = getLink(target);
               if (href == null) return;
               BrowserUtil.browse(href);
+              if (href.startsWith("https://stepik.org")) {
+                EduUsagesCollector.stepikLinkClicked();
+              }
+
             }
           }
         }

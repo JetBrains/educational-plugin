@@ -23,6 +23,7 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.settings.StudyOptionsProvider;
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,6 +58,7 @@ public class StepicStudyOptions implements StudyOptionsProvider {
 
       @Override
       protected void hyperlinkActivated(HyperlinkEvent e) {
+        EduUsagesCollector.loginFromSettings();
         ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
           StepicUser user = EduSettings.getInstance().getUser();
           if (user != null && !user.equals(myStepicUser)) {
