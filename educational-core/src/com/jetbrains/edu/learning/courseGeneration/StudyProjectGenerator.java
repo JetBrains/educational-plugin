@@ -90,6 +90,7 @@ public class StudyProjectGenerator {
       if (course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
         StudyStepikSolutionsLoader studyStepikSolutionsLoader = StudyStepikSolutionsLoader.getInstance(project);
         studyStepikSolutionsLoader.loadSolutions(ProgressManager.getGlobalProgressIndicator(), course);
+        EduUsagesCollector.progressOnGenerateCourse();
         PropertiesComponent.getInstance(project).setValue(EduStepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       }
     });
