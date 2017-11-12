@@ -57,10 +57,10 @@ allprojects {
     }
 
     intellij {
-        if (project.hasProperty("ideaVersion")) {
-            version ideaVersion
-        } else if (project.hasProperty("ideaPath")) {
-            localPath ideaPath
+        if (project.hasProperty("androidStudioPath")) {
+            localPath androidStudioPath
+        } else {
+            localPath "${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion/android-studio"
         }
     }
 
@@ -78,13 +78,32 @@ allprojects {
     }
 }
 
-
 intellij {
-    if (project.hasProperty("ideaVersion")) {
-        version ideaVersion
-    } else if (project.hasProperty("ideaPath")) {
-        localPath ideaPath
+    if (project.hasProperty("androidStudioPath")) {
+        localPath androidStudioPath
+    } else {
+        if (!rootProject.hasProperty("studioVersion")) throw IllegalStateException("studioVersion is unspecified")
+        if (!rootProject.hasProperty("studioBuildVersion")) throw IllegalStateException("studioBuildVersion is unspecified")
+
+        def studioZip = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-${studioBuildVersion}.zip")
+        if (!studioZip.exists()) {
+            download {
+                src "http://dl.google.com/dl/android/studio/ide-zips/$studioVersion/android-studio-ide-$studioBuildVersion-linux.zip"
+                dest studioZip
+            }
+        }
+
+        def studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
+        if (!studioFolder.exists()) {
+            copy {
+                from zipTree(studioZip)
+                into studioFolder
+            }
+        }
+
+        localPath "$studioFolder/android-studio"
     }
+
     if (project.hasProperty("customSinceBuild")) {
         patchPluginXml.sinceBuild = customSinceBuild
     }
