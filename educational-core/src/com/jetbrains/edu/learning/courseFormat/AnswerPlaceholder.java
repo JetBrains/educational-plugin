@@ -300,7 +300,7 @@ public class AnswerPlaceholder {
   }
 
   boolean isValid(int textLength) {
-    int end = getOffset() + getLength();
-    return getOffset() >= 0 && getLength() > 0 && end <= textLength;
+    int end = getOffset() + getRealLength();
+    return getOffset() >= 0 && getRealLength() >= 0 && end <= textLength;
   }
 }
