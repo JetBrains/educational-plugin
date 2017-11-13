@@ -15,9 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -38,14 +36,6 @@ public class TaskWithSubtasksChecker extends StudyTaskChecker<TaskWithSubtasks> 
       return myPyCharmTaskChecker.check();
     }
     return super.check();
-  }
-
-  @Override
-  public StudyCheckResult checkOnRemote(@Nullable StepicUser user) {
-    if (myPyCharmTaskChecker != null) {
-      return myPyCharmTaskChecker.checkOnRemote(user);
-    }
-    return super.checkOnRemote(user);
   }
 
   @Override
