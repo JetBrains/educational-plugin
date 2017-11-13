@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyState;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
@@ -21,8 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.StudyEditor;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
 import one.util.streamex.EntryStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,16 +114,5 @@ public class PyStudyTaskChecker extends StudyTaskChecker<PyCharmTask> {
     Map.Entry<TaskFile, VirtualFile> entry = EntryStream.of(fileMap).findAny(e -> !e.getKey().getActivePlaceholders().isEmpty())
       .orElse(fileMap.entrySet().stream().findFirst().orElse(null));
     return entry == null ? null : entry.getValue();
-  }
-
-  @Override
-  public StudyCheckResult checkOnRemote(@Nullable StepicUser user) {
-    StudyCheckResult result = check();
-    final Course course = StudyTaskManager.getInstance(myProject).getCourse();
-    StudyStatus status = result.getStatus();
-    if (user != null && course != null && course.isStudy() && status != StudyStatus.Unchecked) {
-      EduStepicConnector.postSolution(myTask, status == StudyStatus.Solved, myProject);
-    }
-    return result;
   }
 }

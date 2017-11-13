@@ -18,7 +18,6 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.StudyCheckListener;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
@@ -147,8 +146,20 @@ public class StudyCheckAction extends StudyActionWithShortcut {
     public void run(@NotNull ProgressIndicator indicator) {
       indicator.setIndeterminate(true);
       myCheckInProgress.set(true);
+
       boolean isRemote = myTask.getLesson().getCourse() instanceof RemoteCourse;
-      myResult = isRemote ? checkOnRemote() : myChecker.check();
+      myResult = isRemote ? checkRemoteCourse() : myChecker.check();
+    }
+
+    private StudyCheckResult checkRemoteCourse() {
+      if (StudyUtils.isStudentProject(myProject)) {
+        StudyCheckResult remoteCheckResult = myChecker.checkOnRemote();
+        if (remoteCheckResult != StudyCheckResult.USE_LOCAL_CHECK) {
+          return remoteCheckResult;
+        }
+      }
+
+      return myChecker.check();
     }
 
     @Override
@@ -182,10 +193,6 @@ public class StudyCheckAction extends StudyActionWithShortcut {
     public void onCancel() {
       myChecker.clearState();
       myCheckInProgress.set(false);
-    }
-
-    private StudyCheckResult checkOnRemote() {
-      return myChecker.checkOnRemote(EduSettings.getInstance().getUser());
     }
   }
 }
