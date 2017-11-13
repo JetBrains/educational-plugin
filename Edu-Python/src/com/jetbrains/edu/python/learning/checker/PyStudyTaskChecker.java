@@ -113,7 +113,7 @@ public class PyStudyTaskChecker extends StudyTaskChecker<PyCharmTask> {
                                                 @NotNull final VirtualFile taskDir) {
 
     Map<TaskFile, VirtualFile> fileMap =
-      EntryStream.of(task.getTaskFiles()).invert().mapValues(name -> taskDir.findFileByRelativePath(name)).nonNullValues().toMap();
+      EntryStream.of(task.getTaskFiles()).invert().mapValues(taskDir::findFileByRelativePath).nonNullValues().toMap();
     Map.Entry<TaskFile, VirtualFile> entry = EntryStream.of(fileMap).findAny(e -> !e.getKey().getActivePlaceholders().isEmpty())
       .orElse(fileMap.entrySet().stream().findFirst().orElse(null));
     return entry == null ? null : entry.getValue();
