@@ -87,7 +87,11 @@ public class StudyProjectComponent implements ProjectComponent {
 
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
-        ProjectView.getInstance(myProject).changeView(ProjectViewPane.ID);
+
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+          selectProjectView();
+        }
+
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course == null) {
           LOG.warn("Opened project is with null course");
@@ -126,6 +130,16 @@ public class StudyProjectComponent implements ProjectComponent {
         }
       }
     });
+  }
+
+  private void selectProjectView() {
+    ProjectView projectView = ProjectView.getInstance(myProject);
+    if (projectView != null) {
+      projectView.changeView(ProjectViewPane.ID);
+    }
+    else {
+      LOG.warn("Failed to select Project View");
+    }
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
