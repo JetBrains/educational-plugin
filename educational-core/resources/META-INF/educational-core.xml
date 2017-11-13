@@ -224,6 +224,7 @@
         <optionsProvider instance="com.jetbrains.edu.learning.stepic.StepicStudyOptions"/>
         <checkListener implementation="com.jetbrains.edu.learning.twitter.StudyTwitterAction"/>
         <checkListener implementation="com.jetbrains.edu.learning.stepic.EduNextRecommendationCheckListener"/>
+        <checkListener implementation="com.jetbrains.edu.learning.stepic.PostSolutionCheckListener"/>
 
         <!--educator-->
         <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>

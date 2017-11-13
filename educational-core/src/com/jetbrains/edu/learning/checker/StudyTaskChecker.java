@@ -5,9 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class StudyTaskChecker<T extends Task> {
   @NotNull protected final T myTask;
@@ -32,8 +30,13 @@ public class StudyTaskChecker<T extends Task> {
     return new StudyCheckResult(StudyStatus.Unchecked, "Check for " + myTask.getTaskType() + " task isn't available");
   }
 
-  public StudyCheckResult checkOnRemote(@Nullable StepicUser user)  {
-    return new StudyCheckResult(StudyStatus.Unchecked, "Remote check for " + myTask.getTaskType() + " task isn't available");
+  /**
+   * Checks solution for a task on Stepik
+   * @return result of a check. If remote check is unsupported returns special instance of check result.
+   * @see StudyCheckResult#USE_LOCAL_CHECK
+   */
+  public StudyCheckResult checkOnRemote()  {
+    return StudyCheckResult.USE_LOCAL_CHECK;
   }
 
   public void clearState() {
