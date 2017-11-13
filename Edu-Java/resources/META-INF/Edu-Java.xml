@@ -9,7 +9,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <renameHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
         <refactoring.moveHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
-        <projectTemplatesFactory implementation="com.jetbrains.edu.learning.intellij.EduIntelliJTemplateFactory"/>
     </extensions>
 </idea-plugin>
 

@@ -27,8 +27,6 @@
     </application-components>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="Educational.eduIntelliJProjectTemplate"
-                        interface="com.jetbrains.edu.learning.intellij.EduIntelliJProjectTemplate"/>
         <extensionPoint qualifiedName="Educational.pluginConfigurator" beanClass="com.intellij.lang.LanguageExtensionPoint">
             <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduPluginConfigurator"/>
         </extensionPoint>
