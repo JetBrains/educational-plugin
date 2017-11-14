@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -71,6 +72,10 @@ public class Lesson implements StudyItem {
 
   public List<Task> getTaskList() {
     return taskList;
+  }
+
+  public List<Task> getTaskListForProgress() {
+    return CollectionsKt.filter(taskList, task -> !(task instanceof TheoryTask));
   }
 
   @Transient
