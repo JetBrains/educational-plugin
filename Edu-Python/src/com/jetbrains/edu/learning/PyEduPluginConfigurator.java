@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -11,6 +14,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.checker.PyStudyTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
@@ -22,7 +27,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
-import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.PythonModuleTypeBase;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import icons.PythonIcons;
@@ -99,8 +103,8 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProje
   private static void createFilesFromTemplates(@NotNull Project project,
                                                @NotNull Task task,
                                                @NotNull VirtualFile taskDirectory) {
-    StudyUtils.createFromTemplate(project, PythonLanguage.getInstance(), taskDirectory, TASK_PY);
-    StudyUtils.createFromTemplate(project, PythonLanguage.getInstance(), taskDirectory, TESTS_PY);
+    StudyUtils.createFromTemplate(project, taskDirectory, TASK_PY);
+    StudyUtils.createFromTemplate(project, taskDirectory, TESTS_PY);
     task.addTaskFile(TASK_PY, task.taskFiles.size());
   }
 
@@ -127,7 +131,17 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProje
     int nextSubtaskIndex = task.getLastSubtaskIndex() + 1;
     String nextSubtaskTestsFileName = getSubtaskTestsFileName(nextSubtaskIndex);
     ApplicationManager.getApplication().runWriteAction(() -> {
-      StudyUtils.createFromTemplate(project, PythonLanguage.getInstance(), taskDir, TESTS_PY, nextSubtaskTestsFileName);
+      try {
+        PsiDirectory taskPsiDir = PsiManager.getInstance(project).findDirectory(taskDir);
+        FileTemplate testsTemplate = FileTemplateManager.getInstance(project).getInternalTemplate(TESTS_PY);
+        if (taskPsiDir == null || testsTemplate == null) {
+          return;
+        }
+        FileTemplateUtil.createFromTemplate(testsTemplate, nextSubtaskTestsFileName, null, taskPsiDir);
+      }
+      catch (Exception e) {
+        LOG.error(e);
+      }
     });
   }
 
@@ -193,7 +207,15 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProje
       final VirtualFile baseDir = project.getBaseDir();
       final String testHelper = EduNames.TEST_HELPER;
       if (baseDir.findChild(testHelper) != null) return;
-      StudyUtils.createFromTemplate(project, PythonLanguage.getInstance(), baseDir, "test_helper", testHelper);
+      final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
+      final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
+      if (projectDir == null) return;
+      try {
+        FileTemplateUtil.createFromTemplate(template, testHelper, null, projectDir);
+      }
+      catch (Exception exception) {
+        LOG.error("Can't copy test_helper.py " + exception.getMessage());
+      }
     });
   }
 

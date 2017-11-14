@@ -154,14 +154,6 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
     return FileUtil.getNameWithoutExtension(original) + EduNames.SUBTASK_MARKER + subTaskIndex + EduKotlinPluginConfigurator.KT_EXTENSION;
   }
 
-  @Nullable
-  @Override
-  public Properties getFileTemplateProperties() {
-    Properties properties = new Properties();
-    properties.setProperty("TEST_CLASS_NAME", "Test");
-    return properties;
-  }
-
   @Override
   public List<String> getBundledCoursePaths() {
     File bundledCourseRoot = StudyUtils.getBundledCourseRoot(EduKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME, EduKotlinKoansModuleBuilder.class);

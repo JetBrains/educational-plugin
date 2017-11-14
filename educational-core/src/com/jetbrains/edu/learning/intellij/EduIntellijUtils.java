@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.intellij;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
@@ -22,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduTaskModuleBuilder;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +75,16 @@ public class EduIntellijUtils {
     }
 
 
-    public static VirtualFile createTask(@NotNull Project project, @NotNull Task task, @NotNull VirtualFile parentDirectory,
+    public static void addTemplate(@NotNull final Project project, @NotNull VirtualFile baseDir, @NotNull @NonNls final String templateName) {
+        final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(templateName);
+        try {
+          StudyGenerator.createChildFile(baseDir, templateName, template.getText());
+        } catch (IOException exception) {
+            LOG.error("Failed to create from file template ", exception);
+        }
+    }
+
+  public static VirtualFile createTask(@NotNull Project project, @NotNull Task task, @NotNull VirtualFile parentDirectory,
                                         @Nullable String taskFileName, @Nullable String testFileName) {
     String lessonDirName = parentDirectory.getName();
     Module lessonModule = ModuleManager.getInstance(project).findModuleByName(lessonDirName);
@@ -90,10 +102,10 @@ public class EduIntellijUtils {
         if (course.isAdaptive()) {
           createFromText(project, taskFileName, task);
         } else {
-          createFromTemplate(project, course.getLanguageById(), src, taskFileName);
+          createFromTemplate(project, src, taskFileName);
           task.addTaskFile(taskFileName, task.taskFiles.size());
           if (testFileName != null) {
-            createFromTemplate(project, course.getLanguageById(), src, testFileName);
+            createFromTemplate(project, src, testFileName);
           }
         }
       }

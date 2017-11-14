@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.facet.ui.ValidationResult;
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -19,10 +21,10 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
-import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -35,6 +37,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -91,7 +94,15 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
   }
 
   private static void createTestHelper(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    StudyUtils.createFromTemplate(project, PythonLanguage.getInstance(), project.getBaseDir(), "test_helper", EduNames.TEST_HELPER);
+    final String testHelper = EduNames.TEST_HELPER;
+    if (baseDir.findChild(testHelper) != null) return;
+    final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
+    try {
+      StudyGenerator.createChildFile(project.getBaseDir(), testHelper, template.getText());
+    }
+    catch (IOException exception) {
+      LOG.error("Can't copy test_helper.py " + exception.getMessage());
+    }
   }
 
   @NotNull

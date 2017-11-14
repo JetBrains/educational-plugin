@@ -29,7 +29,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public interface EduPluginConfigurator<S> {
   String EP_NAME = "Educational.pluginConfigurator";
@@ -204,14 +207,6 @@ public interface EduPluginConfigurator<S> {
   default Icon getLogo() {
     return null;
   }
-
-  /**
-   * Returns properties used for creating file from template
-   *
-   * @return properties. Can be null
-   */
-  @Nullable
-  default Properties getFileTemplateProperties() { return null; }
 
   /**
    * Main interface responsible for course project language settings such as JDK or interpreter

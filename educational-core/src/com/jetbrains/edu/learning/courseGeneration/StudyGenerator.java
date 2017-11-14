@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.courseGeneration;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -121,5 +124,10 @@ public class StudyGenerator {
         VfsUtil.saveText(virtualTaskFile, text);
       }
     }
+  }
+
+  public static void createFromInternalTemplate(@NotNull Project project, @NotNull VirtualFile parentDir, @NotNull String name) throws IOException {
+    FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(name);
+    createChildFile(parentDir, name, template.getText());
   }
 }
