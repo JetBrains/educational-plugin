@@ -2,23 +2,20 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.ExecutionListener
 import com.intellij.execution.ExecutionManager
-import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.RunnerRegistry
-import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
-import com.intellij.ide.DataManager
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
+import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -28,8 +25,7 @@ import java.util.concurrent.CountDownLatch
 
 class OutputTaskChecker : TaskChecker() {
   companion object {
-    private val NOT_RUNNABLE_MESSAGE = "Solution isn't runnable"
-    private val OUTPUT_PATTERN_NAME = "output.txt"
+    val OUTPUT_PATTERN_NAME = "output.txt"
   }
 
   override fun isAccepted(task: Task): Boolean {
@@ -42,7 +38,7 @@ class OutputTaskChecker : TaskChecker() {
   }
 
   override fun check(task: Task, project: Project): CheckResult {
-    val configuration = getConfiguration(project) ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
+    val configuration = createDefaultRunConfiguration(project) ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val runner = RunnerRegistry.getInstance().getRunner(executor.id, configuration.configuration)
     configuration.isActivateToolWindowBeforeRun = false
@@ -90,14 +86,6 @@ class OutputTaskChecker : TaskChecker() {
       return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
     }
     return CheckResult(CheckStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
-  }
-
-  private fun getConfiguration(project: Project): RunnerAndConfigurationSettings? {
-    return ApplicationManager.getApplication().runReadAction(Computable<RunnerAndConfigurationSettings> {
-      val dataContext = DataManager.getInstance().getDataContext(EduUtils.getSelectedEditor(project)?.component)
-      val configurationContext = ConfigurationContext.getFromContext(dataContext)
-      return@Computable configurationContext.configuration
-    })
   }
 
   override fun clearState(task: Task, project: Project) {

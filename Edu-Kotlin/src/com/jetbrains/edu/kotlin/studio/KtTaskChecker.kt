@@ -1,13 +1,8 @@
 package com.jetbrains.edu.kotlin.studio
 
 import com.intellij.execution.ExecutionException
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.JdkBundle
 import com.jetbrains.edu.kotlin.KtTaskChecker
 import com.jetbrains.edu.kotlin.KtTaskChecker.FAILED_TO_LAUNCH
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -22,18 +17,11 @@ class KtTaskChecker : StudioTaskCheckerBase() {
   override fun isAccepted(task: Task) = task is EduTask && super.isAccepted(task)
 
   override fun check(task: Task, project: Project): CheckResult {
-    val cmd = GeneralCommandLine()
-    val basePath = project.basePath ?: return FAILED_TO_LAUNCH
-    var bundledJavaPath = JdkBundle.getBundledJDKAbsoluteLocation().absolutePath
-    if (SystemInfo.isMac) {
-      bundledJavaPath = FileUtil.join(PathManager.getHomePath(), "jre", "jdk", "Contents", "Home")
-    }
-    cmd.withEnvironment("JAVA_HOME", bundledJavaPath)
-    val projectPath = FileUtil.toSystemDependentName(basePath)
-    cmd.withWorkDirectory(projectPath)
-    val executablePath = if (SystemInfo.isWindows) FileUtil.join(projectPath, "gradlew.bat") else "./gradlew"
-    cmd.exePath = executablePath
-    cmd.addParameter(":lesson${task.lesson.index}:task${task.index}:test")
+    val cmd = generateGradleCommandLine(
+            project,
+            "${getGradleProjectName(task)}:test"
+    ) ?: return FAILED_TO_LAUNCH
+
     return try {
       val output = CheckUtils.getTestOutput(cmd.createProcess(),
               cmd.commandLineString, false)
