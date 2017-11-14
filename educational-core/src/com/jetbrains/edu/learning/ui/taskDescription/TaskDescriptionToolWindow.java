@@ -303,9 +303,9 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
    */
   @Nullable
   private static Pair<Integer, Integer> countProgressAsOneTaskWithSubtasks(List<Lesson> lessons) {
-    if (lessons.size() == 1 && lessons.get(0).getTaskList().size() == 1) {
+    if (lessons.size() == 1 && lessons.get(0).getTaskListForProgress().size() == 1) {
       final Lesson lesson = lessons.get(0);
-      final Task task = lesson.getTaskList().get(0);
+      final Task task = lesson.getTaskListForProgress().get(0);
       if (task instanceof TaskWithSubtasks) {
         final int lastSubtaskIndex = ((TaskWithSubtasks)task).getLastSubtaskIndex();
         final int activeSubtaskIndex = ((TaskWithSubtasks)task).getActiveSubtaskIndex();
@@ -325,7 +325,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     int taskNum = 0;
     int taskSolved = 0;
     for (Lesson lesson : lessons) {
-      taskNum += lesson.getTaskList().size();
+      taskNum += lesson.getTaskListForProgress().size();
       taskSolved += getSolvedTasks(lesson);
     }
     return Pair.create(taskSolved, taskNum);
@@ -333,7 +333,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
   private static int getSolvedTasks(@NotNull final Lesson lesson) {
     int solved = 0;
-    for (Task task : lesson.getTaskList()) {
+    for (Task task : lesson.getTaskListForProgress()) {
       if (task.getStatus() == CheckStatus.Solved) {
         solved += 1;
       }
