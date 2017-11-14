@@ -3,7 +3,6 @@ package com.jetbrains.edu.kotlin;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -13,7 +12,6 @@ import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
@@ -45,18 +43,8 @@ public class EduKotlinPyCharmTaskChecker extends EduPyCharmTasksChecker {
     }
     if (myTask instanceof TaskWithSubtasks) {
       int subTaskIndex = ((TaskWithSubtasks) myTask).getActiveSubtaskIndex();
-      for (String testFileName : myTask.getTestsText().keySet()) {
-        String subTaskFileName = FileUtil.getNameWithoutExtension(testFileName) + EduNames.SUBTASK_MARKER + subTaskIndex + ".kt";
-        VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, subTaskFileName);
-        if (testFile != null) {
-          return testFile;
-        }
-      }
       String testFileName = StudySubtaskUtils.getTestFileName(myProject, subTaskIndex);
-      if (testFileName != null) {
-        return taskDir.findChild(testFileName);
-      }
-      return null;
+      return testFileName != null ? taskDir.findChild(testFileName) : null;
     }
     else {
       for (String testFileName : myTask.getTestsText().keySet()) {
