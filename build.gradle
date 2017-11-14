@@ -196,7 +196,7 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]
 }
 
 configure([project(':educational-core'), project(':Edu-Java')]) {
-    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy'
+    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy', 'smali'
 }
 
 configure(project(':Edu-Kotlin')) {
