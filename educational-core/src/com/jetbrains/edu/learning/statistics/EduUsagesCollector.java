@@ -56,6 +56,10 @@ public class EduUsagesCollector extends UsagesCollector {
     advanceKey("courseArchive");
   }
 
+  public static void courseArchiveImported() {
+    advanceKey("courseArchiveImported");
+  }
+
   public static void inCourseLinkClicked() {
     advanceKey("inCourseLink");
   }
