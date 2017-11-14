@@ -3,7 +3,6 @@ package com.jetbrains.edu.kotlin;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
@@ -17,6 +16,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyFillPlaceholdersAction;
 import com.jetbrains.edu.learning.checker.StudyTaskChecker;
@@ -48,7 +48,7 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   static final String LEGACY_TESTS_KT = "tests.kt";
   static final String TESTS_KT = "Tests.kt";
-  static final String KT_EXTENSION = ".kt";
+  static final String SUBTASK_TESTS_KT = "Subtask_Tests.kt";
   private static final String TASK_KT = "Task.kt";
   private final Collection<String> NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
     "gradlew", "gradlew.bat", "local.properties", "gradle.properties", "build.gradle"
@@ -131,11 +131,11 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
       return;
     }
     int nextSubtaskIndex = prevSubtaskIndex + 1;
-    String nextSubtaskFileName = getSubtaskFileName(TESTS_KT, nextSubtaskIndex);
+    String nextSubtaskFileName = StudySubtaskUtils.getTestFileName(project, nextSubtaskIndex);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
-        FileTemplate testsTemplate = FileTemplateManager.getInstance(project).getInternalTemplate(TESTS_KT);
+        FileTemplate testsTemplate = FileTemplateManager.getInstance(project).getInternalTemplate(SUBTASK_TESTS_KT);
         if (testsTemplate == null) {
           return;
         }
@@ -147,11 +147,6 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
         LOG.error(e);
       }
     });
-  }
-
-  @NotNull
-  public static String getSubtaskFileName(@NotNull String original, int subTaskIndex) {
-    return FileUtil.getNameWithoutExtension(original) + EduNames.SUBTASK_MARKER + subTaskIndex + EduKotlinPluginConfigurator.KT_EXTENSION;
   }
 
   @Override

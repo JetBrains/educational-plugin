@@ -3,14 +3,17 @@ package com.jetbrains.edu.kotlin;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
+import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
@@ -24,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtClass;
 
 import java.util.Collection;
-
-import static com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator.getSubtaskFileName;
 
 public class EduKotlinPyCharmTaskChecker extends EduPyCharmTasksChecker {
 
@@ -45,17 +46,17 @@ public class EduKotlinPyCharmTaskChecker extends EduPyCharmTasksChecker {
     if (myTask instanceof TaskWithSubtasks) {
       int subTaskIndex = ((TaskWithSubtasks) myTask).getActiveSubtaskIndex();
       for (String testFileName : myTask.getTestsText().keySet()) {
-        String subTaskFileName = getSubtaskFileName(testFileName, subTaskIndex);
+        String subTaskFileName = FileUtil.getNameWithoutExtension(testFileName) + EduNames.SUBTASK_MARKER + subTaskIndex + ".kt";
         VirtualFile testFile = VfsUtil.findRelativeFile(taskDir, subTaskFileName);
         if (testFile != null) {
           return testFile;
         }
       }
-      VirtualFile testsFile = taskDir.findChild(getSubtaskFileName(EduKotlinPluginConfigurator.LEGACY_TESTS_KT, subTaskIndex));
-      if (testsFile != null) {
-        return testsFile;
+      String testFileName = StudySubtaskUtils.getTestFileName(myProject, subTaskIndex);
+      if (testFileName != null) {
+        return taskDir.findChild(testFileName);
       }
-      return taskDir.findChild(getSubtaskFileName(EduKotlinPluginConfigurator.TESTS_KT, subTaskIndex));
+      return null;
     }
     else {
       for (String testFileName : myTask.getTestsText().keySet()) {
