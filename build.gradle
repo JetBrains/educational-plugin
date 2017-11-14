@@ -184,7 +184,7 @@ subprojects {
 
         test {
             java.srcDirs 'testSrc'
-            resources.srcDirs 'resources', 'testResources'
+            resources.srcDirs 'testResources'
 
         }
     }
