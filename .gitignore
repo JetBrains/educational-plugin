@@ -26,6 +26,7 @@ hs_err_pid*
 .idea/
 build/
 .gradle/
+dependencies/
 Edu-Java/classes/
 Edu-Kotlin/classes/
 Edu-Python/classes/
