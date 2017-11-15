@@ -24,6 +24,10 @@
     <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python"/>
   </extensions>
 
+  <extensions defaultExtensionNs="educational">
+    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.PyLanguageDecorator" language="Python" />
+  </extensions>
+
   <actions>
     <action id="Educational.WatchTutorial" class="com.jetbrains.edu.python.learning.actions.PyWatchTutorialAction">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>

@@ -11,8 +11,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduLanguageDecorator;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -137,12 +136,12 @@ public class BrowserWindow extends JFrame {
     if (course == null) {
       return;
     }
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
-    if (configurator == null) {
+    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(course.getLanguageById());
+    if (decorator == null) {
       Platform.runLater(() -> myEngine.loadContent(content));
     }
     else {
-      String withCodeHighlighting = createHtmlWithCodeHighlighting(content, configurator.getLanguageScriptUrl(), configurator.getDefaultHighlightingMode());
+      String withCodeHighlighting = createHtmlWithCodeHighlighting(content, decorator.getLanguageScriptUrl(), decorator.getDefaultHighlightingMode());
       Platform.runLater(() -> {
         updateLookWithProgressBarIfNeeded();
         myEngine.loadContent(withCodeHighlighting);

@@ -22,8 +22,7 @@ import com.intellij.ui.components.JBList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduLanguageDecorator;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -306,12 +305,12 @@ public class CoursesPanel extends JPanel {
   @Nullable
   private static Icon getLogo(@NotNull Course course) {
     Language language = course.getLanguageById();
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
-    if (configurator == null) {
-      LOG.info("plugin configurator is null, language: " + language.getDisplayName());
+    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(language);
+    if (decorator == null) {
+      LOG.info("language decorator is null, language: " + language.getDisplayName());
       return null;
     }
-    return configurator.getLogo();
+    return decorator.getLogo();
   }
 
   @NotNull
