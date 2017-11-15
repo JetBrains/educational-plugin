@@ -13,7 +13,7 @@ import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
-import com.jetbrains.edu.learning.actions.StudyCompareWithAnswerAction;
+import com.jetbrains.edu.learning.actions.CompareWithAnswerAction;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
@@ -136,12 +136,12 @@ public interface EduPluginConfigurator<Settings> {
   default DefaultActionGroup getTaskDescriptionActionGroup() {
     final DefaultActionGroup group = new DefaultActionGroup();
     String[] ids = new String[]{
-      StudyCheckAction.ACTION_ID,
-      StudyPreviousTaskAction.ACTION_ID,
-      StudyNextTaskAction.ACTION_ID,
-      StudyRefreshTaskFileAction.ACTION_ID,
-      StudyShowHintAction.ACTION_ID,
-      StudyCompareWithAnswerAction.ACTION_ID
+      CheckAction.ACTION_ID,
+      PreviousTaskAction.ACTION_ID,
+      NextTaskAction.ACTION_ID,
+      RefreshTaskFileAction.ACTION_ID,
+      ShowHintAction.ACTION_ID,
+      CompareWithAnswerAction.ACTION_ID
     };
     ActionManager actionManager = ActionManager.getInstance();
     Arrays.stream(ids)
@@ -149,7 +149,7 @@ public interface EduPluginConfigurator<Settings> {
       .filter(Objects::nonNull)
       .forEach(group::add);
 
-    group.add(new StudyEditInputAction());
+    group.add(new EditInputAction());
     return group;
   }
 

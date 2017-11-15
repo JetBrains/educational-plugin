@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.actions.StudyCheckAction;
+import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -393,7 +393,7 @@ public class EduAdaptiveStepicConnector {
       return result;
     }
 
-    return new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH);
+    return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
   }
 
   private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {
@@ -429,7 +429,7 @@ public class EduAdaptiveStepicConnector {
     else {
       LOG.warn("Got an incorrect attempt id: " + attemptId);
     }
-    return new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH);
+    return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
   }
 
   private static StudyCheckResult doAdaptiveCheck(@NotNull StepicWrappers.SubmissionToPostWrapper submission,
@@ -454,7 +454,7 @@ public class EduAdaptiveStepicConnector {
         return new StudyCheckResult(StudyStatus.Unchecked, "Can't get check results for Stepik");
       }
     }
-    return new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH);
+    return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
   }
 
   @Nullable

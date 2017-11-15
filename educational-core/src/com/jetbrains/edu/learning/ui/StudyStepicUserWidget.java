@@ -12,7 +12,7 @@ import com.intellij.ui.ClickListener;
 import com.intellij.ui.awt.RelativePoint;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.actions.StudySyncCourseAction;
+import com.jetbrains.edu.learning.actions.SyncCourseAction;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -85,7 +85,7 @@ public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
     String syncCourseStep = "Synchronize course";
     String userActionStep = user == null ? loginText : logOutText;
     ArrayList<String> steps = new ArrayList<>();
-    if (user != null && StudySyncCourseAction.isAvailable(project)) {
+    if (user != null && SyncCourseAction.isAvailable(project)) {
       steps.add(syncCourseStep);
     }
     steps.add(userActionStep);
@@ -96,7 +96,7 @@ public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
         return doFinalStep(() -> {
           if (syncCourseStep.equals(selectedValue)) {
             EduUsagesCollector.progressFromWidget();
-            StudySyncCourseAction.doUpdate(project);
+            SyncCourseAction.doUpdate(project);
           }
           else {
             if (loginText.equals(selectedValue)) {

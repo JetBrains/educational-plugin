@@ -20,7 +20,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.actions.StudyCheckAction;
+import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.EduTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyCheckUtils;
@@ -47,7 +47,7 @@ public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
 
   @Override
   public StudyCheckResult check() {
-    Ref<StudyCheckResult> result = new Ref<>(new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH));
+    Ref<StudyCheckResult> result = new Ref<>(new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH));
     Sdk sdk = ProjectRootManager.getInstance(myProject).getProjectSdk();
     if (sdk == null) {
       return result.get();

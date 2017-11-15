@@ -6,9 +6,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class StudyActionWithShortcut extends DumbAwareAction {
+public abstract class DumbAwareActionWithShortcut extends DumbAwareAction {
 
-  public StudyActionWithShortcut(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
+  public DumbAwareActionWithShortcut(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
     super(text, description, icon);
   }
 

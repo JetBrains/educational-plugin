@@ -15,10 +15,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class StudyResetCourseAction extends DumbAwareAction {
+public class ResetCourseAction extends DumbAwareAction {
 
 
-  public StudyResetCourseAction() {
+  public ResetCourseAction() {
     super("Reset Course", "Reset Course", null);
   }
 
@@ -44,19 +44,19 @@ public class StudyResetCourseAction extends DumbAwareAction {
             if (taskFileVF != null) {
               Document document = StudyUtils.getDocument(project.getBasePath(), lesson.getIndex(), task.getIndex(), relativePath);
               if (document != null) {
-                StudyRefreshTaskFileAction.resetDocument(document, taskFile);
+                RefreshTaskFileAction.resetDocument(document, taskFile);
                 task.setStatus(StudyStatus.Unchecked);
                 if (task instanceof ChoiceTask) {
                   ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
                 }
-                StudyRefreshTaskFileAction.resetAnswerPlaceholders(taskFile, project);
+                RefreshTaskFileAction.resetAnswerPlaceholders(taskFile, project);
               }
             }
           }
         }
       }
 
-      StudyRefreshTaskFileAction.refresh(project);
+      RefreshTaskFileAction.refresh(project);
     });
   }
 

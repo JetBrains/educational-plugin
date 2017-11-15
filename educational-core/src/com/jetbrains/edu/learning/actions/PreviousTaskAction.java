@@ -7,8 +7,8 @@ import com.jetbrains.edu.learning.navigation.StudyNavigator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StudyPreviousTaskAction extends StudyTaskNavigationAction {
-  public StudyPreviousTaskAction() {
+public class PreviousTaskAction extends TaskNavigationAction {
+  public PreviousTaskAction() {
     super("Previous Task","Navigate to the previous task", AllIcons.Actions.Back);
   }
 

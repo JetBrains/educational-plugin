@@ -41,13 +41,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudyEditInputAction extends DumbAwareAction {
+public class EditInputAction extends DumbAwareAction {
 
-  private static final Logger LOG = Logger.getInstance(StudyEditInputAction.class.getName());
+  private static final Logger LOG = Logger.getInstance(EditInputAction.class.getName());
   private JBEditorTabs tabbedPane;
   private Map<TabInfo, UserTest> myEditableTabs = new HashMap<>();
 
-  public StudyEditInputAction() {
+  public EditInputAction() {
     super("Watch Test Input", "Watch test input", EducationalCoreIcons.WatchInput);
   }
 
