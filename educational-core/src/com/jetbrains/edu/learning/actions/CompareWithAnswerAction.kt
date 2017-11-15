@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.StudyState
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.StudyUtils
 
-class StudyCompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Diff.Diff) {
+class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Diff.Diff) {
     companion object {
         @JvmField val ACTION_ID = "Educational.CompareWithAnswer"
     }

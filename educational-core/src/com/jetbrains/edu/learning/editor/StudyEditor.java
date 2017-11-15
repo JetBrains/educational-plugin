@@ -10,7 +10,7 @@ import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.ui.components.labels.ActionLink;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.actions.StudyRefreshTaskFileAction;
+import com.jetbrains.edu.learning.actions.RefreshTaskFileAction;
 import com.jetbrains.edu.learning.core.EduDocumentListener;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class StudyEditor extends PsiAwareTextEditorImpl {
     if (!myTaskFile.isValid(getEditor().getDocument().getText())) {
       JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
       panel.add(new JLabel(BROKEN_SOLUTION_ERROR_TEXT_START));
-      ActionLink actionLink = new ActionLink(ACTION_TEXT, new StudyRefreshTaskFileAction());
+      ActionLink actionLink = new ActionLink(ACTION_TEXT, new RefreshTaskFileAction());
       actionLink.setVerticalAlignment(SwingConstants.CENTER);
       panel.add(actionLink);
       panel.add(new JLabel(BROKEN_SOLUTION_ERROR_TEXT_END));

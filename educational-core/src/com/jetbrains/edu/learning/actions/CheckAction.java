@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class StudyCheckAction extends StudyActionWithShortcut {
+public class CheckAction extends DumbAwareActionWithShortcut {
   public static final String SHORTCUT = "ctrl alt pressed ENTER";
   public static final String ACTION_ID = "Educational.Check";
   private static final String TEXT = "Check Task";
@@ -40,7 +40,7 @@ public class StudyCheckAction extends StudyActionWithShortcut {
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
-  public StudyCheckAction() {
+  public CheckAction() {
     super(TEXT,"Check current task", EducationalCoreIcons.CheckTask);
   }
 

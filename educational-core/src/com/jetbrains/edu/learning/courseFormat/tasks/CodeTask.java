@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.courseFormat.tasks;
 
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.actions.StudyCheckAction;
+import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyCheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
@@ -37,7 +37,7 @@ public class CodeTask extends Task {
       public StudyCheckResult checkOnRemote() {
         StepicUser user = EduSettings.getInstance().getUser();
         if (user == null) {
-          return new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH);
+          return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
         }
         return EduAdaptiveStepicConnector.checkCodeTask(myProject, myTask, user);
       }

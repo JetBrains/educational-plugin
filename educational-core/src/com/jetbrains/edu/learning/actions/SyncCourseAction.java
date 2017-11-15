@@ -20,9 +20,9 @@ import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StudySyncCourseAction extends DumbAwareAction {
+public class SyncCourseAction extends DumbAwareAction {
 
-  public StudySyncCourseAction() {
+  public SyncCourseAction() {
     super("Synchronize Course", "Synchronize Course", EducationalCoreIcons.StepikRefresh);
   }
 
