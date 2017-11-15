@@ -34,9 +34,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
+public class KtPluginConfigurator extends EduPluginConfiguratorBase {
 
-  private static final Logger LOG = Logger.getInstance(EduKotlinPluginConfigurator.class);
+  private static final Logger LOG = Logger.getInstance(KtPluginConfigurator.class);
 
   static final String LEGACY_TESTS_KT = "tests.kt";
   public static final String TESTS_KT = "Tests.kt";
@@ -58,14 +58,14 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
   @NotNull
   @Override
   public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask eduTask, @NotNull Project project) {
-    return new KotlinTaskChecker(eduTask, project);
+    return new KtTaskChecker(eduTask, project);
   }
 
   @Override
   public void configureModule(@NotNull Module module) {
     super.configureModule(module);
     Project project = module.getProject();
-    EduKotlinLibConfigurator.configureLib(project);
+    KtLibConfigurator.configureLib(project);
   }
 
   @Override
@@ -106,13 +106,13 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public List<String> getBundledCoursePaths() {
-    File bundledCourseRoot = StudyUtils.getBundledCourseRoot(EduKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME, EduKotlinKoansModuleBuilder.class);
-    return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), EduKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME));
+    File bundledCourseRoot = StudyUtils.getBundledCourseRoot(KtKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME, KtKotlinKoansModuleBuilder.class);
+    return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), KtKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME));
   }
 
   @Override
   public EduCourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
-    return new EduKotlinCourseProjectGenerator(course);
+    return new KtCourseProjectGenerator(course);
   }
 
   @Nullable

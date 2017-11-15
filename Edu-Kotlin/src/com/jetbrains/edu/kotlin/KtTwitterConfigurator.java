@@ -11,41 +11,41 @@ import com.jetbrains.edu.learning.twitter.StudyTwitterUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EduKotlinTwitterConfigurator implements StudyTwitterPluginConfigurator {
+public class KtTwitterConfigurator implements StudyTwitterPluginConfigurator {
 
 
     @NotNull
     @Override
     public String getConsumerKey(@NotNull Project project) {
-        return KotlinTwitterBundle.message("consumerKey");
+        return KtTwitterBundle.message("consumerKey");
     }
 
     @NotNull
     @Override
     public String getConsumerSecret(@NotNull Project project) {
-        return KotlinTwitterBundle.message("consumerSecret");
+        return KtTwitterBundle.message("consumerSecret");
     }
 
 
     @Override
     public void storeTwitterTokens(@NotNull Project project, @NotNull String accessToken, @NotNull String tokenSecret) {
-        KotlinStudyTwitterSettings kotlinStudyTwitterSettings = KotlinStudyTwitterSettings.getInstance(project);
-        kotlinStudyTwitterSettings.setAccessToken(accessToken);
-        kotlinStudyTwitterSettings.setTokenSecret(tokenSecret);
+        KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
+        ktTwitterSettings.setAccessToken(accessToken);
+        ktTwitterSettings.setTokenSecret(tokenSecret);
     }
 
     @NotNull
     @Override
     public String getTwitterTokenSecret(@NotNull Project project) {
-        KotlinStudyTwitterSettings kotlinStudyTwitterSettings = KotlinStudyTwitterSettings.getInstance(project);
-        return kotlinStudyTwitterSettings.getTokenSecret();
+        KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
+        return ktTwitterSettings.getTokenSecret();
     }
 
     @NotNull
     @Override
     public String getTwitterAccessToken(@NotNull Project project) {
-        KotlinStudyTwitterSettings kotlinStudyTwitterSettings = KotlinStudyTwitterSettings.getInstance(project);
-        return kotlinStudyTwitterSettings.getAccessToken();
+        KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
+        return ktTwitterSettings.getAccessToken();
     }
 
     @Override
@@ -53,8 +53,8 @@ public class EduKotlinTwitterConfigurator implements StudyTwitterPluginConfigura
         StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
         Course course = taskManager.getCourse();
         if (course != null && course.getName().equals("Kotlin Koans")) {
-            KotlinStudyTwitterSettings kotlinStudyTwitterSettings = KotlinStudyTwitterSettings.getInstance(project);
-            return kotlinStudyTwitterSettings.askToTweet()
+            KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
+            return ktTwitterSettings.askToTweet()
                     && solvedTask.getStatus() == StudyStatus.Solved
                     && (statusBeforeCheck == StudyStatus.Unchecked || statusBeforeCheck == StudyStatus.Failed)
                     && KotlinUtils.calculateTaskNumber(solvedTask) % 8 == 0;
@@ -65,12 +65,12 @@ public class EduKotlinTwitterConfigurator implements StudyTwitterPluginConfigura
     @Nullable
     @Override
     public StudyTwitterUtils.TwitterDialogPanel getTweetDialogPanel(@NotNull Task solvedTask) {
-        return new KotlinTwitterDialogPanel(solvedTask);
+        return new KtTwitterDialogPanel(solvedTask);
     }
 
     @Override
     public void setAskToTweet(@NotNull final Project project, boolean askToTweet) {
-        KotlinStudyTwitterSettings.getInstance(project).setAskToTweet(askToTweet);
+        KtTwitterSettings.getInstance(project).setAskToTweet(askToTweet);
     }
 
     @Override

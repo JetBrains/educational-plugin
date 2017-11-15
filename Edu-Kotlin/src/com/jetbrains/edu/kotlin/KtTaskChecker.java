@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.psi.KtClass;
 
 import java.util.Collection;
 
-public class KotlinTaskChecker extends RunConfigurationBasedTaskChecker {
+public class KtTaskChecker extends RunConfigurationBasedTaskChecker {
 
   public static final StudyCheckResult FAILED_TO_LAUNCH = new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH);
 
-  public KotlinTaskChecker(@NotNull EduTask task, @NotNull Project project) {
+  public KtTaskChecker(@NotNull EduTask task, @NotNull Project project) {
     super(task, project);
   }
 
@@ -48,11 +48,11 @@ public class KotlinTaskChecker extends RunConfigurationBasedTaskChecker {
         return testFile;
       }
     }
-    VirtualFile testsFile = taskDir.findChild(EduKotlinPluginConfigurator.LEGACY_TESTS_KT);
+    VirtualFile testsFile = taskDir.findChild(KtPluginConfigurator.LEGACY_TESTS_KT);
     if (testsFile != null) {
       return testsFile;
     }
-    return taskDir.findChild(EduKotlinPluginConfigurator.TESTS_KT);
+    return taskDir.findChild(KtPluginConfigurator.TESTS_KT);
   }
 
   @Override

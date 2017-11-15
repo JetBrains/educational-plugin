@@ -6,15 +6,15 @@ import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGe
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class EduKotlinCourseProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
+class KtCourseProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
 
-  public EduKotlinCourseProjectGenerator(@NotNull Course course) {
+  public KtCourseProjectGenerator(@NotNull Course course) {
     super(course);
   }
 
   @Nullable
   @Override
   protected EduCourseModuleBuilder studyModuleBuilder() {
-    return new EduKotlinKoansModuleBuilder(myCourse);
+    return new KtKotlinKoansModuleBuilder(myCourse);
   }
 }
