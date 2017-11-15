@@ -24,11 +24,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class KoansAndroidProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
+public class KtProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
 
-  private static final Logger LOG = Logger.getInstance(KoansAndroidProjectGenerator.class);
+  private static final Logger LOG = Logger.getInstance(KtProjectGenerator.class);
 
-  public KoansAndroidProjectGenerator(@NotNull Course course) {
+  public KtProjectGenerator(@NotNull Course course) {
     super(course);
   }
 
@@ -43,7 +43,7 @@ public class KoansAndroidProjectGenerator extends EduIntellijCourseProjectGenera
           Task task = new CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1);
           lesson.addTask(task);
           myCourse.getLessons(true).add(lesson);
-          EduKotlinAndroidPluginConfigurator.initTask(task);
+          KtPluginConfigurator.initTask(task);
         }
         Course course = myCourse;
         if (course instanceof RemoteCourse) {

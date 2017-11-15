@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("MethodMayBeStatic")
 @State(name = "KotlinStudyTwitterSettings", storages = @Storage("kotlin_study_twitter_settings.xml"))
-class KotlinStudyTwitterSettings implements PersistentStateComponent<KotlinStudyTwitterSettings.State> {
+class KtTwitterSettings implements PersistentStateComponent<KtTwitterSettings.State> {
 
     private State myState = new State();
 
@@ -21,8 +21,8 @@ class KotlinStudyTwitterSettings implements PersistentStateComponent<KotlinStudy
         public String tokenSecret = "";
     }
 
-    static KotlinStudyTwitterSettings getInstance(@NotNull final Project project) {
-        return ServiceManager.getService(project, KotlinStudyTwitterSettings.class);
+    static KtTwitterSettings getInstance(@NotNull final Project project) {
+        return ServiceManager.getService(project, KtTwitterSettings.class);
     }
     @Nullable
     @Override
