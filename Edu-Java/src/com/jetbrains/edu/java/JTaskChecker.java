@@ -14,18 +14,18 @@ import com.jetbrains.edu.learning.intellij.RunConfigurationBasedTaskChecker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JavaTaskChecker extends RunConfigurationBasedTaskChecker {
-  public JavaTaskChecker(@NotNull EduTask task, @NotNull Project project) {
+public class JTaskChecker extends RunConfigurationBasedTaskChecker {
+  public JTaskChecker(@NotNull EduTask task, @NotNull Project project) {
     super(task, project);
   }
 
   @Nullable
   @Override
   protected VirtualFile getTestsFile() {
-    String testFileName = EduJavaPluginConfigurator.TEST_JAVA;
+    String testFileName = JPluginConfigurator.TEST_JAVA;
     if (myTask instanceof TaskWithSubtasks) {
       int activeSubtaskIndex = ((TaskWithSubtasks) myTask).getActiveSubtaskIndex();
-      testFileName = FileUtil.getNameWithoutExtension(testFileName) + EduNames.SUBTASK_MARKER + activeSubtaskIndex + "." + FileUtilRt.getExtension(EduJavaPluginConfigurator.TEST_JAVA);
+      testFileName = FileUtil.getNameWithoutExtension(testFileName) + EduNames.SUBTASK_MARKER + activeSubtaskIndex + "." + FileUtilRt.getExtension(JPluginConfigurator.TEST_JAVA);
     }
     VirtualFile taskDir = myTask.getTaskDir(myProject);
     if (taskDir == null) {
