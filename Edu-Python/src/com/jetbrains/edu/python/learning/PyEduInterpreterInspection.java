@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PyInterpreterInspection extends PyInspection {
+public class PyEduInterpreterInspection extends PyInspection {
 
   @Nls
   @NotNull

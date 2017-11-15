@@ -19,7 +19,7 @@ import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.sdk.PythonSdkType
 import org.jetbrains.annotations.Nls
 
-class PyLanguageLevelInspection : PyInspection() {
+class PyEduLanguageLevelInspection : PyInspection() {
   @Nls
   override fun getDisplayName(): String {
     return "Unsupported language level for a course"
