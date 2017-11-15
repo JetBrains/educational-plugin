@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.JBColor;
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskChecker;
@@ -109,25 +108,6 @@ public interface EduConfigurator<Settings> {
   default void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
   }
 
-  /**
-   * Used for code highlighting in Task Description tool window
-   *
-   * @return parameter for CodeMirror script. Available languages: @see <@linktourl http://codemirror.net/mode/>
-   */
-  @NotNull
-  default String getDefaultHighlightingMode() {
-    return "";
-  }
-
-  /**
-   * Used for code highlighting in Task Description tool window
-   * Example in <a href="https://github.com/JetBrains/educational-plugins/tree/master/Edu-Python">Edu Python</a> plugin
-   */
-  @NotNull
-  default String getLanguageScriptUrl() {
-    return "";
-  }
-
   @NotNull
   TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project);
 
@@ -190,32 +170,6 @@ public interface EduConfigurator<Settings> {
 
   default ModuleType getModuleType() {
     return StdModuleTypes.JAVA;
-  }
-
-  /**
-   * Gets tag color for configurator language.
-   *
-   * If it returns null then color for configurator language will be taken
-   * from educational-core/resources/languageColors/colors.json.
-   * Original color list can be found <a href="https://github.com/ozh/github-colors/blob/master/colors.json">here</a>
-   *
-   * @return tag color for configurator language
-   */
-  @Nullable
-  default JBColor languageTagColor() {
-    return null;
-  }
-
-  /**
-   * Returns icon for configurator language.
-   * This icon is used in places where course is associated with language.
-   * For example, 'Browse Courses' and 'Create New Course' dialogs.
-   *
-   * @return 16x16 icon or null, if no icon is available
-   */
-  @Nullable
-  default Icon getLogo() {
-    return null;
   }
 
   /**
