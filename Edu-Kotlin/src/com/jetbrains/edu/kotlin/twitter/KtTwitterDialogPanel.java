@@ -57,7 +57,7 @@ public class KtTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPanel {
     }
 
     private static String getMessageForTask(@NotNull final Task task) {
-        int solvedTaskNumber = KotlinUtils.calculateTaskNumber(task);
+        int solvedTaskNumber = KtTwitterConfigurator.calculateTaskNumber(task);
         return "Hey, I just completed level " + solvedTaskNumber / 8 
                 +" of Kotlin Koans. https://kotlinlang.org/docs/tutorials/koans.html #kotlinkoans";
     }
@@ -81,7 +81,7 @@ public class KtTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPanel {
     }
     
     private static String getImageName(@NotNull final Task task) {
-        int solvedTaskNumber = KotlinUtils.calculateTaskNumber(task);
+        int solvedTaskNumber = KtTwitterConfigurator.calculateTaskNumber(task);
         int level = solvedTaskNumber / 8;
         return level + "level.gif";
     }
