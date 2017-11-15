@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.kotlin.twitter;
 
 import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;

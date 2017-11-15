@@ -5,15 +5,15 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceInterface="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"
-                        serviceImplementation="com.jetbrains.edu.kotlin.KotlinStudyTwitterSettings"/>
+        <projectService serviceInterface="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"
+                        serviceImplementation="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"/>
     </extensions>
 
     <extensions defaultExtensionNs="Educational">
         <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.KtPluginConfigurator" language="kotlin"/>
         <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.studio.KtPluginConfigurator" language="kotlin"/>
-        <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.KtTwitterConfigurator"/>
-        <optionsProvider instance="com.jetbrains.edu.kotlin.KtOptionsProvider"/>
+        <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
+        <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
     </extensions>
 
 </idea-plugin>
