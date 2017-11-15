@@ -35,6 +35,10 @@
                         beanClass="com.jetbrains.edu.learning.settings.OptionsProviderEP">
             <with attribute="instance" implements="com.jetbrains.edu.learning.settings.OptionsProvider"/>
         </extensionPoint>
+
+        <extensionPoint qualifiedName="educational.languageDecorator" beanClass="com.intellij.lang.LanguageExtensionPoint">
+            <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduLanguageDecorator"/>
+        </extensionPoint>
     </extensionPoints>
 
     <actions>

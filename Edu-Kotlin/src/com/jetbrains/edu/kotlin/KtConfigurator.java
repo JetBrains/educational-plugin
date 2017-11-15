@@ -24,10 +24,7 @@ import com.jetbrains.edu.learning.intellij.EduConfiguratorBase;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinIcons;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
@@ -112,12 +109,6 @@ public class KtConfigurator extends EduConfiguratorBase {
   @Override
   public CourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
     return new KtCourseProjectGenerator(course);
-  }
-
-  @Nullable
-  @Override
-  public Icon getLogo() {
-    return KotlinIcons.SMALL_LOGO;
   }
 
   @Override

@@ -51,18 +51,6 @@ public abstract class EduConfiguratorBase implements EduConfigurator<JdkProjectS
     return EduIntellijUtils.createTask(project, task, parentDirectory, null, null);
   }
 
-  @NotNull
-  @Override
-  public String getLanguageScriptUrl() {
-    return getClass().getResource("/code_mirror/clike.js").toExternalForm();
-  }
-
-  @NotNull
-  @Override
-  public String getDefaultHighlightingMode() {
-    return "text/x-java";
-  }
-
   @Override
   public boolean excludeFromArchive(@NotNull String path) {
     final String name = PathUtil.getFileName(path);
