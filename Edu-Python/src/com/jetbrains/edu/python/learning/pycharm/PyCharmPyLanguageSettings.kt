@@ -1,9 +1,10 @@
-package com.jetbrains.edu.python.learning
+package com.jetbrains.edu.python.learning.pycharm
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.containers.ContainerUtil
+import com.jetbrains.edu.python.learning.PyLanguageSettings
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 import com.jetbrains.python.newProject.steps.PythonSdkChooserCombo
 
