@@ -11,14 +11,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.BooleanFunction;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
@@ -33,7 +31,6 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
-import com.jetbrains.python.configuration.VirtualEnvProjectFilter;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -49,7 +46,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
+public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
   implements EduCourseProjectGenerator<PyNewProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
@@ -258,7 +255,12 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     return baseSdk != null ? baseSdk : baseSdks.iterator().next();
   }
 
-  protected abstract void addSdk(@NotNull Project project, @NotNull Sdk sdk);
+  protected void addSdk(@NotNull Project project, @NotNull Sdk sdk) {
+    SdkConfigurationUtil.addSdk(sdk);
+  }
+
   @NotNull
-  protected abstract List<Sdk> getAllSdks(@NotNull Project project);
+  protected List<Sdk> getAllSdks(@NotNull Project project) {
+    return ProjectJdkTable.getInstance().getSdksOfType(PythonSdkType.getInstance());
+  }
 }
