@@ -12,21 +12,21 @@ import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
-import com.jetbrains.edu.learning.intellij.EduPyCharmTasksChecker;
+import com.jetbrains.edu.learning.intellij.RunConfigurationBasedTaskChecker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtClass;
 
 import java.util.Collection;
 
-public class EduKotlinPyCharmTaskChecker extends EduPyCharmTasksChecker {
+public class KotlinTaskChecker extends RunConfigurationBasedTaskChecker {
 
   public static final StudyCheckResult FAILED_TO_LAUNCH = new StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH);
 
-  public EduKotlinPyCharmTaskChecker(@NotNull PyCharmTask task, @NotNull Project project) {
+  public KotlinTaskChecker(@NotNull EduTask task, @NotNull Project project) {
     super(task, project);
   }
 

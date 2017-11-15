@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
 import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
@@ -61,8 +61,8 @@ public class ChoiceTask extends Task {
   }
 
   @Override
-  public StudyTaskChecker getChecker(@NotNull Project project) {
-    return new StudyTaskChecker<ChoiceTask>(this, project) {
+  public TaskChecker getChecker(@NotNull Project project) {
+    return new TaskChecker<ChoiceTask>(this, project) {
       @Override
       public StudyCheckResult checkOnRemote() {
         StepicUser user = EduSettings.getInstance().getUser();

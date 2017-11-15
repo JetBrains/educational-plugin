@@ -172,7 +172,7 @@ public class StudyRefreshTaskFileAction extends StudyActionWithShortcut {
       if (task == null) {
         return;
       }
-      presentation.setText(task instanceof PyCharmTask ? TEXT : RESET_TASK);
+      presentation.setText(task instanceof EduTask ? TEXT : RESET_TASK);
       if (!course.isStudy()) {
         presentation.setVisible(true);
         presentation.setEnabled(false);

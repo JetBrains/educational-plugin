@@ -25,7 +25,7 @@ import java.util.*
 import java.util.concurrent.CountDownLatch
 
 
-class OutputTaskChecker(task: OutputTask, project: Project) : StudyTaskChecker<OutputTask>(task, project) {
+class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<OutputTask>(task, project) {
   companion object {
     private val NOT_RUNNABLE_MESSAGE = "Solution isn't runnable"
     private val OUTPUT_PATTERN_NAME = "output.txt"

@@ -9,15 +9,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyState;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
+import com.jetbrains.edu.learning.checker.EduTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyCheckUtils;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyTestsOutputParser;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.StudyEditor;
 import one.util.streamex.EntryStream;
@@ -27,10 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class PyStudyTaskChecker extends StudyTaskChecker<PyCharmTask> {
-  private static final Logger LOG = Logger.getInstance(PyStudyTaskChecker.class);
+public class PyTaskChecker extends EduTaskChecker {
+  private static final Logger LOG = Logger.getInstance(PyTaskChecker.class);
 
-  public PyStudyTaskChecker(PyCharmTask task, Project project) {
+  public PyTaskChecker(EduTask task, Project project) {
     super(task, project);
   }
 

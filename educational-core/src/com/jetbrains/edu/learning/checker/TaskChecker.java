@@ -7,11 +7,11 @@ import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
-public class StudyTaskChecker<T extends Task> {
+public class TaskChecker<T extends Task> {
   @NotNull protected final T myTask;
   @NotNull protected final Project myProject;
 
-  public StudyTaskChecker(@NotNull T task, @NotNull Project project) {
+  public TaskChecker(@NotNull T task, @NotNull Project project) {
     myTask = task;
     myProject = project;
   }

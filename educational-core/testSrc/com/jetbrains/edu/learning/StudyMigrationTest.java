@@ -44,6 +44,11 @@ public class StudyMigrationTest {
     doTest(4);
   }
 
+  @Test
+  public void testPycharmToEdu() throws JDOMException, IOException, StudySerializationUtils.StudyUnrecognizedFormatException {
+    doTest(7);
+  }
+
   private void doTest(int version) throws IOException, JDOMException, StudySerializationUtils.StudyUnrecognizedFormatException {
     final String name = PlatformTestUtil.getTestName(this.name.getMethodName(), true);
     final Path before = getTestDataPath().resolve(name + ".xml");
@@ -59,6 +64,9 @@ public class StudyMigrationTest {
         break;
       case 4:
         converted = StudySerializationUtils.Xml.convertToFifthVersion(element);
+        break;
+      case 7:
+        converted = StudySerializationUtils.Xml.convertToSeventhVersion(element);
         break;
     }
     assertTrue(JDOMUtil.areElementsEqual(converted, JdomKt.loadElement(after)));

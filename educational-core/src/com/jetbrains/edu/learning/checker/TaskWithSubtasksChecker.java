@@ -13,27 +13,27 @@ import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class TaskWithSubtasksChecker extends StudyTaskChecker<TaskWithSubtasks> {
-  private StudyTaskChecker<PyCharmTask> myPyCharmTaskChecker;
+public class TaskWithSubtasksChecker extends TaskChecker<TaskWithSubtasks> {
+  private TaskChecker<EduTask> myEduTaskChecker;
   public TaskWithSubtasksChecker(@NotNull TaskWithSubtasks task,
                                  @NotNull Project project) {
     super(task, project);
     EduPluginConfigurator<?> configurator = EduPluginConfiguratorManager.forLanguage(myTask.getLesson().getCourse().getLanguageById());
     if (configurator != null) {
-      myPyCharmTaskChecker  = configurator.getPyCharmTaskChecker(task, project);
+      myEduTaskChecker = configurator.getEduTaskChecker(task, project);
     }
   }
 
   @Override
   public StudyCheckResult check() {
-    if (myPyCharmTaskChecker != null) {
-      return myPyCharmTaskChecker.check();
+    if (myEduTaskChecker != null) {
+      return myEduTaskChecker.check();
     }
     return super.check();
   }
