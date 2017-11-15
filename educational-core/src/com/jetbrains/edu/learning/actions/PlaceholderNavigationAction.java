@@ -15,9 +15,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-abstract public class WindowNavigationAction extends DumbAwareActionWithShortcut implements DumbAware {
+abstract public class PlaceholderNavigationAction extends DumbAwareActionWithShortcut implements DumbAware {
 
-  protected WindowNavigationAction(String actionId, String description, Icon icon) {
+  protected PlaceholderNavigationAction(String actionId, String description, Icon icon) {
     super(actionId, description, icon);
   }
 

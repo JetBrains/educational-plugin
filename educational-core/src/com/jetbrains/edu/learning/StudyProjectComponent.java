@@ -34,8 +34,8 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
-import com.jetbrains.edu.learning.actions.NextWindowAction;
-import com.jetbrains.edu.learning.actions.PrevWindowAction;
+import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
+import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -206,8 +206,8 @@ public class StudyProjectComponent implements ProjectComponent {
           }
         }
       }
-      addShortcut(NextWindowAction.ACTION_ID, new String[]{NextWindowAction.SHORTCUT, NextWindowAction.SHORTCUT2});
-      addShortcut(PrevWindowAction.ACTION_ID, new String[]{PrevWindowAction.SHORTCUT});
+      addShortcut(NextPlaceholderAction.ACTION_ID, new String[]{NextPlaceholderAction.SHORTCUT, NextPlaceholderAction.SHORTCUT2});
+      addShortcut(PrevPlaceholderAction.ACTION_ID, new String[]{PrevPlaceholderAction.SHORTCUT});
     }
   }
 
