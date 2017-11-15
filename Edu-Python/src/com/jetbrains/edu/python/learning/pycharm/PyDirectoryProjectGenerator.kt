@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 
-internal class PyCharmPyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {
+internal class PyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {
 
   override fun getAllSdks(): List<Sdk> = PyConfigurableInterpreterList.getInstance(null).allPythonSdks
 

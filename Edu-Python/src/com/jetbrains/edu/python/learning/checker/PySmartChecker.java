@@ -25,19 +25,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-class PyStudySmartChecker {
-  private PyStudySmartChecker() {
+class PySmartChecker {
+  private PySmartChecker() {
 
   }
 
-  private static final Logger LOG = Logger.getInstance(PyStudySmartChecker.class);
+  private static final Logger LOG = Logger.getInstance(PySmartChecker.class);
 
   private static void smartCheck(@NotNull final AnswerPlaceholder placeholder,
                                 @NotNull final Project project,
                                 @NotNull final VirtualFile answerFile,
                                 @NotNull final TaskFile answerTaskFile,
                                 @NotNull final TaskFile usersTaskFile,
-                                @NotNull final PyStudyTestRunner testRunner,
+                                @NotNull final PyTestRunner testRunner,
                                 @NotNull final VirtualFile virtualFile,
                                 @NotNull final Document usersDocument) {
     VirtualFile fileWindows = null;
@@ -84,7 +84,7 @@ class PyStudySmartChecker {
   }
 
   static void runSmartTestProcess(@NotNull final VirtualFile taskDir,
-                                         @NotNull final PyStudyTestRunner testRunner,
+                                         @NotNull final PyTestRunner testRunner,
                                          @NotNull final String taskFileName,
                                          @NotNull final TaskFile taskFile,
                                          @NotNull final Project project) {

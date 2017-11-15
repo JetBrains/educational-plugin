@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PyStudyInterpreterInspection extends PyInspection {
+public class PyInterpreterInspection extends PyInspection {
 
   @Nls
   @NotNull
@@ -83,12 +83,12 @@ public class PyStudyInterpreterInspection extends PyInspection {
           final LanguageLevel projectLanguageLevel = LanguageLevel.fromPythonVersion(versionString.substring(prefix.length()));
 
           final String version = course.getLanguageVersion();
-          if (PyEduPluginConfigurator.PYTHON_2.equals(version)) {
+          if (PyPluginConfigurator.PYTHON_2.equals(version)) {
             if (projectLanguageLevel.isPy3K()) {
               registerProblem(node, "Course is available for Python 2, but Python 3 is selected as project interpreter", new ConfigureInterpreterFix());
             }
           }
-          else if (PyEduPluginConfigurator.PYTHON_3.equals(version)) {
+          else if (PyPluginConfigurator.PYTHON_3.equals(version)) {
             if (!projectLanguageLevel.isPy3K()) {
               registerProblem(node, "Course is available for Python 3, but Python 2 is selected as project interpreter", new ConfigureInterpreterFix());
             }

@@ -12,12 +12,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.util.PlatformUtils;
 
-public class PyStudyShowTutorial extends AbstractProjectComponent {
+public class PyShowTutorial extends AbstractProjectComponent {
 
   private static final String POPUP_SHOWN = "StudyShowPopup";
   private final Project myProject;
 
-  protected PyStudyShowTutorial(Project project) {
+  protected PyShowTutorial(Project project) {
     super(project);
     myProject = project;
   }
