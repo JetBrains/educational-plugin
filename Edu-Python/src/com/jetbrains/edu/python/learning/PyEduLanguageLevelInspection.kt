@@ -21,15 +21,11 @@ import org.jetbrains.annotations.Nls
 
 class PyEduLanguageLevelInspection : PyInspection() {
   @Nls
-  override fun getDisplayName(): String {
-    return "Unsupported language level for a course"
-  }
+  override fun getDisplayName(): String = "Unsupported language level for a course"
 
   override fun buildVisitor(holder: ProblemsHolder,
                             isOnTheFly: Boolean,
-                            session: LocalInspectionToolSession): PsiElementVisitor {
-    return Visitor(holder, session)
-  }
+                            session: LocalInspectionToolSession): PsiElementVisitor = Visitor(holder, session)
 
   class Visitor(holder: ProblemsHolder?,
                 session: LocalInspectionToolSession) : PyInspectionVisitor(holder, session) {
@@ -49,7 +45,7 @@ class PyEduLanguageLevelInspection : PyInspection() {
       }
     }
 
-    fun checkIfLanguageLevelSupported(course: Course, languageLevel: LanguageLevel, node: PyFile) {
+    private fun checkIfLanguageLevelSupported(course: Course, languageLevel: LanguageLevel, node: PyFile) {
       if (course.isAdaptive) {
         if(!languageLevel.isPy3K) {
           registerProblem(node, "Adaptive courses support Python 3 only", ConfigureInterpreterFix())
@@ -61,13 +57,9 @@ class PyEduLanguageLevelInspection : PyInspection() {
 
 
 private class ConfigureInterpreterFix : LocalQuickFix {
-  override fun getName(): String {
-    return "Configure python interpreter"
-  }
+  override fun getName(): String = "Configure python interpreter"
 
-  override fun getFamilyName(): String {
-    return "Configure python interpreter"
-  }
+  override fun getFamilyName(): String = "Configure python interpreter"
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     ApplicationManager.getApplication()
