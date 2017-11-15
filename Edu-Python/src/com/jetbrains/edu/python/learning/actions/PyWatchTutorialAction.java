@@ -5,8 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
-public class PyStudyWatchTutorialAction extends DumbAwareAction {
-  public PyStudyWatchTutorialAction() {
+public class PyWatchTutorialAction extends DumbAwareAction {
+  public PyWatchTutorialAction() {
     super("Learn more about PyCharm Edu", null, null);
   }
 
