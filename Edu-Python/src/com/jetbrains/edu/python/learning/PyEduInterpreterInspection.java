@@ -110,7 +110,7 @@ public class PyEduInterpreterInspection extends PyInspection {
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Configure Python Interpreter";
+      return "Configure python interpreter";
     }
 
     @Override
