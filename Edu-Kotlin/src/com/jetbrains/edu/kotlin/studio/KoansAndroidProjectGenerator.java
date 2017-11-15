@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.android;
+package com.jetbrains.edu.kotlin.studio;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
