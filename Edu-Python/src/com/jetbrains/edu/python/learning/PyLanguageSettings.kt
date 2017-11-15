@@ -1,53 +1,33 @@
 package com.jetbrains.edu.python.learning
 
-import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.projectRoots.SdkModel
+import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.roots.ui.configuration.JdkComboBox
+import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.LabeledComponent
+import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduPluginConfigurator
-import com.jetbrains.edu.python.learning.PyDirectoryProjectGenerator.getBaseSdk
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.python.learning.PyDirectoryProjectGenerator.getBaseSdk
 import com.jetbrains.python.newProject.PyNewProjectSettings
+import com.jetbrains.python.sdk.PyDetectedSdk
+import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
 import icons.PythonIcons
 import java.awt.BorderLayout
 import javax.swing.JComponent
-
-internal abstract class PyLanguageSettings : EduPluginConfigurator.LanguageSettings<PyNewProjectSettings> {
+internal open class PyLanguageSettings : EduPluginConfigurator.LanguageSettings<PyNewProjectSettings> {
 
   protected val mySettings: PyNewProjectSettings = PyNewProjectSettings()
 
-  // Some python API has been changed while 2017.3 (first version of python plugin with new API is 2017.3.173.3415.6).
-  // To prevent exceptions because of it we should check if it is new API or not.
-  private val myHasOldPythonApi: Boolean = hasOldPythonApi()
-
-  private fun hasOldPythonApi(): Boolean {
-    return try {
-      // `com.jetbrains.python.sdk.PySdkExtKt` is part of new python API
-      // so we can use it to determine if it is new python API or not.
-      // This way looks easier than check version because
-      // there are different IDE with python support: PyCharm C/P/EDU and other IDEs with python plugin
-      // and we have to use separate way to check API version for each case.
-      Class.forName("com.jetbrains.python.sdk.PySdkExtKt")
-      false
-    } catch (e: ClassNotFoundException) {
-      LOG.warn("Current python API is old")
-      true
-    }
-  }
-
-  override fun getLanguageSettingsComponent(course: Course): LabeledComponent<JComponent>? {
-    // It is rather hard to support python interpreter combobox
-    // and virtual env creation using old API
-    // so we decided to turn off it in this case.
-    if (myHasOldPythonApi) {
-      LOG.warn("We won't show interpreter combobox because current python API is old")
-      return null
-    }
-
+  override fun getLanguageSettingsComponent(course: Course): LabeledComponent<JComponent> {
     // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
     val fakeSdk = createFakeSdk(course)
 
@@ -61,11 +41,49 @@ internal abstract class PyLanguageSettings : EduPluginConfigurator.LanguageSetti
 
   override fun getSettings(): PyNewProjectSettings = mySettings
 
-  protected abstract fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton
+  protected open fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
+    val project = ProjectManager.getInstance().defaultProject
+    val model = ProjectSdksModel()
+    model.reset(project)
+    if (fakeSdk != null) {
+      model.addSdk(fakeSdk)
+    }
+
+    model.addListener(object : SdkModel.Listener {
+      override fun sdkAdded(sdk: Sdk) = SdkConfigurationUtil.addSdk(sdk)
+      override fun beforeSdkRemove(sdk: Sdk) {}
+      override fun sdkChanged(sdk: Sdk, previousName: String) {}
+      override fun sdkHomeSelected(sdk: Sdk, newSdkHome: String) {}
+    })
+
+    val sdkTypeIdFilter = Condition<SdkTypeId> { it == PythonSdkType.getInstance() || it == FakePythonSdkType }
+    val sdkFilter = JdkComboBox.getSdkFilter(sdkTypeIdFilter)
+    val comboBox = JdkComboBox(model, sdkTypeIdFilter, sdkFilter, sdkTypeIdFilter, true)
+    comboBox.addActionListener { onSdkSelected(comboBox) }
+
+    if (fakeSdk != null) {
+      comboBox.selectedJdk = fakeSdk
+    }
+
+    val comboBoxWithBrowseButton = ComboboxWithBrowseButton(comboBox)
+    val setupButton = comboBoxWithBrowseButton.button
+    comboBox.setSetupButton(setupButton, null, model, comboBox.model.selectedItem as JdkComboBox.JdkComboBoxItem, null, false)
+    return comboBoxWithBrowseButton
+
+  }
+
+  private fun onSdkSelected(comboBox: JdkComboBox) {
+    var selectedSdk = comboBox.selectedJdk
+    if (selectedSdk == null) {
+      val selectedItem = comboBox.selectedItem
+      if (selectedItem is JdkComboBox.SuggestedJdkItem) {
+        selectedSdk = PyDetectedSdk(selectedItem.path)
+      }
+    }
+    mySettings.sdk = selectedSdk
+  }
 
   companion object {
-
-    private val LOG = Logger.getInstance(PyLanguageSettings::class.java)
 
     private fun createFakeSdk(course: Course): ProjectJdkImpl? {
       val fakeSdkPath = getBaseSdk(course) ?: return null
