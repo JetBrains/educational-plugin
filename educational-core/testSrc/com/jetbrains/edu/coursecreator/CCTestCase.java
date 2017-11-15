@@ -19,7 +19,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +87,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
 
     Lesson lesson = new Lesson();
     lesson.setName("lesson1");
-    Task task = new PyCharmTask();
+    Task task = new EduTask();
     task.setName("task1");
     task.setIndex(1);
     lesson.addTask(task);

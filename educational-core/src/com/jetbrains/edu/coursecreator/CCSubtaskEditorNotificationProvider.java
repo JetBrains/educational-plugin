@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
@@ -228,10 +228,10 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
       final Lesson lesson = myTask.getLesson();
       final List<Task> list = lesson.getTaskList();
       final int i = list.indexOf(myTask);
-      final Task task = new PyCharmTask();
+      final Task task = new EduTask();
       task.copyTaskParameters(myTask);
 
-      // We convert TaskWithSubtasks to PyCharm task only
+      // We convert TaskWithSubtasks to Edu task only
       // when myTask has two subtasks and we want to remove one of them.
       // So `1 - removingSubtaskIndex` is index of subtask we want to copy.
       int copyingSubtaskIndex = 1 - removingSubtaskIndex;

@@ -39,7 +39,7 @@ public interface StudyTwitterPluginConfigurator {
   boolean askToTweet(@NotNull final Project project, Task solvedTask, StudyStatus statusBeforeCheck);
 
   /**
-   * Stores access token and token secret, obtained by authorizing PyCharm.
+   * Stores access token and token secret, obtained by authorizing EduTools.
    */
   void storeTwitterTokens(@NotNull final Project project, @NotNull final String accessToken, @NotNull final String tokenSecret);
 

@@ -8,6 +8,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -89,7 +90,7 @@ public class StudyProjectGenerator {
 
       if (course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
         StudyStepikSolutionsLoader studyStepikSolutionsLoader = StudyStepikSolutionsLoader.getInstance(project);
-        studyStepikSolutionsLoader.loadSolutions(ProgressManager.getGlobalProgressIndicator(), course);
+        studyStepikSolutionsLoader.loadSolutions(ProgressIndicatorProvider.getGlobalProgressIndicator(), course);
         EduUsagesCollector.progressOnGenerateCourse();
         PropertiesComponent.getInstance(project).setValue(EduStepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       }

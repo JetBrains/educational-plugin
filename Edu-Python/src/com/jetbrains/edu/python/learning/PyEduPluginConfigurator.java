@@ -18,15 +18,15 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
-import com.jetbrains.edu.python.learning.checker.PyStudyTaskChecker;
+import com.jetbrains.edu.python.learning.checker.PyTaskChecker;
 import com.jetbrains.python.PythonModuleTypeBase;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import icons.PythonIcons;
@@ -167,8 +167,8 @@ public abstract class PyEduPluginConfigurator implements EduPluginConfigurator<P
 
   @Override
   @NotNull
-  public StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask task, @NotNull Project project) {
-    return new PyStudyTaskChecker(task, project);
+  public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project) {
+    return new PyTaskChecker(task, project);
   }
 
   @Override
