@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 import static com.jetbrains.edu.learning.stepic.EduStepicConnector.getStep;
 
 public class EduAdaptiveStepicConnector {
-  public static final String PYCHARM_COMMENT = " Posted from PyCharm Edu\n";
+  public static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
   public static final int NEXT_RECOMMENDATION_REACTION = 2;
   public static final int TOO_HARD_RECOMMENDATION_REACTION = 0;
   public static final int TOO_BORING_RECOMMENDATION_REACTION = -1;
@@ -419,7 +419,7 @@ public class EduAdaptiveStepicConnector {
       final Editor editor = StudyUtils.getSelectedEditor(project);
       if (editor != null) {
         String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
-        final String answer = commentPrefix + PYCHARM_COMMENT + editor.getDocument().getText();
+        final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();
         String defaultLanguage = EduPluginConfiguratorManager.forLanguage(courseLanguage).getStepikDefaultLanguage();
         final StepicWrappers.SubmissionToPostWrapper submissionToPost =
           new StepicWrappers.SubmissionToPostWrapper(String.valueOf(attemptId), defaultLanguage, answer);
@@ -591,7 +591,7 @@ public class EduAdaptiveStepicConnector {
       "code", () -> codeTask(),
       "choice", () -> choiceTask(),
       "text", () -> theoryTask(),
-      "task", () -> pycharmTask()
+      "pycharm", () -> eduTask()
     );
 
     public StepikTaskBuilder(@NotNull RemoteCourse course,
@@ -712,9 +712,9 @@ public class EduAdaptiveStepicConnector {
     }
 
     @Nullable
-    private PyCharmTask pycharmTask() {
+    private EduTask eduTask() {
       try {
-        return (PyCharmTask)EduStepicConnector.createTask(myStepId);
+        return (EduTask)EduStepicConnector.createTask(myStepId);
       }
       catch (IOException e) {
         LOG.warn(e.getMessage());

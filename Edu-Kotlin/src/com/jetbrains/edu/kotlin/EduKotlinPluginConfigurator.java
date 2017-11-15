@@ -13,11 +13,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
@@ -57,8 +57,8 @@ public class EduKotlinPluginConfigurator extends EduPluginConfiguratorBase {
 
   @NotNull
   @Override
-  public StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask pyCharmTask, @NotNull Project project) {
-    return new EduKotlinPyCharmTaskChecker(pyCharmTask, project);
+  public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask eduTask, @NotNull Project project) {
+    return new KotlinTaskChecker(eduTask, project);
   }
 
   @Override

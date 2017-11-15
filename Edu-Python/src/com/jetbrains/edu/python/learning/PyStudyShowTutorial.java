@@ -30,7 +30,7 @@ public class PyStudyShowTutorial extends AbstractProjectComponent {
     ApplicationManager.getApplication().invokeLater((DumbAwareRunnable)() -> ApplicationManager.getApplication().runWriteAction(
       (DumbAwareRunnable)() -> {
         final String content = "<html>If you'd like to learn more about PyCharm Edu, " +
-          "click <a href=\"https://www.jetbrains.com/pycharm-edu/quickstart/\">here</a> to watch a tutorial</html>";
+          "click <a href=\"https://www.jetbrains.com/pycharm-edu/quickstart/\">here</a> to access tutorials</html>";
         final Notification notification = new Notification("Watch Tutorials!", "", content, NotificationType.INFORMATION,
           new NotificationListener.UrlOpeningListener(true));
         StartupManager.getInstance(myProject).registerPostStartupActivity(() -> {

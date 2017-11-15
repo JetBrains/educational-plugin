@@ -8,16 +8,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.JdkBundle
-import com.jetbrains.edu.kotlin.EduKotlinPyCharmTaskChecker
-import com.jetbrains.edu.kotlin.EduKotlinPyCharmTaskChecker.FAILED_TO_LAUNCH
+import com.jetbrains.edu.kotlin.KotlinTaskChecker
+import com.jetbrains.edu.kotlin.KotlinTaskChecker.FAILED_TO_LAUNCH
 import com.jetbrains.edu.learning.actions.StudyCheckAction
 import com.jetbrains.edu.learning.checker.StudyCheckResult
 import com.jetbrains.edu.learning.checker.StudyCheckUtils
-import com.jetbrains.edu.learning.checker.StudyTaskChecker
+import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.StudyStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
-class EduKotlinAndroidPyCharmTaskChecker(task: PyCharmTask, project: Project) : StudyTaskChecker<PyCharmTask>(task, project) {
+class KotlinAndroidTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
   override fun check(): StudyCheckResult {
     val cmd = GeneralCommandLine()
     val basePath = myProject.basePath ?: return FAILED_TO_LAUNCH
@@ -36,7 +36,7 @@ class EduKotlinAndroidPyCharmTaskChecker(task: PyCharmTask, project: Project) : 
               cmd.commandLineString, false)
       StudyCheckResult(if (output.isSuccess) StudyStatus.Solved else StudyStatus.Failed, output.message)
     } catch (e: ExecutionException) {
-      Logger.getInstance(EduKotlinPyCharmTaskChecker::class.java).info(StudyCheckAction.FAILED_CHECK_LAUNCH, e)
+      Logger.getInstance(KotlinTaskChecker::class.java).info(StudyCheckAction.FAILED_CHECK_LAUNCH, e)
       FAILED_TO_LAUNCH
     }
   }

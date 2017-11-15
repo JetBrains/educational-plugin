@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
@@ -30,7 +30,7 @@ import java.util.Map;
  * To implement new task there are 4 steps to be done:
  * - extend Task class
  * - go to Lesson and update elementTypes in taskList AbstractCollection. Needed for proper xml serialization
- * - Update TaskSerializer and TaskDeserializer in StudySerializationUtil to handle json serialization
+ * - Update TaskAdapter in StudySerializationUtils to handle json serialization
  * - for Adaptive tasks update taskTypes in EduAdaptiveStepicConnector so new task type can be added to a course
  */
 public abstract class Task implements StudyItem {
@@ -291,8 +291,8 @@ public abstract class Task implements StudyItem {
   // used in json serialization/deserialization
   public abstract String getTaskType();
 
-  public StudyTaskChecker getChecker(@NotNull Project project) {
-    return new StudyTaskChecker<>(this, project);
+  public TaskChecker getChecker(@NotNull Project project) {
+    return new TaskChecker<>(this, project);
   }
 
   public int getPosition() {

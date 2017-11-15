@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.courseFormat.tasks;
 
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +20,8 @@ public class TheoryTask extends Task {
   }
 
   @Override
-  public StudyTaskChecker getChecker(@NotNull Project project) {
-    return new StudyTaskChecker<TheoryTask>(this, project) {
+  public TaskChecker getChecker(@NotNull Project project) {
+    return new TaskChecker<TheoryTask>(this, project) {
       @Override
       public void onTaskSolved(@NotNull String message) {
       }

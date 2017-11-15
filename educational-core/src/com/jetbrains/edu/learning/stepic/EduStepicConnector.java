@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.apache.http.*;
@@ -287,12 +287,11 @@ public class EduStepicConnector {
     List<Integer> unitIds = sectionContainer.sections.get(0).units;
     final List<Lesson> lessons = new ArrayList<>();
     for (Integer unitId : unitIds) {
-      StepicWrappers.UnitContainer
-        unit = getFromStepik(EduStepicNames.UNITS + "/" + String.valueOf(unitId), StepicWrappers.UnitContainer.class);
+      StepicWrappers.UnitContainer unit =
+          getFromStepik(EduStepicNames.UNITS + "/" + String.valueOf(unitId), StepicWrappers.UnitContainer.class);
       int lessonID = unit.units.get(0).lesson;
-      StepicWrappers.LessonContainer
-        lessonContainer = getFromStepik(EduStepicNames.LESSONS + String.valueOf(lessonID),
-                                        StepicWrappers.LessonContainer.class);
+      StepicWrappers.LessonContainer lessonContainer =
+          getFromStepik(EduStepicNames.LESSONS + String.valueOf(lessonID), StepicWrappers.LessonContainer.class);
       Lesson lesson = lessonContainer.lessons.get(0);
       lesson.taskList = new ArrayList<>();
       for (int stepId : lesson.steps) {
@@ -327,7 +326,7 @@ public class EduStepicConnector {
       return null;
     }
     final int lastSubtaskIndex = block.options.lastSubtaskIndex;
-    Task task = new PyCharmTask();
+    Task task = new EduTask();
     if (lastSubtaskIndex != 0) {
       task = createTaskWithSubtasks(lastSubtaskIndex);
     }

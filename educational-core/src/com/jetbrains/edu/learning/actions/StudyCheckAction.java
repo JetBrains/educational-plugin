@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.StudyCheckListener;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyCheckUtils;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -132,7 +132,7 @@ public class StudyCheckAction extends StudyActionWithShortcut {
   private class StudyCheckTask extends com.intellij.openapi.progress.Task.Backgroundable {
     private final Project myProject;
     private final Task myTask;
-    private final StudyTaskChecker myChecker;
+    private final TaskChecker myChecker;
     private StudyCheckResult myResult;
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {

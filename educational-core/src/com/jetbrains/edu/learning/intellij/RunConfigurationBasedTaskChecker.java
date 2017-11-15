@@ -21,22 +21,22 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
+import com.jetbrains.edu.learning.checker.EduTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyCheckUtils;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
 import com.jetbrains.edu.learning.checker.StudyTestsOutputParser;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CountDownLatch;
 
 
-public abstract class EduPyCharmTasksChecker extends StudyTaskChecker<PyCharmTask> {
-  private static final Logger LOG = Logger.getInstance(EduPyCharmTasksChecker.class);
+public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
+  private static final Logger LOG = Logger.getInstance(RunConfigurationBasedTaskChecker.class);
 
-  public EduPyCharmTasksChecker(@NotNull PyCharmTask task, @NotNull Project project) {
+  public RunConfigurationBasedTaskChecker(@NotNull EduTask task, @NotNull Project project) {
     super(task, project);
   }
 
