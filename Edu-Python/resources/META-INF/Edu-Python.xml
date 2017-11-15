@@ -21,7 +21,7 @@
 
   <extensions defaultExtensionNs="Educational">
     <pluginConfigurator implementationClass="com.jetbrains.edu.python.learning.PyEduPluginConfigurator" language="Python"/>
-    <pluginConfigurator implementationClass="com.jetbrains.edu.python.learning.PyCharmPyEduPluginConfigurator" language="Python"/>
+    <pluginConfigurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyCharmPyEduPluginConfigurator" language="Python"/>
   </extensions>
 
   <actions>
