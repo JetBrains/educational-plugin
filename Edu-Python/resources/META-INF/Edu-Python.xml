@@ -4,10 +4,10 @@
   <depends>com.intellij.modules.python</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection shortName="PyStudyInterpreterInspection" bundle="com.jetbrains.python.PyBundle" key="INSP.NAME.invalid.interpreter" groupKey="INSP.GROUP.python" enabledByDefault="true"  level="WARNING" implementationClass="com.jetbrains.edu.python.learning.PyInterpreterInspection"/>
+    <localInspection shortName="PyEduInterpreterInspection" bundle="com.jetbrains.python.PyBundle" key="INSP.NAME.invalid.interpreter" groupKey="INSP.GROUP.python" enabledByDefault="true"  level="WARNING" implementationClass="com.jetbrains.edu.python.learning.PyEduInterpreterInspection"/>
 
-    <localInspection shortName="PyStudyLanguageLevelInspection" suppressId="PyStudyLanguageLevelInspection" enabledByDefault="true"
-                     level="WARNING" implementationClass="com.jetbrains.edu.python.learning.PyLanguageLevelInspection"
+    <localInspection shortName="PyEduLanguageLevelInspection" suppressId="PyEduLanguageLevelInspection" enabledByDefault="true"
+                     level="WARNING" implementationClass="com.jetbrains.edu.python.learning.PyEduLanguageLevelInspection"
                      displayName="Unsupported language level for a course" groupName="Inspection.Study.Python"/>
     <configurationType implementation="com.jetbrains.edu.python.coursecreator.run.PyCCRunTestsConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.edu.python.coursecreator.run.PyCCRunTestsConfigurationProducer"/>
