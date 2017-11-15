@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
+public class JPluginConfigurator extends EduPluginConfiguratorBase {
   static final String TEST_JAVA = "Test.java";
   private static final String TASK_JAVA = "Task.java";
 
@@ -69,7 +69,7 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
   @NotNull
   @Override
   public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask eduTask, @NotNull Project project) {
-    return new JavaTaskChecker(eduTask, project);
+    return new JTaskChecker(eduTask, project);
   }
 
   @Override
@@ -80,7 +80,7 @@ public class EduJavaPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public EduCourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
-    return new EduJavaCourseProjectGenerator(course);
+    return new JCourseProjectGenerator(course);
   }
 
   @Nullable
