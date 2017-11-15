@@ -42,11 +42,11 @@
 
     <actions>
         <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
-        <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevWindowAction"
+        <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
                 text="Previous Answer Placeholder"
                 description="Navigate to the previous answer placeholder">
         </action>
-        <action id="Educational.NextPlaceholder" class="com.jetbrains.edu.learning.actions.NextWindowAction"
+        <action id="Educational.NextPlaceholder" class="com.jetbrains.edu.learning.actions.NextPlaceholderAction"
                 text="Next Answer Placeholder"
                 description="Navigate to the next answer holder">
         </action>
