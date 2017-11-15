@@ -18,7 +18,7 @@ internal class PyCharmPyDirectoryProjectGenerator(course: Course) : PyDirectoryP
     }
   }
 
-  override fun getAllSdks(project: Project): List<Sdk> = PyConfigurableInterpreterList.getInstance(null).allPythonSdks
+  override fun getAllSdks(project: Project): List<Sdk> = PyConfigurableInterpreterList.getInstance(project).allPythonSdks
 
   companion object {
     private val LOG: Logger = Logger.getInstance(PyCharmPyDirectoryProjectGenerator::class.java)

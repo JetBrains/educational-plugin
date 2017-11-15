@@ -11,6 +11,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
@@ -36,6 +37,9 @@ import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.remote.PyProjectSynchronizer;
 import com.jetbrains.python.sdk.*;
+import com.jetbrains.python.sdk.PyDetectedSdk;
+import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.sdk.PythonSdkUpdater;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +49,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
+public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
   implements EduCourseProjectGenerator<PyNewProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
@@ -254,7 +258,12 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
     return baseSdk != null ? baseSdk : baseSdks.iterator().next();
   }
 
-  protected abstract void addSdk(@NotNull Project project, @NotNull Sdk sdk);
+  protected void addSdk(@NotNull Project project, @NotNull Sdk sdk) {
+    SdkConfigurationUtil.addSdk(sdk);
+  }
+
   @NotNull
-  protected abstract List<Sdk> getAllSdks(@NotNull Project project);
+  protected List<Sdk> getAllSdks(@NotNull Project project) {
+    return ProjectJdkTable.getInstance().getSdksOfType(PythonSdkType.getInstance());
+  }
 }
