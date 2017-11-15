@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.learning;
+package com.jetbrains.edu.python.learning.newproject;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.facet.ui.ValidationResult;
@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.python.learning.PyEduPluginConfigurator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyPackageManager;

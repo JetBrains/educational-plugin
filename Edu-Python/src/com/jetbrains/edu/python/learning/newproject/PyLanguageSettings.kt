@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.learning
+package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -17,7 +17,7 @@ import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.python.learning.PyDirectoryProjectGenerator.getBaseSdk
+import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator.getBaseSdk
 import com.jetbrains.python.configuration.VirtualEnvProjectFilter
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.sdk.PyDetectedSdk
