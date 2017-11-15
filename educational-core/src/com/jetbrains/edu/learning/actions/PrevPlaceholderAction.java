@@ -9,10 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * author: liana
- * data: 6/30/14.
- */
 public class PrevPlaceholderAction extends PlaceholderNavigationAction {
   public static final String ACTION_ID = "Educational.PrevPlaceholder";
   public static final String SHORTCUT = "ctrl shift pressed COMMA";
