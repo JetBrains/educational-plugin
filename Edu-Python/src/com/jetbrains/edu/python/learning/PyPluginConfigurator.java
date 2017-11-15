@@ -43,11 +43,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProjectSettings> {
+public class PyPluginConfigurator implements EduPluginConfigurator<PyNewProjectSettings> {
   public static final String PYTHON_3 = "3.x";
   public static final String PYTHON_2 = "2.x";
   private static final String TESTS_PY = "tests.py";
-  private static final Logger LOG = Logger.getInstance(PyEduPluginConfigurator.class);
+  private static final Logger LOG = Logger.getInstance(PyPluginConfigurator.class);
   private static final String COURSE_NAME = "Introduction to Python.zip";
   private static final String TASK_PY = "task.py";
 
@@ -177,7 +177,7 @@ public class PyEduPluginConfigurator implements EduPluginConfigurator<PyNewProje
 
   @Override
   public List<String> getBundledCoursePaths() {
-    File bundledCourseRoot = StudyUtils.getBundledCourseRoot(COURSE_NAME, PyEduPluginConfigurator.class);
+    File bundledCourseRoot = StudyUtils.getBundledCourseRoot(COURSE_NAME, PyPluginConfigurator.class);
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), COURSE_NAME));
   }
 

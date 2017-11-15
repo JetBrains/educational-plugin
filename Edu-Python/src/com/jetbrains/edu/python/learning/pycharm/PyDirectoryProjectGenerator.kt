@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 
-internal class PyCharmPyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {
+internal class PyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {
   override fun addSdk(project: Project, sdk: Sdk) {
     val model = PyConfigurableInterpreterList.getInstance(project).model
     model.addSdk(sdk)
@@ -22,6 +22,6 @@ internal class PyCharmPyDirectoryProjectGenerator(course: Course) : PyDirectoryP
   override fun getAllSdks(project: Project): List<Sdk> = PyConfigurableInterpreterList.getInstance(project).allPythonSdks
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(PyCharmPyDirectoryProjectGenerator::class.java)
+    private val LOG: Logger = Logger.getInstance(PyDirectoryProjectGenerator::class.java)
   }
 }

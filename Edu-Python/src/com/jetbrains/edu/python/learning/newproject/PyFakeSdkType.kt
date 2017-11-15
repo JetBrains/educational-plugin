@@ -6,7 +6,7 @@ import icons.PythonIcons
 import org.jdom.Element
 import javax.swing.Icon
 
-internal object FakePythonSdkType : SdkType("") {
+internal object PyFakeSdkType : SdkType("") {
   override fun getPresentableName(): String = ""
   override fun isValidSdkHome(path: String?): Boolean = false
   override fun suggestSdkName(currentSdkName: String?, sdkHome: String?): String = ""

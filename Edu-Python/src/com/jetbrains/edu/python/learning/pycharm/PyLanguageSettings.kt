@@ -8,7 +8,7 @@ import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 import com.jetbrains.python.newProject.steps.PythonSdkChooserCombo
 
-internal class PyCharmPyLanguageSettings : PyLanguageSettings() {
+internal class PyLanguageSettings : PyLanguageSettings() {
 
   override fun getAllSdks(project: Project): MutableList<Sdk> =
           PyConfigurableInterpreterList.getInstance(project).allPythonSdks

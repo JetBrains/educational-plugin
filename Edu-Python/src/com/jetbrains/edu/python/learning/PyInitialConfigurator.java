@@ -14,17 +14,17 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 @SuppressWarnings({"UtilityClassWithoutPrivateConstructor", "UtilityClassWithPublicConstructor"})
-public class PyStudyInitialConfigurator implements ApplicationComponent {
+public class PyInitialConfigurator implements ApplicationComponent {
   @NonNls private static final String CONFIGURED_V40 = "StudyPyCharm.InitialConfiguration40";
 
   /**
    * @noinspection UnusedParameters
    */
-  public PyStudyInitialConfigurator(MessageBus bus,
-                                    CodeInsightSettings codeInsightSettings,
-                                    final PropertiesComponent propertiesComponent,
-                                    FileTypeManager fileTypeManager,
-                                    final ProjectManagerEx projectManager) {
+  public PyInitialConfigurator(MessageBus bus,
+                               CodeInsightSettings codeInsightSettings,
+                               final PropertiesComponent propertiesComponent,
+                               FileTypeManager fileTypeManager,
+                               final ProjectManagerEx projectManager) {
     if (!propertiesComponent.getBoolean(CONFIGURED_V40)) {
       final File courses = new File(PathManager.getConfigPath(), "courses");
       FileUtil.delete(courses);
