@@ -10,10 +10,10 @@
     </extensions>
 
     <extensions defaultExtensionNs="Educational">
-        <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator" language="kotlin"/>
-        <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.studio.EduKotlinAndroidPluginConfigurator" language="kotlin"/>
-        <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.EduKotlinTwitterConfigurator"/>
-        <optionsProvider instance="com.jetbrains.edu.kotlin.KotlinStudyOptionsProvider"/>
+        <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.KtPluginConfigurator" language="kotlin"/>
+        <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.studio.KtPluginConfigurator" language="kotlin"/>
+        <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.KtTwitterConfigurator"/>
+        <optionsProvider instance="com.jetbrains.edu.kotlin.KtOptionsProvider"/>
     </extensions>
 
 </idea-plugin>

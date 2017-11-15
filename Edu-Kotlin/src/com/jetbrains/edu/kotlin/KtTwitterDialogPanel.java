@@ -14,13 +14,13 @@ import java.io.InputStream;
 import java.net.URL;
 
 @SuppressWarnings("WeakerAccess")
-public class KotlinTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPanel {
+public class KtTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPanel {
     private final JTextArea myTwitterTextField;
     private final JLabel myRemainSymbolsLabel;
     private URL myImageUrl;
     private String imageName = "";
 
-    public KotlinTwitterDialogPanel(@NotNull Task solvedTask) {
+    public KtTwitterDialogPanel(@NotNull Task solvedTask) {
         setLayout(new VerticalFlowLayout());
         myRemainSymbolsLabel = new JLabel();
         myTwitterTextField = new JTextArea();

@@ -24,12 +24,12 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
+class KtKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
   static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
-  private static final Logger LOG = Logger.getInstance(EduKotlinKoansModuleBuilder.class);
+  private static final Logger LOG = Logger.getInstance(KtKotlinKoansModuleBuilder.class);
   @Nullable private Course myCourse;
 
-  EduKotlinKoansModuleBuilder(@Nullable Course course) {
+  KtKotlinKoansModuleBuilder(@Nullable Course course) {
     this.myCourse = course;
   }
 
@@ -51,7 +51,7 @@ class EduKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
     Project project = baseModule.getProject();
     EduProjectGenerator generator = new EduProjectGenerator();
     if (myCourse == null) {
-      File courseRoot = StudyUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, EduKotlinKoansModuleBuilder.class);
+      File courseRoot = StudyUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, KtKotlinKoansModuleBuilder.class);
       final Course course = generator.addLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
       if (course == null) {
         LOG.info("Failed to find course " + DEFAULT_COURSE_NAME);
