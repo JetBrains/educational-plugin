@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.learning
+package com.jetbrains.edu.python.learning.newproject
 
 import com.intellij.openapi.projectRoots.*
 import com.intellij.openapi.util.IconLoader

@@ -5,7 +5,7 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.python.learning.PyDirectoryProjectGenerator
+import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 
 internal class PyCharmPyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {

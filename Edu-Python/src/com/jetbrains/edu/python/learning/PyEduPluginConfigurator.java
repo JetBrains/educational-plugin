@@ -29,6 +29,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.python.learning.checker.PyTaskChecker;
+import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator;
+import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings;
 import com.jetbrains.python.PythonModuleTypeBase;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import icons.PythonIcons;
