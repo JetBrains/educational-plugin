@@ -173,11 +173,6 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
     myValidationResult = validationResult;
   }
 
-  @Override
-  public boolean hideInterpreter() {
-    return true;
-  }
-
   @Nullable
   @Override
   public BooleanFunction<PythonProjectGenerator> beforeProjectGenerated(@Nullable Sdk sdk) {
