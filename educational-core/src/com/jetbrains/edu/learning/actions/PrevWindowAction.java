@@ -13,11 +13,11 @@ import java.util.List;
  * author: liana
  * data: 6/30/14.
  */
-public class StudyPrevWindowAction extends StudyWindowNavigationAction {
+public class PrevWindowAction extends WindowNavigationAction {
   public static final String ACTION_ID = "Educational.PrevPlaceholder";
   public static final String SHORTCUT = "ctrl shift pressed COMMA";
 
-  public StudyPrevWindowAction() {
+  public PrevWindowAction() {
     super("Navigate to the Previous Answer Placeholder", "Navigate to the previous answer placeholder",
           AllIcons.Actions.Back);
   }

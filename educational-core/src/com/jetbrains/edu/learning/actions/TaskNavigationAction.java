@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 
-abstract public class StudyTaskNavigationAction extends StudyActionWithShortcut {
-  public StudyTaskNavigationAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
+abstract public class TaskNavigationAction extends DumbAwareActionWithShortcut {
+  public TaskNavigationAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
     super(text, description, icon);
   }
 

@@ -12,7 +12,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 
 
-class StudySwitchTaskPanelAction: AnAction() {
+class SwitchTaskPanelAction : AnAction() {
   
   override fun actionPerformed(e: AnActionEvent?) {
     val project = e?.project
