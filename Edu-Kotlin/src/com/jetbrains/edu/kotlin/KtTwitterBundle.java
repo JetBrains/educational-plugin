@@ -9,7 +9,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
-public class KotlinTwitterBundle {
+public class KtTwitterBundle {
     public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
         return CommonBundle.message(getBundle(), key, params);
     }
@@ -18,7 +18,7 @@ public class KotlinTwitterBundle {
     @NonNls
     public static final String BUNDLE = "twitter.kotlin_koans.oauth_twitter";
 
-    private KotlinTwitterBundle() {
+    private KtTwitterBundle() {
     }
 
     private static ResourceBundle getBundle() {

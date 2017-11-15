@@ -11,19 +11,19 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 
-public class KotlinStudyOptionsProvider implements StudyOptionsProvider {
-  private KotlinStudyTwitterSettings twitterSettings;
+public class KtOptionsProvider implements StudyOptionsProvider {
+  private KtTwitterSettings twitterSettings;
   private JBCheckBox myAskToTweetCheckBox;
   private JPanel myPanel;
   private boolean myIsModified = false;
 
-  KotlinStudyOptionsProvider() {
+  KtOptionsProvider() {
     Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : openProjects) {
       if (StudyTaskManager.getInstance(project).getCourse() != null) {
         StudyTwitterPluginConfigurator twitterConfigurator = StudyUtils.getTwitterConfigurator(project);
         if (twitterConfigurator != null) {
-          twitterSettings = KotlinStudyTwitterSettings.getInstance(project);
+          twitterSettings = KtTwitterSettings.getInstance(project);
           myAskToTweetCheckBox.setSelected(twitterSettings.askToTweet());
           break;
         }

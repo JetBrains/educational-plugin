@@ -18,8 +18,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 
-public class EduKotlinLibConfigurator {
-  private static final Logger LOG = Logger.getInstance(EduKotlinLibConfigurator.class);
+public class KtLibConfigurator {
+  private static final Logger LOG = Logger.getInstance(KtLibConfigurator.class);
 
   public static void configureLib(@NotNull Project project) {
     if (tryConfigureSilently(project)) {

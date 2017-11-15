@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
-import com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator
+import com.jetbrains.edu.kotlin.KtPluginConfigurator
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.core.EduNames
 import com.jetbrains.edu.learning.core.EduUtils
@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator
 import java.io.IOException
 
-class EduKotlinAndroidPluginConfigurator : EduKotlinPluginConfigurator() {
+class KtPluginConfigurator : KtPluginConfigurator() {
 
   override fun excludeFromArchive(path: String): Boolean {
     val excluded = super.excludeFromArchive(path)
@@ -30,7 +30,7 @@ class EduKotlinAndroidPluginConfigurator : EduKotlinPluginConfigurator() {
   }
 
   override fun getEduTaskChecker(EduTask: EduTask, project: Project): TaskChecker<EduTask> =
-          KotlinAndroidTaskChecker(EduTask, project)
+          KtTaskChecker(EduTask, project)
 
   override fun createTaskContent(project: Project, task: Task,
                                  parentDirectory: VirtualFile, course: Course): VirtualFile? {
@@ -48,12 +48,12 @@ class EduKotlinAndroidPluginConfigurator : EduKotlinPluginConfigurator() {
   }
 
   override fun getEduCourseProjectGenerator(course: Course): EduCourseProjectGenerator<JdkProjectSettings>? =
-          KoansAndroidProjectGenerator(course)
+    KtProjectGenerator(course)
 
   override fun isEnabled(): Boolean = EduUtils.isAndroidStudio()
 
   companion object {
-    private val LOG = Logger.getInstance(EduKotlinAndroidPluginConfigurator::class.java)
+    private val LOG = Logger.getInstance(KtPluginConfigurator::class.java)
 
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
             "gradlew", "gradlew.bat", "local.properties", "gradle.properties",
