@@ -16,9 +16,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class EduJavaCourseProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
+public class JCourseProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
 
-  public EduJavaCourseProjectGenerator(@NotNull Course course) {
+  public JCourseProjectGenerator(@NotNull Course course) {
     super(course);
   }
 

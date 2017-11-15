@@ -3,12 +3,12 @@
     <depends>JUnit</depends>
 
     <extensions defaultExtensionNs="Educational">
-        <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.EduJavaPluginConfigurator"/>
+        <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.JPluginConfigurator"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <renameHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
-        <refactoring.moveHandler implementation="com.jetbrains.edu.java.EduJavaMoveRenameHandler" order="first"/>
+        <renameHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
+        <refactoring.moveHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
     </extensions>
 </idea-plugin>
 
