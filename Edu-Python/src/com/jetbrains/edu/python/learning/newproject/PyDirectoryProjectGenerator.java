@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.EduStepicConnector;
-import com.jetbrains.edu.python.learning.PyEduPluginConfigurator;
+import com.jetbrains.edu.python.learning.PyPluginConfigurator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -151,7 +151,7 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
   public void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
     Sdk sdk = settings.getSdk();
 
-    if (sdk != null && sdk.getSdkType() == FakePythonSdkType.INSTANCE) {
+    if (sdk != null && sdk.getSdkType() == PyFakeSdkType.INSTANCE) {
       createAndAddVirtualEnv(project, settings);
       sdk = settings.getSdk();
     }
@@ -213,10 +213,10 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
   static String getBaseSdk(@NotNull final Course course) {
     LanguageLevel baseLevel = LanguageLevel.PYTHON36;
     final String version = course.getLanguageVersion();
-    if (PyEduPluginConfigurator.PYTHON_2.equals(version)) {
+    if (PyPluginConfigurator.PYTHON_2.equals(version)) {
       baseLevel = LanguageLevel.PYTHON27;
     }
-    else if (PyEduPluginConfigurator.PYTHON_3.equals(version)) {
+    else if (PyPluginConfigurator.PYTHON_3.equals(version)) {
       baseLevel = LanguageLevel.PYTHON36;
     }
     else if (version != null) {

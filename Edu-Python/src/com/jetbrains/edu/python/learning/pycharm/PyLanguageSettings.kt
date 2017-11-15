@@ -8,7 +8,7 @@ import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 import com.jetbrains.python.configuration.VirtualEnvProjectFilter
 import com.jetbrains.python.newProject.steps.PythonSdkChooserCombo
 
-internal class PyCharmPyLanguageSettings : PyLanguageSettings() {
+internal class PyLanguageSettings : PyLanguageSettings() {
 
   override fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
     val registeredSdks = PyConfigurableInterpreterList.getInstance(null).allPythonSdks

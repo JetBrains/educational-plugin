@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.python.learning.PyEduPluginConfigurator;
+import com.jetbrains.edu.python.learning.PyPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -88,7 +88,7 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
     if (task == null) {
       return null;
     }
-    String testsFileName = PyEduPluginConfigurator.getSubtaskTestsFileName(task instanceof TaskWithSubtasks ?
+    String testsFileName = PyPluginConfigurator.getSubtaskTestsFileName(task instanceof TaskWithSubtasks ?
                                                                        ((TaskWithSubtasks)task).getActiveSubtaskIndex() : 0);
     String taskDirPath = FileUtil.toSystemDependentName(taskDir.getPath());
     String testsPath = taskDir.findChild(EduNames.SRC) != null ?

@@ -21,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Map;
 
-class PyStudyTestRunner {
-  private static final Logger LOG = Logger.getInstance(PyStudyTestRunner.class);
+class PyTestRunner {
+  private static final Logger LOG = Logger.getInstance(PyTestRunner.class);
   private static final String PYTHONPATH = "PYTHONPATH";
   @NotNull private final Task myTask;
   @NotNull private final VirtualFile myTaskDir;
   private GeneralCommandLine myCommandLine;
 
-  PyStudyTestRunner(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
+  PyTestRunner(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
     myTask = task;
     myTaskDir = taskDir;
   }

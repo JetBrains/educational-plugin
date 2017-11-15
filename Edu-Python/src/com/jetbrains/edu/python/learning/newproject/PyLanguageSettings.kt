@@ -56,7 +56,7 @@ internal open class PyLanguageSettings : EduPluginConfigurator.LanguageSettings<
       override fun sdkHomeSelected(sdk: Sdk, newSdkHome: String) {}
     })
 
-    val sdkTypeIdFilter = Condition<SdkTypeId> { it == PythonSdkType.getInstance() || it == FakePythonSdkType }
+    val sdkTypeIdFilter = Condition<SdkTypeId> { it == PythonSdkType.getInstance() || it == PyFakeSdkType }
     val sdkFilter = JdkComboBox.getSdkFilter(sdkTypeIdFilter)
     val comboBox = JdkComboBox(model, sdkTypeIdFilter, sdkFilter, sdkTypeIdFilter, true)
     comboBox.addActionListener { onSdkSelected(comboBox) }
@@ -94,7 +94,7 @@ internal open class PyLanguageSettings : EduPluginConfigurator.LanguageSettings<
         return null
       }
       val name = "new virtual env " + versionString.substring(prefix.length)
-      return ProjectJdkImpl(name, FakePythonSdkType)
+      return ProjectJdkImpl(name, PyFakeSdkType)
     }
   }
 }
