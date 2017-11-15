@@ -5,6 +5,7 @@ import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -12,8 +13,11 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
+import com.intellij.openapi.util.ThrowableComputable;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.BooleanFunction;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
@@ -35,6 +39,8 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.remote.PyProjectSynchronizer;
 import com.jetbrains.python.sdk.PyDetectedSdk;
 import com.jetbrains.python.sdk.PySdkExtKt;
+import com.jetbrains.python.sdk.PythonSdkType;
+import com.jetbrains.python.sdk.PythonSdkUpdater;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +50,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
+public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
   implements EduCourseProjectGenerator<PyNewProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
@@ -239,9 +245,27 @@ public abstract class PyDirectoryProjectGenerator extends PythonProjectGenerator
 
   @Nullable
   protected Sdk updateSdkIfNeeded(@NotNull Project project, @Nullable Sdk sdk) {
-    return sdk;
+    if (!(sdk instanceof PyDetectedSdk)) {
+      return sdk;
+    }
+    String name = sdk.getName();
+    VirtualFile sdkHome = WriteAction.compute(new ThrowableComputable<VirtualFile, RuntimeException>() {
+      @Override
+      public VirtualFile compute() throws RuntimeException {
+        LocalFileSystem.getInstance().refreshAndFindFileByPath(name);
+        return null;
+      }
+    });
+    Sdk newSdk = SdkConfigurationUtil.createAndAddSDK(sdkHome.getPath(), PythonSdkType.getInstance());
+    if (newSdk != null) {
+      PythonSdkUpdater.updateOrShowError(newSdk, null, project, null);
+      SdkConfigurationUtil.addSdk(newSdk);
+    }
+    return newSdk;
   }
 
   @NotNull
-  protected abstract List<Sdk> getAllSdks();
+  protected List<Sdk> getAllSdks() {
+    return ProjectJdkTable.getInstance().getSdksOfType(PythonSdkType.getInstance());
+  }
 }
