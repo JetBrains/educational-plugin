@@ -16,4 +16,8 @@
         <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
     </extensions>
 
+    <extensions defaultExtensionNs="educational">
+        <languageDecorator implementationClass="com.jetbrains.edu.kotlin.KtLanguageDecorator" language="kotlin" />
+    </extensions>
+
 </idea-plugin>

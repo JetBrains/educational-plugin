@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.Language
-import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.ComboBox
@@ -21,6 +20,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.EduLanguageDecorator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
 import java.awt.BorderLayout
@@ -178,19 +178,18 @@ class CCNewCoursePanel : JPanel() {
 
   private fun collectSupportedLanguages() {
     EduConfiguratorManager.allExtensions()
-            .mapNotNull { extension -> obtainLanguageData(extension) }
+            .mapNotNull { extension -> obtainLanguageData(extension.key) }
             .sortedBy { (language, _) -> language.displayName }
             .forEach { myLanguageComboBox.addItem(it) }
   }
 
-  private fun obtainLanguageData(extension: LanguageExtensionPoint<EduConfigurator<*>>): LanguageData? {
-    val languageId = extension.key
+  private fun obtainLanguageData(languageId: String): LanguageData? {
     val language = Language.findLanguageByID(languageId)
     if (language == null) {
       LOG.info("Language with id $languageId not found")
       return null
     }
-    return LanguageData(language, extension.instance.logo)
+    return LanguageData(language, EduLanguageDecorator.INSTANCE.forLanguage(language)?.logo)
   }
 
   companion object {

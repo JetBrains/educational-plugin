@@ -33,11 +33,9 @@ import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator;
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings;
 import com.jetbrains.python.PythonModuleTypeBase;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
-import icons.PythonIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -157,18 +155,6 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
                                               FileUtilRt.getExtension(TESTS_PY);
   }
 
-  @NotNull
-  @Override
-  public String getDefaultHighlightingMode() {
-    return "python";
-  }
-
-  @NotNull
-  @Override
-  public String getLanguageScriptUrl() {
-    return getClass().getResource("/python.js").toExternalForm();
-  }
-
   @Override
   @NotNull
   public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project) {
@@ -208,12 +194,6 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
         LOG.error("Can't copy test_helper.py " + exception.getMessage());
       }
     });
-  }
-
-  @Nullable
-  @Override
-  public Icon getLogo() {
-    return PythonIcons.Python.Python_logo;
   }
 
   @Override
