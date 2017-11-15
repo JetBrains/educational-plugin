@@ -4,17 +4,18 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyImportStatementBase;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
 
 public class PyInspectionExtension extends com.jetbrains.python.inspections.PyInspectionExtension {
 
   @Override
-  public boolean ignoreUnresolvedReference(@NotNull PyElement element, @NotNull PsiReference reference) {
+  public boolean ignoreUnresolvedReference(@NotNull PyElement element, @NotNull PsiReference reference, @NotNull TypeEvalContext context) {
     final PsiFile file = element.getContainingFile();
     final Project project = file.getProject();
 
