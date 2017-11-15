@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.kotlin.twitter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.ui.components.JBCheckBox;
