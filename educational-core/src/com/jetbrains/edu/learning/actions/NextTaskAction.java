@@ -6,12 +6,12 @@ import com.jetbrains.edu.learning.navigation.StudyNavigator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StudyNextTaskAction extends StudyTaskNavigationAction {
+public class NextTaskAction extends TaskNavigationAction {
 
   public static final String ACTION_ID = "Educational.NextTask";
   public static final String SHORTCUT = "ctrl pressed PERIOD";
 
-  public StudyNextTaskAction() {
+  public NextTaskAction() {
     super("Next Task", "Navigate to the next task", AllIcons.Actions.Forward);
   }
 

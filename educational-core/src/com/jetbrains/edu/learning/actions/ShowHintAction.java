@@ -30,11 +30,11 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class StudyShowHintAction extends StudyActionWithShortcut {
+public class ShowHintAction extends DumbAwareActionWithShortcut {
   public static final String ACTION_ID = "Educational.ShowHint";
   public static final String SHORTCUT = "ctrl pressed 7";
 
-  public StudyShowHintAction() {
+  public ShowHintAction() {
     super("Show hint", "Show hint", EducationalCoreIcons.ShowHint);
   }
 

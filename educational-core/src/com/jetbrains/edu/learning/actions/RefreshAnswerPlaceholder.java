@@ -17,11 +17,11 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.editor.StudyEditor;
 import org.jetbrains.annotations.Nullable;
 
-public class StudyRefreshAnswerPlaceholder extends DumbAwareAction {
+public class RefreshAnswerPlaceholder extends DumbAwareAction {
 
   public static final String NAME = "Refresh Answer Placeholder";
 
-  public StudyRefreshAnswerPlaceholder() {
+  public RefreshAnswerPlaceholder() {
     super(NAME, NAME, AllIcons.Actions.Refresh);
   }
 

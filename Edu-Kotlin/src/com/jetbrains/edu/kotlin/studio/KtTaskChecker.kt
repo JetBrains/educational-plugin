@@ -10,7 +10,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.JdkBundle
 import com.jetbrains.edu.kotlin.KtTaskChecker
 import com.jetbrains.edu.kotlin.KtTaskChecker.FAILED_TO_LAUNCH
-import com.jetbrains.edu.learning.actions.StudyCheckAction
+import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.StudyCheckResult
 import com.jetbrains.edu.learning.checker.StudyCheckUtils
 import com.jetbrains.edu.learning.checker.TaskChecker
@@ -36,7 +36,7 @@ class KtTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task
               cmd.commandLineString, false)
       StudyCheckResult(if (output.isSuccess) StudyStatus.Solved else StudyStatus.Failed, output.message)
     } catch (e: ExecutionException) {
-      Logger.getInstance(KtTaskChecker::class.java).info(StudyCheckAction.FAILED_CHECK_LAUNCH, e)
+      Logger.getInstance(KtTaskChecker::class.java).info(CheckAction.FAILED_CHECK_LAUNCH, e)
       FAILED_TO_LAUNCH
     }
   }

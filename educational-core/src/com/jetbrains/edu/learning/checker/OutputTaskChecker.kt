@@ -18,7 +18,7 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.StudyUtils
-import com.jetbrains.edu.learning.actions.StudyCheckAction
+import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.StudyStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import java.util.*
@@ -79,7 +79,7 @@ class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<Output
     }
 
     val outputPatternFile = myTask.getTaskDir(myProject)?.findChild(OUTPUT_PATTERN_NAME)
-                            ?: return StudyCheckResult(StudyStatus.Unchecked, StudyCheckAction.FAILED_CHECK_LAUNCH)
+                            ?: return StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH)
     val expectedOutput = VfsUtil.loadText(outputPatternFile)
     var outputString = output.joinToString("")
     if (outputString.isEmpty()) {

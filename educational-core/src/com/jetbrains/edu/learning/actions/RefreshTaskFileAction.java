@@ -37,14 +37,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public class StudyRefreshTaskFileAction extends StudyActionWithShortcut {
+public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
   public static final String ACTION_ID = "Educational.RefreshTaskFile";
   public static final String SHORTCUT = "ctrl shift pressed X";
-  private static final Logger LOG = Logger.getInstance(StudyRefreshTaskFileAction.class.getName());
+  private static final Logger LOG = Logger.getInstance(RefreshTaskFileAction.class.getName());
   private static final String TEXT = "Reset Task File";
   private static final String RESET_TASK = "Reset Task";
 
-  public StudyRefreshTaskFileAction() {
+  public RefreshTaskFileAction() {
     super(TEXT, "Refresh current task", EducationalCoreIcons.ResetTaskFile);
   }
 
