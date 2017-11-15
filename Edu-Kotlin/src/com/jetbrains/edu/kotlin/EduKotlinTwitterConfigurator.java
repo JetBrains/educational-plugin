@@ -3,6 +3,7 @@ package com.jetbrains.edu.kotlin;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyTwitterPluginConfigurator;
+import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -77,6 +78,6 @@ public class EduKotlinTwitterConfigurator implements StudyTwitterPluginConfigura
         StudyTaskManager instance = StudyTaskManager.getInstance(project);
         if (instance == null) return false;
         Course course = instance.getCourse();
-        return course != null && "PyCharm".equals(course.getCourseType()) && "kotlin".equals(course.getLanguage());
+        return course != null && EduNames.PYCHARM.equals(course.getCourseType()) && "kotlin".equals(course.getLanguage());
     }
 }

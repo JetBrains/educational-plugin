@@ -1,0 +1,89 @@
+<component name="StudySettings">
+  <StudyTaskManager>
+    <option name="course">
+      <RemoteCourse>
+        <option name="adaptive" value="false" />
+        <option name="authors">
+          <list>
+            <StepicUser>
+              <option name="accessToken" value="" />
+              <option name="firstName" value="ktisha" />
+              <option name="guest" value="false" />
+              <option name="id" value="625832" />
+              <option name="lastName" value="" />
+              <option name="refreshToken" value="" />
+            </StepicUser>
+          </list>
+        </option>
+        <option name="courseMode" value="Course Creator" />
+        <option name="courseType" value="PyCharm" />
+        <option name="description" value="python test course" />
+        <option name="id" value="4444" />
+        <option name="instructors">
+          <list>
+            <option value="625832" />
+          </list>
+        </option>
+        <option name="language" value="Python" />
+        <option name="lessons">
+          <list>
+            <Lesson>
+              <option name="id" value="61042" />
+              <option name="index" value="1" />
+              <option name="name" value="lesson1" />
+              <option name="updateDate" />
+              <option name="taskList">
+                <list>
+                  <PyCharmTask>
+                    <option name="index" value="1" />
+                    <option name="name" value="task1" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="240541" />
+                    <option name="taskTexts">
+                      <map>
+                        <entry key="task" value="Write task description here using markdown or html" />
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="task.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="index" value="0" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="name" value="task.py" />
+                              <option name="text" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                  </PyCharmTask>
+                </list>
+              </option>
+            </Lesson>
+          </list>
+        </option>
+        <option name="loadSolutions" value="true" />
+        <option name="name" value="Python Course" />
+        <option name="sections">
+          <list />
+        </option>
+        <option name="updateDate" value="1510578358332" />
+      </RemoteCourse>
+    </option>
+    <option name="toolWindowMode" value="TEXT" />
+    <option name="turnEditingMode" value="false" />
+    <option name="VERSION" value="6" />
+  </StudyTaskManager>
+</component>

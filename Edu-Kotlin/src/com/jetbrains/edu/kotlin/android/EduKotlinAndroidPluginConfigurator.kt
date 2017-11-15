@@ -10,12 +10,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.kotlin.EduKotlinPluginConfigurator
-import com.jetbrains.edu.learning.checker.StudyTaskChecker
+import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.core.EduNames
 import com.jetbrains.edu.learning.core.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator
@@ -29,8 +29,8 @@ class EduKotlinAndroidPluginConfigurator : EduKotlinPluginConfigurator() {
     return excluded || path.contains("build") || PathUtil.getFileName(path) in NAMES_TO_EXCLUDE
   }
 
-  override fun getPyCharmTaskChecker(pyCharmTask: PyCharmTask, project: Project): StudyTaskChecker<PyCharmTask> =
-          EduKotlinAndroidPyCharmTaskChecker(pyCharmTask, project)
+  override fun getEduTaskChecker(EduTask: EduTask, project: Project): TaskChecker<EduTask> =
+          KotlinAndroidTaskChecker(EduTask, project)
 
   override fun createTaskContent(project: Project, task: Task,
                                  parentDirectory: VirtualFile, course: Course): VirtualFile? {

@@ -7,15 +7,15 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
-import com.jetbrains.edu.learning.intellij.EduPyCharmTasksChecker;
+import com.jetbrains.edu.learning.intellij.RunConfigurationBasedTaskChecker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EduJavaPyCharmTaskChecker extends EduPyCharmTasksChecker {
-  public EduJavaPyCharmTaskChecker(@NotNull PyCharmTask task, @NotNull Project project) {
+public class JavaTaskChecker extends RunConfigurationBasedTaskChecker {
+  public JavaTaskChecker(@NotNull EduTask task, @NotNull Project project) {
     super(task, project);
   }
 

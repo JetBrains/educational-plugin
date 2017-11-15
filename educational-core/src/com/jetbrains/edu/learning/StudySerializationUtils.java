@@ -103,6 +103,7 @@ public class StudySerializationUtils {
     private static String ADAPTIVE_TASK_PARAMETERS = "adaptiveTaskParameters";
     private static String ADAPTIVE = "adaptive";
     public static final String PYCHARM_TASK = "PyCharmTask";
+    public static final String EDU_TASK = "EduTask";
     private static String TASK_WITH_SUBTASKS = "TaskWithSubtasks";
     private static String THEORY_TASK = "TheoryTask";
     private static String CHOICE_TASK = "ChoiceTask";
@@ -369,6 +370,26 @@ public class StudySerializationUtils {
         taskDir = srcDir;
       }
       return taskDir;
+    }
+
+    public static Element convertToSeventhVersion(Element state) throws StudyUnrecognizedFormatException {
+      Element taskManagerElement = state.getChild(MAIN_ELEMENT);
+      Element courseHolder = getChildWithName(taskManagerElement, COURSE);
+      Element courseElement = courseHolder.getChild(COURSE_TITLED);
+      if (courseElement == null) {
+        courseElement = courseHolder.getChild(REMOTE_COURSE);
+        if (courseElement == null) {
+          throw new StudyUnrecognizedFormatException();
+        }
+      }
+      for (Element lesson : getChildList(courseElement, LESSONS)) {
+        for (Element task : getChildList(lesson, TASK_LIST)) {
+          if (task.getName().equals(PYCHARM_TASK)) {
+            task.setName(EDU_TASK);
+          }
+        }
+      }
+      return state;
     }
 
     public static String addStatus(XMLOutputter outputter,
@@ -740,9 +761,10 @@ public class StudySerializationUtils {
             case "choice": return gson.fromJson(json, ChoiceTask.class);
             case "theory": return gson.fromJson(json, TheoryTask.class);
             case "code": return gson.fromJson(json, CodeTask.class);
-            case "pycharm": return gson.fromJson(json, PyCharmTask.class);
+            case "edu": return gson.fromJson(json, EduTask.class);
             case "subtasks": return gson.fromJson(json, TaskWithSubtasks.class);
             case "output": return gson.fromJson(json, OutputTask.class);
+            case "pycharm": return gson.fromJson(json, EduTask.class);     // deprecated: old courses have pycharm tasks
             default: {
               LOG.warn("Unsupported task type " + taskType);
               return null;

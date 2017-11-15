@@ -15,11 +15,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.jetbrains.edu.learning.actions.StudyCompareWithAnswerAction;
 import com.jetbrains.edu.learning.actions.*;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
@@ -130,7 +130,7 @@ public interface EduPluginConfigurator<Settings> {
   }
 
   @NotNull
-  StudyTaskChecker<PyCharmTask> getPyCharmTaskChecker(@NotNull PyCharmTask task, @NotNull Project project);
+  TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project);
 
   @NotNull
   default DefaultActionGroup getTaskDescriptionActionGroup() {

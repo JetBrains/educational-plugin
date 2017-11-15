@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.tasks.PyCharmTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -106,7 +106,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
 
   @Override
   public Task createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
-    final Task task = new PyCharmTask(name);
+    final Task task = new EduTask(name);
     task.setIndex(index);
     if (parentItem == null) {
       return null;

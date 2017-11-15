@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.actions.StudyCheckAction;
 import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyCheckUtils;
-import com.jetbrains.edu.learning.checker.StudyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -25,8 +25,8 @@ public class CodeTask extends Task {
   }
 
   @Override
-  public StudyTaskChecker getChecker(@NotNull Project project) {
-    return new StudyTaskChecker<CodeTask>(this, project) {
+  public TaskChecker getChecker(@NotNull Project project) {
+    return new TaskChecker<CodeTask>(this, project) {
       @Override
       public void onTaskFailed(@NotNull String message) {
         super.onTaskFailed("Wrong solution");

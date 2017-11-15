@@ -37,6 +37,8 @@ public class EduNames {
 
   public static final String COURSE_META_FILE = "course.json";
   public static final String PYCHARM_ADDITIONAL = "PyCharm additional materials";
+
+  // Used as course type only
   public static final String PYCHARM = "PyCharm";
 
   public static final String STUDY = "Study";
