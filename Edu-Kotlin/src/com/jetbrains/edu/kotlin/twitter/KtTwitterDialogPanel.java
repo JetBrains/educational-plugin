@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin;
+package com.jetbrains.edu.kotlin.twitter;
 
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.util.ui.UIUtil;
@@ -56,7 +56,7 @@ public class KtTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPanel {
         return myTwitterTextField.getText();
     }
 
-    private String getMessageForTask(@NotNull final Task task) {
+    private static String getMessageForTask(@NotNull final Task task) {
         int solvedTaskNumber = KotlinUtils.calculateTaskNumber(task);
         return "Hey, I just completed level " + solvedTaskNumber / 8 
                 +" of Kotlin Koans. https://kotlinlang.org/docs/tutorials/koans.html #kotlinkoans";
@@ -80,7 +80,7 @@ public class KtTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPanel {
         return getClass().getResource(imageName);
     }
     
-    private String getImageName(@NotNull final Task task) {
+    private static String getImageName(@NotNull final Task task) {
         int solvedTaskNumber = KotlinUtils.calculateTaskNumber(task);
         int level = solvedTaskNumber / 8;
         return level + "level.gif";
