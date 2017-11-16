@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,7 +185,7 @@ public interface EduPluginConfigurator<Settings> {
   LanguageSettings<Settings> getLanguageSettings();
 
   @Nullable
-  default EduCourseProjectGenerator<Settings> getEduCourseProjectGenerator(@NotNull Course course) {
+  default CourseProjectGenerator<Settings> getEduCourseProjectGenerator(@NotNull Course course) {
     return null;
   }
 

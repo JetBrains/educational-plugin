@@ -29,7 +29,7 @@ import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.newproject.ui.EduCreateNewStepikCourseDialog;
+import com.jetbrains.edu.learning.newproject.ui.CreateNewStepikCourseDialog;
 import com.jetbrains.edu.learning.stepic.StepicAuthorizedClient;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -180,7 +180,7 @@ public class EduBuiltInServerUtils {
     ApplicationManager.getApplication().invokeLater(() -> {
       if (course != null) {
         PropertiesComponent.getInstance().setValue(STEP_ID, stepId, 0);
-        new EduCreateNewStepikCourseDialog(course).show();
+        new CreateNewStepikCourseDialog(course).show();
       } else {
         Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course");
       }

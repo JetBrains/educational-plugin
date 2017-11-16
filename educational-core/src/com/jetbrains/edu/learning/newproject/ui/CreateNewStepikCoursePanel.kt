@@ -11,9 +11,9 @@ import java.io.File
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
-class EduCreateNewStepikCoursePanel : JPanel(BorderLayout()) {
+class CreateNewStepikCoursePanel : JPanel(BorderLayout()) {
 
-  private val myCoursePanel: EduCoursePanel = EduCoursePanel(true, true)
+  private val myCoursePanel: CoursePanel = CoursePanel(true, true)
   private val myErrorLabel: JBLabel = JBLabel()
 
   private var myValidationListener: ValidationListener? = null

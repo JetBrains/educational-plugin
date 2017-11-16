@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public interface EduCourseProjectGenerator<S> extends DirectoryProjectGenerator<S> {
+public interface CourseProjectGenerator<S> extends DirectoryProjectGenerator<S> {
 
   @NotNull
   default ValidationResult validate() {

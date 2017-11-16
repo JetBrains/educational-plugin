@@ -10,11 +10,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class EduAdvancedSettings extends JPanel {
+public class AdvancedSettings extends JPanel {
 
   private final JPanel myAdvancedSettings = new JPanel();
 
-  public EduAdvancedSettings() {
+  public AdvancedSettings() {
     super(new BorderLayout());
     myAdvancedSettings.setLayout(new BoxLayout(myAdvancedSettings, BoxLayout.Y_AXIS));
     add(myAdvancedSettings, BorderLayout.CENTER);
