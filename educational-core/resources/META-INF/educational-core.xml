@@ -21,9 +21,6 @@
         <component>
             <implementation-class>com.jetbrains.edu.learning.EduSelectRoleComponent</implementation-class>
         </component>
-        <component>
-            <implementation-class>com.jetbrains.edu.learning.stepic.CourseUpdater</implementation-class>
-        </component>
     </application-components>
 
     <extensionPoints>
