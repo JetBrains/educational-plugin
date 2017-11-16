@@ -22,7 +22,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.EduPluginConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings
+import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
@@ -40,7 +40,7 @@ class CCNewCoursePanel : JPanel() {
   private val myAuthorField: JBTextField = JBTextField()
   private val myDescriptionTextArea: JTextArea = JTextArea()
 
-  private val myAdvancedSettings: EduAdvancedSettings = EduAdvancedSettings()
+  private val myAdvancedSettings: AdvancedSettings = AdvancedSettings()
   private val myPathField: PathField = PathField()
   private val myLocationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
 

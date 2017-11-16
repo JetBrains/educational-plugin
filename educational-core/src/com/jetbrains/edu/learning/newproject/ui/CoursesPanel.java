@@ -43,10 +43,10 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
-public class EduCoursesPanel extends JPanel {
+public class CoursesPanel extends JPanel {
   private static final Set<String> FEATURED_COURSES = ContainerUtil.newLinkedHashSet("Adaptive Python", "Introduction to Python", "Kotlin Koans");
   private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
-  private static final Logger LOG = Logger.getInstance(EduCoursesPanel.class);
+  private static final Logger LOG = Logger.getInstance(CoursesPanel.class);
 
   private JPanel myMainPanel;
   private JPanel myCourseListPanel;
@@ -55,11 +55,11 @@ public class EduCoursesPanel extends JPanel {
   private JSplitPane mySplitPane;
   private JPanel mySplitPaneRoot;
   private JBList<Course> myCoursesList;
-  private EduCoursePanel myCoursePanel;
+  private CoursePanel myCoursePanel;
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
 
-  public EduCoursesPanel() {
+  public CoursesPanel() {
     setLayout(new BorderLayout());
     add(myMainPanel, BorderLayout.CENTER);
     initUI();
@@ -219,7 +219,7 @@ public class EduCoursesPanel extends JPanel {
 
   private void updateModel(List<Course> courses, @Nullable String courseToSelect) {
     DefaultListModel<Course> listModel = new DefaultListModel<>();
-    Collections.sort(courses, Comparator.comparingInt(EduCoursesPanel::getWeight));
+    Collections.sort(courses, Comparator.comparingInt(CoursesPanel::getWeight));
     for (Course course : courses) {
       listModel.addElement(course);
     }
@@ -243,7 +243,7 @@ public class EduCoursesPanel extends JPanel {
   }
 
   private void createUIComponents() {
-    myCoursePanel = new EduCoursePanel(false, true);
+    myCoursePanel = new CoursePanel(false, true);
     mySearchField = new FilterComponent("Edu.NewCourse", 5, true) {
       @Override
       public void filter() {

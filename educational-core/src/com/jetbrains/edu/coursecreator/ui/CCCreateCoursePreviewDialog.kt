@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.core.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator
-import com.jetbrains.edu.learning.newproject.ui.EduCoursePanel
+import com.jetbrains.edu.learning.newproject.ui.CoursePanel
 import java.io.IOException
 import javax.swing.JComponent
 
@@ -25,7 +25,7 @@ class CCCreateCoursePreviewDialog(
         private val myConfigurator: EduPluginConfigurator<*>
 ) : DialogWrapper(true) {
 
-  private val myPanel: EduCoursePanel = EduCoursePanel(true, false).apply {
+  private val myPanel: CoursePanel = CoursePanel(true, false).apply {
     preferredSize = JBUI.size(WIDTH, HEIGHT)
     minimumSize = JBUI.size(WIDTH, HEIGHT)
   }

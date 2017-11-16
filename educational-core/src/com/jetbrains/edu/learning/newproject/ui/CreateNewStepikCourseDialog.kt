@@ -5,15 +5,15 @@ import com.jetbrains.edu.learning.EduPluginConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
 
-class EduCreateNewStepikCourseDialog(private val myCourse: Course) : DialogWrapper(true) {
+class CreateNewStepikCourseDialog(private val myCourse: Course) : DialogWrapper(true) {
 
-  private val myPanel: EduCreateNewStepikCoursePanel = EduCreateNewStepikCoursePanel()
+  private val myPanel: CreateNewStepikCoursePanel = CreateNewStepikCoursePanel()
 
   init {
     title = myCourse.name
     setOKButtonText("Join")
     myPanel.bindCourse(myCourse)
-    myPanel.setValidationListener(object : EduCreateNewStepikCoursePanel.ValidationListener {
+    myPanel.setValidationListener(object : CreateNewStepikCoursePanel.ValidationListener {
       override fun onInputDataValidated(isInputDataComplete: Boolean) {
         isOKActionEnabled = isInputDataComplete
       }

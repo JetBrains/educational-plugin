@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
 
 class KtPluginConfigurator : KtPluginConfigurator() {
@@ -47,7 +47,7 @@ class KtPluginConfigurator : KtPluginConfigurator() {
     return parentDirectory.findChild(EduNames.TASK + task.index)
   }
 
-  override fun getEduCourseProjectGenerator(course: Course): EduCourseProjectGenerator<JdkProjectSettings>? =
+  override fun getEduCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>? =
     KtProjectGenerator(course)
 
   override fun isEnabled(): Boolean = EduUtils.isAndroidStudio()
