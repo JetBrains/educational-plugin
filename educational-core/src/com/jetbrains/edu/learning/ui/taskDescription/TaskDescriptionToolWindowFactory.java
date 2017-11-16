@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class StudyToolWindowFactory implements ToolWindowFactory, DumbAware {
+public class TaskDescriptionToolWindowFactory implements ToolWindowFactory, DumbAware {
   public static final String STUDY_TOOL_WINDOW = "Task Description";
 
 
@@ -23,18 +23,18 @@ public class StudyToolWindowFactory implements ToolWindowFactory, DumbAware {
     toolWindow.setIcon(EducationalCoreIcons.TaskDescription);
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course != null) {
-      final StudyToolWindow studyToolWindow;
+      final TaskDescriptionToolWindow taskDescriptionToolWindow;
       if (StudyUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
-        studyToolWindow = new StudyJavaFxToolWindow();
+        taskDescriptionToolWindow = new JavaFxToolWindow();
       }
       else {
-        studyToolWindow = new StudySwingToolWindow();
+        taskDescriptionToolWindow = new SwingToolWindow();
       }
-      studyToolWindow.init(project, true);
+      taskDescriptionToolWindow.init(project, true);
       final ContentManager contentManager = toolWindow.getContentManager();
-      final Content content = contentManager.getFactory().createContent(studyToolWindow, null, false);
+      final Content content = contentManager.getFactory().createContent(taskDescriptionToolWindow, null, false);
       contentManager.addContent(content);
-      Disposer.register(project, studyToolWindow);
+      Disposer.register(project, taskDescriptionToolWindow);
     }
   }
 }

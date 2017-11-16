@@ -14,7 +14,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class CCEditTaskTextAction extends ToggleAction implements DumbAware {
@@ -31,7 +31,7 @@ public class CCEditTaskTextAction extends ToggleAction implements DumbAware {
     if (project == null) {
       return false;
     }
-    return StudyTaskManager.getInstance(project).getToolWindowMode() == StudyToolWindow.StudyToolWindowMode.EDITING;
+    return StudyTaskManager.getInstance(project).getToolWindowMode() == TaskDescriptionToolWindow.StudyToolWindowMode.EDITING;
   }
 
   @Override
@@ -40,7 +40,7 @@ public class CCEditTaskTextAction extends ToggleAction implements DumbAware {
     if (project == null) {
       return;
     }
-    StudyToolWindow window = StudyUtils.getStudyToolWindow(project);
+    TaskDescriptionToolWindow window = StudyUtils.getStudyToolWindow(project);
     if (window == null) {
       return;
     }

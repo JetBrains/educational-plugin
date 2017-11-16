@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,7 +76,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
         return;
       }
       if (task instanceof ChoiceTask) {
-        final StudyToolWindow window = StudyUtils.getStudyToolWindow(project);
+        final TaskDescriptionToolWindow window = StudyUtils.getStudyToolWindow(project);
         if (window != null) {
           window.setBottomComponent(new ChoiceVariantsPanel((ChoiceTask)task));
         }

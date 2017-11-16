@@ -7,15 +7,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class StudyFileEditorManagerListener implements FileEditorManagerListener {
-  private final StudyToolWindow myToolWindow;
+  private final TaskDescriptionToolWindow myToolWindow;
   private final Project myProject;
 
-  public StudyFileEditorManagerListener(StudyToolWindow toolWindow, Project project) {
+  public StudyFileEditorManagerListener(TaskDescriptionToolWindow toolWindow, Project project) {
     myToolWindow = toolWindow;
     myProject = project;
   }

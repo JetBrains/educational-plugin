@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
@@ -344,7 +344,7 @@ public class StepicAdaptiveConnector {
   }
 
   private static void setToolWindowText(@NotNull Project project, @NotNull Task task) {
-    final StudyToolWindow window = StudyUtils.getStudyToolWindow(project);
+    final TaskDescriptionToolWindow window = StudyUtils.getStudyToolWindow(project);
     if (window != null) {
       window.setCurrentTask(project, task);
     }

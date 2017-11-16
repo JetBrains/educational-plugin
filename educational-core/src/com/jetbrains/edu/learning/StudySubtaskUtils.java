@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -169,7 +169,7 @@ public class StudySubtaskUtils {
   public static void updateUI(@NotNull Project project, @NotNull Task task, boolean navigateToTask) {
     CheckUtils.drawAllPlaceholders(project, task);
     ProjectView.getInstance(project).refresh();
-    StudyToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
+    TaskDescriptionToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
     if (toolWindow != null) {
       if (task.getTaskDescription() == null) {
         task.addTaskText(task.getTaskDescriptionName(), CCUtils.TASK_DESCRIPTION_TEXT);

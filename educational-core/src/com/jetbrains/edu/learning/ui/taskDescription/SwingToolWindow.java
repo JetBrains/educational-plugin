@@ -30,10 +30,10 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 
-public class StudySwingToolWindow extends StudyToolWindow {
+public class SwingToolWindow extends TaskDescriptionToolWindow {
   private JTextPane myTaskTextPane;
 
-  public StudySwingToolWindow() {
+  public SwingToolWindow() {
     super();
   }
 
