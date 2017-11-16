@@ -15,7 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +31,8 @@ class UtilModuleBuilder extends JavaModuleBuilder {
 
   public UtilModuleBuilder(String moduleDir, @Nullable Task additionalMaterials) {
     myAdditionalMaterials = additionalMaterials;
-    setName(EduIntelliJNames.UTIL);
-    setModuleFilePath(FileUtil.join(moduleDir, EduIntelliJNames.UTIL, EduIntelliJNames.UTIL + ModuleFileType.DOT_DEFAULT_EXTENSION));
+    setName(EduNames.UTIL);
+    setModuleFilePath(FileUtil.join(moduleDir, EduNames.UTIL, EduNames.UTIL + ModuleFileType.DOT_DEFAULT_EXTENSION));
   }
 
   @NotNull

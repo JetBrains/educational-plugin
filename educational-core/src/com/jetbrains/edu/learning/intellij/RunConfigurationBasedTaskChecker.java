@@ -34,6 +34,7 @@ import java.util.concurrent.CountDownLatch;
 
 
 public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
+  public static final String TEST_RUNNER_CLASS = "EduTestRunner";
   private static final Logger LOG = Logger.getInstance(RunConfigurationBasedTaskChecker.class);
 
   public RunConfigurationBasedTaskChecker(@NotNull EduTask task, @NotNull Project project) {
