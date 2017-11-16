@@ -21,7 +21,7 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.settings.StudyOptionsProvider;
+import com.jetbrains.edu.learning.settings.OptionsProvider;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
-public class StepicOptions implements StudyOptionsProvider {
+public class StepicOptions implements OptionsProvider {
   private JPanel myPane;
   private JBCheckBox myEnableTestingFromSamples;
   private JBLabel myUsernameLabel;

@@ -3,14 +3,14 @@ package com.jetbrains.edu.coursecreator.settings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.jetbrains.edu.learning.settings.StudyOptionsProvider;
+import com.jetbrains.edu.learning.settings.OptionsProvider;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 import static com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.COURSE_CREATOR_ENABLED;
 
-public class CCOptions implements StudyOptionsProvider {
+public class CCOptions implements OptionsProvider {
   private JRadioButton myHtmlRadioButton;
   private JRadioButton myMarkdownRadioButton;
   private JPanel myPanel;
