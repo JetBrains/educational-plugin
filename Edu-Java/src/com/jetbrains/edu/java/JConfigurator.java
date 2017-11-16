@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
-import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
+import com.jetbrains.edu.learning.intellij.EduConfiguratorBase;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import icons.EducationalCoreIcons;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class JPluginConfigurator extends EduPluginConfiguratorBase {
+public class JConfigurator extends EduConfiguratorBase {
   static final String TEST_JAVA = "Test.java";
   private static final String TASK_JAVA = "Task.java";
 

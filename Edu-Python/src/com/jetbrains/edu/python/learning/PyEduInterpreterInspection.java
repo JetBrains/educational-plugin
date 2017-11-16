@@ -83,12 +83,12 @@ public class PyEduInterpreterInspection extends PyInspection {
           final LanguageLevel projectLanguageLevel = LanguageLevel.fromPythonVersion(versionString.substring(prefix.length()));
 
           final String version = course.getLanguageVersion();
-          if (PyPluginConfigurator.PYTHON_2.equals(version)) {
+          if (PyConfigurator.PYTHON_2.equals(version)) {
             if (projectLanguageLevel.isPy3K()) {
               registerProblem(node, "Course is available for Python 2, but Python 3 is selected as project interpreter", new ConfigureInterpreterFix());
             }
           }
-          else if (PyPluginConfigurator.PYTHON_3.equals(version)) {
+          else if (PyConfigurator.PYTHON_3.equals(version)) {
             if (!projectLanguageLevel.isPy3K()) {
               registerProblem(node, "Course is available for Python 3, but Python 2 is selected as project interpreter", new ConfigureInterpreterFix());
             }

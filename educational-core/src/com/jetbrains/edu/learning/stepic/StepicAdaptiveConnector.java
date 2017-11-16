@@ -18,7 +18,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
@@ -298,7 +298,7 @@ public class StepicAdaptiveConnector {
     }
 
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      EduPluginConfiguratorManager.forLanguage(language).createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
+      EduConfiguratorManager.forLanguage(language).createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
     }));
   }
 
@@ -325,7 +325,7 @@ public class StepicAdaptiveConnector {
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {
         removeOldProjectFiles(lessonDir, task.getIndex());
-        EduPluginConfiguratorManager.forLanguage(language).createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
+        EduConfiguratorManager.forLanguage(language).createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
       }
       catch (IOException e) {
         LOG.warn(e.getMessage());
@@ -353,7 +353,7 @@ public class StepicAdaptiveConnector {
   private static String getCodeTemplateForTask(@NotNull Language language,
                                                @Nullable LinkedTreeMap codeTemplates) {
     if (codeTemplates != null) {
-      final String languageString = EduPluginConfiguratorManager.forLanguage(language).getStepikDefaultLanguage();
+      final String languageString = EduConfiguratorManager.forLanguage(language).getStepikDefaultLanguage();
       return (String)codeTemplates.get(languageString);
     }
 
@@ -420,7 +420,7 @@ public class StepicAdaptiveConnector {
       if (editor != null) {
         String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
         final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();
-        String defaultLanguage = EduPluginConfiguratorManager.forLanguage(courseLanguage).getStepikDefaultLanguage();
+        String defaultLanguage = EduConfiguratorManager.forLanguage(courseLanguage).getStepikDefaultLanguage();
         final StepicWrappers.SubmissionToPostWrapper submissionToPost =
           new StepicWrappers.SubmissionToPostWrapper(String.valueOf(attemptId), defaultLanguage, answer);
         return doAdaptiveCheck(submissionToPost, attemptId, user.getId());
@@ -715,7 +715,7 @@ public class StepicAdaptiveConnector {
     private static String getTaskFileName(@NotNull Language language) {
       // This is a hacky way to how we should name task file.
       // It's assumed that if test's name is capitalized we need to capitalize task file name too.
-      String testFileName = EduPluginConfiguratorManager.forLanguage(language).getTestFileName();
+      String testFileName = EduConfiguratorManager.forLanguage(language).getTestFileName();
       boolean capitalize = !testFileName.isEmpty() && Character.isUpperCase(testFileName.charAt(0));
 
       LanguageFileType type = language.getAssociatedFileType();
