@@ -65,8 +65,8 @@ import com.jetbrains.edu.learning.stepic.OAuthDialog;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.stepic.StepicUserWidget;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindowFactory;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import com.petebevin.markdown.MarkdownProcessor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -179,33 +179,33 @@ public class StudyUtils {
   }
 
   public static void updateToolWindows(@NotNull final Project project) {
-    final StudyToolWindow studyToolWindow = getStudyToolWindow(project);
-    if (studyToolWindow != null) {
+    final TaskDescriptionToolWindow taskDescriptionToolWindow = getStudyToolWindow(project);
+    if (taskDescriptionToolWindow != null) {
       Task task = getTaskForCurrentSelectedFile(project);
-      studyToolWindow.updateTask(project, task);
-      studyToolWindow.updateCourseProgress(project);
+      taskDescriptionToolWindow.updateTask(project, task);
+      taskDescriptionToolWindow.updateCourseProgress(project);
     }
   }
 
   public static void initToolWindows(@NotNull final Project project) {
     final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
-    windowManager.getToolWindow(StudyToolWindowFactory.STUDY_TOOL_WINDOW).getContentManager().removeAllContents(false);
-    StudyToolWindowFactory factory = new StudyToolWindowFactory();
-    factory.createToolWindowContent(project, windowManager.getToolWindow(StudyToolWindowFactory.STUDY_TOOL_WINDOW));
+    windowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW).getContentManager().removeAllContents(false);
+    TaskDescriptionToolWindowFactory factory = new TaskDescriptionToolWindowFactory();
+    factory.createToolWindowContent(project, windowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW));
 
   }
 
   @Nullable
-  public static StudyToolWindow getStudyToolWindow(@NotNull final Project project) {
+  public static TaskDescriptionToolWindow getStudyToolWindow(@NotNull final Project project) {
     if (project.isDisposed()) return null;
 
-    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(StudyToolWindowFactory.STUDY_TOOL_WINDOW);
+    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
     if (toolWindow != null) {
       Content[] contents = toolWindow.getContentManager().getContents();
       for (Content content: contents) {
         JComponent component = content.getComponent();
-        if (component != null && component instanceof StudyToolWindow) {
-          return (StudyToolWindow)component;
+        if (component != null && component instanceof TaskDescriptionToolWindow) {
+          return (TaskDescriptionToolWindow)component;
         }
       }
     }
@@ -417,7 +417,7 @@ public class StudyUtils {
   public static String getTaskText(@NotNull final Project project) {
     Task task = getCurrentTask(project);
     if (task == null) {
-      return StudyToolWindow.EMPTY_TASK_TEXT;
+      return TaskDescriptionToolWindow.EMPTY_TASK_TEXT;
     }
     return task.getTaskDescription();
   }
@@ -617,7 +617,7 @@ public class StudyUtils {
     if (course != null && EduNames.PYCHARM.equals(course.getCourseType())) {
       final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
       registerToolWindows(toolWindowManager, project);
-      final ToolWindow studyToolWindow = toolWindowManager.getToolWindow(StudyToolWindowFactory.STUDY_TOOL_WINDOW);
+      final ToolWindow studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
       if (studyToolWindow != null) {
         studyToolWindow.show(null);
         initToolWindows(project);
@@ -626,9 +626,9 @@ public class StudyUtils {
   }
 
   private static void registerToolWindows(@NotNull final ToolWindowManager toolWindowManager, Project project) {
-    final ToolWindow toolWindow = toolWindowManager.getToolWindow(StudyToolWindowFactory.STUDY_TOOL_WINDOW);
+    final ToolWindow toolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
     if (toolWindow == null) {
-      toolWindowManager.registerToolWindow(StudyToolWindowFactory.STUDY_TOOL_WINDOW, true, ToolWindowAnchor.RIGHT, project, true);
+      toolWindowManager.registerToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW, true, ToolWindowAnchor.RIGHT, project, true);
     }
   }
 
@@ -805,9 +805,9 @@ public class StudyUtils {
    * @param project current project
    */
   public static void saveToolWindowTextIfNeeded(@NotNull Project project) {
-    StudyToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
-    StudyToolWindow.StudyToolWindowMode toolWindowMode = StudyTaskManager.getInstance(project).getToolWindowMode();
-    if (toolWindow != null && toolWindowMode == StudyToolWindow.StudyToolWindowMode.EDITING) {
+    TaskDescriptionToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
+    TaskDescriptionToolWindow.StudyToolWindowMode toolWindowMode = StudyTaskManager.getInstance(project).getToolWindowMode();
+    if (toolWindow != null && toolWindowMode == TaskDescriptionToolWindow.StudyToolWindowMode.EDITING) {
       toolWindow.leaveEditingMode(project);
     }
   }

@@ -20,16 +20,16 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class StudyJavaFxToolWindow extends StudyToolWindow {
-  private StudyBrowserWindow myBrowserWindow;
+public class JavaFxToolWindow extends TaskDescriptionToolWindow {
+  private BrowserWindow myBrowserWindow;
 
-  public StudyJavaFxToolWindow() {
+  public JavaFxToolWindow() {
     super();
   }
 
   @Override
   public JComponent createTaskInfoPanel(Project project) {
-    myBrowserWindow = new StudyBrowserWindow(project, true, false);
+    myBrowserWindow = new BrowserWindow(project, true, false);
     myBrowserWindow.addBackAndOpenButtons();
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));

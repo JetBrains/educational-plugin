@@ -20,7 +20,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
@@ -47,7 +47,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
 
   public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();
 
-  private StudyToolWindow.StudyToolWindowMode myToolWindowMode = StudyToolWindow.StudyToolWindowMode.TEXT;
+  private TaskDescriptionToolWindow.StudyToolWindowMode myToolWindowMode = TaskDescriptionToolWindow.StudyToolWindowMode.TEXT;
   private boolean myTurnEditingMode = false;
 
   @Transient private final Project myProject;
@@ -232,11 +232,11 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     return ServiceManager.getService(project, StudyTaskManager.class);
   }
 
-  public StudyToolWindow.StudyToolWindowMode getToolWindowMode() {
+  public TaskDescriptionToolWindow.StudyToolWindowMode getToolWindowMode() {
     return myToolWindowMode;
   }
 
-  public void setToolWindowMode(StudyToolWindow.StudyToolWindowMode toolWindowMode) {
+  public void setToolWindowMode(TaskDescriptionToolWindow.StudyToolWindowMode toolWindowMode) {
     myToolWindowMode = toolWindowMode;
   }
 
