@@ -12,7 +12,7 @@ import com.intellij.openapi.util.text.StringUtil
 import java.util.*
 
 
-class EduInitializationComponent : ApplicationComponent {
+class InitializationComponent : ApplicationComponent {
     companion object {
         @JvmField
         val IDS = arrayOf(

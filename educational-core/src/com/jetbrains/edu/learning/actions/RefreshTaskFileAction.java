@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.EduAnswerPlaceholderPainter;
+import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -85,7 +85,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     WolfTheProblemSolver.getInstance(project).clearProblems(eduState.getVirtualFile());
     taskFile.setHighlightErrors(false);
     StudyUtils.drawAllAnswerPlaceholders(editor, taskFile);
-    EduAnswerPlaceholderPainter.createGuardedBlocks(editor, taskFile);
+    AnswerPlaceholderPainter.createGuardedBlocks(editor, taskFile);
     ApplicationManager.getApplication().invokeLater(
       () -> IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true));
 
