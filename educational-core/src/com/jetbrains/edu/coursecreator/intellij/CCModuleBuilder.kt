@@ -9,9 +9,9 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder
+import com.jetbrains.edu.learning.intellij.generation.CourseModuleBuilder
 
-class CCModuleBuilder(private val myCourse: Course) : EduCourseModuleBuilder() {
+class CCModuleBuilder(private val myCourse: Course) : CourseModuleBuilder() {
 
   override val course: Course? get() = myCourse
 
