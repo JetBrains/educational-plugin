@@ -12,8 +12,8 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import one.util.streamex.EntryStream;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -193,7 +193,7 @@ public abstract class Task implements StudyItem {
     }
     taskText = StudyUtils.wrapTextToDisplayLatex(StudyUtils.convertToHtml(taskText));
     if (getLesson().getCourse().isAdaptive()) {
-      taskText = EduAdaptiveStepicConnector.wrapAdaptiveCourseText(this, taskText);
+      taskText = StepicAdaptiveConnector.wrapAdaptiveCourseText(this, taskText);
     }
     return taskText;
   }
@@ -270,7 +270,7 @@ public abstract class Task implements StudyItem {
 
   public boolean isUpToDate() {
     if (getStepId() == 0) return true;
-    final Date date = EduStepicConnector.getTaskUpdateDate(getStepId());
+    final Date date = StepicConnector.getTaskUpdateDate(getStepId());
     if (date == null) return true;
     if (myUpdateDate == null) return false;
     return !date.after(myUpdateDate);

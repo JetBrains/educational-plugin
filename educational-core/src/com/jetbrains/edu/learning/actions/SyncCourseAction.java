@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.StudyNavigator;
-import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
-import com.jetbrains.edu.learning.stepic.StudyStepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
+import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +41,7 @@ public class SyncCourseAction extends DumbAwareAction {
       updateAdaptiveCourse(project, course);
     }
     else {
-      StudyStepikSolutionsLoader courseSynchronizer = StudyStepikSolutionsLoader.getInstance(project);
+      StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
       courseSynchronizer.loadSolutionsInBackground();
     }
   }
@@ -55,11 +55,11 @@ public class SyncCourseAction extends DumbAwareAction {
 
         int taskNumber = adaptiveLesson.getTaskList().size();
         Task lastRecommendationInCourse = adaptiveLesson.getTaskList().get(taskNumber - 1);
-        Task lastRecommendationOnStepik = EduAdaptiveStepicConnector.getNextRecommendation(project, (RemoteCourse) course);
+        Task lastRecommendationOnStepik = StepicAdaptiveConnector.getNextRecommendation(project, (RemoteCourse) course);
 
         if (lastRecommendationOnStepik != null && lastRecommendationOnStepik.getStepId() != lastRecommendationInCourse.getStepId()) {
           lastRecommendationOnStepik.initTask(adaptiveLesson, false);
-          EduAdaptiveStepicConnector.replaceCurrentTask(project, lastRecommendationOnStepik, adaptiveLesson);
+          StepicAdaptiveConnector.replaceCurrentTask(project, lastRecommendationOnStepik, adaptiveLesson);
 
           ApplicationManager.getApplication().invokeLater(() -> {
             VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);

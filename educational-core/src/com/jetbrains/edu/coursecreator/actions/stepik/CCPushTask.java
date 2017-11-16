@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.stepic.EduStepicNames;
+import com.jetbrains.edu.learning.stepic.StepicNames;
 import org.jetbrains.annotations.NotNull;
 
 public class CCPushTask extends DumbAwareAction {
@@ -91,7 +91,7 @@ public class CCPushTask extends DumbAwareAction {
     ProgressManager.getInstance().run(new Task.Modal(project, "Uploading Task", true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Uploading task to " + EduStepicNames.STEPIC_URL);
+        indicator.setText("Uploading task to " + StepicNames.STEPIC_URL);
         if (task.getStepId() <= 0) {
           CCStepicConnector.postTask(project, task, lesson.getId());
         }

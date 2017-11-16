@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
-import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +69,7 @@ public class ChoiceTask extends Task {
         if (user == null) {
           return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
         }
-        return EduAdaptiveStepicConnector.checkChoiceTask(myTask, user);
+        return StepicAdaptiveConnector.checkChoiceTask(myTask, user);
       }
 
       @Override

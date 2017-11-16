@@ -13,7 +13,6 @@ import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -25,7 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +45,7 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements EduCourse
     if (remoteCourse.getId() > 0) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return StudyUtils.execCancelable(() -> EduStepicConnector.enrollToCourse(remoteCourse.getId(),
+        return StudyUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),
                 EduSettings.getInstance().getUser()));
       }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
     }

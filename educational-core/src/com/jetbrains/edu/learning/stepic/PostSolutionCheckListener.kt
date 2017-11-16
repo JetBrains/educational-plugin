@@ -12,7 +12,7 @@ class PostSolutionCheckListener : StudyCheckListener {
         val course = StudyTaskManager.getInstance(project).course
         val status = task.status
         if (EduSettings.getInstance().user != null && course != null && course.isStudy && status != StudyStatus.Unchecked) {
-            EduStepicConnector.postSolution(task, status == StudyStatus.Solved, project)
+            StepicConnector.postSolution(task, status == StudyStatus.Solved, project)
         }
     }
 }

@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
-public class StepicStudyOptions implements StudyOptionsProvider {
+public class StepicOptions implements StudyOptionsProvider {
   private JPanel myPane;
   private JBCheckBox myEnableTestingFromSamples;
   private JBLabel myUsernameLabel;
@@ -38,7 +38,7 @@ public class StepicStudyOptions implements StudyOptionsProvider {
   private StepicUser myStepicUser;
   private HyperlinkAdapter myListener;
 
-  public StepicStudyOptions() {
+  public StepicOptions() {
   }
 
   @NotNull
@@ -68,7 +68,7 @@ public class StepicStudyOptions implements StudyOptionsProvider {
           }
         });
 
-        EduStepicConnector.doAuthorize(() -> showDialog());
+        StepicConnector.doAuthorize(() -> showDialog());
       }
     };
   }
@@ -153,7 +153,7 @@ public class StepicStudyOptions implements StudyOptionsProvider {
 
   private void removeCredentials() {
     myStepicUser = null;
-    EduStepicAuthorizedClient.invalidateClient();
+    StepicAuthorizedClient.invalidateClient();
   }
 
   @Nullable

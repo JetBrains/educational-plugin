@@ -45,7 +45,7 @@ public class StudyStepicFormatTest {
     String responseString =
       FileUtil.loadFile(new File(getTestDataPath(), fileName));
     StepicWrappers.StepSource stepSource =
-      EduStepicClient.deserializeStepicResponse(StepicWrappers.StepContainer.class, responseString).steps.get(0);
+      StepicClient.deserializeStepicResponse(StepicWrappers.StepContainer.class, responseString).steps.get(0);
     StepicWrappers.StepOptions options = stepSource.block.options;
     List<TaskFile> files = options.files;
     assertTrue("Wrong number of task files", files.size() == 1);
@@ -62,7 +62,7 @@ public class StudyStepicFormatTest {
   public void testAvailableCourses() throws IOException {
     String responseString = FileUtil.loadFile(new File(getTestDataPath(), "courses.json"));
     StepicWrappers.CoursesContainer container =
-      EduStepicClient.deserializeStepicResponse(StepicWrappers.CoursesContainer.class, responseString);
+      StepicClient.deserializeStepicResponse(StepicWrappers.CoursesContainer.class, responseString);
     assertNotNull(container.courses);
     assertTrue("Incorrect number of courses", container.courses.size() == 4);
   }
