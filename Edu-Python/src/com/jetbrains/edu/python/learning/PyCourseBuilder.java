@@ -32,12 +32,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
+import static com.jetbrains.edu.python.learning.PyConfigurator.TASK_PY;
+import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
+
 public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(PyCourseBuilder.class);
-
-  private static final String TESTS_PY = "tests.py";
-  private static final String TASK_PY = "task.py";
 
   @Override
   public VirtualFile createTaskContent(@NotNull Project project,

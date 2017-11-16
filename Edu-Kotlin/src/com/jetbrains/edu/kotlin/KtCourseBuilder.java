@@ -22,11 +22,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Properties;
 
-public class KtCourseBuilder extends EduCourseBuilderBase {
+import static com.jetbrains.edu.kotlin.KtConfigurator.*;
 
-  public static final String TESTS_KT = "Tests.kt";
-  private static final String SUBTASK_TESTS_KT = "Subtask_Tests.kt";
-  public static final String TASK_KT = "Task.kt";
+public class KtCourseBuilder extends EduCourseBuilderBase {
 
   @Override
   public void configureModule(@NotNull Module module) {

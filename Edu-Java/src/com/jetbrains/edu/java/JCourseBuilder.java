@@ -17,10 +17,10 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JCourseBuilder extends EduCourseBuilderBase {
+import static com.jetbrains.edu.java.JConfigurator.TASK_JAVA;
+import static com.jetbrains.edu.java.JConfigurator.TEST_JAVA;
 
-  private static final String TEST_JAVA = "Test.java";
-  private static final String TASK_JAVA = "Task.java";
+public class JCourseBuilder extends EduCourseBuilderBase {
 
   @Override
   public void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
