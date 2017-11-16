@@ -14,8 +14,8 @@
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">
-    <inspectionExtension implementation="com.jetbrains.edu.python.learning.highlighting.PyInspectionExtension"/>
-    <importResolver implementation="com.jetbrains.edu.python.learning.PyImportResolver"/>
+    <inspectionExtension implementation="com.jetbrains.edu.python.learning.highlighting.PyEduInspectionExtension"/>
+    <importResolver implementation="com.jetbrains.edu.python.learning.PyEduImportResolver"/>
   </extensions>
 
 

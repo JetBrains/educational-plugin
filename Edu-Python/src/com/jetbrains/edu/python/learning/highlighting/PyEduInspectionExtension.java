@@ -7,12 +7,13 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.python.inspections.PyInspectionExtension;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyImportStatementBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
 
-public class PyInspectionExtension extends com.jetbrains.python.inspections.PyInspectionExtension {
+public class PyEduInspectionExtension extends PyInspectionExtension {
 
   @Override
   public boolean ignoreUnresolvedReference(@NotNull PyElement element, @NotNull PsiReference reference, @NotNull TypeEvalContext context) {
