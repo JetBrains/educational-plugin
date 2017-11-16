@@ -90,7 +90,7 @@ public class CCNewSubtaskAction extends DumbAwareAction {
     if (configurator == null) {
       return;
     }
-    configurator.createTestsForNewSubtask(project, task);
+    configurator.getCourseBuilder().createTestsForNewSubtask(project, task);
   }
 
   @Override

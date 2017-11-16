@@ -28,7 +28,9 @@ public class BrowseCoursesAction extends AnAction {
       String location = panel.getLocationString();
       EduConfigurator pluginConfigurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
       if (pluginConfigurator != null) {
-        CourseProjectGenerator projectGenerator = pluginConfigurator.getEduCourseProjectGenerator(course);
+        CourseProjectGenerator projectGenerator = pluginConfigurator
+                .getCourseBuilder()
+                .getEduCourseProjectGenerator(course);
         if (projectGenerator != null) {
           projectGenerator.createCourseProject(location, projectSettings);
         }

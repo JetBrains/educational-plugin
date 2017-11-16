@@ -13,6 +13,7 @@ import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -40,7 +41,7 @@ public class CoursePanel extends JPanel {
   private JEditorPane myDescriptionTextArea;
 
   private AdvancedSettings myAdvancedSettings;
-  private EduConfigurator.LanguageSettings<?> myLanguageSettings;
+  private EduCourseBuilder.LanguageSettings<?> myLanguageSettings;
 
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
@@ -165,7 +166,7 @@ public class CoursePanel extends JPanel {
     if (configurator == null) {
       return;
     }
-    myLanguageSettings = configurator.getLanguageSettings();
+    myLanguageSettings = configurator.getCourseBuilder().getLanguageSettings();
 
     List<LabeledComponent> settingsComponents = new ArrayList<>();
     if (myLocationField != null) {
