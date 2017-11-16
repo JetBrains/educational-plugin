@@ -36,10 +36,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
-public class StudyCheckUtils {
-  private static final Logger LOG = Logger.getInstance(StudyCheckUtils.class);
+public class CheckUtils {
+  private static final Logger LOG = Logger.getInstance(CheckUtils.class);
 
-  private StudyCheckUtils() {
+  private CheckUtils() {
   }
 
   public static void drawAllPlaceholders(@NotNull final Project project, @NotNull final Task task) {
@@ -145,18 +145,18 @@ public class StudyCheckUtils {
     });
   }
 
-  public static StudyTestsOutputParser.TestsOutput getTestOutput(@NotNull Process testProcess,
-                                                                 @NotNull String commandLine,
-                                                                 boolean isAdaptive) {
+  public static TestsOutputParser.TestsOutput getTestOutput(@NotNull Process testProcess,
+                                                            @NotNull String commandLine,
+                                                            boolean isAdaptive) {
     final CapturingProcessHandler handler = new CapturingProcessHandler(testProcess, null, commandLine);
     final ProcessOutput output = ProgressManager.getInstance().hasProgressIndicator() ? handler
       .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) :
                                  handler.runProcess();
-    final StudyTestsOutputParser.TestsOutput testsOutput = StudyTestsOutputParser.getTestsOutput(output, isAdaptive);
+    final TestsOutputParser.TestsOutput testsOutput = TestsOutputParser.getTestsOutput(output, isAdaptive);
     String stderr = output.getStderr();
     if (!stderr.isEmpty() && output.getStdout().isEmpty()) {
       LOG.info("#educational " + stderr);
-      return new StudyTestsOutputParser.TestsOutput(false, stderr);
+      return new TestsOutputParser.TestsOutput(false, stderr);
     }
     return testsOutput;
   }

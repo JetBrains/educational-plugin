@@ -3,8 +3,8 @@ package com.jetbrains.edu.learning.courseFormat.tasks;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.actions.CheckAction;
-import com.jetbrains.edu.learning.checker.StudyCheckResult;
-import com.jetbrains.edu.learning.checker.StudyCheckUtils;
+import com.jetbrains.edu.learning.checker.CheckResult;
+import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
@@ -30,14 +30,14 @@ public class CodeTask extends Task {
       @Override
       public void onTaskFailed(@NotNull String message) {
         super.onTaskFailed("Wrong solution");
-        StudyCheckUtils.showTestResultsToolWindow(myProject, message);
+        CheckUtils.showTestResultsToolWindow(myProject, message);
       }
 
       @Override
-      public StudyCheckResult checkOnRemote() {
+      public CheckResult checkOnRemote() {
         StepicUser user = EduSettings.getInstance().getUser();
         if (user == null) {
-          return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+          return new CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
         }
         return StepicAdaptiveConnector.checkCodeTask(myProject, myTask, user);
       }

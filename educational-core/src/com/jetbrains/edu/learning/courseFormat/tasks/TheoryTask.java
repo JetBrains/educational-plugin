@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.checker.StudyCheckResult;
+import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +27,8 @@ public class TheoryTask extends Task {
       }
 
       @Override
-      public StudyCheckResult check() {
-        return new StudyCheckResult(StudyStatus.Solved, "");
+      public CheckResult check() {
+        return new CheckResult(StudyStatus.Solved, "");
       }
     };
   }

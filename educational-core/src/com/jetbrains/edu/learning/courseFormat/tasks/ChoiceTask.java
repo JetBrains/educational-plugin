@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
-import com.jetbrains.edu.learning.checker.StudyCheckResult;
+import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
@@ -64,10 +64,10 @@ public class ChoiceTask extends Task {
   public TaskChecker getChecker(@NotNull Project project) {
     return new TaskChecker<ChoiceTask>(this, project) {
       @Override
-      public StudyCheckResult checkOnRemote() {
+      public CheckResult checkOnRemote() {
         StepicUser user = EduSettings.getInstance().getUser();
         if (user == null) {
-          return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+          return new CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
         }
         return StepicAdaptiveConnector.checkChoiceTask(myTask, user);
       }

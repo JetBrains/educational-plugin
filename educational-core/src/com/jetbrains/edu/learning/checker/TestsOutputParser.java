@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class StudyTestsOutputParser {
+public class TestsOutputParser {
   private static final String STUDY_PREFIX = "#educational_plugin";
   public static final String TEST_OK = "test OK";
   private static final String TEST_FAILED = "FAILED + ";

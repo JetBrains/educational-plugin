@@ -31,7 +31,7 @@ public class TaskWithSubtasksChecker extends TaskChecker<TaskWithSubtasks> {
   }
 
   @Override
-  public StudyCheckResult check() {
+  public CheckResult check() {
     if (myEduTaskChecker != null) {
       return myEduTaskChecker.check();
     }
@@ -46,7 +46,7 @@ public class TaskWithSubtasksChecker extends TaskChecker<TaskWithSubtasks> {
     ApplicationManager.getApplication().invokeLater(() -> {
       int subtaskSize = myTask.getLastSubtaskIndex() + 1;
       String resultMessage = !hasMoreSubtasks ? message : "Subtask " + visibleSubtaskIndex + "/" + subtaskSize + " solved";
-      StudyCheckUtils.showTestResultPopUp(resultMessage, MessageType.INFO.getPopupBackground(), myProject);
+      CheckUtils.showTestResultPopUp(resultMessage, MessageType.INFO.getPopupBackground(), myProject);
       if (hasMoreSubtasks) {
         int nextSubtaskIndex = activeSubtaskIndex + 1;
         StudySubtaskUtils.switchStep(myProject, myTask, nextSubtaskIndex);

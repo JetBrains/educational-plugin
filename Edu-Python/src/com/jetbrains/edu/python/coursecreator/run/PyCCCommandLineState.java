@@ -17,7 +17,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.checker.StudyCheckUtils;
+import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -95,7 +95,7 @@ public class PyCCCommandLineState extends PythonCommandLineState {
 
   @Override
   public ExecutionResult execute(Executor executor, PythonProcessStarter processStarter, CommandLinePatcher... patchers) throws ExecutionException {
-    ApplicationManager.getApplication().runWriteAction(() -> StudyCheckUtils.flushWindows(myTask, myTaskDir));
+    ApplicationManager.getApplication().runWriteAction(() -> CheckUtils.flushWindows(myTask, myTaskDir));
 
     return super.execute(executor, processStarter, patchers);
   }

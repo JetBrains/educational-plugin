@@ -17,7 +17,7 @@ import com.intellij.problems.WolfTheProblemSolver;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.checker.StudyCheckUtils;
+import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.core.EduDocumentListener;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
@@ -167,7 +167,7 @@ public class StudySubtaskUtils {
   }
 
   public static void updateUI(@NotNull Project project, @NotNull Task task, boolean navigateToTask) {
-    StudyCheckUtils.drawAllPlaceholders(project, task);
+    CheckUtils.drawAllPlaceholders(project, task);
     ProjectView.getInstance(project).refresh();
     StudyToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
     if (toolWindow != null) {
