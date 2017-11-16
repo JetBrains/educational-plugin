@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.core;
+package com.jetbrains.edu.learning;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;

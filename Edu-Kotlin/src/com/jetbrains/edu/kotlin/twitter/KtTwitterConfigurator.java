@@ -3,7 +3,7 @@ package com.jetbrains.edu.kotlin.twitter;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
-import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;

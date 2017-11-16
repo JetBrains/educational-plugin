@@ -11,8 +11,8 @@ import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.kotlin.KtPluginConfigurator
 import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.core.EduNames
-import com.jetbrains.edu.learning.core.EduUtils
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask

@@ -46,7 +46,7 @@ import java.util.List;
 
 import static com.jetbrains.edu.learning.StudyUtils.execCancelable;
 import static com.jetbrains.edu.learning.StudyUtils.navigateToStep;
-import static com.jetbrains.edu.learning.core.EduNames.STUDY_PROJECT_XML_PATH;
+import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
 import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
 
 public class EduBuiltInServerUtils {
