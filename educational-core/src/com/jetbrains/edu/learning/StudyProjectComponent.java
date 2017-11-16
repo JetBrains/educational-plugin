@@ -261,7 +261,7 @@ public class StudyProjectComponent implements ProjectComponent {
       for (Task task : lesson.getTaskList()) {
         index += 1;
         final Task studentTask = studentLesson.getTask(task.getStepId());
-        if (studentTask != null && StudyStatus.Solved.equals(studentTask.getStatus())) {
+        if (studentTask != null && CheckStatus.Solved.equals(studentTask.getStatus())) {
           studentTask.setIndex(index);
           tasks.add(studentTask);
           continue;

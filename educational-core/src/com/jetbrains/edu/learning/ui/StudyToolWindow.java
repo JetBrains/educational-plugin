@@ -41,7 +41,7 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveReactionsPanel;
@@ -316,7 +316,7 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
         final int lastSubtaskIndex = ((TaskWithSubtasks)task).getLastSubtaskIndex();
         final int activeSubtaskIndex = ((TaskWithSubtasks)task).getActiveSubtaskIndex();
         int taskNum = lastSubtaskIndex + 1;
-        boolean isLastSubtaskSolved = activeSubtaskIndex == lastSubtaskIndex && task.getStatus() == StudyStatus.Solved;
+        boolean isLastSubtaskSolved = activeSubtaskIndex == lastSubtaskIndex && task.getStatus() == CheckStatus.Solved;
         return Pair.create(isLastSubtaskSolved ? taskNum : activeSubtaskIndex, taskNum);
       }
     }
@@ -340,7 +340,7 @@ public abstract class StudyToolWindow extends SimpleToolWindowPanel implements D
   private static int getSolvedTasks(@NotNull final Lesson lesson) {
     int solved = 0;
     for (Task task : lesson.getTaskList()) {
-      if (task.getStatus() == StudyStatus.Solved) {
+      if (task.getStatus() == CheckStatus.Solved) {
         solved += 1;
       }
     }

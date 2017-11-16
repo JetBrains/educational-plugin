@@ -153,7 +153,7 @@ public class TaskFile {
 
   public boolean hasFailedPlaceholders() {
     for (AnswerPlaceholder placeholder : myAnswerPlaceholders) {
-      if (placeholder.getStatus() == StudyStatus.Failed) {
+      if (placeholder.getStatus() == CheckStatus.Failed) {
         return true;
       }
     }

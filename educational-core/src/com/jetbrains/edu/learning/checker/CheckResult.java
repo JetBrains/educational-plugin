@@ -1,18 +1,18 @@
 package com.jetbrains.edu.learning.checker;
 
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 
 public class CheckResult {
-  public static final CheckResult USE_LOCAL_CHECK = new CheckResult(StudyStatus.Unchecked, "Always use local check");
-  private StudyStatus myStatus;
+  public static final CheckResult USE_LOCAL_CHECK = new CheckResult(CheckStatus.Unchecked, "Always use local check");
+  private CheckStatus myStatus;
   private String myMessage;
 
-  public CheckResult(StudyStatus status, String message) {
+  public CheckResult(CheckStatus status, String message) {
     myStatus = status;
     myMessage = message;
   }
 
-  public StudyStatus getStatus() {
+  public CheckStatus getStatus() {
     return myStatus;
   }
 

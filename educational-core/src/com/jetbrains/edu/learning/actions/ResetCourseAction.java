@@ -45,7 +45,7 @@ public class ResetCourseAction extends DumbAwareAction {
               Document document = StudyUtils.getDocument(project.getBasePath(), lesson.getIndex(), task.getIndex(), relativePath);
               if (document != null) {
                 RefreshTaskFileAction.resetDocument(document, taskFile);
-                task.setStatus(StudyStatus.Unchecked);
+                task.setStatus(CheckStatus.Unchecked);
                 if (task instanceof ChoiceTask) {
                   ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
                 }

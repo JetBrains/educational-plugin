@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,7 @@ public class CodeTask extends Task {
       public CheckResult checkOnRemote() {
         StepicUser user = EduSettings.getInstance().getUser();
         if (user == null) {
-          return new CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+          return new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
         }
         return StepicAdaptiveConnector.checkCodeTask(myProject, myTask, user);
       }

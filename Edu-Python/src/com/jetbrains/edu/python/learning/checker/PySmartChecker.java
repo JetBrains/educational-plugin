@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +70,7 @@ class PySmartChecker {
         final Course course = StudyTaskManager.getInstance(project).getCourse();
         if (course != null) {
           boolean res = TestsOutputParser.getTestsOutput(output, course.isAdaptive()).isSuccess();
-          StudyTaskManager.getInstance(project).setStatus(userAnswerPlaceholder, res ? StudyStatus.Solved : StudyStatus.Failed);
+          StudyTaskManager.getInstance(project).setStatus(userAnswerPlaceholder, res ? CheckStatus.Solved : CheckStatus.Failed);
         }
       }
     }
