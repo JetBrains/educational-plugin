@@ -18,8 +18,8 @@ import com.intellij.ui.layout.CCFlags
 import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduLanguageDecorator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
@@ -47,7 +47,7 @@ class CCNewCoursePanel : JPanel() {
   private val myErrorLabel = JBLabel()
 
   private val myCourse: Course = Course().apply { courseMode = CCUtils.COURSE_MODE }
-  private lateinit var myLanguageSettings: EduConfigurator.LanguageSettings<*>
+  private lateinit var myLanguageSettings: EduCourseBuilder.LanguageSettings<*>
 
   private var myValidationListener: ValidationListener? = null
 
@@ -170,7 +170,7 @@ class CCNewCoursePanel : JPanel() {
 
     val configurator = EduConfiguratorManager.forLanguage(language) ?: return
     myCourse.language = language.id
-    myLanguageSettings = configurator.languageSettings
+    myLanguageSettings = configurator.courseBuilder.languageSettings
 
     val settings = listOfNotNull(myLocationField, myLanguageSettings.getLanguageSettingsComponent(myCourse))
     myAdvancedSettings.setSettingsComponents(settings)

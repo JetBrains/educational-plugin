@@ -49,7 +49,7 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
     if (configurator == null) {
       return null;
     }
-    return configurator.createLessonContent(project, item, parentDirectory);
+    return configurator.getCourseBuilder().createLessonContent(project, item, parentDirectory);
   }
 
   @Override

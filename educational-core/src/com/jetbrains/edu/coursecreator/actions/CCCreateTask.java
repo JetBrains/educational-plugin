@@ -53,7 +53,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator != null) {
-      return configurator.createTaskContent(project, item, parentDirectory, course);
+      return configurator.getCourseBuilder().createTaskContent(project, item, parentDirectory, course);
     }
     return null;
   }
