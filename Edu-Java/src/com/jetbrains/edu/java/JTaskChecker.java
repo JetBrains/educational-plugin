@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
 import com.jetbrains.edu.learning.intellij.RunConfigurationBasedTaskChecker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +43,7 @@ public class JTaskChecker extends RunConfigurationBasedTaskChecker {
 
   @Override
   protected void setProcessParameters(Project project, ApplicationConfiguration configuration, Module module, @NotNull VirtualFile testsFile) {
-    configuration.setMainClassName(EduIntelliJNames.TEST_RUNNER_CLASS);
+    configuration.setMainClassName(RunConfigurationBasedTaskChecker.TEST_RUNNER_CLASS);
     configuration.setModule(module);
     configuration.setProgramParameters(testsFile.getNameWithoutExtension());
   }

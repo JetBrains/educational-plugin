@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.intellij.EduIntelliJNames
 import java.io.File
 import java.io.IOException
 
@@ -77,11 +76,11 @@ object EduGradleModuleGenerator {
         val additionalMaterials = course.additionalMaterialsTask ?: return
         val utilFiles = mutableMapOf<String, String>()
         additionalMaterials.getTaskFiles().mapValuesTo(utilFiles) { (_, v) -> v.text }
-        additionalMaterials.testsText.filterTo(utilFiles) { (path, _) -> path.contains(EduIntelliJNames.UTIL) }
+        additionalMaterials.testsText.filterTo(utilFiles) { (path, _) -> path.contains(EduNames.UTIL) }
         if (utilFiles.isEmpty()) {
             return
         }
-        val (src, _) = EduGradleModuleGenerator.createModule(moduleDir, EduIntelliJNames.UTIL)
+        val (src, _) = EduGradleModuleGenerator.createModule(moduleDir, EduNames.UTIL)
         for ((key, value) in utilFiles) {
             GeneratorUtils.createChildFile(src, PathUtil.getFileName(key), value)
         }
