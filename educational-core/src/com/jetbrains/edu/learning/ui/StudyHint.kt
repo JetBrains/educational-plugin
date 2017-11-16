@@ -11,6 +11,9 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.StudyUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.ui.taskDescription.StudyJavaFxToolWindow
+import com.jetbrains.edu.learning.ui.taskDescription.StudySwingToolWindow
+import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow
 import java.util.*
 
 open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
