@@ -23,7 +23,7 @@ public class AnswerPlaceholderSubtaskInfo {
   // actual student's answer, used to reset file to current subtask initial state
   private String myAnswer = "";
   private boolean mySelected = false;
-  private StudyStatus myStatus = StudyStatus.Unchecked;
+  private CheckStatus myStatus = CheckStatus.Unchecked;
 
   @SerializedName("has_frame")
   @Expose private boolean myHasFrame = true;
@@ -31,11 +31,11 @@ public class AnswerPlaceholderSubtaskInfo {
   @SerializedName("need_insert_text")
   @Expose private boolean myNeedInsertText = false;
 
-  public StudyStatus getStatus() {
+  public CheckStatus getStatus() {
     return myStatus;
   }
 
-  public void setStatus(StudyStatus status) {
+  public void setStatus(CheckStatus status) {
     myStatus = status;
   }
 

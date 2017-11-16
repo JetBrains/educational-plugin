@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.StudyTwitterPluginConfigurator;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.twitter.StudyTwitterUtils;
 import org.jetbrains.annotations.NotNull;
@@ -50,14 +50,14 @@ public class KtTwitterConfigurator implements StudyTwitterPluginConfigurator {
     }
 
     @Override
-    public boolean askToTweet(@NotNull Project project, Task solvedTask, StudyStatus statusBeforeCheck) {
+    public boolean askToTweet(@NotNull Project project, Task solvedTask, CheckStatus statusBeforeCheck) {
         StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
         Course course = taskManager.getCourse();
         if (course != null && course.getName().equals("Kotlin Koans")) {
             KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
             return ktTwitterSettings.askToTweet()
-                    && solvedTask.getStatus() == StudyStatus.Solved
-                    && (statusBeforeCheck == StudyStatus.Unchecked || statusBeforeCheck == StudyStatus.Failed)
+                    && solvedTask.getStatus() == CheckStatus.Solved
+                    && (statusBeforeCheck == CheckStatus.Unchecked || statusBeforeCheck == CheckStatus.Failed)
                     && calculateTaskNumber(solvedTask) % 8 == 0;
         }
         return false;
@@ -88,7 +88,7 @@ public class KtTwitterConfigurator implements StudyTwitterPluginConfigurator {
         int solvedTaskNumber = 0;
         for (Lesson currentLesson: course.getLessons()) {
             for (Task task: currentLesson.getTaskList()) {
-                if(task.getStatus() == StudyStatus.Solved) {
+                if(task.getStatus() == CheckStatus.Solved) {
                     solvedTaskNumber++;
                 }
             }

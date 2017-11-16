@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduAnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
@@ -98,7 +98,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
                                        TaskFile taskFile) {
     resetDocument(document, taskFile);
     final Task task = taskFile.getTask();
-    task.setStatus(StudyStatus.Unchecked);
+    task.setStatus(CheckStatus.Unchecked);
     if (task instanceof ChoiceTask) {
       ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
     }
@@ -122,7 +122,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
     for (AnswerPlaceholder answerPlaceholder : selectedTaskFile.getActivePlaceholders()) {
       answerPlaceholder.reset();
-      taskManager.setStatus(answerPlaceholder, StudyStatus.Unchecked);
+      taskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
     }
   }
 

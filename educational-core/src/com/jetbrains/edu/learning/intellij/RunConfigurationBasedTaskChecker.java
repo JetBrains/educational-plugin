@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.checker.EduTaskChecker;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TestsOutputParser;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +47,7 @@ public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
 
   @Override
   public CheckResult check() {
-    Ref<CheckResult> result = new Ref<>(new CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH));
+    Ref<CheckResult> result = new Ref<>(new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH));
     Sdk sdk = ProjectRootManager.getInstance(myProject).getProjectSdk();
     if (sdk == null) {
       return result.get();
@@ -67,12 +67,12 @@ public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
     CountDownLatch latch = new CountDownLatch(1);
     ApplicationManager.getApplication().invokeAndWait(() -> CompilerManager.getInstance(myProject).make(module, (aborted, errors, warnings, compileContext) -> {
       if (errors != 0) {
-        result.set(new CheckResult(StudyStatus.Unchecked, "Code has compilation errors"));
+        result.set(new CheckResult(CheckStatus.Unchecked, "Code has compilation errors"));
         latch.countDown();
         return;
       }
       if (aborted) {
-        result.set(new CheckResult(StudyStatus.Unchecked, "Compilation aborted"));
+        result.set(new CheckResult(CheckStatus.Unchecked, "Compilation aborted"));
         latch.countDown();
         return;
       }
@@ -101,7 +101,7 @@ public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
           TestsOutputParser.TestsOutput output =
             CheckUtils
               .getTestOutput(process, fromJavaParameters.getCommandLineString(), myTask.getLesson().getCourse().isAdaptive());
-          result.set(new CheckResult(output.isSuccess() ? StudyStatus.Solved : StudyStatus.Failed, output.getMessage()));
+          result.set(new CheckResult(output.isSuccess() ? CheckStatus.Solved : CheckStatus.Failed, output.getMessage()));
         } catch (ExecutionException e) {
           LOG.error(e);
         }

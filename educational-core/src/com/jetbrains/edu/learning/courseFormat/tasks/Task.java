@@ -38,7 +38,7 @@ public abstract class Task implements StudyItem {
 
   // index is visible to user number of task from 1 to task number
   private int myIndex;
-  protected StudyStatus myStatus = StudyStatus.Unchecked;
+  protected CheckStatus myStatus = CheckStatus.Unchecked;
 
   @SerializedName("stepic_id")
   @Expose private int myStepId;
@@ -67,7 +67,7 @@ public abstract class Task implements StudyItem {
    */
   public void initTask(final Lesson lesson, boolean isRestarted) {
     setLesson(lesson);
-    if (!isRestarted) myStatus = StudyStatus.Unchecked;
+    if (!isRestarted) myStatus = CheckStatus.Unchecked;
     for (TaskFile taskFile : getTaskFiles().values()) {
       taskFile.initTaskFile(this, isRestarted);
     }
@@ -240,11 +240,11 @@ public abstract class Task implements StudyItem {
     return myStepId;
   }
 
-  public StudyStatus getStatus() {
+  public CheckStatus getStatus() {
     return myStatus;
   }
 
-  public void setStatus(StudyStatus status) {
+  public void setStatus(CheckStatus status) {
     for (TaskFile taskFile : taskFiles.values()) {
       for (AnswerPlaceholder placeholder : taskFile.getActivePlaceholders()) {
         placeholder.setStatus(status);

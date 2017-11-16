@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.twitter.StudyTwitterUtils;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ public interface StudyTwitterPluginConfigurator {
    * The plugin implemented tweeting should define policy when user will be asked to tweet.
    *@param statusBeforeCheck @return 
    */
-  boolean askToTweet(@NotNull final Project project, Task solvedTask, StudyStatus statusBeforeCheck);
+  boolean askToTweet(@NotNull final Project project, Task solvedTask, CheckStatus statusBeforeCheck);
 
   /**
    * Stores access token and token secret, obtained by authorizing EduTools.

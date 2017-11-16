@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +39,8 @@ public class LessonDirectoryNode extends StudyDirectoryNode {
 
   @Override
   protected void updateImpl(PresentationData data) {
-    StudyStatus status = myLesson.getStatus();
-    boolean isSolved = status != StudyStatus.Solved;
+    CheckStatus status = myLesson.getStatus();
+    boolean isSolved = status != CheckStatus.Solved;
     JBColor color = isSolved ? JBColor.BLACK : LIGHT_GREEN;
     Icon icon = isSolved ? EducationalCoreIcons.Lesson : EducationalCoreIcons.LessonCompl;
     updatePresentation(data, myLesson.getName(), color, icon, null);

@@ -96,7 +96,7 @@ public class StudyNavigator {
     final Project project = editor.getProject();
     if (project == null) return;
     for (AnswerPlaceholder answerPlaceholder : taskFile.getActivePlaceholders()) {
-      if (answerPlaceholder.getStatus() != StudyStatus.Failed) {
+      if (answerPlaceholder.getStatus() != CheckStatus.Failed) {
         continue;
       }
       navigateToAnswerPlaceholder(editor, answerPlaceholder);

@@ -120,13 +120,13 @@ public class AnswerPlaceholder {
   }
 
   @Transient
-  public StudyStatus getStatus() {
+  public CheckStatus getStatus() {
     AnswerPlaceholderSubtaskInfo info = getActiveSubtaskInfo();
-    return info != null ? info.getStatus() : StudyStatus.Unchecked;
+    return info != null ? info.getStatus() : CheckStatus.Unchecked;
   }
 
   @Transient
-  public void setStatus(StudyStatus status) {
+  public void setStatus(CheckStatus status) {
     getActiveSubtaskInfo().setStatus(status);
   }
 

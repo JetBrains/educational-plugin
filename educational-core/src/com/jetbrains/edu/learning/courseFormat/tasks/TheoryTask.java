@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseFormat.tasks;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class TheoryTask extends Task {
@@ -28,7 +28,7 @@ public class TheoryTask extends Task {
 
       @Override
       public CheckResult check() {
-        return new CheckResult(StudyStatus.Solved, "");
+        return new CheckResult(CheckStatus.Solved, "");
       }
     };
   }

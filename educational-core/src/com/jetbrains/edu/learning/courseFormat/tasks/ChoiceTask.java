@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -67,7 +67,7 @@ public class ChoiceTask extends Task {
       public CheckResult checkOnRemote() {
         StepicUser user = EduSettings.getInstance().getUser();
         if (user == null) {
-          return new CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+          return new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
         }
         return StepicAdaptiveConnector.checkChoiceTask(myTask, user);
       }

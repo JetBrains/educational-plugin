@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checker.TaskWithSubtasksChecker;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,20 +47,20 @@ public class TaskWithSubtasks extends EduTask {
     myLastSubtaskIndex = lastSubtaskIndex;
   }
 
-  public void setStatus(StudyStatus status) {
+  public void setStatus(CheckStatus status) {
     for (TaskFile taskFile : taskFiles.values()) {
       for (AnswerPlaceholder placeholder : taskFile.getActivePlaceholders()) {
         placeholder.setStatus(status);
       }
     }
-    if (status == StudyStatus.Solved) {
+    if (status == CheckStatus.Solved) {
       if (activeSubtaskNotLast()) {
-        if (myStatus == StudyStatus.Failed) {
-          myStatus = StudyStatus.Unchecked;
+        if (myStatus == CheckStatus.Failed) {
+          myStatus = CheckStatus.Unchecked;
         }
       }
       else {
-        myStatus = StudyStatus.Solved;
+        myStatus = CheckStatus.Solved;
       }
     }
   }

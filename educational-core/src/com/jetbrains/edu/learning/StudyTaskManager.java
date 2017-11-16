@@ -69,7 +69,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     return myCourse;
   }
 
-  public void setStatus(AnswerPlaceholder placeholder, StudyStatus status) {
+  public void setStatus(AnswerPlaceholder placeholder, CheckStatus status) {
     placeholder.setStatus(status);
   }
 
@@ -103,11 +103,11 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     if (!placeholder.getUseLength() && placeholder.isActive() && placeholder.getActiveSubtaskInfo().isNeedInsertText()) {
       return JBColor.LIGHT_GRAY;
     }
-    final StudyStatus status = placeholder.getStatus();
-    if (status == StudyStatus.Solved) {
+    final CheckStatus status = placeholder.getStatus();
+    if (status == CheckStatus.Solved) {
       return JBColor.GREEN;
     }
-    if (status == StudyStatus.Failed) {
+    if (status == CheckStatus.Failed) {
       return JBColor.RED;
     }
     return JBColor.BLUE;
