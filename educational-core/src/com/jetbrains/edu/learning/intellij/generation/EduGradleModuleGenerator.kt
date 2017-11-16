@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.core.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.intellij.EduIntelliJNames
 import java.io.File
 import java.io.IOException
@@ -33,7 +33,7 @@ object EduGradleModuleGenerator {
     @Throws(IOException::class)
     private fun createTests(task: Task, testDir: VirtualFile) {
         for ((path, text) in getTestTexts(task)) {
-            StudyGenerator.createChildFile(testDir, PathUtil.getFileName(path), text)
+            GeneratorUtils.createChildFile(testDir, PathUtil.getFileName(path), text)
         }
     }
 
@@ -55,7 +55,7 @@ object EduGradleModuleGenerator {
         val taskDirName = EduNames.TASK + task.index
         val (src, test) = EduGradleModuleGenerator.createModule(lessonDir, taskDirName)
         for (taskFile in task.getTaskFiles().values) {
-            StudyGenerator.createTaskFile(src, taskFile)
+            GeneratorUtils.createTaskFile(src, taskFile)
         }
         createTests(task, test)
     }
@@ -83,7 +83,7 @@ object EduGradleModuleGenerator {
         }
         val (src, _) = EduGradleModuleGenerator.createModule(moduleDir, EduIntelliJNames.UTIL)
         for ((key, value) in utilFiles) {
-            StudyGenerator.createChildFile(src, PathUtil.getFileName(key), value)
+            GeneratorUtils.createChildFile(src, PathUtil.getFileName(key), value)
         }
     }
 
@@ -104,8 +104,8 @@ object EduGradleModuleGenerator {
 
         createGradleWrapper(moduleDirPath)
         File(FileUtil.toSystemDependentName(project.basePath!!), "gradlew").setExecutable(true)
-        StudyGenerator.createFromInternalTemplate(project, moduleDir, SdkConstants.FN_BUILD_GRADLE)
-        StudyGenerator.createFromInternalTemplate(project, moduleDir, SdkConstants.FN_SETTINGS_GRADLE)
+        GeneratorUtils.createFromInternalTemplate(project, moduleDir, SdkConstants.FN_BUILD_GRADLE)
+        GeneratorUtils.createFromInternalTemplate(project, moduleDir, SdkConstants.FN_SETTINGS_GRADLE)
 
         createUtilModule(course, moduleDir)
     }

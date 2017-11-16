@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.intellij.EduIntelliJNames;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import org.jdom.JDOMException;
@@ -58,7 +58,7 @@ class EduUtilModuleBuilder extends JavaModuleBuilder {
 
     if (myAdditionalMaterials != null) {
       for (Map.Entry<String, String> entry : myAdditionalMaterials.getTestsText().entrySet()) {
-          StudyGenerator.createChildFile(project.getBaseDir(), entry.getKey(), entry.getValue());
+          GeneratorUtils.createChildFile(project.getBaseDir(), entry.getKey(), entry.getValue());
         }
     }
     return baseModule;

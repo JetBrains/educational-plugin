@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduTaskModuleBuilder;
 import org.jetbrains.annotations.NonNls;
@@ -78,7 +78,7 @@ public class EduIntellijUtils {
     public static void addTemplate(@NotNull final Project project, @NotNull VirtualFile baseDir, @NotNull @NonNls final String templateName) {
         final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(templateName);
         try {
-          StudyGenerator.createChildFile(baseDir, templateName, template.getText());
+          GeneratorUtils.createChildFile(baseDir, templateName, template.getText());
         } catch (IOException exception) {
             LOG.error("Failed to create from file template ", exception);
         }
@@ -122,7 +122,7 @@ public class EduIntellijUtils {
       nameTaskFileAfterContainingClass(task, taskFile, project);
 
       try {
-        StudyGenerator.createTaskFile(taskDir, taskFile);
+        GeneratorUtils.createTaskFile(taskDir, taskFile);
       }
       catch (IOException e) {
         LOG.warn(e.getMessage());

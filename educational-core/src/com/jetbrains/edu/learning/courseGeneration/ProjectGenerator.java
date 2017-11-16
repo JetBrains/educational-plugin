@@ -37,8 +37,8 @@ import java.util.List;
 
 import static com.jetbrains.edu.learning.StudyUtils.execCancelable;
 
-public class StudyProjectGenerator {
-  private static final Logger LOG = Logger.getInstance(StudyProjectGenerator.class.getName());
+public class ProjectGenerator {
+  private static final Logger LOG = Logger.getInstance(ProjectGenerator.class.getName());
   private final List<SettingsListener> myListeners = ContainerUtil.newArrayList();
   private List<Course> myCourses = new ArrayList<>();
   private List<Integer> myEnrolledCoursesIds = new ArrayList<>();
@@ -83,7 +83,7 @@ public class StudyProjectGenerator {
     }
     StudyTaskManager.getInstance(project).setCourse(course);
     ApplicationManager.getApplication().runWriteAction(() -> {
-      StudyGenerator.createCourse(course, baseDir);
+      GeneratorUtils.createCourse(course, baseDir);
       StudyUtils.registerStudyToolWindow(course, project);
       StudyUtils.openFirstTask(course, project);
       EduUsagesCollector.projectTypeCreated(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);

@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +61,7 @@ public class EduTaskModuleBuilder extends EduBaseIntellijModuleBuilder {
   }
 
   protected void createTask(Project project, Course course, VirtualFile src) throws IOException {
-    StudyGenerator.createTaskContent(myTask, src);
+    GeneratorUtils.createTaskContent(myTask, src);
   }
 
   @Nullable
