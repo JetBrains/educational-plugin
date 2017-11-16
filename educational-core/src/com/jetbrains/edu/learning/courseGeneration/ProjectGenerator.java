@@ -18,7 +18,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;

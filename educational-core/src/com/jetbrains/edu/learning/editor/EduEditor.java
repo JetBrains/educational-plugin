@@ -11,7 +11,7 @@ import com.intellij.ui.components.labels.ActionLink;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction;
-import com.jetbrains.edu.learning.core.EduDocumentListener;
+import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 

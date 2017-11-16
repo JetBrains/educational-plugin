@@ -20,7 +20,7 @@ import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;

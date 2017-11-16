@@ -39,8 +39,6 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
-import com.jetbrains.edu.learning.core.EduNames;
-import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
