@@ -28,6 +28,7 @@ class CCNewCourseDialog : DialogWrapper(true) {
     val language = course.languageById
     if (language != null) {
       EduConfiguratorManager.forLanguage(language)
+              ?.courseBuilder
               ?.getEduCourseProjectGenerator(course)
               ?.createCourseProject(location, projectSettings)
     }

@@ -10,12 +10,12 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
 import com.intellij.ui.ComboboxWithBrowseButton
-import com.jetbrains.edu.learning.EduConfigurator
+import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
-internal class JdkLanguageSettings : EduConfigurator.LanguageSettings<JdkProjectSettings> {
+internal class JdkLanguageSettings : EduCourseBuilder.LanguageSettings<JdkProjectSettings> {
 
   private val myModel: ProjectSdksModel = ProjectStructureConfigurable.getInstance(ProjectManager.getInstance().defaultProject).projectJdksModel
   private var myJdkSettings: JdkProjectSettings = JdkProjectSettings(myModel, null)

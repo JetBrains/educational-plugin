@@ -1,87 +1,15 @@
 package com.jetbrains.edu.learning.intellij;
 
-import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
-import com.intellij.execution.junit.JUnitExternalLibraryDescriptor;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.ModifiableModuleModel;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ExternalLibraryDescriptor;
-import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.intellij.generation.LessonModuleBuilder;
-import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
-import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class EduConfiguratorBase implements EduConfigurator<JdkProjectSettings> {
-  @Override
-  public VirtualFile createLessonContent(@NotNull Project project, @NotNull Lesson lesson, @NotNull VirtualFile parentDirectory) {
-    if (EduUtils.isAndroidStudio()) {
-      return EduConfigurator.super.createLessonContent(project, lesson, parentDirectory);
-    }
-    String courseDirPath = parentDirectory.getPath();
-    Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduNames.UTIL);
-    if (utilModule == null) {
-      return null;
-    }
-    EduModuleBuilderUtils.createModule(project, new LessonModuleBuilder(courseDirPath, lesson, utilModule), "");
-    return parentDirectory.findChild(EduNames.LESSON + lesson.getIndex());
-  }
-
-  @Override
-  public VirtualFile createTaskContent(@NotNull Project project, @NotNull Task task,
-                                       @NotNull VirtualFile parentDirectory, @NotNull Course course) {
-    return EduIntellijUtils.createTask(project, task, parentDirectory, null, null);
-  }
 
   @Override
   public boolean excludeFromArchive(@NotNull String path) {
     final String name = PathUtil.getFileName(path);
     return "out".equals(name) || ".idea".equals(name) || "iml".equals(FileUtilRt.getExtension(name)) || "EduTestRunner.java".equals(name);
-  }
-
-
-  @Override
-  public void configureModule(@NotNull Module module) {
-    ExternalLibraryDescriptor descriptor = JUnitExternalLibraryDescriptor.JUNIT4;
-    List<String> defaultRoots = descriptor.getLibraryClassesRoots();
-    final List<String> urls = OrderEntryFix.refreshAndConvertToUrls(defaultRoots);
-    ModuleRootModificationUtil.addModuleLibrary(module, descriptor.getPresentableName(), urls, Collections.emptyList());
-  }
-
-
-  @Override
-  public void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel,
-                                        @NotNull Project project,
-                                        @NotNull Course course,
-                                        @Nullable String moduleDir) {
-    try {
-      EduModuleBuilderUtils.createCourseModuleContent(moduleModel, project, course, moduleDir);
-    } catch (IOException | ModuleWithNameAlreadyExists | ConfigurationException | JDOMException e) {
-      Logger.getInstance(EduConfiguratorBase.class).error(e);
-    }
-  }
-
-  @NotNull
-  @Override
-  public LanguageSettings<JdkProjectSettings> getLanguageSettings() {
-    return new JdkLanguageSettings();
   }
 }
