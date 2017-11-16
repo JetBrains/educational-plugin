@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class StudyFileEditorProvider implements FileEditorProvider, DumbAware {
+public class EduFileEditorProvider implements FileEditorProvider, DumbAware {
   public static final String EDITOR_TYPE_ID = "StudyEditor";
   private final FileEditorProvider defaultTextEditorProvider = TextEditorProvider.getInstance();
 
@@ -26,7 +26,7 @@ public class StudyFileEditorProvider implements FileEditorProvider, DumbAware {
   @NotNull
   @Override
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return new StudyEditor(project, file);
+    return new EduEditor(project, file);
   }
 
   @Override

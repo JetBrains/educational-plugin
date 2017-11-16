@@ -60,7 +60,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.editor.StudyEditor;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.stepic.OAuthDialog;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
@@ -171,8 +171,8 @@ public class StudyUtils {
     presentation.setEnabled(false);
     final Project project = e.getProject();
     if (project != null) {
-      final StudyEditor studyEditor = getSelectedStudyEditor(project);
-      if (studyEditor != null) {
+      final EduEditor eduEditor = getSelectedStudyEditor(project);
+      if (eduEditor != null) {
         presentation.setEnabledAndVisible(true);
       }
     }
@@ -229,8 +229,8 @@ public class StudyUtils {
    * shows pop up in the center of "check task" button in study editor
    */
   public static void showCheckPopUp(@NotNull final Project project, @NotNull final Balloon balloon) {
-    final StudyEditor studyEditor = getSelectedStudyEditor(project);
-    Editor editor = studyEditor != null ? studyEditor.getEditor() : FileEditorManager.getInstance(project).getSelectedTextEditor();
+    final EduEditor eduEditor = getSelectedStudyEditor(project);
+    Editor editor = eduEditor != null ? eduEditor.getEditor() : FileEditorManager.getInstance(project).getSelectedTextEditor();
     assert editor != null;
     balloon.show(computeLocation(editor), Balloon.Position.above);
     Disposer.register(project, balloon);
@@ -317,12 +317,12 @@ public class StudyUtils {
   }
 
   @Nullable
-  public static StudyEditor getSelectedStudyEditor(@NotNull final Project project) {
+  public static EduEditor getSelectedStudyEditor(@NotNull final Project project) {
     try {
       final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
         getSelectedEditor().getSelectedEditorWithProvider().getFirst();
-      if (fileEditor instanceof StudyEditor) {
-        return (StudyEditor)fileEditor;
+      if (fileEditor instanceof EduEditor) {
+        return (EduEditor)fileEditor;
       }
     }
     catch (Exception e) {
@@ -333,9 +333,9 @@ public class StudyUtils {
 
   @Nullable
   public static Editor getSelectedEditor(@NotNull final Project project) {
-    final StudyEditor studyEditor = getSelectedStudyEditor(project);
-    if (studyEditor != null) {
-      return studyEditor.getEditor();
+    final EduEditor eduEditor = getSelectedStudyEditor(project);
+    if (eduEditor != null) {
+      return eduEditor.getEditor();
     }
     return null;
   }
@@ -562,7 +562,7 @@ public class StudyUtils {
 
   @Nullable
   public static Task getTaskFromSelectedEditor(Project project) {
-    final StudyEditor editor = getSelectedStudyEditor(project);
+    final EduEditor editor = getSelectedStudyEditor(project);
     Task task = null;
     if (editor != null) {
       final TaskFile file = editor.getTaskFile();
@@ -600,12 +600,12 @@ public class StudyUtils {
     showCheckPopUp(project, balloon);
   }
 
-  public static void selectFirstAnswerPlaceholder(@Nullable final StudyEditor studyEditor, @NotNull final Project project) {
-    if (studyEditor == null) return;
-    final Editor editor = studyEditor.getEditor();
+  public static void selectFirstAnswerPlaceholder(@Nullable final EduEditor eduEditor, @NotNull final Project project) {
+    if (eduEditor == null) return;
+    final Editor editor = eduEditor.getEditor();
     IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
-    final List<AnswerPlaceholder> placeholders = studyEditor.getTaskFile().getActivePlaceholders();
-    if (placeholders.isEmpty() || !studyEditor.getTaskFile().isValid(editor.getDocument().getText())) return;
+    final List<AnswerPlaceholder> placeholders = eduEditor.getTaskFile().getActivePlaceholders();
+    if (placeholders.isEmpty() || !eduEditor.getTaskFile().isValid(editor.getDocument().getText())) return;
     final AnswerPlaceholder placeholder = placeholders.get(0);
     Pair<Integer, Integer> offsets = getPlaceholderOffsets(placeholder, editor.getDocument());
     editor.getSelectionModel().setSelection(offsets.first, offsets.second);
@@ -721,8 +721,8 @@ public class StudyUtils {
         return;
       }
       final FileEditor studyEditor = editors[0];
-      if (studyEditor instanceof StudyEditor) {
-        selectFirstAnswerPlaceholder((StudyEditor)studyEditor, project);
+      if (studyEditor instanceof EduEditor) {
+        selectFirstAnswerPlaceholder((EduEditor)studyEditor, project);
       }
       FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
     }
