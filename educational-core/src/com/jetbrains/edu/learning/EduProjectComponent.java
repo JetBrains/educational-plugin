@@ -187,7 +187,7 @@ public class EduProjectComponent implements ProjectComponent {
                                return true;
                              });
                            }, "Updating Course", true, myProject);
-                           EduUtils.synchronize();
+                           StudyUtils.synchronize();
                            course.setUpdated();
                          }
                        });
@@ -391,10 +391,10 @@ public class EduProjectComponent implements ProjectComponent {
         return;
       }
       if (taskDir != null && taskDir.getName().contains(EduNames.TASK)) {
-        int taskIndex = EduUtils.getIndex(taskDir.getName(), EduNames.TASK);
+        int taskIndex = StudyUtils.getIndex(taskDir.getName(), EduNames.TASK);
         final VirtualFile lessonDir = taskDir.getParent();
         if (lessonDir != null && lessonDir.getName().contains(EduNames.LESSON)) {
-          int lessonIndex = EduUtils.getIndex(lessonDir.getName(), EduNames.LESSON);
+          int lessonIndex = StudyUtils.getIndex(lessonDir.getName(), EduNames.LESSON);
           List<Lesson> lessons = course.getLessons();
           if (StudyUtils.indexIsValid(lessonIndex, lessons)) {
             final Lesson lesson = lessons.get(lessonIndex);

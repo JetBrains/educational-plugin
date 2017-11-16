@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning;
 
+import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.projectView.ProjectView;
@@ -8,6 +9,12 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.command.UndoConfirmationPolicy;
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.command.undo.UndoManager;
+import com.intellij.openapi.command.undo.UndoableAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -21,6 +28,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -28,10 +36,12 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
 import com.intellij.openapi.wm.*;
@@ -40,21 +50,21 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
 import com.intellij.util.DocumentUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import com.intellij.util.text.MarkdownUtil;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -65,10 +75,12 @@ import com.jetbrains.edu.learning.stepic.StepicUserWidget;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import com.petebevin.markdown.MarkdownProcessor;
+import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -81,9 +93,11 @@ import java.util.concurrent.Future;
 import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
 public class StudyUtils {
+
   private StudyUtils() {
   }
 
+  public static final Comparator<StudyItem> INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::getIndex);
   private static final Logger LOG = Logger.getInstance(StudyUtils.class.getName());
   private static final String ourPrefix = "<html><head><script type=\"text/x-mathjax-config\">\n" +
                                           "            MathJax.Hub.Config({\n" +
@@ -277,13 +291,13 @@ public class StudyUtils {
     if (taskDirName.contains(EduNames.TASK)) {
       final VirtualFile lessonDir = taskDir.getParent();
       if (lessonDir != null) {
-        int lessonIndex = EduUtils.getIndex(lessonDir.getName(), EduNames.LESSON);
+        int lessonIndex = getIndex(lessonDir.getName(), EduNames.LESSON);
         List<Lesson> lessons = course.getLessons();
         if (!indexIsValid(lessonIndex, lessons)) {
           return null;
         }
         final Lesson lesson = lessons.get(lessonIndex);
-        int taskIndex = EduUtils.getIndex(taskDirName, EduNames.TASK);
+        int taskIndex = getIndex(taskDirName, EduNames.TASK);
         final List<Task> tasks = lesson.getTaskList();
         if (!indexIsValid(taskIndex, tasks)) {
           return null;
@@ -438,7 +452,7 @@ public class StudyUtils {
     if (taskFile != null) {
       return taskFile.getTask();
     }
-    return !EduUtils.isAndroidStudio() ? null : findTaskFromTestFiles(project);
+    return !isAndroidStudio() ? null : findTaskFromTestFiles(project);
   }
 
   @Nullable
@@ -802,10 +816,241 @@ public class StudyUtils {
    * @param project current project
    */
   public static void saveToolWindowTextIfNeeded(@NotNull Project project) {
-    TaskDescriptionToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
+    TaskDescriptionToolWindow toolWindow = getStudyToolWindow(project);
     TaskDescriptionToolWindow.StudyToolWindowMode toolWindowMode = StudyTaskManager.getInstance(project).getToolWindowMode();
     if (toolWindow != null && toolWindowMode == TaskDescriptionToolWindow.StudyToolWindowMode.EDITING) {
       toolWindow.leaveEditingMode(project);
     }
+  }
+
+  public static void enableAction(@NotNull final AnActionEvent event, boolean isEnable) {
+    final Presentation presentation = event.getPresentation();
+    presentation.setVisible(isEnable);
+    presentation.setEnabled(isEnable);
+  }
+
+  /**
+   * Gets number index in directory names like "task1", "lesson2"
+   *
+   * @param fullName    full name of directory
+   * @param logicalName part of name without index
+   * @return index of object
+   */
+  public static int getIndex(@NotNull final String fullName, @NotNull final String logicalName) {
+    if (!fullName.startsWith(logicalName)) {
+      return -1;
+    }
+    try {
+      return Integer.parseInt(fullName.substring(logicalName.length())) - 1;
+    }
+    catch (NumberFormatException e) {
+      return -1;
+    }
+  }
+
+  private static void replaceWithTaskText(Document studentDocument, AnswerPlaceholder placeholder, int toSubtaskIndex) {
+    AnswerPlaceholderSubtaskInfo info = placeholder.getSubtaskInfos().get(toSubtaskIndex);
+    if (info == null) {
+      return;
+    }
+    String replacementText;
+    if (Collections.min(placeholder.getSubtaskInfos().keySet()) == toSubtaskIndex) {
+      replacementText = info.getPlaceholderText();
+    }
+    else {
+      Integer max = Collections.max(ContainerUtil.filter(placeholder.getSubtaskInfos().keySet(), i -> i < toSubtaskIndex));
+      replacementText = placeholder.getSubtaskInfos().get(max).getPossibleAnswer();
+    }
+    replaceAnswerPlaceholder(studentDocument, placeholder, placeholder.getVisibleLength(toSubtaskIndex), replacementText);
+  }
+
+  @Nullable
+  public static TaskFile createStudentFile(Project project, VirtualFile answerFile, @Nullable Task task, int targetSubtaskIndex) {
+    try {
+      if (task == null) {
+        task = getTaskForFile(project, answerFile);
+        if (task == null) {
+          return null;
+        }
+        task = task.copy();
+      }
+      TaskFile taskFile = task.getTaskFile(pathRelativeToTask(answerFile));
+      if (taskFile == null) {
+        return null;
+      }
+      if (isImage(taskFile.name)) {
+        taskFile.text = Base64.encodeBase64String(answerFile.contentsToByteArray());
+        return taskFile;
+      }
+      Document document = FileDocumentManager.getInstance().getDocument(answerFile);
+      if (document == null) {
+        return null;
+      }
+      FileDocumentManager.getInstance().saveDocument(document);
+      final LightVirtualFile studentFile = new LightVirtualFile("student_task", PlainTextFileType.INSTANCE, document.getText());
+      Document studentDocument = FileDocumentManager.getInstance().getDocument(studentFile);
+      if (studentDocument == null) {
+        return null;
+      }
+      EduDocumentListener listener = new EduDocumentListener(taskFile, false);
+      studentDocument.addDocumentListener(listener);
+      taskFile.setTrackLengths(false);
+      for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
+        if (task instanceof TaskWithSubtasks) {
+          int fromSubtask = ((TaskWithSubtasks)task).getActiveSubtaskIndex();
+          placeholder.switchSubtask(studentDocument, fromSubtask, targetSubtaskIndex);
+        }
+      }
+      for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
+        replaceWithTaskText(studentDocument, placeholder, targetSubtaskIndex);
+      }
+      taskFile.setTrackChanges(true);
+      studentDocument.removeDocumentListener(listener);
+      taskFile.text = studentDocument.getImmutableCharSequence().toString();
+      return taskFile;
+    }
+    catch (IOException e) {
+      LOG.error("Failed to convert answer file to student one");
+    }
+
+    return null;
+  }
+
+  @Nullable
+  public static String getTextFromInternalTemplate(@NotNull String templateName) {
+    FileTemplate template = FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName);
+    if (template == null) {
+      LOG.info("Failed to obtain internal template: " + templateName);
+      return null;
+    }
+    return template.getText();
+  }
+
+  public static void runUndoableAction(Project project, String name, UndoableAction action, UndoConfirmationPolicy confirmationPolicy) {
+    new WriteCommandAction(project, name) {
+      protected void run(@NotNull final Result result) throws Throwable {
+        action.redo();
+        UndoManager.getInstance(project).undoableActionPerformed(action);
+      }
+
+      @Override
+      protected UndoConfirmationPolicy getUndoConfirmationPolicy() {
+        return confirmationPolicy;
+      }
+    }.execute();
+  }
+
+  public static boolean isAndroidStudio() {
+    return "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
+  }
+
+  public static void runUndoableAction(Project project, String name, UndoableAction action) {
+    runUndoableAction(project, name, action, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
+  }
+
+  public static boolean isImage(String fileName) {
+    final String[] readerFormatNames = ImageIO.getReaderFormatNames();
+    for (@NonNls String format : readerFormatNames) {
+      final String ext = format.toLowerCase();
+      if (fileName.endsWith(ext)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Nullable
+  public static Task getTask(@NotNull final VirtualFile directory, @NotNull final Course course) {
+    VirtualFile lessonDir = directory.getParent();
+    if (lessonDir == null) {
+      return null;
+    }
+    Lesson lesson = course.getLesson(lessonDir.getName());
+    if (lesson == null) {
+      return null;
+    }
+    return lesson.getTask(directory.getName());
+  }
+
+  static void deleteWindowsFile(@NotNull final VirtualFile taskDir, @NotNull final String name) {
+    final VirtualFile fileWindows = taskDir.findChild(name);
+    if (fileWindows != null && fileWindows.exists()) {
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        try {
+          fileWindows.delete(taskDir);
+        }
+        catch (IOException e) {
+          LOG.warn("Tried to delete non existed _windows file");
+        }
+      });
+    }
+  }
+
+  public static void deleteWindowDescriptions(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
+    for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
+      String name = entry.getKey();
+      VirtualFile virtualFile = taskDir.findFileByRelativePath(name);
+      if (virtualFile == null) {
+        continue;
+      }
+      String windowsFileName = virtualFile.getNameWithoutExtension() + EduNames.WINDOWS_POSTFIX;
+      VirtualFile parentDir = virtualFile.getParent();
+      deleteWindowsFile(parentDir, windowsFileName);
+    }
+  }
+
+  public static void replaceAnswerPlaceholder(@NotNull final Document document,
+                                              @NotNull final AnswerPlaceholder answerPlaceholder,
+                                              int length,
+                                              String replacementText) {
+    final int offset = answerPlaceholder.getOffset();
+    CommandProcessor.getInstance().runUndoTransparentAction(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+      document.replaceString(offset, offset + length, replacementText);
+      FileDocumentManager.getInstance().saveDocument(document);
+    }));
+  }
+
+  public static void synchronize() {
+    FileDocumentManager.getInstance().saveAllDocuments();
+    SaveAndSyncHandler.getInstance().refreshOpenFiles();
+    VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
+  }
+
+  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+  @Nullable
+  public static VirtualFile flushWindows(@NotNull final TaskFile taskFile, @NotNull final VirtualFile file) {
+    final VirtualFile taskDir = file.getParent();
+    VirtualFile fileWindows = null;
+    final Document document = FileDocumentManager.getInstance().getDocument(file);
+    if (document == null) {
+      LOG.debug("Couldn't flush windows");
+      return null;
+    }
+    if (taskDir != null) {
+      final String name = file.getNameWithoutExtension() + EduNames.WINDOWS_POSTFIX;
+      deleteWindowsFile(taskDir, name);
+      PrintWriter printWriter = null;
+      try {
+        fileWindows = taskDir.createChildData(taskFile, name);
+        printWriter = new PrintWriter(new FileOutputStream(fileWindows.getPath()));
+        for (AnswerPlaceholder answerPlaceholder : taskFile.getActivePlaceholders()) {
+          int length = answerPlaceholder.getRealLength();
+          int start = answerPlaceholder.getOffset();
+          final String windowDescription = document.getText(new TextRange(start, start + length));
+          printWriter.println("#educational_plugin_window = " + windowDescription);
+        }
+        ApplicationManager.getApplication().runWriteAction(() -> FileDocumentManager.getInstance().saveDocument(document));
+      }
+      catch (IOException e) {
+        LOG.error(e);
+      }
+      finally {
+        if (printWriter != null) {
+          printWriter.close();
+        }
+        synchronize();
+      }
+    }
+    return fileWindows;
   }
 }

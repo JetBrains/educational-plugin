@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.checker.EduTaskChecker;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TestsOutputParser;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -77,7 +76,7 @@ public class PyTaskChecker extends EduTaskChecker {
       CheckUtils.drawAllPlaceholders(myProject, myTask);
       VirtualFile taskDir = myTask.getTaskDir(myProject);
       if (taskDir != null) {
-        EduUtils.deleteWindowDescriptions(myTask, taskDir);
+        StudyUtils.deleteWindowDescriptions(myTask, taskDir);
       }
     });
   }

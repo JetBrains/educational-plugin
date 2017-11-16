@@ -4,10 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
@@ -82,7 +79,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   @Nullable
   @Override
   protected StudyItem getThresholdItem(@NotNull Course course, @NotNull VirtualFile sourceDirectory) {
-    return EduUtils.getTask(sourceDirectory, course);
+    return StudyUtils.getTask(sourceDirectory, course);
   }
 
   @Override
@@ -95,7 +92,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   @Override
   protected void sortSiblings(@NotNull Course course, @Nullable StudyItem parentItem) {
     if (parentItem instanceof Lesson) {
-      Collections.sort(((Lesson)parentItem).getTaskList(), EduUtils.INDEX_COMPARATOR);
+      Collections.sort(((Lesson)parentItem).getTaskList(), StudyUtils.INDEX_COMPARATOR);
     }
   }
 
