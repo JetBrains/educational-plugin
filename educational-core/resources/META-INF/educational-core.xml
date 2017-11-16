@@ -28,7 +28,7 @@
             <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduPluginConfigurator"/>
         </extensionPoint>
         <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
-                        interface="com.jetbrains.edu.learning.TwitterPluginConfigurator"/>
+                        interface="com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator"/>
         <extensionPoint qualifiedName="Educational.checkListener"
                         interface="com.jetbrains.edu.learning.checker.CheckListener"/>
         <extensionPoint qualifiedName="Educational.optionsProvider"
