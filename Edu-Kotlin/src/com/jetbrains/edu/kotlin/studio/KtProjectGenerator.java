@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGeneratorBase;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +47,7 @@ public class KtProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
         }
         Course course = myCourse;
         if (course instanceof RemoteCourse) {
-          course = EduStepicConnector.getCourse(project, (RemoteCourse) course);
+          course = StepicConnector.getCourse(project, (RemoteCourse) course);
           if (course == null) {
             LOG.error("Failed to get course from stepik");
             return;

@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class EduStepicUpdater {
+public class StepicUpdater {
   private static final long CHECK_INTERVAL = DateFormatUtil.DAY;
 
   private final Runnable myCheckRunnable = () -> updateCourseList().doWhenDone(() -> queueNextCheck(CHECK_INTERVAL));
   private final Alarm myCheckForUpdatesAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
 
-  public EduStepicUpdater(@NotNull Application application) {
+  public StepicUpdater(@NotNull Application application) {
     scheduleCourseListUpdate(application);
   }
 
@@ -53,7 +53,7 @@ public class EduStepicUpdater {
   private static ActionCallback updateCourseList() {
     ActionCallback callback = new ActionCallback();
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      final List<Course> courses = EduStepicConnector.getCourses(null);
+      final List<Course> courses = StepicConnector.getCourses(null);
       EduSettings.getInstance().setLastTimeChecked(System.currentTimeMillis());
 
       if (!courses.isEmpty()) {

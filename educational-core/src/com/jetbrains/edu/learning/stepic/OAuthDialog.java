@@ -51,7 +51,7 @@ public class OAuthDialog extends DialogWrapper {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
 
-      myStepicUser = StudyUtils.execCancelable(() -> EduStepicAuthorizedClient.login(code, EduStepicNames.EXTERNAL_REDIRECT_URL));
+      myStepicUser = StudyUtils.execCancelable(() -> StepicAuthorizedClient.login(code, StepicNames.EXTERNAL_REDIRECT_URL));
       if (myStepicUser != null) {
         doJustOkAction();
       }

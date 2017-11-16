@@ -30,8 +30,8 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.newproject.ui.EduCreateNewStepikCourseDialog;
-import com.jetbrains.edu.learning.stepic.EduStepicAuthorizedClient;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicAuthorizedClient;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -47,7 +47,7 @@ import java.util.List;
 import static com.jetbrains.edu.learning.StudyUtils.execCancelable;
 import static com.jetbrains.edu.learning.StudyUtils.navigateToStep;
 import static com.jetbrains.edu.learning.core.EduNames.STUDY_PROJECT_XML_PATH;
-import static com.jetbrains.edu.learning.stepic.EduStepicNames.STEP_ID;
+import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
 
 public class EduBuiltInServerUtils {
 
@@ -162,8 +162,8 @@ public class EduBuiltInServerUtils {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
         execCancelable(() -> {
           try {
-            StepicUser user = EduStepicAuthorizedClient.getCurrentUser();
-            Course course = EduStepicConnector.getCourseFromStepik(user, courseId);
+            StepicUser user = StepicAuthorizedClient.getCurrentUser();
+            Course course = StepicConnector.getCourseFromStepik(user, courseId);
             showDialog(course, stepId);
           } catch (IOException e) {
             LOG.warn("Tried to create a project for course with id=" + courseId, e);

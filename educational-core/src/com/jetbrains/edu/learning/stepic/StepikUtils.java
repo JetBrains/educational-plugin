@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.Nullable;
 
-public class EduStepikUtils {
+public class StepikUtils {
   @Nullable
   public static String getLink(@Nullable Task task, int stepNumber) {
     if (task == null) {
@@ -31,7 +31,7 @@ public class EduStepikUtils {
       return null;
     }
 
-    return String.format("%s/lesson/%d/step/%d", EduStepicNames.STEPIC_URL, lesson.getId(), stepNumber);
+    return String.format("%s/lesson/%d/step/%d", StepicNames.STEPIC_URL, lesson.getId(), stepNumber);
   }
 
   @Nullable

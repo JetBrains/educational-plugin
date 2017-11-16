@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
-public class EduNextRecommendationCheckListener implements StudyCheckListener {
+public class NextRecommendationCheckListener implements StudyCheckListener {
 
   private StudyStatus myStatusBeforeCheck;
 
@@ -33,12 +33,12 @@ public class EduNextRecommendationCheckListener implements StudyCheckListener {
     if (statusAfterCheck != StudyStatus.Solved) {
       return;
     }
-    ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Backgroundable(project, EduAdaptiveStepicConnector.LOADING_NEXT_RECOMMENDATION, false,
+    ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Backgroundable(project, StepicAdaptiveConnector.LOADING_NEXT_RECOMMENDATION, false,
                                                                                             PerformInBackgroundOption.DEAF) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setIndeterminate(true);
-        EduAdaptiveStepicConnector.addNextRecommendedTask(project, task.getLesson(), indicator, EduAdaptiveStepicConnector.NEXT_RECOMMENDATION_REACTION);
+        StepicAdaptiveConnector.addNextRecommendedTask(project, task.getLesson(), indicator, StepicAdaptiveConnector.NEXT_RECOMMENDATION_REACTION);
       }
     });
   }
