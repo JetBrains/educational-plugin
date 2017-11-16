@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.ui;
+package com.jetbrains.edu.learning.ui.taskDescription;
 
 import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.Disposable;
@@ -45,6 +45,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveReactionsPanel;
+import com.jetbrains.edu.learning.ui.StudyProgressBar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

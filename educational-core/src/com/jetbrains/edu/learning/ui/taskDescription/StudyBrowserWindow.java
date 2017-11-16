@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui;
+package com.jetbrains.edu.learning.ui.taskDescription;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
