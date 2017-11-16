@@ -18,15 +18,15 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.projectView.TaskDirectoryNode;
+import com.jetbrains.edu.learning.projectView.TaskNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CCTaskDirectoryNode extends TaskDirectoryNode {
-  public CCTaskDirectoryNode(@NotNull Project project,
-                             PsiDirectory value,
-                             ViewSettings viewSettings,
-                             @NotNull Task task) {
+public class CCTaskNode extends TaskNode {
+  public CCTaskNode(@NotNull Project project,
+                    PsiDirectory value,
+                    ViewSettings viewSettings,
+                    @NotNull Task task) {
     super(project, value, viewSettings, task);
   }
 
@@ -100,6 +100,6 @@ public class CCTaskDirectoryNode extends TaskDirectoryNode {
 
   @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
-    return new CCDirectoryNode(myProject, value, myViewSettings);
+    return new CCNode(myProject, value, myViewSettings);
   }
 }

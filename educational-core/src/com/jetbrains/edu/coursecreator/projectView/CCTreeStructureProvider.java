@@ -6,11 +6,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.projectView.CourseDirectoryNode;
-import com.jetbrains.edu.learning.projectView.StudyTreeStructureProvider;
+import com.jetbrains.edu.learning.projectView.CourseNode;
+import com.jetbrains.edu.learning.projectView.EduTreeStructureProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class CCTreeStructureProvider extends StudyTreeStructureProvider {
+public class CCTreeStructureProvider extends EduTreeStructureProvider {
   @Override
   protected boolean shouldModify(@NotNull Project project) {
     return CCUtils.isCourseCreator(project);
@@ -18,7 +18,7 @@ public class CCTreeStructureProvider extends StudyTreeStructureProvider {
 
   @NotNull
   @Override
-  protected CourseDirectoryNode createCourseNode(Project project, AbstractTreeNode node, ViewSettings settings, Course course) {
-    return new CCCourseDirectoryNode(project, ((PsiDirectory)node.getValue()), settings, course);
+  protected CourseNode createCourseNode(Project project, AbstractTreeNode node, ViewSettings settings, Course course) {
+    return new CCCourseNode(project, ((PsiDirectory)node.getValue()), settings, course);
   }
 }

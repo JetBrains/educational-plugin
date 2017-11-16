@@ -14,21 +14,21 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.projectView.CourseDirectoryNode;
+import com.jetbrains.edu.learning.projectView.CourseNode;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class CCCourseDirectoryNode extends CourseDirectoryNode {
+public class CCCourseNode extends CourseNode {
   private static final Collection<String> NAMES_TO_IGNORE = ContainerUtil.newHashSet("build.gradle",
     "settings.gradle", "local.properties", "gradlew", "gradlew.bat");
 
-  public CCCourseDirectoryNode(@NotNull Project project,
-                               PsiDirectory value,
-                               ViewSettings viewSettings,
-                               @NotNull Course course) {
+  public CCCourseNode(@NotNull Project project,
+                      PsiDirectory value,
+                      ViewSettings viewSettings,
+                      @NotNull Course course) {
     super(project, value, viewSettings, course);
   }
 
@@ -57,7 +57,7 @@ public class CCCourseDirectoryNode extends CourseDirectoryNode {
 
   @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory directory) {
-    return new CCLessonDirectoryNode(myProject, directory, myViewSettings, ((Lesson)item));
+    return new CCLessonNode(myProject, directory, myViewSettings, ((Lesson)item));
   }
 
   @Override
