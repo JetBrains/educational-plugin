@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.actions;
 
 import com.intellij.icons.AllIcons;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ public class NextTaskAction extends TaskNavigationAction {
 
   @Override
   protected Task getTargetTask(@NotNull final Task sourceTask) {
-    return StudyNavigator.nextTask(sourceTask);
+    return NavigationUtils.nextTask(sourceTask);
   }
 
   @NotNull

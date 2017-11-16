@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
 import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
 import icons.EducationalCoreIcons;
@@ -63,7 +63,7 @@ public class SyncCourseAction extends DumbAwareAction {
 
           ApplicationManager.getApplication().invokeLater(() -> {
             VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
-            StudyNavigator.navigateToTask(project, lastRecommendationOnStepik);
+            NavigationUtils.navigateToTask(project, lastRecommendationOnStepik);
           });
           return true;
         }

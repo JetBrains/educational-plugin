@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +33,7 @@ abstract public class PlaceholderNavigationAction extends DumbAwareActionWithSho
           if (targetPlaceholder == null) {
             return;
           }
-          StudyNavigator.navigateToAnswerPlaceholder(selectedEditor, targetPlaceholder);
+          NavigationUtils.navigateToAnswerPlaceholder(selectedEditor, targetPlaceholder);
         }
       }
     }

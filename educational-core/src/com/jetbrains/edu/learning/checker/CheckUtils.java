@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.StudyEditor;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.StudyTestResultsToolWindowFactory;
 import com.jetbrains.edu.learning.ui.StudyTestResultsToolWindowFactoryKt;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +98,7 @@ public class CheckUtils {
     ApplicationManager.getApplication().invokeLater(
       () -> IdeFocusManager.getInstance(project).requestFocus(editorToNavigate.getContentComponent(), true));
 
-    StudyNavigator.navigateToFirstFailedAnswerPlaceholder(editor, taskFileToNavigate);
+    NavigationUtils.navigateToFirstFailedAnswerPlaceholder(editor, taskFileToNavigate);
   }
 
 
