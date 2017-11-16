@@ -23,7 +23,6 @@ import com.intellij.util.PlatformIcons;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -126,7 +125,7 @@ public class EditInputAction extends DumbAwareAction {
     finally {
       StudyUtils.closeSilently(printWriter);
     }
-    EduUtils.synchronize();
+    StudyUtils.synchronize();
   }
 
   private static UserTest createUserTest(@NotNull final VirtualFile testsDir,
@@ -212,7 +211,7 @@ public class EditInputAction extends DumbAwareAction {
       File testInputFile = new File(userTest.getInput());
       File testOutputFile = new File(userTest.getOutput());
       if (testInputFile.delete() && testOutputFile.delete()) {
-        EduUtils.synchronize();
+        StudyUtils.synchronize();
       } else {
         LOG.error("failed to delete user tests");
       }
@@ -224,7 +223,7 @@ public class EditInputAction extends DumbAwareAction {
   }
   @Override
   public void update(final AnActionEvent e) {
-    EduUtils.enableAction(e, false);
+    StudyUtils.enableAction(e, false);
 
     final Project project = e.getProject();
     if (project != null) {
@@ -232,7 +231,7 @@ public class EditInputAction extends DumbAwareAction {
       if (eduEditor != null) {
         final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(eduEditor.getTaskFile().getTask());
         if (!userTests.isEmpty()) {
-          EduUtils.enableAction(e, true);
+          StudyUtils.enableAction(e, true);
         }
       }
     }

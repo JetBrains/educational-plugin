@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
@@ -88,9 +88,9 @@ public class Lesson implements StudyItem {
   }
 
   public Task getTask(@NotNull final String name) {
-    int index = EduUtils.getIndex(name, EduNames.TASK);
+    int index = StudyUtils.getIndex(name, EduNames.TASK);
     List<Task> tasks = getTaskList();
-    if (!EduUtils.indexIsValid(index, tasks)) {
+    if (!StudyUtils.indexIsValid(index, tasks)) {
       return null;
     }
     for (Task task : tasks) {

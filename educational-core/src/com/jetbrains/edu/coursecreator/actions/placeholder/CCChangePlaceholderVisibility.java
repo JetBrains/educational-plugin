@@ -10,7 +10,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.DocumentUtil;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -31,7 +30,7 @@ public abstract class CCChangePlaceholderVisibility extends CCAnswerPlaceholderA
     if (placeholder == null) {
       return;
     }
-    EduUtils.runUndoableAction(state.getProject(), getName(), new BasicUndoableAction(state.getEditor().getDocument()) {
+    StudyUtils.runUndoableAction(state.getProject(), getName(), new BasicUndoableAction(state.getEditor().getDocument()) {
       @Override
       public void undo() throws UnexpectedUndoException {
         setVisible(placeholder, isVisible(), state);

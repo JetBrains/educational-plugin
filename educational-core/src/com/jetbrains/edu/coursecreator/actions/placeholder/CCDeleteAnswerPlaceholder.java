@@ -4,7 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
     Project project = state.getProject();
     TaskFile taskFile = state.getTaskFile();
     AnswerPlaceholder answerPlaceholder = state.getAnswerPlaceholder();
-    EduUtils.runUndoableAction(project, "Delete Answer Placeholder",
+    StudyUtils.runUndoableAction(project, "Delete Answer Placeholder",
                                new CCAddAnswerPlaceholder.AddAction(answerPlaceholder, taskFile, state.getEditor()) {
                                  @Override
                                  public void undo() throws UnexpectedUndoException {

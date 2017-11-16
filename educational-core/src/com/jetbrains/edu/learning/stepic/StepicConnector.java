@@ -13,11 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -577,7 +573,7 @@ public class StepicConnector {
 
   @NotNull
   public static String getOAuthRedirectUrl() {
-    if (EduUtils.isAndroidStudio()) {
+    if (StudyUtils.isAndroidStudio()) {
       CustomServerAuthorizer customServerAuthorizer = new CustomServerAuthorizer();
       int port = customServerAuthorizer.startServer();
       if (port != -1) {

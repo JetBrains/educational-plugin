@@ -9,10 +9,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.projectView.DirectoryNode;
@@ -52,7 +49,7 @@ public class CCNode extends DirectoryNode {
       if (!CCUtils.isTestsFile(myProject, virtualFile)) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       } else {
-        if (EduUtils.isAndroidStudio() && CCUtils.isCourseCreator(myProject)) {
+        if (StudyUtils.isAndroidStudio() && CCUtils.isCourseCreator(myProject)) {
           return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
         }
       }
