@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.jetbrains.edu.learning.newproject.ui.EduCoursePanel">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.jetbrains.edu.learning.newproject.ui.CoursePanel">
   <grid id="7d113" binding="myCoursePanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints/>
     <properties>
@@ -49,7 +49,7 @@
               </component>
             </children>
           </scrollpane>
-          <component id="e1c40" class="com.jetbrains.edu.learning.newproject.ui.EduAdvancedSettings" binding="myAdvancedSettings">
+          <component id="e1c40" class="com.jetbrains.edu.learning.newproject.ui.AdvancedSettings" binding="myAdvancedSettings">
             <constraints border-constraint="South"/>
             <properties/>
           </component>

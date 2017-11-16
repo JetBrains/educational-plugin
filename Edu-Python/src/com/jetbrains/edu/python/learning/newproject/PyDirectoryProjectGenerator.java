@@ -29,7 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.python.learning.PyPluginConfigurator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
@@ -48,7 +48,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
-  implements EduCourseProjectGenerator<PyNewProjectSettings> {
+  implements CourseProjectGenerator<PyNewProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
   private static final String NO_PYTHON_INTERPRETER = "<html><u>Add</u> python interpreter.</html>";

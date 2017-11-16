@@ -80,7 +80,7 @@
             <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
         </action>
 
-        <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.EduBrowseCoursesAction">
+        <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction">
             <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
             <add-to-group group-id="FileMenu" anchor="first"/>
         </action>

@@ -23,12 +23,12 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class EduIntellijCourseProjectGeneratorBase implements EduCourseProjectGenerator<JdkProjectSettings> {
+public abstract class EduIntellijCourseProjectGeneratorBase implements CourseProjectGenerator<JdkProjectSettings> {
 
   private static final Logger LOG = DefaultLogger.getInstance(EduIntellijCourseProjectGeneratorBase.class);
 
