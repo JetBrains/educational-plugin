@@ -104,7 +104,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
     if (isToolwindow) {
       project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new EduFileEditorManagerListener(this, project));
-      Task task = StudyUtils.getCurrentTask(project);
+      Task task = EduUtils.getCurrentTask(project);
       setCurrentTask(project, task);
     }
   }
@@ -263,7 +263,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     WebBrowserManager.getInstance().setShowBrowserHover(true);
     mySplitPane.setFirstComponent(myContentPanel);
     StudyTaskManager.getInstance(project).setToolWindowMode(StudyToolWindowMode.TEXT);
-    StudyUtils.updateToolWindows(project);
+    EduUtils.updateToolWindows(project);
   }
 
   private JPanel createCourseProgress(@NotNull final Project project) {

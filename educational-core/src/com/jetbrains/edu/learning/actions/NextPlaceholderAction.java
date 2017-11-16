@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.actions;
 
 import com.intellij.icons.AllIcons;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class NextPlaceholderAction extends PlaceholderNavigationAction {
     }
     else {
       int index = selectedAnswerPlaceholder.getIndex();
-      if (StudyUtils.indexIsValid(index, placeholders)) {
+      if (EduUtils.indexIsValid(index, placeholders)) {
         int newIndex = index + 1;
         return placeholders.get(newIndex == placeholders.size() ? 0 : newIndex);
       }

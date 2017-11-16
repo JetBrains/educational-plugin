@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCSubtaskEditorNotificationProvider;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -56,7 +56,7 @@ public class CCSwitchSubtask extends DumbAwareAction {
         virtualFile = parent;
       }
     }
-    final Task task = StudyUtils.getTask(project, virtualFile);
+    final Task task = EduUtils.getTask(project, virtualFile);
     return task instanceof TaskWithSubtasks ? (TaskWithSubtasks)task : null;
   }
 }

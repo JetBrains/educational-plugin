@@ -573,7 +573,7 @@ public class StepicConnector {
 
   @NotNull
   public static String getOAuthRedirectUrl() {
-    if (StudyUtils.isAndroidStudio()) {
+    if (EduUtils.isAndroidStudio()) {
       CustomServerAuthorizer customServerAuthorizer = new CustomServerAuthorizer();
       int port = customServerAuthorizer.startServer();
       if (port != -1) {

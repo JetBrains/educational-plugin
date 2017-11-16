@@ -92,13 +92,13 @@ import java.util.concurrent.Future;
 
 import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
-public class StudyUtils {
+public class EduUtils {
 
-  private StudyUtils() {
+  private EduUtils() {
   }
 
   public static final Comparator<StudyItem> INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::getIndex);
-  private static final Logger LOG = Logger.getInstance(StudyUtils.class.getName());
+  private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
   private static final String ourPrefix = "<html><head><script type=\"text/x-mathjax-config\">\n" +
                                           "            MathJax.Hub.Config({\n" +
                                           "                tex2jax: {\n" +
@@ -228,7 +228,7 @@ public class StudyUtils {
       return;
     }
     try {
-      file.delete(StudyUtils.class);
+      file.delete(EduUtils.class);
     }
     catch (IOException e) {
       LOG.error(e);

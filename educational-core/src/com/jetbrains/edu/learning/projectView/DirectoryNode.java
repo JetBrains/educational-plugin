@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +45,7 @@ public class DirectoryNode extends EduNode {
       if (virtualFile == null) {
         return null;
       }
-      return StudyUtils.getTaskFile(myProject, virtualFile) != null ? childNode : null;
+      return EduUtils.getTaskFile(myProject, virtualFile) != null ? childNode : null;
     }
     return null;
   }

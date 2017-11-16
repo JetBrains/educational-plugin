@@ -24,7 +24,7 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -173,7 +173,7 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
       if (((RemoteCourse)course).getId() > 0 && !enrolledCoursesIds.contains(((RemoteCourse)course).getId())) {
         ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-          return StudyUtils.execCancelable(() -> StepicConnector.enrollToCourse(((RemoteCourse)course).getId(),
+          return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(((RemoteCourse)course).getId(),
                                                                                    EduSettings.getInstance().getUser()));
         }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
       }

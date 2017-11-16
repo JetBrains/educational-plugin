@@ -12,7 +12,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.EduNames;
@@ -48,7 +48,7 @@ class PySmartChecker {
       final FileDocumentManager documentManager = FileDocumentManager.getInstance();
       final Document windowDocument = documentManager.getDocument(windowCopy);
       if (windowDocument != null) {
-        TaskFile windowTaskFile = answerTaskFile.getTask().copy().getTaskFile(StudyUtils.pathRelativeToTask(virtualFile));
+        TaskFile windowTaskFile = answerTaskFile.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(virtualFile));
         if (windowTaskFile == null) {
           return;
         }
@@ -62,7 +62,7 @@ class PySmartChecker {
         String text = usersDocument.getText(new TextRange(userStart, userEnd));
         windowDocument.replaceString(start, end, text);
         ApplicationManager.getApplication().runWriteAction(() -> documentManager.saveDocument(windowDocument));
-        fileWindows = StudyUtils.flushWindows(windowTaskFile, windowCopy);
+        fileWindows = EduUtils.flushWindows(windowTaskFile, windowCopy);
         Process smartTestProcess = testRunner.createCheckProcess(project, windowCopy.getPath());
         final CapturingProcessHandler handler = new CapturingProcessHandler(smartTestProcess, null, windowCopy.getPath());
         final ProcessOutput output = handler.runProcess();
@@ -77,8 +77,8 @@ class PySmartChecker {
       LOG.error(e);
     }
     finally {
-      StudyUtils.deleteFile(windowCopy);
-      StudyUtils.deleteFile(fileWindows);
+      EduUtils.deleteFile(windowCopy);
+      EduUtils.deleteFile(fileWindows);
     }
   }
 
@@ -108,7 +108,7 @@ class PySmartChecker {
       }
     }
     finally {
-      StudyUtils.deleteFile(answerFile);
+      EduUtils.deleteFile(answerFile);
     }
   }
 
@@ -120,7 +120,7 @@ class PySmartChecker {
       final FileDocumentManager documentManager = FileDocumentManager.getInstance();
       final Document document = documentManager.getDocument(answerFile);
       if (document != null) {
-        TaskFile answerTaskFile = source.getTask().copy().getTaskFile(StudyUtils.pathRelativeToTask(file));
+        TaskFile answerTaskFile = source.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(file));
         if (answerTaskFile == null) {
           return null;
         }

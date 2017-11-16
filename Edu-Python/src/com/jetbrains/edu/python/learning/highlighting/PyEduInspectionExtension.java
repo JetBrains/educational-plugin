@@ -5,7 +5,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.python.inspections.PyInspectionExtension;
 import com.jetbrains.python.psi.PyElement;
@@ -23,7 +23,7 @@ public class PyEduInspectionExtension extends PyInspectionExtension {
     if (StudyTaskManager.getInstance(project).getCourse() == null) {
       return false;
     }
-    TaskFile taskFile = StudyUtils.getTaskFile(project, file.getVirtualFile());
+    TaskFile taskFile = EduUtils.getTaskFile(project, file.getVirtualFile());
     if (taskFile == null || taskFile.isUserCreated() || taskFile.isHighlightErrors()) {
       return false;
     }

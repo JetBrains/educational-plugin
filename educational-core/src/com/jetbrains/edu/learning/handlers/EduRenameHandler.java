@@ -7,13 +7,13 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class EduRenameHandler implements RenameHandler {
   @Override
   public boolean isAvailableOnDataContext(DataContext dataContext) {
-    return StudyUtils.canRenameOrMove(dataContext);
+    return EduUtils.canRenameOrMove(dataContext);
   }
 
   @Override

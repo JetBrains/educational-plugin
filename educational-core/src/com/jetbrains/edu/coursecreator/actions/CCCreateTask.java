@@ -79,7 +79,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   @Nullable
   @Override
   protected StudyItem getThresholdItem(@NotNull Course course, @NotNull VirtualFile sourceDirectory) {
-    return StudyUtils.getTask(sourceDirectory, course);
+    return EduUtils.getTask(sourceDirectory, course);
   }
 
   @Override
@@ -92,7 +92,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   @Override
   protected void sortSiblings(@NotNull Course course, @Nullable StudyItem parentItem) {
     if (parentItem instanceof Lesson) {
-      Collections.sort(((Lesson)parentItem).getTaskList(), StudyUtils.INDEX_COMPARATOR);
+      Collections.sort(((Lesson)parentItem).getTaskList(), EduUtils.INDEX_COMPARATOR);
     }
   }
 

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.JBColor;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -92,7 +92,7 @@ public class TaskNode extends EduNode {
       if (virtualFile == null) {
         return null;
       }
-      return StudyUtils.getTaskFile(myProject, virtualFile) != null ? childNode : null;
+      return EduUtils.getTaskFile(myProject, virtualFile) != null ? childNode : null;
     }
     return null;
   }

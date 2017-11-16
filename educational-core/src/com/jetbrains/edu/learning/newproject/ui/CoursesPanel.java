@@ -25,7 +25,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
@@ -112,12 +112,12 @@ public class CoursesPanel extends JPanel {
         final FileChooserDescriptor fileChooser = new FileChooserDescriptor(true, false, false, true, false, false) {
           @Override
           public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-            return file.isDirectory() || StudyUtils.isZip(file.getName());
+            return file.isDirectory() || EduUtils.isZip(file.getName());
           }
 
           @Override
           public boolean isFileSelectable(VirtualFile file) {
-            return StudyUtils.isZip(file.getName());
+            return EduUtils.isZip(file.getName());
           }
 
         };
@@ -160,7 +160,7 @@ public class CoursesPanel extends JPanel {
               }, ModalityState.any());
             }
           });
-          StepicConnector.doAuthorize(() -> StudyUtils.showOAuthDialog());
+          StepicConnector.doAuthorize(() -> EduUtils.showOAuthDialog());
         }
       }
 

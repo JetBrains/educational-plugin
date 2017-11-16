@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jetbrains.edu.learning.StudyUtils.execCancelable;
+import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 
 public class ProjectGenerator {
   private static final Logger LOG = Logger.getInstance(ProjectGenerator.class.getName());
@@ -77,15 +77,15 @@ public class ProjectGenerator {
       Messages.showWarningDialog("Some problems occurred while creating the course", "Error in Course Creation");
       return;
     }
-    else if (course.isAdaptive() && !StudyUtils.isCourseValid(course)) {
+    else if (course.isAdaptive() && !EduUtils.isCourseValid(course)) {
       Messages.showWarningDialog("There is no recommended tasks for this adaptive course", "Error in Course Creation");
       return;
     }
     StudyTaskManager.getInstance(project).setCourse(course);
     ApplicationManager.getApplication().runWriteAction(() -> {
       GeneratorUtils.createCourse(course, baseDir);
-      StudyUtils.registerStudyToolWindow(course, project);
-      StudyUtils.openFirstTask(course, project);
+      EduUtils.registerStudyToolWindow(course, project);
+      EduUtils.openFirstTask(course, project);
       EduUsagesCollector.projectTypeCreated(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
 
       if (course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
@@ -111,7 +111,7 @@ public class ProjectGenerator {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       return execCancelable(() -> {
         final RemoteCourse course = StepicConnector.getCourse(project, selectedCourse);
-        if (StudyUtils.isCourseValid(course)) {
+        if (EduUtils.isCourseValid(course)) {
           course.initCourse(false);
         }
         return course;

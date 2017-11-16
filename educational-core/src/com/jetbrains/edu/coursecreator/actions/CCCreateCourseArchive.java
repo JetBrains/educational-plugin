@@ -24,7 +24,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.SerializationUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -149,7 +149,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
           if (answerFile == null) {
             continue;
           }
-          final TaskFile studentFile = StudyUtils.createStudentFile(project, answerFile, task, 0);
+          final TaskFile studentFile = EduUtils.createStudentFile(project, answerFile, task, 0);
           if (studentFile != null) {
             studentTaskFiles.put(entry.getKey(), studentFile);
           }
@@ -176,7 +176,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         if (taskDir == null) {
           return testFiles;
         }
-        if (StudyUtils.isAndroidStudio()) {
+        if (EduUtils.isAndroidStudio()) {
           VirtualFile testDir = taskDir.getParent().findChild(EduNames.TEST);
           if (testDir == null) {
             return testFiles;
@@ -184,7 +184,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
           testFiles.addAll(Arrays.asList(testDir.getChildren()));
         } else {
           testFiles.addAll(Arrays.stream(taskDir.getChildren())
-            .filter(file -> StudyUtils.isTestsFile(project, file.getName()))
+            .filter(file -> EduUtils.isTestsFile(project, file.getName()))
             .collect(Collectors.toList()));
         }
         return testFiles;

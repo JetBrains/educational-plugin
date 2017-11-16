@@ -15,7 +15,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
     if (file == null || project == null) {
       return;
     }
-    final TaskFile taskFile = StudyUtils.getTaskFile(project, file);
+    final TaskFile taskFile = EduUtils.getTaskFile(project, file);
     if (taskFile == null) {
       return;
     }
@@ -57,13 +57,13 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
     }
     List<AnswerPlaceholder> placeholders = new ArrayList<>(taskFile.getAnswerPlaceholders());
     final ClearPlaceholders action = new ClearPlaceholders(taskFile, placeholders, editor);
-    StudyUtils.runUndoableAction(project, ACTION_NAME, action, UndoConfirmationPolicy.REQUEST_CONFIRMATION);
+    EduUtils.runUndoableAction(project, ACTION_NAME, action, UndoConfirmationPolicy.REQUEST_CONFIRMATION);
   }
 
   private static void updateView(@NotNull final Editor editor,
                                  @NotNull final TaskFile taskFile) {
     editor.getMarkupModel().removeAllHighlighters();
-    StudyUtils.drawAllAnswerPlaceholders(editor, taskFile);
+    EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
     if (file == null ) {
       return;
     }
-    TaskFile taskFile = StudyUtils.getTaskFile(project, file);
+    TaskFile taskFile = EduUtils.getTaskFile(project, file);
     if (taskFile == null || taskFile.getAnswerPlaceholders().isEmpty()) {
       return;
     }

@@ -17,7 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -127,7 +127,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
       taskFile.addAnswerPlaceholder(placeholder);
     }
     taskFile.sortAnswerPlaceholders();
-    StudyUtils.drawAllAnswerPlaceholders(myFixture.getEditor(), taskFile);
+    EduUtils.drawAllAnswerPlaceholders(myFixture.getEditor(), taskFile);
     return file;
   }
 

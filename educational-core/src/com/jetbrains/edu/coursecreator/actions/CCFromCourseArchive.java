@@ -19,7 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -75,7 +75,7 @@ public class CCFromCourseArchive extends DumbAwareAction {
     application.invokeAndWait(() -> application.runWriteAction(() -> {
       final VirtualFile[] children = baseDir.getChildren();
       for (VirtualFile child : children) {
-        StudyUtils.deleteFile(child);
+        EduUtils.deleteFile(child);
       }
       GeneratorUtils.createCourse(course, baseDir);
     }));
@@ -101,7 +101,7 @@ public class CCFromCourseArchive extends DumbAwareAction {
       taskIndex = 1;
     }
     course.initCourse(true);
-    application.invokeAndWait(() -> StudyUtils.registerStudyToolWindow(course, project));
+    application.invokeAndWait(() -> EduUtils.registerStudyToolWindow(course, project));
     synchronize(project);
   }
 
