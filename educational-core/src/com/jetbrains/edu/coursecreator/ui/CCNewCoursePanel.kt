@@ -19,8 +19,8 @@ import com.intellij.ui.layout.CCFlags
 import com.intellij.ui.layout.panel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduPluginConfigurator
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager
+import com.jetbrains.edu.learning.EduConfigurator
+import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
 import java.awt.BorderLayout
@@ -47,7 +47,7 @@ class CCNewCoursePanel : JPanel() {
   private val myErrorLabel = JBLabel()
 
   private val myCourse: Course = Course().apply { courseMode = CCUtils.COURSE_MODE }
-  private lateinit var myLanguageSettings: EduPluginConfigurator.LanguageSettings<*>
+  private lateinit var myLanguageSettings: EduConfigurator.LanguageSettings<*>
 
   private var myValidationListener: ValidationListener? = null
 
@@ -168,7 +168,7 @@ class CCNewCoursePanel : JPanel() {
       }
     }
 
-    val configurator = EduPluginConfiguratorManager.forLanguage(language) ?: return
+    val configurator = EduConfiguratorManager.forLanguage(language) ?: return
     myCourse.language = language.id
     myLanguageSettings = configurator.languageSettings
 
@@ -177,13 +177,13 @@ class CCNewCoursePanel : JPanel() {
   }
 
   private fun collectSupportedLanguages() {
-    EduPluginConfiguratorManager.allExtensions()
+    EduConfiguratorManager.allExtensions()
             .mapNotNull { extension -> obtainLanguageData(extension) }
             .sortedBy { (language, _) -> language.displayName }
             .forEach { myLanguageComboBox.addItem(it) }
   }
 
-  private fun obtainLanguageData(extension: LanguageExtensionPoint<EduPluginConfigurator<*>>): LanguageData? {
+  private fun obtainLanguageData(extension: LanguageExtensionPoint<EduConfigurator<*>>): LanguageData? {
     val languageId = extension.key
     val language = Language.findLanguageByID(languageId)
     if (language == null) {

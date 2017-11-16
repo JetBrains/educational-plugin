@@ -8,8 +8,8 @@ import com.intellij.openapi.module.ModuleWithNameAlreadyExists
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.InvalidDataException
-import com.jetbrains.edu.learning.EduPluginConfigurator
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager
+import com.jetbrains.edu.learning.EduConfigurator
+import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.jdom.JDOMException
 import java.io.IOException
@@ -31,13 +31,13 @@ abstract class EduBaseIntellijModuleBuilder : JavaModuleBuilder() {
 
   open protected val course: Course? get() = null
 
-  protected fun pluginConfigurator(course: Course): EduPluginConfigurator<*>? {
+  protected fun pluginConfigurator(course: Course): EduConfigurator<*>? {
     val language = course.languageById
     if (language == null) {
       LOG.error("Can't find language by ${course.languageID}")
       return null
     }
-    val configurator = EduPluginConfiguratorManager.forLanguage(language)
+    val configurator = EduConfiguratorManager.forLanguage(language)
     if (configurator == null) {
       LOG.error("EduPluginConfigurator for language ${language.displayName} not found")
       return null

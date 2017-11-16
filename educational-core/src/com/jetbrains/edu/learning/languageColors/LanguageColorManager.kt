@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.intellij.lang.Language
 import com.intellij.ui.ColorUtil
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager
+import com.jetbrains.edu.learning.EduConfiguratorManager
 import java.awt.Color
 
 object LanguageColorManager {
@@ -20,7 +20,7 @@ object LanguageColorManager {
   }
 
   operator fun get(language: Language): Color? {
-    val tagColor = EduPluginConfiguratorManager.forLanguage(language)?.languageTagColor()
+    val tagColor = EduConfiguratorManager.forLanguage(language)?.languageTagColor()
     return if (tagColor != null) {
       tagColor
     } else {

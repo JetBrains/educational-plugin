@@ -3,7 +3,7 @@
     <depends>JUnit</depends>
 
     <extensions defaultExtensionNs="Educational">
-        <pluginConfigurator language="JAVA" implementationClass="com.jetbrains.edu.java.JPluginConfigurator"/>
+        <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">

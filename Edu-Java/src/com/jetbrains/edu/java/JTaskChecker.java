@@ -21,10 +21,10 @@ public class JTaskChecker extends RunConfigurationBasedTaskChecker {
   @Nullable
   @Override
   protected VirtualFile getTestsFile() {
-    String testFileName = JPluginConfigurator.TEST_JAVA;
+    String testFileName = JConfigurator.TEST_JAVA;
     if (myTask instanceof TaskWithSubtasks) {
       int activeSubtaskIndex = ((TaskWithSubtasks) myTask).getActiveSubtaskIndex();
-      testFileName = FileUtil.getNameWithoutExtension(testFileName) + EduNames.SUBTASK_MARKER + activeSubtaskIndex + "." + FileUtilRt.getExtension(JPluginConfigurator.TEST_JAVA);
+      testFileName = FileUtil.getNameWithoutExtension(testFileName) + EduNames.SUBTASK_MARKER + activeSubtaskIndex + "." + FileUtilRt.getExtension(JConfigurator.TEST_JAVA);
     }
     VirtualFile taskDir = myTask.getTaskDir(myProject);
     if (taskDir == null) {

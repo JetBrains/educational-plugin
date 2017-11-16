@@ -17,7 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformUtils;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.EduNames;
@@ -43,11 +43,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class PyPluginConfigurator implements EduPluginConfigurator<PyNewProjectSettings> {
+public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   public static final String PYTHON_3 = "3.x";
   public static final String PYTHON_2 = "2.x";
   private static final String TESTS_PY = "tests.py";
-  private static final Logger LOG = Logger.getInstance(PyPluginConfigurator.class);
+  private static final Logger LOG = Logger.getInstance(PyConfigurator.class);
   private static final String COURSE_NAME = "Introduction to Python.zip";
   private static final String TASK_PY = "task.py";
 
@@ -177,7 +177,7 @@ public class PyPluginConfigurator implements EduPluginConfigurator<PyNewProjectS
 
   @Override
   public List<String> getBundledCoursePaths() {
-    File bundledCourseRoot = EduUtils.getBundledCourseRoot(COURSE_NAME, PyPluginConfigurator.class);
+    File bundledCourseRoot = EduUtils.getBundledCourseRoot(COURSE_NAME, PyConfigurator.class);
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), COURSE_NAME));
   }
 

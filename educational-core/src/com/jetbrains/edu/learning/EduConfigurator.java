@@ -36,18 +36,18 @@ import java.util.Objects;
 /**
  * The main interface provides courses support for some language.
  *
- * To get configurator instance for some language use {@link EduPluginConfiguratorManager}
+ * To get configurator instance for some language use {@link EduConfiguratorManager}
  * instead of {@link com.intellij.lang.LanguageExtension} because configurator shouldn't be used in some environments
- * and {@link EduPluginConfiguratorManager} supports the corresponding filtering.
+ * and {@link EduConfiguratorManager} supports the corresponding filtering.
  *
  * @param <Settings> container type holds course project settings state
  *
- * @see EduPluginConfiguratorManager
+ * @see EduConfiguratorManager
  */
-public interface EduPluginConfigurator<Settings> {
-  String EP_NAME = "Educational.pluginConfigurator";
+public interface EduConfigurator<Settings> {
+  String EP_NAME = "Educational.configurator";
 
-  Logger LOG = Logger.getInstance(EduPluginConfigurator.class);
+  Logger LOG = Logger.getInstance(EduConfigurator.class);
 
   @NotNull
   String getTestFileName();
@@ -223,7 +223,7 @@ public interface EduPluginConfigurator<Settings> {
    *
    * @return true if configurator can be used, false otherwise
    *
-   * @see EduPluginConfiguratorManager
+   * @see EduConfiguratorManager
    */
   default boolean isEnabled() {
     return true;
