@@ -86,7 +86,7 @@ public class CCNewSubtaskAction extends DumbAwareAction {
     if (course == null) {
       return;
     }
-    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return;
     }

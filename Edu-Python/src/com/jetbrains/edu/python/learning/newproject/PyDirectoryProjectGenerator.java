@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.python.learning.PyPluginConfigurator;
+import com.jetbrains.edu.python.learning.PyConfigurator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -213,10 +213,10 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
   static String getBaseSdk(@NotNull final Course course) {
     LanguageLevel baseLevel = LanguageLevel.PYTHON36;
     final String version = course.getLanguageVersion();
-    if (PyPluginConfigurator.PYTHON_2.equals(version)) {
+    if (PyConfigurator.PYTHON_2.equals(version)) {
       baseLevel = LanguageLevel.PYTHON27;
     }
-    else if (PyPluginConfigurator.PYTHON_3.equals(version)) {
+    else if (PyConfigurator.PYTHON_3.equals(version)) {
       baseLevel = LanguageLevel.PYTHON36;
     }
     else if (version != null) {

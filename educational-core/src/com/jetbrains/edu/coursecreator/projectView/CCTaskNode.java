@@ -10,8 +10,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -55,7 +55,7 @@ public class CCTaskNode extends TaskNode {
       if (course == null) {
         return null;
       }
-      EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
+      EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
       if (configurator == null) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       }
@@ -72,7 +72,7 @@ public class CCTaskNode extends TaskNode {
   }
 
   @NotNull
-  private static String getTestNodeName(EduPluginConfigurator configurator, PsiElement psiElement) {
+  private static String getTestNodeName(EduConfigurator configurator, PsiElement psiElement) {
     String defaultTestName = configurator.getTestFileName();
     if (psiElement instanceof PsiFile) {
       return defaultTestName;

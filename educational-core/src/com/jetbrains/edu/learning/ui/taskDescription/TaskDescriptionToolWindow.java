@@ -168,7 +168,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
       LOG.warn("Course is null");
       return group;
     }
-    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator != null) {
       group.addAll(configurator.getTaskDescriptionActionGroup());
     }

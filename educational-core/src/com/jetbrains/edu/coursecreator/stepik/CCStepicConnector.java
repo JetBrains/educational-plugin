@@ -248,7 +248,7 @@ public class CCStepicConnector {
       registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final Language language = lesson.getCourse().getLanguageById();
-      final EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(language);
+      final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
 
       List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren()).filter(configurator::isTestFile)
                                                  .collect(Collectors.toList());

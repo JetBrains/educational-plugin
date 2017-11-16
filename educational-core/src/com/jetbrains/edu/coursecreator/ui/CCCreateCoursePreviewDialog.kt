@@ -10,7 +10,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
-import com.jetbrains.edu.learning.EduPluginConfigurator
+import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator
@@ -22,7 +22,7 @@ class CCCreateCoursePreviewDialog(
         private val myProject: Project,
         private val myModule: Module,
         private val myCourse: Course,
-        private val myConfigurator: EduPluginConfigurator<*>
+        private val myConfigurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
   private val myPanel: CoursePanel = CoursePanel(true, false).apply {

@@ -14,7 +14,7 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
+import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -30,11 +30,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator<JdkProjectSettings> {
+public abstract class EduConfiguratorBase implements EduConfigurator<JdkProjectSettings> {
   @Override
   public VirtualFile createLessonContent(@NotNull Project project, @NotNull Lesson lesson, @NotNull VirtualFile parentDirectory) {
     if (EduUtils.isAndroidStudio()) {
-      return EduPluginConfigurator.super.createLessonContent(project, lesson, parentDirectory);
+      return EduConfigurator.super.createLessonContent(project, lesson, parentDirectory);
     }
     String courseDirPath = parentDirectory.getPath();
     Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduNames.UTIL);
@@ -87,7 +87,7 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
     try {
       EduModuleBuilderUtils.createCourseModuleContent(moduleModel, project, course, moduleDir);
     } catch (IOException | ModuleWithNameAlreadyExists | ConfigurationException | JDOMException e) {
-      Logger.getInstance(EduPluginConfiguratorBase.class).error(e);
+      Logger.getInstance(EduConfiguratorBase.class).error(e);
     }
   }
 

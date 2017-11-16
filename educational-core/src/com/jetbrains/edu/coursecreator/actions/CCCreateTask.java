@@ -51,7 +51,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   @Nullable
   protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Task item,
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
-    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator != null) {
       return configurator.createTaskContent(project, item, parentDirectory, course);
     }
