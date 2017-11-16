@@ -33,15 +33,15 @@ class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<Output
 
   override fun onTaskFailed(message: String) {
     super.onTaskFailed("Incorrect output")
-    StudyCheckUtils.showTestResultsToolWindow(myProject, message)
+    CheckUtils.showTestResultsToolWindow(myProject, message)
   }
 
   override fun onTaskSolved(message: String) {
     super.onTaskSolved(message)
   }
 
-  override fun check(): StudyCheckResult {
-    val configuration = getConfiguration() ?: return StudyCheckResult(StudyStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
+  override fun check(): CheckResult {
+    val configuration = getConfiguration() ?: return CheckResult(StudyStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val runner = RunnerRegistry.getInstance().getRunner(executor.id, configuration.configuration)
     configuration.isActivateToolWindowBeforeRun = false
@@ -75,20 +75,20 @@ class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<Output
     latch.await()
     connection.disconnect()
     if (processNotStarted) {
-      return StudyCheckResult(StudyStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
+      return CheckResult(StudyStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     }
 
     val outputPatternFile = myTask.getTaskDir(myProject)?.findChild(OUTPUT_PATTERN_NAME)
-                            ?: return StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH)
+                            ?: return CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH)
     val expectedOutput = VfsUtil.loadText(outputPatternFile)
     var outputString = output.joinToString("")
     if (outputString.isEmpty()) {
       outputString = "<no output>"
     }
     if (expectedOutput.dropLastLineBreak() == outputString.dropLastLineBreak()) {
-      return StudyCheckResult(StudyStatus.Solved, StudyTestsOutputParser.CONGRATULATIONS)
+      return CheckResult(StudyStatus.Solved, TestsOutputParser.CONGRATULATIONS)
     }
-    return StudyCheckResult(StudyStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
+    return CheckResult(StudyStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
   }
 
   private fun getConfiguration(): RunnerAndConfigurationSettings? {
@@ -100,7 +100,7 @@ class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<Output
   }
 
   override fun clearState() {
-    StudyCheckUtils.drawAllPlaceholders(myProject, myTask)
+    CheckUtils.drawAllPlaceholders(myProject, myTask)
   }
 
   private fun String.dropLastLineBreak() : String = if (this.endsWith('\n')) this.dropLast(1) else this

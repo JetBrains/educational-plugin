@@ -4,14 +4,14 @@ import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.checker.StudyCheckListener;
+import com.jetbrains.edu.learning.checker.CheckListener;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
-public class NextRecommendationCheckListener implements StudyCheckListener {
+public class NextRecommendationCheckListener implements CheckListener {
 
   private StudyStatus myStatusBeforeCheck;
 

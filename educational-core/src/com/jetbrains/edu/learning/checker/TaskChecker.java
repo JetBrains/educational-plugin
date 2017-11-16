@@ -18,25 +18,25 @@ public class TaskChecker<T extends Task> {
 
   public void onTaskSolved(@NotNull String message) {
     ApplicationManager.getApplication().invokeLater(
-      () -> StudyCheckUtils.showTestResultPopUp(message, MessageType.INFO.getPopupBackground(), myProject));
+      () -> CheckUtils.showTestResultPopUp(message, MessageType.INFO.getPopupBackground(), myProject));
   }
 
   public void onTaskFailed(@NotNull String message) {
     ApplicationManager.getApplication()
-      .invokeLater(() -> StudyCheckUtils.showTestResultPopUp(message, MessageType.ERROR.getPopupBackground(), myProject));
+      .invokeLater(() -> CheckUtils.showTestResultPopUp(message, MessageType.ERROR.getPopupBackground(), myProject));
   }
 
-  public StudyCheckResult check()  {
-    return new StudyCheckResult(StudyStatus.Unchecked, "Check for " + myTask.getTaskType() + " task isn't available");
+  public CheckResult check()  {
+    return new CheckResult(StudyStatus.Unchecked, "Check for " + myTask.getTaskType() + " task isn't available");
   }
 
   /**
    * Checks solution for a task on Stepik
    * @return result of a check. If remote check is unsupported returns special instance of check result.
-   * @see StudyCheckResult#USE_LOCAL_CHECK
+   * @see CheckResult#USE_LOCAL_CHECK
    */
-  public StudyCheckResult checkOnRemote()  {
-    return StudyCheckResult.USE_LOCAL_CHECK;
+  public CheckResult checkOnRemote()  {
+    return CheckResult.USE_LOCAL_CHECK;
   }
 
   public void clearState() {
