@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.ui;
+package com.jetbrains.edu.learning.ui.taskDescription;
 
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Condition;

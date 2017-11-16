@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
