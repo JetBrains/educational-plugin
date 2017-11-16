@@ -16,7 +16,6 @@ import com.intellij.ui.JBColor;
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
