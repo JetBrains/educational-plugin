@@ -37,7 +37,7 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
       return EduPluginConfigurator.super.createLessonContent(project, lesson, parentDirectory);
     }
     String courseDirPath = parentDirectory.getPath();
-    Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduIntelliJNames.UTIL);
+    Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduNames.UTIL);
     if (utilModule == null) {
       return null;
     }
@@ -66,7 +66,7 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
   @Override
   public boolean excludeFromArchive(@NotNull String path) {
     final String name = PathUtil.getFileName(path);
-    return "out".equals(name) || ".idea".equals(name) || "iml".equals(FileUtilRt.getExtension(name)) || EduIntelliJNames.TEST_RUNNER_FILE.equals(name);
+    return "out".equals(name) || ".idea".equals(name) || "iml".equals(FileUtilRt.getExtension(name)) || "EduTestRunner.java".equals(name);
   }
 
 

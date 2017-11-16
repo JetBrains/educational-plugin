@@ -88,7 +88,7 @@ public class EduIntellijUtils {
                                         @Nullable String taskFileName, @Nullable String testFileName) {
     String lessonDirName = parentDirectory.getName();
     Module lessonModule = ModuleManager.getInstance(project).findModuleByName(lessonDirName);
-    Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduIntelliJNames.UTIL);
+    Module utilModule = ModuleManager.getInstance(project).findModuleByName(EduNames.UTIL);
     if (lessonModule == null || utilModule == null) {
       return null;
     }
