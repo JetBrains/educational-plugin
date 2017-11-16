@@ -47,8 +47,8 @@ import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicNames;
 import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepic.StepicUserWidget;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindowFactory;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import javafx.application.Platform;
 import org.jetbrains.annotations.NotNull;
 
@@ -121,7 +121,7 @@ public class StudyProjectComponent implements ProjectComponent {
     myBusConnection.subscribe(EditorColorsManager.TOPIC, new EditorColorsListener() {
       @Override
       public void globalSchemeChange(EditorColorsScheme scheme) {
-        final StudyToolWindow toolWindow = StudyUtils.getStudyToolWindow(myProject);
+        final TaskDescriptionToolWindow toolWindow = StudyUtils.getStudyToolWindow(myProject);
         if (toolWindow != null) {
           toolWindow.updateFonts(myProject);
         }
@@ -194,7 +194,7 @@ public class StudyProjectComponent implements ProjectComponent {
   }
 
   private void registerShortcuts() {
-    StudyToolWindow window = StudyUtils.getStudyToolWindow(myProject);
+    TaskDescriptionToolWindow window = StudyUtils.getStudyToolWindow(myProject);
     if (window != null) {
       List<AnAction> actionsOnToolbar = window.getActions(true);
       for (AnAction action : actionsOnToolbar) {
@@ -311,7 +311,7 @@ public class StudyProjectComponent implements ProjectComponent {
   public void projectClosed() {
     final Course course = StudyTaskManager.getInstance(myProject).getCourse();
     if (course != null) {
-      final ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(StudyToolWindowFactory.STUDY_TOOL_WINDOW);
+      final ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
       if (toolWindow != null) {
         toolWindow.getContentManager().removeAllContents(false);
       }

@@ -45,8 +45,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StudyBrowserWindow extends JFrame {
-  private static final Logger LOG = Logger.getInstance(StudyToolWindow.class);
+public class BrowserWindow extends JFrame {
+  private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
   private static final String EVENT_TYPE_CLICK = "click";
   private static final Pattern IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#");
   private JFXPanel myPanel;
@@ -59,7 +59,7 @@ public class StudyBrowserWindow extends JFrame {
   private boolean myLinkInNewBrowser = true;
   private boolean myShowProgress = false;
 
-  public StudyBrowserWindow(@NotNull final Project project, final boolean linkInNewWindow, final boolean showProgress) {
+  public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow, final boolean showProgress) {
     myProject = project;
     myLinkInNewBrowser = linkInNewWindow;
     myShowProgress = showProgress;

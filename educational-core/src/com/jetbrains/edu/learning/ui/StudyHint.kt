@@ -11,9 +11,9 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.StudyUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.ui.taskDescription.StudyJavaFxToolWindow
-import com.jetbrains.edu.learning.ui.taskDescription.StudySwingToolWindow
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow
+import com.jetbrains.edu.learning.ui.taskDescription.JavaFxToolWindow
+import com.jetbrains.edu.learning.ui.taskDescription.SwingToolWindow
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow
 import java.util.*
 
 open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
@@ -24,22 +24,22 @@ open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
     private val HINTS_NOT_AVAILABLE = "There is no hint for this answer placeholder"
   }
 
-  val studyToolWindow: StudyToolWindow
+  val taskDescriptionToolWindow: TaskDescriptionToolWindow
   protected var myShownHintNumber = 0
   protected var isEditingMode = false
 
   init {
     if (StudyUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
-      studyToolWindow = StudyJavaFxToolWindow()
+      taskDescriptionToolWindow = JavaFxToolWindow()
     }
     else {
-      studyToolWindow = StudySwingToolWindow()
+      taskDescriptionToolWindow = SwingToolWindow()
     }
-    studyToolWindow.init(myProject, false)
+    taskDescriptionToolWindow.init(myProject, false)
 
     if (myPlaceholder == null) {
-      studyToolWindow.setText(OUR_WARNING_MESSAGE)
-      studyToolWindow.setActionToolbar(DefaultActionGroup())
+      taskDescriptionToolWindow.setText(OUR_WARNING_MESSAGE)
+      taskDescriptionToolWindow.setActionToolbar(DefaultActionGroup())
     }
 
     val course = StudyTaskManager.getInstance(myProject).course
@@ -48,7 +48,7 @@ open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
       val hints = myPlaceholder?.hints
       if (hints != null) {
         group.addAll(Arrays.asList(GoBackward(), GoForward(), CCEditHintAction(myPlaceholder)))
-        studyToolWindow.setActionToolbar(group)
+        taskDescriptionToolWindow.setActionToolbar(group)
         setHintText(hints)
       }
     }
@@ -56,11 +56,11 @@ open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
 
   protected fun setHintText(hints: List<String>) {
     if (!hints.isEmpty()) {
-      studyToolWindow.setText(hints[myShownHintNumber])
+      taskDescriptionToolWindow.setText(hints[myShownHintNumber])
     }
     else {
       myShownHintNumber = -1
-      studyToolWindow.setText(HINTS_NOT_AVAILABLE)
+      taskDescriptionToolWindow.setText(HINTS_NOT_AVAILABLE)
     }
   }
 
@@ -68,7 +68,7 @@ open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
 
 
     override fun actionPerformed(e: AnActionEvent) {
-      studyToolWindow.setText(myPlaceholder!!.hints[++myShownHintNumber])
+      taskDescriptionToolWindow.setText(myPlaceholder!!.hints[++myShownHintNumber])
     }
 
     override fun update(e: AnActionEvent) {
@@ -87,7 +87,7 @@ open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
   inner class GoBackward : AnAction("Previous Hint", "Previous Hint", AllIcons.Actions.Back) {
 
     override fun actionPerformed(e: AnActionEvent) {
-      studyToolWindow.setText(myPlaceholder!!.hints[--myShownHintNumber])
+      taskDescriptionToolWindow.setText(myPlaceholder!!.hints[--myShownHintNumber])
     }
 
     override fun update(e: AnActionEvent) {
