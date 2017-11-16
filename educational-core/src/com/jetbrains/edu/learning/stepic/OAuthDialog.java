@@ -5,7 +5,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DefaultProjectFactoryImpl;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.ui.AuthorizationPanel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
