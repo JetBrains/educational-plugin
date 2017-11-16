@@ -402,9 +402,9 @@ public class StudyUtils {
   }
 
   @Nullable
-  public static StudyTwitterPluginConfigurator getTwitterConfigurator(@NotNull final Project project) {
-    StudyTwitterPluginConfigurator[] extensions = StudyTwitterPluginConfigurator.EP_NAME.getExtensions();
-    for (StudyTwitterPluginConfigurator extension: extensions) {
+  public static TwitterPluginConfigurator getTwitterConfigurator(@NotNull final Project project) {
+    TwitterPluginConfigurator[] extensions = TwitterPluginConfigurator.EP_NAME.getExtensions();
+    for (TwitterPluginConfigurator extension: extensions) {
       if (extension.accept(project)) {
         return extension;
       }
