@@ -64,7 +64,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.stepic.OAuthDialog;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
-import com.jetbrains.edu.learning.ui.StudyStepicUserWidget;
+import com.jetbrains.edu.learning.stepic.StudyStepicUserWidget;
 import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindowFactory;
 import com.petebevin.markdown.MarkdownProcessor;
