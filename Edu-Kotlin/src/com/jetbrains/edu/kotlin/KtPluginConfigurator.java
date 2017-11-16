@@ -12,7 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.learning.SubtaskUtils;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -105,7 +105,7 @@ public class KtPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public List<String> getBundledCoursePaths() {
-    File bundledCourseRoot = StudyUtils.getBundledCourseRoot(KtKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME, KtKotlinKoansModuleBuilder.class);
+    File bundledCourseRoot = EduUtils.getBundledCourseRoot(KtKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME, KtKotlinKoansModuleBuilder.class);
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), KtKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME));
   }
 
@@ -122,6 +122,6 @@ public class KtPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public boolean isEnabled() {
-    return !StudyUtils.isAndroidStudio();
+    return !EduUtils.isAndroidStudio();
   }
 }

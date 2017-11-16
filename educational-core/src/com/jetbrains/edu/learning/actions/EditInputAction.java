@@ -21,7 +21,7 @@ import com.intellij.ui.tabs.TabsListener;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
@@ -51,13 +51,13 @@ public class EditInputAction extends DumbAwareAction {
   }
 
   public void showInput(final Project project) {
-    final Editor selectedEditor = StudyUtils.getSelectedEditor(project);
+    final Editor selectedEditor = EduUtils.getSelectedEditor(project);
     if (selectedEditor != null) {
       FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
       final VirtualFile openedFile = fileDocumentManager.getFile(selectedEditor.getDocument());
       final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
       assert openedFile != null;
-      TaskFile taskFile = StudyUtils.getTaskFile(project, openedFile);
+      TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
       assert taskFile != null;
       final Task currentTask = taskFile.getTask();
       tabbedPane = new JBEditorTabs(project, ActionManager.getInstance(), IdeFocusManager.findInstance(), project);
@@ -66,7 +66,7 @@ public class EditInputAction extends DumbAwareAction {
         public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
           if (newSelection.getIcon() != null) {
             int tabCount = tabbedPane.getTabCount();
-            VirtualFile taskDir = StudyUtils.getTaskDir(openedFile);
+            VirtualFile taskDir = EduUtils.getTaskDir(openedFile);
             VirtualFile testsDir = taskDir.findChild(EduNames.USER_TESTS);
             assert testsDir != null;
             UserTest userTest = createUserTest(testsDir, currentTask, studyTaskManager);
@@ -83,8 +83,8 @@ public class EditInputAction extends DumbAwareAction {
       List<UserTest> userTests = studyTaskManager.getUserTests(currentTask);
       int i = 1;
       for (UserTest userTest : userTests) {
-        String inputFileText = StudyUtils.getFileText(null, userTest.getInput(), false, "UTF-8");
-        String outputFileText = StudyUtils.getFileText(null, userTest.getOutput(), false, "UTF-8");
+        String inputFileText = EduUtils.getFileText(null, userTest.getInput(), false, "UTF-8");
+        String outputFileText = EduUtils.getFileText(null, userTest.getOutput(), false, "UTF-8");
         TestContentPanel myContentPanel = new TestContentPanel(userTest);
         myContentPanel.addInputContent(inputFileText);
         myContentPanel.addOutputContent(outputFileText);
@@ -104,7 +104,7 @@ public class EditInputAction extends DumbAwareAction {
           .setMovable(true)
           .setRequestFocus(true)
           .createPopup();
-      EduEditor selectedEduEditor = StudyUtils.getSelectedStudyEditor(project);
+      EduEditor selectedEduEditor = EduUtils.getSelectedStudyEditor(project);
       assert selectedEduEditor != null;
       hint.showInCenterOf(selectedEduEditor.getComponent());
       hint.addListener(new HintClosedListener(currentTask, studyTaskManager));
@@ -123,9 +123,9 @@ public class EditInputAction extends DumbAwareAction {
       LOG.error(e);
     }
     finally {
-      StudyUtils.closeSilently(printWriter);
+      EduUtils.closeSilently(printWriter);
     }
-    StudyUtils.synchronize();
+    EduUtils.synchronize();
   }
 
   private static UserTest createUserTest(@NotNull final VirtualFile testsDir,
@@ -211,7 +211,7 @@ public class EditInputAction extends DumbAwareAction {
       File testInputFile = new File(userTest.getInput());
       File testOutputFile = new File(userTest.getOutput());
       if (testInputFile.delete() && testOutputFile.delete()) {
-        StudyUtils.synchronize();
+        EduUtils.synchronize();
       } else {
         LOG.error("failed to delete user tests");
       }
@@ -223,15 +223,15 @@ public class EditInputAction extends DumbAwareAction {
   }
   @Override
   public void update(final AnActionEvent e) {
-    StudyUtils.enableAction(e, false);
+    EduUtils.enableAction(e, false);
 
     final Project project = e.getProject();
     if (project != null) {
-      EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
+      EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
       if (eduEditor != null) {
         final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(eduEditor.getTaskFile().getTask());
         if (!userTests.isEmpty()) {
-          StudyUtils.enableAction(e, true);
+          EduUtils.enableAction(e, true);
         }
       }
     }

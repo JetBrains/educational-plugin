@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.python.learning.PyPluginConfigurator;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -53,11 +53,11 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
 
   @Nullable
   private static String generateName(@NotNull VirtualFile testsFile, @NotNull Project project) {
-    VirtualFile taskDir = StudyUtils.getTaskDir(testsFile);
+    VirtualFile taskDir = EduUtils.getTaskDir(testsFile);
     if (taskDir == null) {
       return null;
     }
-    Task task = StudyUtils.getTask(project, taskDir);
+    Task task = EduUtils.getTask(project, taskDir);
     if (task == null) {
       return null;
     }
@@ -79,12 +79,12 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
     if (file == null) {
       return null;
     }
-    VirtualFile taskDir = StudyUtils.getTaskDir(file);
+    VirtualFile taskDir = EduUtils.getTaskDir(file);
     if (taskDir == null) {
       return null;
     }
 
-    Task task = StudyUtils.getTask(location.getProject(), taskDir);
+    Task task = EduUtils.getTask(location.getProject(), taskDir);
     if (task == null) {
       return null;
     }

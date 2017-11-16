@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ public class CCEditTaskTextAction extends ToggleAction implements DumbAware {
     if (project == null) {
       return;
     }
-    TaskDescriptionToolWindow window = StudyUtils.getStudyToolWindow(project);
+    TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
     if (window == null) {
       return;
     }
@@ -54,7 +54,7 @@ public class CCEditTaskTextAction extends ToggleAction implements DumbAware {
       return;
     }
 
-    Task task = StudyUtils.getTaskForFile(project, virtualFile);
+    Task task = EduUtils.getTaskForFile(project, virtualFile);
     if (task == null) {
       StudyTaskManager.getInstance(project).setTurnEditingMode(true);
       return;
@@ -75,7 +75,7 @@ public class CCEditTaskTextAction extends ToggleAction implements DumbAware {
 
     super.update(e);
     if (CCUtils.isCourseCreator(project)) {
-      Task task = StudyUtils.getTaskForCurrentSelectedFile(project);
+      Task task = EduUtils.getTaskForCurrentSelectedFile(project);
       e.getPresentation().setVisible(true);
       e.getPresentation().setEnabled(task != null);
     } else {

@@ -7,7 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.EduTaskChecker;
 import com.jetbrains.edu.learning.checker.CheckResult;
@@ -76,7 +76,7 @@ public class PyTaskChecker extends EduTaskChecker {
       CheckUtils.drawAllPlaceholders(myProject, myTask);
       VirtualFile taskDir = myTask.getTaskDir(myProject);
       if (taskDir != null) {
-        StudyUtils.deleteWindowDescriptions(myTask, taskDir);
+        EduUtils.deleteWindowDescriptions(myTask, taskDir);
       }
     });
   }
@@ -100,7 +100,7 @@ public class PyTaskChecker extends EduTaskChecker {
               () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(myTask, taskDir), name, taskFile, myProject)));
         }
       }
-      CheckUtils.navigateToFailedPlaceholder(new EduState(StudyUtils.getSelectedStudyEditor(myProject)), myTask, taskDir, myProject);
+      CheckUtils.navigateToFailedPlaceholder(new EduState(EduUtils.getSelectedStudyEditor(myProject)), myTask, taskDir, myProject);
     });
   }
 

@@ -11,7 +11,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.awt.RelativePoint;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.SyncCourseAction;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import icons.EducationalCoreIcons;
@@ -99,7 +99,7 @@ public class StepicUserWidget implements IconLikeCustomStatusBarWidget {
           else {
             if (loginText.equals(selectedValue)) {
               EduUsagesCollector.loginFromWidget();
-              StepicConnector.doAuthorize(StudyUtils::showOAuthDialog);
+              StepicConnector.doAuthorize(EduUtils::showOAuthDialog);
             }
             else if (logOutText.equals(selectedValue)) {
               EduUsagesCollector.logoutFromWidget();

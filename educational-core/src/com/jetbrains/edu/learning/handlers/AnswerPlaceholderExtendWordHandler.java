@@ -10,7 +10,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +30,7 @@ public class AnswerPlaceholderExtendWordHandler implements ExtendWordSelectionHa
     if (virtualFile == null) {
       return null;
     }
-    TaskFile taskFile = StudyUtils.getTaskFile(e.getProject(), virtualFile);
+    TaskFile taskFile = EduUtils.getTaskFile(e.getProject(), virtualFile);
     if (taskFile == null) {
       return null;
     }
@@ -56,7 +56,7 @@ public class AnswerPlaceholderExtendWordHandler implements ExtendWordSelectionHa
   public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
     AnswerPlaceholder placeholder = getAnswerPlaceholder(e, cursorOffset);
     assert placeholder != null;
-    final Pair<Integer, Integer> offsets = StudyUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
+    final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
     return Collections.singletonList(new TextRange(offsets.getFirst(), offsets.getSecond()));
   }
 }

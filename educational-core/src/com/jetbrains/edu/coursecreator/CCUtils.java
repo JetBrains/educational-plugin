@@ -22,7 +22,7 @@ import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -96,7 +96,7 @@ public class CCUtils {
       StudyItem item1 = getStudyItem.fun(o1);
       StudyItem item2 = getStudyItem.fun(o2);
       //if we delete some dir we should start increasing numbers in dir names from the end
-      return (-delta) * StudyUtils.INDEX_COMPARATOR.compare(item1, item2);
+      return (-delta) * EduUtils.INDEX_COMPARATOR.compare(item1, item2);
     });
 
     for (final VirtualFile dir : dirsToRename) {
@@ -279,16 +279,16 @@ public class CCUtils {
         }
         if (file.isDirectory()) return true;
 
-        if (StudyUtils.isTestsFile(project, name)) return true;
+        if (EduUtils.isTestsFile(project, name)) return true;
 
         if (name.contains(".iml") || (configurator != null && configurator.excludeFromArchive(file.getPath()))) {
           return false;
         }
-        final TaskFile taskFile = StudyUtils.getTaskFile(project, file);
+        final TaskFile taskFile = EduUtils.getTaskFile(project, file);
         if (taskFile == null) {
           final String path = VfsUtilCore.getRelativePath(file, baseDir);
           try {
-            if (StudyUtils.isImage(file.getName())) {
+            if (EduUtils.isImage(file.getName())) {
               task.addTestsTexts(path, Base64.encodeBase64URLSafeString(FileUtil.loadBytes(file.getInputStream())));
             }
             else {

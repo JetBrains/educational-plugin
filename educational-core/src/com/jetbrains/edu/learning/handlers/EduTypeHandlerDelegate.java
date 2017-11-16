@@ -16,7 +16,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCActivatePlaceholder;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAnswerPlaceholderAction;
 import com.jetbrains.edu.learning.SubtaskUtils;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -47,16 +47,16 @@ public class EduTypeHandlerDelegate extends TypedHandlerDelegate {
 
   @NotNull
   private static Result handleTyping(Project project, Editor editor, PsiFile file, boolean showBaloon) {
-    if (!StudyUtils.isStudyProject(project)) {
+    if (!EduUtils.isStudyProject(project)) {
       return Result.CONTINUE;
     }
-    TaskFile taskFile = StudyUtils.getTaskFile(project, file.getVirtualFile());
+    TaskFile taskFile = EduUtils.getTaskFile(project, file.getVirtualFile());
     if (taskFile == null || !(taskFile.getTask() instanceof TaskWithSubtasks)) {
       return Result.CONTINUE;
     }
     int offset = editor.getCaretModel().getOffset();
     if (CCUtils.isCourseCreator(project)) {
-      AnswerPlaceholder placeholder = StudyUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders());
+      AnswerPlaceholder placeholder = EduUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders());
       if (placeholder == null || placeholder.isActive()) {
         return Result.CONTINUE;
       }

@@ -80,7 +80,7 @@ public class SubtaskUtils {
       }
       UndoManager.getInstance(project).nonundoableActionPerformed(DocumentReferenceManager.getInstance().create(document), false);
       EditorNotifications.getInstance(project).updateNotifications(virtualFile);
-      if (StudyUtils.isStudentProject(project)) {
+      if (EduUtils.isStudentProject(project)) {
         WolfTheProblemSolver.getInstance(project).clearProblems(virtualFile);
         taskFile.setHighlightErrors(false);
       }
@@ -89,7 +89,7 @@ public class SubtaskUtils {
 
     // We want to dump current tool window editor state to subtask
     // before we will switch subtask
-    StudyUtils.saveToolWindowTextIfNeeded(project);
+    EduUtils.saveToolWindowTextIfNeeded(project);
 
     task.setActiveSubtaskIndex(toSubtaskIndex);
     updateUI(project, task, !CCUtils.isCourseCreator(project) && navigateToTask);
@@ -166,7 +166,7 @@ public class SubtaskUtils {
   public static void updateUI(@NotNull Project project, @NotNull Task task, boolean navigateToTask) {
     CheckUtils.drawAllPlaceholders(project, task);
     ProjectView.getInstance(project).refresh();
-    TaskDescriptionToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
+    TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
     if (toolWindow != null) {
       if (task.getTaskDescription() == null) {
         task.addTaskText(task.getTaskDescriptionName(), CCUtils.TASK_DESCRIPTION_TEXT);
@@ -193,6 +193,6 @@ public class SubtaskUtils {
     int prevSubtaskIndex = placeholder.getActiveSubtaskIndex() - 1;
     AnswerPlaceholderSubtaskInfo info = placeholder.getSubtaskInfos().get(prevSubtaskIndex);
     String replacementText = info != null ? info.getAnswer() : placeholder.getTaskText();
-    StudyUtils.replaceAnswerPlaceholder(editor.getDocument(), placeholder, placeholder.getRealLength(), replacementText);
+    EduUtils.replaceAnswerPlaceholder(editor.getDocument(), placeholder, placeholder.getRealLength(), replacementText);
   }
 }

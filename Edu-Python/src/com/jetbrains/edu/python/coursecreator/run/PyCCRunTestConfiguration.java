@@ -13,7 +13,7 @@ import com.intellij.openapi.util.JDOMExternalizerUtil;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.python.run.AbstractPythonRunConfiguration;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -69,11 +69,11 @@ class PyCCRunTestConfiguration extends AbstractPythonRunConfiguration<PyCCRunTes
     if (testsFile == null) {
       throw new RuntimeConfigurationException(message);
     }
-    VirtualFile taskDir = StudyUtils.getTaskDir(testsFile);
+    VirtualFile taskDir = EduUtils.getTaskDir(testsFile);
     if (taskDir == null) {
       throw new RuntimeConfigurationException(message);
     }
-    if (StudyUtils.getTask(myProject, taskDir) == null) {
+    if (EduUtils.getTask(myProject, taskDir) == null) {
       throw new RuntimeConfigurationException(message);
     }
   }

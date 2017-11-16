@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jetbrains.edu.learning.StudyUtils.createFromTemplate;
+import static com.jetbrains.edu.learning.EduUtils.createFromTemplate;
 
 public class EduIntellijUtils {
     private static final Logger LOG = Logger.getInstance(EduIntellijUtils.class);

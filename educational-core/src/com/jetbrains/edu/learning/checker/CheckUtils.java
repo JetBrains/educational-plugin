@@ -22,7 +22,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -56,7 +56,7 @@ public class CheckUtils {
       FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
       if (fileEditor instanceof EduEditor) {
         EduEditor eduEditor = (EduEditor)fileEditor;
-        StudyUtils.drawAllAnswerPlaceholders(eduEditor.getEditor(), taskFile);
+        EduUtils.drawAllAnswerPlaceholders(eduEditor.getEditor(), taskFile);
       }
     }
   }
@@ -105,7 +105,7 @@ public class CheckUtils {
     BalloonBuilder balloonBuilder =
       JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, null, color, null);
     final Balloon balloon = balloonBuilder.createBalloon();
-    StudyUtils.showCheckPopUp(project, balloon);
+    EduUtils.showCheckPopUp(project, balloon);
   }
 
 
@@ -117,7 +117,7 @@ public class CheckUtils {
       if (virtualFile == null) {
         continue;
       }
-      StudyUtils.flushWindows(taskFile, virtualFile);
+      EduUtils.flushWindows(taskFile, virtualFile);
     }
   }
 

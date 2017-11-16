@@ -18,7 +18,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -78,7 +78,7 @@ public class PyPluginConfigurator implements EduPluginConfigurator<PyNewProjectS
       }
       if (taskDirectory.isNull()) return;
 
-      if (StudyUtils.isStudentProject(project) && !task.getTaskFiles().isEmpty()) {
+      if (EduUtils.isStudentProject(project) && !task.getTaskFiles().isEmpty()) {
         createFilesFromText(task, taskDirectory.get());
       } else {
         createFilesFromTemplates(project, task, taskDirectory.get());
@@ -107,8 +107,8 @@ public class PyPluginConfigurator implements EduPluginConfigurator<PyNewProjectS
   private static void createFilesFromTemplates(@NotNull Project project,
                                                @NotNull Task task,
                                                @NotNull VirtualFile taskDirectory) {
-    StudyUtils.createFromTemplate(project, taskDirectory, TASK_PY);
-    StudyUtils.createFromTemplate(project, taskDirectory, TESTS_PY);
+    EduUtils.createFromTemplate(project, taskDirectory, TASK_PY);
+    EduUtils.createFromTemplate(project, taskDirectory, TESTS_PY);
     task.addTaskFile(TASK_PY, task.taskFiles.size());
   }
 
@@ -177,7 +177,7 @@ public class PyPluginConfigurator implements EduPluginConfigurator<PyNewProjectS
 
   @Override
   public List<String> getBundledCoursePaths() {
-    File bundledCourseRoot = StudyUtils.getBundledCourseRoot(COURSE_NAME, PyPluginConfigurator.class);
+    File bundledCourseRoot = EduUtils.getBundledCourseRoot(COURSE_NAME, PyPluginConfigurator.class);
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), COURSE_NAME));
   }
 

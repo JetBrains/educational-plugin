@@ -196,7 +196,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       }
       final VirtualFile testHelper = baseDir.findChild(EduNames.TEST_HELPER);
       if (testHelper != null) {
-        StudyUtils.deleteFile(testHelper);
+        EduUtils.deleteFile(testHelper);
       }
       final FileTemplate template =
         FileTemplateManager.getInstance(myProject).getInternalTemplate(FileUtil.getNameWithoutExtension(EduNames.TEST_HELPER));

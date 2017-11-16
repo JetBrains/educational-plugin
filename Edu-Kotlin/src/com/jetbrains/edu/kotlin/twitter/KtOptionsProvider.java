@@ -4,7 +4,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +21,7 @@ public class KtOptionsProvider implements OptionsProvider {
     Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : openProjects) {
       if (StudyTaskManager.getInstance(project).getCourse() != null) {
-        TwitterPluginConfigurator twitterConfigurator = StudyUtils.getTwitterConfigurator(project);
+        TwitterPluginConfigurator twitterConfigurator = EduUtils.getTwitterConfigurator(project);
         if (twitterConfigurator != null) {
           twitterSettings = KtTwitterSettings.getInstance(project);
           myAskToTweetCheckBox.setSelected(twitterSettings.askToTweet());

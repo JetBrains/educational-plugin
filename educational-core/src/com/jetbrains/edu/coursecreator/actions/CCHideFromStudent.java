@@ -9,7 +9,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -26,11 +26,11 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
 
   @Override
   protected void performAction(VirtualFile file, Task task, Course course, Project project) {
-    TaskFile taskFile = StudyUtils.getTaskFile(project, file);
+    TaskFile taskFile = EduUtils.getTaskFile(project, file);
     if (taskFile == null) {
       return;
     }
-    StudyUtils.runUndoableAction(project, ACTION_NAME, new HideTaskFile(project, file, task, taskFile));
+    EduUtils.runUndoableAction(project, ACTION_NAME, new HideTaskFile(project, file, task, taskFile));
   }
 
   private static class HideTaskFile extends BasicUndoableAction {
@@ -50,12 +50,12 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
 
     @Override
     public void undo() throws UnexpectedUndoException {
-      myTask.getTaskFiles().put(StudyUtils.pathRelativeToTask(myFile), myTaskFile);
+      myTask.getTaskFiles().put(EduUtils.pathRelativeToTask(myFile), myTaskFile);
       if (!myTaskFile.getAnswerPlaceholders().isEmpty() && FileEditorManager.getInstance(myProject).isFileOpen(myFile)) {
         for (FileEditor fileEditor : FileEditorManager.getInstance(myProject).getEditors(myFile)) {
           if (fileEditor instanceof TextEditor) {
             Editor editor = ((TextEditor)fileEditor).getEditor();
-            StudyUtils.drawAllAnswerPlaceholders(editor, myTaskFile);
+            EduUtils.drawAllAnswerPlaceholders(editor, myTaskFile);
           }
         }
       }
@@ -83,12 +83,12 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
         }
       }
     }
-    String taskRelativePath = StudyUtils.pathRelativeToTask(file);
+    String taskRelativePath = EduUtils.pathRelativeToTask(file);
     taskFiles.remove(taskRelativePath);
   }
 
   @Override
   protected boolean isAvailable(Project project, VirtualFile file) {
-    return StudyUtils.getTaskFile(project, file) != null;
+    return EduUtils.getTaskFile(project, file) != null;
   }
 }
