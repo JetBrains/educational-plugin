@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.editor.StudyEditor;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
       StudySubtaskUtils.refreshPlaceholder(studyEditor.getEditor(), answerPlaceholder);
       final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
       answerPlaceholder.reset();
-      taskManager.setStatus(answerPlaceholder, StudyStatus.Unchecked);
+      taskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
     }
   }
 

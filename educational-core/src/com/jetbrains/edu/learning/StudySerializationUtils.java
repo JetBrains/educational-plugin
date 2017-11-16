@@ -15,7 +15,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicWrappers;
@@ -179,7 +179,7 @@ public class StudySerializationUtils {
       Map<String, String> destMap = new HashMap<>();
       for (Map.Entry<Element, String> entry : sourceMap.entrySet()) {
         String status = entry.getValue();
-        if (status.equals(StudyStatus.Unchecked.toString())) {
+        if (status.equals(CheckStatus.Unchecked.toString())) {
           continue;
         }
         destMap.put(outputter.outputString(entry.getKey()), status);
@@ -205,7 +205,7 @@ public class StudySerializationUtils {
             Element taskFileElement = entry.getValue();
             String taskFileText = outputter.outputString(taskFileElement);
             String taskFileStatus = taskFileToStatusMap.get(taskFileText);
-            if (taskFileStatus != null && (taskStatus == null || taskFileStatus.equals(StudyStatus.Failed.toString()))) {
+            if (taskFileStatus != null && (taskStatus == null || taskFileStatus.equals(CheckStatus.Failed.toString()))) {
               taskStatus = taskFileStatus;
             }
             Document document = StudyUtils.getDocument(project.getBasePath(), lessonIndex, taskIndex, entry.getKey());
@@ -400,7 +400,7 @@ public class StudySerializationUtils {
       String status = placeholderTextToStatus.get(placeholderText);
       if (status != null) {
         addChildWithName(placeholder, STATUS, status);
-        if (taskStatus == null || status.equals(StudyStatus.Failed.toString())) {
+        if (taskStatus == null || status.equals(CheckStatus.Failed.toString())) {
           taskStatus = status;
         }
       }

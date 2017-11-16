@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -39,11 +39,11 @@ public class PyTaskChecker extends EduTaskChecker {
     VirtualFile taskDir = myTask.getTaskDir(myProject);
     if (taskDir == null) {
       LOG.info("taskDir is null for task " + myTask.getName());
-      return new CheckResult(StudyStatus.Unchecked, "Task is broken");
+      return new CheckResult(CheckStatus.Unchecked, "Task is broken");
     }
 
     if (!myTask.isValid(myProject)) {
-      return new CheckResult(StudyStatus.Unchecked,
+      return new CheckResult(CheckStatus.Unchecked,
               StudyEditor.BROKEN_SOLUTION_ERROR_TEXT_START + StudyEditor.ACTION_TEXT + StudyEditor.BROKEN_SOLUTION_ERROR_TEXT_END);
     }
     CountDownLatch latch = new CountDownLatch(1);
@@ -62,13 +62,13 @@ public class PyTaskChecker extends EduTaskChecker {
         TestsOutputParser.TestsOutput output =
           CheckUtils
             .getTestOutput(testProcess, testRunner.getCommandLine().getCommandLineString(), myTask.getLesson().getCourse().isAdaptive());
-        return new CheckResult(output.isSuccess() ? StudyStatus.Solved : StudyStatus.Failed, output.getMessage());
+        return new CheckResult(output.isSuccess() ? CheckStatus.Solved : CheckStatus.Failed, output.getMessage());
       }
     }
     catch (ExecutionException | InterruptedException e) {
       LOG.error(e);
     }
-    return new CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+    return new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
   }
 
   @Override

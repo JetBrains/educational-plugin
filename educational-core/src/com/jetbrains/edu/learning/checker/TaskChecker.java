@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.checker;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ public class TaskChecker<T extends Task> {
   }
 
   public CheckResult check()  {
-    return new CheckResult(StudyStatus.Unchecked, "Check for " + myTask.getTaskType() + " task isn't available");
+    return new CheckResult(CheckStatus.Unchecked, "Check for " + myTask.getTaskType() + " task isn't available");
   }
 
   /**

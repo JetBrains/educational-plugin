@@ -19,7 +19,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.StudyUtils
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.courseFormat.StudyStatus
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import java.util.*
 import java.util.concurrent.CountDownLatch
@@ -41,7 +41,7 @@ class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<Output
   }
 
   override fun check(): CheckResult {
-    val configuration = getConfiguration() ?: return CheckResult(StudyStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
+    val configuration = getConfiguration() ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val runner = RunnerRegistry.getInstance().getRunner(executor.id, configuration.configuration)
     configuration.isActivateToolWindowBeforeRun = false
@@ -75,20 +75,20 @@ class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<Output
     latch.await()
     connection.disconnect()
     if (processNotStarted) {
-      return CheckResult(StudyStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
+      return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     }
 
     val outputPatternFile = myTask.getTaskDir(myProject)?.findChild(OUTPUT_PATTERN_NAME)
-                            ?: return CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH)
+                            ?: return CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH)
     val expectedOutput = VfsUtil.loadText(outputPatternFile)
     var outputString = output.joinToString("")
     if (outputString.isEmpty()) {
       outputString = "<no output>"
     }
     if (expectedOutput.dropLastLineBreak() == outputString.dropLastLineBreak()) {
-      return CheckResult(StudyStatus.Solved, TestsOutputParser.CONGRATULATIONS)
+      return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
     }
-    return CheckResult(StudyStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
+    return CheckResult(CheckStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
   }
 
   private fun getConfiguration(): RunnerAndConfigurationSettings? {

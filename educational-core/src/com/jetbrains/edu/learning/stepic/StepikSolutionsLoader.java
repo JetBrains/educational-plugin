@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -122,7 +122,7 @@ public class StepikSolutionsLoader implements Disposable{
     for (Task task : tasksToUpdate) {
       if (progressIndicator == null || !progressIndicator.isCanceled()) {
           Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
-          boolean isSolved = task.getStatus() == StudyStatus.Solved;
+          boolean isSolved = task.getStatus() == CheckStatus.Solved;
           loadSolution(myProject, task, isSolved);
           countDownLatch.countDown();
         });
@@ -173,8 +173,8 @@ public class StepikSolutionsLoader implements Disposable{
         Boolean isSolved = taskStatuses[j];
         Task task = allTasks[j];
         if (isSolved != null && isToUpdate(isSolved, task.getStatus(), task.getStepId())) {
-          StudyStatus studyStatus = isSolved ? StudyStatus.Solved : StudyStatus.Failed;
-          task.setStatus(studyStatus);
+          CheckStatus checkStatus = isSolved ? CheckStatus.Solved : CheckStatus.Failed;
+          task.setStatus(checkStatus);
           tasksToUpdate.add(task);
         }
       }
@@ -224,8 +224,8 @@ public class StepikSolutionsLoader implements Disposable{
     });
   }
 
-  private static boolean isToUpdate(@NotNull Boolean isSolved, @NotNull StudyStatus currentStatus, int stepId) {
-    if (isSolved && currentStatus != StudyStatus.Solved) {
+  private static boolean isToUpdate(@NotNull Boolean isSolved, @NotNull CheckStatus currentStatus, int stepId) {
+    if (isSolved && currentStatus != CheckStatus.Solved) {
       return true;
     }
     else if (!isSolved) {
@@ -261,10 +261,10 @@ public class StepikSolutionsLoader implements Disposable{
   private static String loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
     List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
     if (solutionFiles.isEmpty()) {
-      task.setStatus(StudyStatus.Unchecked);
+      task.setStatus(CheckStatus.Unchecked);
       return "";
     }
-    task.setStatus(isSolved ? StudyStatus.Solved : StudyStatus.Failed);
+    task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
     for (StepicWrappers.SolutionFile file : solutionFiles) {
       TaskFile taskFile = task.getTaskFile(file.name);
       if (taskFile != null) {

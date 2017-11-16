@@ -13,7 +13,7 @@ import com.intellij.ui.JBColor;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.navigation.StudyNavigator;
@@ -45,13 +45,13 @@ public class TaskDirectoryNode extends StudyDirectoryNode {
 
   @Override
   protected void updateImpl(PresentationData data) {
-    StudyStatus status = myTask.getStatus();
+    CheckStatus status = myTask.getStatus();
     String subtaskInfo = myTask instanceof TaskWithSubtasks ? getSubtaskInfo((TaskWithSubtasks)myTask) : null;
-    if (status == StudyStatus.Unchecked) {
+    if (status == CheckStatus.Unchecked) {
       updatePresentation(data, myTask.getName(), JBColor.BLACK, EducationalCoreIcons.Task, subtaskInfo);
       return;
     }
-    boolean isSolved = status == StudyStatus.Solved;
+    boolean isSolved = status == CheckStatus.Solved;
     JBColor color = isSolved ? LIGHT_GREEN : JBColor.RED;
     Icon icon = isSolved ? EducationalCoreIcons.TaskCompl : EducationalCoreIcons.TaskProbl;
     updatePresentation(data, myTask.getName(), color, icon, subtaskInfo);
