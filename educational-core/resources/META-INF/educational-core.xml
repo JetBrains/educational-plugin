@@ -30,7 +30,7 @@
         <extensionPoint qualifiedName="Educational.studyTwitterPluginConfigurator"
                         interface="com.jetbrains.edu.learning.StudyTwitterPluginConfigurator"/>
         <extensionPoint qualifiedName="Educational.checkListener"
-                        interface="com.jetbrains.edu.learning.checker.StudyCheckListener"/>
+                        interface="com.jetbrains.edu.learning.checker.CheckListener"/>
         <extensionPoint qualifiedName="Educational.optionsProvider"
                         beanClass="com.jetbrains.edu.learning.settings.StudyOptionsProviderEP">
             <with attribute="instance" implements="com.jetbrains.edu.learning.settings.StudyOptionsProvider"/>

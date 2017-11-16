@@ -11,14 +11,14 @@ import com.intellij.util.JdkBundle
 import com.jetbrains.edu.kotlin.KtTaskChecker
 import com.jetbrains.edu.kotlin.KtTaskChecker.FAILED_TO_LAUNCH
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.checker.StudyCheckResult
-import com.jetbrains.edu.learning.checker.StudyCheckUtils
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.StudyStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 class KtTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
-  override fun check(): StudyCheckResult {
+  override fun check(): CheckResult {
     val cmd = GeneralCommandLine()
     val basePath = myProject.basePath ?: return FAILED_TO_LAUNCH
     var bundledJavaPath = JdkBundle.getBundledJDKAbsoluteLocation().absolutePath
@@ -32,9 +32,9 @@ class KtTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task
     cmd.exePath = executablePath
     cmd.addParameter(":lesson${myTask.lesson.index}:task${myTask.index}:test")
     return try {
-      val output = StudyCheckUtils.getTestOutput(cmd.createProcess(),
+      val output = CheckUtils.getTestOutput(cmd.createProcess(),
               cmd.commandLineString, false)
-      StudyCheckResult(if (output.isSuccess) StudyStatus.Solved else StudyStatus.Failed, output.message)
+      CheckResult(if (output.isSuccess) StudyStatus.Solved else StudyStatus.Failed, output.message)
     } catch (e: ExecutionException) {
       Logger.getInstance(KtTaskChecker::class.java).info(CheckAction.FAILED_CHECK_LAUNCH, e)
       FAILED_TO_LAUNCH

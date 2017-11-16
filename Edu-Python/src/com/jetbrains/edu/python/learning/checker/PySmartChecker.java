@@ -13,7 +13,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.checker.StudyTestsOutputParser;
+import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.core.EduDocumentListener;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
@@ -69,7 +69,7 @@ class PySmartChecker {
         final ProcessOutput output = handler.runProcess();
         final Course course = StudyTaskManager.getInstance(project).getCourse();
         if (course != null) {
-          boolean res = StudyTestsOutputParser.getTestsOutput(output, course.isAdaptive()).isSuccess();
+          boolean res = TestsOutputParser.getTestsOutput(output, course.isAdaptive()).isSuccess();
           StudyTaskManager.getInstance(project).setStatus(userAnswerPlaceholder, res ? StudyStatus.Solved : StudyStatus.Failed);
         }
       }

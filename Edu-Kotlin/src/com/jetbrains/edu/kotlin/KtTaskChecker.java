@@ -10,7 +10,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.edu.learning.StudySubtaskUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
-import com.jetbrains.edu.learning.checker.StudyCheckResult;
+import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -24,7 +24,7 @@ import java.util.Collection;
 
 public class KtTaskChecker extends RunConfigurationBasedTaskChecker {
 
-  public static final StudyCheckResult FAILED_TO_LAUNCH = new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+  public static final CheckResult FAILED_TO_LAUNCH = new CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
 
   public KtTaskChecker(@NotNull EduTask task, @NotNull Project project) {
     super(task, project);

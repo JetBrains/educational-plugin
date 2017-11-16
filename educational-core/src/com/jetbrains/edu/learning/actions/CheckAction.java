@@ -19,9 +19,9 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.checker.StudyCheckListener;
-import com.jetbrains.edu.learning.checker.StudyCheckResult;
-import com.jetbrains.edu.learning.checker.StudyCheckUtils;
+import com.jetbrains.edu.learning.checker.CheckListener;
+import com.jetbrains.edu.learning.checker.CheckResult;
+import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
@@ -52,11 +52,11 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       return;
     }
     if (DumbService.isDumb(project)) {
-      StudyCheckUtils
+      CheckUtils
         .showTestResultPopUp("Checking is not available while indexing is in progress", MessageType.WARNING.getPopupBackground(), project);
       return;
     }
-    StudyCheckUtils.hideTestResultsToolWindow(project);
+    CheckUtils.hideTestResultsToolWindow(project);
     FileDocumentManager.getInstance().saveAllDocuments();
     Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
     if (editor == null) {
@@ -70,7 +70,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     if (task == null) {
       return;
     }
-    for (StudyCheckListener listener : Extensions.getExtensions(StudyCheckListener.EP_NAME)) {
+    for (CheckListener listener : Extensions.getExtensions(CheckListener.EP_NAME)) {
       listener.beforeCheck(project, task);
     }
     ProgressManager.getInstance().run(new StudyCheckTask(project, task));
@@ -133,7 +133,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     private final Project myProject;
     private final Task myTask;
     private final TaskChecker myChecker;
-    private StudyCheckResult myResult;
+    private CheckResult myResult;
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
       super(project, "Checking Task", true, PerformInBackgroundOption.DEAF);
@@ -151,10 +151,10 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       myResult = isRemote ? checkRemoteCourse() : myChecker.check();
     }
 
-    private StudyCheckResult checkRemoteCourse() {
+    private CheckResult checkRemoteCourse() {
       if (StudyUtils.isStudentProject(myProject)) {
-        StudyCheckResult remoteCheckResult = myChecker.checkOnRemote();
-        if (remoteCheckResult != StudyCheckResult.USE_LOCAL_CHECK) {
+        CheckResult remoteCheckResult = myChecker.checkOnRemote();
+        if (remoteCheckResult != CheckResult.USE_LOCAL_CHECK) {
           return remoteCheckResult;
         }
       }
@@ -175,13 +175,13 @@ public class CheckAction extends DumbAwareActionWithShortcut {
           myChecker.onTaskSolved(message);
           break;
         default:
-          StudyCheckUtils.showTestResultPopUp(message, MessageType.WARNING.getPopupBackground(), myProject);
+          CheckUtils.showTestResultPopUp(message, MessageType.WARNING.getPopupBackground(), myProject);
       }
       ApplicationManager.getApplication().invokeLater(() -> {
         StudyUtils.updateToolWindows(myProject);
         ProjectView.getInstance(myProject).refresh();
 
-        for (StudyCheckListener listener : StudyCheckListener.EP_NAME.getExtensions()) {
+        for (CheckListener listener : CheckListener.EP_NAME.getExtensions()) {
           listener.afterCheck(myProject, myTask);
         }
       });
