@@ -5,8 +5,8 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
-public interface StudyCheckListener {
-  ExtensionPointName<StudyCheckListener> EP_NAME = ExtensionPointName.create("Educational.checkListener");
+public interface CheckListener {
+  ExtensionPointName<CheckListener> EP_NAME = ExtensionPointName.create("Educational.checkListener");
 
   default void beforeCheck(@NotNull Project project, @NotNull Task task) {}
 

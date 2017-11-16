@@ -10,9 +10,9 @@ import com.jetbrains.edu.learning.StudyState;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.EduTaskChecker;
-import com.jetbrains.edu.learning.checker.StudyCheckResult;
-import com.jetbrains.edu.learning.checker.StudyCheckUtils;
-import com.jetbrains.edu.learning.checker.StudyTestsOutputParser;
+import com.jetbrains.edu.learning.checker.CheckResult;
+import com.jetbrains.edu.learning.checker.CheckUtils;
+import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
@@ -35,21 +35,21 @@ public class PyTaskChecker extends EduTaskChecker {
   }
 
   @Override
-  public StudyCheckResult check() {
+  public CheckResult check() {
     VirtualFile taskDir = myTask.getTaskDir(myProject);
     if (taskDir == null) {
       LOG.info("taskDir is null for task " + myTask.getName());
-      return new StudyCheckResult(StudyStatus.Unchecked, "Task is broken");
+      return new CheckResult(StudyStatus.Unchecked, "Task is broken");
     }
 
     if (!myTask.isValid(myProject)) {
-      return new StudyCheckResult(StudyStatus.Unchecked,
+      return new CheckResult(StudyStatus.Unchecked,
               StudyEditor.BROKEN_SOLUTION_ERROR_TEXT_START + StudyEditor.ACTION_TEXT + StudyEditor.BROKEN_SOLUTION_ERROR_TEXT_END);
     }
     CountDownLatch latch = new CountDownLatch(1);
     ApplicationManager.getApplication()
       .invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-        StudyCheckUtils.flushWindows(myTask, taskDir);
+        CheckUtils.flushWindows(myTask, taskDir);
         latch.countDown();
       }));
     final PyTestRunner testRunner = new PyTestRunner(myTask, taskDir);
@@ -59,22 +59,22 @@ public class PyTaskChecker extends EduTaskChecker {
         //otherwise answer placeholders might have been not flushed yet
         latch.await();
         Process testProcess = testRunner.createCheckProcess(myProject, fileToCheck.getPath());
-        StudyTestsOutputParser.TestsOutput output =
-          StudyCheckUtils
+        TestsOutputParser.TestsOutput output =
+          CheckUtils
             .getTestOutput(testProcess, testRunner.getCommandLine().getCommandLineString(), myTask.getLesson().getCourse().isAdaptive());
-        return new StudyCheckResult(output.isSuccess() ? StudyStatus.Solved : StudyStatus.Failed, output.getMessage());
+        return new CheckResult(output.isSuccess() ? StudyStatus.Solved : StudyStatus.Failed, output.getMessage());
       }
     }
     catch (ExecutionException | InterruptedException e) {
       LOG.error(e);
     }
-    return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+    return new CheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
   }
 
   @Override
   public void clearState() {
     ApplicationManager.getApplication().invokeLater(() -> {
-      StudyCheckUtils.drawAllPlaceholders(myProject, myTask);
+      CheckUtils.drawAllPlaceholders(myProject, myTask);
       VirtualFile taskDir = myTask.getTaskDir(myProject);
       if (taskDir != null) {
         EduUtils.deleteWindowDescriptions(myTask, taskDir);
@@ -101,7 +101,7 @@ public class PyTaskChecker extends EduTaskChecker {
               () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(myTask, taskDir), name, taskFile, myProject)));
         }
       }
-      StudyCheckUtils.navigateToFailedPlaceholder(new StudyState(StudyUtils.getSelectedStudyEditor(myProject)), myTask, taskDir, myProject);
+      CheckUtils.navigateToFailedPlaceholder(new StudyState(StudyUtils.getSelectedStudyEditor(myProject)), myTask, taskDir, myProject);
     });
   }
 
