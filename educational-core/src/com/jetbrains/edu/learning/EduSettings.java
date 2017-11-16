@@ -8,7 +8,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.ui.StudyStepicUserWidget;
+import com.jetbrains.edu.learning.stepic.StudyStepicUserWidget;
 import org.jetbrains.annotations.Nullable;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
