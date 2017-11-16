@@ -15,15 +15,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class CreateCourseArchivePanel extends JPanel {
+public class CCCreateCourseArchivePanel extends JPanel {
   private JPanel myPanel;
   private JTextField myNameField;
   private TextFieldWithBrowseButton myLocationField;
   private JLabel myErrorIcon;
   private JLabel myErrorLabel;
-  private CreateCourseArchiveDialog myDlg;
+  private CCCreateCourseArchiveDialog myDlg;
 
-  public CreateCourseArchivePanel(@NotNull final Project project, CreateCourseArchiveDialog dlg, String name) {
+  public CCCreateCourseArchivePanel(@NotNull final Project project, CCCreateCourseArchiveDialog dlg, String name) {
     setLayout(new BorderLayout());
     add(myPanel, BorderLayout.CENTER);
     myErrorIcon.setIcon(AllIcons.Actions.Lightning);

@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.io.ZipUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.ui.CreateCourseArchiveDialog;
+import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.SerializationUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
@@ -75,7 +75,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     Module module = ModuleUtil.findModuleForFile(baseDir, project);
     if (module == null) return;
 
-    CreateCourseArchiveDialog dlg = new CreateCourseArchiveDialog(project, this);
+    CCCreateCourseArchiveDialog dlg = new CCCreateCourseArchiveDialog(project, this);
     dlg.show();
     if (dlg.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
       return;
