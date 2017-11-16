@@ -29,7 +29,7 @@ import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.newproject.ui.CreateNewStepikCourseDialog;
+import com.jetbrains.edu.learning.stepic.newproject.CreateNewStepikCourseDialog;
 import com.jetbrains.edu.learning.stepic.StepicAuthorizedClient;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
