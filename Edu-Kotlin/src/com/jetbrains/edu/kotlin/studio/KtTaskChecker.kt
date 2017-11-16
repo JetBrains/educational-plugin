@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.courseFormat.StudyStatus
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 class KtTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
@@ -34,7 +34,7 @@ class KtTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task
     return try {
       val output = CheckUtils.getTestOutput(cmd.createProcess(),
               cmd.commandLineString, false)
-      CheckResult(if (output.isSuccess) StudyStatus.Solved else StudyStatus.Failed, output.message)
+      CheckResult(if (output.isSuccess) CheckStatus.Solved else CheckStatus.Failed, output.message)
     } catch (e: ExecutionException) {
       Logger.getInstance(KtTaskChecker::class.java).info(CheckAction.FAILED_CHECK_LAUNCH, e)
       FAILED_TO_LAUNCH

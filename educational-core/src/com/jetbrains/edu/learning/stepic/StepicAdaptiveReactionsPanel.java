@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -77,7 +77,7 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
       @Override
       public void selectionChanged(@NotNull FileEditorManagerEvent event) {
         final com.jetbrains.edu.learning.courseFormat.tasks.Task task = StudyUtils.getTaskFromSelectedEditor(myProject);
-        final boolean isEnabled = task != null && task.getStatus() != StudyStatus.Solved;
+        final boolean isEnabled = task != null && task.getStatus() != CheckStatus.Solved;
         StepicAdaptiveReactionsPanel.this.setEnabledRecursive(isEnabled);
       }
     };
@@ -92,13 +92,13 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
                                @NotNull final String enabledTooltip,
                                int reaction) {
       com.jetbrains.edu.learning.courseFormat.tasks.Task task = StudyUtils.getTaskFromSelectedEditor(myProject);
-      final boolean isEnabled = task != null && task.getStatus() != StudyStatus.Solved;
+      final boolean isEnabled = task != null && task.getStatus() != CheckStatus.Solved;
 
       myLabel = new JLabel(text);
 
       myButtonPanel = new JPanel();
       myButtonPanel.setLayout(new BoxLayout(myButtonPanel, BoxLayout.PAGE_AXIS));
-      myButtonPanel.setToolTipText(isEnabled && task.getStatus() == StudyStatus.Solved ? enabledTooltip : SOLVED_TASK_TOOLTIP);
+      myButtonPanel.setToolTipText(isEnabled && task.getStatus() == CheckStatus.Solved ? enabledTooltip : SOLVED_TASK_TOOLTIP);
       myButtonPanel.add(Box.createVerticalStrut(5));
       myButtonPanel.add(myLabel);
       myButtonPanel.add(Box.createVerticalStrut(5));
@@ -139,7 +139,7 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 1 && isEnabled()) {
           final com.jetbrains.edu.learning.courseFormat.tasks.Task task = StudyUtils.getCurrentTask(myProject);
-          if (task != null && task.getStatus() != StudyStatus.Solved) {
+          if (task != null && task.getStatus() != CheckStatus.Solved) {
             final ProgressIndicatorBase progress = new ProgressIndicatorBase();
             progress.setText(StepicAdaptiveConnector.LOADING_NEXT_RECOMMENDATION);
             ProgressManager.getInstance().run(new Task.Backgroundable(myProject,
@@ -160,7 +160,7 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
       @Override
       public void mouseEntered(MouseEvent e) {
         final com.jetbrains.edu.learning.courseFormat.tasks.Task task = StudyUtils.getCurrentTask(myProject);
-        if (task != null && task.getStatus() != StudyStatus.Solved && myPanel.isEnabled()) {
+        if (task != null && task.getStatus() != CheckStatus.Solved && myPanel.isEnabled()) {
           setBackground(JBColor.GRAY);
         }
       }

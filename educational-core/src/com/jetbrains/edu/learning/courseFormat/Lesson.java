@@ -114,13 +114,13 @@ public class Lesson implements StudyItem {
     this.taskList = taskList;
   }
 
-  public StudyStatus getStatus() {
+  public CheckStatus getStatus() {
     for (Task task : taskList) {
-      if (task.getStatus() != StudyStatus.Solved) {
-        return StudyStatus.Unchecked;
+      if (task.getStatus() != CheckStatus.Solved) {
+        return CheckStatus.Unchecked;
       }
     }
-    return StudyStatus.Solved;
+    return CheckStatus.Solved;
   }
 
   public int getId() {

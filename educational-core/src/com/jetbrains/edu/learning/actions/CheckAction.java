@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.StudyStatus;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.StudyEditor;
@@ -165,7 +165,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     @Override
     public void onSuccess() {
       String message = myResult.getMessage();
-      StudyStatus status = myResult.getStatus();
+      CheckStatus status = myResult.getStatus();
       myTask.setStatus(status);
       switch (status) {
         case Failed:
