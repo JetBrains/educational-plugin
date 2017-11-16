@@ -245,7 +245,7 @@ public class CCStepicConnector {
 
     final HttpPut request = new HttpPut(StepicNames.STEPIC_API_URL + "/step-sources/" + String.valueOf(task.getStepId()));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new StudySerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
+      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final Language language = lesson.getCourse().getLanguageById();
       final EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(language);
@@ -429,7 +429,7 @@ public class CCStepicConnector {
 
     final HttpPost request = new HttpPost(StepicNames.STEPIC_API_URL + "/step-sources");
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new StudySerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
+      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final String requestBody = gson.toJson(new StepicWrappers.StepSourceWrapper(project, task, lessonId));
       request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));

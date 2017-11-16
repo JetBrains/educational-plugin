@@ -15,7 +15,7 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCActivatePlaceholder;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAnswerPlaceholderAction;
-import com.jetbrains.edu.learning.StudySubtaskUtils;
+import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -125,7 +125,7 @@ public class EduTypeHandlerDelegate extends TypedHandlerDelegate {
                             myProject);
       }
       if (SWITCH.equals(description)) {
-        StudySubtaskUtils.switchStep(myProject,
+        SubtaskUtils.switchStep(myProject,
                                      (TaskWithSubtasks)myTaskFile
                                        .getTask(),
                                      myToSubtask);

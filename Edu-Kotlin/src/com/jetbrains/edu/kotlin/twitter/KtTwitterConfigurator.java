@@ -51,8 +51,8 @@ public class KtTwitterConfigurator implements TwitterPluginConfigurator {
 
     @Override
     public boolean askToTweet(@NotNull Project project, Task solvedTask, CheckStatus statusBeforeCheck) {
-        StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
-        Course course = taskManager.getCourse();
+        StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
+        Course course = studyTaskManager.getCourse();
         if (course != null && course.getName().equals("Kotlin Koans")) {
             KtTwitterSettings ktTwitterSettings = KtTwitterSettings.getInstance(project);
             return ktTwitterSettings.askToTweet()

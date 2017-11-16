@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import org.jetbrains.annotations.Nullable;
 
-public class StudyState {
+public class EduState {
   private final EduEditor myEduEditor;
   private final Editor myEditor;
   private final TaskFile myTaskFile;
@@ -16,7 +16,7 @@ public class StudyState {
   private final Task myTask;
   private final VirtualFile myTaskDir;
 
-  public StudyState(@Nullable final EduEditor eduEditor) {
+  public EduState(@Nullable final EduEditor eduEditor) {
     myEduEditor = eduEditor;
     myEditor = eduEditor != null ? eduEditor.getEditor() : null;
     myTaskFile = eduEditor != null ? eduEditor.getTaskFile() : null;

@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.StudyState;
+import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -20,11 +20,11 @@ abstract public class TaskNavigationAction extends DumbAwareActionWithShortcut {
 
   public void navigateTask(@NotNull final Project project) {
     EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
-    StudyState studyState = new StudyState(eduEditor);
-    if (!studyState.isValid()) {
+    EduState eduState = new EduState(eduEditor);
+    if (!eduState.isValid()) {
       return;
     }
-    Task targetTask = getTargetTask(studyState.getTask());
+    Task targetTask = getTargetTask(eduState.getTask());
     if (targetTask == null) {
       return;
     }
@@ -52,11 +52,11 @@ abstract public class TaskNavigationAction extends DumbAwareActionWithShortcut {
       return;
     }
     EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
-    StudyState studyState = new StudyState(eduEditor);
-    if (!studyState.isValid()) {
+    EduState eduState = new EduState(eduEditor);
+    if (!eduState.isValid()) {
       return;
     }
-    if (getTargetTask(studyState.getTask()) == null) {
+    if (getTargetTask(eduState.getTask()) == null) {
       e.getPresentation().setEnabled(false);
     }
   }

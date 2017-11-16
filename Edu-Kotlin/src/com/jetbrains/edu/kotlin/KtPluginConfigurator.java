@@ -11,7 +11,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.learning.StudySubtaskUtils;
+import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.EduNames;
@@ -86,7 +86,7 @@ public class KtPluginConfigurator extends EduPluginConfiguratorBase {
       return;
     }
     int nextSubtaskIndex = prevSubtaskIndex + 1;
-    String nextSubtaskFileName = StudySubtaskUtils.getTestFileName(project, nextSubtaskIndex);
+    String nextSubtaskFileName = SubtaskUtils.getTestFileName(project, nextSubtaskIndex);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {

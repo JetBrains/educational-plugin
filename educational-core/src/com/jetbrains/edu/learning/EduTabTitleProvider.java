@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.regex.Pattern;
 
-public class StudyTabTitleProvider implements EditorTabTitleProvider {
+public class EduTabTitleProvider implements EditorTabTitleProvider {
   @Nullable
   @Override
   public String getEditorTabTitle(Project project, VirtualFile file) {

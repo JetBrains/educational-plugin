@@ -21,7 +21,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.coursecreator.actions.CCNewSubtaskAction;
-import com.jetbrains.edu.learning.StudySubtaskUtils;
+import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -126,7 +126,7 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
         if (selectedValue.equals(ADD_SUBTASK_ID)) {
           return doFinalStep(() -> CCNewSubtaskAction.addSubtask(myTask, myProject));
         }
-        StudySubtaskUtils.switchStep(myProject, myTask, selectedValue);
+        SubtaskUtils.switchStep(myProject, myTask, selectedValue);
       }
       else {
         if (hasSubstep(selectedValue)) {
@@ -172,7 +172,7 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
     public PopupStep onChosen(String selectedValue, boolean finalChoice) {
       if (finalChoice) {
         if (selectedValue.equals(SELECT)) {
-          StudySubtaskUtils.switchStep(myProject, myTask, mySubtaskIndex);
+          SubtaskUtils.switchStep(myProject, myTask, mySubtaskIndex);
         }
         else {
           return deleteSubtask();
@@ -209,12 +209,12 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
       myTask.setLastSubtaskIndex(lastSubtaskIndex - 1);
       int activeSubtaskIndex = myTask.getActiveSubtaskIndex();
       if (mySubtaskIndex != 0 && activeSubtaskIndex == mySubtaskIndex) {
-        StudySubtaskUtils.switchStep(myProject, myTask, mySubtaskIndex - 1);
+        SubtaskUtils.switchStep(myProject, myTask, mySubtaskIndex - 1);
       }
       if (activeSubtaskIndex > mySubtaskIndex) {
         myTask.setActiveSubtaskIndex(activeSubtaskIndex - 1);
       }
-      StudySubtaskUtils.updateUI(myProject, myTask, true);
+      SubtaskUtils.updateUI(myProject, myTask, true);
       for (VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
         EditorNotifications.getInstance(myProject).updateNotifications(file);
       }

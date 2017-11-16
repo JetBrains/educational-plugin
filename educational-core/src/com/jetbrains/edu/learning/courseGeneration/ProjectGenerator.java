@@ -217,7 +217,7 @@ public class ProjectGenerator {
       byte[] bytes = entry.getData();
       final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
       Gson gson = new GsonBuilder()
-        .registerTypeAdapter(Task.class, new StudySerializationUtils.Json.TaskAdapter())
+        .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
       return gson.fromJson(jsonText, Course.class);

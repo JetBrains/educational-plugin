@@ -6,8 +6,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.StudyState;
-import com.jetbrains.edu.learning.StudySubtaskUtils;
+import com.jetbrains.edu.learning.EduState;
+import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -37,10 +37,10 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     }
     EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
     if (eduEditor != null) {
-      StudySubtaskUtils.refreshPlaceholder(eduEditor.getEditor(), answerPlaceholder);
-      final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
+      SubtaskUtils.refreshPlaceholder(eduEditor.getEditor(), answerPlaceholder);
+      final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
       answerPlaceholder.reset();
-      taskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
+      studyTaskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
     }
   }
 
@@ -76,12 +76,12 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
       return null;
     }
     EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
-    final StudyState studyState = new StudyState(eduEditor);
-    if (eduEditor == null || !studyState.isValid()) {
+    final EduState eduState = new EduState(eduEditor);
+    if (eduEditor == null || !eduState.isValid()) {
       return null;
     }
-    final Editor editor = studyState.getEditor();
-    final TaskFile taskFile = studyState.getTaskFile();
+    final Editor editor = eduState.getEditor();
+    final TaskFile taskFile = eduState.getTaskFile();
     return taskFile.getAnswerPlaceholder(editor.getCaretModel().getOffset());
   }
 }

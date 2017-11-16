@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.StudySerializationUtils.*;
-import static com.jetbrains.edu.learning.StudySerializationUtils.Xml.*;
+import static com.jetbrains.edu.learning.SerializationUtils.*;
+import static com.jetbrains.edu.learning.SerializationUtils.Xml.*;
 
 /**
  * @deprecated since version 3
