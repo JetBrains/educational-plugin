@@ -5,13 +5,13 @@ import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.settings.StudyOptionsProvider;
+import com.jetbrains.edu.learning.settings.OptionsProvider;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 
-public class KtOptionsProvider implements StudyOptionsProvider {
+public class KtOptionsProvider implements OptionsProvider {
   private KtTwitterSettings twitterSettings;
   private JBCheckBox myAskToTweetCheckBox;
   private JPanel myPanel;

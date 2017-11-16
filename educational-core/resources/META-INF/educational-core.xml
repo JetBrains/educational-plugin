@@ -32,8 +32,8 @@
         <extensionPoint qualifiedName="Educational.checkListener"
                         interface="com.jetbrains.edu.learning.checker.CheckListener"/>
         <extensionPoint qualifiedName="Educational.optionsProvider"
-                        beanClass="com.jetbrains.edu.learning.settings.StudyOptionsProviderEP">
-            <with attribute="instance" implements="com.jetbrains.edu.learning.settings.StudyOptionsProvider"/>
+                        beanClass="com.jetbrains.edu.learning.settings.OptionsProviderEP">
+            <with attribute="instance" implements="com.jetbrains.edu.learning.settings.OptionsProvider"/>
         </extensionPoint>
     </extensionPoints>
 
@@ -168,7 +168,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceInterface="com.intellij.codeInsight.documentation.DocumentationManager"
                         serviceImplementation="com.jetbrains.edu.learning.StudyDocumentationManager" overrides="true"/>
-        <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.StudyConfigurable"
+        <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                                  id="Educational"
                                  displayName="Education"/>
 
