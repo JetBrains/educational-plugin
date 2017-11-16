@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
-import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -21,12 +20,12 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class EduAnswerPlaceholderPainter {
+public class AnswerPlaceholderPainter {
 
   //it should be the lowest highlighting layer, otherwise selection and other effects are not visible
   public static final int PLACEHOLDERS_LAYER = 0;
 
-  private EduAnswerPlaceholderPainter() {
+  private AnswerPlaceholderPainter() {
 
   }
 

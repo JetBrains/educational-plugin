@@ -303,13 +303,13 @@ public class StudyUtils {
     final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
       final JBColor color = studyTaskManager.getColor(answerPlaceholder);
-      EduAnswerPlaceholderPainter.drawAnswerPlaceholder(editor, answerPlaceholder, color);
+      AnswerPlaceholderPainter.drawAnswerPlaceholder(editor, answerPlaceholder, color);
     }
 
     final Document document = editor.getDocument();
     EditorActionManager.getInstance()
       .setReadonlyFragmentModificationHandler(document, new AnswerPlaceholderDeleteHandler(editor));
-    EduAnswerPlaceholderPainter.createGuardedBlocks(editor, taskFile);
+    AnswerPlaceholderPainter.createGuardedBlocks(editor, taskFile);
     editor.getColorsScheme().setColor(EditorColors.READONLY_FRAGMENT_BACKGROUND_COLOR, null);
   }
 
