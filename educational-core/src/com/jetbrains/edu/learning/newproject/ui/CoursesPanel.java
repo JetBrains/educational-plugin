@@ -286,7 +286,7 @@ public class CoursesPanel extends JPanel {
     UIUtil.setBackgroundRecursively(mySearchField, UIUtil.getTextFieldBackground());
   }
 
-  public boolean accept(@NonNls String filter, Course course) {
+  private static boolean accept(@NonNls String filter, Course course) {
     if (filter.isEmpty()) {
       return true;
     }
