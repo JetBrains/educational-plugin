@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.ui.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

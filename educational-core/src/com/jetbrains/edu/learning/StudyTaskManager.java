@@ -20,7 +20,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.ui.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;

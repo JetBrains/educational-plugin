@@ -14,7 +14,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.ui.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
 import org.jetbrains.annotations.NotNull;
 
 public class CCEditTaskTextAction extends ToggleAction implements DumbAware {

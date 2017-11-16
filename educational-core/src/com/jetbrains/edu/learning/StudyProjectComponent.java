@@ -47,8 +47,8 @@ import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicNames;
 import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.ui.StudyStepicUserWidget;
-import com.jetbrains.edu.learning.ui.StudyToolWindow;
-import com.jetbrains.edu.learning.ui.StudyToolWindowFactory;
+import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindowFactory;
 import javafx.application.Platform;
 import org.jetbrains.annotations.NotNull;
 

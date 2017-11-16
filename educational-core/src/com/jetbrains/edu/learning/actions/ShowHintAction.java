@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.StudyHint;
-import com.jetbrains.edu.learning.ui.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
