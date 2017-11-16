@@ -1,21 +1,21 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.editor;
 
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StudyFileEditorManagerListener implements FileEditorManagerListener {
+public class EduFileEditorManagerListener implements FileEditorManagerListener {
   private final TaskDescriptionToolWindow myToolWindow;
   private final Project myProject;
 
-  public StudyFileEditorManagerListener(TaskDescriptionToolWindow toolWindow, Project project) {
+  public EduFileEditorManagerListener(TaskDescriptionToolWindow toolWindow, Project project) {
     myToolWindow = toolWindow;
     myProject = project;
   }
