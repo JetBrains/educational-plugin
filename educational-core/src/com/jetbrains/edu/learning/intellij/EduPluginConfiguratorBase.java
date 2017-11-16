@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.intellij.generation.EduLessonModuleBuilder;
+import com.jetbrains.edu.learning.intellij.generation.LessonModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public abstract class EduPluginConfiguratorBase implements EduPluginConfigurator
     if (utilModule == null) {
       return null;
     }
-    EduModuleBuilderUtils.createModule(project, new EduLessonModuleBuilder(courseDirPath, lesson, utilModule), "");
+    EduModuleBuilderUtils.createModule(project, new LessonModuleBuilder(courseDirPath, lesson, utilModule), "");
     return parentDirectory.findChild(EduNames.LESSON + lesson.getIndex());
   }
 

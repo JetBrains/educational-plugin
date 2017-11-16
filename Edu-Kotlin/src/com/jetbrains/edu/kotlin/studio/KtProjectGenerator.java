@@ -15,16 +15,16 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
-import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
+import com.jetbrains.edu.learning.intellij.generation.CourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
-import com.jetbrains.edu.learning.intellij.generation.EduIntellijCourseProjectGeneratorBase;
+import com.jetbrains.edu.learning.intellij.generation.IntellijCourseProjectGeneratorBase;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class KtProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
+public class KtProjectGenerator extends IntellijCourseProjectGeneratorBase {
 
   private static final Logger LOG = Logger.getInstance(KtProjectGenerator.class);
 
@@ -63,7 +63,7 @@ public class KtProjectGenerator extends EduIntellijCourseProjectGeneratorBase {
 
   @Nullable
   @Override
-  protected EduCourseModuleBuilder studyModuleBuilder() {
+  protected CourseModuleBuilder studyModuleBuilder() {
     return null;
   }
 }

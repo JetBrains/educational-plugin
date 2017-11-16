@@ -5,7 +5,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 
 import java.util.Collections;
 
-public class EduCourseModuleBuilder extends EduBaseIntellijModuleBuilder {
+public class CourseModuleBuilder extends EduBaseIntellijModuleBuilder {
 
   @Override
   public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
