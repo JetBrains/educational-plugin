@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -177,7 +177,7 @@ public class StudySubtaskUtils {
       toolWindow.setCurrentTask(project, task);
     }
     if (navigateToTask) {
-      StudyNavigator.navigateToTask(project, task);
+      NavigationUtils.navigateToTask(project, task);
     }
   }
 
