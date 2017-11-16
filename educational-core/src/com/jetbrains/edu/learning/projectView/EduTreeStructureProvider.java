@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class StudyTreeStructureProvider implements TreeStructureProvider, DumbAware {
+public class EduTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @NotNull
   @Override
   public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent,
@@ -36,8 +36,8 @@ public class StudyTreeStructureProvider implements TreeStructureProvider, DumbAw
         modifiedNodes.add(createCourseNode(project, node, settings, course));
         continue;
       }
-      if (parent instanceof StudyDirectoryNode) {
-        AbstractTreeNode modifiedNode = ((StudyDirectoryNode)parent).modifyChildNode(node);
+      if (parent instanceof EduNode) {
+        AbstractTreeNode modifiedNode = ((EduNode)parent).modifyChildNode(node);
         if (modifiedNode != null) {
           modifiedNodes.add(modifiedNode);
         }
@@ -47,8 +47,8 @@ public class StudyTreeStructureProvider implements TreeStructureProvider, DumbAw
   }
 
   @NotNull
-  protected CourseDirectoryNode createCourseNode(Project project, AbstractTreeNode node, ViewSettings settings, Course course) {
-    return new CourseDirectoryNode(project, ((PsiDirectory)node.getValue()), settings, course);
+  protected CourseNode createCourseNode(Project project, AbstractTreeNode node, ViewSettings settings, Course course) {
+    return new CourseNode(project, ((PsiDirectory)node.getValue()), settings, course);
   }
 
   protected boolean shouldModify(@NotNull final Project project) {

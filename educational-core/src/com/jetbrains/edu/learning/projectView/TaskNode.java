@@ -23,15 +23,15 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class TaskDirectoryNode extends StudyDirectoryNode {
+public class TaskNode extends EduNode {
   @NotNull protected final Project myProject;
   protected final ViewSettings myViewSettings;
   @NotNull protected final Task myTask;
 
-  public TaskDirectoryNode(@NotNull Project project,
-                           PsiDirectory value,
-                           ViewSettings viewSettings,
-                           @NotNull Task task) {
+  public TaskNode(@NotNull Project project,
+                  PsiDirectory value,
+                  ViewSettings viewSettings,
+                  @NotNull Task task) {
     super(project, value, viewSettings);
     myProject = project;
     myViewSettings = viewSettings;

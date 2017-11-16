@@ -19,10 +19,10 @@ import com.jetbrains.edu.learning.projectView.DirectoryNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CCDirectoryNode extends DirectoryNode {
-  public CCDirectoryNode(@NotNull Project project,
-                         PsiDirectory value,
-                         ViewSettings viewSettings) {
+public class CCNode extends DirectoryNode {
+  public CCNode(@NotNull Project project,
+                PsiDirectory value,
+                ViewSettings viewSettings) {
     super(project, value, viewSettings);
   }
 
@@ -62,6 +62,6 @@ public class CCDirectoryNode extends DirectoryNode {
 
   @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
-    return new CCDirectoryNode(myProject, value, myViewSettings);
+    return new CCNode(myProject, value, myViewSettings);
   }
 }

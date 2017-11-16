@@ -15,12 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class StudyDirectoryNode extends PsiDirectoryNode {
+public abstract class EduNode extends PsiDirectoryNode {
   protected static final JBColor LIGHT_GREEN = new JBColor(new Color(0, 134, 0), new Color(98, 150, 85));
 
-  public StudyDirectoryNode(@NotNull final Project project,
-                            PsiDirectory value,
-                            ViewSettings viewSettings) {
+  public EduNode(@NotNull final Project project,
+                 PsiDirectory value,
+                 ViewSettings viewSettings) {
     super(project, value, viewSettings);
   }
 
