@@ -11,7 +11,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.text.DateFormatUtil;
-import com.jetbrains.edu.learning.EduInitializationComponent;
+import com.jetbrains.edu.learning.InitializationComponent;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -87,7 +87,7 @@ public class StepicUpdater {
   }
 
   private static boolean checkNeeded() {
-    if (!PropertiesComponent.getInstance().isValueSet(EduInitializationComponent.CONFLICTING_PLUGINS_DISABLED)) {
+    if (!PropertiesComponent.getInstance().isValueSet(InitializationComponent.CONFLICTING_PLUGINS_DISABLED)) {
       return false;
     }
     long timeToNextCheck = EduSettings.getInstance().getLastTimeChecked() + CHECK_INTERVAL - System.currentTimeMillis();

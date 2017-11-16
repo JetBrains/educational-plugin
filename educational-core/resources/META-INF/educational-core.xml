@@ -16,10 +16,10 @@
             <implementation-class>com.jetbrains.edu.learning.stepic.StepicUpdater</implementation-class>
         </component>
         <component>
-            <implementation-class>com.jetbrains.edu.learning.EduInitializationComponent</implementation-class>
+            <implementation-class>com.jetbrains.edu.learning.InitializationComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>com.jetbrains.edu.learning.EduSelectRoleComponent</implementation-class>
+            <implementation-class>com.jetbrains.edu.learning.SelectRoleComponent</implementation-class>
         </component>
     </application-components>
 
