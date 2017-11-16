@@ -10,13 +10,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
-abstract class DeleteStudyItem(text: String) : DumbAwareAction(text) {
+abstract class CCDeleteStudyItem(text: String) : DumbAwareAction(text) {
   override fun actionPerformed(e: AnActionEvent?) {
     val dataContext = e?.dataContext!!
     val project = e.project!!
     val virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(dataContext)!!
     ApplicationManager.getApplication().runWriteAction({
-      CommandProcessor.getInstance().executeCommand(project, {virtualFile.delete(DeleteStudyItem::class.java)}, "", Object())
+      CommandProcessor.getInstance().executeCommand(project, {virtualFile.delete(CCDeleteStudyItem::class.java)}, "", Object())
     })
   }
 
