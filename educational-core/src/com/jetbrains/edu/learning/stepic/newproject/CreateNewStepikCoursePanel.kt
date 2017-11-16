@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.stepic.newproject
 
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.io.FileUtil
@@ -6,6 +6,7 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.newproject.ui.CoursePanel
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JPanel
