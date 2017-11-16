@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -123,6 +122,6 @@ public class KtPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public boolean isEnabled() {
-    return !EduUtils.isAndroidStudio();
+    return !StudyUtils.isAndroidStudio();
   }
 }

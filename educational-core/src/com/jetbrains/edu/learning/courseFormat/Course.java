@@ -7,7 +7,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jdom.Element;
@@ -78,8 +78,8 @@ public class Course {
   }
 
   public Lesson getLesson(@NotNull final String name) {
-    int lessonIndex = EduUtils.getIndex(name, EduNames.LESSON);
-    if (!EduUtils.indexIsValid(lessonIndex, lessons)) {
+    int lessonIndex = StudyUtils.getIndex(name, EduNames.LESSON);
+    if (!StudyUtils.indexIsValid(lessonIndex, lessons)) {
       return null;
     }
     for (Lesson lesson : lessons) {
@@ -213,7 +213,7 @@ public class Course {
   }
 
   public void sortLessons() {
-    Collections.sort(lessons, EduUtils.INDEX_COMPARATOR);
+    Collections.sort(lessons, StudyUtils.INDEX_COMPARATOR);
   }
 
   @Override

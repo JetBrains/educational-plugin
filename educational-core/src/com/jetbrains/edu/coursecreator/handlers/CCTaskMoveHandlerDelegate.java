@@ -20,7 +20,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -68,7 +68,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     if (course == null || !CCUtils.isCourseCreator(project)) {
       return false;
     }
-    return EduUtils.getTask(sourceDirectory.getVirtualFile(), course) != null;
+    return StudyUtils.getTask(sourceDirectory.getVirtualFile(), course) != null;
   }
 
   @Override
@@ -96,7 +96,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     if (course == null) {
       return;
     }
-    final Task taskToMove = EduUtils.getTask(sourceDirectory.getVirtualFile(), course);
+    final Task taskToMove = StudyUtils.getTask(sourceDirectory.getVirtualFile(), course);
     if (taskToMove == null) {
       return;
     }
@@ -116,7 +116,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
       if (lessonDir == null) {
         return;
       }
-      Task targetTask = EduUtils.getTask(targetDir.getVirtualFile(), course);
+      Task targetTask = StudyUtils.getTask(targetDir.getVirtualFile(), course);
       if (targetTask == null) {
         return;
       }
@@ -164,7 +164,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     taskToMove.setIndex(newItemIndex);
     taskToMove.setLesson(targetLesson);
     targetLesson.getTaskList().add(taskToMove);
-    Collections.sort(targetLesson.getTaskList(), EduUtils.INDEX_COMPARATOR);
+    Collections.sort(targetLesson.getTaskList(), StudyUtils.INDEX_COMPARATOR);
 
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override

@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +57,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
     }
     List<AnswerPlaceholder> placeholders = new ArrayList<>(taskFile.getAnswerPlaceholders());
     final ClearPlaceholders action = new ClearPlaceholders(taskFile, placeholders, editor);
-    EduUtils.runUndoableAction(project, ACTION_NAME, action, UndoConfirmationPolicy.REQUEST_CONFIRMATION);
+    StudyUtils.runUndoableAction(project, ACTION_NAME, action, UndoConfirmationPolicy.REQUEST_CONFIRMATION);
   }
 
   private static void updateView(@NotNull final Editor editor,

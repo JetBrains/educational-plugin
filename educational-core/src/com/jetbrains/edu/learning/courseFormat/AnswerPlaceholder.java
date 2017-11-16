@@ -6,7 +6,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
@@ -255,7 +255,7 @@ public class AnswerPlaceholder {
     if (indexes.contains(toSubtask)) {
       if (!myUseLength) {
         String replacementText = mySubtaskInfos.get(toSubtask).getPossibleAnswer();
-        EduUtils.replaceAnswerPlaceholder(document, this, visibleLength, replacementText);
+        StudyUtils.replaceAnswerPlaceholder(document, this, visibleLength, replacementText);
         return;
       }
     }
@@ -265,7 +265,7 @@ public class AnswerPlaceholder {
         Integer maxIndex = Collections.max(ContainerUtil.filter(indexes, integer -> integer <= toSubtask));
         AnswerPlaceholderSubtaskInfo maxInfo = mySubtaskInfos.get(maxIndex);
         String replacementText = myUseLength ? maxInfo.getPlaceholderText() : maxInfo.getPossibleAnswer();
-        EduUtils.replaceAnswerPlaceholder(document, this, visibleLength, replacementText);
+        StudyUtils.replaceAnswerPlaceholder(document, this, visibleLength, replacementText);
         return;
       }
     }
@@ -273,11 +273,11 @@ public class AnswerPlaceholder {
       if (minIndex > toSubtask && minIndex <= fromSubtask) {
         AnswerPlaceholderSubtaskInfo minInfo = mySubtaskInfos.get(minIndex);
         if (minInfo.isNeedInsertText()) {
-          EduUtils.replaceAnswerPlaceholder(document, this, visibleLength, "");
+          StudyUtils.replaceAnswerPlaceholder(document, this, visibleLength, "");
         }
         else {
           String replacementText = minInfo.getPlaceholderText();
-          EduUtils.replaceAnswerPlaceholder(document, this, visibleLength, replacementText);
+          StudyUtils.replaceAnswerPlaceholder(document, this, visibleLength, replacementText);
         }
         return;
       }
@@ -289,11 +289,11 @@ public class AnswerPlaceholder {
         Integer maxIndex = Collections.max(filtered);
         AnswerPlaceholderSubtaskInfo maxInfo = mySubtaskInfos.get(maxIndex);
         if (maxInfo.isNeedInsertText()) {
-          EduUtils.replaceAnswerPlaceholder(document, this, visibleLength, "");
+          StudyUtils.replaceAnswerPlaceholder(document, this, visibleLength, "");
         }
         else {
           String replacementText = myUseLength ? maxInfo.getPlaceholderText() : maxInfo.getPossibleAnswer();
-          EduUtils.replaceAnswerPlaceholder(document, this, visibleLength, replacementText);
+          StudyUtils.replaceAnswerPlaceholder(document, this, visibleLength, replacementText);
         }
       }
     }
