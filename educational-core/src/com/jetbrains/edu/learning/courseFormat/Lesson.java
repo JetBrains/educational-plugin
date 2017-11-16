@@ -7,7 +7,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -145,7 +145,7 @@ public class Lesson implements StudyItem {
 
   public boolean isUpToDate() {
     if (myId == 0) return true;
-    final Date date = EduStepicConnector.getLessonUpdateDate(myId);
+    final Date date = StepicConnector.getLessonUpdateDate(myId);
     if (date == null) return true;
     if (myUpdateDate == null) return false;
     for (Task task : taskList) {

@@ -35,12 +35,12 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EduStepicClient {
-  private static final Logger LOG = Logger.getInstance(EduStepicClient.class.getName());
+public class StepicClient {
+  private static final Logger LOG = Logger.getInstance(StepicClient.class.getName());
   private static CloseableHttpClient ourClient;
   private static final int TIMEOUT_SECONDS = 10;
 
-  private EduStepicClient() {
+  private StepicClient() {
   }
 
   @NotNull
@@ -57,7 +57,7 @@ public class EduStepicClient {
 
   static <T> T getFromStepic(String link, final Class<T> container, @NotNull final CloseableHttpClient client) throws IOException {
     if (!link.startsWith("/")) link = "/" + link;
-    final HttpGet request = new HttpGet(EduStepicNames.STEPIC_API_URL + link);
+    final HttpGet request = new HttpGet(StepicNames.STEPIC_API_URL + link);
     addTimeout(request);
 
     final CloseableHttpResponse response = client.execute(request);
@@ -102,7 +102,7 @@ public class EduStepicClient {
       setMaxConnPerRoute(100000).setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE);
 
     final HttpConfigurable proxyConfigurable = HttpConfigurable.getInstance();
-    final List<Proxy> proxies = proxyConfigurable.getOnlyBySettingsSelector().select(URI.create(EduStepicNames.STEPIC_URL));
+    final List<Proxy> proxies = proxyConfigurable.getOnlyBySettingsSelector().select(URI.create(StepicNames.STEPIC_URL));
     final InetSocketAddress address = proxies.size() > 0 ? (InetSocketAddress)proxies.get(0).address() : null;
     if (address != null) {
       builder.setProxy(new HttpHost(address.getHostName(), address.getPort()));
@@ -124,12 +124,12 @@ public class EduStepicClient {
 
     final List<BasicHeader> headers = new ArrayList<>();
     headers.add(new BasicHeader("Authorization", "Bearer " + token));
-    headers.add(new BasicHeader("Content-type", EduStepicNames.CONTENT_TYPE_APP_JSON));
+    headers.add(new BasicHeader("Content-type", StepicNames.CONTENT_TYPE_APP_JSON));
     CloseableHttpClient httpClient = getBuilder().setDefaultHeaders(headers).build();
 
     try {
       final StepicWrappers.AuthorWrapper wrapper =
-        getFromStepic(EduStepicNames.CURRENT_USER, StepicWrappers.AuthorWrapper.class, httpClient);
+        getFromStepic(StepicNames.CURRENT_USER, StepicWrappers.AuthorWrapper.class, httpClient);
       if (wrapper != null && !wrapper.users.isEmpty()) {
         StepicUser user = wrapper.users.get(0);
         return user != null && !user.isGuest();

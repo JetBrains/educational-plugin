@@ -19,8 +19,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector.TOO_BORING_RECOMMENDATION_REACTION;
-import static com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector.TOO_HARD_RECOMMENDATION_REACTION;
+import static com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector.TOO_BORING_RECOMMENDATION_REACTION;
+import static com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector.TOO_HARD_RECOMMENDATION_REACTION;
 
 
 public class StepicAdaptiveReactionsPanel extends JPanel {
@@ -141,14 +141,14 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
           final com.jetbrains.edu.learning.courseFormat.tasks.Task task = StudyUtils.getCurrentTask(myProject);
           if (task != null && task.getStatus() != StudyStatus.Solved) {
             final ProgressIndicatorBase progress = new ProgressIndicatorBase();
-            progress.setText(EduAdaptiveStepicConnector.LOADING_NEXT_RECOMMENDATION);
+            progress.setText(StepicAdaptiveConnector.LOADING_NEXT_RECOMMENDATION);
             ProgressManager.getInstance().run(new Task.Backgroundable(myProject,
-                                                                      EduAdaptiveStepicConnector.LOADING_NEXT_RECOMMENDATION) {
+                                                                      StepicAdaptiveConnector.LOADING_NEXT_RECOMMENDATION) {
               @Override
               public void run(@NotNull ProgressIndicator indicator) {
                 StepicAdaptiveReactionsPanel.this.setEnabledRecursive(false);
                 ApplicationManager.getApplication().invokeLater(()->setBackground(UIUtil.getLabelBackground()));
-                EduAdaptiveStepicConnector.addNextRecommendedTask(StepicAdaptiveReactionsPanel.this.myProject, task.getLesson(), indicator,
+                StepicAdaptiveConnector.addNextRecommendedTask(StepicAdaptiveReactionsPanel.this.myProject, task.getLesson(), indicator,
                                                                   myReaction);
                 StepicAdaptiveReactionsPanel.this.setEnabledRecursive(true);
               }

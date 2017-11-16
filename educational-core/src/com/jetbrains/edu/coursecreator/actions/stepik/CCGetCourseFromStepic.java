@@ -15,7 +15,7 @@ import com.jetbrains.edu.coursecreator.actions.CCFromCourseArchive;
 import com.jetbrains.edu.coursecreator.stepik.CCStepicConnector;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
 
 public class CCGetCourseFromStepic extends DumbAwareAction {
@@ -46,7 +46,7 @@ public class CCGetCourseFromStepic extends DumbAwareAction {
     final RemoteCourse info = CCStepicConnector.getCourseInfo(courseId);
     if (info == null) return;
 
-    final Course course = EduStepicConnector.getCourse(project, info);
+    final Course course = StepicConnector.getCourse(project, info);
     if (course == null) return;
 
     CCFromCourseArchive.generateFromStudentCourse(project, course);

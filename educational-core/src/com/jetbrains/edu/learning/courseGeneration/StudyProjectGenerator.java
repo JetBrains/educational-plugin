@@ -23,10 +23,10 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
-import com.jetbrains.edu.learning.stepic.EduStepicNames;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicNames;
 import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.stepic.StudyStepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -89,10 +89,10 @@ public class StudyProjectGenerator {
       EduUsagesCollector.projectTypeCreated(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
 
       if (course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
-        StudyStepikSolutionsLoader studyStepikSolutionsLoader = StudyStepikSolutionsLoader.getInstance(project);
-        studyStepikSolutionsLoader.loadSolutions(ProgressIndicatorProvider.getGlobalProgressIndicator(), course);
+        StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
+        stepikSolutionsLoader.loadSolutions(ProgressIndicatorProvider.getGlobalProgressIndicator(), course);
         EduUsagesCollector.progressOnGenerateCourse();
-        PropertiesComponent.getInstance(project).setValue(EduStepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
+        PropertiesComponent.getInstance(project).setValue(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       }
     });
   }
@@ -110,7 +110,7 @@ public class StudyProjectGenerator {
     return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       return execCancelable(() -> {
-        final RemoteCourse course = EduStepicConnector.getCourse(project, selectedCourse);
+        final RemoteCourse course = StepicConnector.getCourse(project, selectedCourse);
         if (StudyUtils.isCourseValid(course)) {
           course.initCourse(false);
         }
@@ -122,7 +122,7 @@ public class StudyProjectGenerator {
   // Supposed to be called under progress
   public List<Course> getCourses(boolean force) {
     if (force) {
-      myCourses = execCancelable(() -> EduStepicConnector.getCourses(EduSettings.getInstance().getUser()));
+      myCourses = execCancelable(() -> StepicConnector.getCourses(EduSettings.getInstance().getUser()));
     }
     List<Course> bundledCourses = getBundledCourses();
     if (bundledCourses != null) {

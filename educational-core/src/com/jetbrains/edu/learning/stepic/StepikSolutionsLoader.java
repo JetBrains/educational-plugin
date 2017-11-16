@@ -36,11 +36,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static com.jetbrains.edu.learning.stepic.EduStepicConnector.getLastSubmission;
-import static com.jetbrains.edu.learning.stepic.EduStepicConnector.removeAllTags;
+import static com.jetbrains.edu.learning.stepic.StepicConnector.getLastSubmission;
+import static com.jetbrains.edu.learning.stepic.StepicConnector.removeAllTags;
 
-public class StudyStepikSolutionsLoader implements Disposable{
-  private static final Logger LOG = DefaultLogger.getInstance(StudyStepikSolutionsLoader.class);
+public class StepikSolutionsLoader implements Disposable{
+  private static final Logger LOG = DefaultLogger.getInstance(StepikSolutionsLoader.class);
   private static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
   private static final String PROGRESS_ID_PREFIX = "77-";
   private final HashMap<Integer, Future> myFutures = new HashMap<>();
@@ -48,12 +48,12 @@ public class StudyStepikSolutionsLoader implements Disposable{
   private MessageBusConnection myBusConnection;
   private Task mySelectedTask;
 
-  protected StudyStepikSolutionsLoader(@NotNull final Project project) {
+  protected StepikSolutionsLoader(@NotNull final Project project) {
     this.myProject = project;
   }
 
-  public static StudyStepikSolutionsLoader getInstance(@NotNull Project project) {
-    StudyStepikSolutionsLoader service = ServiceManager.getService(project, StudyStepikSolutionsLoader.class);
+  public static StepikSolutionsLoader getInstance(@NotNull Project project) {
+    StepikSolutionsLoader service = ServiceManager.getService(project, StepikSolutionsLoader.class);
     if (service != null) {
       service.init();
     }
@@ -167,7 +167,7 @@ public class StudyStepikSolutionsLoader implements Disposable{
     for (int i = 0; i < length; i += MAX_REQUEST_PARAMS) {
       List<Task> sublist = Arrays.asList(allTasks).subList(i, Math.min(i + MAX_REQUEST_PARAMS, length));
       String[] progresses = sublist.stream().map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
-      Boolean[] taskStatuses = EduStepicConnector.taskStatuses(progresses);
+      Boolean[] taskStatuses = StepicConnector.taskStatuses(progresses);
       if (taskStatuses == null) return tasksToUpdate;
       for (int j = 0; j < sublist.size(); j++) {
         Boolean isSolved = taskStatuses[j];
@@ -230,7 +230,7 @@ public class StudyStepikSolutionsLoader implements Disposable{
     }
     else if (!isSolved) {
       try {
-        List<StepicWrappers.SolutionFile> solutionFiles = EduStepicConnector.getLastSubmission(String.valueOf(stepId), isSolved);
+        List<StepicWrappers.SolutionFile> solutionFiles = StepicConnector.getLastSubmission(String.valueOf(stepId), isSolved);
         if (!solutionFiles.isEmpty()) {
           return true;
         }
@@ -268,7 +268,7 @@ public class StudyStepikSolutionsLoader implements Disposable{
     for (StepicWrappers.SolutionFile file : solutionFiles) {
       TaskFile taskFile = task.getTaskFile(file.name);
       if (taskFile != null) {
-        if (EduStepicConnector.setPlaceholdersFromTags(taskFile, file)) {
+        if (StepicConnector.setPlaceholdersFromTags(taskFile, file)) {
           return removeAllTags(file.text);
         }
         else {

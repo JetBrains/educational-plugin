@@ -27,8 +27,8 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.AppIcon;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.stepic.EduStepicAuthorizedClient;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicAuthorizedClient;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.stepic.StepicWrappers;
 import io.netty.buffer.Unpooled;
@@ -50,8 +50,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.jetbrains.edu.learning.builtInServer.EduBuiltInServerUtils.*;
-import static com.jetbrains.edu.learning.stepic.EduStepicNames.EDU_STEPIK_SERVICE_NAME;
-import static com.jetbrains.edu.learning.stepic.EduStepicNames.LINK;
+import static com.jetbrains.edu.learning.stepic.StepicNames.EDU_STEPIK_SERVICE_NAME;
+import static com.jetbrains.edu.learning.stepic.StepicNames.LINK;
 
 public class EduStepikRestService extends RestService {
   private static final Logger LOG = Logger.getInstance(EduStepikRestService.class.getName());
@@ -134,17 +134,17 @@ public class EduStepikRestService extends RestService {
         return log("Unrecognized the Unit id");
       }
 
-      StepicWrappers.Unit unit = EduStepicConnector.getUnit(unitId);
+      StepicWrappers.Unit unit = StepicConnector.getUnit(unitId);
       if (unit.getId() == 0) {
         return log("Unrecognized the Unit id");
       }
 
-      StepicWrappers.Section section = EduStepicConnector.getSection(unit.getSection());
+      StepicWrappers.Section section = StepicConnector.getSection(unit.getSection());
       courseId = section.getCourse();
       if (courseId == 0) {
         return log("Unrecognized the course id");
       }
-      Lesson lesson = EduStepicConnector.getLesson(lessonId);
+      Lesson lesson = StepicConnector.getLesson(lessonId);
       List<Integer> stepIds = lesson.steps;
 
       if (stepIds.isEmpty()) {
@@ -170,7 +170,7 @@ public class EduStepikRestService extends RestService {
     if (codeMatcher.matches()) {
       String code = getStringParameter("code", urlDecoder);
       if (code != null) {
-        StepicUser stepicUser = EduStepicAuthorizedClient.login(code, EduStepicConnector.getOAuthRedirectUrl());
+        StepicUser stepicUser = StepicAuthorizedClient.login(code, StepicConnector.getOAuthRedirectUrl());
         if (stepicUser != null) {
           EduSettings.getInstance().setUser(stepicUser);
           sendHtmlResponse(request, context, "/oauthResponsePages/okPage.html");

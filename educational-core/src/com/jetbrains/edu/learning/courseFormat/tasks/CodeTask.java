@@ -7,7 +7,7 @@ import com.jetbrains.edu.learning.checker.StudyCheckResult;
 import com.jetbrains.edu.learning.checker.StudyCheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
-import com.jetbrains.edu.learning.stepic.EduAdaptiveStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ public class CodeTask extends Task {
         if (user == null) {
           return new StudyCheckResult(StudyStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
         }
-        return EduAdaptiveStepicConnector.checkCodeTask(myProject, myTask, user);
+        return StepicAdaptiveConnector.checkCodeTask(myProject, myTask, user);
       }
     };
   }
