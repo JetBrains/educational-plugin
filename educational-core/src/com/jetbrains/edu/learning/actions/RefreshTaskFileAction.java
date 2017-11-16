@@ -29,7 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
 import com.jetbrains.edu.learning.editor.StudyEditor;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +89,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     ApplicationManager.getApplication().invokeLater(
       () -> IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true));
 
-    StudyNavigator.navigateToFirstAnswerPlaceholder(editor, taskFile);
+    NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
     showBalloon(project, MessageType.INFO);
   }
 

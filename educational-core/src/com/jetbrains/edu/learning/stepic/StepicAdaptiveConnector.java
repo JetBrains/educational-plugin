@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -272,7 +272,7 @@ public class StepicAdaptiveConnector {
     ApplicationManager.getApplication().invokeLater(() -> {
       VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
       ProjectView.getInstance(project).refresh();
-      StudyNavigator.navigateToTask(project, task);
+      NavigationUtils.navigateToTask(project, task);
     });
   }
 

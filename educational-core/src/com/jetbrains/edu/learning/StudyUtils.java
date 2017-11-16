@@ -81,7 +81,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static com.jetbrains.edu.learning.navigation.StudyNavigator.navigateToTask;
+import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
 public class StudyUtils {
   private StudyUtils() {
