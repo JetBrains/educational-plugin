@@ -10,7 +10,7 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.ui.SelectRolePanel
 
 
-class EduSelectRoleComponent : ApplicationComponent {
+class SelectRoleComponent : ApplicationComponent {
 
   override fun getComponentName() = "edu.selectRole"
 

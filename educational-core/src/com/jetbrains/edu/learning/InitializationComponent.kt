@@ -11,8 +11,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.text.StringUtil
 import java.util.*
 
-
-class EduInitializationComponent : ApplicationComponent {
+class InitializationComponent : ApplicationComponent {
     override fun disposeComponent() {}
 
     override fun getComponentName() = "Educational.InitializationComponent"

@@ -13,7 +13,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.DocumentUtil;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.EduAnswerPlaceholderPainter;
+import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
@@ -103,15 +103,15 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
         answerPlaceholders.remove(myPlaceholder);
         myEditor.getMarkupModel().removeAllHighlighters();
         StudyUtils.drawAllAnswerPlaceholders(myEditor, myTaskFile);
-        EduAnswerPlaceholderPainter.createGuardedBlocks(myEditor, myTaskFile);
+        AnswerPlaceholderPainter.createGuardedBlocks(myEditor, myTaskFile);
       }
     }
 
     @Override
     public void redo() throws UnexpectedUndoException {
       myTaskFile.addAnswerPlaceholder(myPlaceholder);
-      EduAnswerPlaceholderPainter.drawAnswerPlaceholder(myEditor, myPlaceholder, JBColor.BLUE);
-      EduAnswerPlaceholderPainter.createGuardedBlocks(myEditor, myPlaceholder);
+      AnswerPlaceholderPainter.drawAnswerPlaceholder(myEditor, myPlaceholder, JBColor.BLUE);
+      AnswerPlaceholderPainter.createGuardedBlocks(myEditor, myPlaceholder);
     }
   }
 

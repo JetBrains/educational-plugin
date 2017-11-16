@@ -39,7 +39,7 @@ import com.intellij.ui.JBColor;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.EduAnswerPlaceholderPainter;
+import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -142,7 +142,7 @@ public class CCShowPreview extends DumbAwareAction {
       }
       Integer minIndex = Collections.min(answerPlaceholder.getSubtaskInfos().keySet());
       answerPlaceholder.setUseLength(minIndex >= answerPlaceholder.getActiveSubtaskIndex());
-      EduAnswerPlaceholderPainter.drawAnswerPlaceholder(createdEditor, answerPlaceholder, JBColor.BLUE);
+      AnswerPlaceholderPainter.drawAnswerPlaceholder(createdEditor, answerPlaceholder, JBColor.BLUE);
     }
     JPanel header = new JPanel();
     header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
