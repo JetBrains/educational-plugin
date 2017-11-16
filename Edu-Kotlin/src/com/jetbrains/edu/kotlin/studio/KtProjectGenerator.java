@@ -43,7 +43,7 @@ public class KtProjectGenerator extends IntellijCourseProjectGeneratorBase {
           Task task = new CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1);
           lesson.addTask(task);
           myCourse.getLessons(true).add(lesson);
-          KtConfigurator.initTask(task);
+          KtCourseBuilder.initTask(task);
         }
         Course course = myCourse;
         if (course instanceof RemoteCourse) {

@@ -18,13 +18,9 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -47,7 +43,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.jetbrains.edu.learning.stepic.StepicConnector.getStep;
@@ -298,7 +297,10 @@ public class StepicAdaptiveConnector {
     }
 
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      EduConfiguratorManager.forLanguage(language).createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
+      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
+      if (configurator != null) {
+        configurator.getCourseBuilder().createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
+      }
     }));
   }
 
@@ -325,7 +327,10 @@ public class StepicAdaptiveConnector {
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {
         removeOldProjectFiles(lessonDir, task.getIndex());
-        EduConfiguratorManager.forLanguage(language).createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
+        EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
+        if (configurator != null) {
+          configurator.getCourseBuilder().createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
+        }
       }
       catch (IOException e) {
         LOG.warn(e.getMessage());

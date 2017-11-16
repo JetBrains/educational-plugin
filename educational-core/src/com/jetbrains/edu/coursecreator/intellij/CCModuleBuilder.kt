@@ -22,7 +22,7 @@ class CCModuleBuilder(private val myCourse: Course) : CourseModuleBuilder() {
     val configurator = pluginConfigurator(myCourse) ?: return module
 
     StudyTaskManager.getInstance(project).course = myCourse
-    configurator.createCourseModuleContent(moduleModel, project, myCourse, moduleFileDirectory)
+    configurator.courseBuilder.createCourseModuleContent(moduleModel, project, myCourse, moduleFileDirectory)
 
     // If we drop `registerPostStartupActivity` modules will not be created
     StartupManager.getInstance(project).registerPostStartupActivity {

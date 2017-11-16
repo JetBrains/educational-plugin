@@ -25,7 +25,7 @@ abstract class EduBaseIntellijModuleBuilder : JavaModuleBuilder() {
     val module = super.createAndCommitIfNeeded(project, model, runFromProjectWizard)
     val course = course ?: return module
     val configurator = pluginConfigurator(course) ?: return module
-    configurator.configureModule(module)
+    configurator.courseBuilder.configureModule(module)
     return module
   }
 
