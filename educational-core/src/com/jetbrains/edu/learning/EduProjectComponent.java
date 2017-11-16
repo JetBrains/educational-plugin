@@ -62,14 +62,14 @@ import static com.jetbrains.edu.learning.StudyUtils.navigateToStep;
 import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
 
 
-public class StudyProjectComponent implements ProjectComponent {
-  private static final Logger LOG = Logger.getInstance(StudyProjectComponent.class.getName());
+public class EduProjectComponent implements ProjectComponent {
+  private static final Logger LOG = Logger.getInstance(EduProjectComponent.class.getName());
   private final Project myProject;
   private FileCreatedByUserListener myListener;
   private final Map<Keymap, List<Pair<String, String>>> myDeletedShortcuts = new HashMap<>();
   private MessageBusConnection myBusConnection;
 
-  private StudyProjectComponent(@NotNull final Project project) {
+  private EduProjectComponent(@NotNull final Project project) {
     myProject = project;
   }
 
@@ -372,9 +372,9 @@ public class StudyProjectComponent implements ProjectComponent {
     return "StudyTaskManager";
   }
 
-  public static StudyProjectComponent getInstance(@NotNull final Project project) {
+  public static EduProjectComponent getInstance(@NotNull final Project project) {
     final Module module = ModuleManager.getInstance(project).getModules()[0];
-    return module.getComponent(StudyProjectComponent.class);
+    return module.getComponent(EduProjectComponent.class);
   }
 
   private class FileCreatedByUserListener extends VirtualFileAdapter {

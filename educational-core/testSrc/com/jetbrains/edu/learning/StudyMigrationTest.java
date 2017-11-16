@@ -20,36 +20,36 @@ public class StudyMigrationTest {
   @Rule public TestName name = new TestName();
 
   @Test
-  public void testFromThirdToForth() throws JDOMException, IOException, StudySerializationUtils.StudyUnrecognizedFormatException {
+  public void testFromThirdToForth() throws JDOMException, IOException, SerializationUtils.StudyUnrecognizedFormatException {
     doTest(3);
   }
 
   @Test
-  public void testAdaptive45() throws JDOMException, IOException, StudySerializationUtils.StudyUnrecognizedFormatException {
+  public void testAdaptive45() throws JDOMException, IOException, SerializationUtils.StudyUnrecognizedFormatException {
     doTest(4);
   }
 
   @Test
-  public void testSubtasks45() throws JDOMException, IOException, StudySerializationUtils.StudyUnrecognizedFormatException {
+  public void testSubtasks45() throws JDOMException, IOException, SerializationUtils.StudyUnrecognizedFormatException {
     doTest(4);
   }
 
   @Test
-  public void testTheory35To4() throws JDOMException, IOException, StudySerializationUtils.StudyUnrecognizedFormatException {
+  public void testTheory35To4() throws JDOMException, IOException, SerializationUtils.StudyUnrecognizedFormatException {
     doTest(4);
   }
 
   @Test
-  public void testTheory351To4() throws JDOMException, IOException, StudySerializationUtils.StudyUnrecognizedFormatException {
+  public void testTheory351To4() throws JDOMException, IOException, SerializationUtils.StudyUnrecognizedFormatException {
     doTest(4);
   }
 
   @Test
-  public void testPycharmToEdu() throws JDOMException, IOException, StudySerializationUtils.StudyUnrecognizedFormatException {
+  public void testPycharmToEdu() throws JDOMException, IOException, SerializationUtils.StudyUnrecognizedFormatException {
     doTest(7);
   }
 
-  private void doTest(int version) throws IOException, JDOMException, StudySerializationUtils.StudyUnrecognizedFormatException {
+  private void doTest(int version) throws IOException, JDOMException, SerializationUtils.StudyUnrecognizedFormatException {
     final String name = PlatformTestUtil.getTestName(this.name.getMethodName(), true);
     final Path before = getTestDataPath().resolve(name + ".xml");
     final Path after = getTestDataPath().resolve(name + ".after.xml");
@@ -57,16 +57,16 @@ public class StudyMigrationTest {
     Element converted = element;
     switch (version) {
       case 1:
-        converted = StudySerializationUtils.Xml.convertToSecondVersion(element);
+        converted = SerializationUtils.Xml.convertToSecondVersion(element);
         break;
       case 3:
-        converted = StudySerializationUtils.Xml.convertToForthVersion(element);
+        converted = SerializationUtils.Xml.convertToForthVersion(element);
         break;
       case 4:
-        converted = StudySerializationUtils.Xml.convertToFifthVersion(element);
+        converted = SerializationUtils.Xml.convertToFifthVersion(element);
         break;
       case 7:
-        converted = StudySerializationUtils.Xml.convertToSeventhVersion(element);
+        converted = SerializationUtils.Xml.convertToSeventhVersion(element);
         break;
     }
     assertTrue(JDOMUtil.areElementsEqual(converted, JdomKt.loadElement(after)));

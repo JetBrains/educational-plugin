@@ -17,8 +17,8 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.jetbrains.edu.learning.StudyState;
-import com.jetbrains.edu.learning.StudySubtaskUtils;
+import com.jetbrains.edu.learning.EduState;
+import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.EduAnswerPlaceholderPainter;
@@ -51,23 +51,23 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
   public static void refresh(@NotNull final Project project) {
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
-      StudyState studyState = new StudyState(eduEditor);
-      if (eduEditor == null || !studyState.isValid()) {
+      EduState eduState = new EduState(eduEditor);
+      if (eduEditor == null || !eduState.isValid()) {
         LOG.info("RefreshTaskFileAction was invoked outside of Study Editor");
         return;
       }
-      refreshFile(studyState, project);
+      refreshFile(eduState, project);
       eduEditor.validateTaskFile();
     }));
   }
 
-  private static void refreshFile(@NotNull final StudyState studyState, @NotNull final Project project) {
-    final Editor editor = studyState.getEditor();
-    final TaskFile taskFile = studyState.getTaskFile();
+  private static void refreshFile(@NotNull final EduState eduState, @NotNull final Project project) {
+    final Editor editor = eduState.getEditor();
+    final TaskFile taskFile = eduState.getTaskFile();
     final Task task = taskFile.getTask();
     if (task instanceof TaskWithSubtasks) {
       for (AnswerPlaceholder placeholder : taskFile.getActivePlaceholders()) {
-        StudySubtaskUtils.refreshPlaceholder(editor, placeholder);
+        SubtaskUtils.refreshPlaceholder(editor, placeholder);
       }
     }
     else {
@@ -82,7 +82,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
         }
       }
     }
-    WolfTheProblemSolver.getInstance(project).clearProblems(studyState.getVirtualFile());
+    WolfTheProblemSolver.getInstance(project).clearProblems(eduState.getVirtualFile());
     taskFile.setHighlightErrors(false);
     StudyUtils.drawAllAnswerPlaceholders(editor, taskFile);
     EduAnswerPlaceholderPainter.createGuardedBlocks(editor, taskFile);
@@ -119,10 +119,10 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
   }
 
   static void resetAnswerPlaceholders(TaskFile selectedTaskFile, Project project) {
-    final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
+    final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     for (AnswerPlaceholder answerPlaceholder : selectedTaskFile.getActivePlaceholders()) {
       answerPlaceholder.reset();
-      taskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
+      studyTaskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
     }
   }
 
@@ -157,9 +157,9 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     final Project project = event.getProject();
     if (project != null) {
       EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
-      StudyState studyState = new StudyState(eduEditor);
+      EduState eduState = new EduState(eduEditor);
       Presentation presentation = event.getPresentation();
-      if (!studyState.isValid()) {
+      if (!eduState.isValid()) {
         presentation.setEnabled(false);
         return;
       }

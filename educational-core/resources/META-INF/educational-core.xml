@@ -3,8 +3,8 @@
 
     <project-components>
         <component>
-            <implementation-class>com.jetbrains.edu.learning.StudyProjectComponent</implementation-class>
-            <interface-class>com.jetbrains.edu.learning.StudyProjectComponent</interface-class>
+            <implementation-class>com.jetbrains.edu.learning.EduProjectComponent</implementation-class>
+            <interface-class>com.jetbrains.edu.learning.EduProjectComponent</interface-class>
         </component>
         <component>
             <implementation-class>com.jetbrains.edu.coursecreator.CCProjectComponent</implementation-class>
@@ -167,7 +167,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceInterface="com.intellij.codeInsight.documentation.DocumentationManager"
-                        serviceImplementation="com.jetbrains.edu.learning.StudyDocumentationManager" overrides="true"/>
+                        serviceImplementation="com.jetbrains.edu.learning.EduDocumentationManager" overrides="true"/>
         <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                                  id="Educational"
                                  displayName="Education"/>
@@ -191,7 +191,7 @@
         <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
         <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
         <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
-        <editorTabTitleProvider implementation="com.jetbrains.edu.learning.StudyTabTitleProvider"/>
+        <editorTabTitleProvider implementation="com.jetbrains.edu.learning.EduTabTitleProvider"/>
         <typedHandler implementation="com.jetbrains.edu.learning.handlers.EduTypeHandlerDelegate"
                       order="first, before completionAutoPopup"/>
         <httpRequestHandler implementation="com.jetbrains.edu.learning.stepic.builtInServer.StepikRestService"/>

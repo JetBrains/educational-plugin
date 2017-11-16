@@ -22,7 +22,7 @@ import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.io.ZipUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CreateCourseArchiveDialog;
-import com.jetbrains.edu.learning.StudySerializationUtils;
+import com.jetbrains.edu.learning.SerializationUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.EduNames;
@@ -219,7 +219,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
 
   private static void generateJson(VirtualFile parentDir, Course course) throws IOException {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(Task.class, new StudySerializationUtils.Json.TaskAdapter()).create();
+      registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter()).create();
     final String json = gson.toJson(course);
     final File courseJson = new File(parentDir.getPath(), EduNames.COURSE_META_FILE);
     try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(courseJson), "UTF-8")) {

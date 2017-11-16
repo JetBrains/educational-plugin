@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.edu.learning.StudySerializationUtils;
+import com.jetbrains.edu.learning.SerializationUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -70,7 +70,7 @@ public class StudyStepicFormatTest {
   @Test
   public void placeholderSerialization() throws IOException {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new StudySerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
+      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
     AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
     answerPlaceholder.setOffset(1);
     answerPlaceholder.setLength(10);
@@ -80,7 +80,7 @@ public class StudyStepicFormatTest {
     final String placeholderSerialization = gson.toJson(answerPlaceholder);
     String expected = FileUtil.loadFile(new File(getTestDataPath(), "placeholder.json"));
     JsonObject object = new JsonParser().parse(expected).getAsJsonObject();
-    StudySerializationUtils.Json.removeIndexFromSubtaskInfos(object);
+    SerializationUtils.Json.removeIndexFromSubtaskInfos(object);
     assertEquals(gson.toJson(gson.fromJson(object, AnswerPlaceholder.class)), placeholderSerialization);
 
   }
