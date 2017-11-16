@@ -29,7 +29,7 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
-import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
+import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -124,7 +124,7 @@ public class EduCoursesPanel extends JPanel {
         FileChooser.chooseFile(fileChooser, null, VfsUtil.getUserHomeDir(),
                                file -> {
                                  String fileName = file.getPath();
-                                 Course course = new StudyProjectGenerator().addLocalCourse(fileName);
+                                 Course course = new ProjectGenerator().addLocalCourse(fileName);
                                  if (course != null) {
                                    EduUsagesCollector.courseArchiveImported();
                                    myCourses.add(course);
@@ -202,7 +202,7 @@ public class EduCoursesPanel extends JPanel {
 
   @NotNull
   private static List<Course> getCourses() {
-    return new StudyProjectGenerator().getCoursesUnderProgress(true, "Getting Available Courses", null);
+    return new ProjectGenerator().getCoursesUnderProgress(true, "Getting Available Courses", null);
   }
 
   private static boolean isLoggedIn() {

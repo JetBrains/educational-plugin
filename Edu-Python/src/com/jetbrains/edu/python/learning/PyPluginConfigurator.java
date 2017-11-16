@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.python.learning.checker.PyTaskChecker;
 import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator;
@@ -95,9 +95,9 @@ public class PyPluginConfigurator implements EduPluginConfigurator<PyNewProjectS
 
     try {
       for (TaskFile file : task.getTaskFiles().values()) {
-        StudyGenerator.createTaskFile(taskDirectory, file);
+        GeneratorUtils.createTaskFile(taskDirectory, file);
       }
-      StudyGenerator.createTestFiles(taskDirectory, task);
+      GeneratorUtils.createTestFiles(taskDirectory, task);
     }
     catch (IOException e) {
       LOG.warn(e.getMessage());

@@ -40,7 +40,7 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.StudyEditorFactoryListener;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
@@ -236,7 +236,7 @@ public class StudyProjectComponent implements ProjectComponent {
       final VirtualFile lessonDir = baseDir.findChild(lessonDirName);
       if (lessonDir == null) {
         try {
-          StudyGenerator.createLesson(lesson, baseDir);
+          GeneratorUtils.createLesson(lesson, baseDir);
         }
         catch (IOException e) {
           LOG.error("Failed to create lesson");
@@ -271,7 +271,7 @@ public class StudyProjectComponent implements ProjectComponent {
 
         if (taskDir != null) return;
         try {
-          StudyGenerator.createTask(task, lessonDir);
+          GeneratorUtils.createTask(task, lessonDir);
         }
         catch (IOException e) {
           LOG.error("Failed to create task");

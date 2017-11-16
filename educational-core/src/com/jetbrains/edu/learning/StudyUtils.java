@@ -59,7 +59,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.StudyEditor;
 import com.jetbrains.edu.learning.stepic.OAuthDialog;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -686,7 +686,7 @@ public class StudyUtils {
       return;
     }
     try {
-      StudyGenerator.createChildFile(taskDirectory, name, template.getText());
+      GeneratorUtils.createChildFile(taskDirectory, name, template.getText());
     } catch (IOException e) {
       LOG.error(e);
     }
