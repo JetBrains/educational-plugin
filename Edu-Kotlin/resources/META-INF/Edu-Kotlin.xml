@@ -12,7 +12,7 @@
     <extensions defaultExtensionNs="Educational">
         <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.KtPluginConfigurator" language="kotlin"/>
         <pluginConfigurator implementationClass="com.jetbrains.edu.kotlin.studio.KtPluginConfigurator" language="kotlin"/>
-        <studyTwitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
+        <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
     </extensions>
 

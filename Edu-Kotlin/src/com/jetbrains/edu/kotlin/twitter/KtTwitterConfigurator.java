@@ -2,17 +2,17 @@ package com.jetbrains.edu.kotlin.twitter;
 
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyTwitterPluginConfigurator;
+import com.jetbrains.edu.learning.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.twitter.StudyTwitterUtils;
+import com.jetbrains.edu.learning.twitter.TwitterUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class KtTwitterConfigurator implements StudyTwitterPluginConfigurator {
+public class KtTwitterConfigurator implements TwitterPluginConfigurator {
 
 
     @NotNull
@@ -65,7 +65,7 @@ public class KtTwitterConfigurator implements StudyTwitterPluginConfigurator {
 
     @Nullable
     @Override
-    public StudyTwitterUtils.TwitterDialogPanel getTweetDialogPanel(@NotNull Task solvedTask) {
+    public TwitterUtils.TwitterDialogPanel getTweetDialogPanel(@NotNull Task solvedTask) {
         return new KtTwitterDialogPanel(solvedTask);
     }
 
