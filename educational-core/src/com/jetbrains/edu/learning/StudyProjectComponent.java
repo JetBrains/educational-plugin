@@ -46,7 +46,7 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicNames;
 import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
-import com.jetbrains.edu.learning.stepic.StudyStepicUserWidget;
+import com.jetbrains.edu.learning.stepic.StepicUserWidget;
 import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindowFactory;
 import javafx.application.Platform;
@@ -156,12 +156,12 @@ public class StudyProjectComponent implements ProjectComponent {
   }
 
   private void addStepicWidget() {
-    StudyStepicUserWidget widget = StudyUtils.getStepicWidget();
+    StepicUserWidget widget = StudyUtils.getStepicWidget();
     StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
     if (widget != null) {
-      statusBar.removeWidget(StudyStepicUserWidget.ID);
+      statusBar.removeWidget(StepicUserWidget.ID);
     }
-    statusBar.addWidget(new StudyStepicUserWidget(myProject), "before Position");
+    statusBar.addWidget(new StepicUserWidget(myProject), "before Position");
   }
 
   private void selectStep(@NotNull Course course) {
