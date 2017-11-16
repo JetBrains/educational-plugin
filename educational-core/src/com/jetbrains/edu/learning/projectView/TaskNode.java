@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +75,7 @@ public class TaskNode extends EduNode {
 
   @Override
   public void navigate(boolean requestFocus) {
-    StudyNavigator.navigateToTask(myProject, myTask);
+    NavigationUtils.navigateToTask(myProject, myTask);
   }
 
   @Nullable

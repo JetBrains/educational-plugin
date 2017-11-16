@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.core.EduDocumentListener;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.StudyToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +79,7 @@ public class StudyEditorFactoryListener implements EditorFactoryListener {
         StudyEditor.addDocumentListener(document, new EduDocumentListener(taskFile, true));
 
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
-          StudyNavigator.navigateToFirstAnswerPlaceholder(editor, taskFile);
+          NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
           boolean isStudyProject = course.isStudy();
           StudyUtils.drawAllAnswerPlaceholders(editor, taskFile);
           if (isStudyProject) {

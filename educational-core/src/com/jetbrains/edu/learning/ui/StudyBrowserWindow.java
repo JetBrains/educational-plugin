@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.navigation.StudyNavigator;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.sun.webkit.dom.ElementImpl;
 import javafx.application.Platform;
@@ -243,7 +243,7 @@ public class StudyBrowserWindow extends JFrame {
               EduUsagesCollector.inCourseLinkClicked();
               final String lessonName = matcher.group(1);
               final String taskName = matcher.group(2);
-              StudyNavigator.navigateToTask(myProject, lessonName, taskName);
+              NavigationUtils.navigateToTask(myProject, lessonName, taskName);
             }
             else {
               EduUsagesCollector.externalLinkClicked();
