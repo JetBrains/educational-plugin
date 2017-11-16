@@ -22,15 +22,15 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class LessonDirectoryNode extends StudyDirectoryNode {
+public class LessonNode extends EduNode {
   @NotNull protected final Project myProject;
   protected final ViewSettings myViewSettings;
   @NotNull protected final Lesson myLesson;
 
-  public LessonDirectoryNode(@NotNull Project project,
-                             PsiDirectory value,
-                             ViewSettings viewSettings,
-                             @NotNull Lesson lesson) {
+  public LessonNode(@NotNull Project project,
+                    PsiDirectory value,
+                    ViewSettings viewSettings,
+                    @NotNull Lesson lesson) {
     super(project, value, viewSettings);
     myProject = project;
     myViewSettings = viewSettings;
@@ -76,6 +76,6 @@ public class LessonDirectoryNode extends StudyDirectoryNode {
 
   @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory directory) {
-    return new TaskDirectoryNode(myProject, directory, myViewSettings, ((Task)item));
+    return new TaskNode(myProject, directory, myViewSettings, ((Task)item));
   }
 }

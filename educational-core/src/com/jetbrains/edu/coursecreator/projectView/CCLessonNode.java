@@ -7,19 +7,19 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.projectView.LessonDirectoryNode;
+import com.jetbrains.edu.learning.projectView.LessonNode;
 import org.jetbrains.annotations.NotNull;
 
-public class CCLessonDirectoryNode extends LessonDirectoryNode {
-  public CCLessonDirectoryNode(@NotNull Project project,
-                               PsiDirectory value,
-                               ViewSettings viewSettings,
-                               @NotNull Lesson lesson) {
+public class CCLessonNode extends LessonNode {
+  public CCLessonNode(@NotNull Project project,
+                      PsiDirectory value,
+                      ViewSettings viewSettings,
+                      @NotNull Lesson lesson) {
     super(project, value, viewSettings, lesson);
   }
 
   @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory directory) {
-    return new CCTaskDirectoryNode(myProject, directory, myViewSettings, ((Task)item));
+    return new CCTaskNode(myProject, directory, myViewSettings, ((Task)item));
   }
 }

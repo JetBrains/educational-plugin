@@ -18,15 +18,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 
-public class CourseDirectoryNode extends StudyDirectoryNode {
+public class CourseNode extends EduNode {
   @NotNull protected final Project myProject;
   protected final ViewSettings myViewSettings;
   protected final Course myCourse;
 
-  public CourseDirectoryNode(@NotNull Project project,
-                             PsiDirectory value,
-                             ViewSettings viewSettings,
-                             @NotNull Course course) {
+  public CourseNode(@NotNull Project project,
+                    PsiDirectory value,
+                    ViewSettings viewSettings,
+                    @NotNull Course course) {
     super(project, value, viewSettings);
     myProject = project;
     myViewSettings = viewSettings;
@@ -61,9 +61,9 @@ public class CourseDirectoryNode extends StudyDirectoryNode {
         if (srcDir != null) {
           taskDirectory = srcDir;
         }
-        return new TaskDirectoryNode(myProject, taskDirectory, myViewSettings, tasks.get(0));
+        return new TaskNode(myProject, taskDirectory, myViewSettings, tasks.get(0));
       }
     }
-    return new LessonDirectoryNode(myProject, directory, myViewSettings, lesson);
+    return new LessonNode(myProject, directory, myViewSettings, lesson);
   }
 }
