@@ -22,26 +22,18 @@ class SwitchTaskPanelAction : AnAction() {
     }
   }
   
-  fun createDialog(): DialogWrapper {
-    return MyDialog(false)
-  }
+  fun createDialog(): DialogWrapper = MyDialog(false)
 
   class MyDialog(canBeParent: Boolean) : DialogWrapper(null, canBeParent) {
     val JAVAFX_ITEM = "JavaFX"
     val SWING_ITEM = "Swing"
     private val myComboBox: ComboBox<String> = ComboBox()
 
-    override fun createCenterPanel(): JComponent? {
-      return myComboBox
-    }
+    override fun createCenterPanel(): JComponent? = myComboBox
 
-    override fun createNorthPanel(): JComponent? {
-      return JLabel("Choose panel: ")
-    }
+    override fun createNorthPanel(): JComponent? = JLabel("Choose panel: ")
 
-    override fun getPreferredFocusedComponent(): JComponent? {
-      return myComboBox
-    }
+    override fun getPreferredFocusedComponent(): JComponent? = myComboBox
 
     override fun doOKAction() {
       super.doOKAction()
