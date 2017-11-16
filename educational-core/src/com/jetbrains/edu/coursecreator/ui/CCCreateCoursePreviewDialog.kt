@@ -11,7 +11,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
 import com.jetbrains.edu.learning.EduPluginConfigurator
-import com.jetbrains.edu.learning.core.EduNames
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel

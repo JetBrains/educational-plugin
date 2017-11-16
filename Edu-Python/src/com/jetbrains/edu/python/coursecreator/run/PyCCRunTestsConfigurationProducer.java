@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.python.learning.PyPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.core.EduNames;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
