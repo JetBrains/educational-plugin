@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
+import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
@@ -81,7 +81,7 @@ public class ChoiceTask extends Task {
       private void repaintChoicePanel(@NotNull Project project, @NotNull ChoiceTask task) {
         final StudyToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
         if (toolWindow != null) {
-          toolWindow.setBottomComponent(new StudyChoiceVariantsPanel(task));
+          toolWindow.setBottomComponent(new ChoiceVariantsPanel(task));
         }
       }
     };

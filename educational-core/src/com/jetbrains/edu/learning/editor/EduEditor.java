@@ -22,16 +22,16 @@ import java.util.Map;
 
 /**
  * Implementation of StudyEditor which has panel with special buttons and task text
- * also @see {@link StudyFileEditorProvider}
+ * also @see {@link EduFileEditorProvider}
  */
-public class StudyEditor extends PsiAwareTextEditorImpl {
+public class EduEditor extends PsiAwareTextEditorImpl {
   public static final String BROKEN_SOLUTION_ERROR_TEXT_START = "Solution can't be loaded.";
   public static final String BROKEN_SOLUTION_ERROR_TEXT_END = " to solve it again";
   public static final String ACTION_TEXT = "Reset task";
   private final TaskFile myTaskFile;
   private static final Map<Document, EduDocumentListener> myDocumentListeners = new HashMap<>();
 
-  public StudyEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
+  public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
     super(project, file, TextEditorProvider.getInstance());
     myTaskFile = StudyUtils.getTaskFile(project, file);
 

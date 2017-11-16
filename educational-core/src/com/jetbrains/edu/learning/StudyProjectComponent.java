@@ -41,7 +41,7 @@ import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.editor.StudyEditorFactoryListener;
+import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicNames;
@@ -330,7 +330,7 @@ public class StudyProjectComponent implements ProjectComponent {
 
   @Override
   public void initComponent() {
-    EditorFactory.getInstance().addEditorFactoryListener(new StudyEditorFactoryListener(), myProject);
+    EditorFactory.getInstance().addEditorFactoryListener(new EduEditorFactoryListener(), myProject);
     ActionManager.getInstance().addAnActionListener(new AnActionListener() {
       @Override
       public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {

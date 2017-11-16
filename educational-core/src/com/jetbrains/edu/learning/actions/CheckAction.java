@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
-import com.jetbrains.edu.learning.editor.StudyEditor;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -105,9 +105,9 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     final Presentation presentation = e.getPresentation();
     final Project project = e.getProject();
     if (project != null) {
-      final StudyEditor studyEditor = StudyUtils.getSelectedStudyEditor(project);
-      if (studyEditor != null) {
-        final Task task = studyEditor.getTaskFile().getTask();
+      final EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
+      if (eduEditor != null) {
+        final Task task = eduEditor.getTaskFile().getTask();
         if (task instanceof TheoryTask) {
           presentation.setText(task.getLesson().getCourse().isAdaptive() ? "Get Next Recommendation" : "Mark as read");
         }

@@ -6,7 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
+import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ public class StudyFileEditorManagerListener implements FileEditorManagerListener
     }
     myToolWindow.setCurrentTask(myProject, task);
     if (task instanceof ChoiceTask) {
-      final StudyChoiceVariantsPanel choicePanel = new StudyChoiceVariantsPanel((ChoiceTask) task);
+      final ChoiceVariantsPanel choicePanel = new ChoiceVariantsPanel((ChoiceTask) task);
       myToolWindow.setBottomComponent(choicePanel);
     } else {
       myToolWindow.setBottomComponent(null);
