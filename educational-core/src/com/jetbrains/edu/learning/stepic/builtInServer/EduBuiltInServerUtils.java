@@ -57,9 +57,9 @@ public class EduBuiltInServerUtils {
     Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : openProjects) {
       if (!project.isDefault()) {
-        StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
-        if (taskManager != null) {
-          Course course = taskManager.getCourse();
+        StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
+        if (studyTaskManager != null) {
+          Course course = studyTaskManager.getCourse();
           RemoteCourse remoteCourse = course instanceof RemoteCourse ? (RemoteCourse)course : null;
           if (remoteCourse != null && remoteCourse.getId() == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
@@ -111,8 +111,8 @@ public class EduBuiltInServerUtils {
       if (component == null) {
         continue;
       }
-      StudyTaskManager taskManager = getDefaultTaskManager();
-      int courseId = getCourseId(taskManager, component);
+      StudyTaskManager studyTaskManager = getDefaultTaskManager();
+      int courseId = getCourseId(studyTaskManager, component);
 
       if (courseId == targetCourseId) {
         PropertiesComponent.getInstance().setValue(STEP_ID, stepId, 0);
@@ -141,10 +141,10 @@ public class EduBuiltInServerUtils {
     return component;
   }
 
-  private static int getCourseId(@NotNull StudyTaskManager taskManager, @NotNull Element component) {
+  private static int getCourseId(@NotNull StudyTaskManager studyTaskManager, @NotNull Element component) {
     try {
-      taskManager.loadState(component);
-      Course course = taskManager.getCourse();
+      studyTaskManager.loadState(component);
+      Course course = studyTaskManager.getCourse();
 
       if (course instanceof RemoteCourse) {
         return ((RemoteCourse)course).getId();

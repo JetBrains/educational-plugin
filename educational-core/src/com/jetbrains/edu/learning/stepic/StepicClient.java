@@ -7,7 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.net.ssl.CertificateManager;
 import com.intellij.util.net.ssl.ConfirmingTrustManager;
-import com.jetbrains.edu.learning.StudySerializationUtils;
+import com.jetbrains.edu.learning.SerializationUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -83,7 +83,7 @@ public class StepicClient {
 
   static <T> T deserializeStepicResponse(Class<T> container, String responseString) {
     Gson gson =
-      new GsonBuilder().registerTypeAdapter(StepicWrappers.StepOptions.class, new StudySerializationUtils.Json.StepicStepOptionsAdapter()).
+      new GsonBuilder().registerTypeAdapter(StepicWrappers.StepOptions.class, new SerializationUtils.Json.StepicStepOptionsAdapter()).
         setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").
         setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     return gson.fromJson(responseString, container);

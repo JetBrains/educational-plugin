@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.jetbrains.edu.learning.StudySubtaskUtils;
+import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -39,7 +39,7 @@ public class KtTaskChecker extends RunConfigurationBasedTaskChecker {
     }
     if (myTask instanceof TaskWithSubtasks) {
       int subTaskIndex = ((TaskWithSubtasks) myTask).getActiveSubtaskIndex();
-      String testFileName = StudySubtaskUtils.getTestFileName(myProject, subTaskIndex);
+      String testFileName = SubtaskUtils.getTestFileName(myProject, subTaskIndex);
       return testFileName != null ? taskDir.findChild(testFileName) : null;
     }
     for (String testFileName : myTask.getTestsText().keySet()) {

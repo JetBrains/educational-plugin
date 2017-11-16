@@ -13,7 +13,7 @@ import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.popup.PopupPositionManager;
-import com.jetbrains.edu.learning.StudyState;
+import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -51,14 +51,14 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     if (course == null) {
       return;
     }
-    StudyState studyState = new StudyState(StudyUtils.getSelectedStudyEditor(project));
-    if (!studyState.isValid()) {
+    EduState eduState = new EduState(StudyUtils.getSelectedStudyEditor(project));
+    if (!eduState.isValid()) {
       return;
     }
-    PsiFile file = PsiManager.getInstance(project).findFile(studyState.getVirtualFile());
-    final Editor editor = studyState.getEditor();
+    PsiFile file = PsiManager.getInstance(project).findFile(eduState.getVirtualFile());
+    final Editor editor = eduState.getEditor();
     int offset = editor.getCaretModel().getOffset();
-    AnswerPlaceholder answerPlaceholder = studyState.getTaskFile().getAnswerPlaceholder(offset);
+    AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(offset);
     if (file == null) {
       return;
     }
@@ -66,7 +66,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
 
     final TaskDescriptionToolWindow hintComponent = getHint(project, answerPlaceholder).getTaskDescriptionToolWindow();
     hintComponent.setPreferredSize(new Dimension(400, 150));
-    showHintPopUp(project, studyState, editor, hintComponent);
+    showHintPopUp(project, eduState, editor, hintComponent);
   }
 
   @NotNull
@@ -74,14 +74,14 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     return new AnswerPlaceholderHint(answerPlaceholder, project);
   }
 
-  private static void showHintPopUp(Project project, StudyState studyState, Editor editor, TaskDescriptionToolWindow hintComponent) {
+  private static void showHintPopUp(Project project, EduState eduState, Editor editor, TaskDescriptionToolWindow hintComponent) {
     final JBPopup popup =
       JBPopupFactory.getInstance().createComponentPopupBuilder(hintComponent, hintComponent)
         .setDimensionServiceKey(project, "StudyHint", false)
         .setResizable(true)
         .setMovable(true)
         .setRequestFocus(true)
-        .setTitle(studyState.getTask().getName())
+        .setTitle(eduState.getTask().getName())
         .createPopup();
     Disposer.register(popup, hintComponent);
 

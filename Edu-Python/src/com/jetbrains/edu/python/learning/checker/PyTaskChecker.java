@@ -6,7 +6,7 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.StudyState;
+import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.EduTaskChecker;
@@ -101,7 +101,7 @@ public class PyTaskChecker extends EduTaskChecker {
               () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(myTask, taskDir), name, taskFile, myProject)));
         }
       }
-      CheckUtils.navigateToFailedPlaceholder(new StudyState(StudyUtils.getSelectedStudyEditor(myProject)), myTask, taskDir, myProject);
+      CheckUtils.navigateToFailedPlaceholder(new EduState(StudyUtils.getSelectedStudyEditor(myProject)), myTask, taskDir, myProject);
     });
   }
 

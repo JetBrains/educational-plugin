@@ -9,7 +9,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
-import com.jetbrains.edu.learning.StudySubtaskUtils;
+import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -49,7 +49,7 @@ public class TaskWithSubtasksChecker extends TaskChecker<TaskWithSubtasks> {
       CheckUtils.showTestResultPopUp(resultMessage, MessageType.INFO.getPopupBackground(), myProject);
       if (hasMoreSubtasks) {
         int nextSubtaskIndex = activeSubtaskIndex + 1;
-        StudySubtaskUtils.switchStep(myProject, myTask, nextSubtaskIndex);
+        SubtaskUtils.switchStep(myProject, myTask, nextSubtaskIndex);
         rememberAnswers(nextSubtaskIndex, myTask);
       }
     });
