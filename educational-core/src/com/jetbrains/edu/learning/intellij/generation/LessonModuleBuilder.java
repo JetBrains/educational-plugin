@@ -22,11 +22,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-public class EduLessonModuleBuilder extends EduBaseIntellijModuleBuilder {
+public class LessonModuleBuilder extends EduBaseIntellijModuleBuilder {
     private final Lesson myLesson;
     private final Module myUtilModule;
 
-    public EduLessonModuleBuilder(@NotNull String moduleDir, @NotNull Lesson lesson, @NotNull Module utilModule) {
+    public LessonModuleBuilder(@NotNull String moduleDir, @NotNull Lesson lesson, @NotNull Module utilModule) {
         myLesson = lesson;
         myUtilModule = utilModule;
         String lessonName = EduNames.LESSON + lesson.getIndex();
@@ -55,7 +55,7 @@ public class EduLessonModuleBuilder extends EduBaseIntellijModuleBuilder {
     }
 
     private void createTaskModule(@NotNull Project project, @NotNull ModifiableModuleModel moduleModel, @NotNull Task task) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
-        EduTaskModuleBuilder taskModuleBuilder = new EduTaskModuleBuilder(getModuleFileDirectory(), getName(), task, myUtilModule);
+        TaskModuleBuilder taskModuleBuilder = new TaskModuleBuilder(getModuleFileDirectory(), getName(), task, myUtilModule);
         taskModuleBuilder.createAndCommitIfNeeded(project, moduleModel, false);
     }
 

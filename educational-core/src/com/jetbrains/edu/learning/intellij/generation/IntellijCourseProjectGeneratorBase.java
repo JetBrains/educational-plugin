@@ -28,13 +28,13 @@ import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class EduIntellijCourseProjectGeneratorBase implements CourseProjectGenerator<JdkProjectSettings> {
+public abstract class IntellijCourseProjectGeneratorBase implements CourseProjectGenerator<JdkProjectSettings> {
 
-  private static final Logger LOG = DefaultLogger.getInstance(EduIntellijCourseProjectGeneratorBase.class);
+  private static final Logger LOG = DefaultLogger.getInstance(IntellijCourseProjectGeneratorBase.class);
 
   protected final Course myCourse;
 
-  public EduIntellijCourseProjectGeneratorBase(@NotNull Course course) {
+  public IntellijCourseProjectGeneratorBase(@NotNull Course course) {
     myCourse = course;
   }
 
@@ -64,7 +64,7 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements CoursePro
   }
 
   private void createCourseStructure(@NotNull Project project) {
-    final EduCourseModuleBuilder moduleBuilder;
+    final CourseModuleBuilder moduleBuilder;
     if (myCourse.isStudy()) {
       moduleBuilder = studyModuleBuilder();
     } else {
@@ -78,10 +78,10 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements CoursePro
   }
 
   @Nullable
-  protected abstract EduCourseModuleBuilder studyModuleBuilder();
+  protected abstract CourseModuleBuilder studyModuleBuilder();
 
   @Nullable
-  protected EduCourseModuleBuilder courseCreationModuleBuilder() {
+  protected CourseModuleBuilder courseCreationModuleBuilder() {
     return new CCModuleBuilder(myCourse);
   }
 

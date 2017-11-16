@@ -55,7 +55,7 @@ public class EduModuleBuilderUtils {
     if (moduleDir == null) {
       return;
     }
-    EduUtilModuleBuilder utilModuleBuilder = new EduUtilModuleBuilder(moduleDir, course.getAdditionalMaterialsTask());
+    UtilModuleBuilder utilModuleBuilder = new UtilModuleBuilder(moduleDir, course.getAdditionalMaterialsTask());
     Module utilModule = utilModuleBuilder.createAndCommitIfNeeded(project, moduleModel, false);
     createLessonModules(project, moduleModel, course, moduleDir, utilModule);
   }
@@ -68,8 +68,8 @@ public class EduModuleBuilderUtils {
       int lessonVisibleIndex = i + 1;
       Lesson lesson = lessons.get(i);
       lesson.setIndex(lessonVisibleIndex);
-      EduLessonModuleBuilder eduLessonModuleBuilder = new EduLessonModuleBuilder(moduleDir, lesson, utilModule);
-      eduLessonModuleBuilder.createAndCommitIfNeeded(project, moduleModel, false);
+      LessonModuleBuilder lessonModuleBuilder = new LessonModuleBuilder(moduleDir, lesson, utilModule);
+      lessonModuleBuilder.createAndCommitIfNeeded(project, moduleModel, false);
     }
   }
 

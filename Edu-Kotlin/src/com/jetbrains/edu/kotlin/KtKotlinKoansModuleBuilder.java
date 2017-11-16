@@ -14,7 +14,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.intellij.generation.EduCourseModuleBuilder;
+import com.jetbrains.edu.learning.intellij.generation.CourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduProjectGenerator;
 import org.jdom.JDOMException;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 
-class KtKotlinKoansModuleBuilder extends EduCourseModuleBuilder {
+class KtKotlinKoansModuleBuilder extends CourseModuleBuilder {
   static final String DEFAULT_COURSE_NAME = "Kotlin Koans.zip";
   private static final Logger LOG = Logger.getInstance(KtKotlinKoansModuleBuilder.class);
   @Nullable private Course myCourse;
