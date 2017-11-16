@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.ui.StudyHint;
+import com.jetbrains.edu.learning.ui.AnswerPlaceholderHint;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -70,8 +70,8 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
   }
 
   @NotNull
-  protected StudyHint getHint(Project project, AnswerPlaceholder answerPlaceholder) {
-    return new StudyHint(answerPlaceholder, project);
+  protected AnswerPlaceholderHint getHint(Project project, AnswerPlaceholder answerPlaceholder) {
+    return new AnswerPlaceholderHint(answerPlaceholder, project);
   }
 
   private static void showHintPopUp(Project project, StudyState studyState, Editor editor, TaskDescriptionToolWindow hintComponent) {

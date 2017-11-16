@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
-import com.jetbrains.edu.learning.ui.StudyTestContentPanel;
+import com.jetbrains.edu.learning.ui.TestContentPanel;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,7 +72,7 @@ public class EditInputAction extends DumbAwareAction {
             assert testsDir != null;
             UserTest userTest = createUserTest(testsDir, currentTask, studyTaskManager);
             userTest.setEditable(true);
-            StudyTestContentPanel testContentPanel = new StudyTestContentPanel(userTest);
+            TestContentPanel testContentPanel = new TestContentPanel(userTest);
             TabInfo testTab = addTestTab(tabbedPane.getTabCount(), testContentPanel, currentTask, true);
             myEditableTabs.put(testTab, userTest);
             tabbedPane.addTabSilently(testTab, tabCount - 1);
@@ -86,7 +86,7 @@ public class EditInputAction extends DumbAwareAction {
       for (UserTest userTest : userTests) {
         String inputFileText = StudyUtils.getFileText(null, userTest.getInput(), false, "UTF-8");
         String outputFileText = StudyUtils.getFileText(null, userTest.getOutput(), false, "UTF-8");
-        StudyTestContentPanel myContentPanel = new StudyTestContentPanel(userTest);
+        TestContentPanel myContentPanel = new TestContentPanel(userTest);
         myContentPanel.addInputContent(inputFileText);
         myContentPanel.addOutputContent(outputFileText);
         TabInfo testTab = addTestTab(i, myContentPanel, currentTask, userTest.isEditable());
@@ -145,12 +145,12 @@ public class EditInputAction extends DumbAwareAction {
     return userTest;
   }
 
-  private TabInfo addTestTab(int nameIndex, final StudyTestContentPanel contentPanel, @NotNull final Task currentTask, boolean toBeClosable) {
+  private TabInfo addTestTab(int nameIndex, final TestContentPanel contentPanel, @NotNull final Task currentTask, boolean toBeClosable) {
     TabInfo testTab = toBeClosable ? createClosableTab(contentPanel, currentTask) : new TabInfo(contentPanel);
     return testTab.setText(EduNames.TEST_TAB_NAME + String.valueOf(nameIndex));
   }
 
-  private TabInfo createClosableTab(StudyTestContentPanel contentPanel, Task currentTask) {
+  private TabInfo createClosableTab(TestContentPanel contentPanel, Task currentTask) {
     TabInfo closableTab = new TabInfo(contentPanel);
     final DefaultActionGroup tabActions = new DefaultActionGroup();
     tabActions.add(new CloseTab(closableTab, currentTask));

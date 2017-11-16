@@ -16,8 +16,8 @@ import com.jetbrains.edu.learning.ui.taskDescription.SwingToolWindow
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow
 import java.util.*
 
-open class StudyHint(private val myPlaceholder: AnswerPlaceholder?,
-                     private val myProject: Project) {
+open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
+                                 private val myProject: Project) {
 
   companion object {
     private val OUR_WARNING_MESSAGE = "Put the caret in the answer placeholder to get hint"

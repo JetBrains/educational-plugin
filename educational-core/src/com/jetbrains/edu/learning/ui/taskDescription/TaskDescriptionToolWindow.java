@@ -45,7 +45,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveReactionsPanel;
-import com.jetbrains.edu.learning.ui.StudyProgressBar;
+import com.jetbrains.edu.learning.ui.CourseProgressBar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +64,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   private final JPanel myContentPanel;
   private final OnePixelSplitter mySplitPane;
   private JLabel myStatisticLabel;
-  private StudyProgressBar myStudyProgressBar;
+  private CourseProgressBar myCourseProgressBar;
   private EditorEx myEditor;
 
   private Task myCurrentTask = null;
@@ -271,11 +271,11 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
     contentPanel.add(Box.createRigidArea(new Dimension(10, 0)));
     contentPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-    myStudyProgressBar = new StudyProgressBar(0, 20, 10);
+    myCourseProgressBar = new CourseProgressBar(0, 20, 10);
 
     myStatisticLabel = new JLabel("", SwingConstants.LEFT);
     contentPanel.add(myStatisticLabel);
-    contentPanel.add(myStudyProgressBar);
+    contentPanel.add(myCourseProgressBar);
 
     contentPanel.setPreferredSize(new Dimension(100, 60));
     contentPanel.setMinimumSize(new Dimension(300, 40));
@@ -299,7 +299,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
       double percent = (taskSolved * 100.0) / taskNum;
 
       myStatisticLabel.setText(completedTasks);
-      myStudyProgressBar.setFraction(percent / 100);
+      myCourseProgressBar.setFraction(percent / 100);
     }
   }
 
