@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
-import com.jetbrains.edu.learning.intellij.generation.EduTaskModuleBuilder;
+import com.jetbrains.edu.learning.intellij.generation.TaskModuleBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,7 +92,7 @@ public class EduIntellijUtils {
     if (lessonModule == null || utilModule == null) {
       return null;
     }
-    EduTaskModuleBuilder moduleBuilder = new EduTaskModuleBuilder(parentDirectory.getPath(), lessonDirName, task, utilModule) {
+    TaskModuleBuilder moduleBuilder = new TaskModuleBuilder(parentDirectory.getPath(), lessonDirName, task, utilModule) {
       @Override
       protected void createTask(Project project, Course course, VirtualFile src) throws IOException {
         if (taskFileName == null) {
