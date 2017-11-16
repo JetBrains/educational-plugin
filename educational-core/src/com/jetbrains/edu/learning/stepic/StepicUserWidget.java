@@ -23,11 +23,11 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
+public class StepicUserWidget implements IconLikeCustomStatusBarWidget {
   public static final String ID = "StepicUser";
   private JLabel myComponent;
 
-  public StudyStepicUserWidget(@NotNull Project project) {
+  public StepicUserWidget(@NotNull Project project) {
     Icon icon = getWidgetIcon(EduSettings.getInstance().getUser());
     myComponent = new JLabel(icon);
 
