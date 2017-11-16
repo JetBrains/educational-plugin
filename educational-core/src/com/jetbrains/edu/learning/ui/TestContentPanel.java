@@ -11,14 +11,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 
-public class StudyTestContentPanel extends JPanel {
+public class TestContentPanel extends JPanel {
   private static final Dimension ourPreferredSize = new Dimension(300, 200);
   private static final Font ourHeaderFont = new Font("Arial", Font.BOLD, 16);
   private final JTextArea myInputArea = new JTextArea();
   private final JTextArea myOutputArea = new JTextArea();
-  private static final Logger LOG = Logger.getInstance(StudyTestContentPanel.class.getName());
+  private static final Logger LOG = Logger.getInstance(TestContentPanel.class.getName());
 
-  public StudyTestContentPanel(UserTest userTest) {
+  public TestContentPanel(UserTest userTest) {
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     initContentLabel("input", myInputArea);
     myInputArea.getDocument().addDocumentListener(new BufferUpdater(userTest.getInputBuffer()));

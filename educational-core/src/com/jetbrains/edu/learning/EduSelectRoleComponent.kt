@@ -7,7 +7,7 @@ import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.util.Ref
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
-import com.jetbrains.edu.learning.ui.EduSelectRolePanel
+import com.jetbrains.edu.learning.ui.SelectRolePanel
 
 
 class EduSelectRoleComponent : ApplicationComponent {
@@ -32,7 +32,7 @@ class EduSelectRoleComponent : ApplicationComponent {
 
   private fun showInitialConfigurationDialog() {
     val dialog = DialogBuilder()
-    val panel = EduSelectRolePanel()
+    val panel = SelectRolePanel()
     dialog.setPreferredFocusComponent(panel.getStudentButton())
     dialog.title("Are you a Learner or an Educator?").centerPanel(panel)
     dialog.addOkAction().setText("Start using EduTools")

@@ -15,7 +15,7 @@ import javax.swing.JPanel
 import javax.swing.SwingConstants
 
 
-class EduSelectRolePanel : JPanel() {
+class SelectRolePanel : JPanel() {
   private var myStudent: JLabel
 
   init {
