@@ -28,8 +28,8 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
-import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
+import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.python.learning.PyPluginConfigurator;
@@ -58,7 +58,7 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
   private static final String NO_PYTHON_INTERPRETER = "<html><u>Add</u> python interpreter.</html>";
 
   private final Course myCourse;
-  private final StudyProjectGenerator myGenerator;
+  private final ProjectGenerator myGenerator;
 
   private ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
 
@@ -68,7 +68,7 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
 
   public PyDirectoryProjectGenerator(@NotNull Course course) {
     myCourse = course;
-    myGenerator = new StudyProjectGenerator();
+    myGenerator = new ProjectGenerator();
     myGenerator.addSettingsStateListener(this::setValidationResult);
     myHasOldPythonApi = hasOldPythonApi();
   }
@@ -128,7 +128,7 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
     if (baseDir.findChild(testHelper) != null) return;
     final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
     try {
-      StudyGenerator.createChildFile(project.getBaseDir(), testHelper, template.getText());
+      GeneratorUtils.createChildFile(project.getBaseDir(), testHelper, template.getText());
     }
     catch (IOException exception) {
       LOG.error("Can't copy test_helper.py " + exception.getMessage());

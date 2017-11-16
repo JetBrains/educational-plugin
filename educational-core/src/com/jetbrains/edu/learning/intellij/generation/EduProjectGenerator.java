@@ -5,10 +5,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
+import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 
-public class EduProjectGenerator extends StudyProjectGenerator {
+public class EduProjectGenerator extends ProjectGenerator {
   private static final Logger LOG = Logger.getInstance(EduProjectGenerator.class);
 
   @Override
