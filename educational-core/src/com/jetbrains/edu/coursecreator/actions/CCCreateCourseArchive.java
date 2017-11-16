@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.SerializationUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -150,7 +149,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
           if (answerFile == null) {
             continue;
           }
-          final TaskFile studentFile = EduUtils.createStudentFile(project, answerFile, task, 0);
+          final TaskFile studentFile = StudyUtils.createStudentFile(project, answerFile, task, 0);
           if (studentFile != null) {
             studentTaskFiles.put(entry.getKey(), studentFile);
           }
@@ -177,7 +176,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         if (taskDir == null) {
           return testFiles;
         }
-        if (EduUtils.isAndroidStudio()) {
+        if (StudyUtils.isAndroidStudio()) {
           VirtualFile testDir = taskDir.getParent().findChild(EduNames.TEST);
           if (testDir == null) {
             return testFiles;

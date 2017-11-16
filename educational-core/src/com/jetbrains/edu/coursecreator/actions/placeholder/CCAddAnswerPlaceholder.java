@@ -14,7 +14,6 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.DocumentUtil;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -81,7 +80,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
     answerPlaceholder.setPossibleAnswer(model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText);
     AddAction action = new AddAction(answerPlaceholder, taskFile, editor);
-    EduUtils.runUndoableAction(project, "Add Answer Placeholder", action);
+    StudyUtils.runUndoableAction(project, "Add Answer Placeholder", action);
   }
 
   static class AddAction extends BasicUndoableAction {

@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -63,7 +62,7 @@ class PySmartChecker {
         String text = usersDocument.getText(new TextRange(userStart, userEnd));
         windowDocument.replaceString(start, end, text);
         ApplicationManager.getApplication().runWriteAction(() -> documentManager.saveDocument(windowDocument));
-        fileWindows = EduUtils.flushWindows(windowTaskFile, windowCopy);
+        fileWindows = StudyUtils.flushWindows(windowTaskFile, windowCopy);
         Process smartTestProcess = testRunner.createCheckProcess(project, windowCopy.getPath());
         final CapturingProcessHandler handler = new CapturingProcessHandler(smartTestProcess, null, windowCopy.getPath());
         final ProcessOutput output = handler.runProcess();

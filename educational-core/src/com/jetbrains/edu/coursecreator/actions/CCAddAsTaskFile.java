@@ -7,7 +7,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -21,7 +20,7 @@ public class CCAddAsTaskFile extends CCTaskFileActionBase {
 
 
   protected void performAction(VirtualFile file, Task task, Course course, Project project) {
-    EduUtils.runUndoableAction(project, ACTION_NAME, new AddTaskFile(file, null, project, task));
+    StudyUtils.runUndoableAction(project, ACTION_NAME, new AddTaskFile(file, null, project, task));
   }
 
   protected boolean isAvailable(Project project, VirtualFile file) {

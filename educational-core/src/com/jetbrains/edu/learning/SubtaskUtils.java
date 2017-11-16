@@ -193,6 +193,6 @@ public class SubtaskUtils {
     int prevSubtaskIndex = placeholder.getActiveSubtaskIndex() - 1;
     AnswerPlaceholderSubtaskInfo info = placeholder.getSubtaskInfos().get(prevSubtaskIndex);
     String replacementText = info != null ? info.getAnswer() : placeholder.getTaskText();
-    EduUtils.replaceAnswerPlaceholder(editor.getDocument(), placeholder, placeholder.getRealLength(), replacementText);
+    StudyUtils.replaceAnswerPlaceholder(editor.getDocument(), placeholder, placeholder.getRealLength(), replacementText);
   }
 }

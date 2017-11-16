@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -106,7 +105,7 @@ public class PyCCCommandLineState extends PythonCommandLineState {
     handler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(@NotNull ProcessEvent event) {
-        ApplicationManager.getApplication().invokeLater(() -> EduUtils.deleteWindowDescriptions(myTask, myTaskDir));
+        ApplicationManager.getApplication().invokeLater(() -> StudyUtils.deleteWindowDescriptions(myTask, myTaskDir));
       }
     });
     return handler;

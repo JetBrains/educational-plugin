@@ -23,7 +23,6 @@ import com.intellij.ui.content.Content;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -118,7 +117,7 @@ public class CheckUtils {
       if (virtualFile == null) {
         continue;
       }
-      EduUtils.flushWindows(taskFile, virtualFile);
+      StudyUtils.flushWindows(taskFile, virtualFile);
     }
   }
 
