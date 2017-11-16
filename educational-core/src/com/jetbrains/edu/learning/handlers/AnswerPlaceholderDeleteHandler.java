@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.core;
+package com.jetbrains.edu.learning.handlers;
 
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.editor.Editor;
@@ -6,11 +6,11 @@ import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
 import com.intellij.openapi.editor.actionSystem.ReadonlyFragmentModificationHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class EduAnswerPlaceholderDeleteHandler implements ReadonlyFragmentModificationHandler {
+public class AnswerPlaceholderDeleteHandler implements ReadonlyFragmentModificationHandler {
 
   private final Editor myEditor;
 
-  public EduAnswerPlaceholderDeleteHandler(@NotNull final Editor editor) {
+  public AnswerPlaceholderDeleteHandler(@NotNull final Editor editor) {
     myEditor = editor;
   }
 

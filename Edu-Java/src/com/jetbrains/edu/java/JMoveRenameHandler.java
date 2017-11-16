@@ -9,14 +9,14 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
-import com.jetbrains.edu.learning.StudyMoveDelegate;
+import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JMoveRenameHandler extends StudyMoveDelegate implements RenameHandler {
+public class JMoveRenameHandler extends EduMoveDelegate implements RenameHandler {
   @Override
   public boolean canMove(DataContext dataContext) {
     return canRenameOrMove(CommonDataKeys.PROJECT.getData(dataContext), CommonDataKeys.PSI_ELEMENT.getData(dataContext));
