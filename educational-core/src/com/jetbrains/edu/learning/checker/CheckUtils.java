@@ -20,7 +20,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
-import com.jetbrains.edu.learning.StudyState;
+import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.EduUtils;
@@ -62,20 +62,20 @@ public class CheckUtils {
     }
   }
 
-  public static void navigateToFailedPlaceholder(@NotNull final StudyState studyState,
+  public static void navigateToFailedPlaceholder(@NotNull final EduState eduState,
                                                  @NotNull final Task task,
                                                  @NotNull final VirtualFile taskDir,
                                                  @NotNull final Project project) {
-    TaskFile selectedTaskFile = studyState.getTaskFile();
-    Editor editor = studyState.getEditor();
+    TaskFile selectedTaskFile = eduState.getTaskFile();
+    Editor editor = eduState.getEditor();
     TaskFile taskFileToNavigate = selectedTaskFile;
-    VirtualFile fileToNavigate = studyState.getVirtualFile();
-    final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
-    if (!taskManager.hasFailedAnswerPlaceholders(selectedTaskFile)) {
+    VirtualFile fileToNavigate = eduState.getVirtualFile();
+    final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
+    if (!studyTaskManager.hasFailedAnswerPlaceholders(selectedTaskFile)) {
       for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
         String name = entry.getKey();
         TaskFile taskFile = entry.getValue();
-        if (taskManager.hasFailedAnswerPlaceholders(taskFile)) {
+        if (studyTaskManager.hasFailedAnswerPlaceholders(taskFile)) {
           taskFileToNavigate = taskFile;
           VirtualFile virtualFile = taskDir.findFileByRelativePath(name);
           if (virtualFile == null) {

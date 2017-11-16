@@ -26,9 +26,9 @@ import com.intellij.openapi.wm.WindowManager;
 
 import java.awt.*;
 
-public class StudyDocumentationManager extends DocumentationManager {
+public class EduDocumentationManager extends DocumentationManager {
 
-  public StudyDocumentationManager(Project project, ActionManager manager, TargetElementUtil targetElementUtil) {
+  public EduDocumentationManager(Project project, ActionManager manager, TargetElementUtil targetElementUtil) {
     super(project, manager, targetElementUtil);
   }
 

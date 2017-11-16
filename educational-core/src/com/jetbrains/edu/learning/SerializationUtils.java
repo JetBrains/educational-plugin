@@ -29,8 +29,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class StudySerializationUtils {
-  private static final Logger LOG = Logger.getInstance(StudySerializationUtils.class);
+public class SerializationUtils {
+  private static final Logger LOG = Logger.getInstance(SerializationUtils.class);
 
   public static final String PLACEHOLDERS = "placeholders";
   public static final String LINE = "line";
@@ -50,7 +50,7 @@ public class StudySerializationUtils {
   public static final String AUTHORS = "authors";
   public static final String MY_INITIAL_START = "myInitialStart";
 
-  private StudySerializationUtils() {
+  private SerializationUtils() {
   }
 
   public static class StudyUnrecognizedFormatException extends Exception {

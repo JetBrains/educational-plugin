@@ -4,7 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.RoamingType;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.jetbrains.edu.learning.StudySerializationUtils;
+import com.jetbrains.edu.learning.SerializationUtils;
 import gnu.trove.TObjectIntHashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ public class EduStatistics implements PersistentStateComponent<Element> {
   public Element getState() {
     Element descriptors = new Element(DESCRIPTORS);
     myUsageDescriptors.forEachEntry((a, b) -> {
-      StudySerializationUtils.Xml.addChildWithName(descriptors, a, b);
+      SerializationUtils.Xml.addChildWithName(descriptors, a, b);
       return true;
     });
     return descriptors;
@@ -31,8 +31,8 @@ public class EduStatistics implements PersistentStateComponent<Element> {
   @Override
   public void loadState(Element state) {
     for (Element element : state.getChildren()) {
-      String key = element.getAttributeValue(StudySerializationUtils.Xml.NAME);
-      Integer value = Integer.valueOf(element.getAttributeValue(StudySerializationUtils.Xml.VALUE));
+      String key = element.getAttributeValue(SerializationUtils.Xml.NAME);
+      Integer value = Integer.valueOf(element.getAttributeValue(SerializationUtils.Xml.VALUE));
       myUsageDescriptors.put(key, value);
     }
   }

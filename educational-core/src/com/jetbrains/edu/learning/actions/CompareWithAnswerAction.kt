@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.StudyState
+import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.StudyUtils
 
@@ -20,7 +20,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
 
-        val studyState = StudyState(StudyUtils.getSelectedStudyEditor(project))
+        val studyState = EduState(StudyUtils.getSelectedStudyEditor(project))
         if (!studyState.isValid) {
             return
         }
@@ -44,7 +44,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     private fun getFileTextWithAnswers(project: Project, myDocument: Document): String {
         val fullAnswer = StringBuilder(myDocument.text)
 
-        val studyState = StudyState(StudyUtils.getSelectedStudyEditor(project))
+        val studyState = EduState(StudyUtils.getSelectedStudyEditor(project))
         studyState.taskFile.activePlaceholders
                 .sortedBy { it.offset }
                 .reversed()
@@ -69,7 +69,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
                 return
             }
             val studyEditor = StudyUtils.getSelectedStudyEditor(project)
-            val studyState = StudyState(studyEditor)
+            val studyState = EduState(studyEditor)
             if (!studyState.isValid) {
                 presentation.isEnabledAndVisible = false
                 return

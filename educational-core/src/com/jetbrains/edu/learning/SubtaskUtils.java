@@ -32,10 +32,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.Map;
 
-public class StudySubtaskUtils {
-  private static final Logger LOG = Logger.getInstance(StudySubtaskUtils.class);
+public class SubtaskUtils {
+  private static final Logger LOG = Logger.getInstance(SubtaskUtils.class);
 
-  private StudySubtaskUtils() {
+  private SubtaskUtils() {
   }
 
   public static void switchStep(@NotNull Project project, @NotNull TaskWithSubtasks task, int toSubtaskIndex) {

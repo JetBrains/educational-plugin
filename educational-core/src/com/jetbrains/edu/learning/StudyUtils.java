@@ -300,9 +300,9 @@ public class StudyUtils {
     final Project project = editor.getProject();
     if (project == null) return;
     if (!taskFile.isValid(editor.getDocument().getText())) return;
-    final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
+    final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-      final JBColor color = taskManager.getColor(answerPlaceholder);
+      final JBColor color = studyTaskManager.getColor(answerPlaceholder);
       EduAnswerPlaceholderPainter.drawAnswerPlaceholder(editor, answerPlaceholder, color);
     }
 

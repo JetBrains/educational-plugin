@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.StudySerializationUtils.Xml.REMOTE_COURSE;
+import static com.jetbrains.edu.learning.SerializationUtils.Xml.REMOTE_COURSE;
 
 /**
  * Implementation of class which contains all the information
@@ -129,7 +129,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @NotNull
   private Element serialize() {
     Element el = new Element("taskManager");
-    Element taskManagerElement = new Element(StudySerializationUtils.Xml.MAIN_ELEMENT);
+    Element taskManagerElement = new Element(SerializationUtils.Xml.MAIN_ELEMENT);
     XmlSerializer.serializeInto(this, taskManagerElement);
 
     if (myCourse instanceof RemoteCourse) {
@@ -138,11 +138,11 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         //noinspection RedundantCast
         XmlSerializer.serializeInto((RemoteCourse)myCourse, course);
 
-        final Element xmlCourse = StudySerializationUtils.Xml.getChildWithName(taskManagerElement, StudySerializationUtils.COURSE);
+        final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
         xmlCourse.removeContent();
         xmlCourse.addContent(course);
       }
-      catch (StudySerializationUtils.StudyUnrecognizedFormatException e) {
+      catch (SerializationUtils.StudyUnrecognizedFormatException e) {
         LOG.error("Failed to serialize remote course");
       }
     }
@@ -154,25 +154,25 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Override
   public void loadState(Element state) {
     try {
-      int version = StudySerializationUtils.Xml.getVersion(state);
+      int version = SerializationUtils.Xml.getVersion(state);
       if (version == -1) {
         LOG.error("StudyTaskManager doesn't contain any version:\n" + state.getValue());
         return;
       }
       switch (version) {
         case 1:
-          state = StudySerializationUtils.Xml.convertToSecondVersion(state);
+          state = SerializationUtils.Xml.convertToSecondVersion(state);
         case 2:
-          state = StudySerializationUtils.Xml.convertToThirdVersion(state, myProject);
+          state = SerializationUtils.Xml.convertToThirdVersion(state, myProject);
         case 3:
-          state = StudySerializationUtils.Xml.convertToForthVersion(state);
+          state = SerializationUtils.Xml.convertToForthVersion(state);
         case 4:
-          state = StudySerializationUtils.Xml.convertToFifthVersion(state);
+          state = SerializationUtils.Xml.convertToFifthVersion(state);
           updateTestHelper();
         case 5:
-          state = StudySerializationUtils.Xml.convertToSixthVersion(state, myProject);
+          state = SerializationUtils.Xml.convertToSixthVersion(state, myProject);
         case 6:
-          state = StudySerializationUtils.Xml.convertToSeventhVersion(state);
+          state = SerializationUtils.Xml.convertToSeventhVersion(state);
         //uncomment for future versions
 //        case 7:
 //          state = StudySerializationUtils.Xml.convertToEighthVersion(state, myProject);
@@ -183,7 +183,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         myCourse.initCourse(true);
       }
     }
-    catch (StudySerializationUtils.StudyUnrecognizedFormatException e) {
+    catch (SerializationUtils.StudyUnrecognizedFormatException e) {
       LOG.error("Unexpected course format:\n", new XMLOutputter().outputString(state));
     }
   }
@@ -212,13 +212,13 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     }));
   }
 
-  private void deserialize(Element state) throws StudySerializationUtils.StudyUnrecognizedFormatException {
-    final Element taskManagerElement = state.getChild(StudySerializationUtils.Xml.MAIN_ELEMENT);
+  private void deserialize(Element state) throws SerializationUtils.StudyUnrecognizedFormatException {
+    final Element taskManagerElement = state.getChild(SerializationUtils.Xml.MAIN_ELEMENT);
     if (taskManagerElement == null) {
-      throw new StudySerializationUtils.StudyUnrecognizedFormatException();
+      throw new SerializationUtils.StudyUnrecognizedFormatException();
     }
     XmlSerializer.deserializeInto(this, taskManagerElement);
-    final Element xmlCourse = StudySerializationUtils.Xml.getChildWithName(taskManagerElement, StudySerializationUtils.COURSE);
+    final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
     final Element remoteCourseElement = xmlCourse.getChild(REMOTE_COURSE);
     if (remoteCourseElement != null) {
       final RemoteCourse remoteCourse = new RemoteCourse();
