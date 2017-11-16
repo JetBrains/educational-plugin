@@ -31,7 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -160,7 +160,7 @@ public class EduCoursesPanel extends JPanel {
               }, ModalityState.any());
             }
           });
-          EduStepicConnector.doAuthorize(() -> StudyUtils.showOAuthDialog());
+          StepicConnector.doAuthorize(() -> StudyUtils.showOAuthDialog());
         }
       }
 

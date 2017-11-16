@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.actions.SyncCourseAction;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -101,7 +101,7 @@ public class StudyStepicUserWidget implements IconLikeCustomStatusBarWidget {
           else {
             if (loginText.equals(selectedValue)) {
               EduUsagesCollector.loginFromWidget();
-              EduStepicConnector.doAuthorize(StudyUtils::showOAuthDialog);
+              StepicConnector.doAuthorize(StudyUtils::showOAuthDialog);
             }
             else if (logOutText.equals(selectedValue)) {
               EduUsagesCollector.logoutFromWidget();

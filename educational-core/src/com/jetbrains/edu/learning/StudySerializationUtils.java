@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.StudyStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicWrappers;
 import org.jdom.Attribute;
 import org.jdom.Content;
@@ -600,7 +600,7 @@ public class StudySerializationUtils {
         StepicWrappers.StepOptions stepOptions =
           new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
             .fromJson(stepOptionsJson, StepicWrappers.StepOptions.class);
-        stepOptions.formatVersion = EduStepicConnector.CURRENT_VERSION;
+        stepOptions.formatVersion = StepicConnector.CURRENT_VERSION;
         return stepOptions;
       }
 

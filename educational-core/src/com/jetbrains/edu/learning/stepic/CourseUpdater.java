@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EduCourseUpdater implements ApplicationComponent {
+public class CourseUpdater implements ApplicationComponent {
 
   private List<Course> ourRemoteCourses = new ArrayList<>();
 
@@ -32,11 +32,11 @@ public class EduCourseUpdater implements ApplicationComponent {
     return ourRemoteCourses;
   }
 
-  public static EduCourseUpdater getInstance() {
-    return ApplicationManager.getApplication().getComponent(EduCourseUpdater.class);
+  public static CourseUpdater getInstance() {
+    return ApplicationManager.getApplication().getComponent(CourseUpdater.class);
   }
 
-  public EduCourseUpdater() {
+  public CourseUpdater() {
     ApplicationManager.getApplication().executeOnPooledThread(
       () -> ourRemoteCourses = new StudyProjectGenerator().getCourses(true));
   }

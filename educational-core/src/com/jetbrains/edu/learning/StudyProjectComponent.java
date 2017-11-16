@@ -43,9 +43,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
 import com.jetbrains.edu.learning.editor.StudyEditorFactoryListener;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.EduStepicConnector;
-import com.jetbrains.edu.learning.stepic.EduStepicNames;
-import com.jetbrains.edu.learning.stepic.StudyStepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicNames;
+import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.ui.StudyStepicUserWidget;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import com.jetbrains.edu.learning.ui.StudyToolWindowFactory;
@@ -61,7 +61,7 @@ import java.util.Map;
 
 import static com.jetbrains.edu.learning.StudyUtils.execCancelable;
 import static com.jetbrains.edu.learning.StudyUtils.navigateToStep;
-import static com.jetbrains.edu.learning.stepic.EduStepicNames.STEP_ID;
+import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
 
 
 public class StudyProjectComponent implements ProjectComponent {
@@ -141,14 +141,14 @@ public class StudyProjectComponent implements ProjectComponent {
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
     if (!(course instanceof RemoteCourse) || !((RemoteCourse) course).isLoadSolutions()) return;
-    if (PropertiesComponent.getInstance(myProject).getBoolean(EduStepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
-      PropertiesComponent.getInstance(myProject).setValue(EduStepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
+    if (PropertiesComponent.getInstance(myProject).getBoolean(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
+      PropertiesComponent.getInstance(myProject).setValue(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
       return;
     }
-    StudyStepikSolutionsLoader studyStepikSolutionsLoader = StudyStepikSolutionsLoader.getInstance(myProject);
+    StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(myProject);
     try {
-      List<Task> tasksToUpdate = studyStepikSolutionsLoader.tasksToUpdateUnderProgress();
-      studyStepikSolutionsLoader.loadSolutionsInBackground(tasksToUpdate);
+      List<Task> tasksToUpdate = stepikSolutionsLoader.tasksToUpdateUnderProgress();
+      stepikSolutionsLoader.loadSolutionsInBackground(tasksToUpdate);
     }
     catch (Exception e) {
       LOG.warn(e.getMessage());
@@ -214,7 +214,7 @@ public class StudyProjectComponent implements ProjectComponent {
   private void updateCourse() {
     final Course currentCourse = StudyTaskManager.getInstance(myProject).getCourse();
     if (currentCourse == null || !(currentCourse instanceof RemoteCourse)) return;
-    final Course course = EduStepicConnector.getCourse(myProject, (RemoteCourse)currentCourse);
+    final Course course = StepicConnector.getCourse(myProject, (RemoteCourse)currentCourse);
     if (course == null) return;
     course.initCourse(false);
 

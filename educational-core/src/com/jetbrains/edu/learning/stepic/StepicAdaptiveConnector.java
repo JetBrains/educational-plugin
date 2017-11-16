@@ -50,21 +50,21 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import static com.jetbrains.edu.learning.stepic.EduStepicConnector.getStep;
+import static com.jetbrains.edu.learning.stepic.StepicConnector.getStep;
 
-public class EduAdaptiveStepicConnector {
+public class StepicAdaptiveConnector {
   public static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
   public static final int NEXT_RECOMMENDATION_REACTION = 2;
   public static final int TOO_HARD_RECOMMENDATION_REACTION = 0;
   public static final int TOO_BORING_RECOMMENDATION_REACTION = -1;
   public static final String LOADING_NEXT_RECOMMENDATION = "Loading Next Recommendation";
-  private static final Logger LOG = Logger.getInstance(EduAdaptiveStepicConnector.class);
+  private static final Logger LOG = Logger.getInstance(StepicAdaptiveConnector.class);
   private static final int CONNECTION_TIMEOUT = 60 * 1000;
 
   @Nullable
   public static Task getNextRecommendation(@NotNull Project project, @NotNull RemoteCourse course) {
     try {
-      final CloseableHttpClient client = EduStepicAuthorizedClient.getHttpClient();
+      final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
       if (client == null) {
         LOG.warn("Http client is null");
         return null;
@@ -76,7 +76,7 @@ public class EduAdaptiveStepicConnector {
         return null;
       }
 
-      final URI uri = new URIBuilder(EduStepicNames.STEPIC_API_URL + EduStepicNames.RECOMMENDATIONS_URL)
+      final URI uri = new URIBuilder(StepicNames.STEPIC_API_URL + StepicNames.RECOMMENDATIONS_URL)
         .addParameter(EduNames.COURSE, String.valueOf(course.getId()))
         .build();
       final HttpGet request = new HttpGet(uri);
@@ -95,7 +95,7 @@ public class EduAdaptiveStepicConnector {
         if (recomWrapper.recommendations.length != 0) {
           final StepicWrappers.Recommendation recommendation = recomWrapper.recommendations[0];
           final String lessonId = recommendation.lesson;
-          final StepicWrappers.LessonContainer lessonContainer = EduStepicAuthorizedClient.getFromStepic(EduStepicNames.LESSONS + lessonId,
+          final StepicWrappers.LessonContainer lessonContainer = StepicAuthorizedClient.getFromStepic(StepicNames.LESSONS + lessonId,
                                                                                                          StepicWrappers.LessonContainer.class);
           if (lessonContainer != null && lessonContainer.lessons.size() == 1) {
             final Lesson realLesson = lessonContainer.lessons.get(0);
@@ -161,7 +161,7 @@ public class EduAdaptiveStepicConnector {
   }
 
   private static StepicWrappers.AdaptiveAttemptWrapper.Attempt createNewAttempt(int id) throws IOException {
-    final String response = EduStepicConnector.postAttempt(id);
+    final String response = StepicConnector.postAttempt(id);
     final StepicWrappers.AdaptiveAttemptContainer attempt = new Gson().fromJson(response, StepicWrappers.AdaptiveAttemptContainer.class);
     return attempt.attempts.get(0);
   }
@@ -169,12 +169,12 @@ public class EduAdaptiveStepicConnector {
   @Nullable
   private static List<StepicWrappers.AdaptiveAttemptWrapper.Attempt> getAttempts(int stepId, int userId)
     throws URISyntaxException, IOException {
-    final URI attemptUrl = new URIBuilder(EduStepicNames.ATTEMPTS)
+    final URI attemptUrl = new URIBuilder(StepicNames.ATTEMPTS)
       .addParameter("step", String.valueOf(stepId))
       .addParameter("user", String.valueOf(userId))
       .build();
     final StepicWrappers.AdaptiveAttemptContainer attempt =
-      EduStepicAuthorizedClient.getFromStepic(attemptUrl.toString(), StepicWrappers.AdaptiveAttemptContainer.class);
+      StepicAuthorizedClient.getFromStepic(attemptUrl.toString(), StepicWrappers.AdaptiveAttemptContainer.class);
     return attempt == null ? null : attempt.attempts;
   }
 
@@ -197,11 +197,11 @@ public class EduAdaptiveStepicConnector {
   }
 
   public static boolean postRecommendationReaction(@NotNull String lessonId, @NotNull String user, int reaction) {
-    final HttpPost post = new HttpPost(EduStepicNames.STEPIC_API_URL + EduStepicNames.RECOMMENDATION_REACTIONS_URL);
+    final HttpPost post = new HttpPost(StepicNames.STEPIC_API_URL + StepicNames.RECOMMENDATION_REACTIONS_URL);
     final String json = new Gson()
       .toJson(new StepicWrappers.RecommendationReactionWrapper(new StepicWrappers.RecommendationReaction(reaction, user, lessonId)));
     post.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
-    final CloseableHttpClient client = EduStepicAuthorizedClient.getHttpClient();
+    final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
     if (client == null) return false;
     setTimeout(post);
     try {
@@ -340,7 +340,7 @@ public class EduAdaptiveStepicConnector {
       return;
     }
 
-    taskDir.delete(EduAdaptiveStepicConnector.class);
+    taskDir.delete(StepicAdaptiveConnector.class);
   }
 
   private static void setToolWindowText(@NotNull Project project, @NotNull Task task) {
@@ -434,7 +434,7 @@ public class EduAdaptiveStepicConnector {
 
   private static StudyCheckResult doAdaptiveCheck(@NotNull StepicWrappers.SubmissionToPostWrapper submission,
                                                        int attemptId, int userId) {
-    final CloseableHttpClient client = EduStepicAuthorizedClient.getHttpClient();
+    final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
     if (client != null) {
       StepicWrappers.ResultSubmissionWrapper wrapper = postResultsForCheck(client, submission);
       if (wrapper != null) {
@@ -462,7 +462,7 @@ public class EduAdaptiveStepicConnector {
                                                                             @NotNull StepicWrappers.SubmissionToPostWrapper submissionToPostWrapper) {
     final CloseableHttpResponse response;
     try {
-      final HttpPost httpPost = new HttpPost(EduStepicNames.STEPIC_API_URL + EduStepicNames.SUBMISSIONS);
+      final HttpPost httpPost = new HttpPost(StepicNames.STEPIC_API_URL + StepicNames.SUBMISSIONS);
       setTimeout(httpPost);
       try {
         httpPost.setEntity(new StringEntity(new Gson().toJson(submissionToPostWrapper)));
@@ -490,7 +490,7 @@ public class EduAdaptiveStepicConnector {
     try {
       while (wrapper.submissions.length == 1 && wrapper.submissions[0].status.equals("evaluation")) {
         TimeUnit.MILLISECONDS.sleep(500);
-        final URI submissionURI = new URIBuilder(EduStepicNames.STEPIC_API_URL + EduStepicNames.SUBMISSIONS)
+        final URI submissionURI = new URIBuilder(StepicNames.STEPIC_API_URL + StepicNames.SUBMISSIONS)
           .addParameter("attempt", String.valueOf(attemptId))
           .addParameter("order", "desc")
           .addParameter("user", String.valueOf(userId))
@@ -513,10 +513,10 @@ public class EduAdaptiveStepicConnector {
   private static int getAttemptId(@NotNull Task task) throws IOException {
     final StepicWrappers.AdaptiveAttemptWrapper attemptWrapper = new StepicWrappers.AdaptiveAttemptWrapper(task.getStepId());
 
-    final HttpPost post = new HttpPost(EduStepicNames.STEPIC_API_URL + EduStepicNames.ATTEMPTS);
+    final HttpPost post = new HttpPost(StepicNames.STEPIC_API_URL + StepicNames.ATTEMPTS);
     post.setEntity(new StringEntity(new Gson().toJson(attemptWrapper)));
 
-    final CloseableHttpClient client = EduStepicAuthorizedClient.getHttpClient();
+    final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
     if (client == null) return -1;
     setTimeout(post);
     final CloseableHttpResponse httpResponse = client.execute(post);
@@ -544,8 +544,8 @@ public class EduAdaptiveStepicConnector {
   @NotNull
   public static List<Integer> getEnrolledCoursesIds(@NotNull StepicUser stepicUser) {
     try {
-      final URI enrolledCoursesUri = new URIBuilder(EduStepicNames.COURSES).addParameter("enrolled", "true").build();
-      final List<RemoteCourse> courses = EduStepicAuthorizedClient.getFromStepic(enrolledCoursesUri.toString(),
+      final URI enrolledCoursesUri = new URIBuilder(StepicNames.COURSES).addParameter("enrolled", "true").build();
+      final List<RemoteCourse> courses = StepicAuthorizedClient.getFromStepic(enrolledCoursesUri.toString(),
                                                                                StepicWrappers.CoursesContainer.class,
                                                                                stepicUser).courses;
       final ArrayList<Integer> ids = new ArrayList<>();
@@ -577,7 +577,7 @@ public class EduAdaptiveStepicConnector {
   @NotNull
   private static String getFooterWithLink(Task task) {
     return
-      "<div class=\"footer\">" + "<a href=" + EduStepikUtils.getAdaptiveLink(task) + ">Open on Stepik</a>" + "</div>";
+      "<div class=\"footer\">" + "<a href=" + StepikUtils.getAdaptiveLink(task) + ">Open on Stepik</a>" + "</div>";
   }
 
   private static class StepikTaskBuilder {
@@ -714,7 +714,7 @@ public class EduAdaptiveStepicConnector {
     @Nullable
     private EduTask eduTask() {
       try {
-        return (EduTask)EduStepicConnector.createTask(myStepId);
+        return (EduTask) StepicConnector.createTask(myStepId);
       }
       catch (IOException e) {
         LOG.warn(e.getMessage());

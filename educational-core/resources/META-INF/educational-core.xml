@@ -13,7 +13,7 @@
 
     <application-components>
         <component>
-            <implementation-class>com.jetbrains.edu.learning.stepic.EduStepicUpdater</implementation-class>
+            <implementation-class>com.jetbrains.edu.learning.stepic.StepicUpdater</implementation-class>
         </component>
         <component>
             <implementation-class>com.jetbrains.edu.learning.EduInitializationComponent</implementation-class>
@@ -22,7 +22,7 @@
             <implementation-class>com.jetbrains.edu.learning.EduSelectRoleComponent</implementation-class>
         </component>
         <component>
-            <implementation-class>com.jetbrains.edu.learning.stepic.EduCourseUpdater</implementation-class>
+            <implementation-class>com.jetbrains.edu.learning.stepic.CourseUpdater</implementation-class>
         </component>
     </application-components>
 
@@ -198,7 +198,7 @@
         <typedHandler implementation="com.jetbrains.edu.learning.StudyTypeHandlerDelegate"
                       order="first, before completionAutoPopup"/>
         <httpRequestHandler implementation="com.jetbrains.edu.learning.builtInServer.EduStepikRestService"/>
-        <projectService serviceImplementation="com.jetbrains.edu.learning.stepic.StudyStepikSolutionsLoader" />
+        <projectService serviceImplementation="com.jetbrains.edu.learning.stepic.StepikSolutionsLoader" />
 
         <!--for educators-->
         <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>
@@ -221,9 +221,9 @@
     </extensions>
 
     <extensions defaultExtensionNs="Educational">
-        <optionsProvider instance="com.jetbrains.edu.learning.stepic.StepicStudyOptions"/>
+        <optionsProvider instance="com.jetbrains.edu.learning.stepic.StepicOptions"/>
         <checkListener implementation="com.jetbrains.edu.learning.twitter.StudyTwitterAction"/>
-        <checkListener implementation="com.jetbrains.edu.learning.stepic.EduNextRecommendationCheckListener"/>
+        <checkListener implementation="com.jetbrains.edu.learning.stepic.NextRecommendationCheckListener"/>
         <checkListener implementation="com.jetbrains.edu.learning.stepic.PostSolutionCheckListener"/>
 
         <!--educator-->
