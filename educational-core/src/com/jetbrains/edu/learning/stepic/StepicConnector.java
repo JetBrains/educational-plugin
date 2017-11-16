@@ -684,7 +684,7 @@ public class StepicConnector {
       return port;
     }
 
-    private boolean available(int port) {
+    private static boolean available(int port) {
       try (Socket ignored = new Socket("localhost", port)) {
         return false;
       }
@@ -710,7 +710,7 @@ public class StepicConnector {
       }
 
       @Override
-      public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws HttpException, IOException {
+      public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws IOException {
         LOG.info("Handling auth response");
 
         try {

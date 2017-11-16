@@ -16,7 +16,6 @@
 package com.jetbrains.edu.learning.stepic;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.components.JBCheckBox;
@@ -136,7 +135,7 @@ public class StepicOptions implements StudyOptionsProvider {
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     final EduSettings stepikSettings = EduSettings.getInstance();
     if (isTestingFromSamplesEnabled() != stepikSettings.isEnableTestingFromSamples()) {
       stepikSettings.setEnableTestingFromSamples(isTestingFromSamplesEnabled());

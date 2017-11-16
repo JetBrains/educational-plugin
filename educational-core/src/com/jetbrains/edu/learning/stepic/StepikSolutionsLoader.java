@@ -230,7 +230,7 @@ public class StepikSolutionsLoader implements Disposable{
     }
     else if (!isSolved) {
       try {
-        List<StepicWrappers.SolutionFile> solutionFiles = StepicConnector.getLastSubmission(String.valueOf(stepId), isSolved);
+        List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(stepId), isSolved);
         if (!solutionFiles.isEmpty()) {
           return true;
         }
