@@ -24,7 +24,7 @@ import javax.swing.JScrollPane
 import javax.swing.ScrollPaneConstants
 
 
-class StudyChoiceVariantsPanel(task: ChoiceTask) : JScrollPane() {
+class ChoiceVariantsPanel(task: ChoiceTask) : JScrollPane() {
 
   private val LEFT_INSET = 15.0
   private val RIGHT_INSET = 10.0

@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.editor.StudyEditor;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,9 +61,9 @@ public class StepikSolutionsLoader implements Disposable{
   }
 
   private void init() {
-    StudyEditor selectedStudyEditor = StudyUtils.getSelectedStudyEditor(myProject);
-    if (selectedStudyEditor != null && selectedStudyEditor.getTaskFile() != null) {
-      mySelectedTask = selectedStudyEditor.getTaskFile().getTask();
+    EduEditor selectedEduEditor = StudyUtils.getSelectedStudyEditor(myProject);
+    if (selectedEduEditor != null && selectedEduEditor.getTaskFile() != null) {
+      mySelectedTask = selectedEduEditor.getTaskFile().getTask();
     }
     addFileOpenListener();
   }
@@ -135,9 +135,9 @@ public class StepikSolutionsLoader implements Disposable{
 
     ApplicationManager.getApplication().invokeLater(() -> {
       if (mySelectedTask != null && tasksToUpdate.contains(mySelectedTask)) {
-        StudyEditor selectedStudyEditor = StudyUtils.getSelectedStudyEditor(myProject);
-        assert selectedStudyEditor != null;
-        selectedStudyEditor.showLoadingPanel();
+        EduEditor selectedEduEditor = StudyUtils.getSelectedStudyEditor(myProject);
+        assert selectedEduEditor != null;
+        selectedEduEditor.showLoadingPanel();
         enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getStepId()));
       }
     });
@@ -187,13 +187,13 @@ public class StepikSolutionsLoader implements Disposable{
     myBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        StudyEditor studyEditor = StudyUtils.getSelectedStudyEditor(myProject);
+        EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(myProject);
         TaskFile taskFile = StudyUtils.getTaskFile(myProject, file);
-        if (studyEditor != null && taskFile != null) {
+        if (eduEditor != null && taskFile != null) {
           mySelectedTask = taskFile.getTask();
           Task task = taskFile.getTask();
           if (myFutures.containsKey(task.getStepId())) {
-            studyEditor.showLoadingPanel();
+            eduEditor.showLoadingPanel();
             Future future = myFutures.get(task.getStepId());
             if (!future.isDone() || !future.isCancelled()) {
               enableEditorWhenFutureDone(future);
@@ -209,7 +209,7 @@ public class StepikSolutionsLoader implements Disposable{
       try {
         future.get();
         ApplicationManager.getApplication().invokeLater(() -> {
-          StudyEditor selectedEditor = StudyUtils.getSelectedStudyEditor(myProject);
+          EduEditor selectedEditor = StudyUtils.getSelectedStudyEditor(myProject);
           if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().name)) {
             JBLoadingPanel component = selectedEditor.getComponent();
             component.stopLoading();

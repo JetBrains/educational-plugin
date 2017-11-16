@@ -26,7 +26,7 @@ import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.core.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.StudyEditor;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.StudyTestResultsToolWindowFactory;
 import com.jetbrains.edu.learning.ui.StudyTestResultsToolWindowFactoryKt;
@@ -55,9 +55,9 @@ public class CheckUtils {
         continue;
       }
       FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
-      if (fileEditor instanceof StudyEditor) {
-        StudyEditor studyEditor = (StudyEditor)fileEditor;
-        StudyUtils.drawAllAnswerPlaceholders(studyEditor.getEditor(), taskFile);
+      if (fileEditor instanceof EduEditor) {
+        EduEditor eduEditor = (EduEditor)fileEditor;
+        StudyUtils.drawAllAnswerPlaceholders(eduEditor.getEditor(), taskFile);
       }
     }
   }
@@ -82,9 +82,9 @@ public class CheckUtils {
             continue;
           }
           FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
-          if (fileEditor instanceof StudyEditor) {
-            StudyEditor studyEditor = (StudyEditor)fileEditor;
-            editor = studyEditor.getEditor();
+          if (fileEditor instanceof EduEditor) {
+            EduEditor eduEditor = (EduEditor)fileEditor;
+            editor = eduEditor.getEditor();
           }
           fileToNavigate = virtualFile;
           break;

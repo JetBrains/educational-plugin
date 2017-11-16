@@ -27,8 +27,8 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.editor.StudyChoiceVariantsPanel;
-import com.jetbrains.edu.learning.editor.StudyEditor;
+import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.StudyToolWindow;
 import icons.EducationalCoreIcons;
@@ -50,14 +50,14 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
 
   public static void refresh(@NotNull final Project project) {
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      StudyEditor studyEditor = StudyUtils.getSelectedStudyEditor(project);
-      StudyState studyState = new StudyState(studyEditor);
-      if (studyEditor == null || !studyState.isValid()) {
+      EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
+      StudyState studyState = new StudyState(eduEditor);
+      if (eduEditor == null || !studyState.isValid()) {
         LOG.info("RefreshTaskFileAction was invoked outside of Study Editor");
         return;
       }
       refreshFile(studyState, project);
-      studyEditor.validateTaskFile();
+      eduEditor.validateTaskFile();
     }));
   }
 
@@ -78,7 +78,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
       if (task instanceof ChoiceTask) {
         final StudyToolWindow window = StudyUtils.getStudyToolWindow(project);
         if (window != null) {
-          window.setBottomComponent(new StudyChoiceVariantsPanel((ChoiceTask)task));
+          window.setBottomComponent(new ChoiceVariantsPanel((ChoiceTask)task));
         }
       }
     }
@@ -112,9 +112,9 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     BalloonBuilder balloonBuilder =
       JBPopupFactory.getInstance().createHtmlTextBalloonBuilder("You can start again now", messageType, null);
     final Balloon balloon = balloonBuilder.createBalloon();
-    StudyEditor selectedStudyEditor = StudyUtils.getSelectedStudyEditor(project);
-    assert selectedStudyEditor != null;
-    balloon.show(StudyUtils.computeLocation(selectedStudyEditor.getEditor()), Balloon.Position.above);
+    EduEditor selectedEduEditor = StudyUtils.getSelectedStudyEditor(project);
+    assert selectedEduEditor != null;
+    balloon.show(StudyUtils.computeLocation(selectedEduEditor.getEditor()), Balloon.Position.above);
     Disposer.register(project, balloon);
   }
 
@@ -156,8 +156,8 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     StudyUtils.updateAction(event);
     final Project project = event.getProject();
     if (project != null) {
-      StudyEditor studyEditor = StudyUtils.getSelectedStudyEditor(project);
-      StudyState studyState = new StudyState(studyEditor);
+      EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
+      StudyState studyState = new StudyState(eduEditor);
       Presentation presentation = event.getPresentation();
       if (!studyState.isValid()) {
         presentation.setEnabled(false);
