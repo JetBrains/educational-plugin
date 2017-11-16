@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.handlers;
 
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandler;
 import com.intellij.openapi.editor.Document;
@@ -10,6 +10,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class StudyAnswerPlaceholderExtendWordHandler implements ExtendWordSelectionHandler {
+public class AnswerPlaceholderExtendWordHandler implements ExtendWordSelectionHandler {
 
   @Nullable
   private static AnswerPlaceholder getAnswerPlaceholder(PsiElement e, int offset) {
