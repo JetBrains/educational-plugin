@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.Nullable;
@@ -34,11 +34,11 @@ public abstract class CCTaskFileActionBase extends AnAction {
 
     for (VirtualFile file : virtualFiles) {
       if (!isAvailable(project, file)) continue;
-      VirtualFile taskVF = StudyUtils.getTaskDir(file);
+      VirtualFile taskVF = EduUtils.getTaskDir(file);
       if (taskVF == null) {
         return;
       }
-      Task task = StudyUtils.getTask(project, taskVF);
+      Task task = EduUtils.getTask(project, taskVF);
       if (task == null) {
         return;
       }

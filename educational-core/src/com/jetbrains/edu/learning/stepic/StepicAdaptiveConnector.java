@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.EduNames;
@@ -129,7 +129,7 @@ public class StepicAdaptiveConnector {
     catch (IOException e) {
       LOG.warn(e.getMessage());
       ApplicationManager.getApplication()
-        .invokeLater(() -> StudyUtils.showErrorPopupOnToolbar(project, "Connection problems, Please, try again"));
+        .invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project, "Connection problems, Please, try again"));
     }
     catch (URISyntaxException e) {
       LOG.warn(e.getMessage());
@@ -231,7 +231,7 @@ public class StepicAdaptiveConnector {
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (!(course instanceof RemoteCourse)) {
       LOG.warn("Course is in incorrect state");
-      ApplicationManager.getApplication().invokeLater(() -> StudyUtils.showErrorPopupOnToolbar(project,
+      ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
                                                                                                "Can't get next recommendation: course is broken"));
       return;
     }
@@ -240,7 +240,7 @@ public class StepicAdaptiveConnector {
     final StepicUser user = EduSettings.getInstance().getUser();
     if (user == null) {
       LOG.warn("Can't get next recommendation: user is null");
-      ApplicationManager.getApplication().invokeLater(() -> StudyUtils.showErrorPopupOnToolbar(project,
+      ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
                                                                                                "Can't get next recommendation: you're not logged in"));
       return;
     }
@@ -248,14 +248,14 @@ public class StepicAdaptiveConnector {
     final boolean reactionPosted = postRecommendationReaction(String.valueOf(lesson.getId()), String.valueOf(user.getId()), reactionToPost);
     if (!reactionPosted) {
       LOG.warn("Recommendation reaction wasn't posted");
-      ApplicationManager.getApplication().invokeLater(() -> StudyUtils.showErrorPopupOnToolbar(project, "Couldn't post your reactionToPost"));
+      ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project, "Couldn't post your reactionToPost"));
       return;
     }
 
     indicator.checkCanceled();
     final Task task = getNextRecommendation(project, (RemoteCourse)course);
     if (task == null) {
-      ApplicationManager.getApplication().invokeLater(() -> StudyUtils.showErrorPopupOnToolbar(project,
+      ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
                                                                                                "Couldn't load a new recommendation"));
       return;
     }
@@ -344,7 +344,7 @@ public class StepicAdaptiveConnector {
   }
 
   private static void setToolWindowText(@NotNull Project project, @NotNull Task task) {
-    final TaskDescriptionToolWindow window = StudyUtils.getStudyToolWindow(project);
+    final TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
     if (window != null) {
       window.setCurrentTask(project, task);
     }
@@ -416,7 +416,7 @@ public class StepicAdaptiveConnector {
     if (attemptId != -1) {
       Course course = task.getLesson().getCourse();
       Language courseLanguage = course.getLanguageById();
-      final Editor editor = StudyUtils.getSelectedEditor(project);
+      final Editor editor = EduUtils.getSelectedEditor(project);
       if (editor != null) {
         String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
         final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();

@@ -10,7 +10,7 @@ import com.jetbrains.edu.coursecreator.CCTestCase;
 import com.jetbrains.edu.coursecreator.CCTestsUtil;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholder;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAnswerPlaceholder;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog;
@@ -63,7 +63,7 @@ public class CCAnswerPlaceholderActionTest extends CCTestCase {
   private void doTest(String name, AnAction action) {
     VirtualFile virtualFile = configureByTaskFile(name + CCTestsUtil.BEFORE_POSTFIX);
     myFixture.testAction(action);
-    TaskFile taskFile = StudyUtils.getTaskFile(getProject(), virtualFile);
+    TaskFile taskFile = EduUtils.getTaskFile(getProject(), virtualFile);
     checkByFile(taskFile, name + CCTestsUtil.AFTER_POSTFIX, false);
     checkHighlighters(taskFile, myFixture.getEditor().getMarkupModel());
     UndoManager.getInstance(getProject()).undo(FileEditorManager.getInstance(getProject()).getSelectedEditor(virtualFile));

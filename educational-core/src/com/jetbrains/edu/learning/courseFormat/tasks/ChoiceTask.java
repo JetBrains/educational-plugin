@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
@@ -79,7 +79,7 @@ public class ChoiceTask extends Task {
       }
 
       private void repaintChoicePanel(@NotNull Project project, @NotNull ChoiceTask task) {
-        final TaskDescriptionToolWindow toolWindow = StudyUtils.getStudyToolWindow(project);
+        final TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
         if (toolWindow != null) {
           toolWindow.setBottomComponent(new ChoiceVariantsPanel(task));
         }

@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -117,7 +117,7 @@ public class GeneratorUtils {
       if (virtualTaskFile == null) {
         virtualTaskFile = dir.createChildData(parentDir, fileName);
       }
-      if (StudyUtils.isImage(name)) {
+      if (EduUtils.isImage(name)) {
         virtualTaskFile.setBinaryContent(Base64.decodeBase64(text));
       }
       else {

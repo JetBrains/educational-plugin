@@ -22,7 +22,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.coursecreator.actions.CCNewSubtaskAction;
 import com.jetbrains.edu.learning.SubtaskUtils;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
@@ -64,10 +64,10 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
       return null;
     }
     boolean isTestFile = CCUtils.isTestsFile(myProject, file);
-    if (!isTestFile && StudyUtils.getTaskFile(myProject, file) == null) {
+    if (!isTestFile && EduUtils.getTaskFile(myProject, file) == null) {
       return null;
     }
-    Task task = StudyUtils.getTaskForFile(myProject, file);
+    Task task = EduUtils.getTaskForFile(myProject, file);
     if (task instanceof TaskWithSubtasks) {
       final TaskWithSubtasks withSubtasks = (TaskWithSubtasks)task;
       EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND);

@@ -16,7 +16,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -41,9 +41,9 @@ public class PyCCCommandLineState extends PythonCommandLineState {
 
     VirtualFile testsFile = LocalFileSystem.getInstance().findFileByPath(myRunConfiguration.getPathToTest());
     assert testsFile != null;
-    myTaskDir = StudyUtils.getTaskDir(testsFile);
+    myTaskDir = EduUtils.getTaskDir(testsFile);
     assert myTaskDir != null;
-    myTask = StudyUtils.getTask(myRunConfiguration.getProject(), myTaskDir);
+    myTask = EduUtils.getTask(myRunConfiguration.getProject(), myTaskDir);
     assert myTask != null;
   }
 
@@ -105,7 +105,7 @@ public class PyCCCommandLineState extends PythonCommandLineState {
     handler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(@NotNull ProcessEvent event) {
-        ApplicationManager.getApplication().invokeLater(() -> StudyUtils.deleteWindowDescriptions(myTask, myTaskDir));
+        ApplicationManager.getApplication().invokeLater(() -> EduUtils.deleteWindowDescriptions(myTask, myTaskDir));
       }
     });
     return handler;

@@ -41,7 +41,7 @@ public class AnswerPlaceholderPainter {
     }
     final int length =
       placeholder.isActive() ? placeholder.getRealLength() : placeholder.getVisibleLength(placeholder.getActiveSubtaskIndex());
-    Pair<Integer, Integer> offsets = StudyUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
+    Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
     startOffset = offsets.first;
     int endOffset = offsets.second;
     if (placeholder.isActive()) {
@@ -97,7 +97,7 @@ public class AnswerPlaceholderPainter {
     if (document instanceof DocumentImpl) {
       DocumentImpl documentImpl = (DocumentImpl)document;
       List<RangeMarker> blocks = documentImpl.getGuardedBlocks();
-      Pair<Integer, Integer> offsets = StudyUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
+      Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
       Integer start = offsets.first;
       Integer end = offsets.second;
       if (start != 0) {

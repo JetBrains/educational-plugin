@@ -5,7 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class EduHighlightErrorFilter extends HighlightErrorFilter{
@@ -19,7 +19,7 @@ public class EduHighlightErrorFilter extends HighlightErrorFilter{
     if (virtualFile == null) {
       return true;
     }
-    TaskFile taskFile = StudyUtils.getTaskFile(element.getProject(), virtualFile);
+    TaskFile taskFile = EduUtils.getTaskFile(element.getProject(), virtualFile);
     return taskFile == null || taskFile.isHighlightErrors();
   }
 }

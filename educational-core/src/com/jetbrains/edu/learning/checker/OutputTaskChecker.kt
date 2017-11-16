@@ -17,7 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.StudyUtils
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
@@ -93,7 +93,7 @@ class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<Output
 
   private fun getConfiguration(): RunnerAndConfigurationSettings? {
     return ApplicationManager.getApplication().runReadAction(Computable<RunnerAndConfigurationSettings> {
-      val dataContext = DataManager.getInstance().getDataContext(StudyUtils.getSelectedEditor(myProject)?.component)
+      val dataContext = DataManager.getInstance().getDataContext(EduUtils.getSelectedEditor(myProject)?.component)
       val configurationContext = ConfigurationContext.getFromContext(dataContext)
       return@Computable configurationContext.configuration
     })

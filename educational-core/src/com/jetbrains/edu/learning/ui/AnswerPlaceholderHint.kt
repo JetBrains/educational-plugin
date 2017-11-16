@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.CCEditHintAction
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.StudyUtils
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.ui.taskDescription.JavaFxToolWindow
 import com.jetbrains.edu.learning.ui.taskDescription.SwingToolWindow
@@ -29,7 +29,7 @@ open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
   protected var isEditingMode = false
 
   init {
-    if (StudyUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
+    if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
       taskDescriptionToolWindow = JavaFxToolWindow()
     }
     else {
@@ -81,7 +81,7 @@ open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
   private fun updateVisibility(myPlaceholder: AnswerPlaceholder?,
                             presentation: Presentation) {
     val hasMultipleHints = myPlaceholder != null && myPlaceholder.hints.size > 1
-    presentation.isVisible = !StudyUtils.isStudentProject(myProject) || hasMultipleHints
+    presentation.isVisible = !EduUtils.isStudentProject(myProject) || hasMultipleHints
   }
 
   inner class GoBackward : AnAction("Previous Hint", "Previous Hint", AllIcons.Actions.Back) {

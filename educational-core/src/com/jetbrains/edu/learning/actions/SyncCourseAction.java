@@ -8,7 +8,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -49,7 +49,7 @@ public class SyncCourseAction extends DumbAwareAction {
   private static void updateAdaptiveCourse(@NotNull Project project, @NotNull Course course) {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-      StudyUtils.execCancelable(() -> {
+      EduUtils.execCancelable(() -> {
         Lesson adaptiveLesson = course.getLessons().get(0);
         assert adaptiveLesson != null;
 
@@ -78,7 +78,7 @@ public class SyncCourseAction extends DumbAwareAction {
       return false;
     }
 
-    if (!StudyUtils.isStudyProject(project)) {
+    if (!EduUtils.isStudyProject(project)) {
       return false;
     }
 

@@ -23,7 +23,7 @@ import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -50,7 +50,7 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
     public CCRenameListener(PsiElement element) {
       if (element instanceof PsiFile) {
         PsiFile psiFile = (PsiFile)element;
-        myElementRelativePath = StudyUtils.pathRelativeToTask(psiFile.getVirtualFile());
+        myElementRelativePath = EduUtils.pathRelativeToTask(psiFile.getVirtualFile());
       }
     }
 
@@ -90,7 +90,7 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
         return;
       }
       taskFiles.remove(oldName);
-      taskFiles.put(StudyUtils.pathRelativeToTask(file.getVirtualFile()), taskFile);
+      taskFiles.put(EduUtils.pathRelativeToTask(file.getVirtualFile()), taskFile);
     }
 
     @Override

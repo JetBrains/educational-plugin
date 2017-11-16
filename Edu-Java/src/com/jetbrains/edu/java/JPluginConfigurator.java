@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaDirectoryService;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -91,6 +91,6 @@ public class JPluginConfigurator extends EduPluginConfiguratorBase {
 
   @Override
   public boolean isEnabled() {
-    return !StudyUtils.isAndroidStudio();
+    return !EduUtils.isAndroidStudio();
   }
 }

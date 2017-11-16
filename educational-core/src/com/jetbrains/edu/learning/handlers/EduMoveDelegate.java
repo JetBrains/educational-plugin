@@ -9,14 +9,14 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.Nullable;
 
 public class EduMoveDelegate extends MoveHandlerDelegate{
   @Override
   public boolean canMove(DataContext dataContext) {
-    return StudyUtils.canRenameOrMove(dataContext);
+    return EduUtils.canRenameOrMove(dataContext);
   }
 
   @Override
@@ -27,7 +27,7 @@ public class EduMoveDelegate extends MoveHandlerDelegate{
       if (course == null || !course.isStudy()) {
         return false;
       }
-      return !StudyUtils.isRenameableOrMoveable(project, course, elements[0]);
+      return !EduUtils.isRenameableOrMoveable(project, course, elements[0]);
     }
     return false;
   }
@@ -51,6 +51,6 @@ public class EduMoveDelegate extends MoveHandlerDelegate{
                            DataContext dataContext,
                            @Nullable PsiReference reference,
                            Editor editor) {
-    return StudyUtils.isStudyProject(project);
+    return EduUtils.isStudyProject(project);
   }
 }

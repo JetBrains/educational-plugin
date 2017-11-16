@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -39,12 +39,12 @@ public class CCVirtualFileListener implements VirtualFileListener {
     if (course == null) {
       return;
     }
-    TaskFile taskFile = StudyUtils.getTaskFile(myProject, createdFile);
+    TaskFile taskFile = EduUtils.getTaskFile(myProject, createdFile);
     if (taskFile != null) {
       return;
     }
 
-    String taskRelativePath = StudyUtils.pathRelativeToTask(createdFile);
+    String taskRelativePath = EduUtils.pathRelativeToTask(createdFile);
 
     EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator != null && configurator.excludeFromArchive(createdFile.getPath())) {
@@ -57,11 +57,11 @@ public class CCVirtualFileListener implements VirtualFileListener {
         || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
       return;
     }
-    VirtualFile taskVF = StudyUtils.getTaskDir(createdFile);
+    VirtualFile taskVF = EduUtils.getTaskDir(createdFile);
     if (taskVF == null) {
       return;
     }
-    Task task = StudyUtils.getTask(myProject, taskVF);
+    Task task = EduUtils.getTask(myProject, taskVF);
     if (task == null) {
       return;
     }
@@ -87,7 +87,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
     if (course == null) {
       return;
     }
-    final TaskFile taskFile = StudyUtils.getTaskFile(myProject, removedFile);
+    final TaskFile taskFile = EduUtils.getTaskFile(myProject, removedFile);
     if (taskFile != null) {
       deleteTaskFile(removedFile, taskFile);
       return;
@@ -132,6 +132,6 @@ public class CCVirtualFileListener implements VirtualFileListener {
     if (task == null) {
       return;
     }
-    task.getTaskFiles().remove(StudyUtils.pathRelativeToTask(removedTaskFile));
+    task.getTaskFiles().remove(EduUtils.pathRelativeToTask(removedTaskFile));
   }
 }
