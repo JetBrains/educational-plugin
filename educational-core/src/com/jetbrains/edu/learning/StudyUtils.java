@@ -50,7 +50,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import com.intellij.util.text.MarkdownUtil;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.core.EduAnswerPlaceholderDeleteHandler;
+import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
 import com.jetbrains.edu.learning.core.EduAnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.core.EduNames;
 import com.jetbrains.edu.learning.core.EduUtils;
@@ -311,7 +311,7 @@ public class StudyUtils {
 
     final Document document = editor.getDocument();
     EditorActionManager.getInstance()
-      .setReadonlyFragmentModificationHandler(document, new EduAnswerPlaceholderDeleteHandler(editor));
+      .setReadonlyFragmentModificationHandler(document, new AnswerPlaceholderDeleteHandler(editor));
     EduAnswerPlaceholderPainter.createGuardedBlocks(editor, taskFile);
     editor.getColorsScheme().setColor(EditorColors.READONLY_FRAGMENT_BACKGROUND_COLOR, null);
   }

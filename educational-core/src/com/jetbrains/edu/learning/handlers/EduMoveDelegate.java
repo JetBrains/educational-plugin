@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.handlers;
 
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
@@ -8,10 +8,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.Nullable;
 
-public class StudyMoveDelegate extends MoveHandlerDelegate{
+public class EduMoveDelegate extends MoveHandlerDelegate{
   @Override
   public boolean canMove(DataContext dataContext) {
     return StudyUtils.canRenameOrMove(dataContext);
