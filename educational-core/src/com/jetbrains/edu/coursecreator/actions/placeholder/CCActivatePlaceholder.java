@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder;
 
 import com.intellij.openapi.util.TextRange;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -45,7 +45,7 @@ public class CCActivatePlaceholder extends CCSubtaskPlaceholderAction {
 
   @Override
   protected boolean isAvailable(TaskFile taskFile, int offset) {
-    AnswerPlaceholder existingPlaceholder = StudyUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders());
+    AnswerPlaceholder existingPlaceholder = EduUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders());
     return existingPlaceholder != null && !existingPlaceholder.isActive();
   }
 }

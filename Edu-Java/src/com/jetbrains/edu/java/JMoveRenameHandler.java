@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,13 +55,13 @@ public class JMoveRenameHandler extends EduMoveDelegate implements RenameHandler
       return false;
     }
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!StudyUtils.isStudentProject(project)) {
+    if (!EduUtils.isStudentProject(project)) {
       return false;
     }
 
     assert course != null;
     PsiElement elementToMove = getElementToMove(element, course);
-    return !StudyUtils.isRenameableOrMoveable(project, course, elementToMove);
+    return !EduUtils.isRenameableOrMoveable(project, course, elementToMove);
   }
 
   private static PsiElement getElementToMove(@NotNull PsiElement element, @NotNull Course course) {

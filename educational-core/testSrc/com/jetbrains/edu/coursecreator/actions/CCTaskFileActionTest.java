@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.MapDataContext;
 import com.intellij.testFramework.TestActionEvent;
 import com.jetbrains.edu.coursecreator.CCTestCase;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,9 +17,9 @@ public class CCTaskFileActionTest extends CCTestCase {
   public void testHideTaskFile() {
     VirtualFile virtualFile = configureByTaskFile("taskFile.txt");
     launchAction(virtualFile, new CCHideFromStudent());
-    assertNull(StudyUtils.getTaskFile(getProject(), virtualFile));
+    assertNull(EduUtils.getTaskFile(getProject(), virtualFile));
     UndoManager.getInstance(getProject()).undo(FileEditorManager.getInstance(getProject()).getSelectedEditor(virtualFile));
-    TaskFile taskFile = StudyUtils.getTaskFile(getProject(), virtualFile);
+    TaskFile taskFile = EduUtils.getTaskFile(getProject(), virtualFile);
     assertNotNull(taskFile);
     checkHighlighters(taskFile, myFixture.getEditor().getMarkupModel());
   }
@@ -28,11 +28,11 @@ public class CCTaskFileActionTest extends CCTestCase {
     VirtualFile virtualFile = copyFileToTask("nonTaskFile.txt");
     myFixture.configureFromExistingVirtualFile(virtualFile);
     launchAction(virtualFile, new CCAddAsTaskFile());
-    TaskFile taskFile = StudyUtils.getTaskFile(getProject(), virtualFile);
+    TaskFile taskFile = EduUtils.getTaskFile(getProject(), virtualFile);
     assertNotNull(taskFile);
     FileEditor fileEditor = FileEditorManager.getInstance(getProject()).getSelectedEditor(virtualFile);
     UndoManager.getInstance(getProject()).undo(fileEditor);
-    assertNull(StudyUtils.getTaskFile(getProject(), virtualFile));
+    assertNull(EduUtils.getTaskFile(getProject(), virtualFile));
   }
 
   private void launchAction(VirtualFile virtualFile, AnAction action) {

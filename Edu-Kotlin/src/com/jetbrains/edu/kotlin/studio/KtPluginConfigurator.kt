@@ -12,7 +12,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.kotlin.KtPluginConfigurator
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.StudyUtils
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -50,7 +50,7 @@ class KtPluginConfigurator : KtPluginConfigurator() {
   override fun getEduCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>? =
     KtProjectGenerator(course)
 
-  override fun isEnabled(): Boolean = StudyUtils.isAndroidStudio()
+  override fun isEnabled(): Boolean = EduUtils.isAndroidStudio()
 
   companion object {
     private val LOG = Logger.getInstance(KtPluginConfigurator::class.java)
@@ -64,9 +64,9 @@ class KtPluginConfigurator : KtPluginConfigurator() {
       val taskFile = TaskFile()
       taskFile.task = task
       taskFile.name = TASK_KT
-      taskFile.text = StudyUtils.getTextFromInternalTemplate(TASK_KT)
+      taskFile.text = EduUtils.getTextFromInternalTemplate(TASK_KT)
       task.addTaskFile(taskFile)
-      task.testsText.put(TESTS_KT, StudyUtils.getTextFromInternalTemplate(TESTS_KT))
+      task.testsText.put(TESTS_KT, EduUtils.getTextFromInternalTemplate(TESTS_KT))
     }
   }
 }

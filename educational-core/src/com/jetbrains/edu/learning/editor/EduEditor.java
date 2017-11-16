@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.ui.components.labels.ActionLink;
 import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -33,7 +33,7 @@ public class EduEditor extends PsiAwareTextEditorImpl {
 
   public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
     super(project, file, TextEditorProvider.getInstance());
-    myTaskFile = StudyUtils.getTaskFile(project, file);
+    myTaskFile = EduUtils.getTaskFile(project, file);
 
     validateTaskFile();
   }

@@ -18,7 +18,7 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckListener;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
@@ -66,7 +66,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     if (virtualFile == null) {
       return;
     }
-    Task task = StudyUtils.getTaskForFile(project, virtualFile);
+    Task task = EduUtils.getTaskForFile(project, virtualFile);
     if (task == null) {
       return;
     }
@@ -79,7 +79,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
   @Override
   public void update(AnActionEvent e) {
     final Presentation presentation = e.getPresentation();
-    StudyUtils.updateAction(e);
+    EduUtils.updateAction(e);
     if (presentation.isEnabled()) {
       updateDescription(e);
       presentation.setEnabled(!myCheckInProgress.get());
@@ -105,7 +105,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     final Presentation presentation = e.getPresentation();
     final Project project = e.getProject();
     if (project != null) {
-      final EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
+      final EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
       if (eduEditor != null) {
         final Task task = eduEditor.getTaskFile().getTask();
         if (task instanceof TheoryTask) {
@@ -152,7 +152,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     }
 
     private CheckResult checkRemoteCourse() {
-      if (StudyUtils.isStudentProject(myProject)) {
+      if (EduUtils.isStudentProject(myProject)) {
         CheckResult remoteCheckResult = myChecker.checkOnRemote();
         if (remoteCheckResult != CheckResult.USE_LOCAL_CHECK) {
           return remoteCheckResult;
@@ -178,7 +178,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
           CheckUtils.showTestResultPopUp(message, MessageType.WARNING.getPopupBackground(), myProject);
       }
       ApplicationManager.getApplication().invokeLater(() -> {
-        StudyUtils.updateToolWindows(myProject);
+        EduUtils.updateToolWindows(myProject);
         ProjectView.getInstance(myProject).refresh();
 
         for (CheckListener listener : CheckListener.EP_NAME.getExtensions()) {

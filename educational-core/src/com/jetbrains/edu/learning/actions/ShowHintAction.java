@@ -15,7 +15,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.ui.popup.PopupPositionManager;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -51,7 +51,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     if (course == null) {
       return;
     }
-    EduState eduState = new EduState(StudyUtils.getSelectedStudyEditor(project));
+    EduState eduState = new EduState(EduUtils.getSelectedStudyEditor(project));
     if (!eduState.isValid()) {
       return;
     }
@@ -100,11 +100,11 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
         presentation.setEnabled(false);
         return;
       }
-      StudyUtils.updateAction(e);
+      EduUtils.updateAction(e);
       if (!presentation.isEnabled()) {
         return;
       }
-      if (StudyUtils.isStudentProject(project)) {
+      if (EduUtils.isStudentProject(project)) {
         presentation.setEnabledAndVisible(hasHints(project));
       }
     }
@@ -112,7 +112,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
   }
 
   private boolean hasHints(@NotNull Project project) {
-    Task currentTask = StudyUtils.getCurrentTask(project);
+    Task currentTask = EduUtils.getCurrentTask(project);
     if (currentTask == null) {
       return false;
     }

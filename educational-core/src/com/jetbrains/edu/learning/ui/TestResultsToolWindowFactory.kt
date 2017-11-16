@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
-import com.jetbrains.edu.learning.StudyUtils
+import com.jetbrains.edu.learning.EduUtils
 
 
 @JvmField val ID = "Test Results"
 class TestResultsToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-    val currentTask = StudyUtils.getCurrentTask(project)
+    val currentTask = EduUtils.getCurrentTask(project)
     if (currentTask != null) {
       val consoleView = ConsoleViewImpl(project, true)
       toolWindow.isToHideOnEmptyContent = true

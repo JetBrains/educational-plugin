@@ -14,7 +14,7 @@ import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialog;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     if (project == null || selectedFiles == null) return false;
     if (selectedFiles.length == 0 || selectedFiles.length > 1) return false;
 
-    if (!StudyUtils.isStudyProject(project) || !CCUtils.isCourseCreator(project)) return false;
+    if (!EduUtils.isStudyProject(project) || !CCUtils.isCourseCreator(project)) return false;
 
     final VirtualFile selectedFile = selectedFiles[0];
     return selectedFile != null;

@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduPluginConfigurator;
 import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -71,7 +71,7 @@ public class StepicWrappers {
           assert taskDir != null;
           String name = entry.getKey();
           VirtualFile answerFile = taskDir.findFileByRelativePath(name);
-          TaskFile studentTaskFile = StudyUtils.createStudentFile(project, answerFile, null, 0);
+          TaskFile studentTaskFile = EduUtils.createStudentFile(project, answerFile, null, 0);
           if (studentTaskFile == null) {
             return;
           }
@@ -130,7 +130,7 @@ public class StepicWrappers {
       return testFiles;
     }
     testFiles.addAll(Arrays.stream(taskDir.getChildren())
-                       .filter(file -> StudyUtils.isTestsFile(project, file.getName()))
+                       .filter(file -> EduUtils.isTestsFile(project, file.getName()))
                        .collect(Collectors.toList()));
     return testFiles;
   }

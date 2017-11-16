@@ -6,7 +6,7 @@ import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -20,11 +20,11 @@ public class CCAddAsTaskFile extends CCTaskFileActionBase {
 
 
   protected void performAction(VirtualFile file, Task task, Course course, Project project) {
-    StudyUtils.runUndoableAction(project, ACTION_NAME, new AddTaskFile(file, null, project, task));
+    EduUtils.runUndoableAction(project, ACTION_NAME, new AddTaskFile(file, null, project, task));
   }
 
   protected boolean isAvailable(Project project, VirtualFile file) {
-    return StudyUtils.getTaskFile(project, file) == null && !CCUtils.isTestsFile(project, file);
+    return EduUtils.getTaskFile(project, file) == null && !CCUtils.isTestsFile(project, file);
   }
 
   private static class AddTaskFile extends BasicUndoableAction {
@@ -53,7 +53,7 @@ public class CCAddAsTaskFile extends CCTaskFileActionBase {
       if (myTaskFile != null) {
         myTask.addTaskFile(myTaskFile);
       } else {
-        final String taskRelativePath = StudyUtils.pathRelativeToTask(myFile);
+        final String taskRelativePath = EduUtils.pathRelativeToTask(myFile);
         myTask.addTaskFile(taskRelativePath, myTask.getTaskFiles().size());
         myTaskFile = myTask.getTaskFile(taskRelativePath);
       }

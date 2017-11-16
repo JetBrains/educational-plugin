@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.DocumentUtil;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
@@ -80,7 +80,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
     answerPlaceholder.setPossibleAnswer(model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText);
     AddAction action = new AddAction(answerPlaceholder, taskFile, editor);
-    StudyUtils.runUndoableAction(project, "Add Answer Placeholder", action);
+    EduUtils.runUndoableAction(project, "Add Answer Placeholder", action);
   }
 
   static class AddAction extends BasicUndoableAction {
@@ -101,7 +101,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
       if (answerPlaceholders.contains(myPlaceholder)) {
         answerPlaceholders.remove(myPlaceholder);
         myEditor.getMarkupModel().removeAllHighlighters();
-        StudyUtils.drawAllAnswerPlaceholders(myEditor, myTaskFile);
+        EduUtils.drawAllAnswerPlaceholders(myEditor, myTaskFile);
         AnswerPlaceholderPainter.createGuardedBlocks(myEditor, myTaskFile);
       }
     }
@@ -146,7 +146,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
       return !arePlaceholdersIntersect(taskFile, start, end);
     }
     int offset = editor.getCaretModel().getOffset();
-    return StudyUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders()) == null;
+    return EduUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders()) == null;
   }
 
   protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {

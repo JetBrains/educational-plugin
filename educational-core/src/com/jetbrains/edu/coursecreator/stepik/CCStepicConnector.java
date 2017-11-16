@@ -44,7 +44,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jetbrains.edu.learning.StudyUtils.showOAuthDialog;
+import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
 
 public class CCStepicConnector {
   private static final Logger LOG = Logger.getInstance(CCStepicConnector.class.getName());

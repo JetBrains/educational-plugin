@@ -11,7 +11,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBScrollPane;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.apache.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
@@ -159,7 +159,7 @@ public class TwitterUtils {
       if (pin != null) {
         try {
           AccessToken token = twitter.getOAuthAccessToken(requestToken, pin);
-          TwitterPluginConfigurator configurator = StudyUtils.getTwitterConfigurator(project);
+          TwitterPluginConfigurator configurator = EduUtils.getTwitterConfigurator(project);
           if (configurator != null) {
             configurator.storeTwitterTokens(project, token.getToken(), token.getTokenSecret());
             updateStatus(panel, twitter);

@@ -26,7 +26,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -82,9 +82,9 @@ public class CCProjectService implements PersistentStateComponent<Element> {
             Element taskFileElement = entry.getValue();
             String name = entry.getKey();
             String answerName = FileUtil.getNameWithoutExtension(name) + CCUtils.ANSWER_EXTENSION_DOTTED + FileUtilRt.getExtension(name);
-            Document document = StudyUtils.getDocument(myProject.getBasePath(), lessonIndex, taskIndex, answerName);
+            Document document = EduUtils.getDocument(myProject.getBasePath(), lessonIndex, taskIndex, answerName);
             if (document == null) {
-              document = StudyUtils.getDocument(myProject.getBasePath(), lessonIndex, taskIndex, name);
+              document = EduUtils.getDocument(myProject.getBasePath(), lessonIndex, taskIndex, name);
               if (document == null) {
                 continue;
               }

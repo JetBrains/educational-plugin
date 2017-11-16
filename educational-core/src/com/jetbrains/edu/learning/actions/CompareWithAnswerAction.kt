@@ -10,7 +10,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.StudyUtils
+import com.jetbrains.edu.learning.EduUtils
 
 class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Diff.Diff) {
     companion object {
@@ -20,7 +20,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
 
-        val studyState = EduState(StudyUtils.getSelectedStudyEditor(project))
+        val studyState = EduState(EduUtils.getSelectedStudyEditor(project))
         if (!studyState.isValid) {
             return
         }
@@ -28,7 +28,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
         val myVirtualFile = studyState.virtualFile ?: return
         val myFileContent = DiffContentFactory.getInstance().create(project, myVirtualFile)
 
-        val myDocument = StudyUtils.getSelectedEditor(project)?.document ?: return
+        val myDocument = EduUtils.getSelectedEditor(project)?.document ?: return
         val answerText = getFileTextWithAnswers(project, myDocument)
         val answerFileName = "answer." + myVirtualFile.extension
         val answerContent = DiffContentFactory.getInstance().create(answerText, myVirtualFile.fileType)
@@ -44,7 +44,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     private fun getFileTextWithAnswers(project: Project, myDocument: Document): String {
         val fullAnswer = StringBuilder(myDocument.text)
 
-        val studyState = EduState(StudyUtils.getSelectedStudyEditor(project))
+        val studyState = EduState(EduUtils.getSelectedStudyEditor(project))
         studyState.taskFile.activePlaceholders
                 .sortedBy { it.offset }
                 .reversed()
@@ -58,7 +58,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     }
 
     override fun update(e: AnActionEvent?) {
-        StudyUtils.updateAction(e!!)
+        EduUtils.updateAction(e!!)
         val project = e.project
         if (project != null) {
             val course = StudyTaskManager.getInstance(project).course
@@ -68,7 +68,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
                 presentation.isVisible = true
                 return
             }
-            val studyEditor = StudyUtils.getSelectedStudyEditor(project)
+            val studyEditor = EduUtils.getSelectedStudyEditor(project)
             val studyState = EduState(studyEditor)
             if (!studyState.isValid) {
                 presentation.isEnabledAndVisible = false

@@ -21,7 +21,7 @@ public class EduState {
     myEditor = eduEditor != null ? eduEditor.getEditor() : null;
     myTaskFile = eduEditor != null ? eduEditor.getTaskFile() : null;
     myVirtualFile = myEditor != null ? FileDocumentManager.getInstance().getFile(myEditor.getDocument()) : null;
-    myTaskDir = myVirtualFile != null ? StudyUtils.getTaskDir(myVirtualFile) : null;
+    myTaskDir = myVirtualFile != null ? EduUtils.getTaskDir(myVirtualFile) : null;
     myTask = myTaskFile != null ? myTaskFile.getTask() : null;
   }
 

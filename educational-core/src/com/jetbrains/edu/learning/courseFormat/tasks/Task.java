@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -191,7 +191,7 @@ public abstract class Task implements StudyItem {
     if (!wrap) {
       return taskText;
     }
-    taskText = StudyUtils.wrapTextToDisplayLatex(StudyUtils.convertToHtml(taskText));
+    taskText = EduUtils.wrapTextToDisplayLatex(EduUtils.convertToHtml(taskText));
     if (getLesson().getCourse().isAdaptive()) {
       taskText = StepicAdaptiveConnector.wrapAdaptiveCourseText(this, taskText);
     }

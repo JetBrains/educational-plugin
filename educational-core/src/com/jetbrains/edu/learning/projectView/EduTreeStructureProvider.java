@@ -9,7 +9,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,6 +52,6 @@ public class EduTreeStructureProvider implements TreeStructureProvider, DumbAwar
   }
 
   protected boolean shouldModify(@NotNull final Project project) {
-    return StudyUtils.isStudentProject(project);
+    return EduUtils.isStudentProject(project);
   }
 }

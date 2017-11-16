@@ -17,7 +17,7 @@ public class EduTabTitleProvider implements EditorTabTitleProvider {
   @Nullable
   @Override
   public String getEditorTabTitle(Project project, VirtualFile file) {
-    TaskFile taskFile = StudyUtils.getTaskFile(project, file);
+    TaskFile taskFile = EduUtils.getTaskFile(project, file);
     if (taskFile == null) {
       return null;
     }

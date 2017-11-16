@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -40,11 +40,11 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
     if (editor == null) {
       return null;
     }
-    TaskFile taskFile = StudyUtils.getTaskFile(project, virtualFile);
+    TaskFile taskFile = EduUtils.getTaskFile(project, virtualFile);
     if (taskFile == null) {
       return null;
     }
-    AnswerPlaceholder answerPlaceholder = StudyUtils.getAnswerPlaceholder(editor.getCaretModel().getOffset(), getPlaceholders(taskFile));
+    AnswerPlaceholder answerPlaceholder = EduUtils.getAnswerPlaceholder(editor.getCaretModel().getOffset(), getPlaceholders(taskFile));
     return new CCState(taskFile, answerPlaceholder, psiFile, editor, project);
   }
 

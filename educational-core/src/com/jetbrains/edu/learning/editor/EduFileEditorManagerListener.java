@@ -4,7 +4,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
@@ -38,6 +38,6 @@ public class EduFileEditorManagerListener implements FileEditorManagerListener {
 
   @Nullable
   private Task getTask(@NotNull VirtualFile file) {
-    return StudyUtils.getTaskForFile(myProject, file);
+    return EduUtils.getTaskForFile(myProject, file);
   }
 }

@@ -19,7 +19,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.intellij.CCModuleBuilder;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
@@ -45,7 +45,7 @@ public abstract class EduIntellijCourseProjectGeneratorBase implements CoursePro
     if (remoteCourse.getId() > 0) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return StudyUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),
+        return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),
                 EduSettings.getInstance().getUser()));
       }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
     }

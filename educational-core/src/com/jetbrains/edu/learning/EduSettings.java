@@ -17,7 +17,7 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
   private StepicUser myUser;
   public long LAST_TIME_CHECKED = 0;
   private boolean myEnableTestingFromSamples = false;
-  public boolean myShouldUseJavaFx = StudyUtils.hasJavaFx();
+  public boolean myShouldUseJavaFx = EduUtils.hasJavaFx();
 
   public EduSettings() {
   }
@@ -65,7 +65,7 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
   }
 
   private static void updateStepicUserWidget() {
-    StepicUserWidget widget = StudyUtils.getStepicWidget();
+    StepicUserWidget widget = EduUtils.getStepicWidget();
     if (widget != null) {
       widget.update();
     }

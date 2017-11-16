@@ -7,7 +7,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -42,7 +42,7 @@ public class ResetCourseAction extends DumbAwareAction {
             TaskFile taskFile = entry.getValue();
             VirtualFile taskFileVF = taskDir.findFileByRelativePath(relativePath);
             if (taskFileVF != null) {
-              Document document = StudyUtils.getDocument(project.getBasePath(), lesson.getIndex(), task.getIndex(), relativePath);
+              Document document = EduUtils.getDocument(project.getBasePath(), lesson.getIndex(), task.getIndex(), relativePath);
               if (document != null) {
                 RefreshTaskFileAction.resetDocument(document, taskFile);
                 task.setStatus(CheckStatus.Unchecked);

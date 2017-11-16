@@ -13,7 +13,7 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -50,7 +50,7 @@ public class NavigationUtils {
       }
       nextLessonTaskList = nextLesson.getTaskList();
     }
-    return StudyUtils.getFirst(nextLessonTaskList);
+    return EduUtils.getFirst(nextLessonTaskList);
   }
 
   public static Task previousTask(@NotNull final Task task) {
@@ -108,7 +108,7 @@ public class NavigationUtils {
     if (editor.isDisposed()) {
       return;
     }
-    Pair<Integer, Integer> offsets = StudyUtils.getPlaceholderOffsets(answerPlaceholder, editor.getDocument());
+    Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder, editor.getDocument());
     editor.getCaretModel().moveToOffset(offsets.first);
     editor.getSelectionModel().setSelection(offsets.first, offsets.second);
   }
@@ -116,7 +116,7 @@ public class NavigationUtils {
 
   public static void navigateToFirstAnswerPlaceholder(@NotNull final Editor editor, @NotNull final TaskFile taskFile) {
     if (!taskFile.getActivePlaceholders().isEmpty()) {
-      AnswerPlaceholder firstAnswerPlaceholder = StudyUtils.getFirst(taskFile.getActivePlaceholders());
+      AnswerPlaceholder firstAnswerPlaceholder = EduUtils.getFirst(taskFile.getActivePlaceholders());
       if (firstAnswerPlaceholder == null) return;
       navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder);
     }
@@ -125,7 +125,7 @@ public class NavigationUtils {
   @Nullable
   private static VirtualFile getFirstTaskFile(@NotNull final VirtualFile taskDir, @NotNull final Project project) {
     for (VirtualFile virtualFile : taskDir.getChildren()) {
-      if (StudyUtils.getTaskFile(project, virtualFile) != null) {
+      if (EduUtils.getTaskFile(project, virtualFile) != null) {
         return virtualFile;
       }
     }
@@ -183,7 +183,7 @@ public class NavigationUtils {
       updateProjectView(project, fileToActivate);
     }
 
-    StudyUtils.selectFirstAnswerPlaceholder(StudyUtils.getSelectedStudyEditor(project), project);
+    EduUtils.selectFirstAnswerPlaceholder(EduUtils.getSelectedStudyEditor(project), project);
     ToolWindow runToolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN);
     if (runToolWindow != null) {
       runToolWindow.hide(null);

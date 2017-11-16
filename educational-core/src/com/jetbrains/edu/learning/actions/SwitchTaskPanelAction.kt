@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.StudyUtils
+import com.jetbrains.edu.learning.EduUtils
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -18,7 +18,7 @@ class SwitchTaskPanelAction : AnAction() {
     val project = e?.project
     val result = createDialog().showAndGet()
     if (result && project != null) {
-      StudyUtils.initToolWindows(project)
+      EduUtils.initToolWindows(project)
     }
   }
   
@@ -42,12 +42,12 @@ class SwitchTaskPanelAction : AnAction() {
 
     init {
       val comboBoxModel = DefaultComboBoxModel<String>()
-      if (StudyUtils.hasJavaFx()) {
+      if (EduUtils.hasJavaFx()) {
         comboBoxModel.addElement(JAVAFX_ITEM)
       }
       comboBoxModel.addElement(SWING_ITEM)
       comboBoxModel.selectedItem =
-          if (StudyUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JAVAFX_ITEM else SWING_ITEM
+          if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JAVAFX_ITEM else SWING_ITEM
       myComboBox.model = comboBoxModel
       title = "Switch Task Description Panel"
       myComboBox.setMinimumAndPreferredWidth(250)
@@ -58,6 +58,6 @@ class SwitchTaskPanelAction : AnAction() {
   override fun update(e: AnActionEvent?) {
     val place = e?.place
     val project = e?.project
-    e?.presentation?.isEnabled = project != null && StudyUtils.isStudyProject(project) || ACTION_SEARCH == place
+    e?.presentation?.isEnabled = project != null && EduUtils.isStudyProject(project) || ACTION_SEARCH == place
   }
 }

@@ -38,7 +38,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.JBColor;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -74,7 +74,7 @@ public class CCShowPreview extends DumbAwareAction {
       return;
     }
     final PsiFile file = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
-    if (file != null && StudyUtils.getTaskFile(project, file.getVirtualFile()) != null) {
+    if (file != null && EduUtils.getTaskFile(project, file.getVirtualFile()) != null) {
       presentation.setEnabledAndVisible(true);
     }
   }
@@ -95,7 +95,7 @@ public class CCShowPreview extends DumbAwareAction {
       return;
     }
     VirtualFile virtualFile = file.getVirtualFile();
-    TaskFile taskFile = StudyUtils.getTaskFile(project, virtualFile);
+    TaskFile taskFile = EduUtils.getTaskFile(project, virtualFile);
     if (taskFile == null) {
       return;
     }
@@ -115,7 +115,7 @@ public class CCShowPreview extends DumbAwareAction {
 
     final Task task = taskFile.getTask();
     ApplicationManager.getApplication().runWriteAction(() -> {
-      TaskFile studentTaskFile = StudyUtils.createStudentFile(project, virtualFile, task.copy(),
+      TaskFile studentTaskFile = EduUtils.createStudentFile(project, virtualFile, task.copy(),
                                    task instanceof TaskWithSubtasks ? ((TaskWithSubtasks)task).getActiveSubtaskIndex() : 0);
       if (studentTaskFile != null) {
         showPreviewDialog(project, studentTaskFile);

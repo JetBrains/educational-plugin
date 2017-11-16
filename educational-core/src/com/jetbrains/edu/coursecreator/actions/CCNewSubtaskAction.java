@@ -37,13 +37,13 @@ public class CCNewSubtaskAction extends DumbAwareAction {
     assert virtualFile != null;
     assert project != null;
 
-    Task task = StudyUtils.getTaskForFile(project, virtualFile);
+    Task task = EduUtils.getTaskForFile(project, virtualFile);
     assert task != null;
 
     if (!(task instanceof TaskWithSubtasks)) {
       // We want dump current tool window editor state to task
       // before it will be converted to TaskWithSubtasks
-      StudyUtils.saveToolWindowTextIfNeeded(project);
+      EduUtils.saveToolWindowTextIfNeeded(project);
 
       task = convertToTaskWithSubtasks(task, project);
     }
@@ -107,7 +107,7 @@ public class CCNewSubtaskAction extends DumbAwareAction {
       return;
     }
 
-    if (StudyUtils.getTaskForFile(project, virtualFile) != null || StudyUtils.getTask(project, virtualFile) != null) {
+    if (EduUtils.getTaskForFile(project, virtualFile) != null || EduUtils.getTask(project, virtualFile) != null) {
       presentation.setEnabledAndVisible(true);
     }
   }

@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.command.undo.BasicUndoableAction;
 import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Editor;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -28,7 +28,7 @@ public abstract class CCSubtaskPlaceholderAction extends CCAnswerPlaceholderActi
     if (!(task instanceof TaskWithSubtasks)) return;
 
     int subtaskIndex = ((TaskWithSubtasks)task).getActiveSubtaskIndex();
-    AnswerPlaceholder existingPlaceholder = StudyUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders());
+    AnswerPlaceholder existingPlaceholder = EduUtils.getAnswerPlaceholder(offset, taskFile.getAnswerPlaceholders());
     if (existingPlaceholder == null) {
       return;
     }
@@ -36,17 +36,17 @@ public abstract class CCSubtaskPlaceholderAction extends CCAnswerPlaceholderActi
     if (info == null) {
       return;
     }
-    StudyUtils.runUndoableAction(state.getProject(), getTitle(), new BasicUndoableAction(state.getEditor().getDocument()) {
+    EduUtils.runUndoableAction(state.getProject(), getTitle(), new BasicUndoableAction(state.getEditor().getDocument()) {
       @Override
       public void undo() throws UnexpectedUndoException {
         undoAction(existingPlaceholder, subtaskIndex, info);
-        StudyUtils.drawAllAnswerPlaceholders(editor, taskFile);
+        EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
       }
 
       @Override
       public void redo() throws UnexpectedUndoException {
         redoAction(existingPlaceholder, subtaskIndex, info);
-        StudyUtils.drawAllAnswerPlaceholders(editor, taskFile);
+        EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
       }
     });
   }

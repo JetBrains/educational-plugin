@@ -16,7 +16,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.StudyUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -46,7 +46,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       if (answerPlaceholder == null || answerPlaceholder.getSelected()) {
         return;
       }
-      final Pair<Integer, Integer> offsets = StudyUtils.getPlaceholderOffsets(answerPlaceholder, editor.getDocument());
+      final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder, editor.getDocument());
       editor.getSelectionModel().setSelection(offsets.getFirst(), offsets.getSecond());
       answerPlaceholder.setSelected(true);
     }
@@ -63,12 +63,12 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     final Document document = editor.getDocument();
     final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(document);
     if (openedFile != null) {
-      final TaskFile taskFile = StudyUtils.getTaskFile(project, openedFile);
+      final TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
       if (taskFile != null) {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
         final ToolWindow studyToolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
         if (studyToolWindow != null) {
-          StudyUtils.updateToolWindows(project);
+          EduUtils.updateToolWindows(project);
           studyToolWindow.show(null);
         }
         Course course = StudyTaskManager.getInstance(project).getCourse();
@@ -81,7 +81,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
           boolean isStudyProject = course.isStudy();
-          StudyUtils.drawAllAnswerPlaceholders(editor, taskFile);
+          EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
           if (isStudyProject) {
             editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
           }
