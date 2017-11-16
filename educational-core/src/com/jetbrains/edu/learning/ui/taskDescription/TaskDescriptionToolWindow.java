@@ -44,6 +44,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
+import com.jetbrains.edu.learning.editor.EduFileEditorManagerListener;
 import com.jetbrains.edu.learning.stepic.StepicAdaptiveReactionsPanel;
 import com.jetbrains.edu.learning.ui.CourseProgressBar;
 import org.jetbrains.annotations.NotNull;
@@ -102,7 +103,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     setContent(mySplitPane);
 
     if (isToolwindow) {
-      project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new StudyFileEditorManagerListener(this, project));
+      project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new EduFileEditorManagerListener(this, project));
       Task task = StudyUtils.getCurrentTask(project);
       setCurrentTask(project, task);
     }
