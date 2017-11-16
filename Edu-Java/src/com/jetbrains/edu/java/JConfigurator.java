@@ -13,8 +13,9 @@ import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
 public class JConfigurator extends EduConfiguratorBase {
-  static final String TEST_JAVA = "Test.java";
-  private static final String TASK_JAVA = "Task.java";
+
+  public static final String TEST_JAVA = "Test.java";
+  public static final String TASK_JAVA = "Task.java";
 
   private final JCourseBuilder myCourseBuilder = new JCourseBuilder();
 

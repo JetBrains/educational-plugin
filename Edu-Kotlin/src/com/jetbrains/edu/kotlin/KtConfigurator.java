@@ -18,9 +18,9 @@ import java.util.List;
 
 public class KtConfigurator extends EduConfiguratorBase {
 
-  static final String LEGACY_TESTS_KT = "tests.kt";
+  public static final String LEGACY_TESTS_KT = "tests.kt";
   public static final String TESTS_KT = "Tests.kt";
-  private static final String SUBTASK_TESTS_KT = "Subtask_Tests.kt";
+  public static final String SUBTASK_TESTS_KT = "Subtask_Tests.kt";
   public static final String TASK_KT = "Task.kt";
 
   private final KtCourseBuilder myCourseBuilder = new KtCourseBuilder();

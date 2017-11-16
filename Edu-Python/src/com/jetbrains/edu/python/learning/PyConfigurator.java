@@ -1,6 +1,5 @@
 package com.jetbrains.edu.python.learning;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -19,13 +18,14 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
+  public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
+
+  private static final String COURSE_NAME = "Introduction to Python.zip";
+
   public static final String PYTHON_3 = "3.x";
   public static final String PYTHON_2 = "2.x";
-  private static final String TESTS_PY = "tests.py";
-  private static final Logger LOG = Logger.getInstance(PyConfigurator.class);
-  private static final String COURSE_NAME = "Introduction to Python.zip";
-  private static final String TASK_PY = "task.py";
+  public static final String TESTS_PY = "tests.py";
+  public static final String TASK_PY = "task.py";
 
   private final PyCourseBuilder myCourseBuilder = new PyCourseBuilder();
 
