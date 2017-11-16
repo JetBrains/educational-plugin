@@ -64,7 +64,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.stepic.OAuthDialog;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
-import com.jetbrains.edu.learning.stepic.StudyStepicUserWidget;
+import com.jetbrains.edu.learning.stepic.StepicUserWidget;
 import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindowFactory;
 import com.petebevin.markdown.MarkdownProcessor;
@@ -759,10 +759,10 @@ public class StudyUtils {
   }
 
   @Nullable
-  public static StudyStepicUserWidget getStepicWidget() {
+  public static StepicUserWidget getStepicWidget() {
     JFrame frame = WindowManager.getInstance().findVisibleFrame();
     if (frame instanceof IdeFrameImpl) {
-      return (StudyStepicUserWidget)((IdeFrameImpl)frame).getStatusBar().getWidget(StudyStepicUserWidget.ID);
+      return (StepicUserWidget)((IdeFrameImpl)frame).getStatusBar().getWidget(StepicUserWidget.ID);
     }
     return null;
   }
