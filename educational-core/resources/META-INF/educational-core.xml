@@ -173,11 +173,11 @@
                                  displayName="Education"/>
 
         <toolWindow id="Educational.TaskDescription" anchor="right"
-                    factoryClass="com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindowFactory"
-                    conditionClass="com.jetbrains.edu.learning.ui.taskDescription.StudyCondition"/>
+                    factoryClass="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory"
+                    conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
         <toolWindow id="Educational.TestResults" anchor="bottom"
                     factoryClass="com.jetbrains.edu.learning.ui.StudyTestResultsToolWindowFactory"
-                    conditionClass="com.jetbrains.edu.learning.ui.taskDescription.StudyCondition"/>
+                    conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
         <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider"/>
         <treeStructureProvider implementation="com.jetbrains.edu.learning.projectView.EduTreeStructureProvider"/>
         <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>

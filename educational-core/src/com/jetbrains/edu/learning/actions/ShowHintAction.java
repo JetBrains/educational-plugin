@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.StudyHint;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +64,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     }
     EduUsagesCollector.hintShown();
 
-    final StudyToolWindow hintComponent = getHint(project, answerPlaceholder).getStudyToolWindow();
+    final TaskDescriptionToolWindow hintComponent = getHint(project, answerPlaceholder).getTaskDescriptionToolWindow();
     hintComponent.setPreferredSize(new Dimension(400, 150));
     showHintPopUp(project, studyState, editor, hintComponent);
   }
@@ -74,7 +74,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     return new StudyHint(answerPlaceholder, project);
   }
 
-  private static void showHintPopUp(Project project, StudyState studyState, Editor editor, StudyToolWindow hintComponent) {
+  private static void showHintPopUp(Project project, StudyState studyState, Editor editor, TaskDescriptionToolWindow hintComponent) {
     final JBPopup popup =
       JBPopupFactory.getInstance().createComponentPopupBuilder(hintComponent, hintComponent)
         .setDimensionServiceKey(project, "StudyHint", false)

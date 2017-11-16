@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.taskDescription.StudyToolWindowFactory;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -66,7 +66,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       final TaskFile taskFile = StudyUtils.getTaskFile(project, openedFile);
       if (taskFile != null) {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
-        final ToolWindow studyToolWindow = ToolWindowManager.getInstance(project).getToolWindow(StudyToolWindowFactory.STUDY_TOOL_WINDOW);
+        final ToolWindow studyToolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
         if (studyToolWindow != null) {
           StudyUtils.updateToolWindows(project);
           studyToolWindow.show(null);
