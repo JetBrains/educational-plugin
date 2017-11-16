@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.openapi.ui.DialogWrapper
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager
+import com.jetbrains.edu.learning.EduConfiguratorManager
 import javax.swing.JComponent
 
 class CCNewCourseDialog : DialogWrapper(true) {
@@ -27,7 +27,7 @@ class CCNewCourseDialog : DialogWrapper(true) {
     val location = myPanel.locationString
     val language = course.languageById
     if (language != null) {
-      EduPluginConfiguratorManager.forLanguage(language)
+      EduConfiguratorManager.forLanguage(language)
               ?.getEduCourseProjectGenerator(course)
               ?.createCourseProject(location, projectSettings)
     }

@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepic.newproject
 
 import com.intellij.openapi.ui.DialogWrapper
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager
+import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
 
@@ -29,7 +29,7 @@ class CreateNewStepikCourseDialog(private val myCourse: Course) : DialogWrapper(
     val projectSettings = myPanel.projectSettings
     val language = myCourse.languageById
     if (language != null) {
-      EduPluginConfiguratorManager.forLanguage(language)
+      EduConfiguratorManager.forLanguage(language)
               ?.getEduCourseProjectGenerator(myCourse)
               ?.createCourseProject(location, projectSettings)
     }

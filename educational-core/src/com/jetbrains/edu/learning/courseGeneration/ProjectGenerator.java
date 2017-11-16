@@ -186,9 +186,9 @@ public class ProjectGenerator {
   @Nullable
   public List<Course> getBundledCourses() {
     final ArrayList<Course> courses = new ArrayList<>();
-    final List<LanguageExtensionPoint<EduPluginConfigurator<?>>> extensions = EduPluginConfiguratorManager.allExtensions();
-    for (LanguageExtensionPoint<EduPluginConfigurator<?>> extension : extensions) {
-      final EduPluginConfigurator configurator = extension.getInstance();
+    final List<LanguageExtensionPoint<EduConfigurator<?>>> extensions = EduConfiguratorManager.allExtensions();
+    for (LanguageExtensionPoint<EduConfigurator<?>> extension : extensions) {
+      final EduConfigurator configurator = extension.getInstance();
       final List<String> paths = configurator.getBundledCoursePaths();
       for (String path : paths) {
         courses.add(getCourse(path));

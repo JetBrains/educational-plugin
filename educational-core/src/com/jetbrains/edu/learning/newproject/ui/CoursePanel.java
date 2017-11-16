@@ -11,8 +11,8 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -40,7 +40,7 @@ public class CoursePanel extends JPanel {
   private JEditorPane myDescriptionTextArea;
 
   private AdvancedSettings myAdvancedSettings;
-  private EduPluginConfigurator.LanguageSettings<?> myLanguageSettings;
+  private EduConfigurator.LanguageSettings<?> myLanguageSettings;
 
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
@@ -161,7 +161,7 @@ public class CoursePanel extends JPanel {
     if (myLocationField != null) {
       myLocationField.getComponent().setText(nameToLocation(course.getName()));
     }
-    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return;
     }

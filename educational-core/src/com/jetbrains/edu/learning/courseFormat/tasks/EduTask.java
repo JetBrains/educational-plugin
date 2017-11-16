@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class EduTask extends Task {
   @Override
   public TaskChecker getChecker(@NotNull Project project) {
     Course course = getLesson().getCourse();
-    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     return configurator != null ? configurator.getEduTaskChecker(this, project) : super.getChecker(project);
   }
 }

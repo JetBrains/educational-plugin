@@ -9,10 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
-import com.jetbrains.edu.kotlin.KtPluginConfigurator
-import com.jetbrains.edu.learning.checker.TaskChecker
+import com.jetbrains.edu.kotlin.KtConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import java.io.IOException
 
-class KtPluginConfigurator : KtPluginConfigurator() {
+class KtConfigurator : KtConfigurator() {
 
   override fun excludeFromArchive(path: String): Boolean {
     val excluded = super.excludeFromArchive(path)
@@ -53,7 +53,7 @@ class KtPluginConfigurator : KtPluginConfigurator() {
   override fun isEnabled(): Boolean = EduUtils.isAndroidStudio()
 
   companion object {
-    private val LOG = Logger.getInstance(KtPluginConfigurator::class.java)
+    private val LOG = Logger.getInstance(KtConfigurator::class.java)
 
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
             "gradlew", "gradlew.bat", "local.properties", "gradle.properties",

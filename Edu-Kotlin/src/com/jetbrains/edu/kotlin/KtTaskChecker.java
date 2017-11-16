@@ -47,11 +47,11 @@ public class KtTaskChecker extends RunConfigurationBasedTaskChecker {
         return testFile;
       }
     }
-    VirtualFile testsFile = taskDir.findChild(KtPluginConfigurator.LEGACY_TESTS_KT);
+    VirtualFile testsFile = taskDir.findChild(KtConfigurator.LEGACY_TESTS_KT);
     if (testsFile != null) {
       return testsFile;
     }
-    return taskDir.findChild(KtPluginConfigurator.TESTS_KT);
+    return taskDir.findChild(KtConfigurator.TESTS_KT);
   }
 
   @Override

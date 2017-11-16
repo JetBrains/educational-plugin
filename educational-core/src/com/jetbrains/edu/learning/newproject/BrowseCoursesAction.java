@@ -4,8 +4,8 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
 import icons.EducationalCoreIcons;
@@ -26,7 +26,7 @@ public class BrowseCoursesAction extends AnAction {
       Course course = panel.getSelectedCourse();
       Object projectSettings = panel.getProjectSettings();
       String location = panel.getLocationString();
-      EduPluginConfigurator pluginConfigurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
+      EduConfigurator pluginConfigurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
       if (pluginConfigurator != null) {
         CourseProjectGenerator projectGenerator = pluginConfigurator.getEduCourseProjectGenerator(course);
         if (projectGenerator != null) {

@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
-import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
+import com.jetbrains.edu.learning.intellij.EduConfiguratorBase;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
@@ -33,9 +33,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-public class KtPluginConfigurator extends EduPluginConfiguratorBase {
+public class KtConfigurator extends EduConfiguratorBase {
 
-  private static final Logger LOG = Logger.getInstance(KtPluginConfigurator.class);
+  private static final Logger LOG = Logger.getInstance(KtConfigurator.class);
 
   static final String LEGACY_TESTS_KT = "tests.kt";
   public static final String TESTS_KT = "Tests.kt";

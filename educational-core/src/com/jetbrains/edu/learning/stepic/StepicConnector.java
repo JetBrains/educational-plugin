@@ -217,7 +217,7 @@ public class StepicConnector {
 
   static boolean canBeOpened(RemoteCourse courseInfo) {
     final ArrayList<String> supportedLanguages = new ArrayList<>();
-    final List<LanguageExtensionPoint<EduPluginConfigurator<?>>> extensions = EduPluginConfiguratorManager.allExtensions();
+    final List<LanguageExtensionPoint<EduConfigurator<?>>> extensions = EduConfiguratorManager.allExtensions();
     for (LanguageExtensionPoint extension : extensions) {
       String languageId = extension.getKey();
       supportedLanguages.add(languageId);

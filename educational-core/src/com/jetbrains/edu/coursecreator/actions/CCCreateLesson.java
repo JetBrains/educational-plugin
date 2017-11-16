@@ -3,8 +3,8 @@ package com.jetbrains.edu.coursecreator.actions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
-import com.jetbrains.edu.learning.EduPluginConfigurator;
-import com.jetbrains.edu.learning.EduPluginConfiguratorManager;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -45,7 +45,7 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
   @Nullable
   protected VirtualFile createItemDir(@NotNull final Project project, @NotNull final Lesson item,
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
-    EduPluginConfigurator configurator = EduPluginConfiguratorManager.forLanguage(course.getLanguageById());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return null;
     }
