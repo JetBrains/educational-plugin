@@ -3,7 +3,7 @@ package com.jetbrains.edu.kotlin.twitter;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.twitter.StudyTwitterUtils;
+import com.jetbrains.edu.learning.twitter.TwitterUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 @SuppressWarnings("WeakerAccess")
-public class KtTwitterDialogPanel extends StudyTwitterUtils.TwitterDialogPanel {
+public class KtTwitterDialogPanel extends TwitterUtils.TwitterDialogPanel {
     private final JTextArea myTwitterTextField;
     private final JLabel myRemainSymbolsLabel;
     private URL myImageUrl;

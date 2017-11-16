@@ -27,8 +27,8 @@
         <extensionPoint qualifiedName="Educational.pluginConfigurator" beanClass="com.intellij.lang.LanguageExtensionPoint">
             <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduPluginConfigurator"/>
         </extensionPoint>
-        <extensionPoint qualifiedName="Educational.studyTwitterPluginConfigurator"
-                        interface="com.jetbrains.edu.learning.StudyTwitterPluginConfigurator"/>
+        <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
+                        interface="com.jetbrains.edu.learning.TwitterPluginConfigurator"/>
         <extensionPoint qualifiedName="Educational.checkListener"
                         interface="com.jetbrains.edu.learning.checker.CheckListener"/>
         <extensionPoint qualifiedName="Educational.optionsProvider"
@@ -219,7 +219,7 @@
 
     <extensions defaultExtensionNs="Educational">
         <optionsProvider instance="com.jetbrains.edu.learning.stepic.StepicOptions"/>
-        <checkListener implementation="com.jetbrains.edu.learning.twitter.StudyTwitterAction"/>
+        <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
         <checkListener implementation="com.jetbrains.edu.learning.stepic.NextRecommendationCheckListener"/>
         <checkListener implementation="com.jetbrains.edu.learning.stepic.PostSolutionCheckListener"/>
 

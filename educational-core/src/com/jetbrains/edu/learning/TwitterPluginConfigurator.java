@@ -4,7 +4,8 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.twitter.StudyTwitterUtils;
+import com.jetbrains.edu.learning.twitter.TwitterUtils;
+import com.jetbrains.edu.learning.twitter.TwitterAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,10 +13,10 @@ import org.jetbrains.annotations.Nullable;
  * Provides twitting to plugin<br>
  * Example can be found in
  * <a href="https://github.com/JetBrains/educational-plugins/blob/master/Edu-Utils/Edu-Kotlin/src/com/jetbrains/edu/kotlin/EduKotlinTwitterConfigurator.java">Edu Kotlin</a> plugin
- * @see com.jetbrains.edu.learning.twitter.StudyTwitterAction
+ * @see TwitterAction
  * */
-public interface StudyTwitterPluginConfigurator {
-  ExtensionPointName<StudyTwitterPluginConfigurator> EP_NAME = ExtensionPointName.create("Educational.studyTwitterPluginConfigurator");
+public interface TwitterPluginConfigurator {
+  ExtensionPointName<TwitterPluginConfigurator> EP_NAME = ExtensionPointName.create("Educational.twitterPluginConfigurator");
 
   /**
    * To implement tweeting you should register you app in twitter. For registered application twitter provide
@@ -57,7 +58,7 @@ public interface StudyTwitterPluginConfigurator {
    * @return panel that will be shown to user in ask to tweet dialog. 
    */
   @Nullable
-  StudyTwitterUtils.TwitterDialogPanel getTweetDialogPanel(@NotNull Task solvedTask);
+  TwitterUtils.TwitterDialogPanel getTweetDialogPanel(@NotNull Task solvedTask);
   
   void setAskToTweet(@NotNull Project project, boolean askToTweet);
 

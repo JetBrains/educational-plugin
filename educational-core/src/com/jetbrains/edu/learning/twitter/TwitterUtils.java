@@ -11,7 +11,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBScrollPane;
-import com.jetbrains.edu.learning.StudyTwitterPluginConfigurator;
+import com.jetbrains.edu.learning.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.apache.http.HttpStatus;
@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class StudyTwitterUtils {
-  private static final Logger LOG = Logger.getInstance(StudyTwitterUtils.class);
+public class TwitterUtils {
+  private static final Logger LOG = Logger.getInstance(TwitterUtils.class);
   
   /**
    * Set consumer key and secret. 
@@ -60,11 +60,11 @@ public class StudyTwitterUtils {
   }
 
   public static void createTwitterDialogAndShow(@NotNull Project project, 
-                                                @NotNull final StudyTwitterPluginConfigurator configurator,
+                                                @NotNull final TwitterPluginConfigurator configurator,
                                                 @NotNull Task task) {
     ApplicationManager.getApplication().invokeLater(() -> {
       DialogWrapper.DoNotAskOption doNotAskOption = createDoNotAskOption(project, configurator);
-      StudyTwitterUtils.TwitterDialogPanel panel = configurator.getTweetDialogPanel(task);
+      TwitterUtils.TwitterDialogPanel panel = configurator.getTweetDialogPanel(task);
       if (panel != null) {
         TwitterDialogWrapper wrapper = new TwitterDialogWrapper(project, panel, doNotAskOption);
         wrapper.setDoNotAskOption(doNotAskOption);
@@ -96,7 +96,7 @@ public class StudyTwitterUtils {
 
 
   private static DialogWrapper.DoNotAskOption createDoNotAskOption(@NotNull final Project project,
-                                                                   @NotNull final StudyTwitterPluginConfigurator configurator) {
+                                                                   @NotNull final TwitterPluginConfigurator configurator) {
     return new DialogWrapper.DoNotAskOption() {
       @Override
       public boolean isToBeShown() {
@@ -132,7 +132,7 @@ public class StudyTwitterUtils {
    * Post on twitter media and text from panel
    * @param panel shown to user and used to provide data to post 
    */
-  public static void updateStatus(StudyTwitterUtils.TwitterDialogPanel panel, Twitter twitter) throws IOException, TwitterException {
+  public static void updateStatus(TwitterUtils.TwitterDialogPanel panel, Twitter twitter) throws IOException, TwitterException {
     StatusUpdate update = new StatusUpdate(panel.getMessage());
     InputStream e = panel.getMediaSource();
     if (e != null) {
@@ -151,7 +151,7 @@ public class StudyTwitterUtils {
    * As a result of succeeded tweet twitter website is opened in default browser.
    */
   public static void authorizeAndUpdateStatus(@NotNull final Project project, @NotNull final Twitter twitter,
-                                              @NotNull final StudyTwitterUtils.TwitterDialogPanel panel) throws TwitterException {
+                                              @NotNull final TwitterUtils.TwitterDialogPanel panel) throws TwitterException {
     RequestToken requestToken = twitter.getOAuthRequestToken();
     BrowserUtil.browse(requestToken.getAuthorizationURL());
 
@@ -160,7 +160,7 @@ public class StudyTwitterUtils {
       if (pin != null) {
         try {
           AccessToken token = twitter.getOAuthAccessToken(requestToken, pin);
-          StudyTwitterPluginConfigurator configurator = StudyUtils.getTwitterConfigurator(project);
+          TwitterPluginConfigurator configurator = StudyUtils.getTwitterConfigurator(project);
           if (configurator != null) {
             configurator.storeTwitterTokens(project, token.getToken(), token.getTokenSecret());
             updateStatus(panel, twitter);
@@ -221,7 +221,7 @@ public class StudyTwitterUtils {
   /**
    * Listener updates label indicating remaining symbols number like in twitter.
    */
-  private static DocumentListener createTextFieldLengthDocumentListener(@NotNull TwitterDialogWrapper builder, @NotNull final StudyTwitterUtils.TwitterDialogPanel panel) {
+  private static DocumentListener createTextFieldLengthDocumentListener(@NotNull TwitterDialogWrapper builder, @NotNull final TwitterUtils.TwitterDialogPanel panel) {
     return new DocumentAdapter() {
       @Override
       protected void textChanged(DocumentEvent e) {
@@ -242,9 +242,9 @@ public class StudyTwitterUtils {
    * Dialog wrapper class with DoNotAsl option for asking user to tweet.
    * */
   private static class TwitterDialogWrapper extends DialogWrapper {
-    private final StudyTwitterUtils.TwitterDialogPanel myPanel;
+    private final TwitterUtils.TwitterDialogPanel myPanel;
 
-    TwitterDialogWrapper(@Nullable Project project, @NotNull StudyTwitterUtils.TwitterDialogPanel panel, DoNotAskOption doNotAskOption) {
+    TwitterDialogWrapper(@Nullable Project project, @NotNull TwitterUtils.TwitterDialogPanel panel, DoNotAskOption doNotAskOption) {
       super(project);
       setTitle("Twitter");
       setDoNotAskOption(doNotAskOption);
