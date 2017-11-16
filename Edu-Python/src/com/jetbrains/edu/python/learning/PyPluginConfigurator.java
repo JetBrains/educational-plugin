@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.python.learning.checker.PyTaskChecker;
 import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator;
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings;
@@ -223,7 +223,7 @@ public class PyPluginConfigurator implements EduPluginConfigurator<PyNewProjectS
 
   @Nullable
   @Override
-  public EduCourseProjectGenerator<PyNewProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
+  public CourseProjectGenerator<PyNewProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
     return new PyDirectoryProjectGenerator(course);
   }
 }

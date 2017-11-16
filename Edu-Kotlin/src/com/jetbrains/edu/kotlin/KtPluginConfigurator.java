@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.intellij.EduPluginConfiguratorBase;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
-import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinIcons;
@@ -111,7 +111,7 @@ public class KtPluginConfigurator extends EduPluginConfiguratorBase {
   }
 
   @Override
-  public EduCourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
+  public CourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
     return new KtCourseProjectGenerator(course);
   }
 

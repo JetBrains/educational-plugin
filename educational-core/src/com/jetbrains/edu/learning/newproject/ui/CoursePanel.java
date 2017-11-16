@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EduCoursePanel extends JPanel {
+public class CoursePanel extends JPanel {
 
   private static final int HORIZONTAL_MARGIN = 10;
   private static final int LARGE_HORIZONTAL_MARGIN = 15;
@@ -39,13 +39,13 @@ public class EduCoursePanel extends JPanel {
   private JBScrollPane myInfoScroll;
   private JEditorPane myDescriptionTextArea;
 
-  private EduAdvancedSettings myAdvancedSettings;
+  private AdvancedSettings myAdvancedSettings;
   private EduPluginConfigurator.LanguageSettings<?> myLanguageSettings;
 
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
 
-  public EduCoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
+  public CoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
     setLayout(new BorderLayout());
     add(myCoursePanel, BorderLayout.CENTER);
     initUI(isIndependentPanel, isLocationFieldNeeded);
