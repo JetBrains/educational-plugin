@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.courseGeneration.StudyGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.EduCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -170,7 +170,7 @@ public interface EduPluginConfigurator<Settings> {
                                          @NotNull Project project,
                                          @NotNull Course course,
                                          @Nullable String moduleDir) {
-    StudyGenerator.createCourse(course, project.getBaseDir());
+    GeneratorUtils.createCourse(course, project.getBaseDir());
   }
 
   default List<String> getBundledCoursePaths() {

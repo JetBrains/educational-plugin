@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator;
+import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,7 @@ public class EduModuleBuilderUtils {
 
   public static void createCourseFromCourseInfo(@NotNull ModifiableModuleModel moduleModel,
                                          @NotNull Project project,
-                                         @NotNull StudyProjectGenerator generator,
+                                         @NotNull ProjectGenerator generator,
                                          @NotNull Course course,
                                          @Nullable String moduleDir) throws JDOMException, ModuleWithNameAlreadyExists, ConfigurationException, IOException {
     generator.setSelectedCourse(course);

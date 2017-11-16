@@ -13,7 +13,7 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
 import com.jetbrains.edu.learning.EduPluginConfigurator
 import com.jetbrains.edu.learning.core.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.StudyProjectGenerator
+import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator
 import com.jetbrains.edu.learning.newproject.ui.EduCoursePanel
 import java.io.IOException
 import javax.swing.JComponent
@@ -48,7 +48,7 @@ class CCCreateCoursePreviewDialog(
 
     if (isSuccessful) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), archiveName + ".zip")
-      val course = StudyProjectGenerator.getCourse(archivePath)
+      val course = ProjectGenerator.getCourse(archivePath)
       if (course != null) {
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
         try {

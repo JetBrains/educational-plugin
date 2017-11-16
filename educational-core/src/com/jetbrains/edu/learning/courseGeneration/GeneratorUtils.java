@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class StudyGenerator {
-  private static final Logger LOG = Logger.getInstance(StudyGenerator.class.getName());
+public class GeneratorUtils {
+  private static final Logger LOG = Logger.getInstance(GeneratorUtils.class.getName());
 
-  private StudyGenerator() {}
+  private GeneratorUtils() {}
 
   public static void createCourse(@NotNull final Course course, @NotNull final VirtualFile baseDir) {
     try {
