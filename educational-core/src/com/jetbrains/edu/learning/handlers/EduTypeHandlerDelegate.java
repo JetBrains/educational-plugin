@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.handlers;
 
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.codeInsight.hint.HintManager;
@@ -15,6 +15,8 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCActivatePlaceholder;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAnswerPlaceholderAction;
+import com.jetbrains.edu.learning.StudySubtaskUtils;
+import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -24,7 +26,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-public class StudyTypeHandlerDelegate extends TypedHandlerDelegate {
+public class EduTypeHandlerDelegate extends TypedHandlerDelegate {
 
   public static final String ACTIVATE = "activate";
   public static final String SWITCH = "switch to";
