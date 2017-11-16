@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 
 
-public class StudyEditorFactoryListener implements EditorFactoryListener {
+public class EduEditorFactoryListener implements EditorFactoryListener {
 
   private static class WindowSelectionListener extends EditorMouseAdapter {
     private final TaskFile myTaskFile;
@@ -76,7 +76,7 @@ public class StudyEditorFactoryListener implements EditorFactoryListener {
           return;
         }
 
-        StudyEditor.addDocumentListener(document, new EduDocumentListener(taskFile, true));
+        EduEditor.addDocumentListener(document, new EduDocumentListener(taskFile, true));
 
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
@@ -94,7 +94,7 @@ public class StudyEditorFactoryListener implements EditorFactoryListener {
   public void editorReleased(@NotNull EditorFactoryEvent event) {
     final Editor editor = event.getEditor();
     final Document document = editor.getDocument();
-    StudyEditor.removeListener(document);
+    EduEditor.removeListener(document);
     editor.getMarkupModel().removeAllHighlighters();
     editor.getSelectionModel().removeSelection();
   }

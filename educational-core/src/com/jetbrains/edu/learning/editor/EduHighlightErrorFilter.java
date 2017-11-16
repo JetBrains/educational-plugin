@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.StudyUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class StudyHighlightErrorFilter extends HighlightErrorFilter{
+public class EduHighlightErrorFilter extends HighlightErrorFilter{
   @Override
   public boolean shouldHighlightErrorElement(@NotNull PsiErrorElement element) {
     PsiFile file = element.getContainingFile();

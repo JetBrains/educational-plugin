@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.editor.StudyEditor;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import org.jetbrains.annotations.Nullable;
 
 public class RefreshAnswerPlaceholder extends DumbAwareAction {
@@ -35,9 +35,9 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (answerPlaceholder == null) {
       return;
     }
-    StudyEditor studyEditor = StudyUtils.getSelectedStudyEditor(project);
-    if (studyEditor != null) {
-      StudySubtaskUtils.refreshPlaceholder(studyEditor.getEditor(), answerPlaceholder);
+    EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
+    if (eduEditor != null) {
+      StudySubtaskUtils.refreshPlaceholder(eduEditor.getEditor(), answerPlaceholder);
       final StudyTaskManager taskManager = StudyTaskManager.getInstance(project);
       answerPlaceholder.reset();
       taskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
@@ -75,9 +75,9 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (project == null) {
       return null;
     }
-    StudyEditor studyEditor = StudyUtils.getSelectedStudyEditor(project);
-    final StudyState studyState = new StudyState(studyEditor);
-    if (studyEditor == null || !studyState.isValid()) {
+    EduEditor eduEditor = StudyUtils.getSelectedStudyEditor(project);
+    final StudyState studyState = new StudyState(eduEditor);
+    if (eduEditor == null || !studyState.isValid()) {
       return null;
     }
     final Editor editor = studyState.getEditor();
