@@ -25,11 +25,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.List;
 
-public class StudyConfigurable extends CompositeConfigurable<StudyOptionsProvider> {
+public class EduConfigurable extends CompositeConfigurable<OptionsProvider> {
   public static final String ID = "com.jetbrains.edu.learning.stepic.EduConfigurable";
   private final JPanel myMainPanel;
 
-  public StudyConfigurable() {
+  public EduConfigurable() {
     myMainPanel = new JPanel(new VerticalFlowLayout());
   }
 
@@ -50,7 +50,7 @@ public class StudyConfigurable extends CompositeConfigurable<StudyOptionsProvide
   public JComponent createComponent() {
     myMainPanel.removeAll();
     for (int i = 0; i < getConfigurables().size(); i++) {
-      StudyOptionsProvider provider = getConfigurables().get(i);
+      OptionsProvider provider = getConfigurables().get(i);
       JComponent component = provider.createComponent();
       if (component != null) {
         myMainPanel.add(component);
@@ -60,8 +60,8 @@ public class StudyConfigurable extends CompositeConfigurable<StudyOptionsProvide
   }
 
   @Override
-  protected List<StudyOptionsProvider> createConfigurables() {
-    return ConfigurableWrapper.createConfigurables(StudyOptionsProviderEP.EP_NAME);
+  protected List<OptionsProvider> createConfigurables() {
+    return ConfigurableWrapper.createConfigurables(OptionsProviderEP.EP_NAME);
   }
 }
 
