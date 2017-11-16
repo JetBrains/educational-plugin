@@ -12,7 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-public class StudyProgressBar extends JComponent implements DumbAware {
+public class CourseProgressBar extends JComponent implements DumbAware {
   private static final Color SHADOW1 = new JBColor(Gray._190, JBColor.border());
   private static final Color SHADOW2 = Gray._105;
   private static final int BRICK_WIDTH = 10;
@@ -22,7 +22,7 @@ public class StudyProgressBar extends JComponent implements DumbAware {
   private double myFraction = 0.0;
   private static final Color myColor = JBColor.GREEN;
 
-  public StudyProgressBar(double fraction, int height, int indent) {
+  public CourseProgressBar(double fraction, int height, int indent) {
     myFraction = fraction;
     myHeight = height;
     myIndent = indent;

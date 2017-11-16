@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.StudyUtils
 
 
 @JvmField val ID = "Test Results"
-class StudyTestResultsToolWindowFactory : ToolWindowFactory {
+class TestResultsToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     val currentTask = StudyUtils.getCurrentTask(project)
     if (currentTask != null) {

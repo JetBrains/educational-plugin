@@ -28,8 +28,8 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.StudyTestResultsToolWindowFactory;
-import com.jetbrains.edu.learning.ui.StudyTestResultsToolWindowFactoryKt;
+import com.jetbrains.edu.learning.ui.TestResultsToolWindowFactory;
+import com.jetbrains.edu.learning.ui.TestResultsToolWindowFactoryKt;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -125,11 +125,11 @@ public class CheckUtils {
   public static void showTestResultsToolWindow(@NotNull final Project project, @NotNull final String message) {
     ApplicationManager.getApplication().invokeLater(() -> {
       final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-      ToolWindow window = toolWindowManager.getToolWindow(StudyTestResultsToolWindowFactoryKt.ID);
+      ToolWindow window = toolWindowManager.getToolWindow(TestResultsToolWindowFactoryKt.ID);
       if (window == null) {
-        toolWindowManager.registerToolWindow(StudyTestResultsToolWindowFactoryKt.ID, true, ToolWindowAnchor.BOTTOM);
-        window = toolWindowManager.getToolWindow(StudyTestResultsToolWindowFactoryKt.ID);
-        new StudyTestResultsToolWindowFactory().createToolWindowContent(project, window);
+        toolWindowManager.registerToolWindow(TestResultsToolWindowFactoryKt.ID, true, ToolWindowAnchor.BOTTOM);
+        window = toolWindowManager.getToolWindow(TestResultsToolWindowFactoryKt.ID);
+        new TestResultsToolWindowFactory().createToolWindowContent(project, window);
       }
 
       final Content[] contents = window.getContentManager().getContents();
@@ -162,7 +162,7 @@ public class CheckUtils {
   }
 
   public static void hideTestResultsToolWindow(@NotNull Project project) {
-    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(StudyTestResultsToolWindowFactoryKt.ID);
+    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TestResultsToolWindowFactoryKt.ID);
     if (toolWindow != null) {
       toolWindow.hide(() -> {});
     }
