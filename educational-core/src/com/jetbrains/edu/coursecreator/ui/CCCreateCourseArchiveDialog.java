@@ -10,17 +10,17 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class CreateCourseArchiveDialog extends DialogWrapper {
+public class CCCreateCourseArchiveDialog extends DialogWrapper {
 
-  private CreateCourseArchivePanel myPanel;
+  private CCCreateCourseArchivePanel myPanel;
   private CCCreateCourseArchive myAction;
 
-  public CreateCourseArchiveDialog(@NotNull final  Project project, CCCreateCourseArchive action) {
+  public CCCreateCourseArchiveDialog(@NotNull final  Project project, CCCreateCourseArchive action) {
     super(project);
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     setTitle("Create Course Archive");
-    myPanel = new CreateCourseArchivePanel(project, this, course.getName());
+    myPanel = new CCCreateCourseArchivePanel(project, this, course.getName());
     myAction = action;
     init();
   }

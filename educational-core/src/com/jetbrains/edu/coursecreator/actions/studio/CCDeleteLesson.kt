@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 
-class CCDeleteLesson : DeleteStudyItem("Delete Lesson") {
+class CCDeleteLesson : CCDeleteStudyItem("Delete Lesson") {
   override fun getStudyItem(project: Project, file: VirtualFile): StudyItem? {
     val course = StudyTaskManager.getInstance(project).course?:return null
     return course.getLesson(file.name)
