@@ -194,7 +194,7 @@
         <editorTabTitleProvider implementation="com.jetbrains.edu.learning.StudyTabTitleProvider"/>
         <typedHandler implementation="com.jetbrains.edu.learning.StudyTypeHandlerDelegate"
                       order="first, before completionAutoPopup"/>
-        <httpRequestHandler implementation="com.jetbrains.edu.learning.builtInServer.EduStepikRestService"/>
+        <httpRequestHandler implementation="com.jetbrains.edu.learning.stepic.builtInServer.StepikRestService"/>
         <projectService serviceImplementation="com.jetbrains.edu.learning.stepic.StepikSolutionsLoader" />
 
         <!--for educators-->

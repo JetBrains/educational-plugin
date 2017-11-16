@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.builtInServer;
+package com.jetbrains.edu.learning.stepic.builtInServer;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -49,12 +49,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jetbrains.edu.learning.builtInServer.EduBuiltInServerUtils.*;
+import static com.jetbrains.edu.learning.stepic.builtInServer.EduBuiltInServerUtils.*;
 import static com.jetbrains.edu.learning.stepic.StepicNames.EDU_STEPIK_SERVICE_NAME;
 import static com.jetbrains.edu.learning.stepic.StepicNames.LINK;
 
-public class EduStepikRestService extends RestService {
-  private static final Logger LOG = Logger.getInstance(EduStepikRestService.class.getName());
+public class StepikRestService extends RestService {
+  private static final Logger LOG = Logger.getInstance(StepikRestService.class.getName());
   private static final Pattern OPEN_COURSE_PATTERN = Pattern.compile("/" + EDU_STEPIK_SERVICE_NAME + "\\?link=.+");
   private static final Pattern COURSE_PATTERN = Pattern.compile("https://stepik\\.org/lesson(?:/[a-zA-Z\\-]*-|/)(\\d+)/step/(\\d+)");
   private static final Pattern
