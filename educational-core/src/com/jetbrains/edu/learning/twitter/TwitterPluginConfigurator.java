@@ -1,11 +1,9 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.twitter;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.twitter.TwitterUtils;
-import com.jetbrains.edu.learning.twitter.TwitterAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

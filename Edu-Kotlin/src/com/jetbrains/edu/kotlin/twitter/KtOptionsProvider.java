@@ -3,7 +3,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.TwitterPluginConfigurator;
+import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.StudyUtils;
 import com.jetbrains.edu.learning.settings.StudyOptionsProvider;
 import org.jetbrains.annotations.Nullable;
