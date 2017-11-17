@@ -61,7 +61,6 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
   public PyDirectoryProjectGenerator(@NotNull Course course) {
     myCourse = course;
     myGenerator = new ProjectGenerator();
-    myGenerator.addSettingsStateListener(this::setValidationResult);
   }
 
   @Nls
@@ -168,10 +167,6 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
     }
 
     return sdk;
-  }
-
-  public void setValidationResult(ValidationResult validationResult) {
-    myValidationResult = validationResult;
   }
 
   @Nullable

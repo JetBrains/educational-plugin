@@ -58,7 +58,7 @@ public class CCFromCourseArchive extends DumbAwareAction {
     final String basePath = project.getBasePath();
     if (basePath == null) return;
 
-    Course course = ProjectGenerator.getCourse(virtualFile.getPath());
+    Course course = ProjectGenerator.getLocalCourse(virtualFile.getPath());
     if (course == null) {
       Messages.showErrorDialog("This course is incompatible with current version", "Failed to Unpack Course");
       return;

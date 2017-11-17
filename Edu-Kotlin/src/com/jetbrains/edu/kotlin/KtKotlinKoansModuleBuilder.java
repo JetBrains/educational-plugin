@@ -14,6 +14,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.intellij.generation.CourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduProjectGenerator;
@@ -49,16 +50,18 @@ class KtKotlinKoansModuleBuilder extends CourseModuleBuilder {
   public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
     Module baseModule = super.createModule(moduleModel);
     Project project = baseModule.getProject();
-    EduProjectGenerator generator = new EduProjectGenerator();
+
     if (myCourse == null) {
       File courseRoot = EduUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, KtKotlinKoansModuleBuilder.class);
-      final Course course = generator.addLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
+      final Course course = ProjectGenerator.getLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
       if (course == null) {
         LOG.info("Failed to find course " + DEFAULT_COURSE_NAME);
         return baseModule;
       }
     }
     myCourse.setLanguage("kotlin");
+
+    EduProjectGenerator generator = new EduProjectGenerator();
     EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, myCourse, getModuleFileDirectory());
     return baseModule;
   }
