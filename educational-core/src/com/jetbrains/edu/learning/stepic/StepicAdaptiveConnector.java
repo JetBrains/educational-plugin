@@ -541,25 +541,6 @@ public class StepicAdaptiveConnector {
     task.addTestsTexts("tests.py", testText);
   }
 
-  @NotNull
-  public static List<Integer> getEnrolledCoursesIds(@NotNull StepicUser stepicUser) {
-    try {
-      final URI enrolledCoursesUri = new URIBuilder(StepicNames.COURSES).addParameter("enrolled", "true").build();
-      final List<RemoteCourse> courses = StepicAuthorizedClient.getFromStepic(enrolledCoursesUri.toString(),
-                                                                               StepicWrappers.CoursesContainer.class,
-                                                                               stepicUser).courses;
-      final ArrayList<Integer> ids = new ArrayList<>();
-      for (RemoteCourse course : courses) {
-        ids.add(course.getId());
-      }
-      return ids;
-    }
-    catch (IOException | URISyntaxException e) {
-      LOG.warn(e.getMessage());
-    }
-    return Collections.emptyList();
-  }
-
   public static String wrapAdaptiveCourseText(Task task, @NotNull String text) {
     String finalText = text;
     if (task instanceof TheoryTask) {
