@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseGeneration;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,19 +13,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicNames;
-import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
+import org.fest.util.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,23 +36,8 @@ import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 
 public class ProjectGenerator {
   private static final Logger LOG = Logger.getInstance(ProjectGenerator.class.getName());
-  private final List<SettingsListener> myListeners = ContainerUtil.newArrayList();
-  private List<Course> myCourses = new ArrayList<>();
   private List<Integer> myEnrolledCoursesIds = new ArrayList<>();
   protected Course mySelectedCourse;
-
-  public void setCourses(List<Course> courses) {
-    myCourses = courses;
-  }
-
-  public boolean isLoggedIn() {
-    final StepicUser user = EduSettings.getInstance().getUser();
-    return user != null;
-  }
-
-  public void setEnrolledCoursesIds(@NotNull final List<Integer> coursesIds) {
-    myEnrolledCoursesIds = coursesIds;
-  }
 
   @NotNull
   public List<Integer> getEnrolledCoursesIds() {
@@ -121,20 +103,22 @@ public class ProjectGenerator {
 
   // Supposed to be called under progress
   public List<Course> getCourses(boolean force) {
+    List<Course> courses = new ArrayList<>();
     if (force) {
-      myCourses = execCancelable(() -> StepicConnector.getCourses(EduSettings.getInstance().getUser()));
+      courses = execCancelable(() -> StepicConnector.getCourses(EduSettings.getInstance().getUser()));
     }
+    if (courses == null) return Lists.emptyList();
     List<Course> bundledCourses = getBundledCourses();
     if (bundledCourses != null) {
       for (Course bundledCourse : bundledCourses) {
-        if (bundledCourse == null || myCourses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
+        if (bundledCourse == null || courses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
           continue;
         }
-        myCourses.add(bundledCourse);
+        courses.add(bundledCourse);
       }
     }
-    sortCourses(myCourses);
-    return myCourses;
+    sortCourses(courses);
+    return courses;
   }
 
   public void sortCourses(List<Course> result) {
@@ -169,20 +153,6 @@ public class ProjectGenerator {
     }
   }
 
-  public void addSettingsStateListener(@NotNull SettingsListener listener) {
-    myListeners.add(listener);
-  }
-
-  public interface SettingsListener {
-    void stateChanged(ValidationResult result);
-  }
-
-  public void fireStateChanged(ValidationResult result) {
-    for (SettingsListener listener : myListeners) {
-      listener.stateChanged(result);
-    }
-  }
-
   @Nullable
   public List<Course> getBundledCourses() {
     final ArrayList<Course> courses = new ArrayList<>();
@@ -191,23 +161,14 @@ public class ProjectGenerator {
       final EduConfigurator configurator = extension.getInstance();
       final List<String> paths = configurator.getBundledCoursePaths();
       for (String path : paths) {
-        courses.add(getCourse(path));
+        courses.add(getLocalCourse(path));
       }
     }
     return courses;
   }
 
   @Nullable
-  public Course addLocalCourse(String zipFilePath) {
-    final Course courseInfo = getCourse(zipFilePath);
-    if (courseInfo != null) {
-      myCourses.add(0, courseInfo);
-    }
-    return courseInfo;
-  }
-
-  @Nullable
-  public static Course getCourse(String zipFilePath) {
+  public static Course getLocalCourse(String zipFilePath) {
     try {
       final JBZipFile zipFile = new JBZipFile(zipFilePath);
       final JBZipEntry entry = zipFile.getEntry(EduNames.COURSE_META_FILE);
