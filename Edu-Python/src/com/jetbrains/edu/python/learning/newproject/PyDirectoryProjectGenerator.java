@@ -62,30 +62,9 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
 
   private ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
 
-  // Some python API has been changed while 2017.3 (first version of python plugin with new API is 2017.3.173.3415.6).
-  // To prevent exceptions because of it we should check if it is new API or not.
-  protected final boolean myHasOldPythonApi;
-
   public PyDirectoryProjectGenerator(@NotNull Course course) {
     myCourse = course;
     myGenerator = new ProjectGenerator();
-    myGenerator.addSettingsStateListener(this::setValidationResult);
-    myHasOldPythonApi = hasOldPythonApi();
-  }
-
-  private boolean hasOldPythonApi() {
-    try {
-      // `com.jetbrains.python.sdk.PySdkExtKt` is part of new python API
-      // so we can use it to determine if it is new python API or not.
-      // This way looks easier than check version because
-      // there are different IDE with python support: PyCharm C/P/EDU and other IDEs with python plugin
-      // and we have to use separate way to check API version for each case.
-      Class.forName("com.jetbrains.python.sdk.PySdkExtKt");
-      return false;
-    } catch (ClassNotFoundException e) {
-      LOG.warn("Current python API is old");
-      return true;
-    }
   }
 
   @Nls
@@ -177,10 +156,6 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
     }
     sdk = updateSdkIfNeeded(project, sdk);
     SdkConfigurationUtil.setDirectoryProjectSdk(project, sdk);
-  }
-
-  public void setValidationResult(ValidationResult validationResult) {
-    myValidationResult = validationResult;
   }
 
   @Nullable
