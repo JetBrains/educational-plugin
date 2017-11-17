@@ -49,7 +49,7 @@ class CCCreateCoursePreviewDialog(
     val isSuccessful = CCCreateCourseArchive.createCourseArchive(myProject, myModule, archiveName, locationDir, false)
     if (isSuccessful) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), archiveName + ".zip")
-      val course = ProjectGenerator.getCourse(archivePath)
+      val course = ProjectGenerator.getLocalCourse(archivePath)
       if (course != null) {
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
         try {
