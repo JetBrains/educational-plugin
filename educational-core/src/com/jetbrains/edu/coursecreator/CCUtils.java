@@ -260,10 +260,10 @@ public class CCUtils {
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
 
     final Lesson lesson = new Lesson();
-    lesson.setName(EduNames.PYCHARM_ADDITIONAL);
+    lesson.setName(EduNames.ADDITIONAL_MATERIALS);
     final Task task = new EduTask();
     task.setLesson(lesson);
-    task.setName(EduNames.PYCHARM_ADDITIONAL);
+    task.setName(EduNames.ADDITIONAL_MATERIALS);
     task.setIndex(1);
 
     VfsUtilCore.visitChildrenRecursively(baseDir, new VirtualFileVisitor(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {

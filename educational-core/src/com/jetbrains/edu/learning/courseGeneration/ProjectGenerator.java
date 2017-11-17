@@ -20,6 +20,7 @@ import com.intellij.util.io.zip.JBZipFile;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -81,6 +82,7 @@ public class ProjectGenerator {
       Messages.showWarningDialog("There is no recommended tasks for this adaptive course", "Error in Course Creation");
       return;
     }
+    updateCourseFormat(course);
     StudyTaskManager.getInstance(project).setCourse(course);
     ApplicationManager.getApplication().runWriteAction(() -> {
       GeneratorUtils.createCourse(course, baseDir);
@@ -95,6 +97,18 @@ public class ProjectGenerator {
         PropertiesComponent.getInstance(project).setValue(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       }
     });
+  }
+
+  private static void updateCourseFormat(@NotNull final Course course) {
+    final List<Lesson> lessons = course.getLessons(true);
+    final Lesson additionalLesson = lessons.stream().
+        filter(lesson -> EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).findFirst().orElse(null);
+    if (additionalLesson != null) {
+      additionalLesson.setName(EduNames.ADDITIONAL_MATERIALS);
+      final List<Task> taskList = additionalLesson.getTaskList();
+      taskList.stream().filter(task -> EduNames.PYCHARM_ADDITIONAL.equals(task.getName())).findFirst().
+          ifPresent(task -> task.setName(EduNames.ADDITIONAL_MATERIALS));
+    }
   }
 
   @Nullable

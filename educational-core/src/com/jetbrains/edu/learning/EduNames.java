@@ -37,6 +37,7 @@ public class EduNames {
 
   public static final String COURSE_META_FILE = "course.json";
   public static final String PYCHARM_ADDITIONAL = "PyCharm additional materials";
+  public static final String ADDITIONAL_MATERIALS = "Edu additional materials";
 
   // Used as course type only
   public static final String PYCHARM = "PyCharm";
@@ -44,7 +45,6 @@ public class EduNames {
   public static final String STUDY = "Study";
   public static final String ADAPTIVE = "Adaptive";
 
-  public static final String ANSWER_PLACEHOLDER = "Answer Placeholder";
   public static final String SRC = "src";
   public static final String TEST = "test";
   public static final String UTIL = "util";

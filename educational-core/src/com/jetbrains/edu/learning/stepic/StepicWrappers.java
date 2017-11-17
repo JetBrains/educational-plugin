@@ -218,6 +218,10 @@ public class StepicWrappers {
       this.title = title;
     }
 
+    public String getTitle() {
+      return title;
+    }
+
     public void setPosition(int position) {
       this.position = position;
     }
