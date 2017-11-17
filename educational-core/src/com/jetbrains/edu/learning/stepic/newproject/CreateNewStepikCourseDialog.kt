@@ -31,7 +31,7 @@ class CreateNewStepikCourseDialog(private val myCourse: Course) : DialogWrapper(
     if (language != null) {
       EduConfiguratorManager.forLanguage(language)
               ?.courseBuilder
-              ?.getEduCourseProjectGenerator(myCourse)
+              ?.getCourseProjectGenerator(myCourse)
               ?.createCourseProject(location, projectSettings)
     }
     close(OK_EXIT_CODE)
