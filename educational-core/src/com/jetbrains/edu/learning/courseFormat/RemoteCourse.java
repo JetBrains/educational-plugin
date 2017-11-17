@@ -118,7 +118,14 @@ public class RemoteCourse extends Course {
   }
 
   private void updateType(String language) {
-    myType = String.format("%s%d %s", StepicNames.PYCHARM_PREFIX, StepicConnector.CURRENT_VERSION, language);
+    final int separator = myType.indexOf(" ");
+    assert separator != -1;
+    final String version = myType.substring(StepicNames.PYCHARM_PREFIX.length(), separator);
+    myType = String.format("%s%s %s", StepicNames.PYCHARM_PREFIX, version, language);
+  }
+
+  public void setType(String type) {
+    myType = type;
   }
 
   public boolean isPublic() {
