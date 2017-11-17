@@ -51,7 +51,7 @@ public class JCourseBuilder extends EduCourseBuilderBase {
 
   @Override
   @Nullable
-  public CourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
+  public CourseProjectGenerator<JdkProjectSettings> getCourseProjectGenerator(@NotNull Course course) {
     return new JCourseProjectGenerator(course);
   }
 }

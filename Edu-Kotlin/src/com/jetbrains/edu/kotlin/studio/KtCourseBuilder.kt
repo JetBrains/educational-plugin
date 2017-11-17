@@ -36,7 +36,7 @@ class KtCourseBuilder : KtCourseBuilder() {
     return parentDirectory.findChild(EduNames.TASK + task.index)
   }
 
-  override fun getEduCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>? =
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>? =
           KtProjectGenerator(course)
 
   companion object {

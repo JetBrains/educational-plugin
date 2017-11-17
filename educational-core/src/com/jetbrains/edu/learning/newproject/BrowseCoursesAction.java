@@ -26,11 +26,11 @@ public class BrowseCoursesAction extends AnAction {
       Course course = panel.getSelectedCourse();
       Object projectSettings = panel.getProjectSettings();
       String location = panel.getLocationString();
-      EduConfigurator pluginConfigurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
-      if (pluginConfigurator != null) {
-        CourseProjectGenerator projectGenerator = pluginConfigurator
+      EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+      if (configurator != null) {
+        CourseProjectGenerator projectGenerator = configurator
                 .getCourseBuilder()
-                .getEduCourseProjectGenerator(course);
+                .getCourseProjectGenerator(course);
         if (projectGenerator != null) {
           projectGenerator.createCourseProject(location, projectSettings);
         }
