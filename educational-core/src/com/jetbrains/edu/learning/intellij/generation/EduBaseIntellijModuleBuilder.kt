@@ -24,14 +24,14 @@ abstract class EduBaseIntellijModuleBuilder : JavaModuleBuilder() {
   override fun createAndCommitIfNeeded(project: Project, model: ModifiableModuleModel?, runFromProjectWizard: Boolean): Module {
     val module = super.createAndCommitIfNeeded(project, model, runFromProjectWizard)
     val course = course ?: return module
-    val configurator = pluginConfigurator(course) ?: return module
+    val configurator = configurator(course) ?: return module
     configurator.courseBuilder.configureModule(module)
     return module
   }
 
   open protected val course: Course? get() = null
 
-  protected fun pluginConfigurator(course: Course): EduConfigurator<*>? {
+  protected fun configurator(course: Course): EduConfigurator<*>? {
     val language = course.languageById
     if (language == null) {
       LOG.error("Can't find language by ${course.languageID}")
@@ -39,7 +39,7 @@ abstract class EduBaseIntellijModuleBuilder : JavaModuleBuilder() {
     }
     val configurator = EduConfiguratorManager.forLanguage(language)
     if (configurator == null) {
-      LOG.error("EduPluginConfigurator for language ${language.displayName} not found")
+      LOG.error("EduConfigurator for language ${language.displayName} not found")
       return null
     }
     return configurator

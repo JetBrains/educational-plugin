@@ -147,7 +147,7 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
 
   @Nullable
   @Override
-  public CourseProjectGenerator<PyNewProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
+  public CourseProjectGenerator<PyNewProjectSettings> getCourseProjectGenerator(@NotNull Course course) {
     return new PyDirectoryProjectGenerator(course);
   }
 }

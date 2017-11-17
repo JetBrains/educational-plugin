@@ -69,7 +69,7 @@ public class KtCourseBuilder extends EduCourseBuilderBase {
     });
   }
 
-  public CourseProjectGenerator<JdkProjectSettings> getEduCourseProjectGenerator(@NotNull Course course) {
+  public CourseProjectGenerator<JdkProjectSettings> getCourseProjectGenerator(@NotNull Course course) {
     return new KtCourseProjectGenerator(course);
   }
 }
