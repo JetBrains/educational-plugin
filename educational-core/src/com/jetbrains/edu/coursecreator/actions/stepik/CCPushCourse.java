@@ -14,12 +14,9 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepicConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class CCPushCourse extends DumbAwareAction {
   public CCPushCourse() {
@@ -55,23 +52,8 @@ public class CCPushCourse extends DumbAwareAction {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           indicator.setIndeterminate(false);
-          for (Lesson lesson : course.getLessons()) {
-            indicator.checkCanceled();
-            indicator.setText2("Publishing lesson " + lesson.getIndex());
-
-            if (lesson.getId() > 0) {
-              CCStepicConnector.updateLesson(project, lesson);
-            }
-            else {
-              final int lessonId = CCStepicConnector.postLesson(project, lesson);
-              if (lessonId != -1) {
-                final List<Integer> sections = ((RemoteCourse)course).getSections();
-                final Integer sectionId = sections.get(sections.size() - 1);
-                CCStepicConnector.postUnit(lessonId, lesson.getIndex(), sectionId, project);
-              }
-            }
-            indicator.setFraction((double)lesson.getIndex()/course.getLessons().size());
-          }
+          CCStepicConnector.updateCourse(project, (RemoteCourse) course);
+          CCStepicConnector.showNotification(project, "Course updated");
         }
       });
     }
