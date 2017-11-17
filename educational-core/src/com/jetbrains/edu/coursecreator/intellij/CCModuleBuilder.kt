@@ -19,7 +19,7 @@ class CCModuleBuilder(private val myCourse: Course) : CourseModuleBuilder() {
     val module = super.createModule(moduleModel)
     val project = module.project
 
-    val configurator = pluginConfigurator(myCourse) ?: return module
+    val configurator = configurator(myCourse) ?: return module
 
     StudyTaskManager.getInstance(project).course = myCourse
     configurator.courseBuilder.createCourseModuleContent(moduleModel, project, myCourse, moduleFileDirectory)

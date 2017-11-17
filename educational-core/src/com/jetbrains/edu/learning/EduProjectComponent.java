@@ -218,7 +218,7 @@ public class EduProjectComponent implements ProjectComponent {
 
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
-      LOG.info("EduPluginConfigurator not found for language " + course.getLanguageById().getDisplayName());
+      LOG.info("EduConfigurator not found for language " + course.getLanguageById().getDisplayName());
       return;
     }
 

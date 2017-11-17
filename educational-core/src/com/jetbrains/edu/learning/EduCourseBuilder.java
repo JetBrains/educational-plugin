@@ -93,7 +93,7 @@ public interface EduCourseBuilder<Settings> {
   LanguageSettings<Settings> getLanguageSettings();
 
   @Nullable
-  default CourseProjectGenerator<Settings> getEduCourseProjectGenerator(@NotNull Course course) {
+  default CourseProjectGenerator<Settings> getCourseProjectGenerator(@NotNull Course course) {
     return null;
   }
 
