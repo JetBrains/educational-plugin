@@ -4,16 +4,15 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.JdkBundle
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.*
@@ -28,11 +27,8 @@ fun getGradleProjectName(task: Task) = ":lesson${task.lesson.index}:task${task.i
 fun generateGradleCommandLine(project: Project, command: String, vararg additionalParams: String): GeneralCommandLine? {
     val cmd = GeneralCommandLine()
     val basePath = project.basePath ?: return null
-    var bundledJavaPath = JdkBundle.getBundledJDKAbsoluteLocation().absolutePath
-    if (SystemInfo.isMac) {
-        bundledJavaPath = FileUtil.join(PathManager.getHomePath(), "jre", "jdk", "Contents", "Home")
-    }
-    cmd.withEnvironment("JAVA_HOME", bundledJavaPath)
+    val projectJdkPath = ProjectRootManager.getInstance(project).projectSdk?.homePath ?: return null
+    cmd.withEnvironment("JAVA_HOME", projectJdkPath)
     val projectPath = FileUtil.toSystemDependentName(basePath)
     cmd.withWorkDirectory(projectPath)
     val executablePath = if (SystemInfo.isWindows) FileUtil.join(projectPath, "gradlew.bat") else "./gradlew"
