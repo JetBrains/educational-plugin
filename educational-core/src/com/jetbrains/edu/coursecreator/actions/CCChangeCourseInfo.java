@@ -11,7 +11,7 @@ import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.ui.CCNewProjectPanel;
+import com.jetbrains.edu.coursecreator.ui.CCCourseInfoPanel;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
@@ -59,8 +59,8 @@ public class CCChangeCourseInfo extends DumbAwareAction {
       return;
     }
 
-    CCNewProjectPanel panel =
-      new CCNewProjectPanel(course.getName(), Course.getAuthorsString(course.getAuthors()), course.getDescription());
+    CCCourseInfoPanel panel =
+      new CCCourseInfoPanel(course.getName(), Course.getAuthorsString(course.getAuthors()), course.getDescription());
     setupLanguageLevels(course, panel);
     DialogBuilder builder = createChangeInfoDialog(project, panel);
     if (builder.showAndGet()) {
@@ -73,11 +73,11 @@ public class CCChangeCourseInfo extends DumbAwareAction {
     }
   }
 
-  protected void setVersion(Course course, CCNewProjectPanel panel) {}
+  protected void setVersion(Course course, CCCourseInfoPanel panel) {}
 
-  protected void setupLanguageLevels(Course course, CCNewProjectPanel panel) {}
+  protected void setupLanguageLevels(Course course, CCCourseInfoPanel panel) {}
 
-  private static DialogBuilder createChangeInfoDialog(Project project, @NotNull CCNewProjectPanel panel) {
+  private static DialogBuilder createChangeInfoDialog(Project project, @NotNull CCCourseInfoPanel panel) {
     DialogBuilder builder = new DialogBuilder(project);
 
     builder.setTitle(ACTION_TEXT);

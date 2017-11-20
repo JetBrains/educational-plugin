@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
-public class CCNewProjectPanel {
+public class CCCourseInfoPanel {
   private JPanel myPanel;
   private JTextArea myDescription;
   private JTextField myName;
@@ -20,24 +20,17 @@ public class CCNewProjectPanel {
   private ComboBox<String> myLanguageLevelCombobox;
   private FacetValidatorsManager myValidationManager;
 
-
-  public CCNewProjectPanel() {
+  public CCCourseInfoPanel(String name, String author, String description) {
     myLanguageLevelLabel.setVisible(false);
     myLanguageLevelCombobox.setVisible(false);
-    final String userName = System.getProperty("user.name");
-    if (userName != null) {
-      myAuthorField.setText(userName);
-    }
+
     myName.getDocument().addDocumentListener(new MyValidator());
     myDescription.getDocument().addDocumentListener(new MyValidator());
     myAuthorField.getDocument().addDocumentListener(new MyValidator());
 
     myDescription.setBorder(BorderFactory.createLineBorder(JBColor.border()));
     myDescription.setFont(myAuthorField.getFont());
-  }
 
-  public CCNewProjectPanel(String name, String author, String description) {
-    this();
     myName.setText(name);
     myAuthorField.setText(author);
     myDescription.setText(description);

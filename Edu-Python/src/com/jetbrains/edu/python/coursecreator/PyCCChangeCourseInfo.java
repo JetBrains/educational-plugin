@@ -2,7 +2,7 @@ package com.jetbrains.edu.python.coursecreator;
 
 import com.intellij.openapi.ui.ComboBox;
 import com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo;
-import com.jetbrains.edu.coursecreator.ui.CCNewProjectPanel;
+import com.jetbrains.edu.coursecreator.ui.CCCourseInfoPanel;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -19,7 +19,7 @@ public class PyCCChangeCourseInfo extends CCChangeCourseInfo {
     super();
   }
 
-  protected void setVersion(Course course, CCNewProjectPanel panel) {
+  protected void setVersion(Course course, CCCourseInfoPanel panel) {
     if (PythonLanguage.getInstance().equals(course.getLanguageById())) {
       String version = panel.getLanguageVersion();
       String language = PythonLanguage.getInstance().getID();
@@ -30,7 +30,7 @@ public class PyCCChangeCourseInfo extends CCChangeCourseInfo {
     }
   }
 
-  protected void setupLanguageLevels(Course course, CCNewProjectPanel panel) {
+  protected void setupLanguageLevels(Course course, CCCourseInfoPanel panel) {
     if (PythonLanguage.getInstance().equals(course.getLanguageById())) {
       JLabel languageLevelLabel = panel.getLanguageLevelLabel();
       languageLevelLabel.setText("Python:");
