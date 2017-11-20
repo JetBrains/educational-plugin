@@ -14,10 +14,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Course {
@@ -28,7 +25,8 @@ public class Course {
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
 
-  @Expose @SerializedName("programming_language") private String myLanguage = "Python";
+  @Expose @SerializedName("programming_language") private String myProgrammingLanguage = "Python";
+  @Expose @SerializedName("language") private String myLanguageCode = "en";
 
   //this field is used to distinguish ordinary and CheckIO projects,
   //"PyCharm" is used here for historical reasons
@@ -161,20 +159,20 @@ public class Course {
    */
   @Deprecated
   public String getLanguage() {
-    return myLanguage;
+    return myProgrammingLanguage;
   }
 
   public void setLanguage(@NotNull final String language) {
-    myLanguage = language;
+    myProgrammingLanguage = language;
   }
 
   public String getLanguageID() {
-    return myLanguage.split(" ")[0];
+    return myProgrammingLanguage.split(" ")[0];
   }
 
   @Nullable
   public String getLanguageVersion() {
-    String[] split = myLanguage.split(" ");
+    String[] split = myProgrammingLanguage.split(" ");
     if (split.length <= 1) {
       return null;
     }
@@ -249,6 +247,20 @@ public class Course {
     if (isAdaptive()) {
       tags.add(new GeneralTag(EduNames.ADAPTIVE));
     }
+    tags.add(new GeneralTag(getHumanLanguage()));
     return tags;
+  }
+
+  public String getHumanLanguage() {
+    Locale loc = new Locale(myLanguageCode);
+    return loc.getDisplayName();
+  }
+
+  public String getLanguageCode() {
+    return myLanguageCode;
+  }
+
+  public void setLanguageCode(String languageCode) {
+    myLanguageCode = languageCode;
   }
 }
