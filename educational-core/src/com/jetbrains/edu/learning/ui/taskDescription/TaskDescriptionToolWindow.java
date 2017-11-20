@@ -321,7 +321,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
    * @return Pair (number of solved tasks, number of tasks)
    */
   @NotNull
-  private static Pair<Integer, Integer> countProgressWithoutSubtasks(List<Lesson> lessons) {
+  public static Pair<Integer, Integer> countProgressWithoutSubtasks(List<Lesson> lessons) {
     int taskNum = 0;
     int taskSolved = 0;
     for (Lesson lesson : lessons) {

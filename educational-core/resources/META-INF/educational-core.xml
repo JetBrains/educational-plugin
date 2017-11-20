@@ -228,6 +228,7 @@
         <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
         <checkListener implementation="com.jetbrains.edu.learning.stepic.NextRecommendationCheckListener"/>
         <checkListener implementation="com.jetbrains.edu.learning.stepic.PostSolutionCheckListener"/>
+        <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
 
         <!--educator-->
         <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
