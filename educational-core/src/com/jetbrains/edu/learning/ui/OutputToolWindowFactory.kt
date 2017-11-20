@@ -12,8 +12,9 @@ import com.intellij.openapi.wm.ToolWindowFactory
 import com.jetbrains.edu.learning.EduUtils
 
 
-@JvmField val ID = "Test Results"
-class TestResultsToolWindowFactory : ToolWindowFactory {
+@JvmField val TEST_RESULTS_ID = "Test Results"
+@JvmField val OUTPUT_TOOLWINDOW_ID = "Output"
+class OutputToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     val currentTask = EduUtils.getCurrentTask(project)
     if (currentTask != null) {
@@ -44,5 +45,3 @@ class TestResultsToolWindowFactory : ToolWindowFactory {
     }
   }
 }
-
-
