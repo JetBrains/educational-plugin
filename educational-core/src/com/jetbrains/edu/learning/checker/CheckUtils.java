@@ -1,9 +1,13 @@
 package com.jetbrains.edu.learning.checker;
 
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -14,6 +18,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindow;
@@ -30,12 +35,17 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.OutputToolWindowFactory;
 import com.jetbrains.edu.learning.ui.OutputToolWindowFactoryKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
 
 public class CheckUtils {
+  public static final String STUDY_PREFIX = "#educational_plugin";
+  public static final String COMPILATION_ERROR = "Compilation error";
+  public static final String COMPILATION_FAILED_MESSAGE = "Compilation failed";
+  public static final String NOT_RUNNABLE_MESSAGE = "Solution isn't runnable";
   private static final Logger LOG = Logger.getInstance(CheckUtils.class);
 
   private CheckUtils() {
@@ -179,4 +189,16 @@ public class CheckUtils {
       toolWindow.hide(() -> {});
     }
   }
+
+  @Nullable
+  public static RunnerAndConfigurationSettings createDefaultRunConfiguration(@NotNull Project project) {
+    return ApplicationManager.getApplication().runReadAction((Computable<RunnerAndConfigurationSettings>) () -> {
+      Editor editor = EduUtils.getSelectedEditor(project);
+      if (editor == null) return null;
+      JComponent editorComponent = editor.getComponent();
+      DataContext dataContext = DataManager.getInstance().getDataContext(editorComponent);
+      return ConfigurationContext.getFromContext(dataContext).getConfiguration();
+    });
+  }
+
 }

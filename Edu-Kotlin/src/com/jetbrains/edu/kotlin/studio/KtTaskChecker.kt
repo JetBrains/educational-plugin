@@ -10,18 +10,16 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.JdkBundle
 import com.jetbrains.edu.kotlin.KtTaskChecker
 import com.jetbrains.edu.kotlin.KtTaskChecker.FAILED_TO_LAUNCH
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-class KtTaskChecker : TaskChecker() {
+class KtTaskChecker : StudioTaskCheckerBase() {
 
-  override fun isAccepted(task: Task) = task is EduTask && EduUtils.isAndroidStudio()
+  override fun isAccepted(task: Task) = task is EduTask && super.isAccepted(task)
 
   override fun check(task: Task, project: Project): CheckResult {
     val cmd = GeneralCommandLine()
