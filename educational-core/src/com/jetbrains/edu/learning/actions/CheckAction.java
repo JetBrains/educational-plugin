@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -35,14 +36,15 @@ import org.jetbrains.annotations.NotNull;
 public class CheckAction extends DumbAwareActionWithShortcut {
   public static final String SHORTCUT = "ctrl alt pressed ENTER";
   public static final String ACTION_ID = "Educational.Check";
-  private static final String TEXT = "Check Task";
+  private static final String CHECK_TASK = "Check Task";
+  private static final String RUN_TASK = "Run Task";
   public static final String FAILED_CHECK_LAUNCH = "Failed to launch checking";
   public static final String LOGIN_NEEDED = "Please, login to Stepik to check the task";
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
-    super(TEXT,"Check current task", EducationalCoreIcons.CheckTask);
+    super(CHECK_TASK,"Check current task", EducationalCoreIcons.CheckTask);
   }
 
   @Override
@@ -81,13 +83,29 @@ public class CheckAction extends DumbAwareActionWithShortcut {
   public void update(AnActionEvent e) {
     final Presentation presentation = e.getPresentation();
     EduUtils.updateAction(e);
+
+    Project project = e.getProject();
+    if (project == null) {
+      return;
+    }
+
+    final EduEditor studyEditor = EduUtils.getSelectedStudyEditor(project);
+    if (studyEditor != null) {
+      final Task task = studyEditor.getTaskFile().getTask();
+      if (task instanceof TheoryTask) {
+        presentation.setIcon(AllIcons.Actions.Execute);
+        presentation.setText(RUN_TASK);
+        presentation.setDescription("Run current task");
+      }
+      else {
+        presentation.setIcon(EducationalCoreIcons.CheckTask);
+        presentation.setText(CHECK_TASK);
+        presentation.setDescription("Check current task");
+      }
+    }
     if (presentation.isEnabled()) {
       updateDescription(e);
       presentation.setEnabled(!myCheckInProgress.get());
-      return;
-    }
-    Project project = e.getProject();
-    if (project == null) {
       return;
     }
     if (!CCUtils.isCourseCreator(project)) {
@@ -113,7 +131,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
           presentation.setText(task.getLesson().getCourse().isAdaptive() ? "Get Next Recommendation" : "Mark as read");
         }
         else {
-          presentation.setText(TEXT);
+          presentation.setText(CHECK_TASK);
         }
       }
     }
@@ -130,6 +148,15 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     return new String[]{SHORTCUT};
   }
 
+  private static PerformInBackgroundOption getBackgroundOption(Task task) {
+    if (task instanceof TheoryTask) {
+      return PerformInBackgroundOption.ALWAYS_BACKGROUND;
+    }
+    else {
+      return PerformInBackgroundOption.DEAF;
+    }
+  }
+
   private class StudyCheckTask extends com.intellij.openapi.progress.Task.Backgroundable {
     private final Project myProject;
     private final Task myTask;
@@ -137,7 +164,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     private CheckResult myResult;
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
-      super(project, "Checking Task", true, PerformInBackgroundOption.DEAF);
+      super(project, "Checking Task", true, getBackgroundOption(task));
       myProject = project;
       myTask = task;
       myChecker = task.getChecker(myProject);
