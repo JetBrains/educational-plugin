@@ -50,7 +50,7 @@ import static com.jetbrains.edu.learning.stepic.StepicNames.PYCHARM_PREFIX;
 public class StepicConnector {
   private static final Logger LOG = Logger.getInstance(StepicConnector.class.getName());
 
-  public static final int CURRENT_VERSION = 3;
+  public static final int CURRENT_VERSION = 2;
   //this prefix indicates that course can be opened by educational plugin
   private static final String ADAPTIVE_NOTE =
     "\n\nInitially, the adaptive system may behave somewhat randomly, but the more problems you solve, the smarter it becomes!";
