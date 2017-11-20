@@ -36,7 +36,6 @@ public class EduNames {
   public static final String TEST_HELPER = "test_helper.py";
 
   public static final String COURSE_META_FILE = "course.json";
-  public static final String PYCHARM_ADDITIONAL = "PyCharm additional materials";
   public static final String ADDITIONAL_MATERIALS = "Edu additional materials";
 
   // Used as course type only

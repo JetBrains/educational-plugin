@@ -84,11 +84,11 @@ public class ProjectGenerator {
   protected static void updateCourseFormat(@NotNull final Course course) {
     final List<Lesson> lessons = course.getLessons(true);
     final Lesson additionalLesson = lessons.stream().
-        filter(lesson -> EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).findFirst().orElse(null);
+        filter(lesson -> StepicNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).findFirst().orElse(null);
     if (additionalLesson != null) {
       additionalLesson.setName(EduNames.ADDITIONAL_MATERIALS);
       final List<Task> taskList = additionalLesson.getTaskList();
-      taskList.stream().filter(task -> EduNames.PYCHARM_ADDITIONAL.equals(task.getName())).findFirst().
+      taskList.stream().filter(task -> StepicNames.PYCHARM_ADDITIONAL.equals(task.getName())).findFirst().
           ifPresent(task -> task.setName(EduNames.ADDITIONAL_MATERIALS));
     }
   }
