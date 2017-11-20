@@ -339,11 +339,13 @@ public class CCStepicConnector {
       final StepicWrappers.Section section = StepicConnector.getSection(sectionId);
       if (section != null && EduNames.ADDITIONAL_MATERIALS.equals(section.getTitle())) {
         final List<Lesson> lessons = StepicConnector.getLessons(sectionId);
-        lessons.stream().filter(lesson -> EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName())).
-            findFirst().ifPresent(lesson -> {
-              updateAdditionalFiles(course, project, lesson.getId());
-              additionalMaterialsUpdated.set(true);
-            });
+        lessons.stream().
+                filter(lesson -> EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName()))
+                .findFirst()
+                .ifPresent(lesson -> {
+                        updateAdditionalFiles(course, project, lesson.getId());
+                        additionalMaterialsUpdated.set(true);
+                });
       }
     }
     return additionalMaterialsUpdated.get();
