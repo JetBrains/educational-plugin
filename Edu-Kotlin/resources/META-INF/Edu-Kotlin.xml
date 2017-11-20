@@ -19,7 +19,7 @@
         <taskChecker language="kotlin" implementationClass="com.jetbrains.edu.learning.checker.TaskWithSubtasksChecker"/>
         <taskChecker language="kotlin" implementationClass="com.jetbrains.edu.learning.checker.ChoiceTaskChecker"/>
         <taskChecker language="kotlin" implementationClass="com.jetbrains.edu.learning.checker.CodeTaskChecker"/>
-        <taskChecker language="kotlin" implementationClass="com.jetbrains.edu.learning.checker.TheoryTaskChecker"/>
+        <taskChecker language="kotlin" implementationClass="com.jetbrains.edu.kotlin.studio.StudioTheoryTaskChecker"/>
         <taskChecker language="kotlin" implementationClass="com.jetbrains.edu.kotlin.studio.KtTaskChecker"/>
         <taskChecker language="kotlin" implementationClass="com.jetbrains.edu.kotlin.KtTaskChecker"/>
     </extensions>
