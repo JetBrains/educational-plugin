@@ -68,7 +68,6 @@ public class ProjectGenerator {
     StudyTaskManager.getInstance(project).setCourse(course);
     ApplicationManager.getApplication().runWriteAction(() -> {
       GeneratorUtils.createCourse(course, baseDir);
-      EduUtils.registerStudyToolWindow(course, project);
       EduUtils.openFirstTask(course, project);
       EduUsagesCollector.projectTypeCreated(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
 
