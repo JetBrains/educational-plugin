@@ -122,7 +122,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       }
 
       private void createAdditionalFiles(Course course) {
-        final Lesson lesson = CCUtils.createAdditionalLesson(course, project);
+        final Lesson lesson = CCUtils.createAdditionalLesson(course, project, EduNames.ADDITIONAL_MATERIALS);
         if (lesson != null) {
           course.addLesson(lesson);
         }

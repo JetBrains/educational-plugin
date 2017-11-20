@@ -18,7 +18,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -158,20 +157,20 @@ public class CCStepicConnector {
   }
 
   public static void postAdditionalFiles(Course course, @NotNull final Project project, int id) {
-    final Lesson lesson = CCUtils.createAdditionalLesson(course, project);
+    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepicNames.PYCHARM_ADDITIONAL);
     if (lesson != null) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
         indicator.setText2("Publishing additional files");
       }
-      final int sectionId = postModule(id, 2, EduNames.ADDITIONAL_MATERIALS, project);
+      final int sectionId = postModule(id, 2, StepicNames.PYCHARM_ADDITIONAL, project);
       final int lessonId = postLesson(project, lesson);
       postUnit(lessonId, 1, sectionId, project);
     }
   }
 
   public static void updateAdditionalFiles(Course course, @NotNull final Project project, int stepikId) {
-    final Lesson lesson = CCUtils.createAdditionalLesson(course, project);
+    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepicNames.PYCHARM_ADDITIONAL);
     if (lesson != null) {
       lesson.setId(stepikId);
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
@@ -322,7 +321,6 @@ public class CCStepicConnector {
         showErrorNotification(project, FAILED_TITLE, responseString);
       }
       final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepicWrappers.CoursesContainer.class).courses.get(0);
-      updateCourseFormatOnRemote(project, course, postedCourse);
       updateLessons(course, project);
       if (!updateAdditionalMaterials(project, course, postedCourse.getSections())) {
         postAdditionalFiles(course, project, course.getId());
@@ -337,10 +335,10 @@ public class CCStepicConnector {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
     for (Integer sectionId : sections) {
       final StepicWrappers.Section section = StepicConnector.getSection(sectionId);
-      if (section != null && EduNames.ADDITIONAL_MATERIALS.equals(section.getTitle())) {
+      if (section != null && StepicNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
         final List<Lesson> lessons = StepicConnector.getLessons(sectionId);
         lessons.stream().
-                filter(lesson -> EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName()))
+                filter(lesson -> StepicNames.PYCHARM_ADDITIONAL.equals(lesson.getName()))
                 .findFirst()
                 .ifPresent(lesson -> {
                         updateAdditionalFiles(course, project, lesson.getId());
@@ -369,37 +367,6 @@ public class CCStepicConnector {
         }
       }
       indicator.setFraction((double)lesson.getIndex()/course.getLessons().size());
-    }
-  }
-
-  private static void updateCourseFormatOnRemote(@NotNull Project project, RemoteCourse course,
-                                                 @NotNull RemoteCourse postedCourse) {
-    final String courseType = course.getType();
-    if (!courseType.startsWith(StepicNames.PYCHARM_PREFIX)) {
-      return;
-    }
-    final int separator = courseType.indexOf(" ");
-    assert separator != -1;
-    final String versionString = courseType.substring(StepicNames.PYCHARM_PREFIX.length(), separator);
-    try {
-      final Integer version = Integer.valueOf(versionString);
-      if (version >= 3 && version >= StepicConnector.CURRENT_VERSION) {
-        return;
-      }
-      course.setType(String.valueOf(StepicConnector.CURRENT_VERSION));
-      for (Integer sectionId : postedCourse.getSections()) {
-        final StepicWrappers.Section section = StepicConnector.getSection(sectionId);
-        if (section.getTitle().equals(EduNames.PYCHARM_ADDITIONAL)) {
-          deleteSection(section.getId(), project);
-          final Notification notification =
-              new Notification("Push.course", "Course format is changed",
-                  "Students should update EduTools plugin to be able to complete this course.",
-                  NotificationType.INFORMATION);
-          notification.notify(project);
-        }
-      }
-    }
-    catch (NumberFormatException ignored) {
     }
   }
 
@@ -530,29 +497,6 @@ public class CCStepicConnector {
         if (line.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
           LOG.error("Failed to delete task " + responseString);
           showErrorNotification(project, "Failed to delete task ", responseString);
-        }
-      }
-      catch (IOException e) {
-        LOG.error(e.getMessage());
-      }
-    });
-  }
-
-  private static void deleteSection(@NotNull final Integer section, @NotNull final Project project) {
-    final HttpDelete request = new HttpDelete(StepicNames.STEPIC_API_URL + StepicNames.SECTIONS +
-        String.valueOf(section));
-    ApplicationManager.getApplication().invokeLater(() -> {
-      try {
-        final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
-        if (client == null) return;
-        final CloseableHttpResponse response = client.execute(request);
-        final HttpEntity responseEntity = response.getEntity();
-        final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-        EntityUtils.consume(responseEntity);
-        final StatusLine line = response.getStatusLine();
-        if (line.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-          LOG.error("Failed to delete section " + responseString);
-          showErrorNotification(project, "Failed to delete section", responseString);
         }
       }
       catch (IOException e) {
