@@ -16,6 +16,12 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
+import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
+import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
+import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.ex.KeymapManagerEx;
@@ -34,6 +40,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -46,10 +53,17 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.*;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicNames;
+import com.jetbrains.edu.learning.stepic.StepicUserWidget;
+import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import javafx.application.Platform;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.settings.DistributionType;
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
+import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -57,9 +71,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static com.jetbrains.edu.learning.EduUtils.execCancelable;
-import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
+import static com.jetbrains.edu.learning.EduUtils.*;
 import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
 
 
@@ -101,6 +115,23 @@ public class EduProjectComponent implements ProjectComponent {
         final StepicUser currentUser = EduSettings.getInstance().getUser();
         if (currentUser != null && !course.getAuthors().contains(currentUser) && !CCUtils.isCourseCreator(myProject)) {
           loadSolutionsFromStepik(course);
+        }
+
+        if (!isAndroidStudio() && isConfiguredWithGradle(myProject)) {
+            String projectBasePath = myProject.getBasePath();
+            if (projectBasePath == null) {
+              LOG.error("Failed to refresh gradle project");
+              return;
+            }
+
+            setGradleSettings(projectBasePath, myProject);
+
+            ExternalSystemUtil.refreshProject(projectBasePath,
+                    new ImportSpecBuilder(myProject, GradleConstants.SYSTEM_ID)
+                            .useDefaultCallback()
+                            .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
+                            .dontReportRefreshErrors()
+                            .build());
         }
 
         addStepicWidget();
@@ -411,5 +442,18 @@ public class EduProjectComponent implements ProjectComponent {
         }
       }
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static void setGradleSettings(@NotNull String location, Project project) {
+    GradleProjectSettings gradleProjectSettings = new GradleProjectSettings();
+    gradleProjectSettings.setDistributionType(DistributionType.WRAPPED);
+
+    AbstractExternalSystemSettings systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
+    gradleProjectSettings.setExternalProjectPath(location);
+    Set<ExternalProjectSettings> projects = ContainerUtilRt.newHashSet(systemSettings.getLinkedProjectsSettings());
+    projects.remove(gradleProjectSettings);
+    projects.add(gradleProjectSettings);
+    systemSettings.setLinkedProjectsSettings(projects);
   }
 }

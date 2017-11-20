@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.courseGeneration;
 
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -133,11 +131,6 @@ public class GeneratorUtils {
         VfsUtil.saveText(virtualTaskFile, text);
       }
     }
-  }
-
-  public static void createFromInternalTemplate(@NotNull Project project, @NotNull VirtualFile parentDir, @NotNull String name) throws IOException {
-    FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(name);
-    createChildFile(parentDir, name, template.getText());
   }
 
   @NotNull
