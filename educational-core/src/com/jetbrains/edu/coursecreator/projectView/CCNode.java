@@ -49,7 +49,7 @@ public class CCNode extends DirectoryNode {
       if (!CCUtils.isTestsFile(myProject, virtualFile)) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       } else {
-        if (EduUtils.isAndroidStudio() && CCUtils.isCourseCreator(myProject)) {
+        if (EduUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject)) {
           return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
         }
       }
