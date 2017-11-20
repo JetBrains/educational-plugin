@@ -1,15 +1,16 @@
-package com.jetbrains.edu.kotlin.studio
+package com.jetbrains.edu.kotlin.check
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.kotlin.KtTaskChecker.FAILED_TO_LAUNCH
+import com.jetbrains.edu.kotlin.check.KtTaskChecker.Companion.FAILED_TO_LAUNCH
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
-class StudioTheoryTaskChecker : StudioTaskCheckerBase() {
-    override fun isAccepted(task: Task) = task is TheoryTask && super.isAccepted(task)
+class KtTheoryTaskChecker : TaskChecker() {
+    override fun isAccepted(task: Task) = task is TheoryTask
 
     override fun onTaskSolved(task: Task, project: Project, message: String) {
         // do not show popup

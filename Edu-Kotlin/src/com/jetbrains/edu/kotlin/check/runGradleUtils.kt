@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.studio
+package com.jetbrains.edu.kotlin.check
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler

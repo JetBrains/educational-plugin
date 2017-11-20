@@ -1,4 +1,4 @@
-rootProject.name = 'koans.test'
+rootProject.name = '$PROJECT_NAME$'
 
 def lessons = rootProject.projectDir.listFiles(new FilenameFilter() {
     @Override

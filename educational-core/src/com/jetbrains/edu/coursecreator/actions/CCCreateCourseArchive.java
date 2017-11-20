@@ -176,7 +176,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         if (taskDir == null) {
           return testFiles;
         }
-        if (EduUtils.isAndroidStudio()) {
+        if (EduUtils.isConfiguredWithGradle(project)) {
           VirtualFile testDir = taskDir.getParent().findChild(EduNames.TEST);
           if (testDir == null) {
             return testFiles;
