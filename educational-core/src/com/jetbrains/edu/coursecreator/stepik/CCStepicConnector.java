@@ -536,7 +536,7 @@ public class CCStepicConnector {
     });
   }
 
-  public static void deleteSection(@NotNull final Integer section, Project project) {
+  private static void deleteSection(@NotNull final Integer section, @NotNull final Project project) {
     final HttpDelete request = new HttpDelete(StepicNames.STEPIC_API_URL + StepicNames.SECTIONS +
         String.valueOf(section));
     ApplicationManager.getApplication().invokeLater(() -> {
