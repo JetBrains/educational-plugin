@@ -99,7 +99,7 @@ public class ProjectGenerator {
     });
   }
 
-  private static void updateCourseFormat(@NotNull final Course course) {
+  protected static void updateCourseFormat(@NotNull final Course course) {
     final List<Lesson> lessons = course.getLessons(true);
     final Lesson additionalLesson = lessons.stream().
         filter(lesson -> EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).findFirst().orElse(null);
