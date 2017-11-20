@@ -6,14 +6,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.jetbrains.edu.learning.checker.CheckUtils.*;
+
+
 public class TestsOutputParser {
-  private static final String STUDY_PREFIX = "#educational_plugin";
   public static final String TEST_OK = "test OK";
   private static final String TEST_FAILED = "FAILED + ";
   private static final String CONGRATS_MESSAGE = "CONGRATS_MESSAGE ";
   public static final String CONGRATULATIONS = "Congratulations!";
-  private static final String COMPILATION_ERROR = "Compilation error";
-  public static final String COMPILATION_FAILED_MESSAGE = "Compilation failed";
 
   public static class TestsOutput {
     private final boolean isSuccess;
