@@ -255,15 +255,16 @@ public class CCUtils {
   }
 
   @Nullable
-  public static Lesson createAdditionalLesson(Course course, Project project) {
+  public static Lesson createAdditionalLesson(@NotNull final Course course, @NotNull final Project project,
+                                              @NotNull final String name) {
     final VirtualFile baseDir = project.getBaseDir();
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
 
     final Lesson lesson = new Lesson();
-    lesson.setName(EduNames.ADDITIONAL_MATERIALS);
+    lesson.setName(name);
     final Task task = new EduTask();
     task.setLesson(lesson);
-    task.setName(EduNames.ADDITIONAL_MATERIALS);
+    task.setName(name);
     task.setIndex(1);
 
     VfsUtilCore.visitChildrenRecursively(baseDir, new VirtualFileVisitor(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
