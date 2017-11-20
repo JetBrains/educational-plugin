@@ -63,6 +63,7 @@ public class CCChangeCourseInfo extends DumbAwareAction {
       new CCCourseInfoPanel(course.getName(), Course.getAuthorsString(course.getAuthors()), course.getDescription());
     setupLanguageLevels(course, panel);
     DialogBuilder builder = createChangeInfoDialog(project, panel);
+    panel.setValidationListener(builder::setOkActionEnabled);
     if (builder.showAndGet()) {
       course.setAuthorsAsString(panel.getAuthors());
       course.setName(panel.getName());

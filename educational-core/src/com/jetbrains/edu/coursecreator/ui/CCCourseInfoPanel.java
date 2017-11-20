@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.ui;
 
-import com.intellij.facet.ui.FacetValidatorsManager;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
@@ -13,27 +13,44 @@ import javax.swing.event.DocumentEvent;
 
 public class CCCourseInfoPanel {
   private JPanel myPanel;
+  private JPanel myCourseInfoPanel;
   private JTextArea myDescription;
   private JTextField myName;
   private JTextField myAuthorField;
   private JLabel myLanguageLevelLabel;
   private ComboBox<String> myLanguageLevelCombobox;
-  private FacetValidatorsManager myValidationManager;
+  private JLabel myErrorLabel;
+
+  private ValidationListener myValidationListener;
 
   public CCCourseInfoPanel(String name, String author, String description) {
     myLanguageLevelLabel.setVisible(false);
     myLanguageLevelCombobox.setVisible(false);
 
-    myName.getDocument().addDocumentListener(new MyValidator());
-    myDescription.getDocument().addDocumentListener(new MyValidator());
-    myAuthorField.getDocument().addDocumentListener(new MyValidator());
-
     myDescription.setBorder(BorderFactory.createLineBorder(JBColor.border()));
     myDescription.setFont(myAuthorField.getFont());
+
+    myErrorLabel.setVisible(false);
+    myErrorLabel.setForeground(MessageType.ERROR.getTitleForeground());
+
+    setupValidation();
 
     myName.setText(name);
     myAuthorField.setText(author);
     myDescription.setText(description);
+  }
+
+  private void setupValidation() {
+    DocumentAdapter validator = new DocumentAdapter() {
+      @Override
+      protected void textChanged(DocumentEvent e) {
+        doValidation();
+      }
+    };
+
+    myName.getDocument().addDocumentListener(validator);
+    myDescription.getDocument().addDocumentListener(validator);
+    myAuthorField.getDocument().addDocumentListener(validator);
   }
 
   public JPanel getMainPanel() {
@@ -55,17 +72,32 @@ public class CCCourseInfoPanel {
     return StringUtil.splitByLines(StringUtil.notNullize(myAuthorField.getText()));
   }
 
-  public void registerValidators(FacetValidatorsManager manager) {
-    myValidationManager = manager;
+  public void setValidationListener(ValidationListener listener) {
+    myValidationListener = listener;
+    doValidation();
   }
 
-  private class MyValidator extends DocumentAdapter {
+  private void doValidation() {
+    final String message;
+    if (StringUtil.isEmpty(myName.getText())) {
+      message = "Enter course title";
+    } else if (StringUtil.isEmpty(myAuthorField.getText())) {
+      message = "Enter course instructor";
+    } else if (StringUtil.isEmpty(myDescription.getText())) {
+      message = "Enter course description";
+    } else {
+      message = null;
+    }
 
-    @Override
-    protected void textChanged(DocumentEvent e) {
-      if (myValidationManager != null) {
-        myValidationManager.validate();
-      }
+    if (message != null) {
+      myErrorLabel.setVisible(true);
+      myErrorLabel.setText(message);
+    } else {
+      myErrorLabel.setVisible(false);
+    }
+
+    if (myValidationListener != null) {
+      myValidationListener.onInputDataValidated(message == null);
     }
   }
 
@@ -95,5 +127,9 @@ public class CCCourseInfoPanel {
       return null;
     }
     return (String)myLanguageLevelCombobox.getSelectedItem();
+  }
+
+  public interface ValidationListener {
+    void onInputDataValidated(boolean isInputDataComplete);
   }
 }
