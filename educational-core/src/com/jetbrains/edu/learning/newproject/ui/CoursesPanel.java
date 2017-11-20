@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +48,8 @@ public class CoursesPanel extends JPanel {
   private static final Set<String> FEATURED_COURSES = ContainerUtil.newLinkedHashSet("Adaptive Python", "Introduction to Python", "Kotlin Koans");
   private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
   private static final Logger LOG = Logger.getInstance(CoursesPanel.class);
+  private static final String TAG = "tag:";
+  private static final String LANGUAGE = "language:";
 
   private JPanel myMainPanel;
   private JPanel myCourseListPanel;
@@ -232,10 +235,10 @@ public class CoursesPanel extends JPanel {
     if (courseToSelect == null) {
       return;
     }
-    Course newCourseToSelect = myCourses.stream().filter(course -> course.getName().equals(courseToSelect)).findFirst().orElse(null);
-    if (newCourseToSelect != null ) {
-      myCoursesList.setSelectedValue(newCourseToSelect, true);
-    }
+    myCourses.stream()
+        .filter(course -> course.getName().equals(courseToSelect))
+        .findFirst()
+        .ifPresent(newCourseToSelect -> myCoursesList.setSelectedValue(newCourseToSelect, true));
   }
 
   public Course getSelectedCourse() {
@@ -260,22 +263,47 @@ public class CoursesPanel extends JPanel {
     UIUtil.setBackgroundRecursively(mySearchField, UIUtil.getTextFieldBackground());
   }
 
-  public boolean accept(String filter, Course course) {
+  public boolean accept(@NonNls String filter, Course course) {
     if (filter.isEmpty()) {
       return true;
     }
     filter = filter.toLowerCase();
-    if (course.getName().toLowerCase().contains(filter)) {
-      return true;
+
+    final Set<String> filterParts = new HashSet<>(Arrays.asList(filter.split(" ")));
+    final String courseName = course.getName().toLowerCase(Locale.getDefault());
+
+    for (String filterPart : filterParts) {
+      if (courseName.contains(filterPart))
+        return true;
     }
+
     for (Tag tag : course.getTags()) {
-      if (tag.getText().toLowerCase().contains(filter)) {
+      for (String filterPart : filterParts) {
+        final String tagText = tag.getText().toLowerCase(Locale.getDefault());
+        if (filterPart.startsWith(TAG) && tagText.contains(filterPart.substring(TAG.length()))) {
+          return true;
+        }
+        if (tagText.contains(filterPart)) {
+          return true;
+        }
+      }
+    }
+
+    for (String filterPart : filterParts) {
+      final String language = course.getHumanLanguage().toLowerCase(Locale.getDefault());
+      if (filterPart.startsWith(LANGUAGE) && language.contains(filterPart.substring(LANGUAGE.length()))) {
+        return true;
+      }
+      if (language.contains(filterPart)) {
         return true;
       }
     }
+
     for (String authorName : course.getAuthorFullNames()) {
-      if (authorName.toLowerCase().contains(filter)) {
-        return true;
+      for (String filterPart : filterParts) {
+        if (authorName.toLowerCase(Locale.getDefault()).contains(filterPart)) {
+          return true;
+        }
       }
     }
     return false;
