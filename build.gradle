@@ -152,7 +152,7 @@ subprojects {
         test {
             java.srcDirs 'testSrc'
             resources.srcDirs 'testResources'
-            kotlin.srcDirs 'testSrc'
+kotlin.srcDirs 'testSrc'
         }
     }
 
@@ -187,7 +187,7 @@ configure([project(':educational-core'), project(':Edu-Java')]) {
 }
 
 configure(project(':Edu-Kotlin')) {
-    intellij.plugins 'junit', 'Kotlin', 'properties', 'gradle', 'Groovy'
+    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
 
 
     task createTwitterProperties() {
