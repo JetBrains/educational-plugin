@@ -21,14 +21,14 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.TestResultsToolWindowFactory;
-import com.jetbrains.edu.learning.ui.TestResultsToolWindowFactoryKt;
+import com.jetbrains.edu.learning.ui.OutputToolWindowFactory;
+import com.jetbrains.edu.learning.ui.OutputToolWindowFactoryKt;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -121,14 +121,27 @@ public class CheckUtils {
     }
   }
 
+  public static void showOutputToolWindow(@NotNull final Project project, @NotNull final String message) {
+    showToolWindow(project, OutputToolWindowFactoryKt.OUTPUT_TOOLWINDOW_ID, message, ConsoleViewContentType.NORMAL_OUTPUT);
+  }
+
   public static void showTestResultsToolWindow(@NotNull final Project project, @NotNull final String message) {
+    showToolWindow(project, OutputToolWindowFactoryKt.TEST_RESULTS_ID, message, ConsoleViewContentType.ERROR_OUTPUT);
+  }
+
+  private static void showToolWindow(
+          @NotNull final Project project,
+          @NotNull String id,
+          @NotNull final String message,
+          @NotNull ConsoleViewContentType type
+  ) {
     ApplicationManager.getApplication().invokeLater(() -> {
       final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-      ToolWindow window = toolWindowManager.getToolWindow(TestResultsToolWindowFactoryKt.ID);
+      ToolWindow window = toolWindowManager.getToolWindow(id);
       if (window == null) {
-        toolWindowManager.registerToolWindow(TestResultsToolWindowFactoryKt.ID, true, ToolWindowAnchor.BOTTOM);
-        window = toolWindowManager.getToolWindow(TestResultsToolWindowFactoryKt.ID);
-        new TestResultsToolWindowFactory().createToolWindowContent(project, window);
+        toolWindowManager.registerToolWindow(id, true, ToolWindowAnchor.BOTTOM);
+        window = toolWindowManager.getToolWindow(id);
+        new OutputToolWindowFactory().createToolWindowContent(project, window);
       }
 
       final Content[] contents = window.getContentManager().getContents();
@@ -136,7 +149,7 @@ public class CheckUtils {
         final JComponent component = content.getComponent();
         if (component instanceof ConsoleViewImpl) {
           ((ConsoleViewImpl)component).clear();
-          ((ConsoleViewImpl)component).print(message, ConsoleViewContentType.ERROR_OUTPUT);
+          ((ConsoleViewImpl)component).print(message, type);
           window.setAvailable(true,null);
           window.show(null);
         }
@@ -161,7 +174,7 @@ public class CheckUtils {
   }
 
   public static void hideTestResultsToolWindow(@NotNull Project project) {
-    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TestResultsToolWindowFactoryKt.ID);
+    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(OutputToolWindowFactoryKt.TEST_RESULTS_ID);
     if (toolWindow != null) {
       toolWindow.hide(() -> {});
     }
