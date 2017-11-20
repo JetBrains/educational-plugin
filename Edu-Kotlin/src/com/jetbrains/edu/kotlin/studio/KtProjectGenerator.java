@@ -59,6 +59,7 @@ public class KtProjectGenerator extends IntellijCourseProjectGeneratorBase {
         LOG.error("Failed to generate course", e);
       }
     });
+    setJdk(project, settings);
   }
 
   @Nullable
