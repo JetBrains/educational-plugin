@@ -193,7 +193,7 @@ configure([project(':educational-core'), project(':Edu-Java')]) {
 }
 
 configure(project(':Edu-Kotlin')) {
-    intellij.plugins 'junit', 'Kotlin', 'properties', 'gradle', 'Groovy'
+    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
 
 
     task createTwitterProperties() {
