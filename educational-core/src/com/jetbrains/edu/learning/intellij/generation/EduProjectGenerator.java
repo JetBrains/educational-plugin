@@ -18,6 +18,7 @@ public class EduProjectGenerator extends ProjectGenerator {
       LOG.warn("Failed to get course");
       return;
     }
+    updateCourseFormat(course);
     StudyTaskManager.getInstance(project).setCourse(course);
   }
 }
