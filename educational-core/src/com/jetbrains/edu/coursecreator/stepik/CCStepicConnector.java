@@ -119,12 +119,12 @@ public class CCStepicConnector {
         showErrorNotification(project, FAILED_TITLE, responseString);
         return;
       }
-      final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepicWrappers.CoursesContainer.class).courses.get(0);
-      postedCourse.setLessons(course.getLessons(true));
-      postedCourse.setAuthors(course.getAuthors());
-      postedCourse.setCourseMode(CCUtils.COURSE_MODE);
-      postedCourse.setLanguage(course.getLanguageID());
-      final int sectionId = postModule(postedCourse.getId(), 1, String.valueOf(postedCourse.getName()), project);
+      final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepicWrappers.CoursesContainer.class).courses.get(0);
+      courseOnRemote.setLessons(course.getLessons(true));
+      courseOnRemote.setAuthors(course.getAuthors());
+      courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
+      courseOnRemote.setLanguage(course.getLanguageID());
+      final int sectionId = postModule(courseOnRemote.getId(), 1, String.valueOf(courseOnRemote.getName()), project);
       int position = 1;
       for (Lesson lesson : course.getLessons()) {
         if (indicator != null) {
@@ -139,8 +139,8 @@ public class CCStepicConnector {
         }
         position += 1;
       }
-      ApplicationManager.getApplication().runReadAction(() -> postAdditionalFiles(course, project, postedCourse.getId()));
-      StudyTaskManager.getInstance(project).setCourse(postedCourse);
+      ApplicationManager.getApplication().runReadAction(() -> postAdditionalFiles(course, project, courseOnRemote.getId()));
+      StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
       showNotification(project, "Course published");
     }
     catch (IOException e) {
