@@ -91,12 +91,13 @@
             <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.BrowseCourses"/>
         </action>
 
-        <action id="Educational.Educator.CreateLesson" class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson">
-            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
-        </action>
-        <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask">
-            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
-        </action>
+        <group id="Educational.Educator.NewFile">
+            <action id="Educational.Educator.CreateLesson"
+                    class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson"/>
+            <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask"/>
+            <separator/>
+            <add-to-group group-id="NewGroup" relative-to-action="NewFile" anchor="before"/>
+        </group>
 
         <action id="Educational.Educator.ChangeCourseInfo" class="com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo"/>
 
