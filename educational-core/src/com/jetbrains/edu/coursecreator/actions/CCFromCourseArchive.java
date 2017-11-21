@@ -28,7 +28,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -58,7 +57,7 @@ public class CCFromCourseArchive extends DumbAwareAction {
     final String basePath = project.getBasePath();
     if (basePath == null) return;
 
-    Course course = ProjectGenerator.getLocalCourse(virtualFile.getPath());
+    Course course = EduUtils.getLocalCourse(virtualFile.getPath());
     if (course == null) {
       Messages.showErrorDialog("This course is incompatible with current version", "Failed to Unpack Course");
       return;
