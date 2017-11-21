@@ -62,7 +62,7 @@ public class ProjectGenerator {
   }
 
   @NotNull
-  public Course initCourse(@NotNull final Course course, @NotNull final Project project) {
+  public static Course initCourse(@NotNull final Course course, @NotNull final Project project) {
     if (course instanceof RemoteCourse) {
       return getCourseFromStepic(project, (RemoteCourse)course);
     }
