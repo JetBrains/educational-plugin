@@ -84,7 +84,7 @@ public abstract class IntellijCourseProjectGeneratorBase implements CourseProjec
     return new CCModuleBuilder(myCourse);
   }
 
-  protected void setJdk(@NotNull Project project, @NotNull JdkProjectSettings settings) {
+  protected static void setJdk(@NotNull Project project, @NotNull JdkProjectSettings settings) {
     final Sdk jdk = getJdk(settings);
 
     // Try to apply model, i.e. commit changes from sdk model into ProjectJdkTable
@@ -98,7 +98,7 @@ public abstract class IntellijCourseProjectGeneratorBase implements CourseProjec
   }
 
   @Nullable
-  private Sdk getJdk(@NotNull JdkProjectSettings settings) {
+  private static Sdk getJdk(@NotNull JdkProjectSettings settings) {
     JdkComboBox.JdkComboBoxItem selectedItem = settings.getJdkItem();
     if (selectedItem == null) return null;
     if (selectedItem instanceof JdkComboBox.SuggestedJdkItem) {

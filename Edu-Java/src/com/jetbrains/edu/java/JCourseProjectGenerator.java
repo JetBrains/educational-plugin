@@ -32,7 +32,6 @@ public class JCourseProjectGenerator extends IntellijCourseProjectGeneratorBase 
         Module baseModule = super.createModule(moduleModel);
         Project project = baseModule.getProject();
         EduProjectGenerator generator = new EduProjectGenerator();
-        generator.setSelectedCourse(myCourse);
         EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, myCourse, getModuleFileDirectory());
         return baseModule;
       }

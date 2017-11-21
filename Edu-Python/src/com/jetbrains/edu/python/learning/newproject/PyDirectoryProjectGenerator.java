@@ -76,8 +76,7 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
                                @NotNull Module module,
                                @Nullable PyProjectSynchronizer synchronizer) {
     if (myCourse.isStudy()) {
-      myGenerator.setSelectedCourse(myCourse);
-      myGenerator.generateProject(project, baseDir);
+      myGenerator.generateProject(project, baseDir, myCourse);
       ApplicationManager.getApplication().runWriteAction(() -> createTestHelper(project, baseDir));
     } else {
       configureNewCourseProject(project, baseDir);
@@ -174,13 +173,13 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
   public BooleanFunction<PythonProjectGenerator> beforeProjectGenerated(@Nullable Sdk sdk) {
     return generator -> {
       final List<Integer> enrolledCoursesIds = myGenerator.getEnrolledCoursesIds();
-      final Course course = myGenerator.getSelectedCourse();
-      if (course == null || !(course instanceof RemoteCourse)) return true;
-      if (((RemoteCourse)course).getId() > 0 && !enrolledCoursesIds.contains(((RemoteCourse)course).getId())) {
+      if (!(myCourse instanceof RemoteCourse)) return true;
+      final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
+      if (remoteCourse.getId() > 0 && !enrolledCoursesIds.contains(remoteCourse.getId())) {
         ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-          return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(((RemoteCourse)course).getId(),
-                                                                                   EduSettings.getInstance().getUser()));
+          return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),
+                                                                              EduSettings.getInstance().getUser()));
         }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
       }
       return true;
