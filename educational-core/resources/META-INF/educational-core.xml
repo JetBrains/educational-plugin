@@ -96,7 +96,7 @@
                     class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson"/>
             <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask"/>
             <separator/>
-            <add-to-group group-id="NewGroup" relative-to-action="NewFile" anchor="before"/>
+            <add-to-group group-id="NewGroup" anchor="first"/>
         </group>
 
         <action id="Educational.Educator.ChangeCourseInfo" class="com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo"/>
