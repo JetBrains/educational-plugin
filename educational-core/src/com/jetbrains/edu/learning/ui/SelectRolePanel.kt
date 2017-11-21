@@ -53,8 +53,6 @@ class SelectRolePanel : JPanel() {
     add(teacherPanel)
   }
 
-  fun getStudentButton(): JComponent {
-    return myStudent
-  }
+  fun getStudentButton(): JComponent = myStudent
 
 }
