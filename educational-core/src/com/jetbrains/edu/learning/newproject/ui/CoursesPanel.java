@@ -275,10 +275,8 @@ public class CoursesPanel extends JPanel {
     for (String filterPart : filterParts) {
       if (courseName.contains(filterPart))
         return true;
-    }
 
-    for (Tag tag : course.getTags()) {
-      for (String filterPart : filterParts) {
+      for (Tag tag : course.getTags()) {
         final String tagText = tag.getText().toLowerCase(Locale.getDefault());
         if (filterPart.startsWith(TAG) && tagText.contains(filterPart.substring(TAG.length()))) {
           return true;
@@ -287,9 +285,7 @@ public class CoursesPanel extends JPanel {
           return true;
         }
       }
-    }
 
-    for (String filterPart : filterParts) {
       final String language = course.getHumanLanguage().toLowerCase(Locale.getDefault());
       if (filterPart.startsWith(LANGUAGE) && language.contains(filterPart.substring(LANGUAGE.length()))) {
         return true;
@@ -297,10 +293,8 @@ public class CoursesPanel extends JPanel {
       if (language.contains(filterPart)) {
         return true;
       }
-    }
 
-    for (String authorName : course.getAuthorFullNames()) {
-      for (String filterPart : filterParts) {
+      for (String authorName : course.getAuthorFullNames()) {
         if (authorName.toLowerCase(Locale.getDefault()).contains(filterPart)) {
           return true;
         }
