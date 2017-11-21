@@ -127,7 +127,7 @@ public class CoursesPanel extends JPanel {
         FileChooser.chooseFile(fileChooser, null, VfsUtil.getUserHomeDir(),
                                file -> {
                                  String fileName = file.getPath();
-                                 Course course = new ProjectGenerator().addLocalCourse(fileName);
+                                 Course course = ProjectGenerator.getLocalCourse(fileName);
                                  if (course != null) {
                                    EduUsagesCollector.courseArchiveImported();
                                    myCourses.add(course);
