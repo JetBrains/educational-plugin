@@ -38,29 +38,16 @@ import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 public class ProjectGenerator {
   private static final Logger LOG = Logger.getInstance(ProjectGenerator.class.getName());
   private List<Integer> myEnrolledCoursesIds = new ArrayList<>();
-  protected Course mySelectedCourse;
 
   @NotNull
   public List<Integer> getEnrolledCoursesIds() {
     return myEnrolledCoursesIds;
   }
 
-  public void setSelectedCourse(@NotNull final Course course) {
-    mySelectedCourse = course;
-  }
-
-  public Course getSelectedCourse() {
-    return mySelectedCourse;
-  }
-
-  public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir) {
-    final Course course = getCourse(project);
-    if (course == null) {
-      LOG.warn("Course is null");
-      Messages.showWarningDialog("Some problems occurred while creating the course", "Error in Course Creation");
-      return;
-    }
-    else if (course.isAdaptive() && !EduUtils.isCourseValid(course)) {
+  public void generateProject(@NotNull final Project project, @NotNull final VirtualFile baseDir,
+                              @NotNull final Course courseInfo) {
+    final Course course = initCourse(courseInfo, project);
+    if (course.isAdaptive() && !EduUtils.isCourseValid(course)) {
       Messages.showWarningDialog("There is no recommended tasks for this adaptive course", "Error in Course Creation");
       return;
     }
@@ -92,13 +79,13 @@ public class ProjectGenerator {
     }
   }
 
-  @Nullable
-  public Course getCourse(@NotNull final Project project) {
-    if (mySelectedCourse instanceof RemoteCourse) {
-      return getCourseFromStepic(project, (RemoteCourse)mySelectedCourse);
+  @NotNull
+  public Course initCourse(@NotNull final Course course, @NotNull final Project project) {
+    if (course instanceof RemoteCourse) {
+      return getCourseFromStepic(project, (RemoteCourse)course);
     }
-    mySelectedCourse.initCourse(false);
-    return mySelectedCourse;
+    course.initCourse(false);
+    return course;
   }
 
   private static RemoteCourse getCourseFromStepic(@NotNull Project project, RemoteCourse selectedCourse) {
@@ -115,7 +102,7 @@ public class ProjectGenerator {
   }
 
   // Supposed to be called under progress
-  public List<Course> getCourses(boolean force) {
+  public static List<Course> getCourses(boolean force) {
     List<Course> courses = new ArrayList<>();
     if (force) {
       courses = execCancelable(() -> StepicConnector.getCourses(EduSettings.getInstance().getUser()));
@@ -134,17 +121,9 @@ public class ProjectGenerator {
     return courses;
   }
 
-  public void sortCourses(List<Course> result) {
+  public static void sortCourses(List<Course> result) {
     // sort courses so as to have non-adaptive courses in the beginning of the list
     Collections.sort(result, (c1, c2) -> {
-      if (mySelectedCourse != null) {
-        if (mySelectedCourse.equals(c1)) {
-          return -1;
-        }
-        if (mySelectedCourse.equals(c2)) {
-          return 1;
-        }
-      }
       if ((c1.isAdaptive() && c2.isAdaptive()) || (!c1.isAdaptive() && !c2.isAdaptive())) {
         return 0;
       }
@@ -153,7 +132,7 @@ public class ProjectGenerator {
   }
 
   @NotNull
-  public List<Course> getCoursesUnderProgress(boolean force, @NotNull final String progressTitle, @Nullable final Project project) {
+  public static List<Course> getCoursesUnderProgress(boolean force, @NotNull final String progressTitle, @Nullable final Project project) {
     try {
       return ProgressManager.getInstance()
         .runProcessWithProgressSynchronously(() -> {
@@ -166,8 +145,7 @@ public class ProjectGenerator {
     }
   }
 
-  @Nullable
-  public List<Course> getBundledCourses() {
+  public static List<Course> getBundledCourses() {
     final ArrayList<Course> courses = new ArrayList<>();
     final List<LanguageExtensionPoint<EduConfigurator<?>>> extensions = EduConfiguratorManager.allExtensions();
     for (LanguageExtensionPoint<EduConfigurator<?>> extension : extensions) {

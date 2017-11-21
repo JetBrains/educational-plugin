@@ -111,7 +111,7 @@ public class CoursePanel extends JPanel {
     }
   }
 
-  private void setTextAreaAttributes(JEditorPane textArea, int leftMargin) {
+  private static void setTextAreaAttributes(JEditorPane textArea, int leftMargin) {
     textArea.setBorder(JBUI.Borders.empty(15, leftMargin, 10, HORIZONTAL_MARGIN));
     textArea.setEditorKit(UIUtil.getHTMLEditorKit());
     textArea.setEditable(false);
@@ -132,7 +132,7 @@ public class CoursePanel extends JPanel {
   }
 
   @Nullable
-  private String htmlInstructorText(@NotNull Course course) {
+  private static String htmlInstructorText(@NotNull Course course) {
     StringBuilder builder = new StringBuilder();
     List<StepicUser> authors = course.getAuthors();
     if (authors.isEmpty()) return null;
@@ -146,7 +146,7 @@ public class CoursePanel extends JPanel {
   }
 
   @NotNull
-  private String htmlDescription(@NotNull Course course) {
+  private static String htmlDescription(@NotNull Course course) {
     String description = course.getDescription() != null ? course.getDescription() : "";
     return UIUtil.toHtml(description.replace("\n", "<br>"));
   }
