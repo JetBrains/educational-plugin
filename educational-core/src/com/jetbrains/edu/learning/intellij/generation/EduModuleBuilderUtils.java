@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
@@ -34,11 +34,10 @@ public class EduModuleBuilderUtils {
   }
 
   public static void createCourseFromCourseInfo(@NotNull ModifiableModuleModel moduleModel,
-                                         @NotNull Project project,
-                                         @NotNull ProjectGenerator generator,
-                                         @NotNull Course course,
-                                         @Nullable String moduleDir) throws JDOMException, ModuleWithNameAlreadyExists, ConfigurationException, IOException {
-    generator.generateProject(project, project.getBaseDir(), course);
+                                                @NotNull Project project,
+                                                @NotNull Course course,
+                                                @Nullable String moduleDir) throws JDOMException, ModuleWithNameAlreadyExists, ConfigurationException, IOException {
+    GeneratorUtils.generateProject(project, course);
     updateAdaptiveCourseTaskFileNames(project, course);
 
     course = StudyTaskManager.getInstance(project).getCourse();

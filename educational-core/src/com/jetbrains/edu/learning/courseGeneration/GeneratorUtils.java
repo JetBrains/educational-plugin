@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -18,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static com.jetbrains.edu.learning.courseGeneration.ProjectGenerator.updateCourseFormat;
 
 public class GeneratorUtils {
   private static final Logger LOG = Logger.getInstance(GeneratorUtils.class.getName());
@@ -130,5 +133,11 @@ public class GeneratorUtils {
   public static void createFromInternalTemplate(@NotNull Project project, @NotNull VirtualFile parentDir, @NotNull String name) throws IOException {
     FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(name);
     createChildFile(parentDir, name, template.getText());
+  }
+
+  public static void generateProject(@NotNull Project project, @NotNull final Course courseInfo) {
+    final Course course = ProjectGenerator.initCourse(courseInfo, project);
+    updateCourseFormat(course);
+    StudyTaskManager.getInstance(project).setCourse(course);
   }
 }
