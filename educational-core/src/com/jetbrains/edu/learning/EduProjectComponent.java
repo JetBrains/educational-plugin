@@ -33,9 +33,11 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
 import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
@@ -63,7 +65,8 @@ import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
 
 public class EduProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(EduProjectComponent.class.getName());
-  private static final String FEEDBACK_URL = "https://www.jetbrains.com/feedback/feedback.jsp?product=EduTools";
+  private static final String FEEDBACK_URL_TEMPLATE = "https://www.jetbrains.com/feedback/feedback.jsp?" +
+      "product=EduTools&amp;ide=$PRODUCT&amp;course=$COURSE&amp;mode=$MODE";
   private static final Key<Boolean> FEEDBACK_ASKED = Key.create("askFeedbackNotification");
   private final Project myProject;
   private FileCreatedByUserListener myListener;
@@ -132,14 +135,21 @@ public class EduProjectComponent implements ProjectComponent {
     }
     final long currentTime = System.currentTimeMillis();
     if (currentTime > SelectRoleComponent.Companion.getFeedbackTime()) {
+      final Course course = StudyTaskManager.getInstance(myProject).getCourse();
+      final boolean ccEnabled = PropertiesComponent.getInstance().
+                                        getBoolean(CCPluginToggleAction.COURSE_CREATOR_ENABLED);
+      final String feedbackUrl = FEEDBACK_URL_TEMPLATE
+                                  .replace("$PRODUCT", PlatformUtils.getPlatformPrefix())
+                                  .replace("$COURSE", course != null ? course.getName() : "null")
+                                  .replace("$MODE", ccEnabled ? "CourseCreator" : "Student");
       final Notification notification = new Notification("eduTools.shareFeedback", "Feedback",
           "<html>Thank you for using the EduTool plugin! <br/> " +
-              "Please, <a href=\"" + FEEDBACK_URL + "\">share</a> your experience. " +
+              "Please, <a href=\"" + feedbackUrl + "\">share</a> your experience. " +
               "Your feedback will help us make learning experience better.</html>",
           NotificationType.INFORMATION, new NotificationListener.Adapter() {
         @Override
         protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent) {
-          BrowserUtil.browse(FEEDBACK_URL);
+          BrowserUtil.browse(feedbackUrl);
           ApplicationManager.getApplication().putUserData(FEEDBACK_ASKED, true);
         }
       });
