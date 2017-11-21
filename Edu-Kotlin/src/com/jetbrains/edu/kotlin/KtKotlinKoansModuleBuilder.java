@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.intellij.generation.CourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
-import com.jetbrains.edu.learning.intellij.generation.EduProjectGenerator;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,8 +59,7 @@ class KtKotlinKoansModuleBuilder extends CourseModuleBuilder {
     }
     myCourse.setLanguage("kotlin");
 
-    EduProjectGenerator generator = new EduProjectGenerator();
-    EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, myCourse, getModuleFileDirectory());
+    EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, myCourse, getModuleFileDirectory());
     return baseModule;
   }
 

@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.intellij.generation.CourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.IntellijCourseProjectGeneratorBase;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
-import com.jetbrains.edu.learning.intellij.generation.EduProjectGenerator;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,8 +30,7 @@ public class JCourseProjectGenerator extends IntellijCourseProjectGeneratorBase 
       public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
         Module baseModule = super.createModule(moduleModel);
         Project project = baseModule.getProject();
-        EduProjectGenerator generator = new EduProjectGenerator();
-        EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, generator, myCourse, getModuleFileDirectory());
+        EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, myCourse, getModuleFileDirectory());
         return baseModule;
       }
     };
