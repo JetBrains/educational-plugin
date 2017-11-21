@@ -32,6 +32,7 @@ public class GeneratorUtils {
         lesson.setIndex(i);
         createLesson(lesson, baseDir);
       }
+      course.removeAdditionalLesson();
     }
     catch (IOException e) {
       LOG.error(e);
@@ -39,7 +40,7 @@ public class GeneratorUtils {
   }
 
   public static void createLesson(@NotNull final Lesson lesson, @NotNull final VirtualFile courseDir) throws IOException {
-    if (EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName())) {
+    if (EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName())) {
       createAdditionalFiles(lesson, courseDir);
     }
     else {

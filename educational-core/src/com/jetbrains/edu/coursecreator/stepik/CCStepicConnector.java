@@ -18,7 +18,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -42,6 +41,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
@@ -118,12 +118,12 @@ public class CCStepicConnector {
         showErrorNotification(project, FAILED_TITLE, responseString);
         return;
       }
-      final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepicWrappers.CoursesContainer.class).courses.get(0);
-      postedCourse.setLessons(course.getLessons(true));
-      postedCourse.setAuthors(course.getAuthors());
-      postedCourse.setCourseMode(CCUtils.COURSE_MODE);
-      postedCourse.setLanguage(course.getLanguageID());
-      final int sectionId = postModule(postedCourse.getId(), 1, String.valueOf(postedCourse.getName()), project);
+      final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepicWrappers.CoursesContainer.class).courses.get(0);
+      courseOnRemote.setLessons(course.getLessons(true));
+      courseOnRemote.setAuthors(course.getAuthors());
+      courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
+      courseOnRemote.setLanguage(course.getLanguageID());
+      final int sectionId = postModule(courseOnRemote.getId(), 1, String.valueOf(courseOnRemote.getName()), project);
       int position = 1;
       for (Lesson lesson : course.getLessons()) {
         if (indicator != null) {
@@ -138,8 +138,8 @@ public class CCStepicConnector {
         }
         position += 1;
       }
-      ApplicationManager.getApplication().runReadAction(() -> postAdditionalFiles(course, project, postedCourse.getId()));
-      StudyTaskManager.getInstance(project).setCourse(postedCourse);
+      ApplicationManager.getApplication().runReadAction(() -> postAdditionalFiles(course, project, courseOnRemote.getId()));
+      StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
       showNotification(project, "Course published");
     }
     catch (IOException e) {
@@ -156,16 +156,28 @@ public class CCStepicConnector {
     return true;
   }
 
-  private static void postAdditionalFiles(Course course, @NotNull final Project project, int id) {
-    final Lesson lesson = CCUtils.createAdditionalLesson(course, project);
+  public static void postAdditionalFiles(Course course, @NotNull final Project project, int id) {
+    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepicNames.PYCHARM_ADDITIONAL);
     if (lesson != null) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
         indicator.setText2("Publishing additional files");
       }
-      final int sectionId = postModule(id, 2, EduNames.PYCHARM_ADDITIONAL, project);
+      final int sectionId = postModule(id, 2, StepicNames.PYCHARM_ADDITIONAL, project);
       final int lessonId = postLesson(project, lesson);
       postUnit(lessonId, 1, sectionId, project);
+    }
+  }
+
+  public static void updateAdditionalFiles(Course course, @NotNull final Project project, int stepikId) {
+    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepicNames.PYCHARM_ADDITIONAL);
+    if (lesson != null) {
+      lesson.setId(stepikId);
+      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+      if (indicator != null) {
+        indicator.setText2("Publishing additional files");
+      }
+      updateLesson(project, lesson);
     }
   }
 
@@ -235,21 +247,22 @@ public class CCStepicConnector {
     return -1;
   }
 
-  public static int updateTask(@NotNull final Project project, @NotNull final Task task) {
-    if (!checkIfAuthorized(project, "update task")) return -1;
+  public static void updateTask(@NotNull final Project project, @NotNull final Task task) {
+    if (!checkIfAuthorized(project, "update task")) return;
     final Lesson lesson = task.getLesson();
     final int lessonId = lesson.getId();
 
     VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) return -1;
+    if (taskDir == null) return;
 
-    final HttpPut request = new HttpPut(StepicNames.STEPIC_API_URL + "/step-sources/" + String.valueOf(task.getStepId()));
+    final HttpPut request = new HttpPut(StepicNames.STEPIC_API_URL + StepicNames.STEP_SOURCES
+                                                                                    + String.valueOf(task.getStepId()));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
       registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final Language language = lesson.getCourse().getLanguageById();
       final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
-
+      if (configurator == null) return;
       List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren()).filter(configurator::isTestFile)
                                                  .collect(Collectors.toList());
       for (VirtualFile file : testFiles) {
@@ -284,7 +297,77 @@ public class CCStepicConnector {
         LOG.error(e.getMessage());
       }
     });
-    return -1;
+  }
+
+  public static void updateCourse(@NotNull final Project project, @NotNull final RemoteCourse course) {
+    if (!checkIfAuthorized(project, "update course")) return;
+    final HttpPut request = new HttpPut(StepicNames.STEPIC_API_URL + StepicNames.COURSES + "/" + String.valueOf(course.getId()));
+    String requestBody = new Gson().toJson(new StepicWrappers.CourseWrapper(course));
+    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
+    try {
+      final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+      if (client == null) {
+        LOG.warn("Http client is null");
+        return;
+      }
+      final CloseableHttpResponse response = client.execute(request);
+      final HttpEntity responseEntity = response.getEntity();
+      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
+      final StatusLine line = response.getStatusLine();
+      EntityUtils.consume(responseEntity);
+      if (line.getStatusCode() != HttpStatus.SC_OK) {
+        final String message = FAILED_TITLE + "course ";
+        LOG.error(message + responseString);
+        showErrorNotification(project, FAILED_TITLE, responseString);
+      }
+      final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepicWrappers.CoursesContainer.class).courses.get(0);
+      updateLessons(course, project);
+      if (!updateAdditionalMaterials(project, course, postedCourse.getSections())) {
+        postAdditionalFiles(course, project, course.getId());
+      }
+    } catch (IOException e) {
+      LOG.error(e.getMessage());
+    }
+  }
+
+  private static boolean updateAdditionalMaterials(@NotNull Project project, @NotNull final RemoteCourse course,
+                                                   @NotNull final List<Integer> sections) throws IOException {
+    AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
+    for (Integer sectionId : sections) {
+      final StepicWrappers.Section section = StepicConnector.getSection(sectionId);
+      if (section != null && StepicNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
+        final List<Lesson> lessons = StepicConnector.getLessons(sectionId);
+        lessons.stream().
+                filter(lesson -> StepicNames.PYCHARM_ADDITIONAL.equals(lesson.getName()))
+                .findFirst()
+                .ifPresent(lesson -> {
+                        updateAdditionalFiles(course, project, lesson.getId());
+                        additionalMaterialsUpdated.set(true);
+                });
+      }
+    }
+    return additionalMaterialsUpdated.get();
+  }
+
+  private static void updateLessons(Course course, Project project) {
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    for (Lesson lesson : course.getLessons()) {
+      indicator.checkCanceled();
+      indicator.setText2("Publishing lesson " + lesson.getIndex());
+
+      if (lesson.getId() > 0) {
+        updateLesson(project, lesson);
+      }
+      else {
+        final int lessonId = postLesson(project, lesson);
+        if (lessonId != -1) {
+          final List<Integer> sections = ((RemoteCourse)course).getSections();
+          final Integer sectionId = sections.get(sections.size() - 1);
+          postUnit(lessonId, lesson.getIndex(), sectionId, project);
+        }
+      }
+      indicator.setFraction((double)lesson.getIndex()/course.getLessons().size());
+    }
   }
 
   public static int updateLesson(@NotNull final Project project, @NotNull final Lesson lesson) {
@@ -309,11 +392,9 @@ public class CCStepicConnector {
         showErrorNotification(project, message, responseString);
         return -1;
       }
-      else {
-        showNotification(project, "Lesson updated");
-      }
 
-      final Lesson postedLesson = new Gson().fromJson(responseString, RemoteCourse.class).getLessons().get(0);
+      final Lesson postedLesson = new Gson().fromJson(responseString, RemoteCourse.class).
+          getLessons(true).get(0);
       for (Integer step : postedLesson.steps) {
         deleteTask(step, project);
       }
@@ -341,7 +422,7 @@ public class CCStepicConnector {
     notification.notify(project);
   }
 
-  private static void showNotification(@NotNull Project project, String message) {
+  public static void showNotification(@NotNull Project project, String message) {
     final Notification notification =
       new Notification("Push.course", message, message, NotificationType.INFORMATION);
     notification.notify(project);

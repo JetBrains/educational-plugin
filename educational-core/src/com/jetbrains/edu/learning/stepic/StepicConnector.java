@@ -330,8 +330,10 @@ public class StepicConnector {
     task.setUpdateDate(step.update_date);
     task.setName(block.options != null ? block.options.title : (PYCHARM_PREFIX + CURRENT_VERSION));
 
-    for (StepicWrappers.FileWrapper wrapper : block.options.test) {
-      task.addTestsTexts(wrapper.name, wrapper.text);
+    if (block.options.test != null) {
+      for (StepicWrappers.FileWrapper wrapper : block.options.test) {
+        task.addTestsTexts(wrapper.name, wrapper.text);
+      }
     }
     if (block.options.text != null) {
       for (StepicWrappers.FileWrapper wrapper : block.options.text) {

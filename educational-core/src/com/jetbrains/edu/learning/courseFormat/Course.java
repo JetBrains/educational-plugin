@@ -55,7 +55,7 @@ public class Course {
    * returns service lesson as well. Meant to be used in project generation/serialization
    */
   public List<Lesson> getLessons(boolean withAdditional) {
-    return withAdditional ? lessons : lessons.stream().filter(lesson -> !EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName()))
+    return withAdditional ? lessons : lessons.stream().filter(lesson -> !EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName()))
                                           .collect(Collectors.toList());
   }
 
@@ -73,6 +73,11 @@ public class Course {
 
   public void removeLesson(Lesson lesson) {
     lessons.remove(lesson);
+  }
+
+  public void removeAdditionalLesson() {
+    lessons.stream().filter(lesson -> lesson.getName().equals(EduNames.ADDITIONAL_MATERIALS)).findFirst().
+        ifPresent(lesson -> lessons.remove(lesson));
   }
 
   public Lesson getLesson(@NotNull final String name) {
@@ -222,7 +227,7 @@ public class Course {
   @Nullable
   public Task getAdditionalMaterialsTask() {
     final Lesson additionalMaterials = getLessons(true).stream().
-      filter(lesson -> EduNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).
+      filter(lesson -> EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName())).
       findFirst().
       orElse(null);
     return additionalMaterials == null ? null : additionalMaterials.getTaskList().get(0);
