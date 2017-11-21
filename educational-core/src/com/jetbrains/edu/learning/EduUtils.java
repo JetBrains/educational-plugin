@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -39,6 +42,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -60,18 +64,20 @@ import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
+import com.intellij.util.io.zip.JBZipEntry;
+import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.text.MarkdownUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
 import com.jetbrains.edu.learning.stepic.OAuthDialog;
 import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.stepic.StepicUserWidget;
+import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import com.petebevin.markdown.MarkdownProcessor;
@@ -1052,5 +1058,28 @@ public class EduUtils {
       }
     }
     return fileWindows;
+  }
+
+  @Nullable
+  public static Course getLocalCourse(@NotNull final String zipFilePath) {
+    try {
+      final JBZipFile zipFile = new JBZipFile(zipFilePath);
+      final JBZipEntry entry = zipFile.getEntry(EduNames.COURSE_META_FILE);
+      if (entry == null) {
+        return null;
+      }
+      byte[] bytes = entry.getData();
+      final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
+      Gson gson = new GsonBuilder()
+          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
+          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+          .create();
+      return gson.fromJson(jsonText, Course.class);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to unzip course archive");
+      LOG.error(e);
+    }
+    return null;
   }
 }
