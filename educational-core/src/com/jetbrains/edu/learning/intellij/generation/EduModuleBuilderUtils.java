@@ -38,8 +38,7 @@ public class EduModuleBuilderUtils {
                                          @NotNull ProjectGenerator generator,
                                          @NotNull Course course,
                                          @Nullable String moduleDir) throws JDOMException, ModuleWithNameAlreadyExists, ConfigurationException, IOException {
-    generator.setSelectedCourse(course);
-    generator.generateProject(project, project.getBaseDir());
+    generator.generateProject(project, project.getBaseDir(), course);
     updateAdaptiveCourseTaskFileNames(project, course);
 
     course = StudyTaskManager.getInstance(project).getCourse();
