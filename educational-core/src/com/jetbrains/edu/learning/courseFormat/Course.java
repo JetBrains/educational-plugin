@@ -241,11 +241,11 @@ public class Course {
   @NotNull
   public List<Tag> getTags() {
     List<Tag> tags = new ArrayList<>();
-    tags.add(new LanguageTag(getLanguageById()));
+    tags.add(new ProgrammingLanguageTag(getLanguageById()));
     if (isAdaptive()) {
-      tags.add(new GeneralTag(EduNames.ADAPTIVE));
+      tags.add(new Tag(EduNames.ADAPTIVE));
     }
-    tags.add(new GeneralTag(getHumanLanguage()));
+    tags.add(new HumanLanguageTag(getHumanLanguage()));
     return tags;
   }
 

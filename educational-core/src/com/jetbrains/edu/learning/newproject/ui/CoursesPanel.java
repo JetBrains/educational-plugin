@@ -47,8 +47,6 @@ public class CoursesPanel extends JPanel {
   private static final Set<String> FEATURED_COURSES = ContainerUtil.newLinkedHashSet("Adaptive Python", "Introduction to Python", "Kotlin Koans");
   private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
   private static final Logger LOG = Logger.getInstance(CoursesPanel.class);
-  private static final String TAG = "tag:";
-  private static final String LANGUAGE = "language:";
   private static final String NO_COURSES = "No courses found";
 
   private JPanel myMainPanel;
@@ -247,6 +245,7 @@ public class CoursesPanel extends JPanel {
     mySearchField = new FilterComponent("Edu.NewCourse", 5, true) {
       @Override
       public void filter() {
+        Course selectedCourse = myCoursesList.getSelectedValue();
         String filter = getFilter();
         List<Course> filtered = new ArrayList<>();
         for (Course course : myCourses) {
@@ -254,9 +253,10 @@ public class CoursesPanel extends JPanel {
             filtered.add(course);
           }
         }
-        updateModel(filtered, null);
+        updateModel(filtered, selectedCourse.getName());
       }
     };
+    myCoursePanel.bindSearchField(mySearchField);
     UIUtil.setBackgroundRecursively(mySearchField, UIUtil.getTextFieldBackground());
   }
 
@@ -264,9 +264,8 @@ public class CoursesPanel extends JPanel {
     if (filter.isEmpty()) {
       return true;
     }
-    filter = filter.toLowerCase();
 
-    final Set<String> filterParts = new HashSet<>(Arrays.asList(filter.split(" ")));
+    final Set<String> filterParts = getFilterParts(filter);
     final String courseName = course.getName().toLowerCase(Locale.getDefault());
 
     for (String filterPart : filterParts) {
@@ -274,21 +273,9 @@ public class CoursesPanel extends JPanel {
         return true;
 
       for (Tag tag : course.getTags()) {
-        final String tagText = tag.getText().toLowerCase(Locale.getDefault());
-        if (filterPart.startsWith(TAG) && tagText.contains(filterPart.substring(TAG.length()))) {
+        if (tag.accept(filterPart)) {
           return true;
         }
-        if (tagText.contains(filterPart)) {
-          return true;
-        }
-      }
-
-      final String language = course.getHumanLanguage().toLowerCase(Locale.getDefault());
-      if (filterPart.startsWith(LANGUAGE) && language.contains(filterPart.substring(LANGUAGE.length()))) {
-        return true;
-      }
-      if (language.contains(filterPart)) {
-        return true;
       }
 
       for (String authorName : course.getAuthorFullNames()) {
@@ -355,5 +342,9 @@ public class CoursesPanel extends JPanel {
 
   public interface CourseValidationListener {
     void validationStatusChanged(boolean canStartCourse);
+  }
+
+  public static Set<String> getFilterParts(String filter) {
+    return new HashSet<>(Arrays.asList(filter.toLowerCase().split(" ")));
   }
 }

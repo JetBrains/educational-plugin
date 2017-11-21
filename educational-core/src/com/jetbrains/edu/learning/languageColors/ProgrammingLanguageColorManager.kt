@@ -8,7 +8,7 @@ import com.intellij.ui.ColorUtil
 import com.jetbrains.edu.learning.EduLanguageDecorator
 import java.awt.Color
 
-object LanguageColorManager {
+object ProgrammingLanguageColorManager {
 
   private val languageColors: Map<String, LanguageColor>
 
