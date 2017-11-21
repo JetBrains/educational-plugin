@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.FilterComponent;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
@@ -24,6 +25,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,8 @@ public class CoursePanel extends JPanel {
   private AdvancedSettings myAdvancedSettings;
   private JPanel myCourseDescriptionPanel;
   private EduCourseBuilder.LanguageSettings<?> myLanguageSettings;
+  @Nullable
+  private FilterComponent mySearchField;
 
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
@@ -200,19 +205,50 @@ public class CoursePanel extends JPanel {
     return FileUtil.findSequentNonexistentFile(new File(ProjectUtil.getBaseDir()), name, "").getAbsolutePath();
   }
 
-  private static void addTags(JPanel tagsPanel, @NotNull Course course) {
+  private void addTags(JPanel tagsPanel, @NotNull Course course) {
     for (Tag tag : course.getTags()) {
       tagsPanel.add(createTagLabel(tag));
     }
   }
 
   @NotNull
-  private static JLabel createTagLabel(Tag tag) {
-    Border emptyBorder = JBUI.Borders.empty(3, 5);
-    JBLabel label = new JBLabel(tag.getText());
-    label.setOpaque(true);
-    label.setBorder(emptyBorder);
-    label.setBackground(tag.getColor());
-    return label;
+  private JComponent createTagLabel(Tag tag) {
+    JComponent tagComponent = tag.createComponent(isTagSelected(tag));
+    if (mySearchField != null) {
+      tagComponent.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          if (!isTagSelected(tag)) {
+            mySearchField.getTextEditor().setText(tag.getSearchText());
+            mySearchField.filter();
+            return;
+          }
+          mySearchField.getTextEditor().setText("");
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+          UIUtil.setCursor(tagComponent, Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+      });
+    }
+    return tagComponent;
+  }
+
+  private boolean isTagSelected(@NotNull Tag tag) {
+    if (mySearchField == null || mySearchField.getFilter().isEmpty()) {
+      return false;
+    }
+    for (String filterPart : CoursesPanel.getFilterParts(mySearchField.getFilter())) {
+      if (tag.getSearchText().equals(filterPart)) {
+        return true;
+      }
+    }
+    return false;
+
+  }
+
+  public void bindSearchField(@NotNull FilterComponent searchField) {
+    mySearchField = searchField;
   }
 }
