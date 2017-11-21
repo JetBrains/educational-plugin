@@ -14,7 +14,6 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.intellij.generation.CourseModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduProjectGenerator;
@@ -53,7 +52,7 @@ class KtKotlinKoansModuleBuilder extends CourseModuleBuilder {
 
     if (myCourse == null) {
       File courseRoot = EduUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, KtKotlinKoansModuleBuilder.class);
-      final Course course = ProjectGenerator.getLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
+      final Course course = EduUtils.getLocalCourse(FileUtil.join(courseRoot.getPath(), DEFAULT_COURSE_NAME));
       if (course == null) {
         LOG.info("Failed to find course " + DEFAULT_COURSE_NAME);
         return baseModule;

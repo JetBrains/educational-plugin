@@ -175,10 +175,9 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
   @Override
   public BooleanFunction<PythonProjectGenerator> beforeProjectGenerated(@Nullable Sdk sdk) {
     return generator -> {
-      final List<Integer> enrolledCoursesIds = myGenerator.getEnrolledCoursesIds();
       if (!(myCourse instanceof RemoteCourse)) return true;
       final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
-      if (remoteCourse.getId() > 0 && !enrolledCoursesIds.contains(remoteCourse.getId())) {
+      if (remoteCourse.getId() > 0) {
         ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
           return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),

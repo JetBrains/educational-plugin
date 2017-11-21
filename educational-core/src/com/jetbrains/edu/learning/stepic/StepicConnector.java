@@ -79,18 +79,17 @@ public class StepicConnector {
 
   @NotNull
   public static List<Course> getCourses(@Nullable StepicUser user) {
+    List<Course> result = new ArrayList<>();
     try {
-      List<Course> result = new ArrayList<>();
       int pageNumber = 1;
       while (addCoursesFromStepic(user, result, pageNumber)) {
         pageNumber += 1;
       }
-      return result;
     }
     catch (IOException e) {
       LOG.warn("Cannot load course list " + e.getMessage());
     }
-    return Collections.emptyList();
+    return result;
   }
 
   public static Date getCourseUpdateDate(final int courseId) {

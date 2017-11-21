@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
+import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -11,6 +12,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.OnePixelDivider;
@@ -22,16 +24,14 @@ import com.intellij.ui.components.JBList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.EduLanguageDecorator;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
-import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
+import org.fest.util.Lists;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +42,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
+
+import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 
 public class CoursesPanel extends JPanel {
   private static final Set<String> FEATURED_COURSES = ContainerUtil.newLinkedHashSet("Adaptive Python", "Introduction to Python", "Kotlin Koans");
@@ -72,7 +74,7 @@ public class CoursesPanel extends JPanel {
     mySplitPane.setDividerLocation(0.5);
     mySplitPane.setResizeWeight(0.5);
     myCoursesList = new JBList<>();
-    myCourses = getCourses();
+    myCourses = getCoursesUnderProgress();
     updateModel(myCourses, null);
     myErrorLabel.setVisible(false);
     myErrorLabel.setBorder(JBUI.Borders.empty(20, 10, 0, 0));
@@ -126,7 +128,7 @@ public class CoursesPanel extends JPanel {
         FileChooser.chooseFile(fileChooser, null, VfsUtil.getUserHomeDir(),
                                file -> {
                                  String fileName = file.getPath();
-                                 Course course = ProjectGenerator.getLocalCourse(fileName);
+                                 Course course = EduUtils.getLocalCourse(fileName);
                                  if (course != null) {
                                    EduUsagesCollector.courseArchiveImported();
                                    myCourses.add(course);
@@ -155,7 +157,7 @@ public class CoursesPanel extends JPanel {
             if (user != null) {
               ApplicationManager.getApplication().invokeLater(() -> {
                 Course selectedCourse = myCoursesList.getSelectedValue();
-                myCourses = getCourses();
+                myCourses = getCoursesUnderProgress();
                 updateModel(myCourses, selectedCourse.getName());
                 myErrorLabel.setVisible(false);
                 notifyListeners(true);
@@ -203,8 +205,54 @@ public class CoursesPanel extends JPanel {
   }
 
   @NotNull
-  private static List<Course> getCourses() {
-    return new ProjectGenerator().getCoursesUnderProgress(true, "Getting Available Courses", null);
+  private static List<Course> getCoursesUnderProgress() {
+    try {
+      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        List<Course> courses = execCancelable(() -> StepicConnector.getCourses(EduSettings.getInstance().getUser()));
+        if (courses == null) return Lists.newArrayList();
+        List<Course> bundledCourses = getBundledCourses();
+        for (Course bundledCourse : bundledCourses) {
+          if (courses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
+            continue;
+          }
+          courses.add(bundledCourse);
+        }
+        sortCourses(courses);
+        return courses;
+          }, "Getting Available Courses", true, null);
+    }
+    catch (RuntimeException e) {
+      return Lists.emptyList();
+    }
+  }
+
+  private static void sortCourses(List<Course> result) {
+    // sort courses so as to have non-adaptive courses in the beginning of the list
+    Collections.sort(result, (c1, c2) -> {
+      if ((c1.isAdaptive() && c2.isAdaptive()) || (!c1.isAdaptive() && !c2.isAdaptive())) {
+        return 0;
+      }
+      return c1.isAdaptive() ? 1 : -1;
+    });
+  }
+
+  @NotNull
+  private static List<Course> getBundledCourses() {
+    final ArrayList<Course> courses = new ArrayList<>();
+    final List<LanguageExtensionPoint<EduConfigurator<?>>> extensions = EduConfiguratorManager.allExtensions();
+    for (LanguageExtensionPoint<EduConfigurator<?>> extension : extensions) {
+      final EduConfigurator configurator = extension.getInstance();
+      //noinspection unchecked
+      final List<String> paths = configurator.getBundledCoursePaths();
+      for (String path : paths) {
+        final Course localCourse = EduUtils.getLocalCourse(path);
+        if (localCourse != null) {
+          courses.add(localCourse);
+        }
+      }
+    }
+    return courses;
   }
 
   private static boolean isLoggedIn() {
@@ -228,8 +276,6 @@ public class CoursesPanel extends JPanel {
     myCoursesList.setModel(listModel);
     if (myCoursesList.getItemsCount() > 0) {
       myCoursesList.setSelectedIndex(0);
-    } else {
-      myCoursePanel.hideContent();
     }
     if (courseToSelect == null) {
       return;

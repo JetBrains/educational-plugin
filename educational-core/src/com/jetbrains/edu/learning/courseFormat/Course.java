@@ -18,8 +18,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Course {
-  public static final Course INVALID_COURSE = new Course();
-
   @Expose protected List<Lesson> lessons = new ArrayList<>();
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
