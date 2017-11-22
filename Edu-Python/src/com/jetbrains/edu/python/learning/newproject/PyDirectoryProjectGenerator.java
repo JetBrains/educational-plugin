@@ -18,7 +18,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
@@ -217,13 +216,7 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
       return sdk;
     }
     String name = sdk.getName();
-    VirtualFile sdkHome = WriteAction.compute(new ThrowableComputable<VirtualFile, RuntimeException>() {
-      @Override
-      public VirtualFile compute() throws RuntimeException {
-        LocalFileSystem.getInstance().refreshAndFindFileByPath(name);
-        return null;
-      }
-    });
+    VirtualFile sdkHome = WriteAction.compute(() -> LocalFileSystem.getInstance().refreshAndFindFileByPath(name));
     Sdk newSdk = SdkConfigurationUtil.createAndAddSDK(sdkHome.getPath(), PythonSdkType.getInstance());
     if (newSdk != null) {
       PythonSdkUpdater.updateOrShowError(newSdk, null, project, null);
