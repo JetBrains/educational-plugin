@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.ui.UISettings;
@@ -25,7 +24,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
@@ -65,9 +63,6 @@ import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
 
 public class EduProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(EduProjectComponent.class.getName());
-  private static final String FEEDBACK_URL_TEMPLATE = "https://www.jetbrains.com/feedback/feedback.jsp?" +
-      "product=EduTools&amp;ide=$PRODUCT&amp;course=$COURSE&amp;mode=$MODE";
-  private static final Key<Boolean> FEEDBACK_ASKED = Key.create("askFeedbackNotification");
   private final Project myProject;
   private FileCreatedByUserListener myListener;
   private final Map<Keymap, List<Pair<String, String>>> myDeletedShortcuts = new HashMap<>();
@@ -111,8 +106,6 @@ public class EduProjectComponent implements ProjectComponent {
             registerShortcuts();
             EduUsagesCollector.projectTypeOpened(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
           }));
-
-        askFeedback();
       }
     );
 
@@ -126,35 +119,6 @@ public class EduProjectComponent implements ProjectComponent {
         }
       }
     });
-  }
-
-  private void askFeedback() {
-    final Boolean feedbackAsked = ApplicationManager.getApplication().getUserData(FEEDBACK_ASKED);
-    if (feedbackAsked != null && feedbackAsked) {
-      return;
-    }
-    final long currentTime = System.currentTimeMillis();
-    if (currentTime > SelectRoleComponent.Companion.getFeedbackTime()) {
-      final Course course = StudyTaskManager.getInstance(myProject).getCourse();
-      final boolean ccEnabled = PropertiesComponent.getInstance().
-                                        getBoolean(CCPluginToggleAction.COURSE_CREATOR_ENABLED);
-      final String feedbackUrl = FEEDBACK_URL_TEMPLATE
-                                  .replace("$PRODUCT", PlatformUtils.getPlatformPrefix())
-                                  .replace("$COURSE", course != null ? course.getName() : "null")
-                                  .replace("$MODE", ccEnabled ? "CourseCreator" : "Student");
-      final Notification notification = new Notification("eduTools.shareFeedback", "Feedback",
-          "<html>Thank you for using the EduTool plugin! <br/> " +
-              "Please, <a href=\"" + feedbackUrl + "\">share</a> your experience. " +
-              "Your feedback will help us make learning experience better.</html>",
-          NotificationType.INFORMATION, new NotificationListener.Adapter() {
-        @Override
-        protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent hyperlinkEvent) {
-          BrowserUtil.browse(feedbackUrl);
-          ApplicationManager.getApplication().putUserData(FEEDBACK_ASKED, true);
-        }
-      });
-      notification.notify(myProject);
-    }
   }
 
   private void selectProjectView() {
