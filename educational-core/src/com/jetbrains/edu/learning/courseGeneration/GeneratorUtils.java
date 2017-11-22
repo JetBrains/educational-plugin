@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicNames;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -152,21 +151,8 @@ public class GeneratorUtils {
       Messages.showWarningDialog("There is no recommended tasks for this adaptive course", "Error in Course Creation");
       return null;
     }
-    updateCourseFormat(course);
     StudyTaskManager.getInstance(project).setCourse(course);
     return course;
-  }
-
-  public static void updateCourseFormat(@NotNull final Course course) {
-    final List<Lesson> lessons = course.getLessons(true);
-    final Lesson additionalLesson = lessons.stream().
-        filter(lesson -> StepicNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).findFirst().orElse(null);
-    if (additionalLesson != null) {
-      additionalLesson.setName(EduNames.ADDITIONAL_MATERIALS);
-      final List<Task> taskList = additionalLesson.getTaskList();
-      taskList.stream().filter(task -> StepicNames.PYCHARM_ADDITIONAL.equals(task.getName())).findFirst().
-          ifPresent(task -> task.setName(EduNames.ADDITIONAL_MATERIALS));
-    }
   }
 
   private static RemoteCourse getCourseFromStepic(@NotNull Project project, RemoteCourse selectedCourse) {

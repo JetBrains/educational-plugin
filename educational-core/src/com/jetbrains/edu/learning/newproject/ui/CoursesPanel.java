@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.newproject.ui;
 
+import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtensionPoint;
@@ -31,7 +32,6 @@ import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
-import org.fest.util.Lists;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -223,7 +223,7 @@ public class CoursesPanel extends JPanel {
           }, "Getting Available Courses", true, null);
     }
     catch (RuntimeException e) {
-      return Lists.emptyList();
+      return Lists.newArrayList();
     }
   }
 
