@@ -574,6 +574,7 @@ public class SerializationUtils {
     public static final String INDEX = "index";
     public static final String TASK_TYPE = "task_type";
     public static final String NAME = "name";
+    public static final String TITLE = "title";
     public static final String LAST_SUBTASK = "last_subtask_index";
 
     private Json() {
@@ -610,10 +611,10 @@ public class SerializationUtils {
 
       @NotNull
       private static JsonObject convertToFourthVersion(JsonObject stepOptionsJson) {
-        if (stepOptionsJson.has("NAME") &&
-            StepicNames.PYCHARM_ADDITIONAL.equals(stepOptionsJson.get(NAME).getAsString())) {
-          stepOptionsJson.remove(NAME);
-          stepOptionsJson.add(NAME, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
+        if (stepOptionsJson.has(TITLE) &&
+            StepicNames.PYCHARM_ADDITIONAL.equals(stepOptionsJson.get(TITLE).getAsString())) {
+          stepOptionsJson.remove(TITLE);
+          stepOptionsJson.add(TITLE, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
         }
         return stepOptionsJson;
       }
