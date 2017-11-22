@@ -358,8 +358,11 @@ public class StepicAdaptiveConnector {
   private static String getCodeTemplateForTask(@NotNull Language language,
                                                @Nullable LinkedTreeMap codeTemplates) {
     if (codeTemplates != null) {
-      final String languageString = EduConfiguratorManager.forLanguage(language).getStepikDefaultLanguage();
-      return (String)codeTemplates.get(languageString);
+      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
+      if (configurator != null) {
+        final String languageString = configurator.getStepikDefaultLanguage();
+        return (String)codeTemplates.get(languageString);
+      }
     }
 
     return null;
@@ -425,7 +428,12 @@ public class StepicAdaptiveConnector {
       if (editor != null) {
         String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
         final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();
-        String defaultLanguage = EduConfiguratorManager.forLanguage(courseLanguage).getStepikDefaultLanguage();
+        final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(courseLanguage);
+        if (configurator == null) {
+          LOG.warn("No applicable configurator found to check task");
+          return new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+        }
+        String defaultLanguage = configurator.getStepikDefaultLanguage();
         final StepicWrappers.SubmissionToPostWrapper submissionToPost =
           new StepicWrappers.SubmissionToPostWrapper(String.valueOf(attemptId), defaultLanguage, answer);
         return doAdaptiveCheck(submissionToPost, attemptId, user.getId());
@@ -720,7 +728,12 @@ public class StepicAdaptiveConnector {
     private static String getTaskFileName(@NotNull Language language) {
       // This is a hacky way to how we should name task file.
       // It's assumed that if test's name is capitalized we need to capitalize task file name too.
-      String testFileName = EduConfiguratorManager.forLanguage(language).getTestFileName();
+      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
+      if (configurator == null) {
+        LOG.warn("No applicable configurator found");
+        return null;
+      }
+      String testFileName = configurator.getTestFileName();
       boolean capitalize = !testFileName.isEmpty() && Character.isUpperCase(testFileName.charAt(0));
 
       LanguageFileType type = language.getAssociatedFileType();

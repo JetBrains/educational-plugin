@@ -50,13 +50,13 @@ class PyCCRunTestConfiguration extends AbstractPythonRunConfiguration<PyCCRunTes
   }
 
   @Override
-  public void readExternal(Element element) throws InvalidDataException {
+  public void readExternal(@NotNull Element element) throws InvalidDataException {
     super.readExternal(element);
     myPathToTest = JDOMExternalizerUtil.readField(element, PATH_ATTR);
   }
 
   @Override
-  public void writeExternal(Element element) throws WriteExternalException {
+  public void writeExternal(@NotNull Element element) throws WriteExternalException {
     super.writeExternal(element);
     JDOMExternalizerUtil.writeField(element, PATH_ATTR, myPathToTest);
   }
