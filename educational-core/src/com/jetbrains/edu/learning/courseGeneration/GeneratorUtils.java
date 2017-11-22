@@ -3,7 +3,9 @@ package com.jetbrains.edu.learning.courseGeneration;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduNames;
@@ -11,16 +13,20 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicNames;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.courseGeneration.ProjectGenerator.updateCourseFormat;
+import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 
 public class GeneratorUtils {
   private static final Logger LOG = Logger.getInstance(GeneratorUtils.class.getName());
@@ -135,9 +141,44 @@ public class GeneratorUtils {
     createChildFile(parentDir, name, template.getText());
   }
 
-  public static void generateProject(@NotNull Project project, @NotNull final Course courseInfo) {
-    final Course course = ProjectGenerator.initCourse(courseInfo, project);
+  @Nullable
+  public static Course initializeCourse(@NotNull Project project, @NotNull Course course) {
+    if (course instanceof RemoteCourse) {
+      course = getCourseFromStepic(project, (RemoteCourse)course);
+    }
+    course.initCourse(false);
+
+    if (course.isAdaptive() && !EduUtils.isCourseValid(course)) {
+      Messages.showWarningDialog("There is no recommended tasks for this adaptive course", "Error in Course Creation");
+      return null;
+    }
     updateCourseFormat(course);
     StudyTaskManager.getInstance(project).setCourse(course);
+    return course;
+  }
+
+  public static void updateCourseFormat(@NotNull final Course course) {
+    final List<Lesson> lessons = course.getLessons(true);
+    final Lesson additionalLesson = lessons.stream().
+        filter(lesson -> StepicNames.PYCHARM_ADDITIONAL.equals(lesson.getName())).findFirst().orElse(null);
+    if (additionalLesson != null) {
+      additionalLesson.setName(EduNames.ADDITIONAL_MATERIALS);
+      final List<Task> taskList = additionalLesson.getTaskList();
+      taskList.stream().filter(task -> StepicNames.PYCHARM_ADDITIONAL.equals(task.getName())).findFirst().
+          ifPresent(task -> task.setName(EduNames.ADDITIONAL_MATERIALS));
+    }
+  }
+
+  private static RemoteCourse getCourseFromStepic(@NotNull Project project, RemoteCourse selectedCourse) {
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+      return execCancelable(() -> {
+        final RemoteCourse course = StepicConnector.getCourse(project, selectedCourse);
+        if (EduUtils.isCourseValid(course)) {
+          course.initCourse(false);
+        }
+        return course;
+      });
+    }, "Creating Course", true, project);
   }
 }

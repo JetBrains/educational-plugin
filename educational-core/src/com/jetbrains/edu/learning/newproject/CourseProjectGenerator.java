@@ -19,24 +19,25 @@ import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.openapi.project.Project;
 import com.intellij.platform.DirectoryProjectGenerator;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public interface CourseProjectGenerator<S> extends DirectoryProjectGenerator<S> {
+public abstract class CourseProjectGenerator<S> implements DirectoryProjectGenerator<S> {
+  @NotNull protected final Course myCourse;
 
-  @NotNull
-  default ValidationResult validate() {
-    return ValidationResult.OK;
+  public CourseProjectGenerator(@NotNull final Course course) {
+    myCourse = course;
   }
 
-  default boolean beforeProjectGenerated() {
+  public boolean beforeProjectGenerated() {
     return true;
   }
 
-  default void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
+  public void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
   }
 
   // 'projectSettings' must have S type but due to some reasons:
@@ -44,7 +45,7 @@ public interface CourseProjectGenerator<S> extends DirectoryProjectGenerator<S> 
   //  * Kotlin and Java do type erasure a little bit differently
   // we use Object instead of S and cast to S when it needed
   @SuppressWarnings("unchecked")
-  default void createCourseProject(@NotNull String location, @NotNull Object projectSettings) {
+  public void createCourseProject(@NotNull String location, @NotNull Object projectSettings) {
     if (!beforeProjectGenerated()) {
       return;
     }
@@ -58,19 +59,19 @@ public interface CourseProjectGenerator<S> extends DirectoryProjectGenerator<S> 
   @Nls
   @NotNull
   @Override
-  default String getName() {
+  public String getName() {
     return "";
   }
 
   @Nullable
   @Override
-  default Icon getLogo() {
+  public Icon getLogo() {
     return null;
   }
 
   @NotNull
   @Override
-  default ValidationResult validate(@NotNull String s) {
+  public ValidationResult validate(@NotNull String baseDirPath) {
     return ValidationResult.OK;
   }
 }

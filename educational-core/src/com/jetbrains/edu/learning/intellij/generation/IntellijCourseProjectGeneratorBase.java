@@ -27,14 +27,12 @@ import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class IntellijCourseProjectGeneratorBase implements CourseProjectGenerator<JdkProjectSettings> {
+public abstract class IntellijCourseProjectGeneratorBase extends CourseProjectGenerator<JdkProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(IntellijCourseProjectGeneratorBase.class);
 
-  protected final Course myCourse;
-
   public IntellijCourseProjectGeneratorBase(@NotNull Course course) {
-    myCourse = course;
+    super(course);
   }
 
   @Override
@@ -50,6 +48,7 @@ public abstract class IntellijCourseProjectGeneratorBase implements CourseProjec
     }
     return true;
   }
+
   @Override
   public void generateProject(@NotNull Project project, @NotNull VirtualFile virtualFile,
                               @NotNull JdkProjectSettings settings, @NotNull Module module) {
