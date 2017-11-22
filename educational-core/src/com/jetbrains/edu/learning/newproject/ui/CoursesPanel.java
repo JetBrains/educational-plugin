@@ -218,23 +218,13 @@ public class CoursesPanel extends JPanel {
           }
           courses.add(bundledCourse);
         }
-        sortCourses(courses);
+        Collections.sort(courses, (c1, c2) -> Boolean.compare(c1.isAdaptive(), c2.isAdaptive()));
         return courses;
           }, "Getting Available Courses", true, null);
     }
     catch (RuntimeException e) {
       return Lists.newArrayList();
     }
-  }
-
-  private static void sortCourses(List<Course> result) {
-    // sort courses so as to have non-adaptive courses in the beginning of the list
-    Collections.sort(result, (c1, c2) -> {
-      if ((c1.isAdaptive() && c2.isAdaptive()) || (!c1.isAdaptive() && !c2.isAdaptive())) {
-        return 0;
-      }
-      return c1.isAdaptive() ? 1 : -1;
-    });
   }
 
   @NotNull
