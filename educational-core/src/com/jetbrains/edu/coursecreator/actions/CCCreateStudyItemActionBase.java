@@ -13,14 +13,17 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialog;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.statistics.FeedbackSenderKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.List;
 
 public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
 
@@ -41,6 +44,21 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     if (itemFile != null) {
       ProjectView.getInstance(project).select(itemFile, itemFile, true);
     }
+    askFeedback(course, project);
+  }
+
+  private static void askFeedback(@NotNull final Course course, @NotNull final  Project project) {
+    if (FeedbackSenderKt.isFeedbackAsked()) {
+      return;
+    }
+    final List<Lesson> lessons = course.getLessons();
+    int countTasks = 0;
+    for (Lesson lesson : lessons) {
+      countTasks += lesson.getTaskList().size();
+    }
+    if (countTasks == 5) {
+      FeedbackSenderKt.showNotification(false, course, project);
+    }
   }
 
   @Override
@@ -60,7 +78,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     presentation.setEnabledAndVisible(true);
   }
 
-  private boolean isActionApplicable(@Nullable Project project, @Nullable VirtualFile[] selectedFiles) {
+  private static boolean isActionApplicable(@Nullable Project project, @Nullable VirtualFile[] selectedFiles) {
     if (project == null || selectedFiles == null) return false;
     if (selectedFiles.length == 0 || selectedFiles.length > 1) return false;
 
