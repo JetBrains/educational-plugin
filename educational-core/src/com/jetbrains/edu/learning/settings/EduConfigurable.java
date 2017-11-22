@@ -59,6 +59,7 @@ public class EduConfigurable extends CompositeConfigurable<OptionsProvider> {
     return myMainPanel;
   }
 
+  @NotNull
   @Override
   protected List<OptionsProvider> createConfigurables() {
     return ConfigurableWrapper.createConfigurables(OptionsProviderEP.EP_NAME);

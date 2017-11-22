@@ -117,10 +117,12 @@ public class StepicWrappers {
   private static List<VirtualFile> getTestFiles(@NotNull Task task, @NotNull Project project) {
     final Course course = task.getLesson().getCourse();
     final Language language = course.getLanguageById();
-    final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
+
     List<VirtualFile> testFiles = new ArrayList<>();
     VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) {
+    final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
+
+    if (taskDir == null || configurator == null) {
       return testFiles;
     }
     if (!(task instanceof TaskWithSubtasks)) {
