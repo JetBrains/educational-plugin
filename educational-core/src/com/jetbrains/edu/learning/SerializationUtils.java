@@ -15,8 +15,10 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicNames;
 import com.jetbrains.edu.learning.stepic.StepicWrappers;
 import org.jdom.Attribute;
 import org.jdom.Content;
@@ -592,8 +594,10 @@ public class SerializationUtils {
             stepOptionsJson = convertToSecondVersion(stepOptionsJson);
           case 2:
             stepOptionsJson = convertToThirdVersion(stepOptionsJson);
+          case 3:
+            stepOptionsJson = convertToFourthVersion(stepOptionsJson);
           // uncomment for future versions
-          //case 3:
+          //case 4:
           //  stepOptionsJson = convertToFourthVersion(stepOptionsJson);
         }
         convertSubtaskInfosToMap(stepOptionsJson);
@@ -602,6 +606,16 @@ public class SerializationUtils {
             .fromJson(stepOptionsJson, StepicWrappers.StepOptions.class);
         stepOptions.formatVersion = StepicConnector.CURRENT_VERSION;
         return stepOptions;
+      }
+
+      @NotNull
+      private static JsonObject convertToFourthVersion(JsonObject stepOptionsJson) {
+        if (stepOptionsJson.has("NAME") &&
+            StepicNames.PYCHARM_ADDITIONAL.equals(stepOptionsJson.get(NAME).getAsString())) {
+          stepOptionsJson.remove(NAME);
+          stepOptionsJson.add(NAME, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
+        }
+        return stepOptionsJson;
       }
 
       private static JsonObject convertToThirdVersion(JsonObject stepOptionsJson) {
@@ -740,6 +754,35 @@ public class SerializationUtils {
       subtaskInfo.addProperty(POSSIBLE_ANSWER, placeholderObject.getAsJsonPrimitive(POSSIBLE_ANSWER).getAsString());
     }
 
+    public static class LessonAdapter implements JsonDeserializer<Lesson> {
+      @Override
+      public Lesson deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
+            .registerTypeAdapter(Task.class, new TaskAdapter()).create();
+        final Lesson lesson = gson.fromJson(json, Lesson.class);
+        final String name = lesson.getName();
+        if (StepicNames.PYCHARM_ADDITIONAL.equals(name)) {
+          lesson.setName(EduNames.ADDITIONAL_MATERIALS);
+        }
+        return lesson;
+      }
+    }
+
+    public static class StepikLessonAdapter implements JsonDeserializer<Lesson> {
+      @Override
+      public Lesson deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        Gson gson = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .registerTypeAdapter(StepicWrappers.StepOptions.class, new StepicStepOptionsAdapter()).create();
+        final Lesson lesson = gson.fromJson(json, Lesson.class);
+        final String name = lesson.getName();
+        if (StepicNames.PYCHARM_ADDITIONAL.equals(name)) {
+          lesson.setName(EduNames.ADDITIONAL_MATERIALS);
+        }
+        return lesson;
+      }
+    }
+
     public static class TaskAdapter implements JsonSerializer<Task>, JsonDeserializer<Task> {
 
       @Override
@@ -755,16 +798,20 @@ public class SerializationUtils {
       public Task deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
         final JsonObject object = json.getAsJsonObject();
+        if (object.has(NAME) && StepicNames.PYCHARM_ADDITIONAL.equals(object.get(NAME).getAsString())) {
+          object.remove(NAME);
+          object.add(NAME, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
+        }
         if (object.has(TASK_TYPE)) {
           final String taskType = object.get(TASK_TYPE).getAsString();
           switch (taskType) {
-            case "choice": return gson.fromJson(json, ChoiceTask.class);
-            case "theory": return gson.fromJson(json, TheoryTask.class);
-            case "code": return gson.fromJson(json, CodeTask.class);
-            case "edu": return gson.fromJson(json, EduTask.class);
-            case "subtasks": return gson.fromJson(json, TaskWithSubtasks.class);
-            case "output": return gson.fromJson(json, OutputTask.class);
-            case "pycharm": return gson.fromJson(json, EduTask.class);     // deprecated: old courses have pycharm tasks
+            case "choice": return gson.fromJson(object, ChoiceTask.class);
+            case "theory": return gson.fromJson(object, TheoryTask.class);
+            case "code": return gson.fromJson(object, CodeTask.class);
+            case "edu": return gson.fromJson(object, EduTask.class);
+            case "subtasks": return gson.fromJson(object, TaskWithSubtasks.class);
+            case "output": return gson.fromJson(object, OutputTask.class);
+            case "pycharm": return gson.fromJson(object, EduTask.class);     // deprecated: old courses have pycharm tasks
             default: {
               LOG.warn("Unsupported task type " + taskType);
               return null;
