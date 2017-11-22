@@ -1072,6 +1072,7 @@ public class EduUtils {
       final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
       Gson gson = new GsonBuilder()
           .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
+          .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.LessonAdapter())
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
           .create();
       return gson.fromJson(jsonText, Course.class);
