@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
 import icons.EducationalCoreIcons;
@@ -19,7 +20,7 @@ public class BrowseCoursesAction extends AnAction {
 
   @Override
   public void actionPerformed(AnActionEvent e) {
-    List<Course> courses = CoursesPanel.getCoursesUnderProgress();
+    List<Course> courses = EduUtils.getCoursesUnderProgress();
     if (courses == null) return;
 
     CoursesPanel panel = new CoursesPanel(courses);
