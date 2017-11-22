@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.jetbrains.edu.learning.newproject.ui.CoursePanel">
   <grid id="7d113" binding="myCoursePanel" layout-manager="BorderLayout" hgap="0" vgap="0">
-    <constraints/>
+    <constraints>
+      <xy x="0" y="0" width="0" height="0"/>
+    </constraints>
     <properties>
       <minimumSize width="-1" height="-1"/>
       <preferredSize width="-1" height="-1"/>
@@ -10,7 +12,7 @@
       <size top="2" left="4" bottom="2" right="4"/>
     </border>
     <children>
-      <grid id="d6214" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="d6214" binding="myCourseDescriptionPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
         <properties/>
         <border type="none"/>
@@ -44,7 +46,7 @@
             <border type="none"/>
             <children>
               <component id="5fbab" class="javax.swing.JEditorPane" binding="myDescriptionTextArea">
-                <constraints border-constraint="Center"/>
+                <constraints/>
                 <properties/>
               </component>
             </children>
