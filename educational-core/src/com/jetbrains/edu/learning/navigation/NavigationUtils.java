@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
@@ -110,6 +111,7 @@ public class NavigationUtils {
     }
     Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder, editor.getDocument());
     editor.getCaretModel().moveToOffset(offsets.first);
+    editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
     editor.getSelectionModel().setSelection(offsets.first, offsets.second);
   }
 
