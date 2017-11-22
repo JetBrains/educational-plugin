@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepic.StepicNames;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNull;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
 
@@ -32,9 +35,19 @@ public class CourseFormatTest {
     assertNull(oldAdditional);
   }
 
+  @Test
+  public void testPycharmToEduTask() throws IOException {
+    final Course course = getCourseFromJson("pycharmToEdu.json");
+    final List<Lesson> lessons = course.getLessons();
+    assertFalse("No lessons found", lessons.isEmpty());
+    final Lesson lesson = lessons.get(0);
+    final List<Task> taskList = lesson.getTaskList();
+    assertFalse("No tasks found", taskList.isEmpty());
+    assertTrue(taskList.get(0) instanceof EduTask);
+  }
+
   private static Course getCourseFromJson(@NotNull final String fileName) throws IOException {
-    String courseJson =
-        FileUtil.loadFile(new File(getTestDataPath(), fileName));
+    String courseJson = FileUtil.loadFile(new File(getTestDataPath(), fileName));
 
     Gson gson = new GsonBuilder()
         .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
