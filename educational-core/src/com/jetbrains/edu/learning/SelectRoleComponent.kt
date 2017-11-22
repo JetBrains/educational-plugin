@@ -6,7 +6,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.util.Ref
-import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.ui.SelectRolePanel
 
@@ -38,10 +37,5 @@ class SelectRoleComponent : ApplicationComponent {
     dialog.title("Are you a Learner or an Educator?").centerPanel(panel)
     dialog.addOkAction().setText("Start using EduTools")
     dialog.show()
-    feedbackTime = System.currentTimeMillis() + DateFormatUtil.DAY * 14
-  }
-
-  companion object {
-    var feedbackTime = System.currentTimeMillis()
   }
 }
