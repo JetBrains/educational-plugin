@@ -27,7 +27,6 @@ import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -109,26 +108,6 @@ public class EduUtils {
 
   public static final Comparator<StudyItem> INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::getIndex);
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
-  private static final String ourPrefix = "<html><head><script type=\"text/x-mathjax-config\">\n" +
-                                          "            MathJax.Hub.Config({\n" +
-                                          "                tex2jax: {\n" +
-                                          "                    inlineMath: [ ['$','$'], [\"\\\\(\",\"\\\\)\"] ],\n" +
-                                          "                    displayMath: [ ['$$','$$'], [\"\\\\[\",\"\\\\]\"] ],\n" +
-                                          "                    processEscapes: true,\n" +
-                                          "                    processEnvironments: true\n" +
-                                          "                },\n" +
-                                          "                displayAlign: 'center',\n" +
-                                          "                \"HTML-CSS\": {\n" +
-                                          "                    styles: {'#mydiv': {\"font-size\": %s}},\n" +
-                                          "                    preferredFont: null,\n" +
-                                          "                    linebreaks: { automatic: true }\n" +
-                                          "                }\n" +
-                                          "            });\n" +
-                                          "</script><script type=\"text/javascript\"\n" +
-                                          " src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML-full\">\n" +
-                                          " </script></head><body><div id=\"mydiv\">";
-
-  private static final String ourPostfix = "</div></body></html>";
 
   public static void closeSilently(@Nullable final Closeable stream) {
     if (stream != null) {
@@ -416,11 +395,6 @@ public class EduUtils {
     }
 
     return !isRenameableOrMoveable(project, course, element);
-  }
-
-  public static String wrapTextToDisplayLatex(String taskTextFileHtml) {
-    final String prefix = String.format(ourPrefix, EditorColorsManager.getInstance().getGlobalScheme().getEditorFontSize());
-    return prefix + taskTextFileHtml + ourPostfix;
   }
 
   @Nullable
