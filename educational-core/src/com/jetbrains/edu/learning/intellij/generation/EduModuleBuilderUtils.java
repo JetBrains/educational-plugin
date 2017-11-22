@@ -14,10 +14,7 @@ import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.InvalidDataException;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +39,6 @@ public class EduModuleBuilderUtils {
       return;
     }
 
-    updateAdaptiveCourseTaskFileNames(project, course);
     createCourseModuleContent(moduleModel, project, course, moduleDir);
   }
 
@@ -66,16 +62,6 @@ public class EduModuleBuilderUtils {
       lesson.setIndex(lessonVisibleIndex);
       LessonModuleBuilder lessonModuleBuilder = new LessonModuleBuilder(moduleDir, lesson, utilModule);
       lessonModuleBuilder.createAndCommitIfNeeded(project, moduleModel, false);
-    }
-  }
-
-  private static void updateAdaptiveCourseTaskFileNames(@NotNull Project project, @NotNull Course course) {
-    if (course.isAdaptive()) {
-      Lesson adaptiveLesson = course.getLessons().get(0);
-      Task task = adaptiveLesson.getTaskList().get(0);
-      for (TaskFile taskFile : task.getTaskFiles().values()) {
-        EduIntellijUtils.nameTaskFileAfterContainingClass(task, taskFile, project);
-      }
     }
   }
 
