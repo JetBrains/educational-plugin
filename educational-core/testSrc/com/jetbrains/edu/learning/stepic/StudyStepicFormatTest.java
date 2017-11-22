@@ -1,14 +1,13 @@
 package com.jetbrains.edu.learning.stepic;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.SerializationUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
@@ -40,6 +39,23 @@ public class StudyStepicFormatTest {
     assertEquals(1, stepOptions.lastSubtaskIndex);
   }
 
+  @Test
+  public void testAdditionalMaterialsLesson() throws IOException {
+    String responseString =
+        FileUtil.loadFile(new File(getTestDataPath(), "additionalMaterialsLesson.json"));
+    Lesson lesson =
+        StepicClient.deserializeStepicResponse(StepicWrappers.LessonContainer.class, responseString).lessons.get(0);
+    assertEquals(EduNames.ADDITIONAL_MATERIALS, lesson.getName());
+  }
+
+  @Test
+  public void testAdditionalMaterialsStep() throws IOException {
+    String responseString =
+        FileUtil.loadFile(new File(getTestDataPath(), "additionalMaterialsStep.json"));
+    StepicWrappers.StepSource step =
+        StepicClient.deserializeStepicResponse(StepicWrappers.StepContainer.class, responseString).steps.get(0);
+    assertEquals(EduNames.ADDITIONAL_MATERIALS, step.block.options.title);
+  }
 
   private static StepicWrappers.StepOptions doStepOptionsCreationTest(String fileName) throws IOException {
     String responseString =
