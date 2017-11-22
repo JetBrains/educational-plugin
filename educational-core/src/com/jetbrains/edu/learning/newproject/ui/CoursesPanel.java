@@ -51,6 +51,7 @@ public class CoursesPanel extends JPanel {
   private static final Logger LOG = Logger.getInstance(CoursesPanel.class);
   private static final String TAG = "tag:";
   private static final String LANGUAGE = "language:";
+  private static final String NO_COURSES = "No courses found";
 
   private JPanel myMainPanel;
   private JPanel myCourseListPanel;
@@ -74,6 +75,7 @@ public class CoursesPanel extends JPanel {
     mySplitPane.setDividerLocation(0.5);
     mySplitPane.setResizeWeight(0.5);
     myCoursesList = new JBList<>();
+    myCoursesList.setEmptyText(NO_COURSES);
     myCourses = getCoursesUnderProgress();
     updateModel(myCourses, null);
     myErrorLabel.setVisible(false);
