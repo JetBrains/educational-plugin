@@ -67,6 +67,7 @@ public class EditInputAction extends DumbAwareAction {
           if (newSelection.getIcon() != null) {
             int tabCount = tabbedPane.getTabCount();
             VirtualFile taskDir = EduUtils.getTaskDir(openedFile);
+            assert taskDir != null;
             VirtualFile testsDir = taskDir.findChild(EduNames.USER_TESTS);
             assert testsDir != null;
             UserTest userTest = createUserTest(testsDir, currentTask, studyTaskManager);

@@ -359,8 +359,9 @@ public class SerializationUtils {
 
     public static VirtualFile getTaskDir(Project project, Element lesson, Element task)
       throws StudyUnrecognizedFormatException {
-      VirtualFile taskDir =
-        project.getBaseDir().findChild(EduNames.LESSON + getAsInt(lesson, INDEX)).findChild(EduNames.TASK + getAsInt(task, INDEX));
+      final VirtualFile lessonDir = project.getBaseDir().findChild(EduNames.LESSON + getAsInt(lesson, INDEX));
+      if (lessonDir == null) return null;
+      VirtualFile taskDir = lessonDir.findChild(EduNames.TASK + getAsInt(task, INDEX));
       if (taskDir == null) {
         return null;
       }
