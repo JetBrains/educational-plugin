@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.newproject.ui;
 import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
-import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -13,7 +12,6 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.OnePixelDivider;
@@ -25,7 +23,9 @@ import com.intellij.ui.components.JBList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduLanguageDecorator;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
@@ -42,8 +42,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
-
-import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 
 public class CoursesPanel extends JPanel {
   private static final Set<String> FEATURED_COURSES = ContainerUtil.newLinkedHashSet("Adaptive Python", "Introduction to Python", "Kotlin Koans");
@@ -64,7 +62,8 @@ public class CoursesPanel extends JPanel {
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
 
-  public CoursesPanel() {
+  public CoursesPanel(@NotNull List<Course> courses) {
+    myCourses = courses;
     setLayout(new BorderLayout());
     add(myMainPanel, BorderLayout.CENTER);
     initUI();
@@ -76,7 +75,6 @@ public class CoursesPanel extends JPanel {
     mySplitPane.setResizeWeight(0.5);
     myCoursesList = new JBList<>();
     myCoursesList.setEmptyText(NO_COURSES);
-    myCourses = getCoursesUnderProgress();
     updateModel(myCourses, null);
     myErrorLabel.setVisible(false);
     myErrorLabel.setBorder(JBUI.Borders.empty(20, 10, 0, 0));
@@ -159,7 +157,8 @@ public class CoursesPanel extends JPanel {
             if (user != null) {
               ApplicationManager.getApplication().invokeLater(() -> {
                 Course selectedCourse = myCoursesList.getSelectedValue();
-                myCourses = getCoursesUnderProgress();
+                List<Course> courses = EduUtils.getCoursesUnderProgress();
+                myCourses = courses != null ? courses : Lists.newArrayList();
                 updateModel(myCourses, selectedCourse.getName());
                 myErrorLabel.setVisible(false);
                 notifyListeners(true);
@@ -204,47 +203,6 @@ public class CoursesPanel extends JPanel {
         UIUtil.toHtml("<u><b>Log in</b></u> to Stepik " + (selectedCourse.isAdaptive() ? "to start adaptive course" : "to see more courses")));
       myErrorLabel.setForeground((selectedCourse.isAdaptive() ? MessageType.ERROR : MessageType.WARNING).getTitleForeground());
     }
-  }
-
-  @NotNull
-  private static List<Course> getCoursesUnderProgress() {
-    try {
-      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        List<Course> courses = execCancelable(() -> StepicConnector.getCourses(EduSettings.getInstance().getUser()));
-        if (courses == null) return Lists.newArrayList();
-        List<Course> bundledCourses = getBundledCourses();
-        for (Course bundledCourse : bundledCourses) {
-          if (courses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
-            continue;
-          }
-          courses.add(bundledCourse);
-        }
-        Collections.sort(courses, (c1, c2) -> Boolean.compare(c1.isAdaptive(), c2.isAdaptive()));
-        return courses;
-          }, "Getting Available Courses", true, null);
-    }
-    catch (RuntimeException e) {
-      return Lists.newArrayList();
-    }
-  }
-
-  @NotNull
-  private static List<Course> getBundledCourses() {
-    final ArrayList<Course> courses = new ArrayList<>();
-    final List<LanguageExtensionPoint<EduConfigurator<?>>> extensions = EduConfiguratorManager.allExtensions();
-    for (LanguageExtensionPoint<EduConfigurator<?>> extension : extensions) {
-      final EduConfigurator configurator = extension.getInstance();
-      //noinspection unchecked
-      final List<String> paths = configurator.getBundledCoursePaths();
-      for (String path : paths) {
-        final Course localCourse = EduUtils.getLocalCourse(path);
-        if (localCourse != null) {
-          courses.add(localCourse);
-        }
-      }
-    }
-    return courses;
   }
 
   private static boolean isLoggedIn() {

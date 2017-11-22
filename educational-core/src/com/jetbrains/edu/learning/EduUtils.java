@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning;
 
+import com.google.common.collect.Lists;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,6 +8,7 @@ import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -32,6 +34,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -75,6 +78,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
 import com.jetbrains.edu.learning.stepic.OAuthDialog;
+import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicUser;
 import com.jetbrains.edu.learning.stepic.StepicUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
@@ -1058,6 +1062,51 @@ public class EduUtils {
       }
     }
     return fileWindows;
+  }
+
+  /**
+   * @return null if process was canceled, otherwise not null list of courses
+   */
+  @Nullable
+  public static List<Course> getCoursesUnderProgress() {
+    try {
+      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        List<Course> courses = execCancelable(() -> StepicConnector.getCourses(EduSettings.getInstance().getUser()));
+        if (courses == null) return Lists.newArrayList();
+        List<Course> bundledCourses = getBundledCourses();
+        for (Course bundledCourse : bundledCourses) {
+          if (courses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
+            continue;
+          }
+          courses.add(bundledCourse);
+        }
+        Collections.sort(courses, (c1, c2) -> Boolean.compare(c1.isAdaptive(), c2.isAdaptive()));
+        return courses;
+      }, "Getting Available Courses", true, null);
+    } catch (ProcessCanceledException e) {
+      return null;
+    } catch (RuntimeException e) {
+      return Lists.newArrayList();
+    }
+  }
+
+  @NotNull
+  private static List<Course> getBundledCourses() {
+    final ArrayList<Course> courses = new ArrayList<>();
+    final List<LanguageExtensionPoint<EduConfigurator<?>>> extensions = EduConfiguratorManager.allExtensions();
+    for (LanguageExtensionPoint<EduConfigurator<?>> extension : extensions) {
+      final EduConfigurator configurator = extension.getInstance();
+      //noinspection unchecked
+      final List<String> paths = configurator.getBundledCoursePaths();
+      for (String path : paths) {
+        final Course localCourse = getLocalCourse(path);
+        if (localCourse != null) {
+          courses.add(localCourse);
+        }
+      }
+    }
+    return courses;
   }
 
   @Nullable
