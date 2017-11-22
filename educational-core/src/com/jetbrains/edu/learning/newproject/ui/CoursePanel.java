@@ -41,6 +41,7 @@ public class CoursePanel extends JPanel {
   private JEditorPane myDescriptionTextArea;
 
   private AdvancedSettings myAdvancedSettings;
+  private JPanel myCourseDescriptionPanel;
   private EduCourseBuilder.LanguageSettings<?> myLanguageSettings;
 
   @Nullable
@@ -84,13 +85,13 @@ public class CoursePanel extends JPanel {
   }
 
   public void bindCourse(@NotNull Course course) {
-    myCoursePanel.setVisible(true);
+    myCourseDescriptionPanel.setVisible(true);
     updateCourseDescriptionPanel(course);
     updateAdvancedSettings(course);
   }
 
   public void hideContent() {
-    myCoursePanel.setVisible(false);
+    myCourseDescriptionPanel.setVisible(false);
   }
 
   @Nullable

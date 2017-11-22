@@ -276,6 +276,8 @@ public class CoursesPanel extends JPanel {
     myCoursesList.setModel(listModel);
     if (myCoursesList.getItemsCount() > 0) {
       myCoursesList.setSelectedIndex(0);
+    } else {
+      myCoursePanel.hideContent();
     }
     if (courseToSelect == null) {
       return;
