@@ -4,11 +4,13 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
@@ -19,31 +21,29 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.BooleanFunction;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.courseGeneration.ProjectGenerator;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepic.StepicNames;
+import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
 import com.jetbrains.edu.python.learning.PyConfigurator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
-import com.jetbrains.python.newProject.PythonProjectGenerator;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.psi.LanguageLevel;
-import com.jetbrains.python.remote.PyProjectSynchronizer;
 import com.jetbrains.python.sdk.PyDetectedSdk;
 import com.jetbrains.python.sdk.PySdkExtKt;
 import com.jetbrains.python.sdk.PythonSdkType;
 import com.jetbrains.python.sdk.PythonSdkUpdater;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,43 +51,44 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewProjectSettings>
-  implements CourseProjectGenerator<PyNewProjectSettings> {
-
+public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewProjectSettings> {
   private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
   private static final String NO_PYTHON_INTERPRETER = "<html><u>Add</u> python interpreter.</html>";
 
-  private final Course myCourse;
-  private final ProjectGenerator myGenerator;
-
-  private ValidationResult myValidationResult = new ValidationResult("selected course is not valid");
-
   public PyDirectoryProjectGenerator(@NotNull Course course) {
-    myCourse = course;
-    myGenerator = new ProjectGenerator();
-  }
-
-  @Nls
-  @NotNull
-  @Override
-  public String getName() {
-    return "Educational";
+    super(course);
   }
 
   @Override
-  public void configureProject(@NotNull final Project project, @NotNull final VirtualFile baseDir,
-                               @NotNull PyNewProjectSettings settings,
-                               @NotNull Module module,
-                               @Nullable PyProjectSynchronizer synchronizer) {
+  public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir,
+                              @NotNull PyNewProjectSettings settings, @NotNull Module module) {
     if (myCourse.isStudy()) {
-      myGenerator.generateProject(project, baseDir, myCourse);
-      ApplicationManager.getApplication().runWriteAction(() -> createTestHelper(project, baseDir));
+      createStudyStructure(project, baseDir, myCourse);
     } else {
-      configureNewCourseProject(project, baseDir);
+      createCourseCreatorStructure(project, baseDir);
     }
   }
 
-  private void configureNewCourseProject(@NotNull Project project, @NotNull VirtualFile baseDir) {
+  public static void createStudyStructure(@NotNull final Project project, @NotNull final VirtualFile baseDir,
+                                          @NotNull final Course courseInfo) {
+    final Course course = GeneratorUtils.initializeCourse(project, courseInfo);
+    if (course == null) return;
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      GeneratorUtils.createCourse(course, baseDir);
+      EduUtils.openFirstTask(course, project);
+      EduUsagesCollector.projectTypeCreated(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
+
+      if (course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
+        StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
+        stepikSolutionsLoader.loadSolutions(ProgressIndicatorProvider.getGlobalProgressIndicator(), course);
+        EduUsagesCollector.progressOnGenerateCourse();
+        PropertiesComponent.getInstance(project).setValue(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
+      }
+      createTestHelper(project, baseDir);
+    });
+  }
+
+  private void createCourseCreatorStructure(@NotNull Project project, @NotNull VirtualFile baseDir) {
     StudyTaskManager.getInstance(project).setCourse(myCourse);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
@@ -115,34 +116,29 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
 
   @NotNull
   @Override
-  public ValidationResult validate() {
+  public ValidationResult validate(@NotNull String baseDirPath) {
     final List<Sdk> sdks = getAllSdks();
 
-    ValidationResult validationResult;
+    ValidationResult validationResult = ValidationResult.OK;
     if (sdks.isEmpty()) {
       validationResult = new ValidationResult(NO_PYTHON_INTERPRETER);
-    } else {
-      validationResult = ValidationResult.OK;
     }
 
     return validationResult;
   }
 
-  @NotNull
-  @Override
-  public ValidationResult validate(@NotNull String s) {
-    ValidationResult validationResult = validate();
-    if (!validationResult.isOk()) {
-      myValidationResult = validationResult;
-    }
-
-    return myValidationResult;
-  }
-
   @Override
   public boolean beforeProjectGenerated() {
-    BooleanFunction<PythonProjectGenerator> function = beforeProjectGenerated(null);
-    return function != null && function.fun(this);
+    if (!(myCourse instanceof RemoteCourse)) return true;
+    final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
+    if (remoteCourse.getId() > 0) {
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),
+            EduSettings.getInstance().getUser()));
+      }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
+    }
+    return true;
   }
 
   @Override
@@ -155,23 +151,6 @@ public class PyDirectoryProjectGenerator extends PythonProjectGenerator<PyNewPro
     }
     sdk = updateSdkIfNeeded(project, sdk);
     SdkConfigurationUtil.setDirectoryProjectSdk(project, sdk);
-  }
-
-  @Nullable
-  @Override
-  public BooleanFunction<PythonProjectGenerator> beforeProjectGenerated(@Nullable Sdk sdk) {
-    return generator -> {
-      if (!(myCourse instanceof RemoteCourse)) return true;
-      final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
-      if (remoteCourse.getId() > 0) {
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-          ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-          return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),
-                                                                              EduSettings.getInstance().getUser()));
-        }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
-      }
-      return true;
-    };
   }
 
   public void createAndAddVirtualEnv(@NotNull Project project, @NotNull PyNewProjectSettings settings) {

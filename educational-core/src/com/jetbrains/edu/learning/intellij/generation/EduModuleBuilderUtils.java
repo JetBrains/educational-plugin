@@ -12,7 +12,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.InvalidDataException;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -37,14 +36,13 @@ public class EduModuleBuilderUtils {
                                                 @NotNull Project project,
                                                 @NotNull Course course,
                                                 @Nullable String moduleDir) throws JDOMException, ModuleWithNameAlreadyExists, ConfigurationException, IOException {
-    GeneratorUtils.generateProject(project, course);
-    updateAdaptiveCourseTaskFileNames(project, course);
-
-    course = StudyTaskManager.getInstance(project).getCourse();
+    course = GeneratorUtils.initializeCourse(project, course);
     if (course == null) {
       LOG.info("failed to generate course");
       return;
     }
+
+    updateAdaptiveCourseTaskFileNames(project, course);
     createCourseModuleContent(moduleModel, project, course, moduleDir);
   }
 
