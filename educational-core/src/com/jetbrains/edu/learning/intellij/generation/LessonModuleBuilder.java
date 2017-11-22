@@ -8,7 +8,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -61,7 +60,7 @@ public class LessonModuleBuilder extends EduBaseIntellijModuleBuilder {
 
     @Override
     public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
-        setSourcePaths(Collections.<Pair<String, String>>emptyList());
+        setSourcePaths(Collections.emptyList());
         super.setupRootModel(rootModel);
     }
 }

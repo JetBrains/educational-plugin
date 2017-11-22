@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.intellij.generation;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.DefaultLogger;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -30,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class IntellijCourseProjectGeneratorBase implements CourseProjectGenerator<JdkProjectSettings> {
 
-  private static final Logger LOG = DefaultLogger.getInstance(IntellijCourseProjectGeneratorBase.class);
+  private static final Logger LOG = Logger.getInstance(IntellijCourseProjectGeneratorBase.class);
 
   protected final Course myCourse;
 
