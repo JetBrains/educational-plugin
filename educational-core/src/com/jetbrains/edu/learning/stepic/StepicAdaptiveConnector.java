@@ -59,6 +59,12 @@ public class StepicAdaptiveConnector {
   public static final String LOADING_NEXT_RECOMMENDATION = "Loading Next Recommendation";
   private static final Logger LOG = Logger.getInstance(StepicAdaptiveConnector.class);
   private static final int CONNECTION_TIMEOUT = 60 * 1000;
+  private static final Map<String, String> LANGUAGES = new HashMap<String, String>() {
+    {
+      put("Java", "java8");
+      put("Python", "python3");
+  }
+  };
 
   @Nullable
   public static Task getNextRecommendation(@NotNull Project project, @NotNull RemoteCourse course) {
@@ -358,11 +364,8 @@ public class StepicAdaptiveConnector {
   private static String getCodeTemplateForTask(@NotNull Language language,
                                                @Nullable LinkedTreeMap codeTemplates) {
     if (codeTemplates != null) {
-      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
-      if (configurator != null) {
-        final String languageString = configurator.getStepikDefaultLanguage();
-        return (String)codeTemplates.get(languageString);
-      }
+      final String languageString = LANGUAGES.get(language.getDisplayName());
+      return (String)codeTemplates.get(languageString);
     }
 
     return null;
@@ -428,12 +431,7 @@ public class StepicAdaptiveConnector {
       if (editor != null) {
         String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
         final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();
-        final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(courseLanguage);
-        if (configurator == null) {
-          LOG.warn("No applicable configurator found to check task");
-          return new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
-        }
-        String defaultLanguage = configurator.getStepikDefaultLanguage();
+        String defaultLanguage = LANGUAGES.get(courseLanguage.getDisplayName());
         final StepicWrappers.SubmissionToPostWrapper submissionToPost =
           new StepicWrappers.SubmissionToPostWrapper(String.valueOf(attemptId), defaultLanguage, answer);
         return doAdaptiveCheck(submissionToPost, attemptId, user.getId());

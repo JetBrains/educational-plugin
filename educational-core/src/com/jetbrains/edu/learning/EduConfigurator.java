@@ -38,15 +38,6 @@ public interface EduConfigurator<Settings> {
   String getTestFileName();
 
   /**
-   * Default language name used to publish submissions to stepik
-   * @return
-   */
-  @NotNull
-  default String getStepikDefaultLanguage() {
-    return "";
-  }
-
-  /**
    * Used in educator plugin to filter files to be packed into course archive
    */
   boolean excludeFromArchive(@NotNull String name);
