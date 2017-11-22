@@ -4,7 +4,6 @@ import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.DefaultLogger;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -18,10 +17,10 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.util.messages.MessageBusConnection;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -39,7 +38,7 @@ import static com.jetbrains.edu.learning.stepic.StepicConnector.getLastSubmissio
 import static com.jetbrains.edu.learning.stepic.StepicConnector.removeAllTags;
 
 public class StepikSolutionsLoader implements Disposable{
-  private static final Logger LOG = DefaultLogger.getInstance(StepikSolutionsLoader.class);
+  private static final Logger LOG = Logger.getInstance(StepikSolutionsLoader.class);
   private static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
   private static final String PROGRESS_ID_PREFIX = "77-";
   private final HashMap<Integer, Future> myFutures = new HashMap<>();
