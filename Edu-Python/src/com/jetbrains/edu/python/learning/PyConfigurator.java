@@ -41,13 +41,7 @@ import java.util.List;
     return TESTS_PY;
   }
 
-  @NotNull
-  @Override
-  public String getStepikDefaultLanguage() {
-    return "python3";
-  }
-
-  @Override
+    @Override
   public boolean excludeFromArchive(@NotNull String path) {
     return path.contains("__pycache__") || path.endsWith(".pyc");
   }

@@ -31,12 +31,6 @@ public class JConfigurator extends EduConfiguratorBase {
     return TEST_JAVA;
   }
 
-  @NotNull
-  @Override
-  public String getStepikDefaultLanguage() {
-    return "java8";
-  }
-
   @Override
   public boolean isTestFile(VirtualFile file) {
     String name = file.getName();
