@@ -10,6 +10,8 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
 import icons.EducationalCoreIcons;
 
+import java.util.List;
+
 public class BrowseCoursesAction extends AnAction {
   public BrowseCoursesAction() {
     super("Browse Courses", "Browse list of available courses", EducationalCoreIcons.Course);
@@ -17,7 +19,10 @@ public class BrowseCoursesAction extends AnAction {
 
   @Override
   public void actionPerformed(AnActionEvent e) {
-    CoursesPanel panel = new CoursesPanel();
+    List<Course> courses = CoursesPanel.getCoursesUnderProgress();
+    if (courses == null) return;
+
+    CoursesPanel panel = new CoursesPanel(courses);
     DialogBuilder dialogBuilder = new DialogBuilder().title("Select Course").centerPanel(panel);
     dialogBuilder.addOkAction().setText("Join");
     panel.addCourseValidationListener(dialogBuilder::setOkActionEnabled);
