@@ -302,7 +302,7 @@ public class StepikFormatTest {
 
   @NotNull
   private static String getTestDataPath() {
-    return FileUtil.join("testData/stepic");
+    return FileUtil.join("testData/stepik");
   }
 
   private static AnswerPlaceholderSubtaskInfo createSubtaskInfo(String placeholderText, String possibleAnswer, List<String> hints) {
