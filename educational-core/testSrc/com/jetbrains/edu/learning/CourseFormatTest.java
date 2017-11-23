@@ -4,8 +4,10 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.util.io.FileUtil;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -18,6 +20,7 @@ import org.junit.rules.TestName;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.TestCase.*;
 import static org.junit.Assert.assertNotNull;
@@ -62,6 +65,144 @@ public class CourseFormatTest {
     assertTrue(task instanceof TaskWithSubtasks);
     TaskWithSubtasks taskWithSubtasks = (TaskWithSubtasks) task;
     assertEquals(1, taskWithSubtasks.getLastSubtaskIndex());
+  }
+
+  @Test
+  public void testDescription() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<Lesson> lessons = course.getLessons();
+    assertFalse("No lessons found", lessons.isEmpty());
+    final Lesson lesson = lessons.get(0);
+    final List<Task> taskList = lesson.getTaskList();
+    assertFalse("No tasks found", taskList.isEmpty());
+    final Task task = taskList.get(0);
+    assertTrue(task instanceof EduTask);
+    EduTask eduTask = (EduTask) task;
+
+    assertEquals("First task description", eduTask.getTaskDescription(false));
+  }
+
+  @Test
+  public void testHint() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<Lesson> lessons = course.getLessons();
+    assertFalse("No lessons found", lessons.isEmpty());
+    final Lesson lesson = lessons.get(0);
+    final List<Task> taskList = lesson.getTaskList();
+    assertFalse("No tasks found", taskList.isEmpty());
+    final Task task = taskList.get(0);
+    assertTrue(task instanceof EduTask);
+    EduTask eduTask = (EduTask) task;
+
+    final TaskFile taskFile = eduTask.getTaskFile("task.py");
+    assertNotNull(taskFile);
+    final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
+    assertEquals(1, answerPlaceholders.size());
+    final List<String> hints = answerPlaceholders.get(0).getHints();
+    assertEquals(1, hints.size());
+    assertEquals("my first hint", hints.get(0));
+  }
+
+  @Test
+  public void testPlaceholderText() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<Lesson> lessons = course.getLessons();
+    assertFalse("No lessons found", lessons.isEmpty());
+    final Lesson lesson = lessons.get(0);
+    final List<Task> taskList = lesson.getTaskList();
+    assertFalse("No tasks found", taskList.isEmpty());
+    final Task task = taskList.get(0);
+    assertTrue(task instanceof EduTask);
+    EduTask eduTask = (EduTask) task;
+
+    final TaskFile taskFile = eduTask.getTaskFile("task.py");
+    assertNotNull(taskFile);
+    final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
+    assertEquals(1, answerPlaceholders.size());
+    assertEquals("write function body", answerPlaceholders.get(0).getTaskText());
+  }
+
+  @Test
+  public void testPossibleAnswer() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<Lesson> lessons = course.getLessons();
+    assertFalse("No lessons found", lessons.isEmpty());
+    final Lesson lesson = lessons.get(0);
+    final List<Task> taskList = lesson.getTaskList();
+    assertFalse("No tasks found", taskList.isEmpty());
+    final Task task = taskList.get(0);
+    assertTrue(task instanceof EduTask);
+    EduTask eduTask = (EduTask) task;
+
+    final TaskFile taskFile = eduTask.getTaskFile("task.py");
+    assertNotNull(taskFile);
+    final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
+    assertEquals(1, answerPlaceholders.size());
+    assertEquals("pass", answerPlaceholders.get(0).getPossibleAnswer());
+  }
+
+  @Test
+  public void testCourseName() throws IOException {
+    final Course course = getCourseFromJson();
+    assertEquals("My Python Course", course.getName());
+  }
+
+  @Test
+  public void testCourseProgrammingLanguage() throws IOException {
+    final Course course = getCourseFromJson();
+    assertEquals("Python", course.getLanguageID());
+  }
+
+  @Test
+  public void testCourseLanguage() throws IOException {
+    final Course course = getCourseFromJson();
+    assertEquals("Russian", course.getHumanLanguage());
+  }
+
+  @Test
+  public void testCourseDescription() throws IOException {
+    final Course course = getCourseFromJson();
+    assertEquals("Best course ever", course.getDescription());
+  }
+
+  @Test
+  public void testTestFiles() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<Lesson> lessons = course.getLessons();
+    assertFalse("No lessons found", lessons.isEmpty());
+    final Lesson lesson = lessons.get(0);
+    final List<Task> taskList = lesson.getTaskList();
+    assertFalse("No tasks found", taskList.isEmpty());
+    final Task task = taskList.get(0);
+    assertEquals(1, task.getTestsText().size());
+  }
+
+  @Test
+  public void testTestFilesCustomName() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<Lesson> lessons = course.getLessons();
+    assertFalse("No lessons found", lessons.isEmpty());
+    final Lesson lesson = lessons.get(0);
+    final List<Task> taskList = lesson.getTaskList();
+    assertFalse("No tasks found", taskList.isEmpty());
+    final Task task = taskList.get(0);
+    final Map<String, String> testsText = task.getTestsText();
+    assertEquals(2, testsText.size());
+    assertTrue(testsText.containsKey("super_test.py"));
+  }
+
+  @Test
+  public void testStudentTaskText() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<Lesson> lessons = course.getLessons();
+    assertFalse("No lessons found", lessons.isEmpty());
+    final Lesson lesson = lessons.get(0);
+    final List<Task> taskList = lesson.getTaskList();
+    assertFalse("No tasks found", taskList.isEmpty());
+    final Task task = taskList.get(0);
+    final TaskFile taskFile = task.getTaskFile("my_task.py");
+    assertNotNull(taskFile);
+    assertEquals("def foo():\n    write function body\n", taskFile.text);
   }
 
   private Course getCourseFromJson() throws IOException {
