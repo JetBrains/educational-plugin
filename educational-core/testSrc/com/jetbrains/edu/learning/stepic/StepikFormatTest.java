@@ -286,6 +286,35 @@ public class StepikFormatTest {
     assertEquals("type your name", taskFile.text.substring(offset, offset + length));
   }
 
+  @Test
+  public void testTaskStatuses() throws IOException {
+    Gson gson = getGson();
+    String jsonText = loadJsonText();
+    StepicWrappers.ProgressContainer progressContainer = gson.fromJson(jsonText, StepicWrappers.ProgressContainer.class);
+    assertNotNull(progressContainer);
+    List<StepicWrappers.ProgressContainer.Progress> progressList = progressContainer.progresses;
+    assertNotNull(progressList);
+    final Boolean[] statuses = progressList.stream().map(progress -> progress.isPassed).toArray(Boolean[]::new);
+    assertNotNull(statuses);
+    assertEquals(50, statuses.length);
+  }
+
+  @Test
+  public void testLastSubmission() throws IOException {
+    Gson gson = getGson();
+    String jsonText = loadJsonText();
+    StepicWrappers.SubmissionsWrapper submissionsWrapper = gson.fromJson(jsonText, StepicWrappers.SubmissionsWrapper.class);
+    assertNotNull(submissionsWrapper);
+    assertNotNull(submissionsWrapper.submissions);
+    assertEquals(20, submissionsWrapper.submissions.length);
+    final StepicWrappers.Submission.Reply reply = submissionsWrapper.submissions[0].reply;
+    assertNotNull(reply);
+    List<StepicWrappers.SolutionFile> solutionFiles = reply.solution;
+    assertEquals(1, solutionFiles.size());
+    assertEquals("hello_world.py", solutionFiles.get(0).name);
+    assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).text);
+  }
+
   @NotNull
   private static Gson getGson() {
     return new GsonBuilder()
