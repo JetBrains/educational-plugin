@@ -340,6 +340,13 @@ public class EduUtils {
   @Nullable
   public static EduEditor getSelectedStudyEditor(@NotNull final Project project) {
     try {
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        final VirtualFile currentFile = FileEditorManagerEx.getInstanceEx(project).getCurrentFile();
+        assert currentFile != null;
+        final FileEditor[] fileEditors = FileEditorManagerEx.getInstanceEx(project).getEditors(currentFile);
+        assert fileEditors.length == 1;
+        return new EduEditor(project, currentFile);
+      }
       final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
         getSelectedEditor().getSelectedEditorWithProvider().getFirst();
       if (fileEditor instanceof EduEditor) {
