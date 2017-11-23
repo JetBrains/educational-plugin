@@ -1,0 +1,39 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "users": [
+    {
+      "id": 625832,
+      "profile": 625832,
+      "is_private": false,
+      "is_active": true,
+      "is_guest": false,
+      "is_organization": false,
+      "short_bio": "",
+      "details": "",
+      "first_name": "Ekaterina",
+      "last_name": "Tuzova",
+      "full_name": "Ekaterina Tuzova",
+      "alias": null,
+      "avatar": "https://stepik.org/users/625832/2f4419dce361a32b38142eb817ee1df944da1637/avatar.svg",
+      "cover": null,
+      "city": null,
+      "level": 4,
+      "level_title": "user",
+      "tag_progresses": [],
+      "knowledge": 11,
+      "knowledge_rank": 167225,
+      "reputation": 0,
+      "reputation_rank": null,
+      "join_date": "2015-01-15T10:32:34Z",
+      "social_profiles": [],
+      "solved_steps_count": 27,
+      "created_courses_count": 1,
+      "created_lessons_count": 723,
+      "issued_certificates_count": 0
+    }
+  ]
+}
