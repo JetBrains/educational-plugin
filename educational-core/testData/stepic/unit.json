@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "units": [
+    {
+      "id": 3584,
+      "section": 662,
+      "lesson": 13416,
+      "assignments": [
+        127610,
+        127611
+      ],
+      "position": 1,
+      "progress": "80-3584",
+      "begin_date": null,
+      "end_date": null,
+      "soft_deadline": null,
+      "hard_deadline": null,
+      "grading_policy": "halved",
+      "begin_date_source": null,
+      "end_date_source": null,
+      "soft_deadline_source": null,
+      "hard_deadline_source": null,
+      "grading_policy_source": null,
+      "is_active": true,
+      "create_date": "2015-08-25T08:57:06Z",
+      "update_date": "2017-07-26T11:52:26Z"
+    }
+  ]
+}

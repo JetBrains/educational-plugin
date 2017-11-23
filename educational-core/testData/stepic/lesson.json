@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "lessons": [
+    {
+      "id": 13416,
+      "steps": [
+        186010,
+        186011
+      ],
+      "actions": {
+        "view_statistics": "/lesson/13416/stats/",
+        "clone_lesson": "/lesson/13416/clone/",
+        "view_all_submissions": "#",
+        "edit_permissions": "/lesson/13416/permissions/",
+        "delete_lesson": "#",
+        "edit_lesson": "#",
+        "attachments": "/lesson/13416/attachments/"
+      },
+      "tags": [],
+      "required_tags": [],
+      "progress": "76-13416",
+      "subscriptions": [
+        "31-76-13416",
+        "30-76-13416"
+      ],
+      "viewed_by": 773,
+      "passed_by": 754,
+      "time_to_complete": 540,
+      "cover_url": null,
+      "is_comments_enabled": true,
+      "owner": 625832,
+      "language": "en",
+      "is_featured": false,
+      "is_public": true,
+      "title": "Introduction",
+      "slug": "Introduction-13416",
+      "create_date": "2015-08-25T08:57:05Z",
+      "update_date": "2017-07-26T11:52:26Z",
+      "learners_group": 34884,
+      "testers_group": 64960,
+      "moderators_group": 120762,
+      "teachers_group": 34883,
+      "admins_group": 95972,
+      "discussions_count": 4,
+      "discussion_proxy": "76-13416-1",
+      "discussion_threads": [
+        "76-13416-1"
+      ],
+      "epic_count": 0,
+      "abuse_count": 0,
+      "vote": "76-13416",
+      "lti_consumer_key": "",
+      "lti_secret_key": ""
+    }
+  ]
+}
