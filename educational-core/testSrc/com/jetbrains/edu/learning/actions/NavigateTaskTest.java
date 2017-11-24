@@ -84,8 +84,8 @@ public class NavigateTaskTest extends EduTestCase {
     course.setName("Edu test course");
     StudyTaskManager.getInstance(myFixture.getProject()).setCourse(course);
 
-    Lesson lesson1 = createLesson(1);
-    Lesson lesson2 = createLesson(2);
+    Lesson lesson1 = createLesson(1, 2);
+    Lesson lesson2 = createLesson(2, 2);
     course.addLesson(lesson1);
     course.addLesson(lesson2);
     course.initCourse(false);

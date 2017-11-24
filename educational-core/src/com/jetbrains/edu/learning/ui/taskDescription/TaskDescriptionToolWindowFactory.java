@@ -30,7 +30,7 @@ public class TaskDescriptionToolWindowFactory implements ToolWindowFactory, Dumb
       else {
         taskDescriptionToolWindow = new SwingToolWindow();
       }
-      taskDescriptionToolWindow.init(project, true);
+      taskDescriptionToolWindow.init(project);
       final ContentManager contentManager = toolWindow.getContentManager();
       final Content content = contentManager.getFactory().createContent(taskDescriptionToolWindow, null, false);
       contentManager.addContent(content);
