@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.util.PropertiesComponent;
@@ -21,13 +21,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class StepicUpdater {
+public class StepikUpdater {
   private static final long CHECK_INTERVAL = DateFormatUtil.DAY;
 
   private final Runnable myCheckRunnable = () -> updateCourseList().doWhenDone(() -> queueNextCheck(CHECK_INTERVAL));
   private final Alarm myCheckForUpdatesAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
 
-  public StepicUpdater(@NotNull Application application) {
+  public StepikUpdater(@NotNull Application application) {
     scheduleCourseListUpdate(application);
   }
 
@@ -53,7 +53,7 @@ public class StepicUpdater {
   private static ActionCallback updateCourseList() {
     ActionCallback callback = new ActionCallback();
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      final List<Course> courses = StepicConnector.getCourses(null);
+      final List<Course> courses = StepikConnector.getCourses(null);
       EduSettings.getInstance().setLastTimeChecked(System.currentTimeMillis());
 
       if (!courses.isEmpty()) {

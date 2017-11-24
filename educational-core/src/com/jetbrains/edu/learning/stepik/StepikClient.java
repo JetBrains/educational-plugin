@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -36,12 +36,12 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StepicClient {
-  private static final Logger LOG = Logger.getInstance(StepicClient.class.getName());
+public class StepikClient {
+  private static final Logger LOG = Logger.getInstance(StepikClient.class.getName());
   private static CloseableHttpClient ourClient;
   private static final int TIMEOUT_SECONDS = 10;
 
-  private StepicClient() {
+  private StepikClient() {
   }
 
   @NotNull
@@ -52,13 +52,13 @@ public class StepicClient {
     return ourClient;
   }
 
-  public static <T> T getFromStepic(String link, final Class<T> container) throws IOException {
-    return getFromStepic(link, container, getHttpClient());
+  public static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
+    return getFromStepik(link, container, getHttpClient());
   }
 
-  static <T> T getFromStepic(String link, final Class<T> container, @NotNull final CloseableHttpClient client) throws IOException {
+  static <T> T getFromStepik(String link, final Class<T> container, @NotNull final CloseableHttpClient client) throws IOException {
     if (!link.startsWith("/")) link = "/" + link;
-    final HttpGet request = new HttpGet(StepicNames.STEPIC_API_URL + link);
+    final HttpGet request = new HttpGet(StepikNames.STEPIK_API_URL + link);
     addTimeout(request);
 
     final CloseableHttpResponse response = client.execute(request);
@@ -67,9 +67,9 @@ public class StepicClient {
     final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
     EntityUtils.consume(responseEntity);
     if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
-      throw new IOException("Stepic returned non 200 status code " + responseString);
+      throw new IOException("Stepik returned non 200 status code " + responseString);
     }
-    return deserializeStepicResponse(container, responseString);
+    return deserializeStepikResponse(container, responseString);
   }
 
   private static void addTimeout(@NotNull HttpGet request) {
@@ -82,10 +82,10 @@ public class StepicClient {
     request.setConfig(requestConfig);
   }
 
-  static <T> T deserializeStepicResponse(Class<T> container, String responseString) {
+  static <T> T deserializeStepikResponse(Class<T> container, String responseString) {
     Gson gson =
       new GsonBuilder()
-          .registerTypeAdapter(StepicWrappers.StepOptions.class, new SerializationUtils.Json.StepicStepOptionsAdapter())
+          .registerTypeAdapter(StepikWrappers.StepOptions.class, new SerializationUtils.Json.StepikStepOptionsAdapter())
           .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.StepikLessonAdapter())
           .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
@@ -105,7 +105,7 @@ public class StepicClient {
       setMaxConnPerRoute(100000).setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE);
 
     final HttpConfigurable proxyConfigurable = HttpConfigurable.getInstance();
-    final List<Proxy> proxies = proxyConfigurable.getOnlyBySettingsSelector().select(URI.create(StepicNames.STEPIC_URL));
+    final List<Proxy> proxies = proxyConfigurable.getOnlyBySettingsSelector().select(URI.create(StepikNames.STEPIK_URL));
     final InetSocketAddress address = proxies.size() > 0 ? (InetSocketAddress)proxies.get(0).address() : null;
     if (address != null) {
       builder.setProxy(new HttpHost(address.getHostName(), address.getPort()));
@@ -127,12 +127,12 @@ public class StepicClient {
 
     final List<BasicHeader> headers = new ArrayList<>();
     headers.add(new BasicHeader("Authorization", "Bearer " + token));
-    headers.add(new BasicHeader("Content-type", StepicNames.CONTENT_TYPE_APP_JSON));
+    headers.add(new BasicHeader("Content-type", StepikNames.CONTENT_TYPE_APP_JSON));
     CloseableHttpClient httpClient = getBuilder().setDefaultHeaders(headers).build();
 
     try {
-      final StepicWrappers.AuthorWrapper wrapper =
-        getFromStepic(StepicNames.CURRENT_USER, StepicWrappers.AuthorWrapper.class, httpClient);
+      final StepikWrappers.AuthorWrapper wrapper =
+        getFromStepik(StepikNames.CURRENT_USER, StepikWrappers.AuthorWrapper.class, httpClient);
       if (wrapper != null && !wrapper.users.isEmpty()) {
         StepicUser user = wrapper.users.get(0);
         return user != null && !user.isGuest();

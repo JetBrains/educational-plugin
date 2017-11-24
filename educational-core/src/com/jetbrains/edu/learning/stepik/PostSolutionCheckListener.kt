@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic
+package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
@@ -14,7 +14,7 @@ class PostSolutionCheckListener : CheckListener {
         val course = StudyTaskManager.getInstance(project).course
         val status = task.status
         if (EduSettings.getInstance().user != null && course != null && course.isStudy && status != CheckStatus.Unchecked && task is EduTask) {
-            StepicConnector.postSolution(task, status == CheckStatus.Solved, project)
+            StepikConnector.postSolution(task, status == CheckStatus.Solved, project)
         }
     }
 }

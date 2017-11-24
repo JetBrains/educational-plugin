@@ -213,7 +213,7 @@ def check_samples(samples=()):
                     "\n \n"
                     "Your result:\n{}".format(str.strip(sample[0]), str.strip(sample[1]), "\n".join(output)))
                 return
-        set_congratulation_message("All test from samples passed. Now we are checking your solution on Stepic server.")
+        set_congratulation_message("All test from samples passed. Now we are checking your solution on Stepik server.")
 
     passed()
 

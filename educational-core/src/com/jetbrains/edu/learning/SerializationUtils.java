@@ -20,9 +20,9 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicNames;
-import com.jetbrains.edu.learning.stepic.StepicWrappers;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Element;
@@ -606,9 +606,9 @@ public class SerializationUtils {
     private Json() {
     }
 
-    public static class StepicStepOptionsAdapter implements JsonDeserializer<StepicWrappers.StepOptions> {
+    public static class StepikStepOptionsAdapter implements JsonDeserializer<StepikWrappers.StepOptions> {
       @Override
-      public StepicWrappers.StepOptions deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      public StepikWrappers.StepOptions deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
         throws JsonParseException {
         JsonObject stepOptionsJson = json.getAsJsonObject();
         JsonPrimitive versionJson = stepOptionsJson.getAsJsonPrimitive(FORMAT_VERSION);
@@ -628,17 +628,17 @@ public class SerializationUtils {
           //  stepOptionsJson = convertToFourthVersion(stepOptionsJson);
         }
         convertSubtaskInfosToMap(stepOptionsJson);
-        StepicWrappers.StepOptions stepOptions =
+        StepikWrappers.StepOptions stepOptions =
           new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
-            .fromJson(stepOptionsJson, StepicWrappers.StepOptions.class);
-        stepOptions.formatVersion = StepicConnector.CURRENT_VERSION;
+            .fromJson(stepOptionsJson, StepikWrappers.StepOptions.class);
+        stepOptions.formatVersion = StepikConnector.CURRENT_VERSION;
         return stepOptions;
       }
 
       @NotNull
       private static JsonObject convertToFourthVersion(JsonObject stepOptionsJson) {
         if (stepOptionsJson.has(TITLE) &&
-            StepicNames.PYCHARM_ADDITIONAL.equals(stepOptionsJson.get(TITLE).getAsString())) {
+            StepikNames.PYCHARM_ADDITIONAL.equals(stepOptionsJson.get(TITLE).getAsString())) {
           stepOptionsJson.remove(TITLE);
           stepOptionsJson.add(TITLE, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
         }
@@ -788,7 +788,7 @@ public class SerializationUtils {
             .registerTypeAdapter(Task.class, new TaskAdapter()).create();
         final Lesson lesson = gson.fromJson(json, Lesson.class);
         final String name = lesson.getName();
-        if (StepicNames.PYCHARM_ADDITIONAL.equals(name)) {
+        if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {
           lesson.setName(EduNames.ADDITIONAL_MATERIALS);
         }
         return lesson;
@@ -800,10 +800,10 @@ public class SerializationUtils {
       public Lesson deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         Gson gson = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(StepicWrappers.StepOptions.class, new StepicStepOptionsAdapter()).create();
+            .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter()).create();
         final Lesson lesson = gson.fromJson(json, Lesson.class);
         final String name = lesson.getName();
-        if (StepicNames.PYCHARM_ADDITIONAL.equals(name)) {
+        if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {
           lesson.setName(EduNames.ADDITIONAL_MATERIALS);
         }
         return lesson;
@@ -825,7 +825,7 @@ public class SerializationUtils {
       public Task deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
         final JsonObject object = json.getAsJsonObject();
-        if (object.has(NAME) && StepicNames.PYCHARM_ADDITIONAL.equals(object.get(NAME).getAsString())) {
+        if (object.has(NAME) && StepikNames.PYCHARM_ADDITIONAL.equals(object.get(NAME).getAsString())) {
           object.remove(NAME);
           object.add(NAME, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
         }
@@ -850,7 +850,7 @@ public class SerializationUtils {
       }
     }
 
-    public static class StepicAnswerPlaceholderAdapter implements JsonSerializer<AnswerPlaceholder> {
+    public static class StepikAnswerPlaceholderAdapter implements JsonSerializer<AnswerPlaceholder> {
       @Override
       public JsonElement serialize(AnswerPlaceholder placeholder, Type typeOfSrc, JsonSerializationContext context) {
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();

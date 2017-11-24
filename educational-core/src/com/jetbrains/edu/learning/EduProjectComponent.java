@@ -51,7 +51,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.*;
+import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
@@ -68,7 +68,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
-import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
+import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
 
 public class EduProjectComponent implements ProjectComponent {
@@ -123,7 +123,7 @@ public class EduProjectComponent implements ProjectComponent {
                             .build());
         }
 
-        addStepicWidget();
+        addStepikWidget();
         selectStep(course);
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
@@ -160,8 +160,8 @@ public class EduProjectComponent implements ProjectComponent {
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
     if (!(course instanceof RemoteCourse) || !((RemoteCourse) course).isLoadSolutions()) return;
-    if (PropertiesComponent.getInstance(myProject).getBoolean(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
-      PropertiesComponent.getInstance(myProject).setValue(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
+    if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
+      PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
       return;
     }
     StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(myProject);
@@ -174,13 +174,13 @@ public class EduProjectComponent implements ProjectComponent {
     }
   }
 
-  private void addStepicWidget() {
-    StepicUserWidget widget = getStepicWidget();
+  private void addStepikWidget() {
+    StepikUserWidget widget = getStepikWidget();
     StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
     if (widget != null) {
-      statusBar.removeWidget(StepicUserWidget.ID);
+      statusBar.removeWidget(StepikUserWidget.ID);
     }
-    statusBar.addWidget(new StepicUserWidget(myProject), "before Position");
+    statusBar.addWidget(new StepikUserWidget(myProject), "before Position");
   }
 
   private void selectStep(@NotNull Course course) {
@@ -233,7 +233,7 @@ public class EduProjectComponent implements ProjectComponent {
   private void updateCourse() {
     final Course currentCourse = StudyTaskManager.getInstance(myProject).getCourse();
     if (currentCourse == null || !(currentCourse instanceof RemoteCourse)) return;
-    final Course course = StepicConnector.getCourse(myProject, (RemoteCourse)currentCourse);
+    final Course course = StepikConnector.getCourse(myProject, (RemoteCourse)currentCourse);
     if (course == null) return;
     course.initCourse(false);
 

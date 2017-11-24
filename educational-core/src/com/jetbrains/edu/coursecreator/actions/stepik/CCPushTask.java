@@ -11,13 +11,13 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.stepik.CCStepicConnector;
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.stepic.StepicNames;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
 public class CCPushTask extends DumbAwareAction {
@@ -91,12 +91,12 @@ public class CCPushTask extends DumbAwareAction {
     ProgressManager.getInstance().run(new Task.Modal(project, "Uploading Task", true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Uploading task to " + StepicNames.STEPIC_URL);
+        indicator.setText("Uploading task to " + StepikNames.STEPIK_URL);
         if (task.getStepId() <= 0) {
-          CCStepicConnector.postTask(project, task, lesson.getId());
+          CCStepikConnector.postTask(project, task, lesson.getId());
         }
         else {
-          CCStepicConnector.updateTask(project, task);
+          CCStepikConnector.updateTask(project, task);
         }
       }
     });
