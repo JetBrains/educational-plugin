@@ -345,7 +345,9 @@ public class EduUtils {
         assert currentFile != null;
         final FileEditor[] fileEditors = FileEditorManagerEx.getInstanceEx(project).getEditors(currentFile);
         assert fileEditors.length == 1;
-        return new EduEditor(project, currentFile);
+        final EduEditor eduEditor = new EduEditor(project, currentFile);
+        Disposer.register(fileEditors[0], eduEditor);
+        return eduEditor;
       }
       final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
         getSelectedEditor().getSelectedEditorWithProvider().getFirst();
