@@ -194,6 +194,7 @@ public class NavigationUtils {
 
   private static void updateProjectView(@NotNull Project project, @NotNull VirtualFile fileToActivate) {
     AbstractProjectViewPane viewPane = ProjectView.getInstance(project).getCurrentProjectViewPane();
+    FileEditorManager.getInstance(project).openFile(fileToActivate, true);
     if (viewPane == null) {
       return;
     }
@@ -227,6 +228,5 @@ public class NavigationUtils {
         tree.fireTreeCollapsed(path);
       }
     });
-    FileEditorManager.getInstance(project).openFile(fileToActivate, true);
   }
 }
