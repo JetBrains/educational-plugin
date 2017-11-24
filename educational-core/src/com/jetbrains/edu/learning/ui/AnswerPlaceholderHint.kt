@@ -7,39 +7,28 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.CCEditHintAction
-import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.ui.taskDescription.JavaFxToolWindow
-import com.jetbrains.edu.learning.ui.taskDescription.SwingToolWindow
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow
 import java.util.*
 
 open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
                                  private val myProject: Project) {
 
   companion object {
-    private val OUR_WARNING_MESSAGE = "Put the caret in the answer placeholder to get hint"
-    private val HINTS_NOT_AVAILABLE = "There is no hint for this answer placeholder"
+    val NO_PLACEHOLDER_MESSAGE = "Put the caret in the answer placeholder to get hint"
+    val HINTS_NOT_AVAILABLE = "There is no hint for this answer placeholder"
   }
 
-  val taskDescriptionToolWindow: TaskDescriptionToolWindow
+  val hintComponent: HintComponent = HintComponent()
+
   protected var myShownHintNumber = 0
   protected var isEditingMode = false
 
   init {
-    if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
-      taskDescriptionToolWindow = JavaFxToolWindow()
-    }
-    else {
-      taskDescriptionToolWindow = SwingToolWindow()
-    }
-    taskDescriptionToolWindow.init(myProject, false)
-
     if (myPlaceholder == null) {
-      taskDescriptionToolWindow.setText(OUR_WARNING_MESSAGE)
-      taskDescriptionToolWindow.setActionToolbar(DefaultActionGroup())
+      hintComponent.text = NO_PLACEHOLDER_MESSAGE
+      hintComponent.setActionToolbar(DefaultActionGroup())
     }
 
     val course = StudyTaskManager.getInstance(myProject).course
@@ -48,27 +37,26 @@ open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
       val hints = myPlaceholder?.hints
       if (hints != null) {
         group.addAll(Arrays.asList(GoBackward(), GoForward(), CCEditHintAction(myPlaceholder)))
-        taskDescriptionToolWindow.setActionToolbar(group)
+        hintComponent.setActionToolbar(group)
         setHintText(hints)
       }
     }
   }
 
-  protected fun setHintText(hints: List<String>) {
-    if (!hints.isEmpty()) {
-      taskDescriptionToolWindow.setText(hints[myShownHintNumber])
-    }
-    else {
-      myShownHintNumber = -1
-      taskDescriptionToolWindow.setText(HINTS_NOT_AVAILABLE)
-    }
+  private fun setHintText(hints: List<String>) = if (!hints.isEmpty()) {
+    hintComponent.setText(hints[myShownHintNumber])
+  } else {
+    myShownHintNumber = -1
+    hintComponent.setText(HINTS_NOT_AVAILABLE)
   }
+
+  fun getGoForwardAction(): GoForward = GoForward()
+  fun getGoBackwardAction(): GoBackward = GoBackward()
 
   inner class GoForward : AnAction("Next Hint", "Next Hint", AllIcons.Actions.Forward) {
 
-
     override fun actionPerformed(e: AnActionEvent) {
-      taskDescriptionToolWindow.setText(myPlaceholder!!.hints[++myShownHintNumber])
+      hintComponent.text = myPlaceholder!!.hints[++myShownHintNumber]
     }
 
     override fun update(e: AnActionEvent) {
@@ -78,8 +66,7 @@ open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
     }
   }
 
-  private fun updateVisibility(myPlaceholder: AnswerPlaceholder?,
-                            presentation: Presentation) {
+  private fun updateVisibility(myPlaceholder: AnswerPlaceholder?, presentation: Presentation) {
     val hasMultipleHints = myPlaceholder != null && myPlaceholder.hints.size > 1
     presentation.isVisible = !EduUtils.isStudentProject(myProject) || hasMultipleHints
   }
@@ -87,7 +74,7 @@ open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
   inner class GoBackward : AnAction("Previous Hint", "Previous Hint", AllIcons.Actions.Back) {
 
     override fun actionPerformed(e: AnActionEvent) {
-      taskDescriptionToolWindow.setText(myPlaceholder!!.hints[--myShownHintNumber])
+      hintComponent.text = myPlaceholder!!.hints[--myShownHintNumber]
     }
 
     override fun update(e: AnActionEvent) {

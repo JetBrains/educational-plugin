@@ -25,20 +25,19 @@ public abstract class EduTestCase extends LightPlatformCodeInsightFixtureTestCas
   protected void createCourse() throws IOException {}
 
   @NotNull
-  protected Lesson createLesson(int index) throws IOException {
+  protected Lesson createLesson(int index, int taskCount) throws IOException {
     Lesson lesson = new Lesson();
     lesson.setName("lesson" + index);
-    Task task1 = createTask(index, 1);
-    Task task2 = createTask(index, 2);
-    lesson.addTask(task1);
-    lesson.addTask(task2);
-
+    for (int i = 1; i <= taskCount; ++i) {
+      Task task = createTask(index, i);
+      lesson.addTask(task);
+    }
     lesson.setIndex(index);
     return lesson;
   }
 
   @NotNull
-  private Task createTask(int lessonIndex, int taskIndex) throws IOException {
+  protected Task createTask(int lessonIndex, int taskIndex) throws IOException {
     Task task = new EduTask();
     task.setName("task" + taskIndex);
     task.setIndex(taskIndex);

@@ -16,8 +16,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -28,7 +29,6 @@ import org.junit.ComparisonFailure;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -136,7 +136,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     new WriteCommandAction(null) {
       @Override
       protected void run(@NotNull Result result) {
-        final String openingTagRx = "<placeholder( taskText=\"(.+?)\")?( possibleAnswer=\"(.+?)\")?( hint=\"(.+?)\")?>";
+        final String openingTagRx = "<placeholder( taskText=\"(.+?)\")?( possibleAnswer=\"(.+?)\")?( hint=\"(.+?)\")?( hint2=\"(.+?)\")?>";
         final String closingTagRx = "</placeholder>";
         CharSequence text = document.getCharsSequence();
         final Matcher openingMatcher = Pattern.compile(openingTagRx).matcher(text);
@@ -156,9 +156,17 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
           if (possibleAnswer != null) {
             answerPlaceholder.setPossibleAnswer(possibleAnswer);
           }
+          final ArrayList<String> hints = ContainerUtil.newArrayList();
           String hint = openingMatcher.group(6);
           if (hint != null) {
-            answerPlaceholder.setHints(Collections.singletonList(hint));
+            hints.add(hint);
+          }
+          String hint2 = openingMatcher.group(8);
+          if (hint2 != null) {
+            hints.add(hint2);
+          }
+          if (!hints.isEmpty()) {
+            answerPlaceholder.setHints(hints);
           }
           answerPlaceholder.setOffset(openingMatcher.start());
           if (!closingMatcher.find(openingMatcher.end())) {

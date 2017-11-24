@@ -38,10 +38,13 @@ import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskTextAction;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.editor.EduFileEditorManagerListener;
@@ -51,7 +54,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.List;
 
@@ -78,13 +80,13 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     mySplitPane = new OnePixelSplitter(myVertical = true);
   }
 
-  public void init(@NotNull final Project project, final boolean isToolwindow) {
+  public void init(@NotNull final Project project) {
     final DefaultActionGroup group = getActionGroup(project);
     setActionToolbar(group);
 
     final JPanel panel = new JPanel(new BorderLayout());
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (isToolwindow && course != null && course.isAdaptive()) {
+    if (course != null && course.isAdaptive()) {
       panel.add(new StepicAdaptiveReactionsPanel(project), BorderLayout.NORTH);
     }
 
@@ -92,7 +94,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     panel.add(taskInfoPanel, BorderLayout.CENTER);
 
     final JPanel courseProgress = createCourseProgress(project);
-    if (isToolwindow && course != null && !course.isAdaptive() && course.isStudy()) {
+    if (course != null && !course.isAdaptive() && course.isStudy()) {
       panel.add(courseProgress, BorderLayout.SOUTH);
     }
 
@@ -102,19 +104,9 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
     setContent(mySplitPane);
 
-    if (isToolwindow) {
-      project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new EduFileEditorManagerListener(this, project));
-      Task task = EduUtils.getCurrentTask(project);
-      setCurrentTask(project, task);
-    }
-  }
-
-  public void setTopComponent(@NotNull final JComponent component) {
-    mySplitPane.setFirstComponent(component);
-  }
-
-  public void setDefaultTopComponent() {
-    mySplitPane.setFirstComponent(myContentPanel);
+    project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new EduFileEditorManagerListener(this, project));
+    Task task = EduUtils.getCurrentTask(project);
+    setCurrentTask(project, task);
   }
 
   public void setActionToolbar(DefaultActionGroup group) {
@@ -240,7 +232,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     });
 
     JComponent editorComponent = myEditor.getComponent();
-    editorComponent.setBorder(new EmptyBorder(10, 20, 0, 10));
+    editorComponent.setBorder(JBUI.Borders.empty(10, 20, 0, 10));
     editorComponent.setBackground(EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground());
     EditorSettings editorSettings = myEditor.getSettings();
     editorSettings.setLineMarkerAreaShown(false);
