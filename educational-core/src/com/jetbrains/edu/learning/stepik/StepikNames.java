@@ -1,10 +1,10 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
-public class StepicNames {
+public class StepikNames {
   public static final String ARE_SOLUTIONS_UPDATED_PROPERTY = "Educational.StepikSolutionUpdated";
-  public static final String STEPIC_URL = "https://stepik.org";
-  public static final String TOKEN_URL = STEPIC_URL + "/oauth2/token/";
-  public static final String STEPIC_API_URL = STEPIC_URL + "/api";
+  public static final String STEPIK_URL = "https://stepik.org";
+  public static final String TOKEN_URL = STEPIK_URL + "/oauth2/token/";
+  public static final String STEPIK_API_URL = STEPIK_URL + "/api";
 
   public static final String RECOMMENDATIONS_URL = "/recommendations";
   public static final String CONTENT_TYPE_APP_JSON = "application/json";

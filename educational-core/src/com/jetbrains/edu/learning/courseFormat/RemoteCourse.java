@@ -7,8 +7,8 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicNames;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.List;
 public class RemoteCourse extends Course {
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
-                        String.format("%s%d %s", StepicNames.PYCHARM_PREFIX, StepicConnector.CURRENT_VERSION, getLanguageID());
+                        String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, StepikConnector.CURRENT_VERSION, getLanguageID());
   @SerializedName("is_idea_compatible") private boolean isCompatible = true;
   List<Integer> sections;
   List<Integer> instructors = new ArrayList<>();
@@ -71,7 +71,7 @@ public class RemoteCourse extends Course {
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(new Backgroundable(null, "Updating Course") {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        final Date date = StepicConnector.getCourseUpdateDate(id);
+        final Date date = StepikConnector.getCourseUpdateDate(id);
         if (date == null) return;
         if (date.after(myUpdateDate)) {
           isUpToDate = false;
@@ -88,11 +88,11 @@ public class RemoteCourse extends Course {
   }
 
   public void setUpdated() {
-    setUpdateDate(StepicConnector.getCourseUpdateDate(id));
+    setUpdateDate(StepikConnector.getCourseUpdateDate(id));
     for (Lesson lesson : lessons) {
-      lesson.setUpdateDate(StepicConnector.getLessonUpdateDate(lesson.getId()));
+      lesson.setUpdateDate(StepikConnector.getLessonUpdateDate(lesson.getId()));
       for (Task task : lesson.getTaskList()) {
-        task.setUpdateDate(StepicConnector.getTaskUpdateDate(task.getStepId()));
+        task.setUpdateDate(StepikConnector.getTaskUpdateDate(task.getStepId()));
       }
     }
   }
@@ -129,8 +129,8 @@ public class RemoteCourse extends Course {
   private void updateType(String language) {
     final int separator = myType.indexOf(" ");
     assert separator != -1;
-    final String version = myType.substring(StepicNames.PYCHARM_PREFIX.length(), separator);
-    myType = String.format("%s%s %s", StepicNames.PYCHARM_PREFIX, version, language);
+    final String version = myType.substring(StepikNames.PYCHARM_PREFIX.length(), separator);
+    myType = String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, version, language);
   }
 
   public void setType(String type) {

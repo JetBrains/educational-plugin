@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepic.*;
+import com.jetbrains.edu.learning.stepik.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -46,18 +46,18 @@ import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
 
-public class CCStepicConnector {
-  private static final Logger LOG = Logger.getInstance(CCStepicConnector.class.getName());
+public class CCStepikConnector {
+  private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
   private static final String FAILED_TITLE = "Failed to publish ";
 
-  private CCStepicConnector() {
+  private CCStepikConnector() {
   }
 
   public static RemoteCourse getCourseInfo(String courseId) {
-    final String url = StepicNames.COURSES + "/" + courseId;
+    final String url = StepikNames.COURSES + "/" + courseId;
     try {
-      final StepicWrappers.CoursesContainer coursesContainer =
-        StepicAuthorizedClient.getFromStepic(url, StepicWrappers.CoursesContainer.class);
+      final StepikWrappers.CoursesContainer coursesContainer =
+        StepikAuthorizedClient.getFromStepik(url, StepikWrappers.CoursesContainer.class);
       return coursesContainer == null ? null : coursesContainer.courses.get(0);
     }
     catch (IOException e) {
@@ -80,12 +80,12 @@ public class CCStepicConnector {
 
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {
-      indicator.setText("Uploading course to " + StepicNames.STEPIC_URL);
+      indicator.setText("Uploading course to " + StepikNames.STEPIK_URL);
       indicator.setIndeterminate(false);
     }
-    final HttpPost request = new HttpPost(StepicNames.STEPIC_API_URL + "/courses");
+    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/courses");
 
-    final StepicUser currentUser = StepicAuthorizedClient.getCurrentUser();
+    final StepicUser currentUser = StepikAuthorizedClient.getCurrentUser();
     if (currentUser != null) {
       final List<StepicUser> courseAuthors = course.getAuthors();
       for (int i = 0; i < courseAuthors.size(); i++) {
@@ -98,11 +98,11 @@ public class CCStepicConnector {
       course.setAuthors(Collections.singletonList(currentUser));
     }
 
-    String requestBody = new Gson().toJson(new StepicWrappers.CourseWrapper(course));
+    String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
-      final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) {
         LOG.warn("Http client is null");
         return;
@@ -118,7 +118,7 @@ public class CCStepicConnector {
         showErrorNotification(project, FAILED_TITLE, responseString);
         return;
       }
-      final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepicWrappers.CoursesContainer.class).courses.get(0);
+      final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
       courseOnRemote.setLessons(course.getLessons(true));
       courseOnRemote.setAuthors(course.getAuthors());
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
@@ -150,27 +150,27 @@ public class CCStepicConnector {
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
     boolean isAuthorized = EduSettings.getInstance().getUser() != null;
     if (!isAuthorized) {
-      showStepicNotification(project, NotificationType.ERROR, failedActionName);
+      showStepikNotification(project, NotificationType.ERROR, failedActionName);
       return false;
     }
     return true;
   }
 
   public static void postAdditionalFiles(Course course, @NotNull final Project project, int id) {
-    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepicNames.PYCHARM_ADDITIONAL);
+    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
     if (lesson != null) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
         indicator.setText2("Publishing additional files");
       }
-      final int sectionId = postModule(id, 2, StepicNames.PYCHARM_ADDITIONAL, project);
+      final int sectionId = postModule(id, 2, StepikNames.PYCHARM_ADDITIONAL, project);
       final int lessonId = postLesson(project, lesson);
       postUnit(lessonId, 1, sectionId, project);
     }
   }
 
   public static void updateAdditionalFiles(Course course, @NotNull final Project project, int stepikId) {
-    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepicNames.PYCHARM_ADDITIONAL);
+    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
     if (lesson != null) {
       lesson.setId(stepikId);
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
@@ -184,9 +184,9 @@ public class CCStepicConnector {
   public static void postUnit(int lessonId, int position, int sectionId, Project project) {
     if (!checkIfAuthorized(project, "postTask")) return;
 
-    final HttpPost request = new HttpPost(StepicNames.STEPIC_API_URL + StepicNames.UNITS);
-    final StepicWrappers.UnitWrapper unitWrapper = new StepicWrappers.UnitWrapper();
-    final StepicWrappers.Unit unit = new StepicWrappers.Unit();
+    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.UNITS);
+    final StepikWrappers.UnitWrapper unitWrapper = new StepikWrappers.UnitWrapper();
+    final StepikWrappers.Unit unit = new StepikWrappers.Unit();
     unit.setLesson(lessonId);
     unit.setPosition(position);
     unit.setSection(sectionId);
@@ -196,7 +196,7 @@ public class CCStepicConnector {
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
-      final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) return;
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
@@ -214,18 +214,18 @@ public class CCStepicConnector {
   }
 
   private static int postModule(int courseId, int position, @NotNull final String title, Project project) {
-    final HttpPost request = new HttpPost(StepicNames.STEPIC_API_URL + "/sections");
-    final StepicWrappers.Section section = new StepicWrappers.Section();
+    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/sections");
+    final StepikWrappers.Section section = new StepikWrappers.Section();
     section.setCourse(courseId);
     section.setTitle(title);
     section.setPosition(position);
-    final StepicWrappers.SectionWrapper sectionContainer = new StepicWrappers.SectionWrapper();
+    final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
     sectionContainer.setSection(section);
     String requestBody = new Gson().toJson(sectionContainer);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
-      final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) return -1;
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
@@ -237,8 +237,8 @@ public class CCStepicConnector {
         showErrorNotification(project, FAILED_TITLE, responseString);
         return -1;
       }
-      final StepicWrappers.Section
-        postedSection = new Gson().fromJson(responseString, StepicWrappers.SectionContainer.class).getSections().get(0);
+      final StepikWrappers.Section
+        postedSection = new Gson().fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
       return postedSection.getId();
     }
     catch (IOException e) {
@@ -255,10 +255,10 @@ public class CCStepicConnector {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) return;
 
-    final HttpPut request = new HttpPut(StepicNames.STEPIC_API_URL + StepicNames.STEP_SOURCES
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES
                                                                                     + String.valueOf(task.getStepId()));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
+      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepikAnswerPlaceholderAdapter()).create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final Language language = lesson.getCourse().getLanguageById();
       final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
@@ -273,11 +273,11 @@ public class CCStepicConnector {
           LOG.warn("Failed to load text " + file.getName());
         }
       }
-      final String requestBody = gson.toJson(new StepicWrappers.StepSourceWrapper(project, task, lessonId));
+      final String requestBody = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
       request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
       try {
-        final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+        final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
         if (client == null) return;
         final CloseableHttpResponse response = client.execute(request);
         final HttpEntity responseEntity = response.getEntity();
@@ -301,11 +301,11 @@ public class CCStepicConnector {
 
   public static void updateCourse(@NotNull final Project project, @NotNull final RemoteCourse course) {
     if (!checkIfAuthorized(project, "update course")) return;
-    final HttpPut request = new HttpPut(StepicNames.STEPIC_API_URL + StepicNames.COURSES + "/" + String.valueOf(course.getId()));
-    String requestBody = new Gson().toJson(new StepicWrappers.CourseWrapper(course));
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.COURSES + "/" + String.valueOf(course.getId()));
+    String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
     try {
-      final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) {
         LOG.warn("Http client is null");
         return;
@@ -320,7 +320,7 @@ public class CCStepicConnector {
         LOG.error(message + responseString);
         showErrorNotification(project, FAILED_TITLE, responseString);
       }
-      final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepicWrappers.CoursesContainer.class).courses.get(0);
+      final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
       updateLessons(course, project);
       if (!updateAdditionalMaterials(project, course, postedCourse.getSections())) {
         postAdditionalFiles(course, project, course.getId());
@@ -334,11 +334,11 @@ public class CCStepicConnector {
                                                    @NotNull final List<Integer> sections) throws IOException {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
     for (Integer sectionId : sections) {
-      final StepicWrappers.Section section = StepicConnector.getSection(sectionId);
-      if (section != null && StepicNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
-        final List<Lesson> lessons = StepicConnector.getLessons(course, sectionId);
+      final StepikWrappers.Section section = StepikConnector.getSection(sectionId);
+      if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
+        final List<Lesson> lessons = StepikConnector.getLessons(course, sectionId);
         lessons.stream().
-                filter(lesson -> StepicNames.PYCHARM_ADDITIONAL.equals(lesson.getName()))
+                filter(lesson -> StepikNames.PYCHARM_ADDITIONAL.equals(lesson.getName()))
                 .findFirst()
                 .ifPresent(lesson -> {
                         updateAdditionalFiles(course, project, lesson.getId());
@@ -373,13 +373,13 @@ public class CCStepicConnector {
   public static int updateLesson(@NotNull final Project project, @NotNull final Lesson lesson) {
     if(!checkIfAuthorized(project, "update lesson")) return -1;
 
-    final HttpPut request = new HttpPut(StepicNames.STEPIC_API_URL + StepicNames.LESSONS + String.valueOf(lesson.getId()));
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + String.valueOf(lesson.getId()));
 
-    String requestBody = new Gson().toJson(new StepicWrappers.LessonWrapper(lesson));
+    String requestBody = new Gson().toJson(new StepikWrappers.LessonWrapper(lesson));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
-      final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) return -1;
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
@@ -428,7 +428,7 @@ public class CCStepicConnector {
     notification.notify(project);
   }
 
-  private static void showStepicNotification(@NotNull Project project,
+  private static void showStepikNotification(@NotNull Project project,
                                              @NotNull NotificationType notificationType, @NotNull String failedActionName) {
     String text = "Log in to Stepik to " + failedActionName;
     Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, notificationType);
@@ -436,7 +436,7 @@ public class CCStepicConnector {
 
       @Override
       public void actionPerformed(AnActionEvent e) {
-        StepicConnector.doAuthorize(() -> showOAuthDialog());
+        StepikConnector.doAuthorize(() -> showOAuthDialog());
         notification.expire();
       }
     });
@@ -447,13 +447,13 @@ public class CCStepicConnector {
   public static int postLesson(@NotNull final Project project, @NotNull final Lesson lesson) {
     if (!checkIfAuthorized(project, "postLesson")) return -1;
 
-    final HttpPost request = new HttpPost(StepicNames.STEPIC_API_URL + "/lessons");
+    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/lessons");
 
-    String requestBody = new Gson().toJson(new StepicWrappers.LessonWrapper(lesson));
+    String requestBody = new Gson().toJson(new StepikWrappers.LessonWrapper(lesson));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
-      final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) return -1;
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
@@ -484,10 +484,10 @@ public class CCStepicConnector {
   }
 
   public static void deleteTask(@NotNull final Integer task, Project project) {
-    final HttpDelete request = new HttpDelete(StepicNames.STEPIC_API_URL + StepicNames.STEP_SOURCES + task);
+    final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES + task);
     ApplicationManager.getApplication().invokeLater(() -> {
       try {
-        final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+        final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
         if (client == null) return;
         final CloseableHttpResponse response = client.execute(request);
         final HttpEntity responseEntity = response.getEntity();
@@ -508,15 +508,15 @@ public class CCStepicConnector {
   public static void postTask(final Project project, @NotNull final Task task, final int lessonId) {
     if (!checkIfAuthorized(project, "postTask")) return;
 
-    final HttpPost request = new HttpPost(StepicNames.STEPIC_API_URL + "/step-sources");
+    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/step-sources");
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
+      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepikAnswerPlaceholderAdapter()).create();
     ApplicationManager.getApplication().invokeLater(() -> {
-      final String requestBody = gson.toJson(new StepicWrappers.StepSourceWrapper(project, task, lessonId));
+      final String requestBody = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
       request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
       try {
-        final CloseableHttpClient client = StepicAuthorizedClient.getHttpClient();
+        final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
         if (client == null) return;
         final CloseableHttpResponse response = client.execute(request);
         final StatusLine line = response.getStatusLine();

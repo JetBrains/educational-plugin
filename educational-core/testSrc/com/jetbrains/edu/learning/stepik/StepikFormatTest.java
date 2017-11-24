@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.google.gson.*;
 import com.intellij.openapi.util.io.FileUtil;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.stepic.StepicNames.PYCHARM_PREFIX;
+import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 import static org.junit.Assert.*;
 
 
@@ -40,7 +40,7 @@ public class StepikFormatTest {
 
   @Test
   public void testWithSubtasks() throws IOException {
-    StepicWrappers.StepOptions stepOptions = doStepOptionsCreationTest();
+    StepikWrappers.StepOptions stepOptions = doStepOptionsCreationTest();
     assertEquals(1, stepOptions.lastSubtaskIndex);
   }
 
@@ -48,23 +48,23 @@ public class StepikFormatTest {
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
     Lesson lesson =
-        StepicClient.deserializeStepicResponse(StepicWrappers.LessonContainer.class, responseString).lessons.get(0);
+        StepikClient.deserializeStepikResponse(StepikWrappers.LessonContainer.class, responseString).lessons.get(0);
     assertEquals(EduNames.ADDITIONAL_MATERIALS, lesson.getName());
   }
 
   @Test
   public void testAdditionalMaterialsStep() throws IOException {
     String responseString = loadJsonText();
-    StepicWrappers.StepSource step =
-        StepicClient.deserializeStepicResponse(StepicWrappers.StepContainer.class, responseString).steps.get(0);
+    StepikWrappers.StepSource step =
+        StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class, responseString).steps.get(0);
     assertEquals(EduNames.ADDITIONAL_MATERIALS, step.block.options.title);
   }
 
   @Test
   public void testAvailableCourses() throws IOException {
     String responseString = loadJsonText();;
-    StepicWrappers.CoursesContainer container =
-      StepicClient.deserializeStepicResponse(StepicWrappers.CoursesContainer.class, responseString);
+    StepikWrappers.CoursesContainer container =
+      StepikClient.deserializeStepikResponse(StepikWrappers.CoursesContainer.class, responseString);
     assertNotNull(container.courses);
     assertTrue("Incorrect number of courses", container.courses.size() == 4);
   }
@@ -72,7 +72,7 @@ public class StepikFormatTest {
   @Test
   public void testPlaceholderSerialization() throws IOException {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepicAnswerPlaceholderAdapter()).create();
+      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepikAnswerPlaceholderAdapter()).create();
     AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
     answerPlaceholder.setOffset(1);
     answerPlaceholder.setLength(10);
@@ -91,7 +91,7 @@ public class StepikFormatTest {
   public void testTokenUptoDate() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.AuthorWrapper wrapper = gson.fromJson(jsonText, StepicWrappers.AuthorWrapper.class);
+    final StepikWrappers.AuthorWrapper wrapper = gson.fromJson(jsonText, StepikWrappers.AuthorWrapper.class);
     assertNotNull(wrapper);
     assertFalse(wrapper.users.isEmpty());
     StepicUser user = wrapper.users.get(0);
@@ -103,7 +103,7 @@ public class StepikFormatTest {
   public void testCourseAuthor() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.AuthorWrapper wrapper = gson.fromJson(jsonText, StepicWrappers.AuthorWrapper.class);
+    final StepikWrappers.AuthorWrapper wrapper = gson.fromJson(jsonText, StepikWrappers.AuthorWrapper.class);
     assertNotNull(wrapper);
     assertFalse(wrapper.users.isEmpty());
     StepicUser user = wrapper.users.get(0);
@@ -115,7 +115,7 @@ public class StepikFormatTest {
   public void testSections() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.SectionContainer sectionContainer = gson.fromJson(jsonText, StepicWrappers.SectionContainer.class);
+    final StepikWrappers.SectionContainer sectionContainer = gson.fromJson(jsonText, StepikWrappers.SectionContainer.class);
     assertNotNull(sectionContainer);
     assertEquals(1, sectionContainer.sections.size());
     List<Integer> unitIds = sectionContainer.sections.get(0).units;
@@ -126,7 +126,7 @@ public class StepikFormatTest {
   public void testUnit() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.UnitContainer unit = gson.fromJson(jsonText, StepicWrappers.UnitContainer.class);
+    final StepikWrappers.UnitContainer unit = gson.fromJson(jsonText, StepikWrappers.UnitContainer.class);
     assertNotNull(unit);
     assertEquals(1, unit.units.size());
     final int lesson = unit.units.get(0).lesson;
@@ -137,7 +137,7 @@ public class StepikFormatTest {
   public void testLesson() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.LessonContainer lessonContainer = gson.fromJson(jsonText, StepicWrappers.LessonContainer.class);
+    final StepikWrappers.LessonContainer lessonContainer = gson.fromJson(jsonText, StepikWrappers.LessonContainer.class);
     assertNotNull(lessonContainer);
     assertEquals(1, lessonContainer.lessons.size());
     final Lesson lesson = lessonContainer.lessons.get(0);
@@ -148,9 +148,9 @@ public class StepikFormatTest {
   public void testStep() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
     assertNotNull(stepContainer);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
     assertNotNull(step);
   }
 
@@ -158,9 +158,9 @@ public class StepikFormatTest {
   public void testStepBlock() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
     assertNotNull(block);
     assertNotNull(block.options);
     assertTrue(block.name.startsWith(PYCHARM_PREFIX));
@@ -170,10 +170,10 @@ public class StepikFormatTest {
   public void testStepBlockOptions() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
-    final StepicWrappers.StepOptions options = block.options;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
+    final StepikWrappers.StepOptions options = block.options;
     assertNotNull(options);
   }
 
@@ -181,10 +181,10 @@ public class StepikFormatTest {
   public void testUpdateDate() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
-    final StepicWrappers.StepOptions options = block.options;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
+    final StepikWrappers.StepOptions options = block.options;
     assertNotNull(step.update_date);
   }
 
@@ -192,10 +192,10 @@ public class StepikFormatTest {
   public void testSubtaskIndex() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
-    final StepicWrappers.StepOptions options = block.options;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
+    final StepikWrappers.StepOptions options = block.options;
     final int lastSubtaskIndex = options.lastSubtaskIndex;
     assertEquals(0, lastSubtaskIndex);
   }
@@ -204,10 +204,10 @@ public class StepikFormatTest {
   public void testOptionsTitle() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
-    final StepicWrappers.StepOptions options = block.options;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
+    final StepikWrappers.StepOptions options = block.options;
     assertEquals("Our first program", options.title);
   }
 
@@ -215,11 +215,11 @@ public class StepikFormatTest {
   public void testOptionsTest() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
-    final StepicWrappers.StepOptions options = block.options;
-    final List<StepicWrappers.FileWrapper> testWrapper = options.test;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
+    final StepikWrappers.StepOptions options = block.options;
+    final List<StepikWrappers.FileWrapper> testWrapper = options.test;
     assertNotNull(testWrapper);
     assertEquals(1, testWrapper.size());
     assertEquals("tests.py", testWrapper.get(0).name);
@@ -230,12 +230,12 @@ public class StepikFormatTest {
   public void testOptionsText() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
-    final StepicWrappers.StepOptions options = block.options;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
+    final StepikWrappers.StepOptions options = block.options;
 
-    final List<StepicWrappers.FileWrapper> texts = options.text;
+    final List<StepikWrappers.FileWrapper> texts = options.text;
     assertEquals(1, texts.size());
     assertEquals("\n" +
         "Traditionally the first program you write in any programming language is <code>\"Hello World!\"</code>.\n" +
@@ -252,10 +252,10 @@ public class StepikFormatTest {
   public void testOptionsFiles() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
-    final StepicWrappers.StepOptions options = block.options;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
+    final StepikWrappers.StepOptions options = block.options;
 
     final List<TaskFile> files = options.files;
     assertEquals(1, files.size());
@@ -268,10 +268,10 @@ public class StepikFormatTest {
   public void testOptionsPlaceholder() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepicWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepicWrappers.StepContainer.class);
-    final StepicWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepicWrappers.Step block = step.block;
-    final StepicWrappers.StepOptions options = block.options;
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
+    final StepikWrappers.Step block = step.block;
+    final StepikWrappers.StepOptions options = block.options;
     final List<TaskFile> files = options.files;
     final TaskFile taskFile = files.get(0);
 
@@ -290,9 +290,9 @@ public class StepikFormatTest {
   public void testTaskStatuses() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    StepicWrappers.ProgressContainer progressContainer = gson.fromJson(jsonText, StepicWrappers.ProgressContainer.class);
+    StepikWrappers.ProgressContainer progressContainer = gson.fromJson(jsonText, StepikWrappers.ProgressContainer.class);
     assertNotNull(progressContainer);
-    List<StepicWrappers.ProgressContainer.Progress> progressList = progressContainer.progresses;
+    List<StepikWrappers.ProgressContainer.Progress> progressList = progressContainer.progresses;
     assertNotNull(progressList);
     final Boolean[] statuses = progressList.stream().map(progress -> progress.isPassed).toArray(Boolean[]::new);
     assertNotNull(statuses);
@@ -303,13 +303,13 @@ public class StepikFormatTest {
   public void testLastSubmission() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    StepicWrappers.SubmissionsWrapper submissionsWrapper = gson.fromJson(jsonText, StepicWrappers.SubmissionsWrapper.class);
+    StepikWrappers.SubmissionsWrapper submissionsWrapper = gson.fromJson(jsonText, StepikWrappers.SubmissionsWrapper.class);
     assertNotNull(submissionsWrapper);
     assertNotNull(submissionsWrapper.submissions);
     assertEquals(20, submissionsWrapper.submissions.length);
-    final StepicWrappers.Submission.Reply reply = submissionsWrapper.submissions[0].reply;
+    final StepikWrappers.Submission.Reply reply = submissionsWrapper.submissions[0].reply;
     assertNotNull(reply);
-    List<StepicWrappers.SolutionFile> solutionFiles = reply.solution;
+    List<StepikWrappers.SolutionFile> solutionFiles = reply.solution;
     assertEquals(1, solutionFiles.size());
     assertEquals("hello_world.py", solutionFiles.get(0).name);
     assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).text);
@@ -318,7 +318,7 @@ public class StepikFormatTest {
   @NotNull
   private static Gson getGson() {
     return new GsonBuilder()
-          .registerTypeAdapter(StepicWrappers.StepOptions.class, new SerializationUtils.Json.StepicStepOptionsAdapter())
+          .registerTypeAdapter(StepikWrappers.StepOptions.class, new SerializationUtils.Json.StepikStepOptionsAdapter())
           .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.StepikLessonAdapter())
           .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
@@ -343,11 +343,11 @@ public class StepikFormatTest {
     return info;
   }
 
-  private StepicWrappers.StepOptions doStepOptionsCreationTest() throws IOException {
+  private StepikWrappers.StepOptions doStepOptionsCreationTest() throws IOException {
     String responseString = loadJsonText();
-    StepicWrappers.StepSource stepSource =
-        StepicClient.deserializeStepicResponse(StepicWrappers.StepContainer.class, responseString).steps.get(0);
-    StepicWrappers.StepOptions options = stepSource.block.options;
+    StepikWrappers.StepSource stepSource =
+        StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class, responseString).steps.get(0);
+    StepikWrappers.StepOptions options = stepSource.block.options;
     List<TaskFile> files = options.files;
     assertTrue("Wrong number of task files", files.size() == 1);
     List<AnswerPlaceholder> placeholders = files.get(0).getAnswerPlaceholders();

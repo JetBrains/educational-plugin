@@ -11,12 +11,12 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.stepik.CCStepicConnector;
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.stepic.StepicNames;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -84,18 +84,18 @@ public class CCPushLesson extends DumbAwareAction {
     ProgressManager.getInstance().run(new Task.Modal(project, "Uploading Lesson", true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        indicator.setText("Uploading lesson to " + StepicNames.STEPIC_URL);
+        indicator.setText("Uploading lesson to " + StepikNames.STEPIK_URL);
         if (lesson.getId() > 0) {
-          int lessonId = CCStepicConnector.updateLesson(project, lesson);
+          int lessonId = CCStepikConnector.updateLesson(project, lesson);
           if (lessonId != -1) {
-            CCStepicConnector.showNotification(project, "Lesson updated");
+            CCStepikConnector.showNotification(project, "Lesson updated");
           }
         }
         else {
-          final int lessonId = CCStepicConnector.postLesson(project, lesson);
+          final int lessonId = CCStepikConnector.postLesson(project, lesson);
           final List<Integer> sections = ((RemoteCourse)course).getSections();
           final Integer sectionId = sections.get(sections.size()-1);
-          CCStepicConnector.postUnit(lessonId, lesson.getIndex(), sectionId, project);
+          CCStepikConnector.postUnit(lessonId, lesson.getIndex(), sectionId, project);
         }
       }});
   }

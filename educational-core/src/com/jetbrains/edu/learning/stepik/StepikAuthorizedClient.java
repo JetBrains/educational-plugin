@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -20,14 +20,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jetbrains.edu.learning.stepic.StepicClient.getBuilder;
-
-public class StepicAuthorizedClient {
-  private static final Logger LOG = Logger.getInstance(StepicAuthorizedClient.class.getName());
+public class StepikAuthorizedClient {
+  private static final Logger LOG = Logger.getInstance(StepikAuthorizedClient.class.getName());
 
   private static CloseableHttpClient ourClient;
 
-  private StepicAuthorizedClient() {
+  private StepikAuthorizedClient() {
   }
 
   @Nullable
@@ -40,69 +38,69 @@ public class StepicAuthorizedClient {
 
     assert eduSettings.getUser() != null: "User must not be null";
 
-    StepicUser stepicUser = eduSettings.getUser();
-    assert stepicUser != null;
+    StepicUser user = eduSettings.getUser();
+    assert user != null;
 
-    if (!StepicClient.isTokenUpToDate(stepicUser.getAccessToken())) {
-      StepicWrappers.TokenInfo tokens = getUpdatedTokens(stepicUser.getRefreshToken());
+    if (!StepikClient.isTokenUpToDate(user.getAccessToken())) {
+      StepikWrappers.TokenInfo tokens = getUpdatedTokens(user.getRefreshToken());
       if (tokens != null) {
-        stepicUser.setTokenInfo(tokens);
+        user.setTokenInfo(tokens);
       }
       else {
         return null;
       }
     }
 
-    ourClient = createInitializedClient(stepicUser.getAccessToken());
+    ourClient = createInitializedClient(user.getAccessToken());
 
     return ourClient;
   }
 
   @Nullable
-  public static <T> T getFromStepic(@NotNull String link, @NotNull final Class<T> container) throws IOException {
+  public static <T> T getFromStepik(@NotNull String link, @NotNull final Class<T> container) throws IOException {
     final CloseableHttpClient client = getHttpClient();
-    return client == null ? null : StepicClient.getFromStepic(link, container, client);
+    return client == null ? null : StepikClient.getFromStepik(link, container, client);
   }
 
   /*
    * This method should be used only in project generation while project is not available.
-   * Make sure you saved stepic user in task manager after using this method.
+   * Make sure you saved stepik user in task manager after using this method.
    */
   @NotNull
-  public static CloseableHttpClient getHttpClient(@NotNull final StepicUser stepicUser) {
+  public static CloseableHttpClient getHttpClient(@NotNull final StepicUser user) {
     if (ourClient != null) {
       return ourClient;
     }
 
-    if (!StepicClient.isTokenUpToDate(stepicUser.getAccessToken())) {
-      StepicWrappers.TokenInfo tokenInfo = getUpdatedTokens(stepicUser.getRefreshToken());
+    if (!StepikClient.isTokenUpToDate(user.getAccessToken())) {
+      StepikWrappers.TokenInfo tokenInfo = getUpdatedTokens(user.getRefreshToken());
       if (tokenInfo != null) {
-        stepicUser.setTokenInfo(tokenInfo);
+        user.setTokenInfo(tokenInfo);
       }
       else {
-        return StepicClient.getHttpClient();
+        return StepikClient.getHttpClient();
       }
     }
 
-    ourClient = createInitializedClient(stepicUser.getAccessToken());
+    ourClient = createInitializedClient(user.getAccessToken());
 
     return ourClient;
   }
 
    /*
    * This method should be used only in project generation while project is not available.
-   * Make sure you saved stepic user in task manager after using this method.
+   * Make sure you saved stepik user in task manager after using this method.
    */
-  public static <T> T getFromStepic(String link, final Class<T> container, @NotNull final StepicUser stepicUser) throws IOException {
-    return StepicClient.getFromStepic(link, container, getHttpClient(stepicUser));
+  public static <T> T getFromStepik(String link, final Class<T> container, @NotNull final StepicUser stepicUser) throws IOException {
+    return StepikClient.getFromStepik(link, container, getHttpClient(stepicUser));
   }
 
   @NotNull
   private static CloseableHttpClient createInitializedClient(@NotNull String accessToken) {
     final List<BasicHeader> headers = new ArrayList<>();
     headers.add(new BasicHeader("Authorization", "Bearer " + accessToken));
-    headers.add(new BasicHeader("Content-type", StepicNames.CONTENT_TYPE_APP_JSON));
-    return getBuilder().setDefaultHeaders(headers).build();
+    headers.add(new BasicHeader("Content-type", StepikNames.CONTENT_TYPE_APP_JSON));
+    return StepikClient.getBuilder().setDefaultHeaders(headers).build();
   }
 
   @Nullable
@@ -111,9 +109,9 @@ public class StepicAuthorizedClient {
     parameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
     parameters.add(new BasicNameValuePair("code", code));
     parameters.add(new BasicNameValuePair("redirect_uri", redirectUrl));
-    parameters.add(new BasicNameValuePair("client_id", StepicNames.CLIENT_ID));
+    parameters.add(new BasicNameValuePair("client_id", StepikNames.CLIENT_ID));
 
-    StepicWrappers.TokenInfo tokenInfo = getTokens(parameters);
+    StepikWrappers.TokenInfo tokenInfo = getTokens(parameters);
     if (tokenInfo != null) {
       final StepicUser user = new StepicUser(tokenInfo);
       ourClient = createInitializedClient(user.getAccessToken());
@@ -135,9 +133,9 @@ public class StepicAuthorizedClient {
   }
 
   @Nullable
-  private static StepicWrappers.TokenInfo getUpdatedTokens(@NotNull final String refreshToken) {
+  private static StepikWrappers.TokenInfo getUpdatedTokens(@NotNull final String refreshToken) {
     final List<NameValuePair> parameters = new ArrayList<>();
-    parameters.add(new BasicNameValuePair("client_id", StepicNames.CLIENT_ID));
+    parameters.add(new BasicNameValuePair("client_id", StepikNames.CLIENT_ID));
     parameters.add(new BasicNameValuePair("content-type", "application/json"));
     parameters.add(new BasicNameValuePair("grant_type", "refresh_token"));
     parameters.add(new BasicNameValuePair("refresh_token", refreshToken));
@@ -150,8 +148,8 @@ public class StepicAuthorizedClient {
     CloseableHttpClient client = getHttpClient();
     if (client != null) {
       try {
-        final StepicWrappers.AuthorWrapper wrapper = StepicClient.getFromStepic(StepicNames.CURRENT_USER,
-                                                                                   StepicWrappers.AuthorWrapper.class,
+        final StepikWrappers.AuthorWrapper wrapper = StepikClient.getFromStepik(StepikNames.CURRENT_USER,
+                                                                                   StepikWrappers.AuthorWrapper.class,
                                                                                    client);
         if (wrapper != null && !wrapper.users.isEmpty()) {
           return wrapper.users.get(0);
@@ -165,21 +163,21 @@ public class StepicAuthorizedClient {
   }
 
   @Nullable
-  private static StepicWrappers.TokenInfo getTokens(@NotNull final List<NameValuePair> parameters) {
+  private static StepikWrappers.TokenInfo getTokens(@NotNull final List<NameValuePair> parameters) {
     final Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
-    final HttpPost request = new HttpPost(StepicNames.TOKEN_URL);
+    final HttpPost request = new HttpPost(StepikNames.TOKEN_URL);
     request.setEntity(new UrlEncodedFormEntity(parameters, Consts.UTF_8));
 
     try {
-      final CloseableHttpClient client = StepicClient.getHttpClient();
+      final CloseableHttpClient client = StepikClient.getHttpClient();
       final CloseableHttpResponse response = client.execute(request);
       final StatusLine statusLine = response.getStatusLine();
       final HttpEntity responseEntity = response.getEntity();
       final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
       EntityUtils.consume(responseEntity);
       if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-        return gson.fromJson(responseString, StepicWrappers.TokenInfo.class);
+        return gson.fromJson(responseString, StepikWrappers.TokenInfo.class);
       }
       else {
         LOG.warn("Failed to get tokens: " + statusLine.getStatusCode() + statusLine.getReasonPhrase());

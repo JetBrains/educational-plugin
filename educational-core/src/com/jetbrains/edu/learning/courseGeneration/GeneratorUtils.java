@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 
@@ -142,7 +142,7 @@ public class GeneratorUtils {
   @NotNull
   public static Course initializeCourse(@NotNull Project project, @NotNull Course course) {
     if (course instanceof RemoteCourse) {
-      course = getCourseFromStepic(project, (RemoteCourse)course);
+      course = getCourseFromStepik(project, (RemoteCourse)course);
     }
     course.initCourse(false);
 
@@ -174,10 +174,10 @@ public class GeneratorUtils {
     }
   }
 
-  private static RemoteCourse getCourseFromStepic(@NotNull Project project, RemoteCourse selectedCourse) {
+  private static RemoteCourse getCourseFromStepik(@NotNull Project project, RemoteCourse selectedCourse) {
     return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(false);
-      final RemoteCourse course = StepicConnector.getCourse(project, selectedCourse);
+      final RemoteCourse course = StepikConnector.getCourse(project, selectedCourse);
       if (EduUtils.isCourseValid(course)) {
         course.initCourse(false);
       }

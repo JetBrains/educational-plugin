@@ -76,10 +76,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
-import com.jetbrains.edu.learning.stepic.OAuthDialog;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.stepic.StepicUserWidget;
+import com.jetbrains.edu.learning.stepik.OAuthDialog;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
@@ -93,15 +93,11 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
@@ -750,10 +746,10 @@ public class EduUtils {
   }
 
   @Nullable
-  public static StepicUserWidget getStepicWidget() {
+  public static StepikUserWidget getStepikWidget() {
     JFrame frame = WindowManager.getInstance().findVisibleFrame();
     if (frame instanceof IdeFrameImpl) {
-      return (StepicUserWidget)((IdeFrameImpl)frame).getStatusBar().getWidget(StepicUserWidget.ID);
+      return (StepikUserWidget)((IdeFrameImpl)frame).getStatusBar().getWidget(StepikUserWidget.ID);
     }
     return null;
   }
@@ -761,7 +757,7 @@ public class EduUtils {
   public static void showOAuthDialog() {
     OAuthDialog dialog = new OAuthDialog();
     if (dialog.showAndGet()) {
-      StepicUser user = dialog.getStepicUser();
+      StepicUser user = dialog.getUser();
       EduSettings.getInstance().setUser(user);
     }
   }
@@ -1042,7 +1038,7 @@ public class EduUtils {
     try {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        List<Course> courses = execCancelable(() -> StepicConnector.getCourses(EduSettings.getInstance().getUser()));
+        List<Course> courses = execCancelable(() -> StepikConnector.getCourses(EduSettings.getInstance().getUser()));
         if (courses == null) return Lists.newArrayList();
         List<Course> bundledCourses = getBundledCourses();
         for (Course bundledCourse : bundledCourses) {

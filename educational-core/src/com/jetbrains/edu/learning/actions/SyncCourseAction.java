@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
-import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
+import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,11 +55,11 @@ public class SyncCourseAction extends DumbAwareAction {
 
         int taskNumber = adaptiveLesson.getTaskList().size();
         Task lastRecommendationInCourse = adaptiveLesson.getTaskList().get(taskNumber - 1);
-        Task lastRecommendationOnStepik = StepicAdaptiveConnector.getNextRecommendation(project, (RemoteCourse) course);
+        Task lastRecommendationOnStepik = StepikAdaptiveConnector.getNextRecommendation(project, (RemoteCourse) course);
 
         if (lastRecommendationOnStepik != null && lastRecommendationOnStepik.getStepId() != lastRecommendationInCourse.getStepId()) {
           lastRecommendationOnStepik.initTask(adaptiveLesson, false);
-          StepicAdaptiveConnector.replaceCurrentTask(project, lastRecommendationOnStepik, adaptiveLesson);
+          StepikAdaptiveConnector.replaceCurrentTask(project, lastRecommendationOnStepik, adaptiveLesson);
 
           ApplicationManager.getApplication().invokeLater(() -> {
             VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.text.StringUtil;
@@ -23,7 +23,7 @@ public class StepicUser {
     return new StepicUser();
   }
 
-  public StepicUser(@NotNull StepicWrappers.TokenInfo tokenInfo) {
+  public StepicUser(@NotNull StepikWrappers.TokenInfo tokenInfo) {
     setTokenInfo(tokenInfo);
   }
 
@@ -82,7 +82,7 @@ public class StepicUser {
     this.myRefreshToken = refreshToken;
   }
 
-  public void setTokenInfo(@NotNull final StepicWrappers.TokenInfo tokenInfo) {
+  public void setTokenInfo(@NotNull final StepikWrappers.TokenInfo tokenInfo) {
     myAccessToken = tokenInfo.getAccessToken();
     myRefreshToken = tokenInfo.getRefreshToken();
   }

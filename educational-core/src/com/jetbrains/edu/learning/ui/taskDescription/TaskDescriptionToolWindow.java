@@ -48,7 +48,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.editor.EduFileEditorManagerListener;
-import com.jetbrains.edu.learning.stepic.StepicAdaptiveReactionsPanel;
+import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
 import com.jetbrains.edu.learning.ui.CourseProgressBar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +87,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     final JPanel panel = new JPanel(new BorderLayout());
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course != null && course.isAdaptive()) {
-      panel.add(new StepicAdaptiveReactionsPanel(project), BorderLayout.NORTH);
+      panel.add(new StepikAdaptiveReactionsPanel(project), BorderLayout.NORTH);
     }
 
     JComponent taskInfoPanel = createTaskInfoPanel(project);

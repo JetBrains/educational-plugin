@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
-import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +70,7 @@ public class ChoiceTask extends Task {
         if (user == null) {
           return new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
         }
-        return StepicAdaptiveConnector.checkChoiceTask(myTask, user);
+        return StepikAdaptiveConnector.checkChoiceTask(myTask, user);
       }
 
       @Override

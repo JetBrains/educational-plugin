@@ -26,7 +26,7 @@ import javax.swing.*;
 import java.util.List;
 
 public class EduConfigurable extends CompositeConfigurable<OptionsProvider> {
-  public static final String ID = "com.jetbrains.edu.learning.stepic.EduConfigurable";
+  public static final String ID = "com.jetbrains.edu.learning.stepik.EduConfigurable";
   private final JPanel myMainPanel;
 
   public EduConfigurable() {

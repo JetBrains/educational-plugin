@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.openapi.Disposable;
@@ -36,9 +36,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static com.jetbrains.edu.learning.stepic.StepicConnector.getLastSubmission;
-import static com.jetbrains.edu.learning.stepic.StepicConnector.getSolutionForStepikAssignment;
-import static com.jetbrains.edu.learning.stepic.StepicConnector.removeAllTags;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.getLastSubmission;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.getSolutionForStepikAssignment;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.removeAllTags;
 
 public class StepikSolutionsLoader implements Disposable{
   private static final Logger LOG = Logger.getInstance(StepikSolutionsLoader.class);
@@ -170,7 +170,7 @@ public class StepikSolutionsLoader implements Disposable{
     for (int i = 0; i < length; i += MAX_REQUEST_PARAMS) {
       List<Task> sublist = Arrays.asList(allTasks).subList(i, Math.min(i + MAX_REQUEST_PARAMS, length));
       String[] progresses = sublist.stream().map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
-      Boolean[] taskStatuses = StepicConnector.taskStatuses(progresses);
+      Boolean[] taskStatuses = StepikConnector.taskStatuses(progresses);
       if (taskStatuses == null) return tasksToUpdate;
       for (int j = 0; j < sublist.size(); j++) {
         Boolean isSolved = taskStatuses[j];
@@ -238,7 +238,7 @@ public class StepikSolutionsLoader implements Disposable{
     else if (!isSolved) {
       try {
         if (task instanceof EduTask) {
-          List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(stepId), isSolved);
+          List<StepikWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(stepId), isSolved);
           if (!solutionFiles.isEmpty()) {
             return true;
           }
@@ -248,7 +248,6 @@ public class StepikSolutionsLoader implements Disposable{
           if (solution != null) {
             return true;
           }
-
         }
       }
       catch (IOException e) {
@@ -276,16 +275,16 @@ public class StepikSolutionsLoader implements Disposable{
 
   private static String loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
     if (task instanceof EduTask) {
-      List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
+      List<StepikWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
       if (solutionFiles.isEmpty()) {
         task.setStatus(CheckStatus.Unchecked);
         return "";
       }
-      for (StepicWrappers.SolutionFile file : solutionFiles) {
+      for (StepikWrappers.SolutionFile file : solutionFiles) {
         TaskFile taskFile = task.getTaskFile(file.name);
         if (taskFile != null) {
           task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
-          if (StepicConnector.setPlaceholdersFromTags(taskFile, file)) {
+          if (StepikConnector.setPlaceholdersFromTags(taskFile, file)) {
             return removeAllTags(file.text);
           }
           else {

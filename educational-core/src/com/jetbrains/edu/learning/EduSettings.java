@@ -7,8 +7,8 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.stepic.StepicUserWidget;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import org.jetbrains.annotations.Nullable;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
@@ -53,7 +53,7 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
   public void setUser(@Nullable final StepicUser user) {
     myUser = user;
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).settingsChanged();
-    updateStepicUserWidget();
+    updateStepikUserWidget();
   }
 
   public boolean shouldUseJavaFx() {
@@ -64,8 +64,8 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
     this.myShouldUseJavaFx = shouldUseJavaFx;
   }
 
-  private static void updateStepicUserWidget() {
-    StepicUserWidget widget = EduUtils.getStepicWidget();
+  private static void updateStepikUserWidget() {
+    StepikUserWidget widget = EduUtils.getStepikWidget();
     if (widget != null) {
       widget.update();
     }
