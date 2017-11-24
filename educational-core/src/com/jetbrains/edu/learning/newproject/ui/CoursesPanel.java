@@ -39,8 +39,8 @@ import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepicUser;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,7 +107,7 @@ public class CoursesPanel extends JPanel {
       public void mouseClicked(MouseEvent e) {
         if (!isLoggedIn() && myErrorLabel.isVisible()) {
           addLoginListener(CoursesPanel.this::updateCoursesList);
-          StepicConnector.doAuthorize(EduUtils::showOAuthDialog);
+          StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
         }
       }
 
@@ -361,7 +361,7 @@ public class CoursesPanel extends JPanel {
                 int result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik", "Log in", "Cancel", null);
                 if (result == Messages.OK) {
                   addLoginListener(CoursesPanel.this::updateCoursesList,  () -> importStepikCourse());
-                  StepicConnector.doAuthorize(EduUtils::showOAuthDialog);
+                  StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
                 }
               }
               else {
@@ -415,7 +415,7 @@ public class CoursesPanel extends JPanel {
         StepicUser user = EduSettings.getInstance().getUser();
         assert user != null;
         try {
-          RemoteCourse course = (RemoteCourse) StepicConnector.getCourseByLink(user, courseLink);
+          RemoteCourse course = (RemoteCourse) StepikConnector.getCourseByLink(user, courseLink);
           List<Language> languages = getLanguagesUnderProgress(course);
 
           if (languages == null || languages.isEmpty()) {
@@ -454,7 +454,7 @@ public class CoursesPanel extends JPanel {
     private List<Language> getLanguagesUnderProgress(RemoteCourse course) {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return EduUtils.execCancelable(() -> StepicConnector.getSupportedLanguages(course));
+        return EduUtils.execCancelable(() -> StepikConnector.getSupportedLanguages(course));
       }, "Getting Available Languages", true, DefaultProjectFactory.getInstance().getDefaultProject() );
     }
 

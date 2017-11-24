@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressManager;
@@ -12,7 +12,7 @@ import javax.swing.*;
 public class OAuthDialog extends DialogWrapper {
   protected final AuthorizationPanel myLoginPanel;
   private String myProgressTitle;
-  private StepicUser myStepicUser;
+  private StepicUser myUser;
 
   public OAuthDialog() {
     super(false);
@@ -50,8 +50,8 @@ public class OAuthDialog extends DialogWrapper {
     ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
 
-      myStepicUser = EduUtils.execCancelable(() -> StepicAuthorizedClient.login(code, StepicNames.EXTERNAL_REDIRECT_URL));
-      if (myStepicUser != null) {
+      myUser = EduUtils.execCancelable(() -> StepikAuthorizedClient.login(code, StepikNames.EXTERNAL_REDIRECT_URL));
+      if (myUser != null) {
         doJustOkAction();
       }
       else {
@@ -68,7 +68,7 @@ public class OAuthDialog extends DialogWrapper {
     ApplicationManager.getApplication().invokeLater(() -> super.doOKAction());
   }
 
-  public StepicUser getStepicUser() {
-    return myStepicUser;
+  public StepicUser getUser() {
+    return myUser;
   }
 }

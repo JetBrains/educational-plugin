@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -55,7 +55,7 @@ public class StepikUtils {
       return null;
     }
 
-    return String.format("%s/lesson/%d/step/%d", StepicNames.STEPIC_URL, lesson.getId(), stepNumber);
+    return String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.getId(), stepNumber);
   }
 
   @Nullable

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -19,11 +19,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector.TOO_BORING_RECOMMENDATION_REACTION;
-import static com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector.TOO_HARD_RECOMMENDATION_REACTION;
 
-
-public class StepicAdaptiveReactionsPanel extends JPanel {
+public class StepikAdaptiveReactionsPanel extends JPanel {
   private final ReactionButtonPanel myHardPanel;
   private final ReactionButtonPanel myBoringPanel;
   @NotNull private final Project myProject;
@@ -33,13 +30,13 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
   private static final String HARD_LABEL_TOOLTIP = "Click To Get An Easier Task";
   private static final String BORING_LABEL_TOOLTIP = "Click To Get A More Challenging Task";
 
-  public StepicAdaptiveReactionsPanel(@NotNull final Project project) {
+  public StepikAdaptiveReactionsPanel(@NotNull final Project project) {
     myProject = project;
     setLayout(new GridBagLayout());
     setBackground(UIUtil.getTextFieldBackground());
 
-    myHardPanel = new ReactionButtonPanel(HARD_REACTION, HARD_LABEL_TOOLTIP, TOO_HARD_RECOMMENDATION_REACTION);
-    myBoringPanel = new ReactionButtonPanel(BORING_REACTION, BORING_LABEL_TOOLTIP, TOO_BORING_RECOMMENDATION_REACTION);
+    myHardPanel = new ReactionButtonPanel(HARD_REACTION, HARD_LABEL_TOOLTIP, StepikAdaptiveConnector.TOO_HARD_RECOMMENDATION_REACTION);
+    myBoringPanel = new ReactionButtonPanel(BORING_REACTION, BORING_LABEL_TOOLTIP, StepikAdaptiveConnector.TOO_BORING_RECOMMENDATION_REACTION);
     addFileListener();
 
     final GridBagConstraints c = new GridBagConstraints();
@@ -78,7 +75,7 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
       public void selectionChanged(@NotNull FileEditorManagerEvent event) {
         final com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getTaskFromSelectedEditor(myProject);
         final boolean isEnabled = task != null && task.getStatus() != CheckStatus.Solved;
-        StepicAdaptiveReactionsPanel.this.setEnabledRecursive(isEnabled);
+        StepikAdaptiveReactionsPanel.this.setEnabledRecursive(isEnabled);
       }
     };
     myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, editorManagerListener);
@@ -141,16 +138,16 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
           final com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getCurrentTask(myProject);
           if (task != null && task.getStatus() != CheckStatus.Solved) {
             final ProgressIndicatorBase progress = new ProgressIndicatorBase();
-            progress.setText(StepicAdaptiveConnector.LOADING_NEXT_RECOMMENDATION);
+            progress.setText(StepikAdaptiveConnector.LOADING_NEXT_RECOMMENDATION);
             ProgressManager.getInstance().run(new Task.Backgroundable(myProject,
-                                                                      StepicAdaptiveConnector.LOADING_NEXT_RECOMMENDATION) {
+                                                                      StepikAdaptiveConnector.LOADING_NEXT_RECOMMENDATION) {
               @Override
               public void run(@NotNull ProgressIndicator indicator) {
-                StepicAdaptiveReactionsPanel.this.setEnabledRecursive(false);
+                StepikAdaptiveReactionsPanel.this.setEnabledRecursive(false);
                 ApplicationManager.getApplication().invokeLater(()->setBackground(UIUtil.getLabelBackground()));
-                StepicAdaptiveConnector.addNextRecommendedTask(StepicAdaptiveReactionsPanel.this.myProject, task.getLesson(), indicator,
+                StepikAdaptiveConnector.addNextRecommendedTask(StepikAdaptiveReactionsPanel.this.myProject, task.getLesson(), indicator,
                                                                   myReaction);
-                StepicAdaptiveReactionsPanel.this.setEnabledRecursive(true);
+                StepikAdaptiveReactionsPanel.this.setEnabledRecursive(true);
               }
             });
           }

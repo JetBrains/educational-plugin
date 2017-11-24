@@ -9,7 +9,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepic.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepicUser;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,9 +93,9 @@ public class Course {
     return null;
   }
 
-  public Lesson getLesson(int stepicId) {
+  public Lesson getLesson(int lessonId) {
     for (Lesson lesson : lessons) {
-      if (lesson.getId() == stepicId) {
+      if (lesson.getId() == lessonId) {
         return lesson;
       }
     }
@@ -117,12 +117,12 @@ public class Course {
     for (String name : authors) {
       final List<String> firstLast = StringUtil.split(name, " ");
       if (!firstLast.isEmpty()) {
-        final StepicUser stepicUser = StepicUser.createEmptyUser();
-        stepicUser.setFirstName(firstLast.remove(0));
+        final StepicUser user = StepicUser.createEmptyUser();
+        user.setFirstName(firstLast.remove(0));
         if (firstLast.size() > 0) {
-          stepicUser.setLastName(StringUtil.join(firstLast, " "));
+          user.setLastName(StringUtil.join(firstLast, " "));
         }
-        this.authors.add(stepicUser);
+        this.authors.add(user);
       }
     }
   }

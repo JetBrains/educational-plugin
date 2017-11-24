@@ -45,7 +45,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.*;
+import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +57,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.EduUtils.execCancelable;
-import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
-import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
+import static com.jetbrains.edu.learning.EduUtils.*;
+import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
 
 public class EduProjectComponent implements ProjectComponent {
@@ -80,7 +79,7 @@ public class EduProjectComponent implements ProjectComponent {
     }
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
-        if (!EduUtils.isStudyProject(myProject)) {
+        if (!isStudyProject(myProject)) {
           return;
         }
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
@@ -102,7 +101,7 @@ public class EduProjectComponent implements ProjectComponent {
           loadSolutionsFromStepik(course);
         }
 
-        addStepicWidget();
+        addStepikWidget();
         selectStep(course);
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
@@ -119,7 +118,7 @@ public class EduProjectComponent implements ProjectComponent {
     myBusConnection.subscribe(EditorColorsManager.TOPIC, new EditorColorsListener() {
       @Override
       public void globalSchemeChange(EditorColorsScheme scheme) {
-        final TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(myProject);
+        final TaskDescriptionToolWindow toolWindow = getStudyToolWindow(myProject);
         if (toolWindow != null) {
           toolWindow.updateFonts(myProject);
         }
@@ -142,8 +141,8 @@ public class EduProjectComponent implements ProjectComponent {
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
     if (!(course instanceof RemoteCourse) || !((RemoteCourse) course).isLoadSolutions()) return;
-    if (PropertiesComponent.getInstance(myProject).getBoolean(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
-      PropertiesComponent.getInstance(myProject).setValue(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
+    if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
+      PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
       return;
     }
     StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(myProject);
@@ -156,13 +155,13 @@ public class EduProjectComponent implements ProjectComponent {
     }
   }
 
-  private void addStepicWidget() {
-    StepicUserWidget widget = EduUtils.getStepicWidget();
+  private void addStepikWidget() {
+    StepikUserWidget widget = getStepikWidget();
     StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
     if (widget != null) {
-      statusBar.removeWidget(StepicUserWidget.ID);
+      statusBar.removeWidget(StepikUserWidget.ID);
     }
-    statusBar.addWidget(new StepicUserWidget(myProject), "before Position");
+    statusBar.addWidget(new StepikUserWidget(myProject), "before Position");
   }
 
   private void selectStep(@NotNull Course course) {
@@ -187,7 +186,7 @@ public class EduProjectComponent implements ProjectComponent {
                                return true;
                              });
                            }, "Updating Course", true, myProject);
-                           EduUtils.synchronize();
+                           synchronize();
                            course.setUpdated();
                          }
                        });
@@ -195,7 +194,7 @@ public class EduProjectComponent implements ProjectComponent {
   }
 
   private void registerShortcuts() {
-    TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(myProject);
+    TaskDescriptionToolWindow window = getStudyToolWindow(myProject);
     if (window != null) {
       List<AnAction> actionsOnToolbar = window.getActions(true);
       for (AnAction action : actionsOnToolbar) {
@@ -215,7 +214,7 @@ public class EduProjectComponent implements ProjectComponent {
   private void updateCourse() {
     final Course currentCourse = StudyTaskManager.getInstance(myProject).getCourse();
     if (currentCourse == null || !(currentCourse instanceof RemoteCourse)) return;
-    final Course course = StepicConnector.getCourse(myProject, (RemoteCourse)currentCourse);
+    final Course course = StepikConnector.getCourse(myProject, (RemoteCourse)currentCourse);
     if (course == null) return;
     course.initCourse(false);
 
@@ -385,21 +384,21 @@ public class EduProjectComponent implements ProjectComponent {
     public void fileCreated(@NotNull VirtualFileEvent event) {
       if (myProject.isDisposed()) return;
       final VirtualFile createdFile = event.getFile();
-      final VirtualFile taskDir = EduUtils.getTaskDir(createdFile);
+      final VirtualFile taskDir = getTaskDir(createdFile);
       final Course course = StudyTaskManager.getInstance(myProject).getCourse();
       if (course == null || !course.isStudy()) {
         return;
       }
       if (taskDir != null && taskDir.getName().contains(EduNames.TASK)) {
-        int taskIndex = EduUtils.getIndex(taskDir.getName(), EduNames.TASK);
+        int taskIndex = getIndex(taskDir.getName(), EduNames.TASK);
         final VirtualFile lessonDir = taskDir.getParent();
         if (lessonDir != null && lessonDir.getName().contains(EduNames.LESSON)) {
-          int lessonIndex = EduUtils.getIndex(lessonDir.getName(), EduNames.LESSON);
+          int lessonIndex = getIndex(lessonDir.getName(), EduNames.LESSON);
           List<Lesson> lessons = course.getLessons();
-          if (EduUtils.indexIsValid(lessonIndex, lessons)) {
+          if (indexIsValid(lessonIndex, lessons)) {
             final Lesson lesson = lessons.get(lessonIndex);
             final List<Task> tasks = lesson.getTaskList();
-            if (EduUtils.indexIsValid(taskIndex, tasks)) {
+            if (indexIsValid(taskIndex, tasks)) {
               final Task task = tasks.get(taskIndex);
               final TaskFile taskFile = new TaskFile();
               taskFile.initTaskFile(task, false);

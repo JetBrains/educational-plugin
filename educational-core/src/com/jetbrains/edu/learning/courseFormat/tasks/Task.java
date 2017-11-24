@@ -16,8 +16,9 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepikUtils;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
+import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
 import one.util.streamex.EntryStream;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -289,7 +290,7 @@ public abstract class Task implements StudyItem {
 
   public boolean isUpToDate() {
     if (getStepId() == 0) return true;
-    final Date date = StepicConnector.getTaskUpdateDate(getStepId());
+    final Date date = StepikConnector.getTaskUpdateDate(getStepId());
     if (date == null) return true;
     if (myUpdateDate == null) return false;
     return !date.after(myUpdateDate);

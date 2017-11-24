@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.HoverHyperlinkLabel;
@@ -29,15 +29,15 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
-public class StepicOptions implements OptionsProvider {
+public class StepikOptions implements OptionsProvider {
   private JPanel myPane;
   private JBCheckBox myEnableTestingFromSamples;
   private JBLabel myUsernameLabel;
   private HoverHyperlinkLabel myHoverHyperlinkLabel;
-  private StepicUser myStepicUser;
+  private StepicUser myUser;
   private HyperlinkAdapter myListener;
 
-  public StepicOptions() {
+  public StepikOptions() {
   }
 
   @NotNull
@@ -60,14 +60,14 @@ public class StepicOptions implements OptionsProvider {
         EduUsagesCollector.loginFromSettings();
         ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
           StepicUser user = EduSettings.getInstance().getUser();
-          if (user != null && !user.equals(myStepicUser)) {
-            EduSettings.getInstance().setUser(myStepicUser);
-            myStepicUser = user;
-            updateLoginLabels(myStepicUser);
+          if (user != null && !user.equals(myUser)) {
+            EduSettings.getInstance().setUser(myUser);
+            myUser = user;
+            updateLoginLabels(myUser);
           }
         });
 
-        StepicConnector.doAuthorize(() -> showDialog());
+        StepikConnector.doAuthorize(() -> showDialog());
       }
     };
   }
@@ -75,8 +75,8 @@ public class StepicOptions implements OptionsProvider {
   private void showDialog() {
     OAuthDialog dialog = new OAuthDialog();
     if (dialog.showAndGet()) {
-      myStepicUser = dialog.getStepicUser();
-      updateLoginLabels(myStepicUser);
+      myUser = dialog.getUser();
+      updateLoginLabels(myUser);
     }
   }
 
@@ -96,12 +96,12 @@ public class StepicOptions implements OptionsProvider {
     updateLoginLabels(stepikSettings.getUser());
   }
 
-  private void updateLoginLabels(@Nullable StepicUser stepicUser) {
+  private void updateLoginLabels(@Nullable StepicUser user) {
     if (myListener != null) {
       myHoverHyperlinkLabel.removeHyperlinkListener(myListener);
     }
 
-    if (stepicUser == null) {
+    if (user == null) {
       myUsernameLabel.setText("You're not logged in");
       myHoverHyperlinkLabel.setText("Log in to Stepik");
 
@@ -109,8 +109,8 @@ public class StepicOptions implements OptionsProvider {
       myHoverHyperlinkLabel.addHyperlinkListener(myListener);
     }
     else {
-      String firstName = stepicUser.getFirstName();
-      String lastName = stepicUser.getLastName();
+      String firstName = user.getFirstName();
+      String lastName = user.getLastName();
       String loggedInText = "You're logged in";
       if (firstName == null || lastName == null || firstName.isEmpty() || lastName.isEmpty()) {
         myUsernameLabel.setText(loggedInText);
@@ -142,17 +142,17 @@ public class StepicOptions implements OptionsProvider {
     }
 
     final StepicUser user = stepikSettings.getUser();
-    boolean userDeleted = myStepicUser == null && user != null;
-    boolean userModified = myStepicUser != null && !myStepicUser.equals(user);
+    boolean userDeleted = myUser == null && user != null;
+    boolean userModified = myUser != null && !myUser.equals(user);
     if (userDeleted || userModified) {
-      stepikSettings.setUser(myStepicUser);
+      stepikSettings.setUser(myUser);
     }
     reset();
   }
 
   private void removeCredentials() {
-    myStepicUser = null;
-    StepicAuthorizedClient.invalidateClient();
+    myUser = null;
+    StepikAuthorizedClient.invalidateClient();
   }
 
   @Nullable
@@ -166,8 +166,8 @@ public class StepicOptions implements OptionsProvider {
     boolean isTestOptionModified = !isTestingFromSamplesEnabled() == stepikSettings.isEnableTestingFromSamples();
     final StepicUser user = stepikSettings.getUser();
 
-    boolean userDeleted = myStepicUser == null && user != null;
-    boolean userModified = myStepicUser != null && !myStepicUser.equals(user);
+    boolean userDeleted = myUser == null && user != null;
+    boolean userModified = myUser != null && !myUser.equals(user);
     return isTestOptionModified || (userDeleted || userModified);
   }
 }

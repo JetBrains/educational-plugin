@@ -11,7 +11,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.stepik.CCStepicConnector;
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -52,13 +52,13 @@ public class CCPushCourse extends DumbAwareAction {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           indicator.setIndeterminate(false);
-          CCStepicConnector.updateCourse(project, (RemoteCourse) course);
-          CCStepicConnector.showNotification(project, "Course updated");
+          CCStepikConnector.updateCourse(project, (RemoteCourse) course);
+          CCStepikConnector.showNotification(project, "Course updated");
         }
       });
     }
     else {
-      CCStepicConnector.postCourseWithProgress(project, course);
+      CCStepikConnector.postCourseWithProgress(project, course);
     }
     EduUsagesCollector.courseUploaded();
   }

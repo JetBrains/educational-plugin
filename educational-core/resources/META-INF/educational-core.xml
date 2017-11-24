@@ -13,7 +13,7 @@
 
     <application-components>
         <component>
-            <implementation-class>com.jetbrains.edu.learning.stepic.StepicUpdater</implementation-class>
+            <implementation-class>com.jetbrains.edu.learning.stepik.StepikUpdater</implementation-class>
         </component>
         <component>
             <implementation-class>com.jetbrains.edu.learning.InitializationComponent</implementation-class>
@@ -167,7 +167,7 @@
         </group>
 
         <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
-        <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepic"/>
+        <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepik"/>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -199,8 +199,8 @@
         <editorTabTitleProvider implementation="com.jetbrains.edu.learning.EduTabTitleProvider"/>
         <typedHandler implementation="com.jetbrains.edu.learning.handlers.EduTypeHandlerDelegate"
                       order="first, before completionAutoPopup"/>
-        <httpRequestHandler implementation="com.jetbrains.edu.learning.stepic.builtInServer.StepikRestService"/>
-        <projectService serviceImplementation="com.jetbrains.edu.learning.stepic.StepikSolutionsLoader" />
+        <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
+        <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader" />
 
         <!--for educators-->
         <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>
@@ -223,10 +223,10 @@
     </extensions>
 
     <extensions defaultExtensionNs="Educational">
-        <optionsProvider instance="com.jetbrains.edu.learning.stepic.StepicOptions"/>
+        <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
         <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
-        <checkListener implementation="com.jetbrains.edu.learning.stepic.NextRecommendationCheckListener"/>
-        <checkListener implementation="com.jetbrains.edu.learning.stepic.PostSolutionCheckListener"/>
+        <checkListener implementation="com.jetbrains.edu.learning.stepik.NextRecommendationCheckListener"/>
+        <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
         <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
         <!--educator-->
         <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>

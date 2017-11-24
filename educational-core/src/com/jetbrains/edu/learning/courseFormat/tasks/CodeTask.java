@@ -7,8 +7,8 @@ import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
 import org.jetbrains.annotations.NotNull;
 
 public class CodeTask extends Task {
@@ -39,7 +39,7 @@ public class CodeTask extends Task {
         if (user == null) {
           return new CheckResult(CheckStatus.Unchecked, CheckAction.LOGIN_NEEDED);
         }
-        return StepicAdaptiveConnector.checkCodeTask(myProject, myTask, user);
+        return StepikAdaptiveConnector.checkCodeTask(myProject, myTask, user);
       }
     };
   }

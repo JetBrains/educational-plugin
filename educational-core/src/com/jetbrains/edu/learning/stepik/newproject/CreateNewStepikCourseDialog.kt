@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic.newproject
+package com.jetbrains.edu.learning.stepik.newproject
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.edu.learning.EduConfiguratorManager
