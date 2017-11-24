@@ -52,6 +52,28 @@ public class NavigateTaskTest extends EduTestCase {
     assertEquals(1, lesson.getIndex());
   }
 
+  public void testLastTask() {
+    configureByTaskFile(2, 2, "taskFile2.txt");
+    myFixture.testAction(new NextTaskAction());
+    final VirtualFile currentFile = FileEditorManagerEx.getInstanceEx(myFixture.getProject()).getCurrentFile();
+    final TaskFile taskFile = EduUtils.getTaskFile(myFixture.getProject(), currentFile);
+    final Task task = taskFile.getTask();
+    assertEquals(2, task.getIndex());
+    final Lesson lesson = task.getLesson();
+    assertEquals(2, lesson.getIndex());
+  }
+
+  public void testFirstTask() {
+    configureByTaskFile(1, 1, "taskFile1.txt");
+    myFixture.testAction(new PreviousTaskAction());
+    final VirtualFile currentFile = FileEditorManagerEx.getInstanceEx(myFixture.getProject()).getCurrentFile();
+    final TaskFile taskFile = EduUtils.getTaskFile(myFixture.getProject(), currentFile);
+    final Task task = taskFile.getTask();
+    assertEquals(1, task.getIndex());
+    final Lesson lesson = task.getLesson();
+    assertEquals(1, lesson.getIndex());
+  }
+
   @Override
   protected void createCourse() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1");
