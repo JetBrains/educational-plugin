@@ -131,7 +131,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     return file;
   }
 
-  private static List<AnswerPlaceholder> getPlaceholders(Document document, boolean useLength) {
+  public static List<AnswerPlaceholder> getPlaceholders(Document document, boolean useLength) {
     final List<AnswerPlaceholder> placeholders = new ArrayList<>();
     new WriteCommandAction(null) {
       @Override
