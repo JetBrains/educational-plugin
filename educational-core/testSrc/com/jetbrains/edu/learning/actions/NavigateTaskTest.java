@@ -10,6 +10,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 
+import java.io.IOException;
+
 public class NavigateTaskTest extends EduTestCase {
 
   public void testNextTask() {
@@ -75,7 +77,7 @@ public class NavigateTaskTest extends EduTestCase {
   }
 
   @Override
-  protected void createCourse() {
+  protected void createCourse() throws IOException {
     myFixture.copyDirectoryToProject("lesson1", "lesson1");
     myFixture.copyDirectoryToProject("lesson2", "lesson2");
     Course course = new Course();
