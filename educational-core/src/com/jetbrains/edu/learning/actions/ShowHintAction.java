@@ -14,15 +14,15 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.popup.PopupPositionManager;
 import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.AnswerPlaceholderHint;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.ui.HintComponent;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,17 +64,17 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     }
     EduUsagesCollector.hintShown();
 
-    final TaskDescriptionToolWindow hintComponent = getHint(project, answerPlaceholder).getTaskDescriptionToolWindow();
+    final HintComponent hintComponent = getHint(project, answerPlaceholder).getHintComponent();
     hintComponent.setPreferredSize(new Dimension(400, 150));
     showHintPopUp(project, eduState, editor, hintComponent);
   }
 
   @NotNull
-  protected AnswerPlaceholderHint getHint(Project project, AnswerPlaceholder answerPlaceholder) {
+  protected static AnswerPlaceholderHint getHint(Project project, AnswerPlaceholder answerPlaceholder) {
     return new AnswerPlaceholderHint(answerPlaceholder, project);
   }
 
-  private static void showHintPopUp(Project project, EduState eduState, Editor editor, TaskDescriptionToolWindow hintComponent) {
+  private static void showHintPopUp(Project project, EduState eduState, Editor editor, HintComponent hintComponent) {
     final JBPopup popup =
       JBPopupFactory.getInstance().createComponentPopupBuilder(hintComponent, hintComponent)
         .setDimensionServiceKey(project, "StudyHint", false)
@@ -111,7 +111,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     
   }
 
-  private boolean hasHints(@NotNull Project project) {
+  private static boolean hasHints(@NotNull Project project) {
     Task currentTask = EduUtils.getCurrentTask(project);
     if (currentTask == null) {
       return false;

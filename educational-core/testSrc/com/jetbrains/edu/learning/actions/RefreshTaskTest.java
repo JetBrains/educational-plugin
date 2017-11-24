@@ -34,7 +34,7 @@ public class RefreshTaskTest extends EduTestCase {
     course.setName("Edu test course");
     StudyTaskManager.getInstance(myFixture.getProject()).setCourse(course);
 
-    Lesson lesson1 = createLesson(1);
+    Lesson lesson1 = createLesson(1, 2);
     course.addLesson(lesson1);
     course.initCourse(false);
   }
