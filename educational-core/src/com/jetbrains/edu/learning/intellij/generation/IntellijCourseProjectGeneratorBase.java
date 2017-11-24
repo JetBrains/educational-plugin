@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +43,7 @@ public abstract class IntellijCourseProjectGeneratorBase extends CourseProjectGe
     if (remoteCourse.getId() > 0) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),
+        return EduUtils.execCancelable(() -> StepikConnector.enrollToCourse(remoteCourse.getId(),
                 EduSettings.getInstance().getUser()));
       }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
     }

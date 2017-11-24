@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.stepic.builtInServer;
+package com.jetbrains.edu.learning.stepik.builtInServer;
 
 import com.intellij.ide.RecentProjectsManagerBase;
 import com.intellij.ide.impl.ProjectUtil;
@@ -29,10 +29,11 @@ import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.stepic.newproject.CreateNewStepikCourseDialog;
-import com.jetbrains.edu.learning.stepic.StepicAuthorizedClient;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
+import com.jetbrains.edu.learning.stepik.newproject.CreateNewStepikCourseDialog;
+import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -47,7 +48,6 @@ import java.util.List;
 import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
 import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
-import static com.jetbrains.edu.learning.stepic.StepicNames.STEP_ID;
 
 public class EduBuiltInServerUtils {
 
@@ -115,7 +115,7 @@ public class EduBuiltInServerUtils {
       int courseId = getCourseId(studyTaskManager, component);
 
       if (courseId == targetCourseId) {
-        PropertiesComponent.getInstance().setValue(STEP_ID, stepId, 0);
+        PropertiesComponent.getInstance().setValue(StepikNames.STEP_ID, stepId, 0);
         Project project = openProject(projectPath);
         if (project != null) {
           return true;
@@ -162,8 +162,8 @@ public class EduBuiltInServerUtils {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
         execCancelable(() -> {
           try {
-            StepicUser user = StepicAuthorizedClient.getCurrentUser();
-            Course course = StepicConnector.getCourseFromStepik(user, courseId, true);
+            StepicUser user = StepikAuthorizedClient.getCurrentUser();
+            Course course = StepikConnector.getCourseFromStepik(user, courseId, true);
             showDialog(course, stepId);
           } catch (IOException e) {
             LOG.warn("Tried to create a project for course with id=" + courseId, e);
@@ -179,7 +179,7 @@ public class EduBuiltInServerUtils {
   private static void showDialog(@Nullable Course course, int stepId) {
     ApplicationManager.getApplication().invokeLater(() -> {
       if (course != null) {
-        PropertiesComponent.getInstance().setValue(STEP_ID, stepId, 0);
+        PropertiesComponent.getInstance().setValue(StepikNames.STEP_ID, stepId, 0);
         new CreateNewStepikCourseDialog(course).show();
       } else {
         Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course");

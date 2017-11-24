@@ -12,15 +12,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.coursecreator.actions.CCFromCourseArchive;
-import com.jetbrains.edu.coursecreator.stepik.CCStepicConnector;
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 
-public class CCGetCourseFromStepic extends DumbAwareAction {
+public class CCGetCourseFromStepik extends DumbAwareAction {
 
-  public CCGetCourseFromStepic() {
+  public CCGetCourseFromStepik() {
     super("Get Course From Stepik", "Get Course From Stepik", null);
   }
 
@@ -43,10 +43,10 @@ public class CCGetCourseFromStepic extends DumbAwareAction {
   }
 
   private static void createCourse(Project project, String courseId) {
-    final RemoteCourse info = CCStepicConnector.getCourseInfo(courseId);
+    final RemoteCourse info = CCStepikConnector.getCourseInfo(courseId);
     if (info == null) return;
 
-    final Course course = StepicConnector.getCourse(project, info);
+    final Course course = StepikConnector.getCourse(project, info);
     if (course == null) return;
 
     CCFromCourseArchive.generateFromStudentCourse(project, course);

@@ -13,6 +13,9 @@ import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,17 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.stepic.StepicNames.PYCHARM_PREFIX;
+import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 
 public class StepikTaskBuilder {
   private static final String TASK_NAME = "task";
   private static final Logger LOG = Logger.getInstance(StepikTaskBuilder.class);
-  private final StepicWrappers.StepSource myStepSource;
+  private final StepikWrappers.StepSource myStepSource;
   private int myStepId;
   private int myUserId;
   private String myName;
   private final Language myLanguage;
-  private StepicWrappers.Step myStep;
+  private StepikWrappers.Step myStep;
   private final Map<String, Computable<Task>> taskTypes = ImmutableMap.of(
     "code", this::codeTask,
     "choice", this::choiceTask,
@@ -46,7 +49,7 @@ public class StepikTaskBuilder {
   private static final String EMPTY_NAME = "";
 
   public StepikTaskBuilder(@NotNull RemoteCourse course,
-                           @NotNull StepicWrappers.StepSource stepSource,
+                           @NotNull StepikWrappers.StepSource stepSource,
                            int stepId, int userId) {
     this(course, EMPTY_NAME, stepSource, stepId, userId);
   }
@@ -54,7 +57,7 @@ public class StepikTaskBuilder {
 
   public StepikTaskBuilder(@NotNull RemoteCourse course,
                            @NotNull String name,
-                           @NotNull StepicWrappers.StepSource stepSource,
+                           @NotNull StepikWrappers.StepSource stepSource,
                            int stepId, int userId) {
     myName = name;
     myStepSource = stepSource;
@@ -104,7 +107,7 @@ public class StepikTaskBuilder {
     task.addTaskText(EduNames.TASK, taskDescription.toString());
 
     if (myStep.options.test != null) {
-      for (StepicWrappers.FileWrapper wrapper : myStep.options.test) {
+      for (StepikWrappers.FileWrapper wrapper : myStep.options.test) {
         task.addTestsTexts(wrapper.name, wrapper.text);
       }
     }
@@ -139,9 +142,9 @@ public class StepikTaskBuilder {
     task.setStepikPosition(myStepSource.position);
     task.addTaskText(EduNames.TASK, myStep.text);
 
-    final StepicWrappers.AdaptiveAttemptWrapper.Attempt attempt = StepicAdaptiveConnector.getAttemptForStep(myStepId, myUserId);
+    final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = StepikAdaptiveConnector.getAttemptForStep(myStepId, myUserId);
     if (attempt != null) {
-      final StepicWrappers.AdaptiveAttemptWrapper.Dataset dataset = attempt.dataset;
+      final StepikWrappers.AdaptiveAttemptWrapper.Dataset dataset = attempt.dataset;
       if (dataset != null) {
         task.setChoiceVariants(dataset.options);
         task.setMultipleChoice(dataset.is_multiple_choice);
@@ -187,13 +190,13 @@ public class StepikTaskBuilder {
     }
     task.setStepId(myStepId);
     task.setUpdateDate(myStepSource.update_date);
-    task.setName(myStep.options != null ? myStep.options.title : (PYCHARM_PREFIX + StepicConnector.CURRENT_VERSION));
+    task.setName(myStep.options != null ? myStep.options.title : (PYCHARM_PREFIX + StepikConnector.CURRENT_VERSION));
 
-    for (StepicWrappers.FileWrapper wrapper : myStep.options.test) {
+    for (StepikWrappers.FileWrapper wrapper : myStep.options.test) {
       task.addTestsTexts(wrapper.name, wrapper.text);
     }
     if (myStep.options.text != null) {
-      for (StepicWrappers.FileWrapper wrapper : myStep.options.text) {
+      for (StepikWrappers.FileWrapper wrapper : myStep.options.text) {
         task.addTaskText(wrapper.name, wrapper.text);
       }
     } else {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jetbrains.edu.learning.stepic.builtInServer;
+package com.jetbrains.edu.learning.stepik.builtInServer;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -27,10 +27,11 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.AppIcon;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.stepic.StepicAuthorizedClient;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.stepic.StepicWrappers;
+import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikWrappers;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
@@ -49,16 +50,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jetbrains.edu.learning.stepic.builtInServer.EduBuiltInServerUtils.*;
-import static com.jetbrains.edu.learning.stepic.StepicNames.EDU_STEPIK_SERVICE_NAME;
-import static com.jetbrains.edu.learning.stepic.StepicNames.LINK;
+import static com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils.*;
 
 public class StepikRestService extends RestService {
   private static final Logger LOG = Logger.getInstance(StepikRestService.class.getName());
-  private static final Pattern OPEN_COURSE_PATTERN = Pattern.compile("/" + EDU_STEPIK_SERVICE_NAME + "\\?link=.+");
+  private static final Pattern OPEN_COURSE_PATTERN = Pattern.compile("/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "\\?link=.+");
   private static final Pattern COURSE_PATTERN = Pattern.compile("https://stepik\\.org/lesson(?:/[a-zA-Z\\-]*-|/)(\\d+)/step/(\\d+)");
   private static final Pattern
-    OAUTH_CODE_PATTERN = Pattern.compile("/" + RestService.PREFIX + "/" + EDU_STEPIK_SERVICE_NAME + "/oauth" + "\\?code=(\\w+)");
+    OAUTH_CODE_PATTERN = Pattern.compile("/" + RestService.PREFIX + "/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "/oauth" + "\\?code=(\\w+)");
 
   @NotNull
   private static String log(@NotNull String message) {
@@ -69,7 +68,7 @@ public class StepikRestService extends RestService {
   @NotNull
   @Override
   protected String getServiceName() {
-    return EDU_STEPIK_SERVICE_NAME;
+    return StepikNames.EDU_STEPIK_SERVICE_NAME;
   }
 
   @Override
@@ -103,7 +102,7 @@ public class StepikRestService extends RestService {
     if (matcher.matches()) {
       int courseId;
       int stepId;
-      String link = getStringParameter(LINK, urlDecoder);
+      String link = getStringParameter(StepikNames.LINK, urlDecoder);
 
       if (link == null) {
         return log("The link parameter was not found");
@@ -134,17 +133,17 @@ public class StepikRestService extends RestService {
         return log("Unrecognized the Unit id");
       }
 
-      StepicWrappers.Unit unit = StepicConnector.getUnit(unitId);
+      StepikWrappers.Unit unit = StepikConnector.getUnit(unitId);
       if (unit.getId() == 0) {
         return log("Unrecognized the Unit id");
       }
 
-      StepicWrappers.Section section = StepicConnector.getSection(unit.getSection());
+      StepikWrappers.Section section = StepikConnector.getSection(unit.getSection());
       courseId = section.getCourse();
       if (courseId == 0) {
         return log("Unrecognized the course id");
       }
-      Lesson lesson = StepicConnector.getLesson(lessonId);
+      Lesson lesson = StepikConnector.getLesson(lessonId);
       List<Integer> stepIds = lesson.steps;
 
       if (stepIds.isEmpty()) {
@@ -170,19 +169,19 @@ public class StepikRestService extends RestService {
     if (codeMatcher.matches()) {
       String code = getStringParameter("code", urlDecoder);
       if (code != null) {
-        StepicUser stepicUser = StepicAuthorizedClient.login(code, StepicConnector.getOAuthRedirectUrl());
-        if (stepicUser != null) {
-          EduSettings.getInstance().setUser(stepicUser);
+        StepicUser user = StepikAuthorizedClient.login(code, StepikConnector.getOAuthRedirectUrl());
+        if (user != null) {
+          EduSettings.getInstance().setUser(user);
           sendHtmlResponse(request, context, "/oauthResponsePages/okPage.html");
-          showStepicNotification(NotificationType.INFORMATION,
-                                 "Logged in as " + stepicUser.getFirstName() + " " + stepicUser.getLastName());
+          showStepikNotification(NotificationType.INFORMATION,
+                                 "Logged in as " + user.getFirstName() + " " + user.getLastName());
           focusOnApplicationWindow();
           return null;
         }
       }
 
       sendHtmlResponse(request, context, "/oauthResponsePages/errorPage.html");
-      showStepicNotification(NotificationType.ERROR, "Failed to log in");
+      showStepikNotification(NotificationType.ERROR, "Failed to log in");
       return "Couldn't find code parameter for Stepik OAuth";
     }
 
@@ -218,7 +217,7 @@ public class StepikRestService extends RestService {
     }
   }
 
-  private static void showStepicNotification(@NotNull NotificationType notificationType, @NotNull String text) {
+  private static void showStepikNotification(@NotNull NotificationType notificationType, @NotNull String text) {
     Notification notification = new Notification("Stepik", "Stepik", text, notificationType);
     notification.notify(null);
   }

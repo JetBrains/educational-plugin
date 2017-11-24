@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector
+import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector
 
 class CodeTaskChecker(task: CodeTask, project: Project) : TaskChecker<CodeTask>(task, project) {
     override fun onTaskFailed(message: String) {
@@ -15,6 +15,6 @@ class CodeTaskChecker(task: CodeTask, project: Project) : TaskChecker<CodeTask>(
     override fun checkOnRemote(): CheckResult {
         val user = EduSettings.getInstance().user
                 ?: return CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
-        return StepicAdaptiveConnector.checkCodeTask(project, task, user)
+        return StepikAdaptiveConnector.checkCodeTask(project, task, user)
     }
 }

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -23,11 +23,11 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class StepicUserWidget implements IconLikeCustomStatusBarWidget {
-  public static final String ID = "StepicUser";
+public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
+  public static final String ID = "StepikUserWidget";
   private JLabel myComponent;
 
-  public StepicUserWidget(@NotNull Project project) {
+  public StepikUserWidget(@NotNull Project project) {
     Icon icon = getWidgetIcon(EduSettings.getInstance().getUser());
     myComponent = new JLabel(icon);
 
@@ -99,7 +99,7 @@ public class StepicUserWidget implements IconLikeCustomStatusBarWidget {
           else {
             if (loginText.equals(selectedValue)) {
               EduUsagesCollector.loginFromWidget();
-              StepicConnector.doAuthorize(EduUtils::showOAuthDialog);
+              StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
             }
             else if (logOutText.equals(selectedValue)) {
               EduUsagesCollector.logoutFromWidget();

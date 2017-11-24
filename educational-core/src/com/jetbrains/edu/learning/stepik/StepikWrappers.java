@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class StepicWrappers {
+public class StepikWrappers {
   private static final Logger LOG = Logger.getInstance(StepOptions.class);
 
   static class StepContainer {
@@ -30,10 +30,10 @@ public class StepicWrappers {
   }
 
   public static class Step {
-    @Expose StepOptions options;
-    @Expose String text;
-    @Expose String name = "pycharm";
-    @Expose StepOptions source;
+    @Expose public StepOptions options;
+    @Expose public String text;
+    @Expose public String name = "pycharm";
+    @Expose public StepOptions source;
 
     public static Step fromTask(Project project, @NotNull final Task task) {
       final Step step = new Step();
@@ -43,18 +43,18 @@ public class StepicWrappers {
   }
 
   public static class StepOptions {
-    @Expose List<FileWrapper> test;
-    @Expose String title;
-    @Expose List<TaskFile> files;
-    @Expose List<FileWrapper> text;
-    @Expose List<List<String>> samples;
-    @Expose Integer executionMemoryLimit;
-    @Expose Integer executionTimeLimit;
-    @Expose Map<String, String> codeTemplates;
+    @Expose public List<FileWrapper> test;
+    @Expose public String title;
+    @Expose public List<TaskFile> files;
+    @Expose public List<FileWrapper> text;
+    @Expose public List<List<String>> samples;
+    @Expose public Integer executionMemoryLimit;
+    @Expose public Integer executionTimeLimit;
+    @Expose public Map<String, String> codeTemplates;
     @SerializedName("format_version")
     @Expose public int formatVersion = 3;
     @SerializedName("last_subtask_index")
-    @Expose int lastSubtaskIndex = 0;
+    @Expose public int lastSubtaskIndex = 0;
 
     public static StepOptions fromTask(final Project project, @NotNull final Task task) {
       final StepOptions source = new StepOptions();
@@ -168,7 +168,7 @@ public class StepicWrappers {
     }
   }
 
-  static class FileWrapper {
+  public static class FileWrapper {
     @Expose public final String name;
     @Expose public final String text;
 
@@ -288,10 +288,10 @@ public class StepicWrappers {
     Attempt attempt;
   }
 
-  static class AdaptiveAttemptWrapper {
-    static class Attempt {
+  public static class AdaptiveAttemptWrapper {
+    public static class Attempt {
       int step;
-      Dataset dataset;
+      public Dataset dataset;
       String dataset_url;
       String status;
       String time;
@@ -309,9 +309,9 @@ public class StepicWrappers {
       }
     }
 
-    static class Dataset {
-      boolean is_multiple_choice;
-      List<String> options;
+    public static class Dataset {
+      public boolean is_multiple_choice;
+      public List<String> options;
     }
 
     public AdaptiveAttemptWrapper(int step) {

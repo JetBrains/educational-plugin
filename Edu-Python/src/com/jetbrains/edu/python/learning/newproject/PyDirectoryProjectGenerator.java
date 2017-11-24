@@ -31,9 +31,9 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicNames;
-import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.python.learning.PyConfigurator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -77,7 +77,7 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
         StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
         stepikSolutionsLoader.loadSolutions(ProgressIndicatorProvider.getGlobalProgressIndicator(), course);
         EduUsagesCollector.progressOnGenerateCourse();
-        PropertiesComponent.getInstance(project).setValue(StepicNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
+        PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       }
       createTestHelper(project, baseDir);
     });
@@ -130,7 +130,7 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
     if (remoteCourse.getId() > 0) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return EduUtils.execCancelable(() -> StepicConnector.enrollToCourse(remoteCourse.getId(),
+        return EduUtils.execCancelable(() -> StepikConnector.enrollToCourse(remoteCourse.getId(),
             EduSettings.getInstance().getUser()));
       }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
     }

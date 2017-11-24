@@ -44,7 +44,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jetbrains.edu.learning.stepic.StepicNames.STEPIC_URL;
+import static com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL;
 
 public class BrowserWindow extends JFrame {
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
@@ -254,10 +254,10 @@ public class BrowserWindow extends JFrame {
               String href = getLink(target);
               if (href == null) return;
               if (isRelativeLink(href)) {
-                href = STEPIC_URL + href;
+                href = STEPIK_URL + href;
               }
               BrowserUtil.browse(href);
-              if (href.startsWith(STEPIC_URL)) {
+              if (href.startsWith(STEPIK_URL)) {
                 EduUsagesCollector.stepikLinkClicked();
               }
 

@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.stepic.StepicNames;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class CourseFormatTest {
     final Lesson additional = lessons.stream().
         filter(lesson -> lesson.getName().equals(EduNames.ADDITIONAL_MATERIALS)).findFirst().orElse(null);
     final Lesson oldAdditional = lessons.stream().
-        filter(lesson -> lesson.getName().equals(StepicNames.PYCHARM_ADDITIONAL)).findFirst().orElse(null);
+        filter(lesson -> lesson.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).findFirst().orElse(null);
     assertNotNull(additional);
     assertNull(oldAdditional);
   }

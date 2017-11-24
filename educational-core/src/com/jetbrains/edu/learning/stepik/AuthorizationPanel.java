@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.ui.components.JBTextField;
 
