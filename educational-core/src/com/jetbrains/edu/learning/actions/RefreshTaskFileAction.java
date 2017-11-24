@@ -49,7 +49,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
   }
 
   public static void refresh(@NotNull final Project project) {
-    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+    ApplicationManager.getApplication().runWriteAction(() -> {
       EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
       EduState eduState = new EduState(eduEditor);
       if (eduEditor == null || !eduState.isValid()) {
@@ -58,7 +58,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
       }
       refreshFile(eduState, project);
       eduEditor.validateTaskFile();
-    }));
+    });
   }
 
   private static void refreshFile(@NotNull final EduState eduState, @NotNull final Project project) {
