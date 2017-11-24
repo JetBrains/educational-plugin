@@ -63,7 +63,8 @@ public class StepicAdaptiveConnector {
     {
       put("Java", "java8");
       put("Python", "python3");
-  }
+      put("Kotlin", "kotlin");
+    }
   };
 
   @Nullable
@@ -365,6 +366,7 @@ public class StepicAdaptiveConnector {
                                                @Nullable LinkedTreeMap codeTemplates) {
     if (codeTemplates != null) {
       final String languageString = LANGUAGES.get(language.getDisplayName());
+      assert languageString != null : ("Default Stepik language not found for: " + language.getDisplayName());
       return (String)codeTemplates.get(languageString);
     }
 
@@ -432,6 +434,7 @@ public class StepicAdaptiveConnector {
         String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(courseLanguage).getLineCommentPrefix();
         final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();
         String defaultLanguage = LANGUAGES.get(courseLanguage.getDisplayName());
+        assert defaultLanguage != null : ("Default Stepik language not found for: " + courseLanguage.getDisplayName());
         final StepicWrappers.SubmissionToPostWrapper submissionToPost =
           new StepicWrappers.SubmissionToPostWrapper(String.valueOf(attemptId), defaultLanguage, answer);
         return doAdaptiveCheck(submissionToPost, attemptId, user.getId());
