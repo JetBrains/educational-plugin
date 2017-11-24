@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.intellij.generation
 
-import com.android.SdkConstants
-import com.android.tools.idea.gradle.util.GradleWrapper
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -13,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.io.IOException
 
@@ -86,11 +85,6 @@ object EduGradleModuleGenerator {
         }
     }
 
-    private fun createGradleWrapper(moduleDirPath: String) {
-        val projectDirPath = File(FileUtil.toSystemDependentName(moduleDirPath))
-        GradleWrapper.create(projectDirPath)
-    }
-
     @JvmStatic
     @Throws(IOException::class)
     fun createCourseContent(project: Project, course: Course, moduleDirPath: String) {
@@ -101,10 +95,9 @@ object EduGradleModuleGenerator {
             createLessonModule(moduleDir, lesson)
         }
 
-        createGradleWrapper(moduleDirPath)
         File(FileUtil.toSystemDependentName(project.basePath!!), "gradlew").setExecutable(true)
-        GeneratorUtils.createFromInternalTemplate(project, moduleDir, SdkConstants.FN_BUILD_GRADLE)
-        GeneratorUtils.createFromInternalTemplate(project, moduleDir, SdkConstants.FN_SETTINGS_GRADLE)
+        GeneratorUtils.createFromInternalTemplate(project, moduleDir, GradleConstants.DEFAULT_SCRIPT_NAME)
+        GeneratorUtils.createFromInternalTemplate(project, moduleDir, GradleConstants.SETTINGS_FILE_NAME)
 
         createUtilModule(course, moduleDir)
     }

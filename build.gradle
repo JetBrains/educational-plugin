@@ -123,7 +123,7 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", 'android'
+    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
 }
 
 static String getOsFamily() {
@@ -226,11 +226,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]
 }
 
 configure([project(':educational-core'), project(':Edu-Java')]) {
-    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy', 'smali'
+    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy', 'smali'
 }
 
 configure(project(':Edu-Kotlin')) {
-    intellij.plugins 'junit', 'Kotlin', 'properties', 'android', 'gradle', 'Groovy', 'smali'
+    intellij.plugins 'junit', 'Kotlin', 'properties', 'gradle', 'Groovy', 'smali'
 
 
     task createTwitterProperties() {
