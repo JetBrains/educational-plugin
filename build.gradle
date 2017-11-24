@@ -103,7 +103,7 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", 'android'
+    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
 }
 
 task configurePyCharm {
@@ -189,11 +189,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]
 }
 
 configure([project(':educational-core'), project(':Edu-Java')]) {
-    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy'
+    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
 }
 
 configure(project(':Edu-Kotlin')) {
-    intellij.plugins 'junit', 'Kotlin', 'properties', 'android', 'gradle', 'Groovy'
+    intellij.plugins 'junit', 'Kotlin', 'properties', 'gradle', 'Groovy'
 
 
     task createTwitterProperties() {
