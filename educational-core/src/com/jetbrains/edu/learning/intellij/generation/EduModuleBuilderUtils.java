@@ -36,6 +36,7 @@ public class EduModuleBuilderUtils {
     UtilModuleBuilder utilModuleBuilder = new UtilModuleBuilder(moduleDir, course.getAdditionalMaterialsTask());
     Module utilModule = utilModuleBuilder.createAndCommitIfNeeded(project, moduleModel, false);
     createLessonModules(project, moduleModel, course, moduleDir, utilModule);
+    moduleModel.commit();
   }
 
 
