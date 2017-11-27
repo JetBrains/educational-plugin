@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseFormat;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.editor.Document;
+import com.intellij.ui.JBColor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -161,6 +162,10 @@ public class AnswerPlaceholder {
     return myOffset;
   }
 
+  public int  getEndOffset() {
+    return myOffset + getRealLength();
+  }
+
   public void setOffset(int offset) {
     myOffset = offset;
   }
@@ -193,6 +198,20 @@ public class AnswerPlaceholder {
 
   public boolean isActive() {
     return getActiveSubtaskInfo() != null;
+  }
+
+  public JBColor getColor() {
+    if (!getUseLength() && isActive() && getActiveSubtaskInfo().isNeedInsertText()) {
+      return JBColor.LIGHT_GRAY;
+    }
+    final CheckStatus status = getStatus();
+    if (status == CheckStatus.Solved) {
+      return JBColor.GREEN;
+    }
+    if (status == CheckStatus.Failed) {
+      return JBColor.RED;
+    }
+    return JBColor.BLUE;
   }
 
   public static class MyInitialState {

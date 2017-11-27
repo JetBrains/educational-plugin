@@ -82,7 +82,12 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
           boolean isStudyProject = course.isStudy();
-          EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
+          //TODO: cleanup this place
+          editor.getMarkupModel().removeAllHighlighters();
+          for (AnswerPlaceholder answerPlaceholder : taskFile.getActivePlaceholders()) {
+            NewPlaceholderPainter.INSTANCE.paintPlaceholder(editor, answerPlaceholder);
+          }
+//          EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
           if (isStudyProject) {
             editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
           }

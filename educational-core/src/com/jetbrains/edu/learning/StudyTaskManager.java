@@ -101,17 +101,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   public JBColor getColor(@NotNull final AnswerPlaceholder placeholder) {
-    if (!placeholder.getUseLength() && placeholder.isActive() && placeholder.getActiveSubtaskInfo().isNeedInsertText()) {
-      return JBColor.LIGHT_GRAY;
-    }
-    final CheckStatus status = placeholder.getStatus();
-    if (status == CheckStatus.Solved) {
-      return JBColor.GREEN;
-    }
-    if (status == CheckStatus.Failed) {
-      return JBColor.RED;
-    }
-    return JBColor.BLUE;
+    return placeholder.getColor();
   }
 
   public boolean hasFailedAnswerPlaceholders(@NotNull final TaskFile taskFile) {

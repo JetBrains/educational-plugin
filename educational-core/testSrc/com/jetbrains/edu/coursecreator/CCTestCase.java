@@ -143,7 +143,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
         final Matcher openingMatcher = Pattern.compile(openingTagRx).matcher(text);
         final Matcher closingMatcher = Pattern.compile(closingTagRx).matcher(text);
         int pos = 0;
-        while (openingMatcher.find(pos)) {
+        while (pos < document.getTextLength() && openingMatcher.find(pos)) {
           AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
           AnswerPlaceholderSubtaskInfo subtaskInfo = new AnswerPlaceholderSubtaskInfo();
           answerPlaceholder.getSubtaskInfos().put(0, subtaskInfo);
@@ -183,7 +183,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
           }
           document.deleteString(closingMatcher.start(), closingMatcher.end());
           document.deleteString(openingMatcher.start(), openingMatcher.end());
-          FileDocumentManager.getInstance().saveDocument(document);
+          FileDocumentManager.getInstance().saveDocumentAsIs(document);
           placeholders.add(answerPlaceholder);
           pos = answerPlaceholder.getOffset() + answerPlaceholder.getRealLength();
         }
