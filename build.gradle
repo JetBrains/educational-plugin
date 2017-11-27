@@ -177,6 +177,7 @@ configure(project(':educational-core')) {
 configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]) {
     dependencies {
         compile project(':educational-core')
+        testCompile project(':educational-core').sourceSets.test.output
     }
 }
 
