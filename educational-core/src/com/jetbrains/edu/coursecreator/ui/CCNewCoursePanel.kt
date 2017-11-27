@@ -192,6 +192,18 @@ class CCNewCoursePanel : JPanel() {
     return LanguageData(language, EduLanguageDecorator.INSTANCE.forLanguage(language)?.logo)
   }
 
+  fun setDescription(description : String) {
+    myDescriptionTextArea.text = description
+  }
+
+  fun setLanguage(language: String) {
+    myLanguageComboBox.selectedItem = obtainLanguageData(language)
+  }
+
+  fun setCourseName(courseName : String) {
+    myTitleField.text = courseName
+  }
+
   companion object {
     private val LOG = Logger.getInstance(CCNewCoursePanel::class.java)
   }
