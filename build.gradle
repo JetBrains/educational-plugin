@@ -72,6 +72,10 @@ allprojects {
         }
     }
 
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "1.8"
+    }
+
     dependencies {
         compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
