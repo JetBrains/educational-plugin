@@ -1,0 +1,140 @@
+{
+  "lessons": [
+    {
+      "id": 0,
+      "title": "Introduction",
+      "task_list": [
+        {
+          "name": "Hello, world!",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.kt": {
+              "name": "Task.kt",
+              "text": "fun start(): String \u003d TODO()\n",
+              "placeholders": [
+                {
+                  "offset": 22,
+                  "length": 6,
+                  "subtask_infos": {
+                    "0": {
+                      "hints": [
+                        ""
+                      ],
+                      "possible_answer": "\"OK\"",
+                      "placeholder_text": "TODO()",
+                      "has_frame": true,
+                      "need_insert_text": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "test_files": {
+          },
+          "task_texts": {
+            "task": "\u003ch2\u003eSimple Functions\u003c/h2\u003e\n\u003cp\u003eTake a look at \u003ca href\u003d\"http://kotlinlang.org/docs/reference/basic-syntax.html#defining-functions\"\u003efunction syntax\u003c/a\u003e and make the function \u003ccode\u003estart\u003c/code\u003e return the string \u003ccode\u003e\u0026quot;OK\u0026quot;\u003c/code\u003e.\u003c/p\u003e\n\u003cp\u003eIn the tasks the function \u003ccode\u003eTODO()\u003c/code\u003e is used that throws an exception. Your job during the koans will be to replace this function invocation with a meaningful code according to the problem.\u003c/p\u003e"
+          },
+          "task_type": "edu"
+        },
+        {
+          "name": "Java to Kotlin conversion",
+          "stepic_id": 0,
+          "task_files": {
+            "JavaCode.java": {
+              "name": "JavaCode.java",
+              "text": "import java.util.Collection;\nimport java.util.Iterator;\n\npublic class JavaCode {\n    public String toJSON(Collection\u003cInteger\u003e collection) {\n        StringBuilder sb \u003d new StringBuilder();\n        sb.append(\"[\");\n        Iterator\u003cInteger\u003e iterator \u003d collection.iterator();\n        while (iterator.hasNext()) {\n            Integer element \u003d iterator.next();\n            sb.append(element);\n            if (iterator.hasNext()) {\n                sb.append(\", \");\n            }\n        }\n        sb.append(\"]\");\n        return sb.toString();\n    }\n}",
+              "placeholders": []
+            },
+            "Task.kt": {
+              "name": "Task.kt",
+              "text": "fun toJSON(collection: Collection\u003cInt\u003e): String \u003d TODO()\n",
+              "placeholders": [
+                {
+                  "offset": 0,
+                  "length": 56,
+                  "subtask_infos": {
+                    "0": {
+                      "hints": [
+                        ""
+                      ],
+                      "possible_answer": "fun toJSON(collection: Collection\u003cInt\u003e): String {\n    val sb \u003d StringBuilder()\n    sb.append(\"[\")\n    val iterator \u003d collection.iterator()\n    while (iterator.hasNext())\n    {\n        val element \u003d iterator.next()\n        sb.append(element)\n        if (iterator.hasNext())\n        {\n            sb.append(\", \")\n        }\n    }\n    sb.append(\"]\")\n    return sb.toString()\n}",
+                      "placeholder_text": "fun toJSON(collection: Collection\u003cInt\u003e): String \u003d TODO()",
+                      "has_frame": true,
+                      "need_insert_text": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "test_files": {},
+          "task_texts": {
+            "task": "\u003ch2\u003eJava to Kotlin conversion\u003c/h2\u003e\n\u003cp\u003eWe have a handy tool for Java developers: Java to Kotlin converter. To become familiar with it, please convert the java function \u003ccode\u003etoJSON\u003c/code\u003e in the file \u003ccode\u003eJavaCode.java\u003c/code\u003e. You can just copy-paste the code to Kotlin file and agree to automatically convert it to Kotlin.\u003c/p\u003e"
+          },
+          "task_type": "edu"
+        }
+      ]
+    },
+    {
+      "id": 0,
+      "title": "Conventions",
+      "task_list": [
+        {
+          "name": "Comparison",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.kt": {
+              "name": "Task.kt",
+              "text": "data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int) : Comparable\u003cMyDate\u003e {\n    /* TODO */\n}\n\nfun compare(date1: MyDate, date2: MyDate) \u003d date1 \u003c date2\n",
+              "placeholders": [
+                {
+                  "offset": 97,
+                  "length": 10,
+                  "subtask_infos": {
+                    "0": {
+                      "hints": [
+                        ""
+                      ],
+                      "possible_answer": "override fun compareTo(other: MyDate) \u003d when {\n        year !\u003d other.year -\u003e year - other.year\n        month !\u003d other.month -\u003e month - other.month\n        else -\u003e dayOfMonth - other.dayOfMonth\n    }",
+                      "placeholder_text": "/* TODO */",
+                      "has_frame": true,
+                      "need_insert_text": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "test_files": {},
+          "task_texts": {
+            "task": "\u003ch2\u003eComparison\u003c/h2\u003e\n\u003cp\u003eRead about \u003ca href\u003d\"http://kotlinlang.org/docs/reference/operator-overloading.html\"\u003eoperator overloading\u003c/a\u003e to learn how different conventions for operations like \u003ccode\u003e\u003d\u003d\u003c/code\u003e, \u003ccode\u003e\u0026lt;\u003c/code\u003e, \u003ccode\u003e+\u003c/code\u003e work in Kotlin. Add the function \u003ccode\u003ecompareTo\u003c/code\u003e to the class MyDate to make it comparable. After that the code below \u003ccode\u003edate1 \u0026lt; date2\u003c/code\u003e will start to compile.\u003c/p\u003e\n\u003cp\u003eIn Kotlin when you override a member, the modifier \u003ca href\u003d\"http://kotlinlang.org/docs/reference/classes.html#overriding-members\"\u003e\u003ccode\u003eoverride\u003c/code\u003e\u003c/a\u003e is mandatory.\u003c/p\u003e"
+          },
+          "task_type": "edu"
+        }
+      ]
+    },
+    {
+      "id": 0,
+      "title": "PyCharm additional materials",
+      "task_list": [
+        {
+          "name": "PyCharm additional materials",
+          "stepic_id": 0,
+          "task_files": {},
+          "test_files": {
+            "lesson1/task1/src/tests.kt": "import org.junit.Assert\nimport org.junit.Test\n\nclass TestStart {\n    @Test fun testOk() {\n        Assert.assertEquals(\"OK\", start())\n    }\n}",
+            "util/src/koansTestUtil.kt": "package koans.util\n\nfun String.toMessage() \u003d \"The function \u0027$this\u0027 is implemented incorrectly\"\n\nfun String.toMessageInEquals() \u003d toMessage().inEquals()\n\nfun String.inEquals() \u003d this + \":\" + if (mode \u003d\u003d Mode.WEB_DEMO) \" \" else \"\u003cbr\u003e\u003cbr\u003e\"\n\nprivate enum class Mode { WEB_DEMO, EDUCATIONAL_PLUGIN }\nprivate val mode \u003d Mode.EDUCATIONAL_PLUGIN\n",
+            "lesson2/task1/src/tests.kt": "import org.junit.Assert\nimport org.junit.Test\nimport koans.util.toMessage\n\nclass TestComparison {\n\n    @Test fun testBefore() {\n        val first \u003d MyDate(2014, 5, 10)\n        val second \u003d MyDate(2014, 7, 11)\n        Assert.assertTrue(\"compareTo\".toMessage() + \": ${first} should go before ${second}\", first \u003c second)\n    }\n\n    @Test fun testAfter() {\n        val first \u003d MyDate(2014, 10, 20)\n        val second \u003d MyDate(2014, 7, 11)\n        Assert.assertTrue(\"compareTo\".toMessage() + \": ${first} should go after ${second}\", first \u003e second)\n    }\n}",
+            "lesson1/task2/src/tests.kt": "import org.junit.Test\nimport org.junit.Assert\nimport koans.util.toMessageInEquals\n\nclass TestFunctions() {\n    @Test fun collection() {\n        Assert.assertEquals(\"toJSON\".toMessageInEquals(), \"[1, 2, 3, 42, 555]\", toJSON(listOf(1, 2, 3, 42, 555)))\n    }\n}"
+          },
+          "task_texts": {},
+          "task_type": "edu"
+        }
+      ]
+    }
+  ],
+  "summary": "Kotlin Koans",
+  "title": "Kotlin Koans",
+  "programming_language": "kotlin"
+}

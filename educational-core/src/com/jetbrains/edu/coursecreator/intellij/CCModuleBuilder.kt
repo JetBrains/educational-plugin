@@ -24,8 +24,7 @@ class CCModuleBuilder(private val myCourse: Course) : CourseModuleBuilder() {
     StudyTaskManager.getInstance(project).course = myCourse
     configurator.courseBuilder.createCourseModuleContent(moduleModel, project, myCourse, moduleFileDirectory)
 
-    // If we drop `registerPostStartupActivity` modules will not be created
-    StartupManager.getInstance(project).registerPostStartupActivity {
+    val createInitialStructure = Runnable {
       ApplicationManager.getApplication().runWriteAction {
         val lessonDir = CCCreateLesson().createItem(project, project.baseDir, myCourse, false)
         if (lessonDir == null) {
@@ -35,6 +34,13 @@ class CCModuleBuilder(private val myCourse: Course) : CourseModuleBuilder() {
         CCCreateTask().createItem(project, lessonDir, myCourse, false)
       }
     }
+    if (ApplicationManager.getApplication().isUnitTestMode) {
+      createInitialStructure.run()
+    } else {
+      // If we drop `registerPostStartupActivity` modules will not be created
+      StartupManager.getInstance(project).registerPostStartupActivity(createInitialStructure)
+    }
+
     return module
   }
 
