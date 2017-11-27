@@ -1,0 +1,137 @@
+{
+  "lessons": [
+    {
+      "id": 13416,
+      "title": "Introduction",
+      "task_list": [
+        {
+          "name": "Our first program",
+          "stepic_id": 0,
+          "task_files": {
+            "hello_world.py": {
+              "name": "hello_world.py",
+              "text": "print(\"Hello, world! My name is type your name\")\n",
+              "placeholders": [
+                {
+                  "offset": 32,
+                  "length": 14,
+                  "subtask_infos": {
+                    "0": {
+                      "hints": [
+                        "Type your name here."
+                      ],
+                      "possible_answer": "Liana",
+                      "placeholder_text": "type your name",
+                      "has_frame": true,
+                      "need_insert_text": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "test_files": {
+            "tests.py": "from test_helper import run_common_tests, failed, passed, get_answer_placeholders\n\n\ndef test_ASCII():\n    windows \u003d get_answer_placeholders()\n    for window in windows:\n        all_ascii \u003d all(ord(c) \u003c 128 for c in window)\n        if not all_ascii:\n            failed(\"Please use only English characters this time.\")\n            return\n    passed()\n\ndef test_initial():\n    window \u003d get_answer_placeholders()[0]\n    if window \u003d\u003d \"type your name\":\n        failed(\"You should modify the file\")\n    else:\n        passed()\n\ndef test_is_alpha():\n    window \u003d get_answer_placeholders()[0]\n    is_multiline \u003d window.find(\"\\n\")\n    if is_multiline !\u003d -1:\n        window \u003d window[:is_multiline-1]\n    splitted \u003d window.split()\n    for s in splitted:\n        if not s.isalpha():\n            failed(\"Please use only English characters this time.\")\n            return\n\n    passed()\n\n\nif __name__ \u003d\u003d \u0027__main__\u0027:\n    test_ASCII()\n    run_common_tests(\"You should enter your name\")\n    test_is_alpha()\n    test_initial()\n\n\n"
+          },
+          "task_texts": {
+            "task.html": "\nTraditionally the first program you write in any programming language is \u003ccode\u003e\"Hello World!\"\u003c/code\u003e.\n\u003cbr\u003e\u003cbr\u003e\nIntroduce yourself to the World.\n\u003cbr\u003e\n"
+          },
+          "task_type": "edu"
+        },
+        {
+          "name": "Comments",
+          "stepic_id": 0,
+          "task_files": {
+            "comments.py": {
+              "name": "comments.py",
+              "text": "# This is the comment for the comments.py file\nprint(\"Hello!\")  # this comment is for the second line\n\nprint(\"# this is not a comment\")\n# add new comment here\n",
+              "placeholders": [
+                {
+                  "offset": 138,
+                  "length": 20,
+                  "subtask_infos": {
+                    "0": {
+                      "hints": [
+                        "Type your new comment here."
+                      ],
+                      "possible_answer": "new comment",
+                      "placeholder_text": "add new comment here",
+                      "has_frame": true,
+                      "need_insert_text": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "test_files": {
+            "tests.py": "from test_helper import run_common_tests\n\nif __name__ \u003d\u003d \u0027__main__\u0027:\n    run_common_tests(\"You should type new comment\")\n"
+          },
+          "task_texts": {
+            "task.html": "\nComments in Python start with the hash character (\u003ccode\u003e#\u003c/code\u003e) and include the whole line.\nYou can use Ctrl + / to comment or uncomment the whole line in PyCharm.\n\u003cbr\u003e\u003cbr\u003e\nAdd a new comment to the file.\u003cbr\u003e\n"
+          },
+          "task_type": "edu"
+        }
+      ]
+    },
+    {
+      "id": 13417,
+      "title": "Variables",
+      "task_list": [
+        {
+          "name": "Variable definition",
+          "stepic_id": 0,
+          "task_files": {
+            "variable_definition.py": {
+              "name": "variable_definition.py",
+              "text": "a \u003d b \u003d 2  # This is called a \"chained assignment\". It assigns the value 2 to variables \"a\" and \"b\".\nprint(\"a \u003d \" + str(a))   # We\u0027ll explain the expression str(a) later in the course. For now it is used to convert the  variable \"a\" to a string.\nprint(\"b \u003d \" + str(b))\n\ngreetings \u003d \"greetings\"\nprint(\"greetings \u003d \" + str(greetings))\ngreetings \u003d another value\nprint(\"greetings \u003d \" + str(greetings))\n",
+              "placeholders": [
+                {
+                  "offset": 345,
+                  "length": 13,
+                  "subtask_infos": {
+                    "0": {
+                      "hints": [
+                        "Type value here."
+                      ],
+                      "possible_answer": "5",
+                      "placeholder_text": "another value",
+                      "has_frame": true,
+                      "need_insert_text": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "test_files": {
+            "tests.py": "from test_helper import run_common_tests, failed, passed, import_task_file, get_answer_placeholders\n\n\ndef test_task_window():\n    window \u003d get_answer_placeholders()[0]\n    if \"another value\" \u003d\u003d window:\n      failed(\"You should redefine the variable \u0027greetings\u0027\")\n    else:\n      passed()\n\ndef test_value():\n    file \u003d import_task_file()\n\n    if file.greetings \u003d\u003d \"greetings\":\n        failed(\"You should assign a different value to the variable\")\n    else:\n        passed()\n\nif __name__ \u003d\u003d \u0027__main__\u0027:\n    test_task_window()\n    run_common_tests(\"You should redefine the variable \u0027greetings\u0027\")\n    test_value()\n"
+          },
+          "task_texts": {
+            "task.html": "\nVariables are used to store values so we can refer to them later. A variable is like a label, and you use the \u0027\u003ccode\u003e\u003d\u003c/code\u003e\u0027 symbol,\nknown as the assignment operator, to assign a value to a variable. An assignment can be chained, e.g. \u003ccode\u003ea \u003d b \u003d 2\u003c/code\u003e\n\u003cbr\u003e\u003cbr\u003e\nChange the value stored in the variable \u003ccode\u003egreetings\u003c/code\u003e.\n\u003cbr\u003e\n"
+          },
+          "task_type": "edu"
+        }
+        ]
+    },
+    {
+      "id": 0,
+      "title": "PyCharm additional materials",
+      "task_list": [
+        {
+          "name": "PyCharm additional materials",
+          "stepic_id": 0,
+          "task_files": {},
+          "test_files": {
+            "test_helper.py": "import sys\n\n\ndef get_file_text(path):\n    \"\"\" Returns file text by path\"\"\"\n    file_io \u003d open(path, \"r\")\n    text \u003d file_io.read()\n    file_io.close()\n    return text\n\n\ndef get_file_output(encoding\u003d\"utf-8\", path\u003dsys.argv[-1], arg_string\u003d\"\"):\n    \"\"\"\n    Returns answer file output\n    :param encoding: to decode output in python3\n    :param path: path of file to execute\n    :return: list of strings\n    \"\"\"\n    import subprocess\n\n    proc \u003d subprocess.Popen([sys.executable, path], stdin\u003dsubprocess.PIPE, stdout\u003dsubprocess.PIPE,\n                            stderr\u003dsubprocess.STDOUT)\n    if arg_string:\n        for arg in arg_string.split(\"\\n\"):\n            proc.stdin.write(bytearray(str(arg) + \"\\n\", encoding))\n            proc.stdin.flush()\n\n    return list(map(lambda x: str(x.decode(encoding)), proc.communicate()[0].splitlines()))\n\n\ndef test_file_importable():\n    \"\"\" Tests there is no obvious syntax errors\"\"\"\n    path \u003d sys.argv[-1]\n    if not path.endswith(\".py\"):\n        import os\n\n        parent \u003d os.path.abspath(os.path.join(path, os.pardir))\n        python_files \u003d [f for f in os.listdir(parent) if os.path.isfile(os.path.join(parent, f)) and f.endswith(\".py\")]\n        for python_file in python_files:\n            if python_file \u003d\u003d \"tests.py\":\n                continue\n            check_importable_path(os.path.join(parent, python_file))\n        return\n    check_importable_path(path)\n\n\ndef check_importable_path(path):\n    \"\"\" Checks that file is importable.\n        Reports failure otherwise.\n    \"\"\"\n    saved_input \u003d patch_input()\n    try:\n        import_file(path)\n    except:\n        failed(\"The file contains syntax errors\", test_file_importable.__name__)\n        return\n    finally:\n        revert_input(saved_input)\n\n    passed(test_file_importable.__name__)\n\n\ndef patch_input():\n    def mock_fun(_m\u003d\"\"):\n        return \"mock\"\n\n    if sys.version_info[0] \u003d\u003d 3:\n        import builtins\n        save_input \u003d builtins.input\n        builtins.input \u003d mock_fun\n        return save_input\n    elif sys.version_info[0] \u003d\u003d 2:\n        import __builtin__\n        save_input \u003d __builtin__.raw_input\n        __builtin__.raw_input \u003d mock_fun\n        __builtin__.input \u003d mock_fun\n        return save_input\n\n\ndef revert_input(saved_input):\n    if sys.version_info[0] \u003d\u003d 3:\n        import builtins\n        builtins.input \u003d saved_input\n    elif sys.version_info[0] \u003d\u003d 2:\n        import __builtin__\n        __builtin__.raw_input \u003d saved_input\n        __builtin__.input \u003d saved_input\n\n\ndef import_file(path):\n    \"\"\" Returns imported file \"\"\"\n    if sys.version_info[0] \u003d\u003d 2 or sys.version_info[1] \u003c 3:\n        import imp\n\n        return imp.load_source(\"tmp\", path)\n    elif sys.version_info[0] \u003d\u003d 3:\n        import importlib.machinery\n\n        return importlib.machinery.SourceFileLoader(\"tmp\", path).load_module(\"tmp\")\n\n\ndef import_task_file():\n    \"\"\" Returns imported file.\n        Imports file from which check action was run\n    \"\"\"\n    path \u003d sys.argv[-1]\n    return import_file(path)\n\n\ndef test_is_not_empty():\n    \"\"\"\n        Checks that file is not empty\n    \"\"\"\n    path \u003d sys.argv[-1]\n    file_text \u003d get_file_text(path)\n\n    if len(file_text) \u003e 0:\n        passed()\n    else:\n        failed(\"The file is empty. Please, reload the task and try again.\")\n\n\ndef test_text_equals(text, error_text):\n    \"\"\"\n        Checks that answer equals text.\n    \"\"\"\n    path \u003d sys.argv[-1]\n    file_text \u003d get_file_text(path)\n\n    if file_text.strip() \u003d\u003d text:\n        passed()\n    else:\n        failed(error_text)\n\n\ndef test_answer_placeholders_text_deleted(error_text\u003d\"Don\u0027t just delete task text\"):\n    \"\"\"\n        Checks that all answer placeholders are not empty\n    \"\"\"\n    windows \u003d get_answer_placeholders()\n\n    for window in windows:\n        if len(window) \u003d\u003d 0:\n            failed(error_text)\n            return\n    passed()\n\n\ndef set_congratulation_message(message):\n    \"\"\" Overrides default \u0027Congratulations!\u0027 message \"\"\"\n    print(\"#educational_plugin CONGRATS_MESSAGE \" + message)\n\n\ndef failed(message\u003d\"Please, reload the task and try again.\", name\u003dNone):\n    \"\"\" Reports failure \"\"\"\n    if not name:\n        name \u003d sys._getframe().f_back.f_code.co_name\n    print(\"#educational_plugin \" + name + \" FAILED + \" + message)\n\n\ndef passed(name\u003dNone):\n    \"\"\" Reports success \"\"\"\n    if not name:\n        name \u003d sys._getframe().f_back.f_code.co_name\n    print(\"#educational_plugin \" + name + \" test OK\")\n\n\ndef get_answer_placeholders():\n    \"\"\"\n        Returns all answer placeholders text\n    \"\"\"\n    prefix \u003d \"#educational_plugin_window \u003d \"\n    path \u003d sys.argv[-1]\n    import os\n\n    file_name_without_extension \u003d os.path.splitext(path)[0]\n    windows_path \u003d file_name_without_extension + \"_windows\"\n    windows \u003d []\n    f \u003d open(windows_path, \"r\")\n    window_text \u003d \"\"\n    first \u003d True\n    for line in f.readlines():\n        if line.startswith(prefix):\n            if not first:\n                windows.append(window_text.strip())\n            else:\n                first \u003d False\n            window_text \u003d line[len(prefix):]\n        else:\n            window_text +\u003d line\n\n    if window_text:\n        windows.append(window_text.strip())\n\n    f.close()\n    return windows\n\n\ndef check_samples(samples\u003d()):\n    \"\"\"\n      Check script output for all samples. Sample is a two element list, where the first is input and\n      the second is output.\n    \"\"\"\n    for sample in samples:\n        if len(sample) \u003d\u003d 2:\n            output \u003d get_file_output(arg_string\u003dstr(sample[0]))\n            if \"\\n\".join(output) !\u003d sample[1]:\n                failed(\n                    \"Test from samples failed: \\n \\n\"\n                    \"Input:\\n{}\"\n                    \"\\n \\n\"\n                    \"Expected:\\n{}\"\n                    \"\\n \\n\"\n                    \"Your result:\\n{}\".format(str.strip(sample[0]), str.strip(sample[1]), \"\\n\".join(output)))\n                return\n        set_congratulation_message(\"All test from samples passed. Now we are checking your solution on Stepic server.\")\n\n    passed()\n\n\ndef run_common_tests(error_text\u003d\"Please, reload file and try again\"):\n    test_is_not_empty()\n    test_answer_placeholders_text_deleted()\n    test_file_importable()\n"
+          },
+          "task_texts": {},
+          "task_type": "edu"
+        }
+      ]
+    }
+  ],
+  "summary": "Introduction course to Python",
+  "title": "Introduction to Python",
+  "programming_language": "Python"
+}
