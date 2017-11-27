@@ -105,7 +105,7 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
     if (baseDir.findChild(testHelper) != null) return;
     final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
     try {
-      GeneratorUtils.createChildFile(project.getBaseDir(), testHelper, template.getText());
+      GeneratorUtils.createChildFile(baseDir, testHelper, template.getText());
     }
     catch (IOException exception) {
       LOG.error("Can't copy test_helper.py " + exception.getMessage());
