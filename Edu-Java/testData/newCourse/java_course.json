@@ -1,0 +1,74 @@
+{
+  "lessons": [
+    {
+      "id": 0,
+      "title": "lesson1",
+      "task_list": [
+        {
+          "name": "task1",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.java": {
+              "name": "Task.java",
+              "text": "class Task {\n  //put your task here\n}",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "Test.java": "class Test {\n    // put your test here\n}"
+          },
+          "task_texts": {
+            "task": "Write task description here using markdown or html"
+          },
+          "task_type": "edu"
+        },
+        {
+          "name": "task2",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.java": {
+              "name": "Task.java",
+              "text": "class Task {\n  //put your task here\n}",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "Test.java": "class Test {\n    // put your test here\n}"
+          },
+          "task_texts": {
+            "task": "Write task description here using markdown or html"
+          },
+          "task_type": "edu"
+        }
+      ]
+    },
+    {
+      "id": 0,
+      "title": "lesson2",
+      "task_list": [
+        {
+          "name": "task1",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.java": {
+              "name": "Task.java",
+              "text": "class Task {\n  //put your task here\n}",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "Test.java": "class Test {\n    // put your test here\n}"
+          },
+          "task_texts": {
+            "task": "Write task description here using markdown or html"
+          },
+          "task_type": "edu"
+        }
+      ]
+    }
+  ],
+  "summary": "Test Java Course",
+  "title": "Java Course",
+  "programming_language": "JAVA",
+  "language": "en"
+}
