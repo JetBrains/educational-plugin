@@ -10,9 +10,8 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -46,7 +45,6 @@ public class CCProjectComponent extends AbstractProjectComponent {
       CCProjectService.getInstance(myProject).setCourse(null);
       oldCourse.initCourse(true);
       oldCourse.setCourseMode(CCUtils.COURSE_MODE);
-      EduUtils.registerStudyToolWindow(oldCourse, myProject);
       transformFiles(oldCourse, myProject);
     }
   }
