@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
@@ -140,7 +139,7 @@ public class GeneratorUtils {
     createChildFile(parentDir, name, template.getText());
   }
 
-  @Nullable
+  @NotNull
   public static Course initializeCourse(@NotNull Project project, @NotNull Course course) {
     if (course instanceof RemoteCourse) {
       course = getCourseFromStepic(project, (RemoteCourse)course);
@@ -148,8 +147,9 @@ public class GeneratorUtils {
     course.initCourse(false);
 
     if (course.isAdaptive() && !EduUtils.isCourseValid(course)) {
-      Messages.showWarningDialog("There is no recommended tasks for this adaptive course", "Error in Course Creation");
-      return null;
+      Messages.showWarningDialog("There is no recommended tasks for this adaptive course",
+          "Error in Course Creation");
+      return course;
     }
     StudyTaskManager.getInstance(project).setCourse(course);
     return course;
