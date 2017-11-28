@@ -11,6 +11,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.configuration.*;
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils;
 
@@ -94,29 +95,47 @@ public class KtLibConfigurator {
         }
     }
 
-    //should work since Kotlin 1.0.2
+    // should work since Kotlin 1.0.2
     private static boolean tryConfigureSilently(Project project) {
-        //TODO: uncomment this when nobody use kotlin plugin versions < 1.0.2
-//        KotlinJavaModuleConfigurator.getInstance().configureSilently(project);
-
-        Class<KotlinJavaModuleConfigurator> configuratorClass = KotlinJavaModuleConfigurator.class;
+        KotlinJavaModuleConfigurator configurator;
         try {
-            Method instanceMethod = configuratorClass.getDeclaredMethod("getInstance");
-            KotlinJavaModuleConfigurator configurator = (KotlinJavaModuleConfigurator) instanceMethod.invoke(null);
+            configurator = KotlinJavaModuleConfigurator.Companion.getInstance();
+        } catch (Exception e) {
+            LOG.info("Failed to get `KotlinJavaModuleConfigurator` instance through Companion object", e);
+            // Try to use old API
+            configurator = getModuleConfiguratorInstance();
+        }
+        if (configurator != null) {
             Class<?> confClass = configurator.getClass();
             while (confClass != KotlinWithLibraryConfigurator.class) {
                 confClass = confClass.getSuperclass();
             }
-            Method configureSilently = confClass.getDeclaredMethod("configureSilently", Project.class);
-            configureSilently.invoke(configurator, project);
+            try {
+                Method configureSilently = confClass.getDeclaredMethod("configureSilently", Project.class);
+                configureSilently.invoke(configurator, project);
+                return true;
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                LOG.info("Failed to invoke `KotlinJavaModuleConfigurator.configureSilently` method", e);
+            }
+        }
+        return false;
+    }
 
-            return true;
-        } catch (NoSuchMethodException e) {
-            return false;
-        } catch (InvocationTargetException e) {
-            return false;
-        } catch (IllegalAccessException e) {
-            return false;
+    /**
+     * Get instance of {@link KotlinJavaModuleConfigurator} for kotlin plugin 1.0.2 - 1.1.2.
+     * Uses reflection.
+     *
+     * @return {@link KotlinJavaModuleConfigurator} instance
+     */
+    @Nullable
+    private static KotlinJavaModuleConfigurator getModuleConfiguratorInstance() {
+        Class<KotlinJavaModuleConfigurator> configuratorClass = KotlinJavaModuleConfigurator.class;
+        try {
+            Method instanceMethod = configuratorClass.getDeclaredMethod("getInstance");
+            return (KotlinJavaModuleConfigurator) instanceMethod.invoke(null);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            LOG.info("Failed to get `KotlinJavaModuleConfigurator` instance through `getInstance` method", e);
+            return null;
         }
     }
 }
