@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectUtil.guessProjectForFile
@@ -132,8 +133,19 @@ class CCUnpackCourseDialog (val course: Course): DialogWrapper(true) {
     CommandProcessor.getInstance().runUndoTransparentAction {
       ApplicationManager.getApplication().runWriteAction {
         document.replaceString(offset, offset + placeholder.realLength, replacementText)
-        FileDocumentManager.getInstance().saveDocument(document)
+        saveDocument(document)
       }
+    }
+  }
+
+  private fun saveDocument(document: Document) {
+    val settings = EditorSettingsExternalizable.getInstance()
+    val oldValue = settings.stripTrailingSpaces
+    settings.stripTrailingSpaces = EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE
+    try {
+      FileDocumentManager.getInstance().saveDocument(document)
+    } finally {
+      settings.stripTrailingSpaces = oldValue
     }
   }
 }
