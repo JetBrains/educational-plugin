@@ -83,6 +83,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     super.setUp();
     Course course = new Course();
     course.setName("test course");
+    course.setLanguage("JAVA");
     StudyTaskManager.getInstance(getProject()).setCourse(course);
 
     Lesson lesson = new Lesson();
