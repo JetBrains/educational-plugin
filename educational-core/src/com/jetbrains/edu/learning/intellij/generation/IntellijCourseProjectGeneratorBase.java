@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
@@ -64,6 +65,7 @@ public abstract class IntellijCourseProjectGeneratorBase extends CourseProjectGe
   private void createCourseStructure(@NotNull Project project) {
     final CourseModuleBuilder moduleBuilder;
     if (myCourse.isStudy()) {
+      myCourse = GeneratorUtils.initializeCourse(project, myCourse);
       moduleBuilder = studyModuleBuilder();
     } else {
       moduleBuilder = courseCreationModuleBuilder();

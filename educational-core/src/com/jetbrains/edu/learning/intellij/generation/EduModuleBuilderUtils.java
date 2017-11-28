@@ -4,7 +4,6 @@ import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard;
 import com.intellij.ide.util.newProjectWizard.StepSequence;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.util.projectWizard.ProjectBuilder;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
@@ -14,7 +13,6 @@ import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction;
 import com.intellij.openapi.util.InvalidDataException;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,22 +22,7 @@ import java.util.List;
 
 public class EduModuleBuilderUtils {
 
-  private static final Logger LOG = Logger.getInstance(EduModuleBuilderUtils.class);
-
   private EduModuleBuilderUtils() {
-  }
-
-  public static void createCourseFromCourseInfo(@NotNull ModifiableModuleModel moduleModel,
-                                                @NotNull Project project,
-                                                @NotNull Course course,
-                                                @Nullable String moduleDir) throws JDOMException, ModuleWithNameAlreadyExists, ConfigurationException, IOException {
-    course = GeneratorUtils.initializeCourse(project, course);
-    if (course == null) {
-      LOG.info("failed to generate course");
-      return;
-    }
-
-    createCourseModuleContent(moduleModel, project, course, moduleDir);
   }
 
   public static void createCourseModuleContent(@NotNull ModifiableModuleModel moduleModel, @NotNull Project project, Course course, String moduleDir)
