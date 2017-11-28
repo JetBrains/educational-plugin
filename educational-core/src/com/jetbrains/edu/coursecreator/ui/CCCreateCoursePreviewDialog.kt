@@ -44,6 +44,7 @@ class CCCreateCoursePreviewDialog(
     val courseName = myCourse.name
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path
+    close(OK_EXIT_CODE)
     val isSuccessful = CCCreateCourseArchive.createCourseArchive(myProject, myModule, archiveName, locationDir, false)
 
     if (isSuccessful) {
@@ -55,7 +56,6 @@ class CCCreateCoursePreviewDialog(
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
           val settings = myPanel.projectSettings
           myConfigurator.courseBuilder.getCourseProjectGenerator(course)?.createCourseProject(location.absolutePath, settings)
-          close(OK_EXIT_CODE)
         } catch (e: IOException) {
           LOG.error("Failed to create tmp dir for course preview", e)
           showErrorMessage()

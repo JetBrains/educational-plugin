@@ -22,6 +22,7 @@ class CCNewCourseDialog : DialogWrapper(true) {
   override fun createCenterPanel(): JComponent = myPanel
 
   override fun doOKAction() {
+    close(OK_EXIT_CODE)
     val course = myPanel.course
     val projectSettings = myPanel.projectSettings
     val location = myPanel.locationString
@@ -32,6 +33,5 @@ class CCNewCourseDialog : DialogWrapper(true) {
               ?.getCourseProjectGenerator(course)
               ?.createCourseProject(location, projectSettings)
     }
-    close(OK_EXIT_CODE)
   }
 }
