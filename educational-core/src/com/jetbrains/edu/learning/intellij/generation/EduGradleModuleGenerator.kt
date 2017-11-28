@@ -23,10 +23,20 @@ object EduGradleModuleGenerator {
 
     @JvmStatic
     fun createModule(baseDir: VirtualFile, name: String): EduGradleModule {
-        val moduleDir = baseDir.createChildDirectory(requestor, name)
-        val srcDir = moduleDir.createChildDirectory(requestor, EduNames.SRC)
-        val testDir = moduleDir.createChildDirectory(requestor, EduNames.TEST)
+        val moduleDir = baseDir.getOrCreateChildDirectory(name)
+        val srcDir = moduleDir.getOrCreateChildDirectory(EduNames.SRC)
+        val testDir = moduleDir.getOrCreateChildDirectory(EduNames.TEST)
         return EduGradleModule(srcDir, testDir)
+    }
+
+    private fun VirtualFile.getOrCreateChildDirectory(name: String): VirtualFile {
+        val alreadyExists = findChild(name)
+        if (alreadyExists != null) {
+            return alreadyExists
+        }
+        else {
+            return createChildDirectory(requestor, name)
+        }
     }
 
     @Throws(IOException::class)
@@ -62,7 +72,7 @@ object EduGradleModuleGenerator {
 
     @Throws(IOException::class)
     private fun createLessonModule(moduleDir: VirtualFile, lesson: Lesson) {
-        val lessonDir = moduleDir.createChildDirectory(requestor, EduNames.LESSON + lesson.index)
+        val lessonDir = moduleDir.getOrCreateChildDirectory(EduNames.LESSON + lesson.index)
         val taskList = lesson.getTaskList()
         for ((i, task) in taskList.withIndex()) {
             task.index = i + 1
@@ -71,9 +81,16 @@ object EduGradleModuleGenerator {
     }
 
 
+    @JvmStatic
     @Throws(IOException::class)
-    private fun createUtilModule(course: Course, moduleDir: VirtualFile) {
+    fun createUtilModule(course: Course, moduleDir: VirtualFile) {
         val additionalMaterials = course.additionalMaterialsTask ?: return
+        createUtilModule(additionalMaterials, moduleDir)
+    }
+
+    @JvmStatic
+    @Throws(IOException::class)
+    fun createUtilModule(additionalMaterials: Task, moduleDir: VirtualFile) {
         val utilFiles = mutableMapOf<String, String>()
         additionalMaterials.getTaskFiles().mapValuesTo(utilFiles) { (_, v) -> v.text }
         additionalMaterials.testsText.filterTo(utilFiles) { (path, _) -> path.contains(EduNames.UTIL) }
