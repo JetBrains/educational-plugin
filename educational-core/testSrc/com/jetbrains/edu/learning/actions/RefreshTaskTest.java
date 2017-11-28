@@ -32,6 +32,7 @@ public class RefreshTaskTest extends EduTestCase {
     myFixture.copyDirectoryToProject("lesson1", "lesson1");
     Course course = new Course();
     course.setName("Edu test course");
+    course.setLanguage("JAVA");
     StudyTaskManager.getInstance(myFixture.getProject()).setCourse(course);
 
     Lesson lesson1 = createLesson(1, 2);

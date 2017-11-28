@@ -104,7 +104,6 @@ public class EduProjectComponent implements ProjectComponent {
           loadSolutionsFromStepik(course);
         }
 
-        EduUtils.registerStudyToolWindow(course, myProject);
         addStepicWidget();
         selectStep(course);
 

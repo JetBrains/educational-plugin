@@ -18,7 +18,7 @@ class SwitchTaskPanelAction : AnAction() {
     val project = e?.project
     val result = createDialog().showAndGet()
     if (result && project != null) {
-      EduUtils.initToolWindows(project)
+      EduUtils.initToolWindow(project)
     }
   }
   
