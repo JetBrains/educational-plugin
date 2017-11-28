@@ -30,7 +30,7 @@ public class JCourseProjectGenerator extends IntellijCourseProjectGeneratorBase 
       public Module createModule(@NotNull ModifiableModuleModel moduleModel) throws InvalidDataException, IOException, ModuleWithNameAlreadyExists, JDOMException, ConfigurationException {
         Module baseModule = super.createModule(moduleModel);
         Project project = baseModule.getProject();
-        EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, myCourse, getModuleFileDirectory());
+        EduModuleBuilderUtils.createCourseModuleContent(moduleModel, project, myCourse, getModuleFileDirectory());
         return baseModule;
       }
     };

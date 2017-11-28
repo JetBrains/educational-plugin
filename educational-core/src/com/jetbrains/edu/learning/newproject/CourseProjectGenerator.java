@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public abstract class CourseProjectGenerator<S> implements DirectoryProjectGenerator<S> {
-  @NotNull protected final Course myCourse;
+  @NotNull protected Course myCourse;
 
   public CourseProjectGenerator(@NotNull final Course course) {
     myCourse = course;

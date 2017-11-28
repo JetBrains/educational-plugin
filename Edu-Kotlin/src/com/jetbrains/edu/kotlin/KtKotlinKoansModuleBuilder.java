@@ -59,7 +59,7 @@ class KtKotlinKoansModuleBuilder extends CourseModuleBuilder {
     }
     myCourse.setLanguage("kotlin");
 
-    EduModuleBuilderUtils.createCourseFromCourseInfo(moduleModel, project, myCourse, getModuleFileDirectory());
+    EduModuleBuilderUtils.createCourseModuleContent(moduleModel, project, myCourse, getModuleFileDirectory());
     return baseModule;
   }
 
