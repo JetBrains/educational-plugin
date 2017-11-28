@@ -90,3 +90,9 @@ subprojects {
     tasks.run.setStandardOutput(runOutput)
     tasks.run.doLast { printOutput(runOutput) }
 }
+
+project(':util') {
+    dependencies {
+        compile group: 'junit', name: 'junit', version: '4.12'
+    }
+}

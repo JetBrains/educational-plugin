@@ -445,7 +445,7 @@ public class EduProjectComponent implements ProjectComponent {
   }
 
   @SuppressWarnings("unchecked")
-  private static void setGradleSettings(@NotNull String location, Project project) {
+  public static void setGradleSettings(@NotNull String location, Project project) {
     GradleProjectSettings gradleProjectSettings = new GradleProjectSettings();
     gradleProjectSettings.setDistributionType(DistributionType.WRAPPED);
 

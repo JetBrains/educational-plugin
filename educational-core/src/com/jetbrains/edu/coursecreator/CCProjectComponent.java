@@ -1,9 +1,14 @@
 package com.jetbrains.edu.coursecreator;
 
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.ModifiableModuleModel;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ui.configuration.actions.ModuleDeleteProvider;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -12,15 +17,19 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.EduProjectComponent;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +55,41 @@ public class CCProjectComponent extends AbstractProjectComponent {
       oldCourse.initCourse(true);
       oldCourse.setCourseMode(CCUtils.COURSE_MODE);
       transformFiles(oldCourse, myProject);
+    }
+    else if (studyCourse.getLanguageID().equals("kotlin") && !EduUtils.isConfiguredWithGradle(myProject)) {
+      String basePath = myProject.getBasePath();
+      if (basePath == null) {
+        return;
+      }
+
+      ModuleManager moduleManager = ModuleManager.getInstance(myProject);
+      Module[] modules = moduleManager.getModules();
+      final ModifiableModuleModel modifiableModuleModel = moduleManager.getModifiableModel();
+      for (Module module : modules) {
+        ModuleDeleteProvider.removeModule(module, null, Collections.emptyList(), modifiableModuleModel);
+        ModuleBuilder.deleteModuleFile(module.getModuleFilePath());
+      }
+
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        modifiableModuleModel.commit();
+
+        try {
+          EduGradleModuleGenerator.createProjectGradleFiles(basePath, myProject.getName());
+          final Lesson lesson = CCUtils.createAdditionalLesson(studyCourse, myProject, EduNames.ADDITIONAL_MATERIALS);
+          if (lesson != null) {
+            EduGradleModuleGenerator.createUtilModule(lesson.taskList.get(0), myProject.getBaseDir());
+          }
+
+          StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
+            transformCourseStructure(studyCourse, myProject);
+          });
+
+        } catch (IOException e) {
+          LOG.error(e);
+        }
+      });
+
+      EduProjectComponent.setGradleSettings(basePath, myProject);
     }
   }
 
@@ -92,6 +136,34 @@ public class CCProjectComponent extends AbstractProjectComponent {
             result.add(taskFile);
           }
         }
+      }
+    }
+    return result;
+  }
+
+  private static void transformCourseStructure(Course course, Project project) {
+    List<VirtualFile> files = getAllTestFiles(course, project);
+    for (VirtualFile testFile : files) {
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        VirtualFile parent = testFile.getParent().getParent();
+        try {
+          VirtualFile testDir = parent.findChild(EduNames.TEST);
+          if (testDir == null) {
+            testDir = parent.createChildDirectory(CCProjectComponent.class, EduNames.TEST);
+          }
+          testFile.move(CCProjectComponent.class, testDir);
+        } catch (IOException e) {
+          LOG.error(e);
+        }
+      });
+    }
+  }
+
+  private static List<VirtualFile> getAllTestFiles(@NotNull Course course, @NotNull Project project) {
+    List<VirtualFile> result = new ArrayList<>();
+    for (Lesson lesson : course.getLessons()) {
+      for (Task task : lesson.getTaskList()) {
+        result.addAll(EduUtils.getTestFiles(task, project));
       }
     }
     return result;
