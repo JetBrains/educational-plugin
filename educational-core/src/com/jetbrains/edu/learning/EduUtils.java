@@ -209,7 +209,7 @@ public class EduUtils {
     }
   }
 
-  public static void initToolWindows(@NotNull final Project project) {
+  public static void initToolWindow(@NotNull final Project project) {
     final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
     windowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW).getContentManager().removeAllContents(false);
     TaskDescriptionToolWindowFactory factory = new TaskDescriptionToolWindowFactory();
@@ -645,23 +645,15 @@ public class EduUtils {
     editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
   }
 
-  public static void registerStudyToolWindow(@Nullable final Course course, Project project) {
-    if (course != null && EduNames.PYCHARM.equals(course.getCourseType())) {
-      final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-      registerToolWindows(toolWindowManager, project);
-      final ToolWindow studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-      if (studyToolWindow != null) {
-        studyToolWindow.show(null);
-        initToolWindows(project);
-      }
+  public static void registerStudyToolWindow(Project project) {
+    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+    ToolWindow studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
+    if (studyToolWindow == null) {
+      studyToolWindow = toolWindowManager.registerToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW,
+                                                                          true, ToolWindowAnchor.RIGHT, project, true);
     }
-  }
-
-  private static void registerToolWindows(@NotNull final ToolWindowManager toolWindowManager, Project project) {
-    final ToolWindow toolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-    if (toolWindow == null) {
-      toolWindowManager.registerToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW, true, ToolWindowAnchor.RIGHT, project, true);
-    }
+    studyToolWindow.show(null);
+    initToolWindow(project);
   }
 
   @Nullable public static AnswerPlaceholder getAnswerPlaceholder(int offset, List<AnswerPlaceholder> placeholders) {
