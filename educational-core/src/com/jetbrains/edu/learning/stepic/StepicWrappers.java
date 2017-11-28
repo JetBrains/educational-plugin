@@ -3,14 +3,11 @@ package com.jetbrains.edu.learning.stepic;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.internal.LinkedTreeMap;
-import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -21,8 +18,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class StepicWrappers {
   private static final Logger LOG = Logger.getInstance(StepOptions.class);
@@ -92,7 +91,7 @@ public class StepicWrappers {
       final Map<String, String> testsText = task.getTestsText();
       source.test = new ArrayList<>();
       if (testsText.isEmpty()) {
-        List<VirtualFile> testFiles = getTestFiles(task, project);
+        List<VirtualFile> testFiles = EduUtils.getTestFiles(task, project);
         for (VirtualFile testFile : testFiles) {
           addFileWrapper(testFile, source.test);
         }
@@ -112,29 +111,6 @@ public class StepicWrappers {
     catch (IOException e) {
       LOG.error(e);
     }
-  }
-
-  private static List<VirtualFile> getTestFiles(@NotNull Task task, @NotNull Project project) {
-    final Course course = task.getLesson().getCourse();
-    final Language language = course.getLanguageById();
-
-    List<VirtualFile> testFiles = new ArrayList<>();
-    VirtualFile taskDir = task.getTaskDir(project);
-    final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
-
-    if (taskDir == null || configurator == null) {
-      return testFiles;
-    }
-    if (!(task instanceof TaskWithSubtasks)) {
-      testFiles.addAll(Arrays.stream(taskDir.getChildren())
-          .filter(configurator::isTestFile)
-          .collect(Collectors.toList()));
-      return testFiles;
-    }
-    testFiles.addAll(Arrays.stream(taskDir.getChildren())
-                       .filter(file -> EduUtils.isTestsFile(project, file.getName()))
-                       .collect(Collectors.toList()));
-    return testFiles;
   }
 
   public static class CoursesContainer {
