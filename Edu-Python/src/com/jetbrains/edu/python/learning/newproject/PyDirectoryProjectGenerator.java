@@ -71,7 +71,6 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
   public static void createStudyStructure(@NotNull final Project project, @NotNull final VirtualFile baseDir,
                                           @NotNull final Course courseInfo) {
     final Course course = GeneratorUtils.initializeCourse(project, courseInfo);
-    if (course == null) return;
     ApplicationManager.getApplication().runWriteAction(() -> {
       GeneratorUtils.createCourse(course, baseDir);
       EduUtils.openFirstTask(course, project);
