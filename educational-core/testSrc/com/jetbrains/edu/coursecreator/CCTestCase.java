@@ -174,6 +174,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
             LOG.error("No matching closing tag found");
           }
           if (useLength) {
+            answerPlaceholder.setTaskText(String.valueOf(text.subSequence(openingMatcher.end(), closingMatcher.start())));
             answerPlaceholder.setLength(closingMatcher.start() - openingMatcher.end());
           } else {
             if (possibleAnswer == null) {
