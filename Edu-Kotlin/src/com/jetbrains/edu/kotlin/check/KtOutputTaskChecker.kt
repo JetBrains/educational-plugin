@@ -16,15 +16,19 @@ class KtOutputTaskChecker : TaskChecker() {
 
     override fun check(task: Task, project: Project): CheckResult {
         val mainClassName = getMainClassName(project) ?: return FAILED_TO_LAUNCH
+        val taskName = "${getGradleProjectName(task)}:run"
         val cmd = generateGradleCommandLine(
                 project,
-                "${getGradleProjectName(task)}:run",
+                taskName,
                 "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName"
         ) ?: return FAILED_TO_LAUNCH
 
-        val output = getProcessOutput(cmd.createProcess(), cmd.commandLineString)
-                .postProcessOutput()
-                .takeIf { it.isNotBlank() } ?: "<no output>"
+        val gradleOutput = getProcessOutput(cmd.createProcess(), cmd.commandLineString, taskName)
+        if (!gradleOutput.isSuccess) {
+            return CheckResult(CheckStatus.Failed, gradleOutput.message)
+        }
+
+        val output = gradleOutput.message.takeIf { it.isNotBlank() } ?: "<no output>"
 
         val outputFile = task.getTaskDir(project)
                 ?.parent
