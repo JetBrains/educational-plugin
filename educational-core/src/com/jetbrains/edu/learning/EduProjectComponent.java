@@ -31,7 +31,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
@@ -403,34 +402,16 @@ public class EduProjectComponent implements ProjectComponent {
     @Override
     public void fileCreated(@NotNull VirtualFileEvent event) {
       if (myProject.isDisposed()) return;
+      if (!isStudentProject(myProject)) return;
       final VirtualFile createdFile = event.getFile();
-      final VirtualFile taskDir = getTaskDir(createdFile);
-      final Course course = StudyTaskManager.getInstance(myProject).getCourse();
-      if (course == null || !course.isStudy()) {
-        return;
-      }
-      if (taskDir != null && taskDir.getName().contains(EduNames.TASK)) {
-        int taskIndex = getIndex(taskDir.getName(), EduNames.TASK);
-        final VirtualFile lessonDir = taskDir.getParent();
-        if (lessonDir != null && lessonDir.getName().contains(EduNames.LESSON)) {
-          int lessonIndex = getIndex(lessonDir.getName(), EduNames.LESSON);
-          List<Lesson> lessons = course.getLessons();
-          if (indexIsValid(lessonIndex, lessons)) {
-            final Lesson lesson = lessons.get(lessonIndex);
-            final List<Task> tasks = lesson.getTaskList();
-            if (indexIsValid(taskIndex, tasks)) {
-              final Task task = tasks.get(taskIndex);
-              final TaskFile taskFile = new TaskFile();
-              taskFile.initTaskFile(task, false);
-              taskFile.setUserCreated(true);
-              final String name = FileUtil.getRelativePath(taskDir.getPath(), createdFile.getPath(), '/');
-              taskFile.name = name;
-              //TODO: put to other steps as well
-              task.getTaskFiles().put(name, taskFile);
-            }
-          }
-        }
-      }
+      final Task task = getTaskForFile(myProject, createdFile);
+      if (task == null) return;
+      final TaskFile taskFile = new TaskFile();
+      taskFile.initTaskFile(task, false);
+      taskFile.setUserCreated(true);
+      final String name = pathRelativeToTask(createdFile);
+      taskFile.name = name;
+      task.getTaskFiles().put(name, taskFile);
     }
   }
 

@@ -14,14 +14,12 @@ public class EduState {
   private final TaskFile myTaskFile;
   private final VirtualFile myVirtualFile;
   private final Task myTask;
-  private final VirtualFile myTaskDir;
 
   public EduState(@Nullable final EduEditor eduEditor) {
     myEduEditor = eduEditor;
     myEditor = eduEditor != null ? eduEditor.getEditor() : null;
     myTaskFile = eduEditor != null ? eduEditor.getTaskFile() : null;
     myVirtualFile = myEditor != null ? FileDocumentManager.getInstance().getFile(myEditor.getDocument()) : null;
-    myTaskDir = myVirtualFile != null ? EduUtils.getTaskDir(myVirtualFile) : null;
     myTask = myTaskFile != null ? myTaskFile.getTask() : null;
   }
 
@@ -41,13 +39,9 @@ public class EduState {
     return myTask;
   }
 
-  public VirtualFile getTaskDir() {
-    return myTaskDir;
-  }
-
   public boolean isValid() {
     return myEduEditor != null && myEditor != null &&
            myTaskFile != null && myVirtualFile != null &&
-           myTask != null && myTaskDir != null;
+           myTask != null;
   }
 }

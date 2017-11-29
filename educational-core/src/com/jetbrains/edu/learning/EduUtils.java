@@ -749,7 +749,7 @@ public class EduUtils {
     if (srcDir != null) {
       taskDir = srcDir;
     }
-    return FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtil.VFS_SEPARATOR_CHAR);
+    return FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
   }
 
   public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder,
