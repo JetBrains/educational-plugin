@@ -22,7 +22,6 @@ import java.awt.event.MouseEvent;
 import static com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector.TOO_BORING_RECOMMENDATION_REACTION;
 import static com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector.TOO_HARD_RECOMMENDATION_REACTION;
 
-
 public class StepicAdaptiveReactionsPanel extends JPanel {
   private final ReactionButtonPanel myHardPanel;
   private final ReactionButtonPanel myBoringPanel;
@@ -76,7 +75,7 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
     final FileEditorManagerListener editorManagerListener = new FileEditorManagerListener() {
       @Override
       public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-        final com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getTaskFromSelectedEditor(myProject);
+        final com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getCurrentTask(myProject);
         final boolean isEnabled = task != null && task.getStatus() != CheckStatus.Solved;
         StepicAdaptiveReactionsPanel.this.setEnabledRecursive(isEnabled);
       }
@@ -91,7 +90,7 @@ public class StepicAdaptiveReactionsPanel extends JPanel {
     public ReactionButtonPanel(@NotNull final String text,
                                @NotNull final String enabledTooltip,
                                int reaction) {
-      com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getTaskFromSelectedEditor(myProject);
+      com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getCurrentTask(myProject);
       final boolean isEnabled = task != null && task.getStatus() != CheckStatus.Solved;
 
       myLabel = new JLabel(text);

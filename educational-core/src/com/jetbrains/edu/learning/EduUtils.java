@@ -650,17 +650,6 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Task getTaskFromSelectedEditor(Project project) {
-    final EduEditor editor = getSelectedStudyEditor(project);
-    Task task = null;
-    if (editor != null) {
-      final TaskFile file = editor.getTaskFile();
-      task = file.getTask();
-    }
-    return task;
-  }
-
-  @Nullable
   public static String convertToHtml(@Nullable final String content) {
     if (content == null) return null;
     ArrayList<String> lines = ContainerUtil.newArrayList(content.split("\n|\r|\r\n"));
@@ -685,7 +674,7 @@ public class EduUtils {
 
   @Nullable
   public static VirtualFile findTaskDescriptionVirtualFile(@NotNull Project project, @NotNull VirtualFile taskDir) {
-    Task task = getTask(project, taskDir.getName().contains(EduNames.TASK) ? taskDir: taskDir.getParent());
+    Task task = getTaskForFile(project, taskDir.getName().contains(EduNames.TASK) ? taskDir: taskDir.getParent());
     if (task == null) {
       return null;
     }
