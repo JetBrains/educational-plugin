@@ -2,7 +2,6 @@ package com.jetbrains.edu.kotlin.check
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
-import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressManager
@@ -13,7 +12,6 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -79,9 +77,4 @@ fun getMainClassName(project: Project): String? {
         val container = KotlinRunConfigurationProducer.getEntryPointContainer(ktElements.first())
         return@Computable KotlinRunConfigurationProducer.getStartClassFqName(container)
     })
-}
-
-
-private fun hasCompilationErrors(processOutput: ProcessOutput): Boolean {
-    return ContainerUtil.find(processOutput.stderrLines) { line -> line.contains(COMPILATION_ERROR) } != null
 }
