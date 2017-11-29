@@ -34,16 +34,18 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.OutputToolWindowFactory;
 import com.jetbrains.edu.learning.ui.OutputToolWindowFactoryKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.util.Map;
 
 public class CheckUtils {
   public static final String STUDY_PREFIX = "#educational_plugin";
-  public static final String COMPILATION_ERROR = "Compilation error";
+  public static final List<String> COMPILATION_ERRORS = CollectionsKt.listOf("Compilation failed", "Compilation error");
   public static final String COMPILATION_FAILED_MESSAGE = "Compilation failed";
   public static final String NOT_RUNNABLE_MESSAGE = "Solution isn't runnable";
   private static final Logger LOG = Logger.getInstance(CheckUtils.class);
@@ -201,4 +203,10 @@ public class CheckUtils {
     });
   }
 
+  public static boolean hasCompilationErrors(ProcessOutput processOutput) {
+    for (String error : COMPILATION_ERRORS) {
+      if (processOutput.getStderr().contains(error)) return true;
+    }
+    return false;
+  }
 }
