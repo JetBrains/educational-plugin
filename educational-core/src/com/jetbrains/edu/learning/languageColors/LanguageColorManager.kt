@@ -30,6 +30,6 @@ object LanguageColorManager {
   }
 }
 
-internal data class LanguageColor(
-        @SerializedName("color") val color: String?
+data class LanguageColor(
+  @SerializedName("color") val color: String?
 )
