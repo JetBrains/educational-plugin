@@ -10,5 +10,5 @@ public interface CheckListener {
 
   default void beforeCheck(@NotNull Project project, @NotNull Task task) {}
 
-  default void afterCheck(@NotNull Project project, @NotNull Task task) {}
+  default void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {}
 }

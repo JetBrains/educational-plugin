@@ -5,6 +5,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.checker.CheckListener;
+import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -21,7 +22,7 @@ public class NextRecommendationCheckListener implements CheckListener {
   }
 
   @Override
-  public void afterCheck(@NotNull Project project, @NotNull Task task) {
+  public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
     Course course = task.getLesson().getCourse();
     if (!(course instanceof RemoteCourse && course.isAdaptive())) {
       return;
