@@ -53,11 +53,7 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
 
   @Nullable
   private static String generateName(@NotNull VirtualFile testsFile, @NotNull Project project) {
-    VirtualFile taskDir = EduUtils.getTaskDir(testsFile);
-    if (taskDir == null) {
-      return null;
-    }
-    Task task = EduUtils.getTask(project, taskDir);
+    Task task = EduUtils.getTaskForFile(project, testsFile);
     if (task == null) {
       return null;
     }
@@ -79,13 +75,13 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
     if (file == null) {
       return null;
     }
-    VirtualFile taskDir = EduUtils.getTaskDir(file);
-    if (taskDir == null) {
+    Project project = location.getProject();
+    Task task = EduUtils.getTaskForFile(project, file);
+    if (task == null) {
       return null;
     }
-
-    Task task = EduUtils.getTask(location.getProject(), taskDir);
-    if (task == null) {
+    VirtualFile taskDir = task.getTaskDir(project);
+    if (taskDir == null) {
       return null;
     }
     String testsFileName = PyCourseBuilder.getSubtaskTestsFileName(task instanceof TaskWithSubtasks ?

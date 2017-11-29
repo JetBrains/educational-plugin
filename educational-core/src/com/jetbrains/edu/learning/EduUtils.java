@@ -47,10 +47,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
 import com.intellij.openapi.wm.*;
@@ -288,41 +285,8 @@ public class EduUtils {
 
   @Nullable
   public static TaskFile getTaskFile(@NotNull final Project project, @NotNull final VirtualFile file) {
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return null;
-    }
-    VirtualFile taskDir = getTaskDir(file);
-    if (taskDir == null) {
-      return null;
-    }
-    //need this because of multi-module generation
-    if (EduNames.SRC.equals(taskDir.getName())) {
-      taskDir = taskDir.getParent();
-      if (taskDir == null) {
-        return null;
-      }
-    }
-    final String taskDirName = taskDir.getName();
-    if (taskDirName.contains(EduNames.TASK)) {
-      final VirtualFile lessonDir = taskDir.getParent();
-      if (lessonDir != null) {
-        int lessonIndex = getIndex(lessonDir.getName(), EduNames.LESSON);
-        List<Lesson> lessons = course.getLessons();
-        if (!indexIsValid(lessonIndex, lessons)) {
-          return null;
-        }
-        final Lesson lesson = lessons.get(lessonIndex);
-        int taskIndex = getIndex(taskDirName, EduNames.TASK);
-        final List<Task> tasks = lesson.getTaskList();
-        if (!indexIsValid(taskIndex, tasks)) {
-          return null;
-        }
-        final Task task = tasks.get(taskIndex);
-        return task.getFile(pathRelativeToTask(file));
-      }
-    }
-    return null;
+    Task task = getTaskForFile(project, file);
+    return task == null ? null : task.getTaskFile(pathRelativeToTask(file));
   }
 
   public static void drawAllAnswerPlaceholders(Editor editor, TaskFile taskFile) {
@@ -610,23 +574,6 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Task getTask(@NotNull Project project, @NotNull VirtualFile taskVF) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return null;
-    }
-    VirtualFile lessonVF = taskVF.getParent();
-    if (lessonVF == null) {
-      return null;
-    }
-    Lesson lesson = course.getLesson(lessonVF.getName());
-    if (lesson == null) {
-      return null;
-    }
-    return lesson.getTask(taskVF.getName());
-  }
-
-  @Nullable
   public static VirtualFile getTaskDir(@NotNull VirtualFile taskFile) {
     VirtualFile parent = taskFile.getParent();
 
@@ -646,12 +593,41 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Task getTaskForFile(@NotNull Project project, @NotNull VirtualFile taskFile) {
-    VirtualFile taskDir = getTaskDir(taskFile);
+  public static Task getTaskForFile(@NotNull Project project, @NotNull VirtualFile file) {
+    final Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return null;
+    }
+    VirtualFile taskDir = getTaskDir(file);
     if (taskDir == null) {
       return null;
     }
-    return getTask(project, taskDir);
+    //need this because of multi-module generation
+    if (EduNames.SRC.equals(taskDir.getName())) {
+      taskDir = taskDir.getParent();
+      if (taskDir == null) {
+        return null;
+      }
+    }
+    final String taskDirName = taskDir.getName();
+    if (taskDirName.contains(EduNames.TASK)) {
+      final VirtualFile lessonDir = taskDir.getParent();
+      if (lessonDir != null) {
+        int lessonIndex = getIndex(lessonDir.getName(), EduNames.LESSON);
+        List<Lesson> lessons = course.getLessons();
+        if (!indexIsValid(lessonIndex, lessons)) {
+          return null;
+        }
+        final Lesson lesson = lessons.get(lessonIndex);
+        int taskIndex = getIndex(taskDirName, EduNames.TASK);
+        final List<Task> tasks = lesson.getTaskList();
+        if (!indexIsValid(taskIndex, tasks)) {
+          return null;
+        }
+        return tasks.get(taskIndex);
+      }
+    }
+    return null;
   }
 
   // supposed to be called under progress
@@ -784,7 +760,7 @@ public class EduUtils {
     if (srcDir != null) {
       taskDir = srcDir;
     }
-    return FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), '/');
+    return FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtil.VFS_SEPARATOR_CHAR);
   }
 
   public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder,
