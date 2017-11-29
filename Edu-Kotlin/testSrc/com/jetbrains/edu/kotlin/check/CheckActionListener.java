@@ -7,42 +7,64 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
 public class CheckActionListener implements CheckListener {
-    public static final Function1<Task, Unit> SHOULD_FAIL = new Function1<Task, Unit>() {
+    private static final Function2<Task, CheckResult, Unit> SHOULD_FAIL = new Function2<Task, CheckResult, Unit>() {
         @Override
-        public Unit invoke(Task task) {
-            String taskName = task.getLesson().getName() + "/" + task.getName();
-            Assert.assertFalse("Check Task Action skipped for " + taskName, task.getStatus() == CheckStatus.Unchecked);
-            Assert.assertFalse("Check Task Action passed for " + taskName, task.getStatus() == CheckStatus.Solved);
-            System.out.println("Check for " + taskName + " fails as expected");
+        public Unit invoke(@NotNull Task task, @NotNull CheckResult result) {
+            String taskName = getTaskName(task);
+            Assert.assertFalse("Check Task Action skipped for " + taskName, result.getStatus() == CheckStatus.Unchecked);
+            Assert.assertFalse("Check Task Action passed for " + taskName, result.getStatus() == CheckStatus.Solved);
+            System.out.println("Checking status for " + taskName + " fails as expected");
             return Unit.INSTANCE;
         }
     };
 
-    public static final Function1<Task, Unit> SHOULD_PASS = new Function1<Task, Unit>() {
+    private static final Function2<Task, CheckResult, Unit> SHOULD_PASS = new Function2<Task, CheckResult, Unit>() {
         @Override
-        public Unit invoke(Task task) {
-            String taskName = task.getLesson().getName() + "/" + task.getName();
-            Assert.assertFalse("Check Task Action skipped for " + taskName, task.getStatus() == CheckStatus.Unchecked);
-            Assert.assertFalse("Check Task Action failed for " + taskName, task.getStatus() == CheckStatus.Failed);
-            System.out.println("Check for " + taskName + " passed");
+        public Unit invoke(@NotNull Task task, @NotNull CheckResult result) {
+            String taskName = getTaskName(task);
+            Assert.assertFalse("Check Task Action skipped for " + taskName, result.getStatus() == CheckStatus.Unchecked);
+            Assert.assertFalse("Check Task Action failed for " + taskName, result.getStatus() == CheckStatus.Failed);
+            System.out.println("Checking status for " + taskName + " passed");
             return Unit.INSTANCE;
         }
     };
 
-    // This field can be modified if some special checks are needed (return true if should run standard checks)
-    @SuppressWarnings("StaticNonFinalField")
-    public static Function1<Task, Unit> afterCheck = SHOULD_PASS;
+    @NotNull
+    private static String getTaskName(@NotNull Task task) {
+        return task.getLesson().getName() + "/" + task.getName();
+    }
+
+    // Those fields can be modified if some special checks are needed (return true if should run standard checks)
+    private static Function2<Task, CheckResult, Unit> checkStatus = SHOULD_PASS;
+    private static Function1<Task, String> expectedMessageForTask = null;
 
     @Override
     public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
-        afterCheck.invoke(task);
+        checkStatus.invoke(task, result);
+        if (expectedMessageForTask != null) {
+            String expectedMessage = expectedMessageForTask.invoke(task);
+            if (expectedMessage != null) {
+                Assert.assertEquals("Checking output for " + getTaskName(task) + " fails", expectedMessage, result.getMessage());
+            }
+
+        }
     }
 
     public static void reset() {
-        afterCheck = SHOULD_PASS;
+        checkStatus = SHOULD_PASS;
+        expectedMessageForTask = null;
+    }
+
+    public static void shouldFail() {
+        checkStatus = SHOULD_FAIL;
+    }
+
+    public static void expectedMessage(@NotNull Function1<Task, String> f) {
+        expectedMessageForTask = f;
     }
 }

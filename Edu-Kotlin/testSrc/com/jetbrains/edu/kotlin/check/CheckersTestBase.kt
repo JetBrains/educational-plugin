@@ -36,8 +36,8 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.test.CheckActionListener
 import org.junit.Assert
+import org.junit.ComparisonFailure
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -75,6 +75,8 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
                     UIUtil.dispatchAllInvocationEvents()
                 } catch (e: AssertionError) {
+                    exceptions.add(e)
+                } catch (e: ComparisonFailure) {
                     exceptions.add(e)
                 }
             }
