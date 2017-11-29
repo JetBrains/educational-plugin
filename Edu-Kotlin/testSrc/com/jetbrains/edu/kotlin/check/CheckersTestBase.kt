@@ -36,14 +36,12 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import com.jetbrains.edu.test.CheckActionListener
 import org.junit.Assert
+import org.junit.ComparisonFailure
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.reflect.InvocationTargetException
 import java.util.zip.ZipOutputStream
-import javax.swing.SwingUtilities
 
 abstract class CheckersTestBase : UsefulTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
@@ -65,7 +63,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
         for (lesson in course.lessons) {
             for (task in lesson.getTaskList()) {
                 try {
-                    val taskDir = task.getTaskDir(myProject) ?: return Assert.fail("Cannot find task directory for task ${task.name}")
+                    val taskDir = task.getTaskDir(myProject) ?: error("Cannot find task directory for task ${task.name}")
                     val firstTaskFileName = task.getTaskFiles().keys.first()
                     val taskFile = taskDir.findFileByRelativePath(firstTaskFileName) ?: continue
 
@@ -75,6 +73,8 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
                     UIUtil.dispatchAllInvocationEvents()
                 } catch (e: AssertionError) {
+                    exceptions.add(e)
+                } catch (e: ComparisonFailure) {
                     exceptions.add(e)
                 }
             }
@@ -117,10 +117,10 @@ abstract class CheckersTestBase : UsefulTestCase() {
         val zipPath = packCourseToZip()
 
         course = EduUtils.getLocalCourse(zipPath)
-                ?: return Assert.fail("Cannot create course from testData/check/${projectName()} project")
+                ?: error("Cannot create course from testData/check/${projectName()} project")
 
         val jdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME)
-                ?: return Assert.fail("Gradle JDK should be configured in setUp()")
+                ?: error("Gradle JDK should be configured in setUp()")
 
         val sdksModel = ProjectSdksModel()
         sdksModel.addSdk(jdk)
@@ -130,11 +130,9 @@ abstract class CheckersTestBase : UsefulTestCase() {
             override fun getSdkName() = jdk.name
         })
 
-        runInEdtAndWait {
-            getGenerator(course).createCourseProject(myTestDir.absolutePath, settings)
-            myProject = ProjectManager.getInstance().openProjects.firstOrNull { it.name == UsefulTestCase.TEMP_DIR_MARKER + projectName() }
-                    ?: return@runInEdtAndWait Assert.fail("Cannot find project with name ${projectName()}")
-        }
+        getGenerator(course).createCourseProject(myTestDir.absolutePath, settings)
+        myProject = ProjectManager.getInstance().openProjects.firstOrNull { it.name == UsefulTestCase.TEMP_DIR_MARKER + projectName() }
+                    ?: error("Cannot find project with name ${projectName()}")
     }
 
     private fun packCourseToZip(): String {
@@ -217,19 +215,6 @@ abstract class CheckersTestBase : UsefulTestCase() {
             (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
         } finally {
             super.tearDown()
-        }
-    }
-
-    private fun runInEdtAndWait(runnable: () -> Unit) {
-        if (SwingUtilities.isEventDispatchThread()) {
-            runnable()
-        }
-        else {
-            try {
-                SwingUtilities.invokeAndWait(runnable)
-            } catch (e: InvocationTargetException) {
-                throw e.cause ?: e
-            }
         }
     }
 }
