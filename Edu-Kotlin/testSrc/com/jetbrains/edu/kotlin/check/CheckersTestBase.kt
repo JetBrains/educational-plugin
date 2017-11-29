@@ -61,19 +61,38 @@ abstract class CheckersTestBase : UsefulTestCase() {
     fun doTest() {
         UIUtil.dispatchAllInvocationEvents()
 
+        val exceptions = arrayListOf<AssertionError>()
         for (lesson in course.lessons) {
             for (task in lesson.getTaskList()) {
-                val taskDir = task.getTaskDir(myProject) ?: return Assert.fail("Cannot find task directory for task ${task.name}")
-                val firstTaskFileName = task.getTaskFiles().keys.first()
-                val taskFile = taskDir.findFileByRelativePath(firstTaskFileName) ?: continue
+                try {
+                    val taskDir = task.getTaskDir(myProject) ?: return Assert.fail("Cannot find task directory for task ${task.name}")
+                    val firstTaskFileName = task.getTaskFiles().keys.first()
+                    val taskFile = taskDir.findFileByRelativePath(firstTaskFileName) ?: continue
 
-                FileEditorManager.getInstance(myProject).openFile(taskFile, true)
+                    FileEditorManager.getInstance(myProject).openFile(taskFile, true)
 
-                launchAction(taskFile, CheckAction())
+                    launchAction(taskFile, CheckAction())
 
-                UIUtil.dispatchAllInvocationEvents()
+                    UIUtil.dispatchAllInvocationEvents()
+                } catch (e: AssertionError) {
+                    exceptions.add(e)
+                }
             }
         }
+        if (exceptions.isNotEmpty()) {
+            throw MultipleCauseException(exceptions)
+        }
+    }
+
+    private class MultipleCauseException(val causes: ArrayList<AssertionError>) : Exception() {
+        override fun printStackTrace() {
+            for (cause in causes) {
+                cause.printStackTrace()
+            }
+        }
+
+        override val message: String?
+            get() = "\n" + causes.joinToString("\n") { it.message ?: "" }
     }
 
     protected abstract fun getGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>
