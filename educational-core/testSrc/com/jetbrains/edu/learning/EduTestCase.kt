@@ -91,14 +91,12 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     val file = myFixture.findFileInTempDir(fileName)
     taskFile.text = VfsUtilCore.loadText(file)
 
-    myFixture.configureFromExistingVirtualFile(file)
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
     val document = FileDocumentManager.getInstance().getDocument(file)
     for (placeholder in CCTestCase.getPlaceholders(document, false)) {
       taskFile.addAnswerPlaceholder(placeholder)
     }
     taskFile.sortAnswerPlaceholders()
-    EduUtils.drawAllAnswerPlaceholders(myFixture.editor, taskFile)
   }
 
   protected fun configureByTaskFile(lessonIndex: Int, taskIndex: Int, taskFileName: String) {
