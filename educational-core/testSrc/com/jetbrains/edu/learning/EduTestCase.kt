@@ -93,7 +93,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
     val document = FileDocumentManager.getInstance().getDocument(file)
-    for (placeholder in CCTestCase.getPlaceholders(document, false)) {
+    for (placeholder in CCTestCase.getPlaceholders(document, true)) {
       taskFile.addAnswerPlaceholder(placeholder)
     }
     taskFile.sortAnswerPlaceholders()
