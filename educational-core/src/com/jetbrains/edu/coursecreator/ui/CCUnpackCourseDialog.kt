@@ -5,7 +5,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectUtil.guessProjectForFile
@@ -24,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import java.io.File
 import javax.swing.JComponent
 
-class CCUnpackCourseDialog (val course: Course): DialogWrapper(true) {
+class CCUnpackCourseDialog(val course: Course) : DialogWrapper(true) {
   private val LOG = Logger.getInstance(CCUnpackCourseDialog::class.java)
   private val myPanel: CCNewCoursePanel = CCNewCoursePanel()
 
@@ -100,12 +99,17 @@ class CCUnpackCourseDialog (val course: Course): DialogWrapper(true) {
       }
     }
     if (file == null) {
-      LOG.warn("Failed to find file "  + file)
+      LOG.warn("Failed to find file " + file)
       return
     }
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return
 
-    CommandProcessor.getInstance().executeCommand(project, { ApplicationManager.getApplication().runWriteAction { document.replaceString(0, document.textLength, document.charsSequence) } },
+    CommandProcessor.getInstance().executeCommand(project,
+        {
+          ApplicationManager.getApplication().runWriteAction {
+            document.replaceString(0, document.textLength, document.charsSequence)
+          }
+        },
         "Create answer document", "Create answer document")
     val listener = EduDocumentListener(taskFile, false)
     document.addDocumentListener(listener)
@@ -118,7 +122,13 @@ class CCUnpackCourseDialog (val course: Course): DialogWrapper(true) {
       placeholder.useLength = false
     }
 
-    CommandProcessor.getInstance().executeCommand(project, { ApplicationManager.getApplication().runWriteAction { FileDocumentManager.getInstance().saveDocument(document) } }, "Create answer document", "Create answer document")
+    CommandProcessor.getInstance().executeCommand(project,
+        {
+          ApplicationManager.getApplication().runWriteAction {
+            FileDocumentManager.getInstance().saveDocumentAsIs(document)
+          }
+        },
+        "Create answer document", "Create answer document")
     document.removeDocumentListener(listener)
   }
 
@@ -133,19 +143,8 @@ class CCUnpackCourseDialog (val course: Course): DialogWrapper(true) {
     CommandProcessor.getInstance().runUndoTransparentAction {
       ApplicationManager.getApplication().runWriteAction {
         document.replaceString(offset, offset + placeholder.realLength, replacementText)
-        saveDocument(document)
+        FileDocumentManager.getInstance().saveDocumentAsIs(document)
       }
-    }
-  }
-
-  private fun saveDocument(document: Document) {
-    val settings = EditorSettingsExternalizable.getInstance()
-    val oldValue = settings.stripTrailingSpaces
-    settings.stripTrailingSpaces = EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE
-    try {
-      FileDocumentManager.getInstance().saveDocument(document)
-    } finally {
-      settings.stripTrailingSpaces = oldValue
     }
   }
 }
