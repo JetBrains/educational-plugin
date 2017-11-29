@@ -1116,6 +1116,7 @@ public class EduUtils {
           .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.LessonAdapter())
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
           .create();
+      zipFile.close();
       return gson.fromJson(jsonText, Course.class);
     }
     catch (IOException e) {
