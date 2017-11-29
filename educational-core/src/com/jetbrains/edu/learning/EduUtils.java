@@ -13,7 +13,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.CommandProcessor;
@@ -341,16 +340,6 @@ public class EduUtils {
   @Nullable
   public static EduEditor getSelectedStudyEditor(@NotNull final Project project) {
     try {
-      final Application application = ApplicationManager.getApplication();
-      if (application.isUnitTestMode() && application.isDispatchThread()) {
-        final VirtualFile currentFile = FileEditorManagerEx.getInstanceEx(project).getCurrentFile();
-        assert currentFile != null;
-        final FileEditor[] fileEditors = FileEditorManagerEx.getInstanceEx(project).getEditors(currentFile);
-        assert fileEditors.length == 1;
-        final EduEditor eduEditor = new EduEditor(project, currentFile);
-        Disposer.register(fileEditors[0], eduEditor);
-        return eduEditor;
-      }
       final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
         getSelectedEditor().getSelectedEditorWithProvider().getFirst();
       if (fileEditor instanceof EduEditor) {
