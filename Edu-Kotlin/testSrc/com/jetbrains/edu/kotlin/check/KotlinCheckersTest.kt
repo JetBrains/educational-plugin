@@ -1,10 +1,14 @@
 package com.jetbrains.edu.kotlin.check
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.kotlin.KtProjectGenerator
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.test.CheckActionListener
-import org.junit.Assert
 
 class KotlinCheckersTest : CheckersTestBase() {
 
@@ -13,13 +17,21 @@ class KotlinCheckersTest : CheckersTestBase() {
     }
 
     fun testErrors() {
-        CheckActionListener.afterCheck = { task ->
-            val taskName = task.lesson.name + "/" + task.name
-            Assert.assertFalse("Check Task Action skipped for " + taskName, task.status == CheckStatus.Unchecked)
-            Assert.assertFalse("Check Task Action passed for " + taskName, task.status == CheckStatus.Solved)
-            println("Check for $taskName fails as expected")
-            false
+        CheckActionListener.afterCheck = CheckActionListener.SHOULD_FAIL
+        doTest()
+    }
+
+    fun testBrokenJdk() {
+        UIUtil.dispatchAllInvocationEvents()
+
+        val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), myProject.baseDir, JavaSdk.getInstance(), true, null, "Broken JDK")
+        ApplicationManager.getApplication().runWriteAction {
+            ProjectRootManager.getInstance(myProject).projectSdk = jdk
+            ProjectJdkTable.getInstance().addJdk(jdk!!)
         }
+
+        CheckActionListener.afterCheck = CheckActionListener.SHOULD_FAIL
+
         doTest()
     }
 

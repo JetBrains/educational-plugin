@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.test.CheckActionListener
 import org.junit.Assert
 import java.io.BufferedOutputStream
 import java.io.File
@@ -50,7 +51,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
     private lateinit var myOldDockContainers: Set<DockContainer>
 
     private lateinit var course: Course
-    private lateinit var myProject: Project
+    protected lateinit var myProject: Project
     private lateinit var myApplication: IdeaTestApplication
 
     private lateinit var myTestDir: File
@@ -130,6 +131,8 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
     override fun setUp() {
         super.setUp()
+
+        CheckActionListener.reset()
 
         val myJdkHome = IdeaTestUtil.requireRealJdkHome()
         VfsRootAccess.allowRootAccess(testRootDisposable, myJdkHome)
