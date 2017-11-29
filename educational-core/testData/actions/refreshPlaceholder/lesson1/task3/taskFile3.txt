@@ -1,0 +1,2 @@
+Look! There is <placeholder>first</placeholder> placeholder.
+Look! There is <placeholder>second</placeholder> placeholder.
