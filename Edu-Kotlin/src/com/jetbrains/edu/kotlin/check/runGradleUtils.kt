@@ -2,7 +2,6 @@ package com.jetbrains.edu.kotlin.check
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
-import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressManager
@@ -75,10 +74,8 @@ fun getProcessOutput(process: Process, commandLine: String, taskName: String): G
         if (it.startsWith(STUDY_PREFIX)) sb.appendln(it.removePrefix(STUDY_PREFIX))
     }
 
-    return GradleOutput(output.isSuccess(), sb.toString())
+    return GradleOutput(true, sb.toString())
 }
-
-fun ProcessOutput.isSuccess() = stdout.contains("BUILD SUCCESSFUL")
 
 fun String.postProcessOutput() = this.replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
 
