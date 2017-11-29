@@ -2,6 +2,7 @@ package com.jetbrains.edu.kotlin.check;
 
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.checker.CheckListener;
+import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import kotlin.Unit;
@@ -37,7 +38,7 @@ public class CheckActionListener implements CheckListener {
     public static Function1<Task, Unit> afterCheck = SHOULD_PASS;
 
     @Override
-    public void afterCheck(@NotNull Project project, @NotNull Task task) {
+    public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
         afterCheck.invoke(task);
     }
 
