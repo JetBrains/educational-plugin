@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.ui.AnswerPlaceholderHint;
 import com.jetbrains.edu.learning.ui.HintComponent;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -28,8 +29,7 @@ public class ShowHintTest extends EduTestCase {
   public void testOutsidePlaceholder() {
     configureByTaskFile(1, 2, "taskFile2.txt");
     EduState eduState = new EduState(EduUtils.getSelectedStudyEditor(myFixture.getProject()));
-    int offset = myFixture.getCaretOffset();
-    AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(offset);
+    AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(5);
 
     final AnswerPlaceholderHint hint = ShowHintAction.getHint(myFixture.getProject(), answerPlaceholder);
     final HintComponent hintContent = hint.getHintComponent();
@@ -91,6 +91,7 @@ public class ShowHintTest extends EduTestCase {
     course.initCourse(false);
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return super.getTestDataPath() + "/actions/showHint";
