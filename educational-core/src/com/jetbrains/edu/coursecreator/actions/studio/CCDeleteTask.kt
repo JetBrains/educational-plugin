@@ -6,5 +6,5 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
 class CCDeleteTask : CCDeleteStudyItem("Delete Task") {
-  override fun getStudyItem(project: Project, file: VirtualFile): StudyItem? = EduUtils.getTask(project, file)
+  override fun getStudyItem(project: Project, file: VirtualFile): StudyItem? = EduUtils.getTaskForFile(project, file)
 }

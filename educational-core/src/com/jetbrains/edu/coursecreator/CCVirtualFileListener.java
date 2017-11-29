@@ -58,11 +58,7 @@ public class CCVirtualFileListener extends VirtualFileAdapter {
         || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
       return;
     }
-    VirtualFile taskVF = EduUtils.getTaskDir(createdFile);
-    if (taskVF == null) {
-      return;
-    }
-    Task task = EduUtils.getTask(myProject, taskVF);
+    Task task = EduUtils.getTaskForFile(myProject, createdFile);
     if (task == null) {
       return;
     }

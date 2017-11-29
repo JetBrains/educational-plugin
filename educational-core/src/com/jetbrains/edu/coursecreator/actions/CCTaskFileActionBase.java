@@ -34,11 +34,7 @@ public abstract class CCTaskFileActionBase extends AnAction {
 
     for (VirtualFile file : virtualFiles) {
       if (!isAvailable(project, file)) continue;
-      VirtualFile taskVF = EduUtils.getTaskDir(file);
-      if (taskVF == null) {
-        return;
-      }
-      Task task = EduUtils.getTask(project, taskVF);
+      Task task = EduUtils.getTaskForFile(project, file);
       if (task == null) {
         return;
       }

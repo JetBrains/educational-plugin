@@ -135,7 +135,7 @@ public class CCNewSubtaskAction extends DumbAwareAction {
       return;
     }
 
-    if (EduUtils.getTaskForFile(project, virtualFile) != null || EduUtils.getTask(project, virtualFile) != null) {
+    if (EduUtils.getTaskForFile(project, virtualFile) != null) {
       presentation.setEnabledAndVisible(true);
     }
   }
