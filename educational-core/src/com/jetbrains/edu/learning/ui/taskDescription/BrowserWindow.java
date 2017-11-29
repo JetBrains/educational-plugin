@@ -44,6 +44,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.jetbrains.edu.learning.stepic.StepicNames.STEPIC_URL;
+
 public class BrowserWindow extends JFrame {
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
   private static final String EVENT_TYPE_CLICK = "click";
@@ -248,16 +250,23 @@ public class BrowserWindow extends JFrame {
               EduUsagesCollector.externalLinkClicked();
               myEngine.setJavaScriptEnabled(true);
               myEngine.getLoadWorker().cancel();
-              final String href = getLink(target);
+              String href = getLink(target);
               if (href == null) return;
+              if (isRelativeLink(href)) {
+                href = STEPIC_URL + href;
+              }
               BrowserUtil.browse(href);
-              if (href.startsWith("https://stepik.org")) {
+              if (href.startsWith(STEPIC_URL)) {
                 EduUsagesCollector.stepikLinkClicked();
               }
 
             }
           }
         }
+      }
+
+      private boolean isRelativeLink(@NotNull String href) {
+        return !href.startsWith("http");
       }
 
       private Element getElementWithATag(Element element) {
