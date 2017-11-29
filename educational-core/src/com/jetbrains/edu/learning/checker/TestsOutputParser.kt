@@ -7,9 +7,9 @@ import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
 
 
 object TestsOutputParser {
-    private const val TEST_OK = "test OK"
-    private const val TEST_FAILED = "FAILED + "
-    private const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
+    const val TEST_OK = "test OK"
+    const val TEST_FAILED = "FAILED + "
+    const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
     const val CONGRATULATIONS = "Congratulations!"
 
     private val LOG = Logger.getInstance(TestsOutputParser::class.qualifiedName!!)
