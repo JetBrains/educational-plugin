@@ -1,0 +1,2 @@
+Look! There <placeholder>i<caret>s</placeholder> placeholder.
+Look! My <placeholder>second</placeholder> placeholder.
