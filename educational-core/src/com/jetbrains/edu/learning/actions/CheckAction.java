@@ -207,7 +207,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
         ProjectView.getInstance(myProject).refresh();
 
         for (CheckListener listener : CheckListener.EP_NAME.getExtensions()) {
-          listener.afterCheck(myProject, myTask);
+          listener.afterCheck(myProject, myTask, myResult);
         }
       });
       myChecker.clearState(myTask, myProject);
