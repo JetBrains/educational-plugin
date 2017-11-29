@@ -3,10 +3,7 @@ package com.jetbrains.edu.kotlin.check
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.kotlin.check.KtTaskChecker.Companion.FAILED_TO_LAUNCH
-import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.OutputTaskChecker
-import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.checker.TestsOutputParser
+import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -42,5 +39,9 @@ class KtOutputTaskChecker : TaskChecker() {
         }
 
         return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
+    }
+
+    override fun clearState(task: Task, project: Project) {
+        CheckUtils.drawAllPlaceholders(project, task)
     }
 }
