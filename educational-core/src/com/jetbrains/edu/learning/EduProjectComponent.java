@@ -41,10 +41,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicNames;
-import com.jetbrains.edu.learning.stepic.StepikSolutionsLoader;
-import com.jetbrains.edu.learning.stepic.StepicUserWidget;
+import com.jetbrains.edu.learning.stepic.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import javafx.application.Platform;
@@ -97,7 +94,8 @@ public class EduProjectComponent implements ProjectComponent {
           updateAvailable(course);
         }
 
-        if (EduSettings.getInstance().getUser() != null) {
+        final StepicUser currentUser = EduSettings.getInstance().getUser();
+        if (currentUser != null && !course.getAuthors().contains(currentUser)) {
           loadSolutionsFromStepik(course);
         }
 
