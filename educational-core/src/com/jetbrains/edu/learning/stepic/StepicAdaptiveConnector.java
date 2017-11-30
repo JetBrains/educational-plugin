@@ -686,7 +686,7 @@ public class StepicAdaptiveConnector {
       String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
       String taskFileName = getTaskFileName(myLanguage);
       if (taskFileName != null) {
-        createMockTaskFile(task, commentPrefix + " you can experiment here, it won't be checked", taskFileName);
+        createMockTaskFile(task, commentPrefix + " you can experiment here, it won't be checked\n", taskFileName);
       }
 
       return task;
@@ -701,7 +701,7 @@ public class StepicAdaptiveConnector {
       String taskFileName = getTaskFileName(myLanguage);
 
       if (taskFileName != null) {
-        createMockTaskFile(task, commentPrefix + " this is a theory task. You can use this editor as a playground", taskFileName);
+        createMockTaskFile(task, commentPrefix + " this is a theory task. You can use this editor as a playground\n", taskFileName);
       }
       return task;
     }
