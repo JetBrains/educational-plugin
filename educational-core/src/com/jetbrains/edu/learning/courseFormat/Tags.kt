@@ -57,3 +57,5 @@ class ProgrammingLanguageTag(language: Language) :
         Tag(language.displayName, ProgrammingLanguageColorManager[language] ?: DEFAULT_COLOR, "programming_language")
 
 class HumanLanguageTag(languageName: String): Tag(languageName, searchOption = "language")
+
+class FeaturedTag: Tag("Featured")
