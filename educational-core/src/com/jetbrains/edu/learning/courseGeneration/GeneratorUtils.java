@@ -78,6 +78,7 @@ public class GeneratorUtils {
       createTaskFile(taskDir, taskFile.getValue());
     }
     createTestFiles(taskDir, task);
+    createDescriptionFiles(taskDir, task);
   }
 
   public static void createTaskFile(@NotNull final VirtualFile taskDir, @NotNull final TaskFile taskFile) throws IOException {
@@ -87,6 +88,11 @@ public class GeneratorUtils {
 
   public static void createTestFiles(@NotNull VirtualFile taskDir, @NotNull Task task) throws IOException {
     final Map<String, String> tests = task.getTestsText();
+    createFiles(taskDir, tests);
+  }
+
+  public static void createDescriptionFiles(@NotNull VirtualFile taskDir, @NotNull Task task) throws IOException {
+    final Map<String, String> tests = task.getTaskTexts();
     createFiles(taskDir, tests);
   }
 
