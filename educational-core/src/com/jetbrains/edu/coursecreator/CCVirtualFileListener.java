@@ -52,6 +52,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
     }
 
     if (CCUtils.isTestsFile(myProject, createdFile)
+        || EduUtils.isTaskDescriptionFile(createdFile.getName())
         || taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
         || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)
         || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {

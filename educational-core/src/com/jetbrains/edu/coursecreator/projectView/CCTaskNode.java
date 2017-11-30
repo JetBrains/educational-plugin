@@ -10,10 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -49,6 +46,9 @@ public class CCTaskNode extends TaskNode {
       PsiFile psiFile = psiElement.getContainingFile();
       VirtualFile virtualFile = psiFile.getVirtualFile();
       if (virtualFile == null) {
+        return null;
+      }
+      if (EduUtils.isTaskDescriptionFile(virtualFile.getName())) {
         return null;
       }
       Course course = StudyTaskManager.getInstance(myProject).getCourse();
