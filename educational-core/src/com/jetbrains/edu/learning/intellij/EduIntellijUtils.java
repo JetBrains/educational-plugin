@@ -9,7 +9,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -56,6 +58,8 @@ public class EduIntellijUtils {
           if (testFileName != null) {
             createFromTemplate(project, src, testFileName);
           }
+          String taskDescriptionFileName = EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat());
+          createFromTemplate(project, src, taskDescriptionFileName);
         }
       }
     };
