@@ -54,6 +54,8 @@ public class StepicConnector {
   //this prefix indicates that course can be opened by educational plugin
   private static final String ADAPTIVE_NOTE =
     "\n\nInitially, the adaptive system may behave somewhat randomly, but the more problems you solve, the smarter it becomes!";
+  private static final String NOT_VERIFIED_NOTE = "\n\nThis course is not verified by JetBrains yet. " +
+      "If you are a course owner please contact Jetbrains so we can help you improve your course.";
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
 
@@ -80,9 +82,10 @@ public class StepicConnector {
   @NotNull
   public static List<Course> getCourses(@Nullable StepicUser user) {
     List<Course> result = new ArrayList<>();
+    final List<Integer> featuredCourses = EduUtils.getFeaturedCourses();
     try {
       int pageNumber = 1;
-      while (addCoursesFromStepic(user, result, pageNumber)) {
+      while (addCoursesFromStepic(user, result, pageNumber, featuredCourses)) {
         pageNumber += 1;
       }
     }
@@ -148,7 +151,8 @@ public class StepicConnector {
     return coursesContainer;
   }
 
-  private static boolean addCoursesFromStepic(@Nullable StepicUser user, List<Course> result, int pageNumber) throws IOException {
+  private static boolean addCoursesFromStepic(@Nullable StepicUser user, List<Course> result, int pageNumber,
+                                              @NotNull List<Integer> featuredCourses) throws IOException {
     final URI url;
     try {
       url = new URIBuilder(StepicNames.COURSES).addParameter("is_idea_compatible", "true").
@@ -159,7 +163,7 @@ public class StepicConnector {
       return false;
     }
     final StepicWrappers.CoursesContainer coursesContainer = getCoursesFromStepik(user, url);
-    addAvailableCourses(result, coursesContainer);
+    addAvailableCourses(result, coursesContainer, featuredCourses);
     return coursesContainer.meta.containsKey("has_next") && coursesContainer.meta.get("has_next") == Boolean.TRUE;
   }
 
@@ -183,7 +187,8 @@ public class StepicConnector {
     }
   }
 
-  static void addAvailableCourses(List<Course> result, StepicWrappers.CoursesContainer coursesContainer) throws IOException {
+  static void addAvailableCourses(List<Course> result, StepicWrappers.CoursesContainer coursesContainer,
+                                  @NotNull List<Integer> featuredCourses) throws IOException {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse info : courses) {
       if (!info.isAdaptive() && StringUtil.isEmptyOrSpaces(info.getType())) continue;
@@ -200,6 +205,9 @@ public class StepicConnector {
 
         if (info.isAdaptive()) {
           info.setDescription("This is a Stepik Adaptive course.\n\n" + info.getDescription() + ADAPTIVE_NOTE);
+        }
+        if (info.isPublic() && !featuredCourses.contains(info.getId())) {
+          info.setDescription(info.getDescription() + NOT_VERIFIED_NOTE);
         }
         result.add(info);
       }

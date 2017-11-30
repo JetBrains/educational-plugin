@@ -15,12 +15,12 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.OnePixelDivider;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduLanguageDecorator;
@@ -43,8 +43,10 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
 public class CoursesPanel extends JPanel {
-  private static final Set<String> FEATURED_COURSES = ContainerUtil.newLinkedHashSet("Adaptive Python", "Introduction to Python", "Kotlin Koans");
   private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
   private static final Logger LOG = Logger.getInstance(CoursesPanel.class);
   private static final String NO_COURSES = "No courses found";
@@ -59,6 +61,7 @@ public class CoursesPanel extends JPanel {
   private CoursePanel myCoursePanel;
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
+  private final List<Integer> myFeaturedCourses = EduUtils.getFeaturedCourses();
 
   public CoursesPanel(@NotNull List<Course> courses) {
     myCourses = courses;
@@ -77,36 +80,8 @@ public class CoursesPanel extends JPanel {
     myErrorLabel.setVisible(false);
     myErrorLabel.setBorder(JBUI.Borders.empty(20, 10, 0, 0));
 
-    ListCellRendererWrapper<Course> renderer = new ListCellRendererWrapper<Course>() {
-      @Override
-      public void customize(JList list, Course value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getName());
-        Icon logo = getLogo(value);
-        if (logo != null) {
-          boolean isPrivate = value instanceof RemoteCourse && !((RemoteCourse)value).isPublic();
-          setIcon(isPrivate ? getPrivateCourseIcon(logo) : logo);
-          setToolTipText(isPrivate ? "Private course" : "");
-        }
-      }
-
-      @NotNull
-      public LayeredIcon getPrivateCourseIcon(@Nullable Icon languageLogo) {
-        LayeredIcon icon = new LayeredIcon(2);
-        icon.setIcon(languageLogo, 0, 0, 0);
-        icon.setIcon(AllIcons.Ide.Readonly, 1, JBUI.scale(7), JBUI.scale(7));
-        return icon;
-      }
-    };
-    myCoursesList.setCellRenderer(new DefaultListCellRenderer() {
-      @Override
-      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        Component component = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        if (component instanceof JLabel) {
-          ((JLabel)component).setBorder(JBUI.Borders.empty(5, 0));
-        }
-        return component;
-      }
-    });
+    ColoredListCellRenderer<Course> renderer = getCourseRenderer();
+    myCoursesList.setCellRenderer(renderer);
     myCoursesList.addListSelectionListener(e -> processSelectionChanged());
     DefaultActionGroup group = new DefaultActionGroup(new AnAction("Import Course", "import local course", AllIcons.ToolbarDecorator.Import) {
       @Override
@@ -185,6 +160,47 @@ public class CoursesPanel extends JPanel {
     processSelectionChanged();
   }
 
+  @NotNull
+  private ColoredListCellRenderer<Course> getCourseRenderer() {
+    return new ColoredListCellRenderer<Course>() {
+        @Override
+        protected void customizeCellRenderer(@NotNull JList<? extends Course> jList, Course course, int i, boolean b, boolean b1) {
+          boolean isPrivate = course instanceof RemoteCourse && !((RemoteCourse)course).isPublic();
+          Icon logo = getLogo(course);
+          setBorder(JBUI.Borders.empty(5, 0));
+
+          if ((course instanceof RemoteCourse && myFeaturedCourses.contains(((RemoteCourse) course).getId())) ||
+              myFeaturedCourses.isEmpty()) {
+            append(course.getName());
+            setIcon(logo);
+            setToolTipText(null);
+          }
+          else if (isPrivate) {
+            append(course.getName());
+            setIcon(getPrivateCourseIcon(logo));
+            setToolTipText("Course is private");
+          } else {
+            append(course.getName(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
+            setIcon(getNotApprovedCourseIcon(logo));
+            setToolTipText("Course has not been approved by JetBrains yet");
+          }
+        }
+
+        @NotNull
+        public LayeredIcon getPrivateCourseIcon(@Nullable Icon languageLogo) {
+          LayeredIcon icon = new LayeredIcon(2);
+          icon.setIcon(languageLogo, 0, 0, 0);
+          icon.setIcon(AllIcons.Ide.Readonly, 1, JBUI.scale(7), JBUI.scale(7));
+          return icon;
+        }
+
+        @Nullable
+        public Icon getNotApprovedCourseIcon(@Nullable Icon languageLogo) {
+          return languageLogo != null ? IconLoader.getTransparentIcon(languageLogo) : null;
+        }
+      };
+  }
+
   private void processSelectionChanged() {
     Course selectedCourse = myCoursesList.getSelectedValue();
     notifyListeners(canStartCourse(selectedCourse));
@@ -207,20 +223,27 @@ public class CoursesPanel extends JPanel {
     return EduSettings.getInstance().getUser() != null;
   }
 
-  private static int getWeight(@NotNull Course course) {
-    String name = course.getName();
-    if (FEATURED_COURSES.contains(name)) {
-      return FEATURED_COURSES.size() - 1 - new ArrayList<>(FEATURED_COURSES).indexOf(name);
-    }
+  private int getWeight(@NotNull Course course) {
+    final int id = course instanceof RemoteCourse ? ((RemoteCourse) course).getId() : 0;
     if (course instanceof RemoteCourse && !((RemoteCourse) course).isPublic()) {
-      return FEATURED_COURSES.size() + 1;
+      return 1;
     }
-    return FEATURED_COURSES.size();
+    if (myFeaturedCourses.contains(id)) {
+      return 2;
+    }
+    return 3;
+  }
+
+  private List<Course> sortCourses(List<Course> courses) {
+    final Map<Integer, List<Course>> groupedCourses = courses.stream()
+                                                          .sorted(Comparator.comparing(course -> course.getName()))
+                                                          .collect(groupingBy((course) -> getWeight(course)));
+    return groupedCourses.values().stream().flatMap(Collection::stream).collect(toList());
   }
 
   private void updateModel(List<Course> courses, @Nullable String courseToSelect) {
     DefaultListModel<Course> listModel = new DefaultListModel<>();
-    Collections.sort(courses, Comparator.comparingInt(CoursesPanel::getWeight));
+    courses = sortCourses(courses);
     for (Course course : courses) {
       listModel.addElement(course);
     }

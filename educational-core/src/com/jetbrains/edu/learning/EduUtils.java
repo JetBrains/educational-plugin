@@ -93,15 +93,22 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
 public class EduUtils {
+
+  private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/educational-core/resources/featured_courses.txt";
 
   private EduUtils() {
   }
@@ -1098,5 +1105,21 @@ public class EduUtils {
       LOG.error(e);
     }
     return null;
+  }
+
+  @NotNull
+  public static List<Integer> getFeaturedCourses() {
+    try {
+      final URL url = new URL(PROMOTED_COURSES_LINK);
+      URLConnection conn = url.openConnection();
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+        return reader.lines().map(Integer::valueOf).collect(Collectors.toList());
+      }
+    } catch (MalformedURLException e) {
+      LOG.warn("Failed to get promoted courses");
+    } catch (IOException e) {
+      LOG.warn("Failed to get promoted courses");
+    }
+    return Lists.newArrayList();
   }
 }
