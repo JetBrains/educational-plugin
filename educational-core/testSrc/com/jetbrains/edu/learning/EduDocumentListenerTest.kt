@@ -129,6 +129,6 @@ class EduDocumentListenerTest : EduTestCase() {
   }
 
   override fun getTestDataPath(): String {
-    return super.getTestDataPath() + "/actions/documentListener"
+    return super.getTestDataPath() + "/documentListener"
   }
 }
