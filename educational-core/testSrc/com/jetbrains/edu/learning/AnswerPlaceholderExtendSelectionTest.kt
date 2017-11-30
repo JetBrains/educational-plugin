@@ -32,20 +32,6 @@ class AnswerPlaceholderExtendSelectionTest : EduTestCase() {
     assertEquals("is another", myFixture.editor.selectionModel.selectedText)
   }
 
-  fun testMultilinePlaceholder() {
-    val lessonIndex = 1
-    val taskIndex = 3
-    val taskFileName = "taskFile3.txt"
-    configureByTaskFile(lessonIndex, taskIndex, taskFileName)
-    myFixture.editor.caretModel.moveToOffset(12)
-    myFixture.editor.selectionModel.removeSelection()
-    assertNull(myFixture.editor.selectionModel.selectedText)
-    EditorTestUtil.executeAction(myFixture.editor, IdeActions.ACTION_EDITOR_SELECT_WORD_AT_CARET)
-    EditorTestUtil.executeAction(myFixture.editor, IdeActions.ACTION_EDITOR_SELECT_WORD_AT_CARET)
-    assertEquals("is placeholder.\n" +
-        "Look! There is another", myFixture.editor.selectionModel.selectedText)
-  }
-
   @Throws(IOException::class)
   override fun createCourse() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1")
