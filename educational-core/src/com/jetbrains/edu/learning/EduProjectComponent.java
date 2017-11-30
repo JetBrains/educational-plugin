@@ -36,6 +36,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
@@ -98,7 +99,7 @@ public class EduProjectComponent implements ProjectComponent {
         }
 
         final StepicUser currentUser = EduSettings.getInstance().getUser();
-        if (currentUser != null && !course.getAuthors().contains(currentUser)) {
+        if (currentUser != null && !course.getAuthors().contains(currentUser) && !CCUtils.isCourseCreator(myProject)) {
           loadSolutionsFromStepik(course);
         }
 
