@@ -212,6 +212,9 @@ public class CoursesPanel extends JPanel {
     if (FEATURED_COURSES.contains(name)) {
       return FEATURED_COURSES.size() - 1 - new ArrayList<>(FEATURED_COURSES).indexOf(name);
     }
+    if (course instanceof RemoteCourse && !((RemoteCourse) course).isPublic()) {
+      return FEATURED_COURSES.size() + 1;
+    }
     return FEATURED_COURSES.size();
   }
 
