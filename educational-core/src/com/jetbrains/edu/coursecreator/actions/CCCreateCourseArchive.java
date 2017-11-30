@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -138,6 +139,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
             if (taskDir == null) continue;
             convertToStudentTaskFiles(task, taskDir);
             addTestsToTask(task);
+            addDescriptions(task);
           }
         }
       }
@@ -155,6 +157,18 @@ public class CCCreateCourseArchive extends DumbAwareAction {
           }
         }
         task.taskFiles = studentTaskFiles;
+      }
+
+      private void addDescriptions(@NotNull final Task task) {
+        final List<VirtualFile> descriptions = getDescriptionFiles(task, project);
+        for (VirtualFile file : descriptions) {
+          try {
+            task.addTaskText(FileUtilRt.getNameWithoutExtension(file.getName()), VfsUtilCore.loadText(file));
+          }
+          catch (IOException e) {
+            LOG.warn("Failed to load text " + file.getName());
+          }
+        }
       }
 
       private void addTestsToTask(Task task) {
@@ -187,6 +201,18 @@ public class CCCreateCourseArchive extends DumbAwareAction {
             .filter(file -> EduUtils.isTestsFile(project, file.getName()))
             .collect(Collectors.toList()));
         }
+        return testFiles;
+      }
+
+      private List<VirtualFile> getDescriptionFiles(@NotNull Task task, @NotNull Project project) {
+        List<VirtualFile> testFiles = new ArrayList<>();
+        VirtualFile taskDir = task.getTaskDir(project);
+        if (taskDir == null) {
+          return testFiles;
+        }
+        testFiles.addAll(Arrays.stream(taskDir.getChildren())
+                           .filter(file -> EduUtils.isTaskDescriptionFile(file.getName()))
+                           .collect(Collectors.toList()));
         return testFiles;
       }
     });

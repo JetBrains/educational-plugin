@@ -211,7 +211,7 @@ public abstract class Task implements StudyItem {
   }
 
   public String getTaskDescriptionName() {
-    return EduNames.TASK;
+    return FileUtil.getNameWithoutExtension(EduNames.TASK_HTML);
   }
 
   @Override
