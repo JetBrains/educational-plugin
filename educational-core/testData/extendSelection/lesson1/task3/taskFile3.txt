@@ -1,0 +1,2 @@
+Look! There <placeholder>is placeholder.
+Look! There is another</placeholder> placeholder.
