@@ -529,6 +529,31 @@ public class StepicConnector {
     return Collections.emptyList();
   }
 
+  @Nullable
+  static String getSolutionForStepikAssignment(@NotNull Task task, boolean isSolved) throws IOException {
+    try {
+      URI url = new URIBuilder(StepicNames.SUBMISSIONS)
+              .addParameter("order", "desc")
+              .addParameter("page", "1")
+              .addParameter("status", isSolved ? "correct" : "wrong")
+              .addParameter("step", String.valueOf(task.getStepId())).build();
+      StepicWrappers.Submission[] submissions = getFromStepik(url.toString(), StepicWrappers.SubmissionsWrapper.class).submissions;
+      Language language = task.getLesson().getCourse().getLanguageById();
+      String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
+      for (StepicWrappers.Submission submission : submissions) {
+        StepicWrappers.Submission.Reply reply = submission.reply;
+        if (stepikLanguage != null && stepikLanguage.equals(reply.language)) {
+          return reply.code;
+        }
+      }
+    }
+    catch (URISyntaxException e) {
+      LOG.warn(e.getMessage());
+    }
+
+    return null;
+  }
+
   public static StepicWrappers.StepSource getStep(int step) throws IOException {
     return getFromStepik(StepicNames.STEPS + String.valueOf(step),
                          StepicWrappers.StepContainer.class).steps.get(0);
