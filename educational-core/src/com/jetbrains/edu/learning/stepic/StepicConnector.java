@@ -10,6 +10,8 @@ import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -363,13 +365,22 @@ public class StepicConnector {
   }
 
   private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds) throws IOException {
+    final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
     try {
       StepicWrappers.LessonContainer lessonContainer = getLessonContainer(unitIds);
       if (lessonContainer == null) {
         return lessons;
       }
-      for (Lesson lesson : lessonContainer.lessons) {
+      final int lessonCount = lessonContainer.lessons.size();
+      for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
+        Lesson lesson = lessonContainer.lessons.get(lessonIndex);
+        if (progressIndicator != null) {
+          final int readableIndex = lessonIndex + 1;
+          progressIndicator.checkCanceled();
+          progressIndicator.setText("Loading lesson " + readableIndex + " from " + lessonCount);
+          progressIndicator.setFraction((double)readableIndex / lessonCount);
+        }
         String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
         StepicWrappers.StepContainer stepContainer = multipleRequestToStepik(StepicNames.STEPS, stepIds, StepicWrappers.StepContainer.class);
         if (stepContainer == null) {
