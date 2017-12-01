@@ -12,11 +12,13 @@ import com.intellij.ui.FilterComponent;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.PathUtil;
+import com.intellij.util.io.IOUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduCourseBuilder;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.stepic.StepicUser;
@@ -170,7 +172,7 @@ public class CoursePanel extends JPanel {
 
   private void updateAdvancedSettings(@NotNull Course course) {
     if (myLocationField != null) {
-      myLocationField.getComponent().setText(nameToLocation(course.getName()));
+      myLocationField.getComponent().setText(nameToLocation(course.getName(), course.getLanguageById().getDisplayName()));
     }
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
@@ -204,8 +206,12 @@ public class CoursePanel extends JPanel {
   }
 
   @NotNull
-  private static String nameToLocation(@NotNull String courseName) {
+  private static String nameToLocation(@NotNull String courseName, String language) {
     String name = courseName;
+    if (!IOUtil.isAscii(name)) {
+      //there are problems with venv creation for python course
+      name = StringUtil.capitalize(EduNames.COURSE + " " + language);
+    }
     if (!PathUtil.isValidFileName(name)) {
       name = FileUtil.sanitizeFileName(name);
     }
