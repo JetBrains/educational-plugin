@@ -18,7 +18,7 @@ public class ImportStepikCoursePanel {
     myPanel.setPreferredSize(JBUI.size(new Dimension(400, 30)));
     helpLabel.setForeground(UIUtil.getLabelDisabledForeground());
     helpLabel.setFont(UIUtil.getLabelFont());
-    helpLabel.setBorder(JBUI.Borders.emptyLeft(JBUI.scale(10)));
+    helpLabel.setBorder(JBUI.Borders.emptyLeft(10));
   }
 
   public String getCourseLink() {
