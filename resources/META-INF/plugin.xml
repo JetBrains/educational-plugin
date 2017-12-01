@@ -8,7 +8,17 @@
     <vendor>JetBrains</vendor>
 
     <change-notes><![CDATA[
-    <b>1.0.1</b>
+    <b>1.1</b>
+    <ul>
+    <li>Import Stepik Course action from Browse Courses</li>
+    <li>"Compare with Answer" action on Task Description panel</li>
+    <li>Courses verified by JetBrains are highlighted</li>
+    <li>Courses filtering by natural language</li>
+    <li>Tags in course descriptions can be clicked to filter courses</li>
+    <li>Subtasks are enabled for Kotlin courses</li>
+    </ul>
+    <br>
+    <b>1.0.2</b>
     <ul>
     <li>Kotlin Koans are now available in Android Studio 3.0</li>
     <li>It's now possible to create courses for Kotlin in Android Studio 3.0</li>
