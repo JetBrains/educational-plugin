@@ -279,7 +279,7 @@ public class CoursesPanel extends JPanel {
             filtered.add(course);
           }
         }
-        updateModel(filtered, selectedCourse.getName());
+        updateModel(filtered, selectedCourse != null ? selectedCourse.getName() : null);
       }
     };
     myCoursePanel.bindSearchField(mySearchField);
