@@ -234,7 +234,6 @@ public class CoursePanel extends JPanel {
         public void mouseClicked(MouseEvent e) {
           if (!isTagSelected(tag)) {
             mySearchField.getTextEditor().setText(tag.getSearchText());
-            mySearchField.filter();
             return;
           }
           mySearchField.getTextEditor().setText("");
