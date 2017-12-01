@@ -392,6 +392,8 @@ public class StepicWrappers {
     static class Reply {
       String score;
       List<SolutionFile> solution;
+      String language;
+      String code;
 
       public Reply(ArrayList<SolutionFile> files, String score) {
         this.score = score;
