@@ -37,7 +37,7 @@ public class CodeTask extends Task {
       public CheckResult checkOnRemote() {
         StepicUser user = EduSettings.getInstance().getUser();
         if (user == null) {
-          return new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+          return new CheckResult(CheckStatus.Unchecked, CheckAction.LOGIN_NEEDED);
         }
         return StepicAdaptiveConnector.checkCodeTask(myProject, myTask, user);
       }
