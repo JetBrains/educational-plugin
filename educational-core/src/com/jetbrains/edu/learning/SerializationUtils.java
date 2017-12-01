@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -342,16 +341,6 @@ public class SerializationUtils {
             }
           }
           addTextChildMap(task, TASK_TEXTS, taskTextsMap);
-          for (VirtualFile file : taskDescriptionFiles) {
-            ApplicationManager.getApplication().runWriteAction(() -> {
-              try {
-                file.delete(project);
-              }
-              catch (IOException e) {
-                LOG.error(e);
-              }
-            });
-          }
         }
       }
       return state;
