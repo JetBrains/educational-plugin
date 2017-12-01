@@ -33,18 +33,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CountDownLatch;
 
 
-public abstract class RunConfigurationBasedTaskChecker extends TaskChecker {
+public abstract class RunConfigurationBasedTaskChecker<T extends Task> extends TaskChecker<T> {
   public static final String TEST_RUNNER_CLASS = "EduTestRunner";
   private static final Logger LOG = Logger.getInstance(RunConfigurationBasedTaskChecker.class);
 
+  public RunConfigurationBasedTaskChecker(@NotNull T task, @NotNull Project project) {
+    super(task, project);
+  }
+
   @Override
-  public void clearState(@NotNull Task task, @NotNull Project project) {
+  public void clearState() {
     CheckUtils.drawAllPlaceholders(project, task);
   }
 
   @NotNull
   @Override
-  public CheckResult check(@NotNull Task task, @NotNull Project project) {
+  public CheckResult check() {
     Ref<CheckResult> result = new Ref<>(new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH));
     Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
     if (sdk == null) {

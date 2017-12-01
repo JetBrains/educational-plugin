@@ -1,6 +1,5 @@
 package com.jetbrains.edu.python.learning;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PlatformUtils;
@@ -8,9 +7,8 @@ import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import com.jetbrains.edu.python.learning.checker.PyTaskChecker;
+import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
+import com.jetbrains.edu.python.learning.pycharm.PyTaskCheckerProvider;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,4 +63,10 @@ import java.util.List;
   public boolean isEnabled() {
     return !(PlatformUtils.isPyCharm() || PlatformUtils.isCLion());
   }
-}
+
+    @NotNull
+    @Override
+    public TaskCheckerProvider getTaskCheckerProvider() {
+      return new PyTaskCheckerProvider();
+    }
+  }

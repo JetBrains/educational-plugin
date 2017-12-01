@@ -12,32 +12,26 @@ import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.util.*
 import java.util.concurrent.CountDownLatch
 
 
-class OutputTaskChecker : TaskChecker() {
+class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<OutputTask>(task, project) {
   companion object {
     val OUTPUT_PATTERN_NAME = "output.txt"
   }
 
-  override fun isAccepted(task: Task): Boolean {
-    return task is OutputTask
-  }
-
-  override fun onTaskFailed(task: Task, project: Project, message: String) {
-    super.onTaskFailed(task, project, "Incorrect output")
+  override fun onTaskFailed(message: String) {
+    super.onTaskFailed("Incorrect output")
     CheckUtils.showTestResultsToolWindow(project, message)
   }
 
-  override fun check(task: Task, project: Project): CheckResult {
+  override fun check(): CheckResult {
     val configuration = createDefaultRunConfiguration(project) ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val runner = RunnerRegistry.getInstance().getRunner(executor.id, configuration.configuration)
@@ -88,7 +82,7 @@ class OutputTaskChecker : TaskChecker() {
     return CheckResult(CheckStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
   }
 
-  override fun clearState(task: Task, project: Project) {
+  override fun clearState() {
     CheckUtils.drawAllPlaceholders(project, task)
   }
 

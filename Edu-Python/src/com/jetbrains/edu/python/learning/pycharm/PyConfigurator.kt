@@ -6,7 +6,6 @@ import com.jetbrains.edu.python.learning.PyConfigurator
 import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyConfigurator : PyConfigurator() {
-
   private val myCourseBuilder: PyCourseBuilder = PyCourseBuilder()
 
   override fun getCourseBuilder(): EduCourseBuilder<PyNewProjectSettings> = myCourseBuilder

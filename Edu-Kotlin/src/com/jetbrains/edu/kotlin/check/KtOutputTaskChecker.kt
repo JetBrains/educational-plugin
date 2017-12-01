@@ -6,12 +6,9 @@ import com.jetbrains.edu.kotlin.check.KtTaskChecker.Companion.FAILED_TO_LAUNCH
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-class KtOutputTaskChecker : TaskChecker() {
-    override fun isAccepted(task: Task) = task is OutputTask
-
-    override fun check(task: Task, project: Project): CheckResult {
+class KtOutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<OutputTask>(task, project) {
+    override fun check(): CheckResult {
         val mainClassName = getMainClassName(project) ?: return FAILED_TO_LAUNCH
         val taskName = "${getGradleProjectName(task)}:run"
         val cmd = generateGradleCommandLine(
@@ -41,7 +38,7 @@ class KtOutputTaskChecker : TaskChecker() {
         return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
     }
 
-    override fun clearState(task: Task, project: Project) {
+    override fun clearState() {
         CheckUtils.drawAllPlaceholders(project, task)
     }
 }
