@@ -17,9 +17,7 @@ public class ImportStepikCoursePanel {
   public ImportStepikCoursePanel() {
     myPanel.setPreferredSize(JBUI.size(new Dimension(400, 30)));
     helpLabel.setForeground(UIUtil.getLabelDisabledForeground());
-    Font font = helpLabel.getFont();
-    float newFontSize = Math.max(10f, font.getSize() - 2f);
-    helpLabel.setFont(font.deriveFont(Float.valueOf(JBUI.scaleFontSize(newFontSize))));
+    helpLabel.setFont(UIUtil.getLabelFont());
     helpLabel.setBorder(JBUI.Borders.emptyLeft(JBUI.scale(10)));
   }
 
