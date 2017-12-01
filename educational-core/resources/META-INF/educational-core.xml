@@ -180,7 +180,7 @@
         <toolWindow id="Educational.TaskDescription" anchor="right"
                     factoryClass="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory"
                     conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
-        <toolWindow id="Educational.TestResults" anchor="bottom"
+        <toolWindow id="Educational.Output" anchor="bottom"
                     factoryClass="com.jetbrains.edu.learning.ui.OutputToolWindowFactory"
                     conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
         <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider"/>

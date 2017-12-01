@@ -4,7 +4,6 @@ import com.intellij.ide.impl.NewProjectUtil;
 import com.intellij.ide.util.newProjectWizard.AddModuleWizard;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.project.Project;
@@ -64,7 +63,7 @@ public class KtProjectGenerator extends IntellijCourseProjectGeneratorBase {
             }
         });
 
-        final ProjectDataManager projectDataManager = ServiceManager.getService(ProjectDataManager.class);
+        final ProjectDataManager projectDataManager = ProjectDataManager.getInstance();
         GradleProjectImportBuilder gradleProjectImportBuilder = new GradleProjectImportBuilder(projectDataManager);
         final GradleProjectImportProvider gradleProjectImportProvider = new GradleProjectImportProvider(gradleProjectImportBuilder);
         AddModuleWizard wizard = new AddModuleWizard(null, baseDir.getPath(), gradleProjectImportProvider);

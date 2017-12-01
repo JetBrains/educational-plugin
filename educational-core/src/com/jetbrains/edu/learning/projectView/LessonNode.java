@@ -62,8 +62,8 @@ public class LessonNode extends EduNode {
         return null;
       }
       VirtualFile srcDir = directory.getVirtualFile().findChild(EduNames.SRC);
-      boolean isCourseCreatorStudioProject = EduUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject);
-      if (srcDir != null && !isCourseCreatorStudioProject) {
+      boolean isCourseCreatorGradleProject = EduUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject);
+      if (srcDir != null && !isCourseCreatorGradleProject) {
         directory = PsiManager.getInstance(myProject).findDirectory(srcDir);
         if (directory == null) {
           return null;
