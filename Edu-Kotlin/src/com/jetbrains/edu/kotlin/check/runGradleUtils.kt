@@ -13,7 +13,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckUtils.*
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TestsOutputParser
@@ -66,7 +65,7 @@ fun getProcessOutput(process: Process, commandLine: String, taskName: String): G
 
     if (!output.stdout.contains(taskName)) {
         TaskChecker.LOG.warn("#educational: executing $taskName fails: \n" + output.stdout)
-        return GradleOutput(false, CheckAction.FAILED_CHECK_LAUNCH + ". See idea.log for more details.")
+        return GradleOutput(false, FAILED_TO_CHECK_MESSAGE + ". See idea.log for more details.")
     }
 
     val sb = StringBuilder()

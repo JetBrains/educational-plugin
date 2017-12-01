@@ -7,7 +7,7 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.kotlin.KtProjectGenerator
-import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.TestsOutputParser.CONGRATULATIONS
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -52,7 +52,7 @@ class KotlinCheckersTest : CheckersTestBase() {
         }
 
         shouldFail()
-        expectedMessage { "${CheckAction.FAILED_CHECK_LAUNCH}. See idea.log for more details." }
+        expectedMessage { "${CheckUtils.FAILED_TO_CHECK_MESSAGE}. See idea.log for more details." }
 
         doTest()
     }

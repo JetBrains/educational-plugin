@@ -2,20 +2,20 @@ package com.jetbrains.edu.kotlin.check
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.kotlin.check.KtTaskChecker.Companion.FAILED_TO_LAUNCH
 import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.checker.CheckUtils.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 
 class KtOutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<OutputTask>(task, project) {
     override fun check(): CheckResult {
-        val mainClassName = getMainClassName(project) ?: return FAILED_TO_LAUNCH
+        val mainClassName = getMainClassName(project) ?: return FAILED_TO_CHECK
         val taskName = "${getGradleProjectName(task)}:run"
         val cmd = generateGradleCommandLine(
                 project,
                 taskName,
                 "$MAIN_CLASS_PROPERTY_PREFIX$mainClassName"
-        ) ?: return FAILED_TO_LAUNCH
+        ) ?: return FAILED_TO_CHECK
 
         val gradleOutput = getProcessOutput(cmd.createProcess(), cmd.commandLineString, taskName)
         if (!gradleOutput.isSuccess) {
@@ -28,7 +28,7 @@ class KtOutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<Outp
                 ?.parent
                 ?.findChild("test")
                 ?.findChild(OutputTaskChecker.OUTPUT_PATTERN_NAME)
-                ?: return FAILED_TO_LAUNCH
+                ?: return FAILED_TO_CHECK
 
         val expectedOutput = VfsUtil.loadText(outputFile).postProcessOutput()
         if (expectedOutput != output) {

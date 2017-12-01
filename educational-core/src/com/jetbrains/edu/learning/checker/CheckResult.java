@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.checker;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 
 public class CheckResult {
-  public static final CheckResult USE_LOCAL_CHECK = new CheckResult(CheckStatus.Unchecked, "Always use local check");
   private CheckStatus myStatus;
   private String myMessage;
 
