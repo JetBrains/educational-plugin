@@ -7,6 +7,7 @@
       ]]></description>
     <vendor>JetBrains</vendor>
 
+    <!--update changes in changes.html file-->
     <change-notes><![CDATA[
     <b>1.1</b>
     <ul>
