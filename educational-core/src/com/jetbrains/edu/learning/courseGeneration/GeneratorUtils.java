@@ -6,8 +6,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -18,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
+import kotlin.collections.MapsKt;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,8 +95,10 @@ public class GeneratorUtils {
   }
 
   public static void createDescriptionFiles(@NotNull VirtualFile taskDir, @NotNull Task task) throws IOException {
-    final Map<String, String> tests = task.getTaskTexts();
-    createFiles(taskDir, tests);
+    final Map<String, String> taskTexts = task.getTaskTexts();
+    Map<String, String> renamedTaskTexts = MapsKt.mapKeys(taskTexts, entry ->
+            entry.getKey() + "." + FileUtilRt.getExtension(EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat())));
+    createFiles(taskDir, renamedTaskTexts);
   }
 
   private static void createFiles(@NotNull VirtualFile taskDir, @NotNull Map<String, String> texts) throws IOException {
