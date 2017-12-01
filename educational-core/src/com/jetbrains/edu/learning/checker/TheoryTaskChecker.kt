@@ -6,15 +6,12 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
-class TheoryTaskChecker : TaskChecker() {
-    override fun isAccepted(task: Task) = task is TheoryTask
+open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<TheoryTask>(task, project) {
+    override fun onTaskSolved(message: String) {}
 
-    override fun onTaskSolved(task: Task, project: Project, message: String) {}
-
-    override fun check(task: Task, project: Project): CheckResult {
+    override fun check(): CheckResult {
         val configuration = createDefaultRunConfiguration(project)
         @Suppress("FoldInitializerAndIfToElvis")
         if (configuration == null) {
@@ -25,5 +22,5 @@ class TheoryTaskChecker : TaskChecker() {
         return CheckResult(CheckStatus.Solved, "")
     }
 
-    override fun checkOnRemote(task: Task, project: Project) = check(task, project)
+    override fun checkOnRemote() = check()
 }

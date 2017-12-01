@@ -1,15 +1,12 @@
 package com.jetbrains.edu.java;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
+import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.intellij.EduConfiguratorBase;
-import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,5 +38,11 @@ public class JConfigurator extends EduConfiguratorBase {
   @Override
   public boolean isEnabled() {
     return !EduUtils.isAndroidStudio();
+  }
+
+  @NotNull
+  @Override
+  public TaskCheckerProvider getTaskCheckerProvider() {
+    return new JTaskCheckerProvider();
   }
 }

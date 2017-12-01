@@ -26,17 +26,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class PyTaskChecker extends TaskChecker {
+public class PyTaskChecker extends TaskChecker<EduTask> {
   private static final Logger LOG = Logger.getInstance(PyTaskChecker.class);
 
-  @Override
-  public boolean isAccepted(@NotNull Task task) {
-    return task instanceof EduTask;
+  public PyTaskChecker(@NotNull EduTask task, @NotNull Project project) {
+    super(task, project);
   }
 
   @NotNull
   @Override
-  public CheckResult check(@NotNull Task task, @NotNull Project project) {
+  public CheckResult check() {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       LOG.info("taskDir is null for task " + task.getName());
@@ -73,7 +72,7 @@ public class PyTaskChecker extends TaskChecker {
   }
 
   @Override
-  public void clearState(@NotNull Task task, @NotNull Project project) {
+  public void clearState() {
     ApplicationManager.getApplication().invokeLater(() -> {
       CheckUtils.drawAllPlaceholders(project, task);
       VirtualFile taskDir = task.getTaskDir(project);
@@ -84,8 +83,8 @@ public class PyTaskChecker extends TaskChecker {
   }
 
   @Override
-  public void onTaskFailed(@NotNull Task task, @NotNull Project project, @NotNull String message) {
-    super.onTaskFailed(task, project, message);
+  public void onTaskFailed(@NotNull String message) {
+    super.onTaskFailed(message);
     ApplicationManager.getApplication().invokeLater(() -> {
       VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir == null) return;

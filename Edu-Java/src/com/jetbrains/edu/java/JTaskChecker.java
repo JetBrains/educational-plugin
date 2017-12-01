@@ -14,10 +14,9 @@ import com.jetbrains.edu.learning.intellij.RunConfigurationBasedTaskChecker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JTaskChecker extends RunConfigurationBasedTaskChecker {
-  @Override
-  public boolean isAccepted(@NotNull Task task) {
-    return task instanceof EduTask;
+public class JTaskChecker extends RunConfigurationBasedTaskChecker<EduTask> {
+  public JTaskChecker(@NotNull EduTask task, @NotNull Project project) {
+    super(task, project);
   }
 
   @Nullable

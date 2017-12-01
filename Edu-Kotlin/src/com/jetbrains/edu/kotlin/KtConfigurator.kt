@@ -34,6 +34,8 @@ open class KtConfigurator : EduConfiguratorBase() {
         return listOf(FileUtil.join(bundledCourseRoot.absolutePath, KtKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME))
     }
 
+    override fun getTaskCheckerProvider() = KTaskCheckerProvider()
+
     companion object {
 
         @JvmField val LEGACY_TESTS_KT = "tests.kt"
@@ -46,3 +48,4 @@ open class KtConfigurator : EduConfiguratorBase() {
                 "build.gradle", "settings.gradle", "gradle-wrapper.jar", "gradle-wrapper.properties")
     }
 }
+

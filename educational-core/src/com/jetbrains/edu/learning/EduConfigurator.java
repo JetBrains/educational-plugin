@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.*;
+import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -45,6 +46,11 @@ public interface EduConfigurator<Settings> {
   default boolean isTestFile(VirtualFile file) {
     return false;
   }
+
+  /**
+   * @return class that provide checkers for all types of tasks
+   */
+  @NotNull TaskCheckerProvider getTaskCheckerProvider();
 
   @NotNull
   default DefaultActionGroup getTaskDescriptionActionGroup() {
