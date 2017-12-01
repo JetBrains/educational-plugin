@@ -14,7 +14,8 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.TaskChecker;
+import com.jetbrains.edu.learning.SerializationUtils;
+import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepikUtils;
@@ -31,11 +32,12 @@ import java.util.Map;
 /**
  * Implementation of task which contains task files, tests, input file for tests
  *
- * To implement new task there are 4 steps to be done:
- * - extend Task class
- * - go to Lesson and update elementTypes in taskList AbstractCollection. Needed for proper xml serialization
- * - Update TaskAdapter in StudySerializationUtils to handle json serialization
- * - for Adaptive tasks update taskTypes in EduAdaptiveStepicConnector so new task type can be added to a course
+ * To implement new task there are 5 steps to be done:
+ * - Extend {@link Task} class
+ * - Go to {@link Lesson#taskList} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
+ * - Update {@link SerializationUtils.Json.TaskAdapter#deserialize} to handle json serialization
+ * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
+ * - For Adaptive tasks update {@link StepicAdaptiveConnector.StepikTaskBuilder#taskTypes} so new task type can be added to a course
  */
 public abstract class Task implements StudyItem {
   @Expose private String name;

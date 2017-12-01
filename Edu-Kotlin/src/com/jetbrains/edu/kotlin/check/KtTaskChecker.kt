@@ -9,17 +9,14 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-class KtTaskChecker : TaskChecker() {
+class KtTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
     companion object {
         @JvmField
         val FAILED_TO_LAUNCH = CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH)
     }
 
-    override fun isAccepted(task: Task) = task is EduTask
-
-    override fun check(task: Task, project: Project): CheckResult {
+    override fun check(): CheckResult {
         val taskName = "${getGradleProjectName(task)}:test"
         val cmd = generateGradleCommandLine(
                 project,
@@ -35,7 +32,7 @@ class KtTaskChecker : TaskChecker() {
         }
     }
 
-    override fun clearState(task: Task, project: Project) {
+    override fun clearState() {
         CheckUtils.drawAllPlaceholders(project, task)
     }
 }
