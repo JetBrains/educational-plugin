@@ -7,6 +7,10 @@ import java.io.IOException
 
 class AnswerPlaceholderExtendSelectionTest : EduTestCase() {
 
+  override fun runTest() {
+    println("${AnswerPlaceholderExtendSelectionTest::class.simpleName} is temporarily disabled in AS")
+  }
+
   fun testExtendSelection() {
     val lessonIndex = 1
     val taskIndex = 1
