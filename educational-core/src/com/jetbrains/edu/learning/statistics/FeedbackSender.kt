@@ -14,7 +14,8 @@ import javax.swing.event.HyperlinkEvent
 
 fun showNotification(student : Boolean, course: Course, project: Project) {
   val feedbackUrl = feedbackUrlTemplate
-      .replace("\$PRODUCT", PlatformUtils.getPlatformPrefix())
+      .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?:
+                                             PlatformUtils.getPlatformPrefix())
       .replace("\$COURSE", course.name)
       .replace("\$MODE", if (course.courseMode == EduNames.STUDY) "Student" else "CourseCreator")
 
@@ -52,3 +53,17 @@ val creatorTemplate = "<html>You’ve just created your first tasks with \$PRODU
 
 val studentTemplate = "<html>You’ve just completed your first lesson with \$PRODUCT!\n" +
     "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make learning \$LANGUAGE better.</html>"
+
+val productMap = hashMapOf(
+    Pair("PyCharmCore", "PY"),
+    Pair("Python", "PY"),
+    Pair("PyCharmEdu", "EDU"),
+    Pair("Idea", "IDEA"),
+    Pair("idea", "IDEA"),
+    Pair("WebStorm", "WEB"),
+    Pair("PhpStorm", "PhpStorm"),
+    Pair("AppCode", "CIDR"),
+    Pair("CLion", "CLion"),
+    Pair("DataGrip", "DBE"),
+    Pair("GoLand", "GoLand"),
+    Pair("Ruby", "RubyMine"))
