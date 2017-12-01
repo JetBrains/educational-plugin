@@ -29,7 +29,7 @@ class SelectRolePanel : JPanel() {
     myStudent.preferredSize = Dimension(iconSize, iconSize)
     PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, false, true)
     myStudent.addMouseListener(object : MouseAdapter() {
-      override fun mouseClicked(e: MouseEvent?) {
+      override fun mousePressed(e: MouseEvent?) {
         PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, false)
         myStudent.icon = EducationalCoreIcons.StudentHover
         teacher.icon = EducationalCoreIcons.Teacher
