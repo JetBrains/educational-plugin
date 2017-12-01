@@ -21,9 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.apache.http.HttpEntity;
@@ -525,25 +523,5 @@ public class StepicAdaptiveConnector {
       return (container.attempts != null && !container.attempts.isEmpty()) ? container.attempts.get(0).id : -1;
     }
     return -1;
-  }
-
-  public static String wrapAdaptiveCourseText(Task task, @NotNull String text) {
-    String finalText = text;
-    if (task instanceof TheoryTask) {
-      finalText += "\n\n<b>Note</b>: This theory task aims to help you solve difficult tasks. " +
-                   "Please, read it and press \"Check\" to go further.";
-    }
-    else if (!(task instanceof ChoiceTask)) {
-      finalText += "\n\n<b>Note</b>: Use standard input to obtain input for the task.";
-    }
-    finalText += getFooterWithLink(task);
-
-    return finalText;
-  }
-
-  @NotNull
-  private static String getFooterWithLink(Task task) {
-    return
-      "<div class=\"footer\">" + "<a href=" + StepikUtils.getAdaptiveLink(task) + ">Open on Stepik</a>" + "</div>";
   }
 }
