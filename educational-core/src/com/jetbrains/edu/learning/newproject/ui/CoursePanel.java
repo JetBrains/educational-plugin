@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.FilterComponent;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
@@ -87,6 +88,8 @@ public class CoursePanel extends JPanel {
     if (isLocationFieldNeeded) {
       myLocationField = createLocationComponent();
     }
+
+    myDescriptionTextArea.addHyperlinkListener(new BrowserHyperlinkListener());
   }
 
   public void bindCourse(@NotNull Course course) {
