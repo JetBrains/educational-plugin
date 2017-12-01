@@ -386,6 +386,8 @@ public class StepicConnector {
         if (stepContainer == null) {
           continue;
         }
+        if (stepIds.length == 0) continue;
+
         for (int i = 0; i < stepContainer.steps.size(); i++) {
           StepicWrappers.StepSource step = stepContainer.steps.get(i);
           Integer stepId = Integer.valueOf(stepIds[i]);
