@@ -2,16 +2,21 @@ package com.jetbrains.edu.learning;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
+import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
+import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -380,6 +385,48 @@ public class SerializationUtils {
       }
       return state;
     }
+
+    public static Element convertToEighthVersion(Element state, Project project) throws StudyUnrecognizedFormatException {
+      if (PropertiesComponent.getInstance().getBoolean(CCPluginToggleAction.COURSE_CREATOR_ENABLED)) {
+        Element taskManagerElement = state.getChild(MAIN_ELEMENT);
+        Element courseHolder = getChildWithName(taskManagerElement, COURSE);
+        Element courseElement = courseHolder.getChild(COURSE_TITLED);
+        if (courseElement == null) {
+          courseElement = courseHolder.getChild(REMOTE_COURSE);
+          if (courseElement == null) {
+            throw new StudyUnrecognizedFormatException();
+          }
+        }
+        for (Element lesson : getChildList(courseElement, LESSONS)) {
+          for (Element task : getChildList(lesson, TASK_LIST)) {
+            Map<String, String> taskTexts = getChildMap(task, TASK_TEXTS);
+            VirtualFile taskDir = getTaskDir(project, lesson, task);
+            if (taskDir == null) {
+              throw new StudyUnrecognizedFormatException();
+            }
+
+            String extension = FileUtilRt.getExtension(EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat()));
+
+            for (Map.Entry<String, String> taskDescriptionData : taskTexts.entrySet()) {
+              String descriptionFileName = taskDescriptionData.getKey() + "." + extension;
+              VirtualFile descriptionFile = taskDir.findChild(descriptionFileName);
+              if (descriptionFile == null) {
+                ApplicationManager.getApplication().runWriteAction(() -> {
+                  try {
+                    VirtualFile descriptionVirtualFile = taskDir.createChildData(StudyTaskManager.class, descriptionFileName);
+                    VfsUtil.saveText(descriptionVirtualFile, taskDescriptionData.getValue());
+                  } catch (IOException e) {
+                    LOG.error(e);
+                  }
+                });
+              }
+            }
+          }
+        }
+      }
+      return state;
+    }
+
 
     public static String addStatus(XMLOutputter outputter,
                                    Map<String, String> placeholderTextToStatus,
