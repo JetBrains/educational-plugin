@@ -23,20 +23,10 @@ object EduGradleModuleGenerator {
 
     @JvmStatic
     fun createModule(baseDir: VirtualFile, name: String): EduGradleModule {
-        val moduleDir = baseDir.getOrCreateChildDirectory(name)
-        val srcDir = moduleDir.getOrCreateChildDirectory(EduNames.SRC)
-        val testDir = moduleDir.getOrCreateChildDirectory(EduNames.TEST)
+        val moduleDir = VfsUtil.createDirectoryIfMissing(baseDir, name)
+        val srcDir = VfsUtil.createDirectoryIfMissing(moduleDir, EduNames.SRC)
+        val testDir = VfsUtil.createDirectoryIfMissing(moduleDir, EduNames.TEST)
         return EduGradleModule(srcDir, testDir)
-    }
-
-    private fun VirtualFile.getOrCreateChildDirectory(name: String): VirtualFile {
-        val alreadyExists = findChild(name)
-        if (alreadyExists != null) {
-            return alreadyExists
-        }
-        else {
-            return createChildDirectory(requestor, name)
-        }
     }
 
     @Throws(IOException::class)
@@ -72,7 +62,7 @@ object EduGradleModuleGenerator {
 
     @Throws(IOException::class)
     private fun createLessonModule(moduleDir: VirtualFile, lesson: Lesson) {
-        val lessonDir = moduleDir.getOrCreateChildDirectory(EduNames.LESSON + lesson.index)
+        val lessonDir = VfsUtil.createDirectoryIfMissing(moduleDir, EduNames.LESSON + lesson.index)
         val taskList = lesson.getTaskList()
         for ((i, task) in taskList.withIndex()) {
             task.index = i + 1

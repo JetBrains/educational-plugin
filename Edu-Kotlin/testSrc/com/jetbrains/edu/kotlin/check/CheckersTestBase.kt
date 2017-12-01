@@ -145,7 +145,6 @@ abstract class CheckersTestBase : UsefulTestCase() {
         val zipFile = File(myTestDir, testName + ".zip")
         ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
             ZipUtil.addFileOrDirRecursively(zos, null, File(courseFile.path), courseFile.name, null, null)
-            zos.close()
         }
         return zipFile.absolutePath
     }
