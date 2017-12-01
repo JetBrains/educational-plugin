@@ -16,8 +16,8 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.stepic.StepicAdaptiveConnector;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
+import com.jetbrains.edu.learning.stepic.StepikUtils;
 import one.util.streamex.EntryStream;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +46,9 @@ public abstract class Task implements StudyItem {
 
   @SerializedName("stepic_id")
   @Expose private int myStepId;
+
+  @SerializedName("position")
+  @Expose private int myStepikPosition;
 
   @SerializedName("task_files")
   @Expose public Map<String, TaskFile> taskFiles = new HashMap<>();
@@ -200,8 +203,8 @@ public abstract class Task implements StudyItem {
       return taskText;
     }
     taskText = EduUtils.convertToHtml(taskText);
-    if (getLesson().getCourse().isAdaptive()) {
-      taskText = StepicAdaptiveConnector.wrapAdaptiveCourseText(this, taskText);
+    if (getLesson().getCourse() instanceof RemoteCourse) {
+      taskText = StepikUtils.wrapStepikTasks(this, taskText, getLesson().getCourse().isAdaptive());
     }
     return taskText;
   }
@@ -248,6 +251,14 @@ public abstract class Task implements StudyItem {
     return myStepId;
   }
 
+  public int getStepikPosition() {
+    return myStepikPosition;
+  }
+
+  public void setStepikPosition(int myStepikPosition) {
+    this.myStepikPosition = myStepikPosition;
+  }
+
   public CheckStatus getStatus() {
     return myStatus;
   }
@@ -289,6 +300,7 @@ public abstract class Task implements StudyItem {
     setIndex(task.getIndex());
     setStatus(task.getStatus());
     setStepId(task.getStepId());
+    setStepikPosition(task.getStepikPosition());
     taskFiles = task.getTaskFiles();
     testsText = task.getTestsText();
     taskTexts = task.getTaskTexts();

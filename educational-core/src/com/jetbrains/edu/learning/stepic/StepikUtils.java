@@ -17,10 +17,34 @@ package com.jetbrains.edu.learning.stepic;
 
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class StepikUtils {
+
+  public static String wrapStepikTasks(Task task, @NotNull String text, boolean adaptive) {
+    String finalText = text;
+    if (task instanceof TheoryTask) {
+      finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. " +
+          "Please, read it and press \"Check\" to go further.";
+    }
+    else if (task instanceof CodeTask) {
+      finalText += "<br/><br/><b>Note</b>: Use standard input to obtain input for the task.";
+    }
+    if (!(task instanceof EduTask) && !(task instanceof OutputTask)) {
+      finalText += getFooterWithLink(task, adaptive);
+    }
+
+    return finalText;
+  }
+
+  @NotNull
+  private static String getFooterWithLink(Task task, boolean adaptive) {
+    final String link = adaptive ? getAdaptiveLink(task) : getLink(task, task.getStepikPosition());
+    return "<div class=\"footer\">" + "<a href=" + link + ">Open on Stepik</a>" + "</div>";
+  }
+
   @Nullable
   public static String getLink(@Nullable Task task, int stepNumber) {
     if (task == null) {
