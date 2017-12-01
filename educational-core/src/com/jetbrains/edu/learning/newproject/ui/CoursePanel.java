@@ -228,11 +228,19 @@ public class CoursePanel extends JPanel {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-          UIUtil.setCursor(tagComponent, Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+          setCursor(tagComponent, Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
       });
     }
     return tagComponent;
+  }
+
+  // Copied from new IDEA version codebase.
+  // TODO: drop it after update to 2017.2 or newer and use 'UIUtil.setCursor'
+  private static void setCursor(Component component, Cursor cursor) {
+    // cursor is updated by native code even if component has the same cursor, causing performance problems (IDEA-167733)
+    if (component.isCursorSet() && component.getCursor() == cursor) return;
+    component.setCursor(cursor);
   }
 
   private boolean isTagSelected(@NotNull Tag tag) {
