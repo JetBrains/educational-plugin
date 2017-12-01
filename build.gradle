@@ -69,11 +69,17 @@ allprojects {
         destinationDir = compileJava.destinationDir
         kotlinOptions {
             jvmTarget = "1.8"
+            languageVersion = "1.1"
+            apiVersion = "1.1"
         }
     }
 
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions {
+            jvmTarget = "1.8"
+            languageVersion = "1.1"
+            apiVersion = "1.1"
+        }
     }
 
     dependencies {
