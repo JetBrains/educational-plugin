@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.EduUtils.execCancelable;
-
 public class GeneratorUtils {
   private static final Logger LOG = Logger.getInstance(GeneratorUtils.class.getName());
 
@@ -178,14 +176,12 @@ public class GeneratorUtils {
 
   private static RemoteCourse getCourseFromStepic(@NotNull Project project, RemoteCourse selectedCourse) {
     return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-      return execCancelable(() -> {
-        final RemoteCourse course = StepicConnector.getCourse(project, selectedCourse);
-        if (EduUtils.isCourseValid(course)) {
-          course.initCourse(false);
-        }
-        return course;
-      });
+      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(false);
+      final RemoteCourse course = StepicConnector.getCourse(project, selectedCourse);
+      if (EduUtils.isCourseValid(course)) {
+        course.initCourse(false);
+      }
+      return course;
     }, "Creating Course", true, project);
   }
 }
