@@ -16,7 +16,7 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
       .replace("\$PRODUCT", productMap[PlatformUtils.getPlatformPrefix()] ?:
                                              PlatformUtils.getPlatformPrefix())
       .replace("\$COURSE", course.name)
-      .replace("\$MODE", if (course.courseMode == EduNames.STUDY) "Student" else "CourseCreator")
+      .replace("\$MODE", if (course.courseMode == EduNames.STUDY) "Learner" else "Educator")
 
   val product = if (PlatformUtils.isPyCharmEducational()) "PyCharm Edu" else "EduTools"
   val language = course.languageID
