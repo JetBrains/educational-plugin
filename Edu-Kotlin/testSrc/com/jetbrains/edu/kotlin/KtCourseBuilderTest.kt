@@ -1,10 +1,8 @@
 package com.jetbrains.edu.kotlin
 
-import com.jetbrains.edu.learning.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.kotlin.studio.KtCourseBuilder
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
-import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
@@ -19,6 +17,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.kt")
+          }
+          dir("test") {
             file("tests.kt")
           }
         }
@@ -26,6 +26,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("src") {
             file("JavaCode.java")
             file("Task.kt")
+          }
+          dir("test") {
             file("tests.kt")
           }
         }
@@ -34,6 +36,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.kt")
+          }
+          dir("test") {
             file("tests.kt")
           }
         }
@@ -41,9 +45,11 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("util") {
         dir("src") {
           file("koansTestUtil.kt")
-          file("EduTestRunner.java")
+        }
+        dir("test") {
         }
       }
+      gradleFiles()
     }
     expectedFileTree.assertEquals(rootDir)
   }
@@ -57,17 +63,28 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.kt")
+          }
+          dir("test") {
             file("Tests.kt")
           }
         }
       }
-      dir("util") {
-        dir("src") {
-          file("EduTestRunner.java")
-        }
-      }
+      gradleFiles()
     }
 
     expectedFileTree.assertEquals(rootDir)
+  }
+
+  private fun FileTreeBuilder.gradleFiles() {
+    dir("gradle") {
+      dir("wrapper") {
+        file("gradle-wrapper.jar")
+        file("gradle-wrapper.properties")
+      }
+    }
+    file("gradlew")
+    file("gradlew.bat")
+    file("build.gradle")
+    file("settings.gradle")
   }
 }
