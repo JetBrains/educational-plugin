@@ -231,7 +231,7 @@ public class CoursePanel extends JPanel {
     if (mySearchField != null) {
       tagComponent.addMouseListener(new MouseAdapter() {
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mousePressed(MouseEvent e) {
           if (!isTagSelected(tag)) {
             mySearchField.getTextEditor().setText(tag.getSearchText());
             return;
