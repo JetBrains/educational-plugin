@@ -54,15 +54,17 @@ val studentTemplate = "<html>You’ve just completed your first lesson with \$PR
     "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make learning \$LANGUAGE better.</html>"
 
 val productMap = hashMapOf(
-    Pair("PyCharmCore", "PY"),
-    Pair("Python", "PY"),
-    Pair("PyCharmEdu", "EDU"),
-    Pair("Idea", "IDEA"),
-    Pair("idea", "IDEA"),
-    Pair("WebStorm", "WEB"),
-    Pair("PhpStorm", "PhpStorm"),
-    Pair("AppCode", "CIDR"),
-    Pair("CLion", "CLion"),
-    Pair("DataGrip", "DBE"),
-    Pair("GoLand", "GoLand"),
-    Pair("Ruby", "RubyMine"))
+    Pair(PlatformUtils.PYCHARM_CE_PREFIX, "PC"),
+    Pair(PlatformUtils.PYCHARM_PREFIX, "PY"),
+    Pair(PlatformUtils.PYCHARM_EDU_PREFIX, "PE"),
+    Pair(PlatformUtils.IDEA_CE_PREFIX, "IC"),
+    Pair(PlatformUtils.IDEA_PREFIX, "IU"),
+    Pair("AndroidStudio", "AI"),
+    Pair(PlatformUtils.WEB_PREFIX, "WS"),
+    Pair(PlatformUtils.PHP_PREFIX, "PS"),
+    Pair(PlatformUtils.APPCODE_PREFIX, "OC"),
+    Pair(PlatformUtils.CLION_PREFIX, "CL"),
+    Pair(PlatformUtils.DBE_PREFIX, "DB"),
+    Pair(PlatformUtils.GOIDE_PREFIX, "GO"),
+    Pair(PlatformUtils.RIDER_PREFIX, "RD"),
+    Pair(PlatformUtils.RUBY_PREFIX, "RM"))
