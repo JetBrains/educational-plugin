@@ -12,7 +12,7 @@ import com.jetbrains.python.newProject.PythonProjectGenerator
 class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
 
   override val courseBuilder: EduCourseBuilder<PyNewProjectSettings> = PyCourseBuilder()
-  override val defaultSettings: PyNewProjectSettings = PythonProjectGenerator.NO_SETTINGS
+  override val defaultSettings: PyNewProjectSettings = PyNewProjectSettings()
 
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/python_course.json")
