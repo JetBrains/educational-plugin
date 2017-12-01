@@ -16,12 +16,12 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.fest.util.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.ComparisonFailure;
@@ -157,7 +157,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
           if (possibleAnswer != null) {
             answerPlaceholder.setPossibleAnswer(possibleAnswer);
           }
-          final ArrayList<String> hints = Lists.newArrayList();
+          final ArrayList<String> hints = ContainerUtil.newArrayList();
           String hint = openingMatcher.group(6);
           if (hint != null) {
             hints.add(hint);
