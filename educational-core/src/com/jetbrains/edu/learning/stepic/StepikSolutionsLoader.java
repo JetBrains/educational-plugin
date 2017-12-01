@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -36,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import static com.jetbrains.edu.learning.stepic.StepicConnector.getLastSubmission;
+import static com.jetbrains.edu.learning.stepic.StepicConnector.getSolutionForStepikAssignment;
 import static com.jetbrains.edu.learning.stepic.StepicConnector.removeAllTags;
 
 public class StepikSolutionsLoader implements Disposable{
@@ -172,8 +174,12 @@ public class StepikSolutionsLoader implements Disposable{
       if (taskStatuses == null) return tasksToUpdate;
       for (int j = 0; j < sublist.size(); j++) {
         Boolean isSolved = taskStatuses[j];
-        Task task = allTasks[j];
-        if (!(task instanceof TheoryTask) && isSolved != null && isToUpdate(isSolved, task.getStatus(), task.getStepId())) {
+        Task task = sublist.get(j);
+        boolean toUpdate = false;
+        if (isSolved != null && !(task instanceof TheoryTask)) {
+          toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
+        }
+        if (toUpdate) {
           CheckStatus checkStatus = isSolved ? CheckStatus.Solved : CheckStatus.Failed;
           task.setStatus(checkStatus);
           tasksToUpdate.add(task);
@@ -225,15 +231,24 @@ public class StepikSolutionsLoader implements Disposable{
     });
   }
 
-  private static boolean isToUpdate(@NotNull Boolean isSolved, @NotNull CheckStatus currentStatus, int stepId) {
+  private static boolean isToUpdate(Task task, @NotNull Boolean isSolved, @NotNull CheckStatus currentStatus, int stepId) {
     if (isSolved && currentStatus != CheckStatus.Solved) {
       return true;
     }
     else if (!isSolved) {
       try {
-        List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(stepId), isSolved);
-        if (!solutionFiles.isEmpty()) {
-          return true;
+        if (task instanceof EduTask) {
+          List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(stepId), isSolved);
+          if (!solutionFiles.isEmpty()) {
+            return true;
+          }
+        }
+        else {
+          String solution = getSolutionForStepikAssignment(task, isSolved);
+          if (solution != null) {
+            return true;
+          }
+
         }
       }
       catch (IOException e) {
@@ -260,21 +275,30 @@ public class StepikSolutionsLoader implements Disposable{
   }
 
   private static String loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
-    List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
-    if (solutionFiles.isEmpty()) {
-//      task.setStatus(CheckStatus.Unchecked);
-      return "";
+    if (task instanceof EduTask) {
+      List<StepicWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
+      if (solutionFiles.isEmpty()) {
+        task.setStatus(CheckStatus.Unchecked);
+        return "";
+      }
+      for (StepicWrappers.SolutionFile file : solutionFiles) {
+        TaskFile taskFile = task.getTaskFile(file.name);
+        if (taskFile != null) {
+          task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
+          if (StepicConnector.setPlaceholdersFromTags(taskFile, file)) {
+            return removeAllTags(file.text);
+          }
+          else {
+            return file.text;
+          }
+        }
+      }
     }
-    task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
-    for (StepicWrappers.SolutionFile file : solutionFiles) {
-      TaskFile taskFile = task.getTaskFile(file.name);
-      if (taskFile != null) {
-        if (StepicConnector.setPlaceholdersFromTags(taskFile, file)) {
-          return removeAllTags(file.text);
-        }
-        else {
-          return file.text;
-        }
+    else {
+      String solution = getSolutionForStepikAssignment(task, isSolved);
+      if (solution != null) {
+        task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
+        return solution;
       }
     }
     return "";
