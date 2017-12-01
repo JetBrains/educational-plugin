@@ -54,8 +54,9 @@ public class StepicConnector {
   //this prefix indicates that course can be opened by educational plugin
   private static final String ADAPTIVE_NOTE =
     "\n\nInitially, the adaptive system may behave somewhat randomly, but the more problems you solve, the smarter it becomes!";
-  private static final String NOT_VERIFIED_NOTE = "\n\nThis course is not verified by JetBrains yet. " +
-      "If you are a course owner please contact Jetbrains so we can help you improve your course.";
+  private static final String NOT_VERIFIED_NOTE = "\n\nNote: We’re sorry, but this course feels a little incomplete. " +
+      "If you are the owner of the course please <a href=\"mailto:Tatiana.Vasilyeva@jetbrains.com\">get in touch with us</a>, " +
+      "we would like to verify this with you; we think with improvement this can be listed as a featured course in the future.";
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
 
