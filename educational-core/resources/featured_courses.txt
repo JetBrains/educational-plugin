@@ -1,9 +1,9 @@
-238
-3215
-3216
-3213
-3212
-568
-4222
-2057
-2403
+238  # Introduction to Python
+3215 # Logging in Python
+3216 # Introduction to Classic Ciphers
+3213 # Python Unit-Testing Course
+3212 # Django Tutorial
+568  # Adaptive Python
+4222 # Kotlin Koans
+2057 # Python. Functional Programming
+2403 # Adaptive Java
