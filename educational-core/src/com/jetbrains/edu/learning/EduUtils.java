@@ -93,7 +93,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -1113,10 +1112,8 @@ public class EduUtils {
       final URL url = new URL(PROMOTED_COURSES_LINK);
       URLConnection conn = url.openConnection();
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-        return reader.lines().map(Integer::valueOf).collect(Collectors.toList());
+        return reader.lines().map(s -> Integer.valueOf(s.split("#")[0].trim())).collect(Collectors.toList());
       }
-    } catch (MalformedURLException e) {
-      LOG.warn("Failed to get promoted courses");
     } catch (IOException e) {
       LOG.warn("Failed to get promoted courses");
     }
