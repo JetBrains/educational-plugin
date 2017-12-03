@@ -226,18 +226,22 @@ public class CoursesPanel extends JPanel {
   private int getWeight(@NotNull Course course) {
     final int id = course instanceof RemoteCourse ? ((RemoteCourse) course).getId() : 0;
     if (course instanceof RemoteCourse && !((RemoteCourse) course).isPublic()) {
-      return 1;
+      return CourseWeight.PRIVATE.weight;
     }
     if (myFeaturedCourses.contains(id)) {
-      return 2;
+      return CourseWeight.FEATURED.weight;
     }
-    return 3;
+    return CourseWeight.PUBLIC.weight;
   }
 
   private List<Course> sortCourses(List<Course> courses) {
-    final Map<Integer, List<Course>> groupedCourses = courses.stream()
-                                                          .sorted(Comparator.comparing(course -> course.getName()))
-                                                          .collect(groupingBy((course) -> getWeight(course)));
+    final Map<Integer, List<Course>> groupedCourses = courses.stream().collect(groupingBy(this::getWeight));
+    for (Integer groupWeight : groupedCourses.keySet()) {
+      Comparator<Course> comparator =
+        groupWeight == CourseWeight.FEATURED.weight ? Comparator.comparingInt(o -> myFeaturedCourses.indexOf(((RemoteCourse)o).getId()))
+                                                    : Comparator.comparing(Course::getName);
+      groupedCourses.get(groupWeight).sort(comparator);
+    }
     return groupedCourses.values().stream().flatMap(Collection::stream).collect(toList());
   }
 
@@ -497,6 +501,17 @@ public class CoursesPanel extends JPanel {
 
     private void showFailedToAddCourseNotification() {
       Messages.showErrorDialog("Cannot add course from Stepik, please check if link is correct", "Failed to Add Stepik Course");
+    }
+  }
+
+  private enum CourseWeight {
+    PRIVATE(1), FEATURED(2), PUBLIC(3);
+
+    private final int weight;
+
+    CourseWeight(int weight) {
+
+      this.weight = weight;
     }
   }
 }
