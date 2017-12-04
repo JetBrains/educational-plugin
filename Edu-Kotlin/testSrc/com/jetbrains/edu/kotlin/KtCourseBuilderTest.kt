@@ -1,6 +1,5 @@
 package com.jetbrains.edu.kotlin
 
-import com.jetbrains.edu.kotlin.studio.KtCourseBuilder
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -13,6 +12,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/kotlin_course.json")
     val expectedFileTree = fileTree {
+      dir(".idea") {}
       dir("lesson1") {
         dir("task1") {
           dir("src") {
@@ -46,8 +46,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("src") {
           file("koansTestUtil.kt")
         }
-        dir("test") {
-        }
+        dir("test") {}
       }
       gradleFiles()
     }
@@ -59,6 +58,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
     createCourseStructure(courseBuilder, course, defaultSettings)
 
     val expectedFileTree = fileTree {
+      dir(".idea") {}
       dir("lesson1") {
         dir("task1") {
           dir("src") {
