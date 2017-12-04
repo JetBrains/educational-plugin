@@ -33,6 +33,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
@@ -62,10 +63,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
-import com.intellij.util.DocumentUtil;
-import com.intellij.util.PathUtil;
-import com.intellij.util.PlatformUtils;
-import com.intellij.util.TimeoutUtil;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import com.intellij.util.io.zip.JBZipEntry;
@@ -73,15 +71,14 @@ import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.text.MarkdownUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
-import com.jetbrains.edu.learning.stepic.OAuthDialog;
-import com.jetbrains.edu.learning.stepic.StepicConnector;
-import com.jetbrains.edu.learning.stepic.StepicUser;
-import com.jetbrains.edu.learning.stepic.StepicUserWidget;
+import com.jetbrains.edu.learning.stepic.*;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
@@ -428,6 +425,88 @@ public class EduUtils {
   }
 
   @Nullable
+  public static String getTaskTextFromTask(@Nullable final VirtualFile taskDirectory, @Nullable final Task task) {
+    if (task == null || task.getLesson() == null || task.getLesson().getCourse() == null) {
+      return null;
+    }
+    final Course course = task.getLesson().getCourse();
+    String text = task.getTaskDescription() != null ? task.getTaskDescription() : getTaskTextByTaskName(task, taskDirectory);
+
+    if (text == null) return null;
+    if (course.isAdaptive()) text = wrapAdaptiveCourseText(task, text);
+
+    return text;
+  }
+
+  @NotNull
+  public static String constructTaskTextFilename(@NotNull Task task, @NotNull String defaultName) {
+    String fileNameWithoutExtension = FileUtil.getNameWithoutExtension(defaultName);
+    if (task instanceof TaskWithSubtasks) {
+      int activeStepIndex = ((TaskWithSubtasks)task).getActiveSubtaskIndex();
+      fileNameWithoutExtension += EduNames.SUBTASK_MARKER + activeStepIndex;
+    }
+    return addExtension(fileNameWithoutExtension, defaultName);
+  }
+
+  private static String wrapAdaptiveCourseText(Task task, @NotNull String text) {
+    String finalText = text;
+    if (task instanceof TheoryTask) {
+      finalText += "\n\n<b>Note</b>: This theory task aims to help you solve difficult tasks. " +
+             "Please, read it and press \"Check\" to go further.";
+    }
+    else if (!(task instanceof ChoiceTask)) {
+      finalText += "\n\n<b>Note</b>: Use standard input to obtain input for the task.";
+    }
+    finalText += getFooterWithLink(task);
+
+    return finalText;
+  }
+
+  @NotNull
+  private static String getFooterWithLink(Task task) {
+    return
+    "<div class=\"footer\">" + "<a href=" + StepikUtils.getAdaptiveLink(task) + ">Open on Stepik</a>"  + "</div>";
+  }
+
+  @NotNull
+  private static String addExtension(@NotNull String fileNameWithoutExtension, @NotNull String defaultName) {
+    return fileNameWithoutExtension + "." + FileUtilRt.getExtension(defaultName);
+  }
+
+  @Nullable
+  private static String getTaskTextByTaskName(@NotNull Task task, @Nullable VirtualFile taskDirectory) {
+    if (taskDirectory == null) return null;
+
+    String textFromHtmlFile = getTextByTaskFileFormat(task, taskDirectory, EduNames.TASK_HTML);
+    if (textFromHtmlFile != null) {
+      return textFromHtmlFile;
+    }
+
+    String taskTextFromMd = getTextByTaskFileFormat(task, taskDirectory, EduNames.TASK_MD);
+    return convertToHtml(taskTextFromMd);
+  }
+
+  @Nullable
+  private static String getTextByTaskFileFormat(@NotNull Task task, @NotNull VirtualFile taskDirectory, @NotNull String taskTextFileName) {
+    String textFilename = constructTaskTextFilename(task, taskTextFileName);
+    VirtualFile taskTextFile = taskDirectory.findChild(textFilename);
+
+    if (taskTextFile != null) {
+      return String.valueOf(LoadTextUtil.loadText(taskTextFile));
+    }
+
+    VirtualFile srcDir = taskDirectory.findChild(EduNames.SRC);
+    if (srcDir != null) {
+      VirtualFile taskTextSrcFile = srcDir.findChild(textFilename);
+      if (taskTextSrcFile != null) {
+        return String.valueOf(LoadTextUtil.loadText(taskTextSrcFile));
+      }
+    }
+
+    return null;
+  }
+
+  @Nullable
   public static TwitterPluginConfigurator getTwitterConfigurator(@NotNull final Project project) {
     TwitterPluginConfigurator[] extensions = TwitterPluginConfigurator.EP_NAME.getExtensions();
     for (TwitterPluginConfigurator extension: extensions) {
@@ -440,11 +519,20 @@ public class EduUtils {
 
   @Nullable
   public static String getTaskText(@NotNull final Project project) {
-    Task task = getCurrentTask(project);
-    if (task == null) {
+    Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+    if (editor == null) {
       return TaskDescriptionToolWindow.EMPTY_TASK_TEXT;
     }
-    return task.getTaskDescription();
+    Document document = editor.getDocument();
+    VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+    if (virtualFile == null) {
+      return TaskDescriptionToolWindow.EMPTY_TASK_TEXT;
+    }
+    final Task task = getTaskForFile(project, virtualFile);
+    if (task != null) {
+      return getTaskTextFromTask(task.getTaskDir(project), task);
+    }
+    return null;
   }
 
   @Nullable
@@ -596,7 +684,9 @@ public class EduUtils {
     return task;
   }
 
-  public static String convertToHtml(@NotNull String content) {
+  @Nullable
+  public static String convertToHtml(@Nullable final String content) {
+    if (content == null) return null;
     ArrayList<String> lines = ContainerUtil.newArrayList(content.split("\n|\r|\r\n"));
     if ((content.contains("<h") && content.contains("</h")) || (content.contains("<code>") && content.contains("</code>"))) {
       return content;
@@ -615,6 +705,22 @@ public class EduUtils {
       return false;
     }
     return fileName.contains(EduNames.TASK) && fileName.contains(EduNames.SUBTASK_MARKER);
+  }
+
+  @Nullable
+  public static VirtualFile findTaskDescriptionVirtualFile(@NotNull Project project, @NotNull VirtualFile taskDir) {
+    Task task = getTask(project, taskDir.getName().contains(EduNames.TASK) ? taskDir: taskDir.getParent());
+    if (task == null) {
+      return null;
+    }
+
+    return ObjectUtils.chooseNotNull(taskDir.findChild(constructTaskTextFilename(task, EduNames.TASK_HTML)),
+                                     taskDir.findChild(constructTaskTextFilename(task, EduNames.TASK_MD)));
+  }
+
+  @NotNull
+  public static String getTaskDescriptionFileName(final boolean useHtml) {
+    return useHtml ? EduNames.TASK_HTML : EduNames.TASK_MD;
   }
 
   @Nullable
