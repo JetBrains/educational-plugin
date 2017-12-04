@@ -106,6 +106,7 @@ public class BrowserWindow extends JFrame {
 
   private void initComponents() {
     Platform.runLater(() -> {
+      Platform.setImplicitExit(false);
       myPane = new StackPane();
       myWebComponent = new WebView();
       myWebComponent.setOnDragDetected(event -> {});

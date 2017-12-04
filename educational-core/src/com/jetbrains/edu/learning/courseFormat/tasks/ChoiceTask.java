@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat.tasks;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
@@ -81,7 +82,8 @@ public class ChoiceTask extends Task {
       private void repaintChoicePanel(@NotNull Project project, @NotNull ChoiceTask task) {
         final TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
         if (toolWindow != null) {
-          toolWindow.setBottomComponent(new ChoiceVariantsPanel(task));
+          ApplicationManager.getApplication().invokeLater(
+            () -> toolWindow.setBottomComponent(new ChoiceVariantsPanel(task)));
         }
       }
     };
