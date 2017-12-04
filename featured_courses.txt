@@ -1,9 +1,16 @@
 4222 # Kotlin Koans
 238  # Introduction to Python
 568  # Adaptive Python
-2403 # Adaptive Java
 3215 # Logging in Python
 3216 # Introduction to Classic Ciphers
 3213 # Python Unit-Testing Course
 3212 # Django Tutorial
 2057 # Python. Functional Programming
+4798 # Java Practice Intro
+4799 # Java Practice Types
+4800 # Java Practice Statements
+4801 # Java Practice Arrays
+4802 # Java Practice Classes
+4803 # Java Practice Collections
+4804 # Java Practice Functional
+4805 # Java Practice Streams
