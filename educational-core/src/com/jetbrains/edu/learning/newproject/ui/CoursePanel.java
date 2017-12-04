@@ -172,7 +172,7 @@ public class CoursePanel extends JPanel {
 
   private void updateAdvancedSettings(@NotNull Course course) {
     if (myLocationField != null) {
-      myLocationField.getComponent().setText(nameToLocation(course.getName(), course.getLanguageById().getDisplayName()));
+      myLocationField.getComponent().setText(nameToLocation(course));
     }
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
@@ -206,11 +206,14 @@ public class CoursePanel extends JPanel {
   }
 
   @NotNull
-  private static String nameToLocation(@NotNull String courseName, String language) {
+  private static String nameToLocation(@NotNull Course course) {
+    final String courseName = course.getName();
+    final String language = course.getLanguageById().getDisplayName();
+    final String humanLanguage = course.getHumanLanguage();
     String name = courseName;
     if (!IOUtil.isAscii(name)) {
       //there are problems with venv creation for python course
-      name = StringUtil.capitalize(EduNames.COURSE + " " + language);
+      name = StringUtil.capitalize(EduNames.COURSE + " " + language + " " + humanLanguage);
     }
     if (!PathUtil.isValidFileName(name)) {
       name = FileUtil.sanitizeFileName(name);
