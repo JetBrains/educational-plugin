@@ -28,6 +28,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
+import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduLanguageDecorator;
@@ -70,6 +71,7 @@ public class CoursesPanel extends JPanel {
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
   private final List<Integer> myFeaturedCourses = EduUtils.getFeaturedCourses();
+  private MessageBusConnection myBusConnection;
 
   public CoursesPanel(@NotNull List<Course> courses) {
     myCourses = courses;
@@ -130,14 +132,20 @@ public class CoursesPanel extends JPanel {
     processSelectionChanged();
   }
 
-  private static void addLoginListener(Runnable... postLoginActions) {
-    ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
+  private void addLoginListener(Runnable... postLoginActions) {
+    if (myBusConnection != null) {
+      myBusConnection.disconnect();
+    }
+    myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
+    myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, () -> {
       StepicUser user = EduSettings.getInstance().getUser();
       if (user != null) {
         ApplicationManager.getApplication().invokeLater(() -> {
           for (Runnable action : postLoginActions) {
             action.run();
           }
+          myBusConnection.disconnect();
+          myBusConnection = null;
         }, ModalityState.any());
       }
     });
