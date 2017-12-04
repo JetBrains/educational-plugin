@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createDescriptionFiles
 import java.io.File
 import java.io.IOException
 
@@ -57,6 +58,7 @@ object EduGradleModuleGenerator {
             GeneratorUtils.createTaskFile(src, taskFile)
         }
         createTests(task, test)
+        createDescriptionFiles(src, task)
     }
 
 
