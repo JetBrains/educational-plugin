@@ -203,14 +203,14 @@ public abstract class Task implements StudyItem {
     if (getLesson().getCourse().isAdaptive()) {
       taskText = StepicAdaptiveConnector.wrapAdaptiveCourseText(this, taskText);
     }
-    return taskText;
+    return EduUtils.convertToHtml(taskText);
   }
 
   public String getTaskDescription() {
     return getTaskDescription(true);
   }
 
-  public String getTaskDescriptionName() {
+  protected String getTaskDescriptionName() {
     return FileUtil.getNameWithoutExtension(EduNames.TASK_HTML);
   }
 
@@ -306,10 +306,6 @@ public abstract class Task implements StudyItem {
   public int getPosition() {
     final Lesson lesson = getLesson();
     return lesson.getTaskList().indexOf(this) + 1;
-  }
-
-  public void saveTaskText(String text) {
-    taskTexts.put(getTaskDescriptionName(), text);
   }
 
   public boolean isValid(@NotNull Project project) {

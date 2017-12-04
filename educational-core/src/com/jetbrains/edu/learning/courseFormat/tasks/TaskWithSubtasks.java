@@ -23,7 +23,7 @@ public class TaskWithSubtasks extends EduTask {
   }
 
   @Override
-  public String getTaskDescriptionName() {
+  protected String getTaskDescriptionName() {
     return super.getTaskDescriptionName() + EduNames.SUBTASK_MARKER + myActiveSubtaskIndex;
   }
 

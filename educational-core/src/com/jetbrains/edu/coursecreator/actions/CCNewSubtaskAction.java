@@ -1,15 +1,23 @@
 package com.jetbrains.edu.coursecreator.actions;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -23,6 +31,7 @@ import static com.jetbrains.edu.coursecreator.CCUtils.renameFiles;
 
 
 public class CCNewSubtaskAction extends DumbAwareAction {
+  private static final Logger LOG = Logger.getInstance(CCNewSubtaskAction.class);
   public static final String NEW_SUBTASK = "Add Subtask";
 
   public CCNewSubtaskAction() {
@@ -77,6 +86,7 @@ public class CCNewSubtaskAction extends DumbAwareAction {
     }
     createTestsForNewSubtask(project, task);
     int num = task.getLastSubtaskIndex() + 1;
+    createTaskDescriptionFile(project, taskDir, num);
     SubtaskUtils.switchStep(project, task, num, false);
     task.setLastSubtaskIndex(num);
   }
@@ -91,6 +101,24 @@ public class CCNewSubtaskAction extends DumbAwareAction {
       return;
     }
     configurator.getCourseBuilder().createTestsForNewSubtask(project, task);
+  }
+
+  private static void createTaskDescriptionFile(Project project, VirtualFile taskDir, int index) {
+    String taskDescriptionFileName = EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat());
+    FileTemplate taskTextTemplate = FileTemplateManager.getInstance(project).getInternalTemplate(taskDescriptionFileName);
+    PsiDirectory taskPsiDir = PsiManager.getInstance(project).findDirectory(taskDir);
+    if (taskTextTemplate != null && taskPsiDir != null) {
+      String nextTaskTextName = FileUtil.getNameWithoutExtension(taskDescriptionFileName) +
+                                EduNames.SUBTASK_MARKER +
+                                index + "." +
+                                FileUtilRt.getExtension(taskDescriptionFileName);
+      try {
+        FileTemplateUtil.createFromTemplate(taskTextTemplate, nextTaskTextName, null, taskPsiDir);
+      }
+      catch (Exception e) {
+        LOG.error(e);
+      }
+    }
   }
 
   @Override

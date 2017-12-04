@@ -92,7 +92,7 @@ public class SubtaskUtils {
     EduUtils.saveToolWindowTextIfNeeded(project);
 
     task.setActiveSubtaskIndex(toSubtaskIndex);
-    updateUI(project, task, !CCUtils.isCourseCreator(project) && navigateToTask);
+    updateUI(project, task, taskDir, !CCUtils.isCourseCreator(project) && navigateToTask);
     if (CCUtils.isCourseCreator(project)) {
       updateOpenedTestFiles(project, taskDir, fromSubtaskIndex, toSubtaskIndex);
     }
@@ -163,15 +163,17 @@ public class SubtaskUtils {
     return nameWithoutExtension + EduNames.SUBTASK_MARKER + subtaskIndex + "." + extension;
   }
 
-  public static void updateUI(@NotNull Project project, @NotNull Task task, boolean navigateToTask) {
+  public static void updateUI(@NotNull Project project, @NotNull Task task, VirtualFile taskDir, boolean navigateToTask) {
     CheckUtils.drawAllPlaceholders(project, task);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
     if (toolWindow != null) {
-      if (task.getTaskDescription() == null) {
-        task.addTaskText(task.getTaskDescriptionName(), CCUtils.TASK_DESCRIPTION_TEXT);
-      }
-      toolWindow.setCurrentTask(project, task);
+        String text = EduUtils.getTaskTextFromTask(taskDir, task);
+        if (text == null) {
+            toolWindow.setEmptyText(project);
+            return;
+        }
+        toolWindow.setTaskText(text, taskDir, project);
     }
     if (navigateToTask) {
       NavigationUtils.navigateToTask(project, task);

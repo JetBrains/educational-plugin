@@ -1,10 +1,15 @@
 package com.jetbrains.edu.coursecreator.actions;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.coursecreator.settings.CCSettings;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
@@ -109,7 +114,11 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
       return null;
     }
     task.setLesson(((Lesson)parentItem));
-    task.addTaskText(task.getTaskDescriptionName(), CCUtils.TASK_DESCRIPTION_TEXT);
+    String fileName = EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat());
+    FileTemplate template = FileTemplateManager.getDefaultInstance().getInternalTemplate(fileName);
+    if (template != null) {
+      task.addTaskText(EduNames.TASK, template.getText());
+    }
     return task;
   }
 }
