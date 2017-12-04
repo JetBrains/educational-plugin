@@ -7,6 +7,8 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.kotlin.KtProjectGenerator
+import com.jetbrains.edu.kotlin.check.CheckActionListener.expectedMessage
+import com.jetbrains.edu.kotlin.check.CheckActionListener.shouldFail
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.TestsOutputParser.CONGRATULATIONS
@@ -14,8 +16,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
-import com.jetbrains.edu.test.CheckActionListener.expectedMessage
-import com.jetbrains.edu.test.CheckActionListener.shouldFail
 
 class KotlinCheckersTest : CheckersTestBase() {
 
