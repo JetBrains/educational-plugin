@@ -48,7 +48,6 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepic.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
-import javafx.application.Platform;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -76,11 +75,6 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void projectOpened() {
-    // Check if user has javafx lib in his JDK. Now bundled JDK doesn't have this lib inside.
-    if (EduUtils.hasJavaFx()) {
-      Platform.setImplicitExit(false);
-    }
-
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
 
