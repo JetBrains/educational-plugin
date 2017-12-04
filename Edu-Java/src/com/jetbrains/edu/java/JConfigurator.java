@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.intellij.EduConfiguratorBase;
+import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,12 +36,6 @@ public class JConfigurator extends EduConfiguratorBase {
   public boolean isTestFile(VirtualFile file) {
     String name = file.getName();
     return TEST_JAVA.equals(name) || name.contains(FileUtil.getNameWithoutExtension(TEST_JAVA)) && name.contains(EduNames.SUBTASK_MARKER);
-  }
-
-  @NotNull
-  @Override
-  public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask eduTask, @NotNull Project project) {
-    return new JTaskChecker(eduTask, project);
   }
 
   @Override

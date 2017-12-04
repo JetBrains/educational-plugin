@@ -3,11 +3,8 @@ package com.jetbrains.edu.learning;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.*;
-import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -48,9 +45,6 @@ public interface EduConfigurator<Settings> {
   default boolean isTestFile(VirtualFile file) {
     return false;
   }
-
-  @NotNull
-  TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project);
 
   @NotNull
   default DefaultActionGroup getTaskDescriptionActionGroup() {

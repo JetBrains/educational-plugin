@@ -299,10 +299,6 @@ public abstract class Task implements StudyItem {
   // used in json serialization/deserialization
   public abstract String getTaskType();
 
-  public TaskChecker getChecker(@NotNull Project project) {
-    return new TaskChecker<>(this, project);
-  }
-
   public int getPosition() {
     final Lesson lesson = getLesson();
     return lesson.getTaskList().indexOf(this) + 1;

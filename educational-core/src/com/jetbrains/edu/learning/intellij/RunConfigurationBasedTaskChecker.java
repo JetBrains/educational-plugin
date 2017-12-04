@@ -21,52 +21,49 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.CheckAction;
-import com.jetbrains.edu.learning.checker.EduTaskChecker;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checker.TestsOutputParser;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CountDownLatch;
 
 
-public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
+public abstract class RunConfigurationBasedTaskChecker extends TaskChecker {
   public static final String TEST_RUNNER_CLASS = "EduTestRunner";
   private static final Logger LOG = Logger.getInstance(RunConfigurationBasedTaskChecker.class);
 
-  public RunConfigurationBasedTaskChecker(@NotNull EduTask task, @NotNull Project project) {
-    super(task, project);
+  @Override
+  public void clearState(@NotNull Task task, @NotNull Project project) {
+    CheckUtils.drawAllPlaceholders(project, task);
   }
 
+  @NotNull
   @Override
-  public void clearState() {
-    CheckUtils.drawAllPlaceholders(myProject, myTask);
-  }
-
-  @Override
-  public CheckResult check() {
+  public CheckResult check(@NotNull Task task, @NotNull Project project) {
     Ref<CheckResult> result = new Ref<>(new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH));
-    Sdk sdk = ProjectRootManager.getInstance(myProject).getProjectSdk();
+    Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
     if (sdk == null) {
       return result.get();
     }
-    final VirtualFile testsFile = getTestsFile();
+    final VirtualFile testsFile = getTestsFile(task, project);
     if (testsFile == null) {
       return result.get();
     }
-    VirtualFile taskDir = myTask.getTaskDir(myProject);
+    VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       return result.get();
     }
-    Module module = ModuleUtilCore.findModuleForFile(taskDir, myProject);
+    Module module = ModuleUtilCore.findModuleForFile(taskDir, project);
     if (module == null) {
       return result.get();
     }
     CountDownLatch latch = new CountDownLatch(1);
-    ApplicationManager.getApplication().invokeAndWait(() -> CompilerManager.getInstance(myProject).make(module, (aborted, errors, warnings, compileContext) -> {
+    ApplicationManager.getApplication().invokeAndWait(() -> CompilerManager.getInstance(project).make(module, (aborted, errors, warnings, compileContext) -> {
       if (errors != 0) {
         result.set(new CheckResult(CheckStatus.Unchecked, "Code has compilation errors"));
         latch.countDown();
@@ -77,10 +74,10 @@ public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
         latch.countDown();
         return;
       }
-      RunnerAndConfigurationSettings javaTemplateConfiguration = produceRunConfiguration(myProject,
+      RunnerAndConfigurationSettings javaTemplateConfiguration = produceRunConfiguration(project,
         "javaTemplateConfiguration", ApplicationConfigurationType.getInstance());
 
-      setProcessParameters(myProject,
+      setProcessParameters(project,
         ((ApplicationConfiguration) javaTemplateConfiguration.getConfiguration()),module, testsFile);
 
       RunProfileState state = getState(javaTemplateConfiguration);
@@ -93,15 +90,15 @@ public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
 
       final JavaCommandLineState javaCmdLine = (JavaCommandLineState) state;
       ApplicationManager.getApplication().invokeLater(() -> FileDocumentManager.getInstance().saveAllDocuments());
-      DumbService.getInstance(myProject).runWhenSmart(() -> {
+      DumbService.getInstance(project).runWhenSmart(() -> {
         try {
           JavaParameters javaParameters;
           javaParameters = javaCmdLine.getJavaParameters();
-          GeneralCommandLine fromJavaParameters = CommandLineBuilder.createFromJavaParameters(javaParameters, myProject, false);
+          GeneralCommandLine fromJavaParameters = CommandLineBuilder.createFromJavaParameters(javaParameters, project, false);
           Process process = fromJavaParameters.createProcess();
           TestsOutputParser.TestsOutput output =
             CheckUtils
-              .getTestOutput(process, fromJavaParameters.getCommandLineString(), myTask.getLesson().getCourse().isAdaptive());
+              .getTestOutput(process, fromJavaParameters.getCommandLineString(), task.getLesson().getCourse().isAdaptive());
           result.set(new CheckResult(output.isSuccess() ? CheckStatus.Solved : CheckStatus.Failed, output.getMessage()));
         } catch (ExecutionException e) {
           LOG.error(e);
@@ -120,7 +117,7 @@ public abstract class RunConfigurationBasedTaskChecker extends EduTaskChecker {
   }
 
   @Nullable
-  protected abstract VirtualFile getTestsFile();
+  protected abstract VirtualFile getTestsFile(@NotNull Task task, @NotNull Project project);
 
   @Nullable
   private RunProfileState getState(RunnerAndConfigurationSettings javaTemplateConfiguration) {

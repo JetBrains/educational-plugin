@@ -20,12 +20,9 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.CheckListener;
-import com.jetbrains.edu.learning.checker.CheckResult;
-import com.jetbrains.edu.learning.checker.CheckUtils;
-import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.checker.*;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -167,7 +164,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       super(project, "Checking Task", true, getBackgroundOption(task));
       myProject = project;
       myTask = task;
-      myChecker = task.getChecker(myProject);
+      myChecker = TaskCheckerManager.getChecker(task);
     }
 
     @Override
@@ -176,18 +173,18 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       myCheckInProgress.set(true);
 
       boolean isRemote = myTask.getLesson().getCourse() instanceof RemoteCourse;
-      myResult = isRemote ? checkRemoteCourse() : myChecker.check();
+      myResult = isRemote ? checkRemoteCourse() : myChecker.check(myTask, myProject);
     }
 
     private CheckResult checkRemoteCourse() {
       if (EduUtils.isStudentProject(myProject)) {
-        CheckResult remoteCheckResult = myChecker.checkOnRemote();
+        CheckResult remoteCheckResult = myChecker.checkOnRemote(myTask, myProject);
         if (remoteCheckResult != CheckResult.USE_LOCAL_CHECK) {
           return remoteCheckResult;
         }
       }
 
-      return myChecker.check();
+      return myChecker.check(myTask, myProject);
     }
 
     @Override
@@ -197,10 +194,10 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       myTask.setStatus(status);
       switch (status) {
         case Failed:
-          myChecker.onTaskFailed(message);
+          myChecker.onTaskFailed(myTask, myProject, message);
           break;
         case Solved:
-          myChecker.onTaskSolved(message);
+          myChecker.onTaskSolved(myTask, myProject, message);
           break;
         default:
           CheckUtils.showTestResultPopUp(message, MessageType.WARNING.getPopupBackground(), myProject);
@@ -213,13 +210,13 @@ public class CheckAction extends DumbAwareActionWithShortcut {
           listener.afterCheck(myProject, myTask);
         }
       });
-      myChecker.clearState();
+      myChecker.clearState(myTask, myProject);
       myCheckInProgress.set(false);
     }
 
     @Override
     public void onCancel() {
-      myChecker.clearState();
+      myChecker.clearState(myTask, myProject);
       myCheckInProgress.set(false);
     }
   }
