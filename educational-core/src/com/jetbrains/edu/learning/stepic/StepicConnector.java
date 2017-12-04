@@ -355,26 +355,47 @@ public class StepicConnector {
   }
 
   @Nullable
-  private static StepicWrappers.LessonContainer getLessonContainer(String[] unitIds) throws IOException, URISyntaxException {
+  private static List<Lesson> getLessons(String[] unitIds) throws IOException, URISyntaxException {
     StepicWrappers.UnitContainer unitContainer = multipleRequestToStepik(StepicNames.UNITS, unitIds, StepicWrappers.UnitContainer.class);
     if (unitContainer == null) {
       return null;
     }
     String[] lessonIds = unitContainer.units.stream().map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
-    return multipleRequestToStepik(StepicNames.LESSONS, lessonIds, StepicWrappers.LessonContainer.class);
+    StepicWrappers.LessonContainer lessonContainer = multipleRequestToStepik(StepicNames.LESSONS, lessonIds, StepicWrappers.LessonContainer.class);
+    if (lessonContainer == null) return null;
+    return sortLessonsByUnits(lessonContainer, unitContainer.units);
+  }
+
+  /**
+   * Stepik sorts result of multiple requests by id, but in some cases unit-wise and lessonId-wise order differ.
+   * So we need to sort lesson by units to keep correct course structure
+   */
+  @NotNull
+  private static List<Lesson> sortLessonsByUnits(StepicWrappers.LessonContainer lessonContainer, List<StepicWrappers.Unit> units) {
+    HashMap<Integer, Lesson> idToLesson = new HashMap<>();
+    for (Lesson lesson : lessonContainer.lessons) {
+      idToLesson.put(lesson.getId(), lesson);
+    }
+    List<Lesson> lessons = new ArrayList<>();
+    for (StepicWrappers.Unit unit : units) {
+      int lessonId = unit.lesson;
+      lessons.add(idToLesson.get(lessonId));
+    }
+    return lessons;
   }
 
   private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds) throws IOException {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
     try {
-      StepicWrappers.LessonContainer lessonContainer = getLessonContainer(unitIds);
-      if (lessonContainer == null) {
+      List<Lesson> lessonsFromUnits = getLessons(unitIds);
+      if (lessonsFromUnits == null) {
         return lessons;
       }
-      final int lessonCount = lessonContainer.lessons.size();
+
+      final int lessonCount = lessonsFromUnits.size();
       for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
-        Lesson lesson = lessonContainer.lessons.get(lessonIndex);
+        Lesson lesson = lessonsFromUnits.get(lessonIndex);
         if (progressIndicator != null) {
           final int readableIndex = lessonIndex + 1;
           progressIndicator.checkCanceled();
@@ -434,9 +455,9 @@ public class StepicConnector {
   @NotNull
   private static Map<String, String> getFirstCodeTemplates(@NotNull RemoteCourse remoteCourse) throws IOException, URISyntaxException {
     String[] unitsIds = getUnitsIds(remoteCourse.getSections().stream().map(section -> String.valueOf(section)).toArray(String[]::new));
-    StepicWrappers.LessonContainer lessonContainer = getLessonContainer(unitsIds);
-    if (lessonContainer != null) {
-      for (Lesson lesson : lessonContainer.lessons) {
+    List<Lesson> lessons = getLessons(unitsIds);
+    if (lessons != null) {
+      for (Lesson lesson : lessons) {
         String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
         StepicWrappers.StepContainer stepContainer = multipleRequestToStepik(StepicNames.STEPS, stepIds, StepicWrappers.StepContainer.class);
         if (stepContainer == null) {
