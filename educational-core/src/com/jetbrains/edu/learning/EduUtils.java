@@ -107,8 +107,7 @@ import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTa
 
 public class EduUtils {
 
-  //TODO: modify to point to master
-  private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/liana/improve-featured/featured_courses.txt";
+  private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/educational-core/resources/featured_courses.txt";
 
   private EduUtils() {
   }
