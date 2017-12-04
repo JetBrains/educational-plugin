@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.editor;
 
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -15,14 +16,18 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduDocumentListener;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +35,7 @@ import java.awt.*;
 
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
+  private static final Logger LOG = Logger.getInstance(EduEditorFactoryListener.class);
 
   private static class WindowSelectionListener extends EditorMouseAdapter {
     private final TaskFile myTaskFile;
@@ -75,6 +81,12 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         Course course = StudyTaskManager.getInstance(project).getCourse();
         if (course == null) {
           return;
+        }
+
+        Task task = taskFile.getTask();
+        if (task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
+          task.setStatus(CheckStatus.Solved);
+          StepikConnector.postTheory(task, project);
         }
 
         EduEditor.addDocumentListener(document, new EduDocumentListener(taskFile, true));
