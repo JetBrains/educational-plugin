@@ -11,8 +11,10 @@ import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -33,6 +35,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.util.EntityUtils;
@@ -795,6 +798,64 @@ public class StepikConnector {
       LOG.warn("Failed getting section: " + lessonId);
     }
     return new Lesson();
+  }
+
+  public static void postTheory(Task task, final Project project) {
+    if (EduSettings.getInstance().getUser() == null) {
+      return;
+    }
+    final int stepId = task.getStepId();
+    int lessonId = task.getLesson().getId();
+    ProgressManager.getInstance().runProcessWithProgressAsynchronously(
+      new Backgroundable(project, "Posting Theory to Stepik", false) {
+        @Override
+        public void run(@NotNull ProgressIndicator progressIndicator) {
+          try {
+            markStepAsViewed(lessonId, stepId);
+          }
+          catch (URISyntaxException | IOException e) {
+            LOG.warn(e.getMessage());
+          }
+        }
+      }, new EmptyProgressIndicator());
+  }
+
+  private static void markStepAsViewed(int lessonId, int stepId) throws URISyntaxException, IOException {
+    final URI unitsUrl = new URIBuilder(StepikNames.UNITS).addParameter("lesson", String.valueOf(lessonId)).build();
+    final StepikWrappers.UnitContainer unitContainer = getFromStepik(unitsUrl.toString(), StepikWrappers.UnitContainer.class);
+    if (unitContainer.units.size() == 0) {
+      LOG.warn("Got unexpected numbers of units: " + unitContainer.units.size());
+      return;
+    }
+
+    final URIBuilder builder = new URIBuilder(StepikNames.ASSIGNMENTS);
+    for (Integer assignmentId : unitContainer.units.get(0).assignments) {
+      builder.addParameter("ids[]", String.valueOf(assignmentId));
+    }
+
+    final StepikWrappers.AssignmentsWrapper assignments = getFromStepik(builder.toString(), StepikWrappers.AssignmentsWrapper.class);
+    if (assignments.assignments.size() > 0) {
+      for (StepikWrappers.Assignment assignment : assignments.assignments) {
+        if (assignment.step != stepId) {
+          continue;
+        }
+        final HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.VIEWS);
+        final StepikWrappers.ViewsWrapper viewsWrapper = new StepikWrappers.ViewsWrapper(assignment.id, stepId);
+        post.setEntity(new StringEntity(new Gson().toJson(viewsWrapper)));
+        post.addHeader(new BasicHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType()));
+
+        CloseableHttpClient httpClient = StepikAuthorizedClient.getHttpClient();
+        if (httpClient != null) {
+          final CloseableHttpResponse viewPostResult = httpClient.execute(post);
+          if (viewPostResult.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
+            LOG.warn("Error while Views post, code: " + viewPostResult.getStatusLine().getStatusCode());
+          }
+        }
+      }
+    }
+    else {
+      LOG.warn("Got assignments of incorrect length: " + assignments.assignments.size());
+    }
   }
 
   @NotNull
