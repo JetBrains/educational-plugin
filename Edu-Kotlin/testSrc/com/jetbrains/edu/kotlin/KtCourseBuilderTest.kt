@@ -15,10 +15,13 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/kotlin_course.json")
     val expectedFileTree = fileTree {
+      dir(".idea") {}
       dir("lesson1") {
         dir("task1") {
           dir("src") {
             file("Task.kt")
+          }
+          dir("test") {
             file("tests.kt")
           }
         }
@@ -26,6 +29,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("src") {
             file("JavaCode.java")
             file("Task.kt")
+          }
+          dir("test") {
             file("tests.kt")
           }
         }
@@ -34,6 +39,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.kt")
+          }
+          dir("test") {
             file("tests.kt")
           }
         }
@@ -41,9 +48,11 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
       dir("util") {
         dir("src") {
           file("koansTestUtil.kt")
-          file("EduTestRunner.java")
         }
+        dir("test") {}
       }
+      file("build.gradle")
+      file("settings.gradle")
     }
     expectedFileTree.assertEquals(rootDir)
   }
@@ -53,19 +62,19 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
     createCourseStructure(courseBuilder, course, defaultSettings)
 
     val expectedFileTree = fileTree {
+      dir(".idea") {}
       dir("lesson1") {
         dir("task1") {
           dir("src") {
             file("Task.kt")
+          }
+          dir("test") {
             file("Tests.kt")
           }
         }
       }
-      dir("util") {
-        dir("src") {
-          file("EduTestRunner.java")
-        }
-      }
+      file("build.gradle")
+      file("settings.gradle")
     }
 
     expectedFileTree.assertEquals(rootDir)
