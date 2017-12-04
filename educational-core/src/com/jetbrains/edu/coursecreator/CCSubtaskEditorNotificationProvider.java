@@ -214,7 +214,7 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
       if (activeSubtaskIndex > mySubtaskIndex) {
         myTask.setActiveSubtaskIndex(activeSubtaskIndex - 1);
       }
-      SubtaskUtils.updateUI(myProject, myTask, true);
+      SubtaskUtils.updateUI(myProject, myTask, taskDir, true);
       for (VirtualFile file : FileEditorManager.getInstance(myProject).getOpenFiles()) {
         EditorNotifications.getInstance(myProject).updateNotifications(file);
       }
