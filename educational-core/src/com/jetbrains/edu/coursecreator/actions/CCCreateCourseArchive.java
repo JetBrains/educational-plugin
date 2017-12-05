@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -99,6 +100,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     if (archiveFolder == null) {
       return false;
     }
+    FileDocumentManager.getInstance().saveAllDocuments();
 
     final Ref<Boolean> isCreationSuccessful = Ref.create();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
