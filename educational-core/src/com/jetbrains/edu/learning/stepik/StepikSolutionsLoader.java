@@ -36,13 +36,10 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import static com.jetbrains.edu.learning.stepik.StepikConnector.getLastSubmission;
-import static com.jetbrains.edu.learning.stepik.StepikConnector.getSolutionForStepikAssignment;
-import static com.jetbrains.edu.learning.stepik.StepikConnector.removeAllTags;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.*;
 
 public class StepikSolutionsLoader implements Disposable{
   private static final Logger LOG = Logger.getInstance(StepikSolutionsLoader.class);
-  private static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
   private static final String PROGRESS_ID_PREFIX = "77-";
   private final HashMap<Integer, Future> myFutures = new HashMap<>();
   private final Project myProject;
@@ -166,24 +163,20 @@ public class StepikSolutionsLoader implements Disposable{
   private List<Task> tasksToUpdate(@NotNull Course course) {
     List<Task> tasksToUpdate = new ArrayList<>();
     Task[] allTasks = course.getLessons().stream().flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
-    int length = allTasks.length;
-    for (int i = 0; i < length; i += MAX_REQUEST_PARAMS) {
-      List<Task> sublist = Arrays.asList(allTasks).subList(i, Math.min(i + MAX_REQUEST_PARAMS, length));
-      String[] progresses = sublist.stream().map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
-      Boolean[] taskStatuses = StepikConnector.taskStatuses(progresses);
-      if (taskStatuses == null) return tasksToUpdate;
-      for (int j = 0; j < sublist.size(); j++) {
-        Boolean isSolved = taskStatuses[j];
-        Task task = sublist.get(j);
-        boolean toUpdate = false;
-        if (isSolved != null && !(task instanceof TheoryTask)) {
-          toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
-        }
-        if (toUpdate) {
-          CheckStatus checkStatus = isSolved ? CheckStatus.Solved : CheckStatus.Failed;
-          task.setStatus(checkStatus);
-          tasksToUpdate.add(task);
-        }
+    String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
+    Boolean[] taskStatuses = taskStatuses(progresses);
+    if (taskStatuses == null) return tasksToUpdate;
+    for (int j = 0; j < allTasks.length; j++) {
+      Boolean isSolved = taskStatuses[j];
+      Task task = allTasks[j];
+      boolean toUpdate = false;
+      if (isSolved != null && !(task instanceof TheoryTask)) {
+        toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
+      }
+      if (toUpdate) {
+        CheckStatus checkStatus = isSolved ? CheckStatus.Solved : CheckStatus.Failed;
+        task.setStatus(checkStatus);
+        tasksToUpdate.add(task);
       }
     }
     return tasksToUpdate;
@@ -284,7 +277,7 @@ public class StepikSolutionsLoader implements Disposable{
         TaskFile taskFile = task.getTaskFile(file.name);
         if (taskFile != null) {
           task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
-          if (StepikConnector.setPlaceholdersFromTags(taskFile, file)) {
+          if (setPlaceholdersFromTags(taskFile, file)) {
             return removeAllTags(file.text);
           }
           else {

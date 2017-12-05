@@ -50,6 +50,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 
@@ -66,6 +67,7 @@ public class StepikConnector {
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
   private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
+  public static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
 
   private StepikConnector() {
   }
@@ -363,29 +365,25 @@ public class StepikConnector {
   }
 
   private static String[] getUnitsIds(String[] sectionIds) throws IOException, URISyntaxException {
-    SectionContainer sectionContainer = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
-    if (sectionContainer != null && sectionContainer.sections != null) {
-      return sectionContainer.sections.stream()
-              .map(section -> section.units)
-              .flatMap(unitList -> unitList.stream())
-              .map(unit -> String.valueOf(unit))
-              .toArray(String[]::new);
-    }
-    else {
-      return new String[]{};
-    }
+    List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
+    Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
+    return allSections
+            .map(section -> section.units)
+            .flatMap(unitList -> unitList.stream())
+            .map(unit -> String.valueOf(unit))
+            .toArray(String[]::new);
   }
 
-  @Nullable
+  @NotNull
   private static List<Lesson> getLessons(String[] unitIds) throws IOException, URISyntaxException {
-    UnitContainer unitContainer = multipleRequestToStepik(StepikNames.UNITS, unitIds, UnitContainer.class);
-    if (unitContainer == null) {
-      return null;
-    }
-    String[] lessonIds = unitContainer.units.stream().map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
-    LessonContainer lessonContainer = multipleRequestToStepik(StepikNames.LESSONS, lessonIds, LessonContainer.class);
-    if (lessonContainer == null) return null;
-    return sortLessonsByUnits(lessonContainer, unitContainer.units);
+    List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitIds, UnitContainer.class);
+    Stream<Unit> allUnits = unitContainers.stream().flatMap(container -> container.units.stream());
+    String[] lessonIds = allUnits.map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
+
+    List<LessonContainer> lessonContainers = multipleRequestToStepik(StepikNames.LESSONS, lessonIds, LessonContainer.class);
+    List<Lesson> lessons = lessonContainers.stream().flatMap(lessonContainer -> lessonContainer.lessons.stream()).collect(Collectors.toList());
+    List<Unit> units = unitContainers.stream().flatMap(container -> container.units.stream()).collect(Collectors.toList());
+    return sortLessonsByUnits(units, lessons);
   }
 
   /**
@@ -393,17 +391,17 @@ public class StepikConnector {
    * So we need to sort lesson by units to keep correct course structure
    */
   @NotNull
-  private static List<Lesson> sortLessonsByUnits(LessonContainer lessonContainer, List<Unit> units) {
+  private static List<Lesson> sortLessonsByUnits(List<Unit> units, List<Lesson> lessons) {
     HashMap<Integer, Lesson> idToLesson = new HashMap<>();
-    for (Lesson lesson : lessonContainer.lessons) {
+    for (Lesson lesson : lessons) {
       idToLesson.put(lesson.getId(), lesson);
     }
-    List<Lesson> lessons = new ArrayList<>();
+    List<Lesson> sorted = new ArrayList<>();
     for (Unit unit : units) {
       int lessonId = unit.lesson;
-      lessons.add(idToLesson.get(lessonId));
+      sorted.add(idToLesson.get(lessonId));
     }
-    return lessons;
+    return sorted;
   }
 
   private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds) throws IOException {
@@ -411,9 +409,6 @@ public class StepikConnector {
     final List<Lesson> lessons = new ArrayList<>();
     try {
       List<Lesson> lessonsFromUnits = getLessons(unitIds);
-      if (lessonsFromUnits == null) {
-        return lessons;
-      }
 
       final int lessonCount = lessonsFromUnits.size();
       for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
@@ -425,14 +420,11 @@ public class StepikConnector {
           progressIndicator.setFraction((double)readableIndex / lessonCount);
         }
         String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
-        StepContainer stepContainer = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class);
-        if (stepContainer == null) {
-          continue;
-        }
-        if (stepIds.length == 0) continue;
+        List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class);
+        List<StepSource> allStepSources = stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
 
-        for (int i = 0; i < stepContainer.steps.size(); i++) {
-          StepSource step = stepContainer.steps.get(i);
+        for (int i = 0; i < allStepSources.size(); i++) {
+          StepSource step = allStepSources.get(i);
           Integer stepId = Integer.valueOf(stepIds[i]);
           StepicUser user = EduSettings.getInstance().getUser();
           StepikTaskBuilder builder = new StepikTaskBuilder(remoteCourse, step, stepId, user == null ? -1 : user.getId());
@@ -478,21 +470,17 @@ public class StepikConnector {
   private static Map<String, String> getFirstCodeTemplates(@NotNull RemoteCourse remoteCourse) throws IOException, URISyntaxException {
     String[] unitsIds = getUnitsIds(remoteCourse.getSections().stream().map(section -> String.valueOf(section)).toArray(String[]::new));
     List<Lesson> lessons = getLessons(unitsIds);
-    if (lessons != null) {
-      for (Lesson lesson : lessons) {
-        String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
-        StepContainer stepContainer = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class);
-        if (stepContainer == null) {
-          break;
-        }
+    for (Lesson lesson : lessons) {
+      String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
+      List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class);
+      List<StepSource> allStepSources = stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
 
-        for (StepSource stepSource : stepContainer.steps) {
-          Step step = stepSource.block;
-          if (step != null && step.name.equals("code") && step.options != null) {
-            Map<String, String> codeTemplates = step.options.codeTemplates;
-            if (codeTemplates != null) {
-              return codeTemplates;
-            }
+      for (StepSource stepSource : allStepSources) {
+        Step step = stepSource.block;
+        if (step != null && step.name.equals("code") && step.options != null) {
+          Map<String, String> codeTemplates = step.options.codeTemplates;
+          if (codeTemplates != null) {
+            return codeTemplates;
           }
         }
       }
@@ -618,9 +606,8 @@ public class StepikConnector {
   @Nullable
   static Boolean[] taskStatuses(String[] progresses) {
     try {
-      ProgressContainer progressContainer = multipleRequestToStepik(StepikNames.PROGRESS, progresses, ProgressContainer.class);
-      if (progressContainer == null) return null;
-      List<ProgressContainer.Progress> progressList = progressContainer.progresses;
+      List<ProgressContainer> progressContainers = multipleRequestToStepik(StepikNames.PROGRESS, progresses, ProgressContainer.class);
+      List<ProgressContainer.Progress> progressList = progressContainers.stream().flatMap(progressContainer -> progressContainer.progresses.stream()).collect(Collectors.toList());
       return progressList.stream().map(progress -> progress.isPassed).toArray(Boolean[]::new);
     }
     catch (URISyntaxException | IOException e) {
@@ -630,14 +617,21 @@ public class StepikConnector {
     return null;
   }
 
-  @Nullable
-  private static <T> T multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
-    URIBuilder builder = new URIBuilder(apiUrl);
-    for (String id : ids) {
-      builder.addParameter("ids[]", id);
+  private static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
+    List<T> result = new ArrayList<>();
+
+    int length = ids.length;
+    for (int i = 0; i < length ; i += MAX_REQUEST_PARAMS) {
+      URIBuilder builder = new URIBuilder(apiUrl);
+      List<String> sublist = Arrays.asList(ids).subList(i, Math.min(i + MAX_REQUEST_PARAMS, length));
+      for (String id : sublist) {
+        builder.addParameter("ids[]", id);
+      }
+      String link = builder.build().toString();
+      result.add(getFromStepik(link, container));
     }
-    String link = builder.build().toString();
-    return getFromStepik(link, container);
+
+    return result;
   }
 
   public static void postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
