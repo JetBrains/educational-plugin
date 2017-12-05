@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
+import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,6 +87,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
             editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
           }
         }
+        EduLaunchesReporter.INSTANCE.sendStats();
       }
     }
   }
