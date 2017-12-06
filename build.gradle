@@ -152,7 +152,7 @@ subprojects {
         test {
             java.srcDirs 'testSrc'
             resources.srcDirs 'testResources'
-kotlin.srcDirs 'testSrc'
+            kotlin.srcDirs 'testSrc'
         }
     }
 
