@@ -9,10 +9,14 @@ public interface TaskCheckerProvider {
     TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project);
 
     @NotNull
-    TaskChecker<OutputTask> getOutputTaskChecker(@NotNull OutputTask task, @NotNull Project project);
+    default TaskChecker<OutputTask> getOutputTaskChecker(@NotNull OutputTask task, @NotNull Project project) {
+        return new TaskChecker<>(task, project);
+    }
 
     @NotNull
-    TaskChecker<TheoryTask> getTheoryTaskChecker(@NotNull TheoryTask task, @NotNull Project project);
+    default TaskChecker<TheoryTask> getTheoryTaskChecker(@NotNull TheoryTask task, @NotNull Project project) {
+        return new TaskChecker<>(task, project);
+    }
 
     @NotNull
     default TaskChecker<ChoiceTask> getChoiceTaskChecker(@NotNull ChoiceTask task, @NotNull Project project) {
