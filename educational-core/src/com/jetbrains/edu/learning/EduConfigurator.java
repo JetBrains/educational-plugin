@@ -48,7 +48,7 @@ public interface EduConfigurator<Settings> {
   }
 
   /**
-   * @return true for all the test files including tests for subtasks
+   * @return class that provide checkers for all types of tasks
    */
   @NotNull TaskCheckerProvider getTaskCheckerProvider();
 
