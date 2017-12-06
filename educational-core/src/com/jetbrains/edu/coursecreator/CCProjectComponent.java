@@ -66,7 +66,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       Module[] modules = moduleManager.getModules();
       final ModifiableModuleModel modifiableModuleModel = moduleManager.getModifiableModel();
       for (Module module : modules) {
-        ModuleDeleteProvider.removeModule(module, null, Collections.emptyList(), modifiableModuleModel);
+        ModuleDeleteProvider.removeModule(module, Collections.emptyList(), modifiableModuleModel);
         ModuleBuilder.deleteModuleFile(module.getModuleFilePath());
       }
 
