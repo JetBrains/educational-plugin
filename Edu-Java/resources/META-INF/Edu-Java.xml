@@ -4,6 +4,13 @@
 
     <extensions defaultExtensionNs="Educational">
         <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
+
+        <taskChecker language="JAVA" implementationClass="com.jetbrains.edu.learning.checker.OutputTaskChecker"/>
+        <taskChecker language="JAVA" implementationClass="com.jetbrains.edu.learning.checker.TaskWithSubtasksChecker"/>
+        <taskChecker language="JAVA" implementationClass="com.jetbrains.edu.learning.checker.ChoiceTaskChecker"/>
+        <taskChecker language="JAVA" implementationClass="com.jetbrains.edu.learning.checker.CodeTaskChecker"/>
+        <taskChecker language="JAVA" implementationClass="com.jetbrains.edu.learning.checker.TheoryTaskChecker"/>
+        <taskChecker language="JAVA" implementationClass="com.jetbrains.edu.java.JTaskChecker"/>
     </extensions>
 
     <extensions defaultExtensionNs="educational">

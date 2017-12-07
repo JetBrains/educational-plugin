@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat.tasks
 
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.OutputTaskChecker
 
 /**
@@ -15,6 +14,4 @@ class OutputTask : Task() {
   }
 
   override fun getTaskType() = OUTPUT_TASK_TYPE
-
-  override fun getChecker(project: Project) = OutputTaskChecker(this, project)
 }

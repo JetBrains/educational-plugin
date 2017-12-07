@@ -56,12 +56,6 @@ import java.util.List;
   }
 
   @Override
-  @NotNull
-  public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project) {
-    return new PyTaskChecker(task, project);
-  }
-
-  @Override
   public List<String> getBundledCoursePaths() {
     File bundledCourseRoot = EduUtils.getBundledCourseRoot(COURSE_NAME, PyConfigurator.class);
     return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), COURSE_NAME));

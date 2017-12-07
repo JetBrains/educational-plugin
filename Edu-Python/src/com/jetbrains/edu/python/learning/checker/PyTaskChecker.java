@@ -9,12 +9,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.actions.CheckAction;
-import com.jetbrains.edu.learning.checker.EduTaskChecker;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checker.TestsOutputParser;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -26,41 +26,43 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-public class PyTaskChecker extends EduTaskChecker {
+public class PyTaskChecker extends TaskChecker {
   private static final Logger LOG = Logger.getInstance(PyTaskChecker.class);
 
-  public PyTaskChecker(EduTask task, Project project) {
-    super(task, project);
+  @Override
+  public boolean isAccepted(@NotNull Task task) {
+    return task instanceof EduTask;
   }
 
+  @NotNull
   @Override
-  public CheckResult check() {
-    VirtualFile taskDir = myTask.getTaskDir(myProject);
+  public CheckResult check(@NotNull Task task, @NotNull Project project) {
+    VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
-      LOG.info("taskDir is null for task " + myTask.getName());
+      LOG.info("taskDir is null for task " + task.getName());
       return new CheckResult(CheckStatus.Unchecked, "Task is broken");
     }
 
-    if (!myTask.isValid(myProject)) {
+    if (!task.isValid(project)) {
       return new CheckResult(CheckStatus.Unchecked,
               EduEditor.BROKEN_SOLUTION_ERROR_TEXT_START + EduEditor.ACTION_TEXT + EduEditor.BROKEN_SOLUTION_ERROR_TEXT_END);
     }
     CountDownLatch latch = new CountDownLatch(1);
     ApplicationManager.getApplication()
       .invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-        CheckUtils.flushWindows(myTask, taskDir);
+        CheckUtils.flushWindows(task, taskDir);
         latch.countDown();
       }));
-    final PyTestRunner testRunner = new PyTestRunner(myTask, taskDir);
+    final PyTestRunner testRunner = new PyTestRunner(task, taskDir);
     try {
-      final VirtualFile fileToCheck = getTaskVirtualFile(myTask, taskDir);
+      final VirtualFile fileToCheck = getTaskVirtualFile(task, taskDir);
       if (fileToCheck != null) {
         //otherwise answer placeholders might have been not flushed yet
         latch.await();
-        Process testProcess = testRunner.createCheckProcess(myProject, fileToCheck.getPath());
+        Process testProcess = testRunner.createCheckProcess(project, fileToCheck.getPath());
         TestsOutputParser.TestsOutput output =
           CheckUtils
-            .getTestOutput(testProcess, testRunner.getCommandLine().getCommandLineString(), myTask.getLesson().getCourse().isAdaptive());
+            .getTestOutput(testProcess, testRunner.getCommandLine().getCommandLineString(), task.getLesson().getCourse().isAdaptive());
         return new CheckResult(output.isSuccess() ? CheckStatus.Solved : CheckStatus.Failed, output.getMessage());
       }
     }
@@ -71,36 +73,36 @@ public class PyTaskChecker extends EduTaskChecker {
   }
 
   @Override
-  public void clearState() {
+  public void clearState(@NotNull Task task, @NotNull Project project) {
     ApplicationManager.getApplication().invokeLater(() -> {
-      CheckUtils.drawAllPlaceholders(myProject, myTask);
-      VirtualFile taskDir = myTask.getTaskDir(myProject);
+      CheckUtils.drawAllPlaceholders(project, task);
+      VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir != null) {
-        EduUtils.deleteWindowDescriptions(myTask, taskDir);
+        EduUtils.deleteWindowDescriptions(task, taskDir);
       }
     });
   }
 
   @Override
-  public void onTaskFailed(@NotNull String message) {
-    super.onTaskFailed(message);
+  public void onTaskFailed(@NotNull Task task, @NotNull Project project, @NotNull String message) {
+    super.onTaskFailed(task, project, message);
     ApplicationManager.getApplication().invokeLater(() -> {
-      VirtualFile taskDir = myTask.getTaskDir(myProject);
+      VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir == null) return;
-      for (Map.Entry<String, TaskFile> entry : myTask.getTaskFiles().entrySet()) {
+      for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
         final String name = entry.getKey();
         final TaskFile taskFile = entry.getValue();
         if (taskFile.getActivePlaceholders().size() < 2) {
           continue;
         }
-        final Course course = myTask.getLesson().getCourse();
+        final Course course = task.getLesson().getCourse();
         if (course != null && course.isStudy()) {
           CommandProcessor.getInstance().runUndoTransparentAction(
             () -> ApplicationManager.getApplication().runWriteAction(
-              () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(myTask, taskDir), name, taskFile, myProject)));
+              () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(task, taskDir), name, taskFile, project)));
         }
       }
-      CheckUtils.navigateToFailedPlaceholder(new EduState(EduUtils.getSelectedStudyEditor(myProject)), myTask, taskDir, myProject);
+      CheckUtils.navigateToFailedPlaceholder(new EduState(EduUtils.getSelectedStudyEditor(project)), task, taskDir, project);
     });
   }
 

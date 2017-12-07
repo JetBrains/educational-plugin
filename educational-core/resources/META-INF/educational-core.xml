@@ -27,6 +27,10 @@
         <extensionPoint qualifiedName="Educational.configurator" beanClass="com.intellij.lang.LanguageExtensionPoint">
             <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduConfigurator"/>
         </extensionPoint>
+        <extensionPoint qualifiedName="Educational.taskChecker"
+                        beanClass="com.intellij.lang.LanguageExtensionPoint">
+            <with attribute="implementationClass" implements="com.jetbrains.edu.learning.checker.TaskChecker"/>
+        </extensionPoint>
         <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
                         interface="com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator"/>
         <extensionPoint qualifiedName="Educational.checkListener"
