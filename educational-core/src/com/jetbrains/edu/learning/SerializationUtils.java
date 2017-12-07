@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -15,7 +14,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.hash.HashMap;
-import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -387,7 +386,7 @@ public class SerializationUtils {
     }
 
     public static Element convertToEighthVersion(Element state, Project project) throws StudyUnrecognizedFormatException {
-      if (PropertiesComponent.getInstance().getBoolean(CCPluginToggleAction.COURSE_CREATOR_ENABLED)) {
+      if (CCUtils.isCourseCreator(project)) {
         Element taskManagerElement = state.getChild(MAIN_ELEMENT);
         Element courseHolder = getChildWithName(taskManagerElement, COURSE);
         Element courseElement = courseHolder.getChild(COURSE_TITLED);
