@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepic;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.BrowserUtil;
@@ -38,11 +39,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.BuiltInServerOptions;
 import org.jetbrains.ide.BuiltInServerManager;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.stepic.StepicNames.PYCHARM_PREFIX;
 
@@ -58,6 +63,7 @@ public class StepicConnector {
       "we would like to verify this with you; we think with improvement this can be listed as a featured course in the future.";
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
+  private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
 
   private StepicConnector() {
   }
@@ -82,7 +88,7 @@ public class StepicConnector {
   @NotNull
   public static List<Course> getCourses(@Nullable StepicUser user) {
     List<Course> result = new ArrayList<>();
-    final List<Integer> featuredCourses = EduUtils.getFeaturedCourses();
+    final List<Integer> featuredCourses = getFeaturedCourses();
     try {
       int pageNumber = 1;
       while (addCoursesFromStepic(user, result, pageNumber, featuredCourses)) {
@@ -210,9 +216,23 @@ public class StepicConnector {
         if (info.isPublic() && !featuredCourses.contains(info.getId())) {
           info.setDescription(info.getDescription() + NOT_VERIFIED_NOTE);
         }
+        info.setVisibility(getVisibility(info, featuredCourses));
         result.add(info);
       }
     }
+  }
+
+  private static CourseVisibility getVisibility(@NotNull RemoteCourse course, @NotNull List<Integer> featuredCourses) {
+    if (!course.isPublic()) {
+      return CourseVisibility.PrivateVisibility.INSTANCE;
+    }
+    if (featuredCourses.contains(course.getId())) {
+      return new CourseVisibility.FeaturedVisibility(featuredCourses.indexOf(course.getId()));
+    }
+    if (featuredCourses.isEmpty()) {
+      return CourseVisibility.LocalVisibility.INSTANCE;
+    }
+    return CourseVisibility.PublicVisibility.INSTANCE;
   }
 
   public static Course getCourseByLink(@NotNull StepicUser user, @NotNull String link) throws IOException {
@@ -779,6 +799,20 @@ public class StepicConnector {
       LOG.warn("Failed getting section: " + lessonId);
     }
     return new Lesson();
+  }
+
+  @NotNull
+  public static List<Integer> getFeaturedCourses() {
+    try {
+      final URL url = new URL(PROMOTED_COURSES_LINK);
+      URLConnection conn = url.openConnection();
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+        return reader.lines().map(s -> Integer.valueOf(s.split("#")[0].trim())).collect(Collectors.toList());
+      }
+    } catch (IOException e) {
+      LOG.warn("Failed to get promoted courses");
+    }
+    return Lists.newArrayList();
   }
 
 

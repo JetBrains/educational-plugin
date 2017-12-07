@@ -107,8 +107,6 @@ import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTa
 
 public class EduUtils {
 
-  private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
-
   private EduUtils() {
   }
 
@@ -1104,19 +1102,5 @@ public class EduUtils {
       LOG.error(e);
     }
     return null;
-  }
-
-  @NotNull
-  public static List<Integer> getFeaturedCourses() {
-    try {
-      final URL url = new URL(PROMOTED_COURSES_LINK);
-      URLConnection conn = url.openConnection();
-      try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-        return reader.lines().map(s -> Integer.valueOf(s.split("#")[0].trim())).collect(Collectors.toList());
-      }
-    } catch (IOException e) {
-      LOG.warn("Failed to get promoted courses");
-    }
-    return Lists.newArrayList();
   }
 }

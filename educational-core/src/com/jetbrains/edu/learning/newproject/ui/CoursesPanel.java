@@ -21,13 +21,13 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.EduLanguageDecorator;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -52,9 +53,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
-
 public class CoursesPanel extends JPanel {
   private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
   private static final Logger LOG = Logger.getInstance(CoursesPanel.class);
@@ -70,7 +68,6 @@ public class CoursesPanel extends JPanel {
   private CoursePanel myCoursePanel;
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
-  private final List<Integer> myFeaturedCourses = EduUtils.getFeaturedCourses();
   private MessageBusConnection myBusConnection;
 
   public CoursesPanel(@NotNull List<Course> courses) {
@@ -165,38 +162,12 @@ public class CoursesPanel extends JPanel {
     return new ColoredListCellRenderer<Course>() {
         @Override
         protected void customizeCellRenderer(@NotNull JList<? extends Course> jList, Course course, int i, boolean b, boolean b1) {
-          boolean isPrivate = course instanceof RemoteCourse && !((RemoteCourse)course).isPublic();
           Icon logo = getLogo(course);
           setBorder(JBUI.Borders.empty(5, 0));
-
-          if ((course instanceof RemoteCourse && myFeaturedCourses.contains(((RemoteCourse) course).getId())) ||
-              myFeaturedCourses.isEmpty()) {
-            append(course.getName());
-            setIcon(logo);
-            setToolTipText(null);
-          }
-          else if (isPrivate) {
-            append(course.getName());
-            setIcon(getPrivateCourseIcon(logo));
-            setToolTipText("Course is private");
-          } else {
-            append(course.getName(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
-            setIcon(getNotApprovedCourseIcon(logo));
-            setToolTipText("Course has not been approved by JetBrains yet");
-          }
-        }
-
-        @NotNull
-        public LayeredIcon getPrivateCourseIcon(@Nullable Icon languageLogo) {
-          LayeredIcon icon = new LayeredIcon(2);
-          icon.setIcon(languageLogo, 0, 0, 0);
-          icon.setIcon(AllIcons.Ide.Readonly, 1, JBUI.scale(7), JBUI.scale(7));
-          return icon;
-        }
-
-        @Nullable
-        public Icon getNotApprovedCourseIcon(@Nullable Icon languageLogo) {
-          return languageLogo != null ? IconLoader.getTransparentIcon(languageLogo) : null;
+          CourseVisibility visibility = course.getVisibility();
+          append(course.getName(), visibility.getTextAttributes());
+          setIcon(visibility.getDecoratedLogo(logo));
+          setToolTipText(visibility.getTooltipText());
         }
       };
   }
@@ -223,26 +194,14 @@ public class CoursesPanel extends JPanel {
     return EduSettings.getInstance().getUser() != null;
   }
 
-  private int getWeight(@NotNull Course course) {
-    final int id = course instanceof RemoteCourse ? ((RemoteCourse) course).getId() : 0;
-    if (course instanceof RemoteCourse && !((RemoteCourse) course).isPublic()) {
-      return CourseWeight.PRIVATE.weight;
-    }
-    if (myFeaturedCourses.contains(id)) {
-      return CourseWeight.FEATURED.weight;
-    }
-    return CourseWeight.PUBLIC.weight;
-  }
-
-  private List<Course> sortCourses(List<Course> courses) {
-    final Map<Integer, List<Course>> groupedCourses = courses.stream().collect(groupingBy(this::getWeight));
-    for (Integer groupWeight : groupedCourses.keySet()) {
-      Comparator<Course> comparator =
-        groupWeight == CourseWeight.FEATURED.weight ? Comparator.comparingInt(o -> myFeaturedCourses.indexOf(((RemoteCourse)o).getId()))
-                                                    : Comparator.comparing(Course::getName);
-      groupedCourses.get(groupWeight).sort(comparator);
-    }
-    return groupedCourses.values().stream().flatMap(Collection::stream).collect(toList());
+  private static List<Course> sortCourses(List<Course> courses) {
+    return ContainerUtil.sorted(courses, (first, second) -> {
+      int visibilityCompared = first.getVisibility().compareTo(second.getVisibility());
+      if (visibilityCompared != 0) {
+        return visibilityCompared;
+      }
+      return first.getName().compareTo(second.getName());
+    });
   }
 
   private void updateModel(List<Course> courses, @Nullable String courseToSelect) {
@@ -501,17 +460,6 @@ public class CoursesPanel extends JPanel {
 
     private void showFailedToAddCourseNotification() {
       Messages.showErrorDialog("Cannot add course from Stepik, please check if link is correct", "Failed to Add Stepik Course");
-    }
-  }
-
-  private enum CourseWeight {
-    PRIVATE(1), FEATURED(2), PUBLIC(3);
-
-    private final int weight;
-
-    CourseWeight(int weight) {
-
-      this.weight = weight;
     }
   }
 }
