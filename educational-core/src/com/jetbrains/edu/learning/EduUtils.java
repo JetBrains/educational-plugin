@@ -8,6 +8,7 @@ import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -262,6 +263,29 @@ public class EduUtils {
     String testFileName = configurator.getTestFileName();
     return name.equals(testFileName) ||
            name.startsWith(FileUtil.getNameWithoutExtension(testFileName)) && name.contains(EduNames.SUBTASK_MARKER);
+  }
+
+  public static List<VirtualFile> getTestFiles(@NotNull Task task, @NotNull Project project) {
+    final Course course = task.getLesson().getCourse();
+    final Language language = course.getLanguageById();
+
+    List<VirtualFile> testFiles = new ArrayList<>();
+    VirtualFile taskDir = task.getTaskDir(project);
+    final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
+
+    if (taskDir == null || configurator == null) {
+      return testFiles;
+    }
+    if (!(task instanceof TaskWithSubtasks)) {
+      testFiles.addAll(Arrays.stream(taskDir.getChildren())
+              .filter(configurator::isTestFile)
+              .collect(Collectors.toList()));
+      return testFiles;
+    }
+    testFiles.addAll(Arrays.stream(taskDir.getChildren())
+            .filter(file -> isTestsFile(project, file.getName()))
+            .collect(Collectors.toList()));
+    return testFiles;
   }
 
   @Nullable
