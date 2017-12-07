@@ -63,7 +63,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
         for (lesson in course.lessons) {
             for (task in lesson.getTaskList()) {
                 try {
-                    val taskDir = task.getTaskDir(myProject) ?: return Assert.fail("Cannot find task directory for task ${task.name}")
+                    val taskDir = task.getTaskDir(myProject) ?: error("Cannot find task directory for task ${task.name}")
                     val firstTaskFileName = task.getTaskFiles().keys.first()
                     val taskFile = taskDir.findFileByRelativePath(firstTaskFileName) ?: continue
 
@@ -117,10 +117,10 @@ abstract class CheckersTestBase : UsefulTestCase() {
         val zipPath = packCourseToZip()
 
         course = EduUtils.getLocalCourse(zipPath)
-                ?: return Assert.fail("Cannot create course from testData/check/${projectName()} project")
+                ?: error("Cannot create course from testData/check/${projectName()} project")
 
         val jdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME)
-                ?: return Assert.fail("Gradle JDK should be configured in setUp()")
+                ?: error("Gradle JDK should be configured in setUp()")
 
         val sdksModel = ProjectSdksModel()
         sdksModel.addSdk(jdk)
@@ -132,7 +132,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
         getGenerator(course).createCourseProject(myTestDir.absolutePath, settings)
         myProject = ProjectManager.getInstance().openProjects.firstOrNull { it.name == UsefulTestCase.TEMP_DIR_MARKER + projectName() }
-                    ?: return Assert.fail("Cannot find project with name ${projectName()}")
+                    ?: error("Cannot find project with name ${projectName()}")
     }
 
     private fun packCourseToZip(): String {
