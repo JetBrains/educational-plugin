@@ -31,6 +31,8 @@ public class Course {
   private String courseType = EduNames.PYCHARM;
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
+  protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
+
   public Course() {}
 
   /**
@@ -260,5 +262,15 @@ public class Course {
 
   public void setLanguageCode(String languageCode) {
     myLanguageCode = languageCode;
+  }
+
+  @Transient
+  public CourseVisibility getVisibility() {
+    return myVisibility;
+  }
+
+  @Transient
+  public void setVisibility(CourseVisibility visibility) {
+    myVisibility = visibility;
   }
 }
