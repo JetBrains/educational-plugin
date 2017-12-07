@@ -12,7 +12,6 @@ import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -70,7 +69,7 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
     }
 
     val outputPatternFile = task.getTaskDir(project)?.findChild(OUTPUT_PATTERN_NAME)
-            ?: return CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH)
+            ?: return CheckResult.FAILED_TO_CHECK
     val expectedOutput = VfsUtil.loadText(outputPatternFile)
     var outputString = output.joinToString("")
     if (outputString.isEmpty()) {

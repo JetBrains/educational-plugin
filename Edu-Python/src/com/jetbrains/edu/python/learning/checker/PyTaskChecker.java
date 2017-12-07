@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
@@ -68,7 +67,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
     catch (ExecutionException | InterruptedException e) {
       LOG.error(e);
     }
-    return new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH);
+    return CheckResult.FAILED_TO_CHECK;
   }
 
   @Override
