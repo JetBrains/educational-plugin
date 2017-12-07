@@ -1,13 +1,9 @@
 package com.jetbrains.edu.kotlin.studio
 
-import com.intellij.openapi.project.Project
 import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.kotlin.KtConfigurator
-import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 
 class KtConfigurator : KtConfigurator() {
@@ -20,9 +16,6 @@ class KtConfigurator : KtConfigurator() {
     val excluded = super.excludeFromArchive(path)
     return excluded || path.contains("build") || PathUtil.getFileName(path) in NAMES_TO_EXCLUDE
   }
-
-  override fun getEduTaskChecker(EduTask: EduTask, project: Project): TaskChecker<EduTask> =
-          KtTaskChecker(EduTask, project)
 
   override fun isEnabled(): Boolean = EduUtils.isAndroidStudio()
 

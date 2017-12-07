@@ -1,13 +1,10 @@
 package com.jetbrains.edu.kotlin;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.intellij.EduConfiguratorBase;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import org.jetbrains.annotations.NotNull;
@@ -43,11 +40,6 @@ public class KtConfigurator extends EduConfiguratorBase {
     return TESTS_KT.equals(name) || LEGACY_TESTS_KT.equals(name) || name.contains(FileUtil.getNameWithoutExtension(TESTS_KT)) && name.contains(EduNames.SUBTASK_MARKER);
   }
 
-  @NotNull
-  @Override
-  public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask eduTask, @NotNull Project project) {
-    return new KtTaskChecker(eduTask, project);
-  }
 
   @Override
   public List<String> getBundledCoursePaths() {
