@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfigurati
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
-class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<TheoryTask>(task, project) {
+open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<TheoryTask>(task, project) {
     override fun onTaskSolved(message: String) {}
 
     override fun check(): CheckResult {

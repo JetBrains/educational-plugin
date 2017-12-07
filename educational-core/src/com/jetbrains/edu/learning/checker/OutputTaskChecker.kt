@@ -20,7 +20,7 @@ import java.util.*
 import java.util.concurrent.CountDownLatch
 
 
-class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<OutputTask>(task, project) {
+open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<OutputTask>(task, project) {
   companion object {
     val OUTPUT_PATTERN_NAME = "output.txt"
   }

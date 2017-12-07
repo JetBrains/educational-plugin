@@ -2,12 +2,15 @@ package com.jetbrains.edu.kotlin.check
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.FAILED_TO_CHECK
+import com.jetbrains.edu.learning.checker.OutputTaskChecker
+import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 
-class KtOutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<OutputTask>(task, project) {
+class KtOutputTaskChecker(task: OutputTask, project: Project) : OutputTaskChecker(task, project) {
     override fun check(): CheckResult {
         val mainClassName = getMainClassName(project) ?: return FAILED_TO_CHECK
         val taskName = "${getGradleProjectName(task)}:run"
