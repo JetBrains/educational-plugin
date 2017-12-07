@@ -28,13 +28,14 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.SerializationUtils.*;
-import static com.jetbrains.edu.learning.SerializationUtils.Xml.*;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.*;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 /**
  * @deprecated since version 3
