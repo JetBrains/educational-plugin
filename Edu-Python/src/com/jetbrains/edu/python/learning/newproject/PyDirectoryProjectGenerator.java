@@ -180,6 +180,7 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
     }
   }
 
+  @Nullable
   static String getBaseSdk(@NotNull final Course course) {
     LanguageLevel baseLevel = LanguageLevel.PYTHON36;
     final String version = course.getLanguageVersion();
@@ -206,7 +207,8 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
         }
       }
     }
-    return baseSdk != null ? baseSdk : baseSdks.iterator().next();
+    if (baseSdk != null) return baseSdk;
+    return baseSdks.isEmpty() ? null : baseSdks.iterator().next();
   }
 
   @Nullable
