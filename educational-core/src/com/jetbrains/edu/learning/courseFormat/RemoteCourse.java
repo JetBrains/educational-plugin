@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepic.StepicConnector;
 import com.jetbrains.edu.learning.stepic.StepicNames;
@@ -59,8 +58,7 @@ public class RemoteCourse extends Course {
   @Override
   public List<Tag> getTags() {
     final List<Tag> tags = super.getTags();
-    final List<Integer> featuredCourses = EduUtils.getFeaturedCourses();
-    if (featuredCourses.contains(getId())) {
+    if (getVisibility() instanceof CourseVisibility.FeaturedVisibility) {
       tags.add(new FeaturedTag());
     }
     return tags;
