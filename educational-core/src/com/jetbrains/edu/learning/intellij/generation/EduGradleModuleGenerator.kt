@@ -6,6 +6,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -58,7 +59,9 @@ object EduGradleModuleGenerator {
             GeneratorUtils.createTaskFile(src, taskFile)
         }
         createTests(task, test)
-        createDescriptionFiles(src, task)
+        if (CCUtils.COURSE_MODE == task.lesson.course.courseMode) {
+            createDescriptionFiles(src, task)
+        }
     }
 
 

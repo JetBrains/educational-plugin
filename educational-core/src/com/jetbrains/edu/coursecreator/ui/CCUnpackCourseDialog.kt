@@ -53,6 +53,7 @@ class CCUnpackCourseDialog(val course: Course) : DialogWrapper(true) {
     if (language == null) return
 
     close(OK_EXIT_CODE)
+    course.courseMode = CCUtils.COURSE_MODE
     EduConfiguratorManager.forLanguage(language)
         ?.courseBuilder
         ?.getCourseProjectGenerator(course)
@@ -60,7 +61,6 @@ class CCUnpackCourseDialog(val course: Course) : DialogWrapper(true) {
     val project = guessProjectForFile(VfsUtil.findFileByIoFile(File(location), true))
     if (project == null) return
     val application = ApplicationManager.getApplication()
-    course.courseMode = CCUtils.COURSE_MODE
 
     var index = 1
     var taskIndex = 1
