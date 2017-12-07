@@ -1,5 +1,8 @@
 package com.jetbrains.edu.learning.courseGeneration;
 
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -7,6 +10,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -78,7 +82,9 @@ public class GeneratorUtils {
       createTaskFile(taskDir, taskFile.getValue());
     }
     createTestFiles(taskDir, task);
-    createDescriptionFiles(taskDir, task);
+    if (CCUtils.COURSE_MODE.equals(task.getLesson().getCourse().getCourseMode())) {
+      createDescriptionFiles(taskDir, task);
+    }
   }
 
   public static void createTaskFile(@NotNull final VirtualFile taskDir, @NotNull final TaskFile taskFile) throws IOException {

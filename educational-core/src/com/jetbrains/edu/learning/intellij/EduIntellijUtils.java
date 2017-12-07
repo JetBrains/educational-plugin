@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.intellij;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -9,6 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -58,8 +60,10 @@ public class EduIntellijUtils {
           if (testFileName != null) {
             createFromTemplate(project, src, testFileName);
           }
-          String taskDescriptionFileName = EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat());
-          createFromTemplate(project, src, taskDescriptionFileName);
+          if (CCUtils.isCourseCreator(project)) {
+            String taskDescriptionFileName = EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat());
+            createFromTemplate(project, src, taskDescriptionFileName);
+          }
         }
       }
     };
