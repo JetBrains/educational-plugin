@@ -41,6 +41,7 @@ import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.sdk.*;
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -192,6 +193,7 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
     }
   }
 
+  @Nullable
   static String getBaseSdk(@NotNull final Course course) {
     LanguageLevel baseLevel = LanguageLevel.PYTHON30;
     final String version = course.getLanguageVersion();
@@ -218,7 +220,8 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
         }
       }
     }
-    return baseSdk != null ? baseSdk : baseSdks.iterator().next();
+    if (baseSdk != null) return baseSdk;
+    return baseSdks.isEmpty() ? null : baseSdks.iterator().next();
   }
 
   protected void addSdk(@NotNull Project project, @NotNull Sdk sdk) {
