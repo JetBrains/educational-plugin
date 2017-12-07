@@ -37,8 +37,6 @@ public class CheckAction extends DumbAwareActionWithShortcut {
   public static final String ACTION_ID = "Educational.Check";
   private static final String CHECK_TASK = "Check Task";
   private static final String RUN_TASK = "Run Task";
-  public static final String FAILED_CHECK_LAUNCH = "Failed to launch checking";
-  public static final String LOGIN_NEEDED = "Please, login to Stepik to check the task";
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 

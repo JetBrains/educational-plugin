@@ -20,7 +20,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.actions.CheckAction;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
@@ -49,7 +48,7 @@ public abstract class RunConfigurationBasedTaskChecker<T extends Task> extends T
   @NotNull
   @Override
   public CheckResult check() {
-    Ref<CheckResult> result = new Ref<>(new CheckResult(CheckStatus.Unchecked, CheckAction.FAILED_CHECK_LAUNCH));
+    Ref<CheckResult> result = new Ref<>(CheckResult.FAILED_TO_CHECK);
     Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
     if (sdk == null) {
       return result.get();
