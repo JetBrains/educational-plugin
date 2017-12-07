@@ -19,6 +19,8 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
+import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -30,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.SerializationUtils.Xml.REMOTE_COURSE;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.REMOTE_COURSE;
 
 /**
  * Implementation of class which contains all the information
@@ -144,7 +146,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         xmlCourse.removeContent();
         xmlCourse.addContent(course);
       }
-      catch (SerializationUtils.StudyUnrecognizedFormatException e) {
+      catch (StudyUnrecognizedFormatException e) {
         LOG.error("Failed to serialize remote course");
       }
     }
@@ -163,18 +165,18 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       }
       switch (version) {
         case 1:
-          state = SerializationUtils.Xml.convertToSecondVersion(state);
+          state = SerializationUtils.Xml.convertToSecondVersion(myProject, state);
         case 2:
-          state = SerializationUtils.Xml.convertToThirdVersion(state, myProject);
+          state = SerializationUtils.Xml.convertToThirdVersion(myProject, state);
         case 3:
-          state = SerializationUtils.Xml.convertToForthVersion(state);
+          state = SerializationUtils.Xml.convertToFourthVersion(myProject, state);
         case 4:
-          state = SerializationUtils.Xml.convertToFifthVersion(state);
+          state = SerializationUtils.Xml.convertToFifthVersion(myProject, state);
           updateTestHelper();
         case 5:
-          state = SerializationUtils.Xml.convertToSixthVersion(state, myProject);
+          state = SerializationUtils.Xml.convertToSixthVersion(myProject, state);
         case 6:
-          state = SerializationUtils.Xml.convertToSeventhVersion(state);
+          state = SerializationUtils.Xml.convertToSeventhVersion(myProject, state);
         //uncomment for future versions
 //        case 7:
 //          state = StudySerializationUtils.Xml.convertToEighthVersion(state, myProject);
@@ -185,7 +187,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         myCourse.initCourse(true);
       }
     }
-    catch (SerializationUtils.StudyUnrecognizedFormatException e) {
+    catch (StudyUnrecognizedFormatException e) {
       LOG.error("Unexpected course format:\n", new XMLOutputter().outputString(state));
     }
   }
@@ -214,10 +216,10 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     }));
   }
 
-  private void deserialize(Element state) throws SerializationUtils.StudyUnrecognizedFormatException {
+  private void deserialize(Element state) throws StudyUnrecognizedFormatException {
     final Element taskManagerElement = state.getChild(SerializationUtils.Xml.MAIN_ELEMENT);
     if (taskManagerElement == null) {
-      throw new SerializationUtils.StudyUnrecognizedFormatException();
+      throw new StudyUnrecognizedFormatException();
     }
     XmlSerializer.deserializeInto(this, taskManagerElement);
     final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
