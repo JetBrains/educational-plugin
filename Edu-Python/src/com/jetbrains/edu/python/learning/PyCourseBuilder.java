@@ -15,6 +15,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
+import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createDescriptionFiles;
 import static com.jetbrains.edu.python.learning.PyConfigurator.TASK_PY;
 import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
 
@@ -49,15 +51,19 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
       String taskDirName = EduNames.TASK + task.getIndex();
       try {
         taskDirectory.set(VfsUtil.createDirectoryIfMissing(parentDirectory, taskDirName));
-      } catch (IOException e) {
-        LOG.error("Failed to create task directory", e);
-      }
-      if (taskDirectory.isNull()) return;
 
-      if (EduUtils.isStudentProject(project) && !task.getTaskFiles().isEmpty()) {
-        createFilesFromText(task, taskDirectory.get());
-      } else {
-        createFilesFromTemplates(project, task, taskDirectory.get());
+        if (taskDirectory.isNull()) return;
+
+        if (EduUtils.isStudentProject(project) && !task.getTaskFiles().isEmpty()) {
+          createFilesFromText(task, taskDirectory.get());
+        } else {
+          createFilesFromTemplates(project, task, taskDirectory.get());
+        }
+        if (CCUtils.COURSE_MODE == task.getLesson().getCourse().getCourseMode()) {
+          createDescriptionFiles(taskDirectory.get(), task);
+        }
+      } catch (IOException e) {
+        LOG.error("Failed to create task content", e);
       }
     });
     return taskDirectory.get();
