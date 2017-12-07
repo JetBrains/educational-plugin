@@ -28,7 +28,6 @@ import com.intellij.ui.content.Content;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -51,9 +50,6 @@ public class CheckUtils {
   public static final String NOT_RUNNABLE_MESSAGE = "Solution isn't runnable";
   public static final String LOGIN_NEEDED_MESSAGE = "Please, login to Stepik to check the task";
   public static final String FAILED_TO_CHECK_MESSAGE = "Failed to launch checking";
-
-  public static final CheckResult FAILED_TO_CHECK = new CheckResult(CheckStatus.Unchecked, FAILED_TO_CHECK_MESSAGE);
-  public static final CheckResult USE_LOCAL_CHECK = new CheckResult(CheckStatus.Unchecked, "Always use local check");
 
   private static final Logger LOG = Logger.getInstance(CheckUtils.class);
 

@@ -67,7 +67,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
     catch (ExecutionException | InterruptedException e) {
       LOG.error(e);
     }
-    return CheckUtils.FAILED_TO_CHECK;
+    return CheckResult.FAILED_TO_CHECK;
   }
 
   @Override

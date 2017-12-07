@@ -3,7 +3,7 @@ package com.jetbrains.edu.kotlin.check
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.learning.checker.CheckUtils.FAILED_TO_CHECK
+import com.jetbrains.edu.learning.checker.CheckResult.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask

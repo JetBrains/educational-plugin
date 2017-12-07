@@ -69,7 +69,7 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
     }
 
     val outputPatternFile = task.getTaskDir(project)?.findChild(OUTPUT_PATTERN_NAME)
-            ?: return CheckUtils.FAILED_TO_CHECK
+            ?: return CheckResult.FAILED_TO_CHECK
     val expectedOutput = VfsUtil.loadText(outputPatternFile)
     var outputString = output.joinToString("")
     if (outputString.isEmpty()) {

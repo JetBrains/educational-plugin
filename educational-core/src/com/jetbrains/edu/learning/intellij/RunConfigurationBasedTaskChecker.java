@@ -48,7 +48,7 @@ public abstract class RunConfigurationBasedTaskChecker<T extends Task> extends T
   @NotNull
   @Override
   public CheckResult check() {
-    Ref<CheckResult> result = new Ref<>(CheckUtils.FAILED_TO_CHECK);
+    Ref<CheckResult> result = new Ref<>(CheckResult.FAILED_TO_CHECK);
     Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
     if (sdk == null) {
       return result.get();

@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.checker.CheckResult;
-import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -406,7 +405,7 @@ public class StepicAdaptiveConnector {
       return result;
     }
 
-    return CheckUtils.FAILED_TO_CHECK;
+    return CheckResult.FAILED_TO_CHECK;
   }
 
   private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {
@@ -443,7 +442,7 @@ public class StepicAdaptiveConnector {
     else {
       LOG.warn("Got an incorrect attempt id: " + attemptId);
     }
-    return CheckUtils.FAILED_TO_CHECK;
+    return CheckResult.FAILED_TO_CHECK;
   }
 
   private static CheckResult doAdaptiveCheck(@NotNull StepicWrappers.SubmissionToPostWrapper submission,
@@ -468,7 +467,7 @@ public class StepicAdaptiveConnector {
         return new CheckResult(CheckStatus.Unchecked, "Can't get check results for Stepik");
       }
     }
-    return CheckUtils.FAILED_TO_CHECK;
+    return CheckResult.FAILED_TO_CHECK;
   }
 
   @Nullable

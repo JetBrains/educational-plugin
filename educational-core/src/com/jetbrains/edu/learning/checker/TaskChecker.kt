@@ -26,7 +26,7 @@ open class TaskChecker<out T: Task>(@JvmField val task: T,@JvmField val project:
      * @return result of a check. If remote check is unsupported returns special instance of check result.
      * @see CheckResult.USE_LOCAL_CHECK
      */
-    open fun checkOnRemote(): CheckResult = CheckUtils.USE_LOCAL_CHECK
+    open fun checkOnRemote(): CheckResult = CheckResult.USE_LOCAL_CHECK
 
     open fun clearState() {}
 
