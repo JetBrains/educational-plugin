@@ -41,9 +41,7 @@ import org.junit.ComparisonFailure
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.reflect.InvocationTargetException
 import java.util.zip.ZipOutputStream
-import javax.swing.SwingUtilities
 
 abstract class CheckersTestBase : UsefulTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
@@ -132,11 +130,9 @@ abstract class CheckersTestBase : UsefulTestCase() {
             override fun getSdkName() = jdk.name
         })
 
-        runInEdtAndWait {
-            getGenerator(course).createCourseProject(myTestDir.absolutePath, settings)
-            myProject = ProjectManager.getInstance().openProjects.firstOrNull { it.name == UsefulTestCase.TEMP_DIR_MARKER + projectName() }
-                    ?: return@runInEdtAndWait Assert.fail("Cannot find project with name ${projectName()}")
-        }
+        getGenerator(course).createCourseProject(myTestDir.absolutePath, settings)
+        myProject = ProjectManager.getInstance().openProjects.firstOrNull { it.name == UsefulTestCase.TEMP_DIR_MARKER + projectName() }
+                    ?: return Assert.fail("Cannot find project with name ${projectName()}")
     }
 
     private fun packCourseToZip(): String {
@@ -218,19 +214,6 @@ abstract class CheckersTestBase : UsefulTestCase() {
             (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
         } finally {
             super.tearDown()
-        }
-    }
-
-    private fun runInEdtAndWait(runnable: () -> Unit) {
-        if (SwingUtilities.isEventDispatchThread()) {
-            runnable()
-        }
-        else {
-            try {
-                SwingUtilities.invokeAndWait(runnable)
-            } catch (e: InvocationTargetException) {
-                throw e.cause ?: e
-            }
         }
     }
 }
