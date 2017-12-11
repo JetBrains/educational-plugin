@@ -58,6 +58,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("src") {
             file("Task.java")
             file("Test.java")
+            file("task.html")
           }
         }
       }
