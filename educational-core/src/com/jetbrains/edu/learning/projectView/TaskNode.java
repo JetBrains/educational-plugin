@@ -82,8 +82,14 @@ public class TaskNode extends EduNode {
   @Override
   public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
     Object value = childNode.getValue();
-    if (value instanceof PsiDirectory && !((PsiDirectory)value).getName().equals(EduNames.SRC)) {
-      return createChildDirectoryNode(null, (PsiDirectory)value);
+    if (value instanceof PsiDirectory) {
+      String dirName = ((PsiDirectory) value).getName();
+      if (dirName.equals(EduNames.BUILD)) {
+        return null;
+      }
+      if (!dirName.equals(EduNames.SRC)) {
+        return createChildDirectoryNode(null, (PsiDirectory)value);
+      }
     }
     if (value instanceof PsiElement) {
       PsiFile psiFile = ((PsiElement) value).getContainingFile();
