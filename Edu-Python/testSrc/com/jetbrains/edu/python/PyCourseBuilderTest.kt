@@ -50,6 +50,26 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
         dir("task1") {
           file("task.py")
           file("tests.py")
+          file("task.html")
+        }
+      }
+      file("test_helper.py")
+    }
+
+    expectedFileTree.assertEquals(rootDir)
+  }
+
+  fun `test new course structure for student`() {
+    val course = newCourse(PythonLanguage.INSTANCE)
+    course.courseMode = "Student"
+    createCourseStructure(courseBuilder, course, defaultSettings)
+
+    val expectedFileTree = fileTree {
+      dir(".idea") {}
+      dir("lesson1") {
+        dir("task1") {
+          file("task.py")
+          file("tests.py")
         }
       }
       file("test_helper.py")
