@@ -386,39 +386,43 @@ public class SerializationUtils {
     }
 
     public static Element convertToEighthVersion(Element state, Project project) throws StudyUnrecognizedFormatException {
-      if (CCUtils.isCourseCreator(project)) {
-        Element taskManagerElement = state.getChild(MAIN_ELEMENT);
-        Element courseHolder = getChildWithName(taskManagerElement, COURSE);
-        Element courseElement = courseHolder.getChild(COURSE_TITLED);
+      Element taskManagerElement = state.getChild(MAIN_ELEMENT);
+      Element courseHolder = getChildWithName(taskManagerElement, COURSE);
+      Element courseElement = courseHolder.getChild(COURSE_TITLED);
+      if (courseElement == null) {
+        courseElement = courseHolder.getChild(REMOTE_COURSE);
         if (courseElement == null) {
-          courseElement = courseHolder.getChild(REMOTE_COURSE);
-          if (courseElement == null) {
+          throw new StudyUnrecognizedFormatException();
+        }
+      }
+
+      Element courseMode = getChildWithName(courseElement, "courseMode");
+      if (!courseMode.getAttributeValue(VALUE).equals(CCUtils.COURSE_MODE)) {
+        return state;
+      }
+
+      for (Element lesson : getChildList(courseElement, LESSONS)) {
+        for (Element task : getChildList(lesson, TASK_LIST)) {
+          Map<String, String> taskTexts = getChildMap(task, TASK_TEXTS);
+          VirtualFile taskDir = getTaskDir(project, lesson, task);
+          if (taskDir == null) {
             throw new StudyUnrecognizedFormatException();
           }
-        }
-        for (Element lesson : getChildList(courseElement, LESSONS)) {
-          for (Element task : getChildList(lesson, TASK_LIST)) {
-            Map<String, String> taskTexts = getChildMap(task, TASK_TEXTS);
-            VirtualFile taskDir = getTaskDir(project, lesson, task);
-            if (taskDir == null) {
-              throw new StudyUnrecognizedFormatException();
-            }
 
-            String extension = FileUtilRt.getExtension(EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat()));
+          String extension = FileUtilRt.getExtension(EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat()));
 
-            for (Map.Entry<String, String> taskDescriptionData : taskTexts.entrySet()) {
-              String descriptionFileName = taskDescriptionData.getKey() + "." + extension;
-              VirtualFile descriptionFile = taskDir.findChild(descriptionFileName);
-              if (descriptionFile == null) {
-                ApplicationManager.getApplication().runWriteAction(() -> {
-                  try {
-                    VirtualFile descriptionVirtualFile = taskDir.createChildData(StudyTaskManager.class, descriptionFileName);
-                    VfsUtil.saveText(descriptionVirtualFile, taskDescriptionData.getValue());
-                  } catch (IOException e) {
-                    LOG.error(e);
-                  }
-                });
-              }
+          for (Map.Entry<String, String> taskDescriptionData : taskTexts.entrySet()) {
+            String descriptionFileName = taskDescriptionData.getKey() + "." + extension;
+            VirtualFile descriptionFile = taskDir.findChild(descriptionFileName);
+            if (descriptionFile == null) {
+              ApplicationManager.getApplication().runWriteAction(() -> {
+                try {
+                  VirtualFile descriptionVirtualFile = taskDir.createChildData(StudyTaskManager.class, descriptionFileName);
+                  VfsUtil.saveText(descriptionVirtualFile, taskDescriptionData.getValue());
+                } catch (IOException e) {
+                  LOG.error(e);
+                }
+              });
             }
           }
         }
