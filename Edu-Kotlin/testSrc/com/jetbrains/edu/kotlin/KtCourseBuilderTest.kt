@@ -58,6 +58,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           dir("src") {
             file("Task.kt")
             file("Tests.kt")
+            file("task.html")
           }
         }
       }
