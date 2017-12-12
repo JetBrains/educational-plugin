@@ -28,13 +28,12 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CCProjectComponent extends AbstractProjectComponent {
   private static final Logger LOG = Logger.getInstance(CCProjectComponent.class);
+  private static final List<String> GRADLE_BASED_LANGUAGES = Arrays.asList(EduNames.KOTLIN, EduNames.JAVA);
+
   private CCVirtualFileListener myTaskFileLifeListener;
   private final Project myProject;
 
@@ -56,7 +55,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       oldCourse.setCourseMode(CCUtils.COURSE_MODE);
       transformFiles(oldCourse, myProject);
     }
-    else if (EduNames.KOTLIN.equals(studyCourse.getLanguageID()) && !EduUtils.isConfiguredWithGradle(myProject)) {
+    else if (needConvertToGradleProject(myProject, studyCourse)) {
       String basePath = myProject.getBasePath();
       if (basePath == null) {
         return;
@@ -91,6 +90,11 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
       EduProjectComponent.setGradleSettings(basePath, myProject);
     }
+  }
+
+  private static boolean needConvertToGradleProject(@NotNull Project project, @NotNull Course course) {
+    String languageID = course.getLanguageID();
+    return GRADLE_BASED_LANGUAGES.contains(languageID) && !EduUtils.isConfiguredWithGradle(project);
   }
 
   private static void transformFiles(Course course, Project project) {

@@ -22,12 +22,16 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.java")
+          }
+          dir("test") {
             file("Test.java")
           }
         }
         dir("task2") {
           dir("src") {
             file("Task.java")
+          }
+          dir("test") {
             file("Test.java")
           }
         }
@@ -36,15 +40,14 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.java")
+          }
+          dir("test") {
             file("Test.java")
           }
         }
       }
-      dir("util") {
-        dir("src") {
-          file("EduTestRunner.java")
-        }
-      }
+      file("build.gradle")
+      file("settings.gradle")
     }
     expectedFileTree.assertEquals(rootDir)
   }
@@ -59,16 +62,15 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.java")
-            file("Test.java")
             file("task.html")
+          }
+          dir("test") {
+            file("Test.java")
           }
         }
       }
-      dir("util") {
-        dir("src") {
-          file("EduTestRunner.java")
-        }
-      }
+      file("build.gradle")
+      file("settings.gradle")
     }
 
     expectedFileTree.assertEquals(rootDir)
