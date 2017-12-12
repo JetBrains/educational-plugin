@@ -29,7 +29,7 @@ open class KtCourseBuilder : EduCourseBuilderBase() {
 
     override fun createTaskContent(project: Project, task: Task,
                                    parentDirectory: VirtualFile, course: Course): VirtualFile? {
-        KtCourseBuilder.initTask(task)
+        initTask(task)
         ApplicationManager.getApplication().runWriteAction {
             try {
                 EduGradleModuleGenerator.createTaskModule(parentDirectory, task)
