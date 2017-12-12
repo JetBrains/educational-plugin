@@ -100,8 +100,7 @@ object EduGradleModuleGenerator {
 
     @JvmStatic
     @Throws(IOException::class)
-    fun createCourseContent(course: Course, moduleDirPath: String) {
-        val moduleDir = VfsUtil.findFileByIoFile(File(FileUtil.toSystemDependentName(moduleDirPath)), true) ?: return
+    fun createCourseContent(course: Course, moduleDir: VirtualFile) {
         val lessons = course.lessons
         for ((i, lesson) in lessons.withIndex()) {
             lesson.index = i + 1

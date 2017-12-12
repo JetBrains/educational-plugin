@@ -8,13 +8,10 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
@@ -31,7 +28,6 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.python.learning.PyConfigurator;
@@ -59,8 +55,8 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
   }
 
   @Override
-  public void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir,
-                              @NotNull PyNewProjectSettings settings, @NotNull Module module) {
+  protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir,
+                                       @NotNull PyNewProjectSettings settings) {
     if (myCourse.isStudy()) {
       createStudyStructure(project, baseDir, myCourse);
     } else {
@@ -126,21 +122,7 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
   }
 
   @Override
-  public boolean beforeProjectGenerated() {
-    if (!(myCourse instanceof RemoteCourse)) return true;
-    final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
-    if (remoteCourse.getId() > 0) {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return EduUtils.execCancelable(() -> StepikConnector.enrollToCourse(remoteCourse.getId(),
-            EduSettings.getInstance().getUser()));
-      }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
-    }
-    return true;
-  }
-
-  @Override
-  public void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
+  protected void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
     Sdk sdk = settings.getSdk();
 
     if (sdk != null && sdk.getSdkType() == PyFakeSdkType.INSTANCE) {

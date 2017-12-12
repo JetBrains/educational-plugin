@@ -17,9 +17,17 @@ package com.jetbrains.edu.learning.newproject;
 
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,11 +41,20 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
     myCourse = course;
   }
 
-  public boolean beforeProjectGenerated() {
+  protected boolean beforeProjectGenerated() {
+    if (!(myCourse instanceof RemoteCourse)) return true;
+    final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
+    if (remoteCourse.getId() > 0) {
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        return EduUtils.execCancelable(() -> StepikConnector.enrollToCourse(remoteCourse.getId(),
+                EduSettings.getInstance().getUser()));
+      }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
+    }
     return true;
   }
 
-  public void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
+  protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
   }
 
   // 'projectSettings' must have S type but due to some reasons:
@@ -49,12 +66,32 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
     if (!beforeProjectGenerated()) {
       return;
     }
-    Project createdProject = AbstractNewProjectStep.doGenerateProject(null, location, this, projectSettings);
-    if (createdProject == null) {
-      return;
-    }
+    Project createdProject = createProject(location, projectSettings);
+    if (createdProject == null) return;
     afterProjectGenerated(createdProject, (S) projectSettings);
   }
+
+  /**
+   * Create new project in given location.
+   * It is supposed this method calls {@link CourseProjectGenerator#createCourseStructure(Project, VirtualFile, Object)}
+   * to generate course structure.
+   *
+   * @param location location of new project
+   * @param projectSettings new project settings
+   * @return project of new course or null if new project can't be created
+   */
+  @Nullable
+  protected Project createProject(@NotNull String location, @NotNull Object projectSettings) {
+    return AbstractNewProjectStep.doGenerateProject(null, location, this, projectSettings);
+  }
+
+  @Override
+  public final void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir,
+                                    @NotNull S settings, @NotNull Module module) {
+    createCourseStructure(project, baseDir, settings);
+  }
+
+  abstract protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull S settings);
 
   @Nls
   @NotNull
