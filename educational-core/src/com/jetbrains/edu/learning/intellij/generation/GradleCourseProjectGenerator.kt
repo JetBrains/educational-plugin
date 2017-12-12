@@ -6,7 +6,6 @@ import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
@@ -34,31 +33,41 @@ import java.io.IOException
 
 abstract class GradleCourseProjectGenerator(course: Course) : CourseProjectGenerator<JdkProjectSettings>(course) {
 
-  override fun createCourseProject(location: String, projectSettings: Any) {
+  override fun createProject(location: String, projectSettings: Any): Project? {
     val locationFile = File(FileUtil.toSystemDependentName(location))
-    if (!locationFile.exists() && !locationFile.mkdirs()) return
+    if (!locationFile.exists() && !locationFile.mkdirs()) return null
 
-    val baseDir = WriteAction.compute<VirtualFile, RuntimeException> { LocalFileSystem.getInstance().refreshAndFindFileByIoFile(locationFile) }
+    val baseDir = WriteAction.compute<VirtualFile, RuntimeException> {
+      LocalFileSystem.getInstance().refreshAndFindFileByIoFile(locationFile)
+    }
     if (baseDir == null) {
       LOG.error("Couldn't find '$locationFile' in VFS")
-      return
+      return null
     }
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir)
 
-    runWriteAction {
+    val isGradleFilesCreated = WriteAction.compute<Boolean, RuntimeException> {
       try {
         EduGradleModuleGenerator.createProjectGradleFiles(location, locationFile.name)
+        true
       } catch (e: IOException) {
         LOG.error("Failed to generate project with gradle", e)
+        false
       }
     }
+    if (!isGradleFilesCreated) return null
 
     val projectDataManager = ProjectDataManager.getInstance()
     val gradleProjectImportBuilder = GradleProjectImportBuilder(projectDataManager)
     val gradleProjectImportProvider = GradleProjectImportProvider(gradleProjectImportBuilder)
     val wizard = AddModuleWizard(null, baseDir.path, gradleProjectImportProvider)
-    val project = NewProjectUtil.createFromWizard(wizard, null)
+    val project = NewProjectUtil.createFromWizard(wizard, null) ?: return null
 
+    createCourseStructure(project, baseDir, projectSettings as JdkProjectSettings)
+    return project
+  }
+
+  override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: JdkProjectSettings) {
     runWriteAction {
       try {
         val course = GeneratorUtils.initializeCourse(project, myCourse)
@@ -69,9 +78,9 @@ abstract class GradleCourseProjectGenerator(course: Course) : CourseProjectGener
           lesson.addTask(task)
           initializeFirstTask(task)
         }
-        EduGradleModuleGenerator.createCourseContent(course, location)
+        EduGradleModuleGenerator.createCourseContent(course, baseDir)
 
-        setJdk(project, projectSettings as JdkProjectSettings)
+        setJdk(project, settings)
       } catch (e: IOException) {
         LOG.error("Failed to generate course", e)
       }
@@ -103,10 +112,6 @@ abstract class GradleCourseProjectGenerator(course: Course) : CourseProjectGener
       return jdkRef.get()
     }
     return selectedItem.jdk
-  }
-
-  override fun generateProject(project: Project, baseDir: VirtualFile, settings: JdkProjectSettings, module: Module) {
-
   }
 
   companion object {

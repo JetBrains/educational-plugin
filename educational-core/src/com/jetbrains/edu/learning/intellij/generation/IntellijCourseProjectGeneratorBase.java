@@ -2,11 +2,8 @@ package com.jetbrains.edu.learning.intellij.generation;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.CompilerProjectExtension;
@@ -17,14 +14,10 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.intellij.CCModuleBuilder;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,22 +30,7 @@ public abstract class IntellijCourseProjectGeneratorBase extends CourseProjectGe
   }
 
   @Override
-  public boolean beforeProjectGenerated() {
-    if (!(myCourse instanceof RemoteCourse)) return true;
-    RemoteCourse remoteCourse = (RemoteCourse) myCourse;
-    if (remoteCourse.getId() > 0) {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return EduUtils.execCancelable(() -> StepikConnector.enrollToCourse(remoteCourse.getId(),
-                EduSettings.getInstance().getUser()));
-      }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
-    }
-    return true;
-  }
-
-  @Override
-  public void generateProject(@NotNull Project project, @NotNull VirtualFile virtualFile,
-                              @NotNull JdkProjectSettings settings, @NotNull Module module) {
+  protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull JdkProjectSettings settings) {
     configureProject(project, settings);
     createCourseStructure(project);
   }
