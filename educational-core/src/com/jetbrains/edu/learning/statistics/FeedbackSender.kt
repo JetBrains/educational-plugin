@@ -46,7 +46,7 @@ fun isFeedbackAsked() : Boolean = PropertiesComponent.getInstance().getBoolean(f
 val feedbackAsked = "askFeedbackNotification"
 
 val feedbackUrlTemplate = "https://www.jetbrains.com/feedback/feedback.jsp?" +
-    "product=EduTools&amp;ide=\$PRODUCT&amp;course=\$COURSE&amp;mode=\$MODE"
+    "product=EduTools&ide=\$PRODUCT&course=\$COURSE&mode=\$MODE"
 
 val creatorTemplate = "<html>You’ve just created your first tasks with \$PRODUCT!\n" +
     "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make teaching \$LANGUAGE better.</html>"
