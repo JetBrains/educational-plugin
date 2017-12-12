@@ -5,7 +5,6 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
-import com.intellij.notification.impl.NotificationFullContent
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.EduNames
@@ -39,7 +38,7 @@ class MyNotification(content: String, feedbackUrl : String) :
           override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
             BrowserUtil.browse(feedbackUrl)
           }
-        }), NotificationFullContent
+        })
 
 fun isFeedbackAsked() : Boolean = PropertiesComponent.getInstance().getBoolean(feedbackAsked)
 
