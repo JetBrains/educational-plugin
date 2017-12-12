@@ -27,6 +27,7 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
                    .replace("\$URL", feedbackUrl)
                    .replace("\$LANGUAGE", language.toLowerCase().capitalize())
   val notification = MyNotification(content, feedbackUrl)
+  PropertiesComponent.getInstance().setValue(feedbackAsked, true)
   notification.notify(project)
 }
 
@@ -36,7 +37,6 @@ class MyNotification(content: String, feedbackUrl : String) :
         object : NotificationListener.Adapter() {
           override fun hyperlinkActivated(notification: Notification, e: HyperlinkEvent) {
             BrowserUtil.browse(feedbackUrl)
-            PropertiesComponent.getInstance().setValue(feedbackAsked, true)
           }
         })
 
