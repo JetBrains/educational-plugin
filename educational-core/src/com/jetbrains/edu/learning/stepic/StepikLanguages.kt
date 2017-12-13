@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.stepic
 
+import com.jetbrains.edu.learning.EduNames
+
 /**
  * Base on a class from intellij plugin from Stepik
  *
@@ -7,9 +9,9 @@ package com.jetbrains.edu.learning.stepic
  *
  */
 enum class StepikLanguages (val id: String?, val langName: String?) {
-    JAVA("JAVA", "java8"),
-    KOTLIN("kotlin", "kotlin"),
-    PYTHON("Python", "python3"),
+    JAVA(EduNames.JAVA, "java8"),
+    KOTLIN(EduNames.KOTLIN, "kotlin"),
+    PYTHON(EduNames.PYTHON, "python3"),
     INVALID(null, null);
 
 

@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.io.FileUtil;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.intellij.generation.CourseModuleBuilder;
@@ -57,7 +58,7 @@ class KtKotlinKoansModuleBuilder extends CourseModuleBuilder {
         return baseModule;
       }
     }
-    myCourse.setLanguage("kotlin");
+    myCourse.setLanguage(EduNames.KOTLIN);
 
     EduModuleBuilderUtils.createCourseModuleContent(moduleModel, project, myCourse, getModuleFileDirectory());
     return baseModule;

@@ -150,7 +150,7 @@ public class CourseFormatTest {
   @Test
   public void testCourseProgrammingLanguage() throws IOException {
     final Course course = getCourseFromJson();
-    assertEquals("Python", course.getLanguageID());
+    assertEquals(EduNames.PYTHON, course.getLanguageID());
   }
 
   @Test

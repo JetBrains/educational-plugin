@@ -41,7 +41,7 @@ class AnswerPlaceholderExtendSelectionTest : EduTestCase() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1")
     val course = Course()
     course.name = "Edu test course"
-    course.language = "JAVA"
+    course.language = EduNames.JAVA
     StudyTaskManager.getInstance(myFixture.project).course = course
 
     val lesson1 = createLesson(1, 3)

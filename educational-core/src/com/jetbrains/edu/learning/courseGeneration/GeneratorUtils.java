@@ -169,7 +169,7 @@ public class GeneratorUtils {
   }
 
   private static boolean updateTaskFilesNeed(@NotNull final Course course) {
-    return course instanceof RemoteCourse && course.isStudy() && "JAVA".equals(course.getLanguageID());
+    return course instanceof RemoteCourse && course.isStudy() && EduNames.JAVA.equals(course.getLanguageID());
   }
 
   private static void updateJavaCodeTaskFileNames(@NotNull Project project, @NotNull Course course) {
