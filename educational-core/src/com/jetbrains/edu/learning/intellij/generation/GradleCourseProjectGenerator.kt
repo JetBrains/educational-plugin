@@ -22,7 +22,6 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.intellij.EduCourseBuilderBase
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
@@ -80,7 +79,7 @@ abstract class GradleCourseProjectGenerator(
           course.addLesson(lesson)
           val task = CCCreateTask().createAndInitItem(course, lesson, EduNames.TASK + 1, 1)
           lesson.addTask(task)
-          initializeFirstTask(task)
+          myCourseBuilder.initNewTask(task)
         }
         EduGradleModuleGenerator.createCourseContent(course, baseDir)
 
@@ -90,8 +89,6 @@ abstract class GradleCourseProjectGenerator(
       }
     }
   }
-
-  abstract protected fun initializeFirstTask(task: Task)
 
   private fun setJdk(project: Project, settings: JdkProjectSettings) {
     val jdk = getJdk(settings)
