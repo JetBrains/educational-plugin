@@ -4,6 +4,6 @@
     <depends optional="true" config-file="Edu-Kotlin.xml">com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="Educational">
-        <checkListener implementation="com.jetbrains.edu.kotlin.check.CheckActionListener"/>
+        <checkListener implementation="com.jetbrains.edu.learning.checker.CheckActionListener"/>
     </extensions>
 </idea-plugin>

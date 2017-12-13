@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.check
+package com.jetbrains.edu.learning.checker
 
 import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.actionSystem.AnAction
@@ -55,6 +55,9 @@ abstract class CheckersTestBase : UsefulTestCase() {
     private lateinit var myTestDir: File
 
     private val MY_TEST_JDK_NAME = "Test JDK"
+
+    open protected val dataPath: String = ""
+    protected val testDataPath: String get() = "testData/$dataPath"
 
     fun doTest() {
         UIUtil.dispatchAllInvocationEvents()
@@ -117,7 +120,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
         val zipPath = packCourseToZip()
 
         course = EduUtils.getLocalCourse(zipPath)
-                ?: error("Cannot create course from testData/check/${projectName()} project")
+                ?: error("Cannot create course from $testDataPath/${projectName()} project")
 
         val jdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME)
                 ?: error("Gradle JDK should be configured in setUp()")
@@ -137,7 +140,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
     private fun packCourseToZip(): String {
         val testName = projectName()
-        val courseFile = File("testData/check/$testName/course.json")
+        val courseFile = File("$testDataPath/$testName/course.json")
         val zipFile = File(myTestDir, testName + ".zip")
         ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
             ZipUtil.addFileOrDirRecursively(zos, null, File(courseFile.path), courseFile.name, null, null)

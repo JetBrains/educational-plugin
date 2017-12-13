@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.check
+package com.jetbrains.edu.kotlin.checker
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager

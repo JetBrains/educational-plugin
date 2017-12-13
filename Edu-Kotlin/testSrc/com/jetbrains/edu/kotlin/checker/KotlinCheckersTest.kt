@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.check
+package com.jetbrains.edu.kotlin.checker
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -8,8 +8,9 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.kotlin.KtCourseBuilder
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.kotlin.check.CheckActionListener.expectedMessage
-import com.jetbrains.edu.kotlin.check.CheckActionListener.shouldFail
+import com.jetbrains.edu.learning.checker.CheckActionListener.expectedMessage
+import com.jetbrains.edu.learning.checker.CheckActionListener.shouldFail
+import com.jetbrains.edu.learning.checker.CheckersTestBase
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
 import com.jetbrains.edu.learning.checker.TestsOutputParser.CONGRATULATIONS
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -18,6 +19,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
 class KotlinCheckersTest : CheckersTestBase() {
+
+    override val dataPath: String = "checker"
 
     fun testKotlinCourse() {
         expectedMessage { task ->
@@ -33,7 +36,7 @@ class KotlinCheckersTest : CheckersTestBase() {
     fun testErrors() {
         shouldFail()
         expectedMessage { task ->
-            when(task.name) {
+            when (task.name) {
                 "kotlinCompilationError", "javaCompilationError" -> COMPILATION_FAILED_MESSAGE
                 "testFail" -> "foo() should return 42"
                 else -> null

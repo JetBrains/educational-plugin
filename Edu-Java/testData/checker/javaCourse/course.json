@@ -1,0 +1,33 @@
+{
+  "lessons": [
+    {
+      "id": 0,
+      "title": "lesson1",
+      "task_list": [
+        {
+          "name": "EduTask",
+          "stepic_id": 0,
+          "position": 0,
+          "task_files": {
+            "Task.java": {
+              "name": "Task.java",
+              "text": "public class Task {\n  public static int foo() {\n    return 42;\n  }\n}",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "Test.java": "import org.junit.Assert;\n\npublic class Test {\n\n    @org.junit.Test\n    public void test() {\n        Assert.assertTrue(\"Task.foo() should return 42\", Task.foo() \u003d\u003d 42);\n    }\n}"
+          },
+          "task_texts": {
+            "task": "\u003chtml\u003e\nWrite your task text here.\n\u003cbr\u003e\n\u003c/html\u003e"
+          },
+          "task_type": "edu"
+        }
+      ]
+    }
+  ],
+  "summary": "JavaCourse",
+  "title": "JavaCourse",
+  "programming_language": "JAVA",
+  "language": "en"
+}
