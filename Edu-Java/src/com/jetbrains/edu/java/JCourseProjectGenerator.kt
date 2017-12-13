@@ -6,9 +6,11 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.intellij.EduCourseBuilderBase
 import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
 
-class JCourseProjectGenerator(course: Course) : GradleCourseProjectGenerator(course) {
+class JCourseProjectGenerator(courseBuilder: EduCourseBuilderBase, course: Course)
+  : GradleCourseProjectGenerator(courseBuilder, course) {
 
   override fun initializeFirstTask(task: Task) {
     val taskFile = TaskFile()

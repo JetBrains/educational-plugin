@@ -6,7 +6,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.kotlin.KtProjectGenerator
+import com.jetbrains.edu.kotlin.KtCourseBuilder
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.kotlin.check.CheckActionListener.expectedMessage
 import com.jetbrains.edu.kotlin.check.CheckActionListener.shouldFail
@@ -57,5 +57,5 @@ class KotlinCheckersTest : CheckersTestBase() {
         doTest()
     }
 
-    override fun getGenerator(course: Course) = KtProjectGenerator(course)
+    override fun getGenerator(course: Course) = KtCourseBuilder().getCourseProjectGenerator(course)
 }

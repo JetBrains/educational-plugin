@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.intellij.EduCourseBuilderBase
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportBuilder
@@ -31,7 +32,10 @@ import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportPr
 import java.io.File
 import java.io.IOException
 
-abstract class GradleCourseProjectGenerator(course: Course) : CourseProjectGenerator<JdkProjectSettings>(course) {
+abstract class GradleCourseProjectGenerator(
+        protected val myCourseBuilder: EduCourseBuilderBase,
+        course: Course
+) : CourseProjectGenerator<JdkProjectSettings>(course) {
 
   override fun createProject(location: String, projectSettings: Any): Project? {
     val locationFile = File(FileUtil.toSystemDependentName(location))
@@ -48,7 +52,7 @@ abstract class GradleCourseProjectGenerator(course: Course) : CourseProjectGener
 
     val isGradleFilesCreated = WriteAction.compute<Boolean, RuntimeException> {
       try {
-        EduGradleModuleGenerator.createProjectGradleFiles(location, locationFile.name)
+        EduGradleModuleGenerator.createProjectGradleFiles(location, locationFile.name, myCourseBuilder.buildGradleTemplateName)
         true
       } catch (e: IOException) {
         LOG.error("Failed to generate project with gradle", e)

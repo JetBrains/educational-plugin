@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator;
 import com.jetbrains.edu.learning.intellij.generation.LessonModuleBuilder;
 import com.jetbrains.edu.learning.intellij.generation.EduModuleBuilderUtils;
 import org.jdom.JDOMException;
@@ -75,4 +76,11 @@ public abstract class EduCourseBuilderBase implements EduCourseBuilder<JdkProjec
   public LanguageSettings<JdkProjectSettings> getLanguageSettings() {
     return new JdkLanguageSettings();
   }
+
+  @Nullable
+  @Override
+  public abstract GradleCourseProjectGenerator getCourseProjectGenerator(@NotNull Course course);
+
+  @NotNull
+  public abstract String getBuildGradleTemplateName();
 }
