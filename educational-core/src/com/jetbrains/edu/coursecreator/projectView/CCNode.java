@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.projectView;
 
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -63,5 +64,21 @@ public class CCNode extends DirectoryNode {
   @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
     return new CCNode(myProject, value, myViewSettings);
+  }
+
+  @Override
+  protected void updateImpl(PresentationData data) {
+    Project project = getProject();
+    if (project != null && CCUtils.isCourseCreator(project) && EduUtils.isConfiguredWithGradle(project)) {
+      PsiDirectory dir = getValue();
+      VirtualFile directoryFile = dir.getVirtualFile();
+      String name = directoryFile.getName();
+      if (EduNames.SRC.equals(name) || EduNames.TEST.equals(name)) {
+        data.setPresentableText(name);
+        return;
+      }
+    }
+
+    super.updateImpl(data);
   }
 }
