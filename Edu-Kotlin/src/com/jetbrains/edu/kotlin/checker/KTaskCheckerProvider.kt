@@ -1,4 +1,4 @@
-package com.jetbrains.edu.kotlin.check
+package com.jetbrains.edu.kotlin.checker
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider

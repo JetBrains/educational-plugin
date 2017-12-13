@@ -1,8 +1,6 @@
-package com.jetbrains.edu.kotlin.check;
+package com.jetbrains.edu.learning.checker;
 
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.checker.CheckListener;
-import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import kotlin.Unit;
@@ -50,6 +48,8 @@ public class CheckActionListener implements CheckListener {
             String expectedMessage = expectedMessageForTask.invoke(task);
             if (expectedMessage != null) {
                 Assert.assertEquals("Checking output for " + getTaskName(task) + " fails", expectedMessage, result.getMessage());
+            } else {
+                throw new IllegalStateException(String.format("Unexpected task `%s`", task.getName()));
             }
 
         }

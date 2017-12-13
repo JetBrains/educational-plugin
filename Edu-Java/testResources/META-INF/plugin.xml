@@ -2,4 +2,8 @@
     <id>com.jetbrains.edu.java</id>
     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
     <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
+
+    <extensions defaultExtensionNs="Educational">
+        <checkListener implementation="com.jetbrains.edu.learning.checker.CheckActionListener"/>
+    </extensions>
 </idea-plugin>
