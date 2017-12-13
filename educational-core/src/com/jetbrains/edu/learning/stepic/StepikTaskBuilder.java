@@ -112,7 +112,7 @@ public class StepikTaskBuilder {
       }
     }
     else {
-      if (myLanguage.isKindOf("Python") && myStep.options.samples != null) {
+      if (myLanguage.isKindOf(EduNames.PYTHON) && myStep.options.samples != null) {
         createTestFileFromSamples(task, myStep.options.samples);
       }
     }

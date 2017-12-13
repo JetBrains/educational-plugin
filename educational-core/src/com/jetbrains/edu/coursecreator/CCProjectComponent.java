@@ -56,7 +56,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       oldCourse.setCourseMode(CCUtils.COURSE_MODE);
       transformFiles(oldCourse, myProject);
     }
-    else if (studyCourse.getLanguageID().equals("kotlin") && !EduUtils.isConfiguredWithGradle(myProject)) {
+    else if (EduNames.KOTLIN.equals(studyCourse.getLanguageID()) && !EduUtils.isConfiguredWithGradle(myProject)) {
       String basePath = myProject.getBasePath();
       if (basePath == null) {
         return;

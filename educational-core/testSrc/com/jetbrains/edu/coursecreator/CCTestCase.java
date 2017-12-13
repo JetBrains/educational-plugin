@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -83,7 +84,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     super.setUp();
     Course course = new Course();
     course.setName("test course");
-    course.setLanguage("JAVA");
+    course.setLanguage(EduNames.JAVA);
     StudyTaskManager.getInstance(getProject()).setCourse(course);
 
     Lesson lesson = new Lesson();
