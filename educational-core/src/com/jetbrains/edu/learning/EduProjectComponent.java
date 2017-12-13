@@ -417,10 +417,13 @@ public class EduProjectComponent implements ProjectComponent {
 
   @SuppressWarnings("unchecked")
   public static void setGradleSettings(@NotNull String location, Project project) {
-    GradleProjectSettings gradleProjectSettings = new GradleProjectSettings();
-    gradleProjectSettings.setDistributionType(DistributionType.WRAPPED);
-
     AbstractExternalSystemSettings systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
+    ExternalProjectSettings existingProject = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectSettings(location);
+    if (existingProject != null) return;
+
+    GradleProjectSettings gradleProjectSettings = new GradleProjectSettings();
+    gradleProjectSettings.setDistributionType(DistributionType.DEFAULT_WRAPPED);
+
     gradleProjectSettings.setExternalProjectPath(location);
     Set<ExternalProjectSettings> projects = ContainerUtilRt.newHashSet(systemSettings.getLinkedProjectsSettings());
     projects.remove(gradleProjectSettings);
