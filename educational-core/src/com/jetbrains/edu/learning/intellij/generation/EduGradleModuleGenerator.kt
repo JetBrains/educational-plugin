@@ -112,10 +112,10 @@ object EduGradleModuleGenerator {
 
     @JvmStatic
     @Throws(IOException::class)
-    fun createProjectGradleFiles(projectPath: String, projectName: String) {
+    fun createProjectGradleFiles(projectPath: String, projectName: String, buildGradleTemplateName: String) {
         val projectDir = VfsUtil.findFileByIoFile(File(FileUtil.toSystemDependentName(projectPath)), true) ?: return
 
-        val buildTemplate = FileTemplateManager.getDefaultInstance().getInternalTemplate(GradleConstants.DEFAULT_SCRIPT_NAME)
+        val buildTemplate = FileTemplateManager.getDefaultInstance().getInternalTemplate(buildGradleTemplateName)
         createChildFile(projectDir, GradleConstants.DEFAULT_SCRIPT_NAME, buildTemplate.text)
 
         val settingsTemplate = FileTemplateManager.getDefaultInstance().getInternalTemplate(GradleConstants.SETTINGS_FILE_NAME)

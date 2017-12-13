@@ -12,15 +12,15 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.intellij.EduCourseBuilderBase;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
+import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.jetbrains.edu.java.JConfigurator.TASK_JAVA;
 import static com.jetbrains.edu.java.JConfigurator.TEST_JAVA;
 
 public class JCourseBuilder extends EduCourseBuilderBase {
+
+  private static final String JAVA_BUILD_GRADLE_TEMPLATE_NAME = "java-build.gradle";
 
   @Override
   public void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
@@ -50,8 +50,14 @@ public class JCourseBuilder extends EduCourseBuilderBase {
   }
 
   @Override
-  @Nullable
-  public CourseProjectGenerator<JdkProjectSettings> getCourseProjectGenerator(@NotNull Course course) {
-    return new JCourseProjectGenerator(course);
+  @NotNull
+  public GradleCourseProjectGenerator getCourseProjectGenerator(@NotNull Course course) {
+    return new JCourseProjectGenerator(this, course);
+  }
+
+  @NotNull
+  @Override
+  public String getBuildGradleTemplateName() {
+    return JAVA_BUILD_GRADLE_TEMPLATE_NAME;
   }
 }

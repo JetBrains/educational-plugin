@@ -18,9 +18,8 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks
 import com.jetbrains.edu.learning.intellij.EduCourseBuilderBase
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
+import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.IOException
 import java.util.*
@@ -65,11 +64,15 @@ open class KtCourseBuilder : EduCourseBuilderBase() {
         }
     }
 
-    override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>? =
-            KtProjectGenerator(course)
+    override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator =
+            KtProjectGenerator(this, course)
+
+    override fun getBuildGradleTemplateName(): String = KOTLIN_BUILD_GRADLE_TEMPLATE_NAME
 
     companion object {
         private val LOG = Logger.getInstance(KtCourseBuilder::class.java)
+
+        private const val KOTLIN_BUILD_GRADLE_TEMPLATE_NAME = "kotlin-build.gradle"
 
         @JvmStatic
         fun initTask(task: Task) {

@@ -15,14 +15,12 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduProjectComponent;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.intellij.EduCourseBuilderBase;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +30,6 @@ import java.util.*;
 
 public class CCProjectComponent extends AbstractProjectComponent {
   private static final Logger LOG = Logger.getInstance(CCProjectComponent.class);
-  private static final List<String> GRADLE_BASED_LANGUAGES = Arrays.asList(EduNames.KOTLIN, EduNames.JAVA);
 
   private CCVirtualFileListener myTaskFileLifeListener;
   private final Project myProject;
@@ -54,47 +51,48 @@ public class CCProjectComponent extends AbstractProjectComponent {
       oldCourse.initCourse(true);
       oldCourse.setCourseMode(CCUtils.COURSE_MODE);
       transformFiles(oldCourse, myProject);
-    }
-    else if (needConvertToGradleProject(myProject, studyCourse)) {
-      String basePath = myProject.getBasePath();
-      if (basePath == null) {
-        return;
+    } else {
+      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(studyCourse.getLanguageById());
+      if (configurator == null) return;
+      EduCourseBuilder<?> courseBuilder = configurator.getCourseBuilder();
+      if (courseBuilder instanceof EduCourseBuilderBase && !EduUtils.isConfiguredWithGradle(myProject)) {
+        convertToGradleProject(studyCourse, ((EduCourseBuilderBase) courseBuilder).getBuildGradleTemplateName());
       }
-
-      ModuleManager moduleManager = ModuleManager.getInstance(myProject);
-      Module[] modules = moduleManager.getModules();
-      final ModifiableModuleModel modifiableModuleModel = moduleManager.getModifiableModel();
-      for (Module module : modules) {
-        ModuleDeleteProvider.removeModule(module, Collections.emptyList(), modifiableModuleModel);
-        ModuleBuilder.deleteModuleFile(module.getModuleFilePath());
-      }
-
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        modifiableModuleModel.commit();
-
-        try {
-          EduGradleModuleGenerator.createProjectGradleFiles(basePath, myProject.getName());
-          final Lesson lesson = CCUtils.createAdditionalLesson(studyCourse, myProject, EduNames.ADDITIONAL_MATERIALS);
-          if (lesson != null) {
-            EduGradleModuleGenerator.createUtilModule(lesson.taskList.get(0), myProject.getBaseDir());
-          }
-
-          StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
-            transformCourseStructure(studyCourse, myProject);
-          });
-
-        } catch (IOException e) {
-          LOG.error(e);
-        }
-      });
-
-      EduProjectComponent.setGradleSettings(basePath, myProject);
     }
   }
 
-  private static boolean needConvertToGradleProject(@NotNull Project project, @NotNull Course course) {
-    String languageID = course.getLanguageID();
-    return GRADLE_BASED_LANGUAGES.contains(languageID) && !EduUtils.isConfiguredWithGradle(project);
+  private void convertToGradleProject(@NotNull Course course, @NotNull String buildGradleTemplateName) {
+    String basePath = myProject.getBasePath();
+    if (basePath == null) {
+      return;
+    }
+
+    ModuleManager moduleManager = ModuleManager.getInstance(myProject);
+    Module[] modules = moduleManager.getModules();
+    final ModifiableModuleModel modifiableModuleModel = moduleManager.getModifiableModel();
+    for (Module module : modules) {
+      ModuleDeleteProvider.removeModule(module, Collections.emptyList(), modifiableModuleModel);
+      ModuleBuilder.deleteModuleFile(module.getModuleFilePath());
+    }
+
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      modifiableModuleModel.commit();
+
+      try {
+        EduGradleModuleGenerator.createProjectGradleFiles(basePath, myProject.getName(), buildGradleTemplateName);
+        final Lesson lesson = CCUtils.createAdditionalLesson(course, myProject, EduNames.ADDITIONAL_MATERIALS);
+        if (lesson != null) {
+          EduGradleModuleGenerator.createUtilModule(lesson.taskList.get(0), myProject.getBaseDir());
+        }
+
+        StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> transformCourseStructure(course, myProject));
+
+      } catch (IOException e) {
+        LOG.error(e);
+      }
+    });
+
+    EduProjectComponent.setGradleSettings(basePath, myProject);
   }
 
   private static void transformFiles(Course course, Project project) {
