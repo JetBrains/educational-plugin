@@ -2,9 +2,62 @@
     <id>com.jetbrains.edu</id>
     <name>EduTools</name>
     <description><![CDATA[
-      With EduTools plugin you can learn and teach programming languages such as Kotlin, Java, Python
-      through code practicing tasks just inside JetBrains IDEs based on IntelliJ Platform
-      ]]></description>
+    <p>
+        With the EduTools plugin, you can learn and teach programming languages such as Kotlin, Java, and Python in the
+        form of coding tasks and custom verification tests right inside of JetBrains IntelliJ Platform based IDEs.
+    </p>
+    <strong>How It Works</strong>
+    <p>Install EduTools plugin: Go to Preferences -> Plugins (or Configure -> Plugins from the Welcome Screen),
+    press Install JetBrains Plugin… and search for the EduTools plugin.
+    </p>
+    <p>
+      Choose the learning or teaching mode: When it’s installed for the first time, the EduTools plugin asks you to
+      select whether you're a Learner or an Educator.
+    </p>
+    <p>
+      <strong>As an Educator</strong>:
+    <ul>
+      <li>
+        Create your own interactive course with custom tasks, checks, tests, hints, and lots more.
+      </li>
+      <li>
+        Share your course publicly or privately with your students or co-workers
+        on <a class="_external" target="_blank" href="https://stepik.org/">Stepik</a>, a learning management, and MOOC
+        platform. Or you can save your course as an archive file.
+      </li>
+      <li>
+        Let learners independently complete their assignments with the assistance of your integrated tests.
+      </li>
+    </ul>
+    <a class="_external" target="_blank" href="https://kotlinlang.org/docs/tutorials/edu-tools-educator.html">
+    Read this tutorial for more details.</a>
+    </p>
+    <p>
+      <strong>As a Learner</strong>:
+    <ul>
+      <li>
+        Join a public interactive programming course from the list, or choose a course
+        from <a class="_external" target="_blank" href="https://stepik.org/">Stepik</a>, a learning management,
+        and MOOC platform.
+      </li>
+      <li>
+        Start learning by filling in placeholders in the exercise code according to the task description.
+      </li>
+      <li>
+        Verify tasks, get instant feedback and quick results using an intelligent development tool.
+      </li>
+    </ul>
+    <a class="_external" target="_blank" href="https://kotlinlang.org/docs/tutorials/edu-tools-learner.html">Read this
+      tutorial for more details.</a>
+    </p>
+    <p>
+    <i>You may also be interested
+       in <a class="_external" target="_blank" href="https://www.jetbrains.com/pycharm-edu/">PyCharm Edu</a>—a special
+       educational edition of PyCharm IDE. All the features
+       available in PyCharm Edu are also available in the EduTools plugin.
+    </i>
+    </p>
+    ]]></description>
     <vendor>JetBrains</vendor>
 
     <!--update changes in changes.html file-->
