@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.intellij.generation
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -19,7 +18,6 @@ import java.io.File
 import java.io.IOException
 
 object EduGradleModuleGenerator {
-    private val LOG = Logger.getInstance(EduModuleBuilderUtils::class.java)
     private val FAILED_MESSAGE = "Failed to generate gradle wrapper"
     private val requestor = EduGradleModuleGenerator.javaClass
 

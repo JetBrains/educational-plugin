@@ -23,17 +23,18 @@ open class KtConfigurator : EduConfiguratorBase() {
     }
 
     override fun getBundledCoursePaths(): List<String> {
-        val bundledCourseRoot = EduUtils.getBundledCourseRoot(KtKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME, KtKotlinKoansModuleBuilder::class.java)
-        return listOf(FileUtil.join(bundledCourseRoot.absolutePath, KtKotlinKoansModuleBuilder.DEFAULT_COURSE_NAME))
+        val bundledCourseRoot = EduUtils.getBundledCourseRoot(DEFAULT_COURSE_NAME, KtConfigurator::class.java)
+        return listOf(FileUtil.join(bundledCourseRoot.absolutePath, DEFAULT_COURSE_NAME))
     }
 
     override fun getTaskCheckerProvider() = KTaskCheckerProvider()
 
     companion object {
+        const val DEFAULT_COURSE_NAME = "Kotlin Koans.zip"
 
-        @JvmField val LEGACY_TESTS_KT = "tests.kt"
-        @JvmField val TESTS_KT = "Tests.kt"
-        @JvmField val SUBTASK_TESTS_KT = "Subtask_Tests.kt"
-        @JvmField val TASK_KT = "Task.kt"
+        const val LEGACY_TESTS_KT = "tests.kt"
+        const val TESTS_KT = "Tests.kt"
+        const val SUBTASK_TESTS_KT = "Subtask_Tests.kt"
+        const val TASK_KT = "Task.kt"
     }
 }

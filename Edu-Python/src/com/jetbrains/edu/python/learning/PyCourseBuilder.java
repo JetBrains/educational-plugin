@@ -5,9 +5,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -114,25 +112,6 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
       }
       catch (Exception e) {
         LOG.error(e);
-      }
-    });
-  }
-
-  @Override
-  public void configureModule(@NotNull Module module) {
-    final Project project = module.getProject();
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-      final VirtualFile baseDir = project.getBaseDir();
-      final String testHelper = EduNames.TEST_HELPER;
-      if (baseDir.findChild(testHelper) != null) return;
-      final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
-      final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
-      if (projectDir == null) return;
-      try {
-        FileTemplateUtil.createFromTemplate(template, testHelper, null, projectDir);
-      }
-      catch (Exception exception) {
-        LOG.error("Can't copy test_helper.py " + exception.getMessage());
       }
     });
   }
