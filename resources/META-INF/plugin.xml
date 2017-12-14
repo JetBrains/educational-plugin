@@ -1,6 +1,7 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude" allow-bundled-update="true">
     <id>com.jetbrains.edu</id>
     <name>EduTools</name>
+    <!--update description in description.html file instead-->
     <description><![CDATA[
     <p>
         With the EduTools plugin, you can learn and teach programming languages such as Kotlin, Java, and Python in the
@@ -60,7 +61,7 @@
     ]]></description>
     <vendor>JetBrains</vendor>
 
-    <!--update changes in changes.html file-->
+    <!--update changes in changes.html file instead-->
     <change-notes><![CDATA[
     <b>1.1</b>
     <ul>
