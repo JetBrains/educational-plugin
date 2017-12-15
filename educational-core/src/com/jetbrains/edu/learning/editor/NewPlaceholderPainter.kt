@@ -4,11 +4,12 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.markup.CustomHighlighterRenderer
-import com.intellij.openapi.editor.markup.HighlighterLayer
-import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.RangeHighlighter
+import com.intellij.openapi.ui.AbstractPainter
+import com.intellij.openapi.wm.IdeGlassPaneUtil
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import java.awt.Component
 import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Point
@@ -17,9 +18,25 @@ import java.awt.geom.GeneralPath
 
 object NewPlaceholderPainter {
   fun paintPlaceholder(editor: Editor, placeholder: AnswerPlaceholder) {
-    val highlighter = editor.markupModel.addRangeHighlighter(placeholder.offset, placeholder.endOffset, HighlighterLayer.LAST, null,
-                                                             HighlighterTargetArea.EXACT_RANGE)
-    highlighter.customRenderer = EduPlaceholderRenderer(placeholder)
+//    val highlighter = editor.markupModel.addRangeHighlighter(placeholder.offset, placeholder.endOffset, HighlighterLayer.LAST, null,
+//                                                             HighlighterTargetArea.EXACT_RANGE)
+//    highlighter.customRenderer = EduPlaceholderRenderer(placeholder)
+    IdeGlassPaneUtil.installPainter(editor.contentComponent, object: AbstractPainter() {
+
+      override fun needsRepaint() = true
+
+      override fun executePaint(component: Component?, g: Graphics2D) {
+        g.color = placeholder.color
+        val path = getPath(editor, placeholder.offset, placeholder.endOffset)
+        val generalPath = GeneralPath()
+        generalPath.moveTo(path[0].x.toDouble(), path[0].y.toDouble())
+        for (i in 1 until path.size) {
+          generalPath.lineTo(path[i].x.toDouble(), path[i].y.toDouble())
+        }
+        generalPath.closePath()
+        g.draw(generalPath)
+      }
+    }, editor.project)
   }
 
 
