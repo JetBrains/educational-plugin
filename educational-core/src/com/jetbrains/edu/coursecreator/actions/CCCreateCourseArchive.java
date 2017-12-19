@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -45,7 +46,10 @@ import java.util.zip.ZipOutputStream;
 
 public class CCCreateCourseArchive extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCCreateCourseArchive.class.getName());
+
   public static final String GENERATE_COURSE_ARCHIVE = "Generate Course Archive";
+  public static final String LAST_ARCHIVE_LOCATION = "Edu.CourseCreator.LastArchiveLocation";
+
   private String myZipName;
   private String myLocationDir;
 
@@ -84,6 +88,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     }
     boolean isSuccessful = createCourseArchive(project, module, myZipName, myLocationDir, true);
     if (isSuccessful) {
+      PropertiesComponent.getInstance(project).setValue(LAST_ARCHIVE_LOCATION, myLocationDir);
       EduUsagesCollector.createdCourseArchive();
     } else {
       Messages.showErrorDialog("Can not create archive for current course", "Failed to Create Course Archive");
