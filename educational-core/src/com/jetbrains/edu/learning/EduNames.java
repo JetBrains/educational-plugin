@@ -50,6 +50,7 @@ public class EduNames {
   public static final String TEST = "test";
   public static final String UTIL = "util";
   public static final String BUILD = "build";
+  public static final String OUT = "out";
 
   public static final String SUBTASK_MARKER = "_subtask";
   public static final String SUBTASK = "subtask";

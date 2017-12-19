@@ -84,7 +84,7 @@ public class TaskNode extends EduNode {
     Object value = childNode.getValue();
     if (value instanceof PsiDirectory) {
       String dirName = ((PsiDirectory) value).getName();
-      if (dirName.equals(EduNames.BUILD)) {
+      if (dirName.equals(EduNames.BUILD) || dirName.equals(EduNames.OUT)) {
         return null;
       }
       if (!dirName.equals(EduNames.SRC)) {
