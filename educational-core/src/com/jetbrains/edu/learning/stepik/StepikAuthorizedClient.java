@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.edu.learning.EduSettings;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -98,9 +99,14 @@ public class StepikAuthorizedClient {
   @NotNull
   private static CloseableHttpClient createInitializedClient(@NotNull String accessToken) {
     final List<BasicHeader> headers = new ArrayList<>();
-    headers.add(new BasicHeader("Authorization", "Bearer " + accessToken));
+    headers.add(getAuthorizationHeader(accessToken));
     headers.add(new BasicHeader("Content-type", StepikNames.CONTENT_TYPE_APP_JSON));
     return StepikClient.getBuilder().setDefaultHeaders(headers).build();
+  }
+
+  @NotNull
+  public static BasicHeader getAuthorizationHeader(@NotNull String accessToken) {
+    return new BasicHeader("Authorization", "Bearer " + accessToken);
   }
 
   @Nullable
@@ -112,20 +118,24 @@ public class StepikAuthorizedClient {
     parameters.add(new BasicNameValuePair("client_id", StepikNames.CLIENT_ID));
 
     StepikWrappers.TokenInfo tokenInfo = getTokens(parameters);
-    if (tokenInfo != null) {
-      final StepicUser user = new StepicUser(tokenInfo);
-      ourClient = createInitializedClient(user.getAccessToken());
-
-      final StepicUser currentUser = getCurrentUser();
-      if (currentUser != null) {
-        user.setId(currentUser.getId());
-        user.setFirstName(currentUser.getFirstName());
-        user.setLastName(currentUser.getLastName());
-      }
-      return user;
+    if (tokenInfo == null) {
+      return null;
     }
+    return login(tokenInfo);
+  }
 
-    return null;
+
+  public static StepicUser login(@NotNull StepikWrappers.TokenInfo tokenInfo) {
+    final StepicUser user = new StepicUser(tokenInfo);
+    ourClient = createInitializedClient(user.getAccessToken());
+
+    final StepicUser currentUser = getCurrentUser();
+    if (currentUser != null) {
+      user.setId(currentUser.getId());
+      user.setFirstName(currentUser.getFirstName());
+      user.setLastName(currentUser.getLastName());
+    }
+    return user;
   }
 
   public static void invalidateClient() {
@@ -163,10 +173,14 @@ public class StepikAuthorizedClient {
   }
 
   @Nullable
-  private static StepikWrappers.TokenInfo getTokens(@NotNull final List<NameValuePair> parameters) {
+  public static StepikWrappers.TokenInfo getTokens(@NotNull final List<NameValuePair> parameters, @Nullable String credentials) {
     final Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     final HttpPost request = new HttpPost(StepikNames.TOKEN_URL);
+
+    if (credentials != null) {
+      request.addHeader("Authorization", "Basic " + Base64.encodeBase64String(credentials.getBytes(Consts.UTF_8)));
+    }
     request.setEntity(new UrlEncodedFormEntity(parameters, Consts.UTF_8));
 
     try {
@@ -187,5 +201,10 @@ public class StepikAuthorizedClient {
       LOG.warn(e.getMessage());
     }
     return null;
+  }
+
+  @Nullable
+  public static StepikWrappers.TokenInfo getTokens(@NotNull final List<NameValuePair> parameters) {
+    return getTokens(parameters, null);
   }
 }
