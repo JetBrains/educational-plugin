@@ -1,21 +1,24 @@
 package com.jetbrains.edu.learning.intellij
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduConfigurator
+import com.jetbrains.edu.learning.EduNames
 
 abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
   override fun excludeFromArchive(path: String): Boolean {
-    val name = PathUtil.getFileName(path)
-    return name in NAMES_TO_EXCLUDE || path.contains("build") || "iml" == FileUtilRt.getExtension(name)
+    val pathSegments = FileUtil.splitPath(path)
+    val name = pathSegments.last()
+    return name in NAMES_TO_EXCLUDE || pathSegments.any { it in FOLDERS_TO_EXCLUDE } || "iml" == FileUtilRt.getExtension(name)
   }
 
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
-      "out", "build", ".idea", "EduTestRunner.java",
-      "gradlew", "gradlew.bat", "local.properties", "gradle.properties",
+      ".idea", "EduTestRunner.java", "gradlew", "gradlew.bat", "local.properties", "gradle.properties",
       "build.gradle", "settings.gradle", "gradle-wrapper.jar", "gradle-wrapper.properties")
+
+    private val FOLDERS_TO_EXCLUDE = ContainerUtil.newHashSet(EduNames.OUT, EduNames.BUILD)
   }
 }
