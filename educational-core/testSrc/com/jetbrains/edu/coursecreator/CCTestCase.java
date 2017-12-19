@@ -1,5 +1,8 @@
 package com.jetbrains.edu.coursecreator;
 
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -16,6 +19,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
+import com.intellij.testFramework.TestActionEvent;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduUtils;
@@ -213,6 +217,17 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     return Pair.create(null, null);
   }
 
+  @NotNull
+  protected Presentation testAction(DataContext context, AnAction action) {
+    TestActionEvent e = new TestActionEvent(context, action);
+    action.beforeActionPerformedUpdate(e);
+    if (e.getPresentation().isEnabledAndVisible()) {
+      action.actionPerformed(e);
+    }
+    return e.getPresentation();
+  }
+
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return getBasePath();

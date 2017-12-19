@@ -2,12 +2,12 @@ package com.jetbrains.edu.coursecreator.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.MapDataContext;
-import com.intellij.testFramework.TestActionEvent;
 import com.jetbrains.edu.coursecreator.CCTestCase;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -35,19 +35,12 @@ public class CCTaskFileActionTest extends CCTestCase {
     assertNull(EduUtils.getTaskFile(getProject(), virtualFile));
   }
 
-  private void launchAction(VirtualFile virtualFile, AnAction action) {
-    TestActionEvent e = getActionEvent(virtualFile, action);
-    action.beforeActionPerformedUpdate(e);
-    assertTrue(e.getPresentation().isEnabled() && e.getPresentation().isVisible());
-    action.actionPerformed(e);
-  }
-
-  @NotNull
-  private TestActionEvent getActionEvent(VirtualFile virtualFile, AnAction action) {
+  private void launchAction(@NotNull VirtualFile virtualFile, @NotNull AnAction action) {
     MapDataContext context = new MapDataContext();
     context.put(CommonDataKeys.VIRTUAL_FILE_ARRAY, new VirtualFile[]{virtualFile});
     context.put(CommonDataKeys.PROJECT, getProject());
-    return new TestActionEvent(context, action);
+    Presentation presentation = testAction(context, action);
+    assertTrue(presentation.isEnabledAndVisible());
   }
 
   @Override
