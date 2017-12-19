@@ -37,7 +37,7 @@ public class CCTaskNode extends TaskNode {
     Object value = childNode.getValue();
     if (value instanceof PsiDirectory) {
       String name = ((PsiDirectory) value).getName();
-      if (EduNames.BUILD.equals(name)) {
+      if (EduNames.BUILD.equals(name) || EduNames.OUT.equals(name)) {
         return null;
       }
       if (EduNames.SRC.equals(name) || EduNames.TEST.equals(name)) {
