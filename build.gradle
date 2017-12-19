@@ -225,3 +225,11 @@ idea {
         vcs = 'Git'
     }
 }
+
+allprojects {
+    test {
+        if (rootProject.hasProperty("stepik_test_client_secret")) {
+            environment 'STEPIK_TEST_CLIENT_SECRET', stepik_test_client_secret
+        }
+    }
+}
