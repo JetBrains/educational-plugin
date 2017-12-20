@@ -55,6 +55,7 @@ object NewPlaceholderPainter {
   }
 
 
+  //TODO: make this method return placeholder shape
   fun getPath(editor: Editor, start: Int, end: Int): List<Point> {
     val x = getFirstNonWhitespace(editor.document, start..end)
     val y = getFirstNonWhitespace(editor.document, end..start)
@@ -69,7 +70,7 @@ object NewPlaceholderPainter {
 
 
     if (lineX == lineY) {
-      return createRectangle(editor, x, y)
+      return PlaceholderShape.Rectangular(editor, editor.offsetToLogicalPosition(x), editor.offsetToLogicalPosition(y)).points
     }
 
     val boundaries = (lineX..lineY).map { getBoundaries(document, it) }
@@ -81,9 +82,15 @@ object NewPlaceholderPainter {
     val isLeftRectangular = boundaries[0].left >= editor.offsetToLogicalPosition(x).column
     val isRightRectangular = boundaries[boundaries.size - 1].right <= editor.offsetToLogicalPosition(y).column
 
-
     val rightPointX = maxOf(editor.logicalPositionToXY(LogicalPosition(right.line, right.right)).x, yPoint.x)
     val leftPointX = minOf(editor.logicalPositionToXY(LogicalPosition(left.line, left.left)).x, xPoint.x)
+
+
+    if (isLeftRectangular && isRightRectangular) {
+      val startPosition = editor.xyToLogicalPosition(Point(leftPointX, xPoint.y))
+      val endPosition = editor.xyToLogicalPosition(Point(rightPointX, yPoint.y))
+      return PlaceholderShape.Rectangular(editor, startPosition, endPosition).points
+    }
 
     //add left and upper borders
     if (!isLeftRectangular) {
@@ -166,6 +173,30 @@ object NewPlaceholderPainter {
 
   private fun Char.isDrawableSymbol() = this != ' ' && this != '\t' && this != '\n'
 
+  sealed class PlaceholderShape {
+    val points = ArrayList<Point>()
+
+    class Rectangular(editor: Editor, start: LogicalPosition, end: LogicalPosition) : PlaceholderShape() {
+      init {
+        val startPoint = toPoint(editor, LogicalPositionWithLinePlacement(start.line, start.column))
+        val endPoint = toPoint(editor, LogicalPositionWithLinePlacement(end.line, end.column, PositionInLine.BOTTOM))
+        points.addAll(listOf(startPoint, Point(endPoint.x, startPoint.y), endPoint, Point(startPoint.x, endPoint.y)))
+      }
+    }
+
+//    object LeftRectangular: PlaceholderShape() {
+//
+//    }
+//
+//    object RightRectangular: PlaceholderShape() {
+//
+//    }
+//
+//    object Complex: PlaceholderShape() {
+//
+//    }
+  }
+
   enum class PositionInLine {
     TOP, BOTTOM
   }
@@ -187,9 +218,9 @@ object NewPlaceholderPainter {
     return toPoint(editor, LogicalPositionWithLinePlacement(logicalPosition.line, logicalPosition.column, offset.placement))
   }
 
-  private fun createRectangle(editor: Editor, startOffset: Int, endOffset: Int): List<Point> {
-    val startPoint = toPoint(editor, OffsetWithLinePlacement(startOffset))
-    val endPoint = toPoint(editor, OffsetWithLinePlacement(endOffset, PositionInLine.BOTTOM))
+  private fun createRectangle(editor: Editor, start: LogicalPosition, end: LogicalPosition): List<Point> {
+    val startPoint = toPoint(editor, LogicalPositionWithLinePlacement(start.line, start.column))
+    val endPoint = toPoint(editor, LogicalPositionWithLinePlacement(end.line, end.column, PositionInLine.BOTTOM))
     return listOf(startPoint, Point(endPoint.x, startPoint.y), endPoint, Point(startPoint.x, endPoint.y))
   }
 }
