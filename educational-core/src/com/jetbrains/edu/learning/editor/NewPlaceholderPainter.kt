@@ -69,13 +69,7 @@ object NewPlaceholderPainter {
 
 
     if (lineX == lineY) {
-      //always a rectangular
-      //TODO: extract a function that makes a rectangular path?
-      points.add(Point(xPoint.x, xPoint.y))
-      points.add(Point(yPoint.x, xPoint.y))
-      points.add(Point(yPoint.x, yPoint.y + lineHeight))
-      points.add(Point(xPoint.x, yPoint.y + lineHeight))
-      return points
+      return createRectangle(editor, x, y)
     }
 
     val boundaries = (lineX..lineY).map { getBoundaries(document, it) }
@@ -137,14 +131,14 @@ object NewPlaceholderPainter {
 
   data class LineBoundary(val line: Int, val left: Int, val right: Int)
 
-//TODO: handle empty lines correctly?
-private fun getBoundaries(document: Document, line: Int): LineBoundary {
-  val start = document.getLineStartOffset(line)
-  val end = document.getLineEndOffset(line)
-  val left = getFirstNonWhitespace(document, start..end) - start
-  val right = getFirstNonWhitespace(document, end..left) - start
-  return LineBoundary(line, left, right)
-}
+  //TODO: handle empty lines correctly?
+  private fun getBoundaries(document: Document, line: Int): LineBoundary {
+    val start = document.getLineStartOffset(line)
+    val end = document.getLineEndOffset(line)
+    val left = getFirstNonWhitespace(document, start..end) - start
+    val right = getFirstNonWhitespace(document, end..left) - start
+    return LineBoundary(line, left, right)
+  }
 
   private fun LineBoundary.getVisualBoundaries(editor: Editor): Pair<Int, Int> {
     val leftPosition = LogicalPosition(this.line, this.left)
@@ -168,8 +162,34 @@ private fun getBoundaries(document: Document, line: Int): LineBoundary {
       }
     }
     return range.start
-}
+  }
 
+  private fun Char.isDrawableSymbol() = this != ' ' && this != '\t' && this != '\n'
 
-private fun Char.isDrawableSymbol() = this != ' ' && this != '\t' && this != '\n'
+  enum class PositionInLine {
+    TOP, BOTTOM
+  }
+
+  data class LogicalPositionWithLinePlacement(val line: Int, val column: Int, val position: PositionInLine = PositionInLine.TOP)
+
+  data class OffsetWithLinePlacement(val offset: Int, val placement: PositionInLine = PositionInLine.TOP)
+
+  fun toPoint(editor: Editor, logicalPositionWithLinePlacement: LogicalPositionWithLinePlacement): Point {
+    val point = editor.logicalPositionToXY(LogicalPosition(logicalPositionWithLinePlacement.line, logicalPositionWithLinePlacement.column))
+    if (logicalPositionWithLinePlacement.position == PositionInLine.TOP) {
+      return point
+    }
+    return Point(point.x, point.y + getLineHeight(editor))
+  }
+
+  fun toPoint(editor: Editor, offset: OffsetWithLinePlacement): Point {
+    val logicalPosition = editor.offsetToLogicalPosition(offset.offset)
+    return toPoint(editor, LogicalPositionWithLinePlacement(logicalPosition.line, logicalPosition.column, offset.placement))
+  }
+
+  private fun createRectangle(editor: Editor, startOffset: Int, endOffset: Int): List<Point> {
+    val startPoint = toPoint(editor, OffsetWithLinePlacement(startOffset))
+    val endPoint = toPoint(editor, OffsetWithLinePlacement(endOffset, PositionInLine.BOTTOM))
+    return listOf(startPoint, Point(endPoint.x, startPoint.y), endPoint, Point(startPoint.x, endPoint.y))
+  }
 }

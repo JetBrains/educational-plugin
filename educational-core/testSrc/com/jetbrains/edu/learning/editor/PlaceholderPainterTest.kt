@@ -4,6 +4,7 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.editor.NewPlaceholderPainter.toPoint
 import org.junit.Test
 import java.awt.Point
 
@@ -56,12 +57,12 @@ class PlaceholderPainterTest : EduTestCase() {
 
   @Test
   fun `test non rectangular`() {
-    val expected = listOf(PointWithLinePosition(0, 2), PointWithLinePosition(0, 4),
-                          PointWithLinePosition(1, 4), PointWithLinePosition(1, 2),
-                          PointWithLinePosition(1, 2, PositionInLine.BOTTOM),
-                          PointWithLinePosition(1, 0, PositionInLine.BOTTOM),
-                          PointWithLinePosition(0, 0, PositionInLine.BOTTOM),
-                          PointWithLinePosition(0, 2, PositionInLine.BOTTOM))
+    val expected = listOf(NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 2), NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 4),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 4), NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 2),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 2, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 0, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 0, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 2, NewPlaceholderPainter.PositionInLine.BOTTOM))
     checkPath("""
       |t <placeholder>tt
       |tt</placeholder> t
@@ -70,11 +71,11 @@ class PlaceholderPainterTest : EduTestCase() {
 
   @Test
   fun `test right rectangular`() {
-    val expected = listOf(PointWithLinePosition(0, 61), PointWithLinePosition(0, 70),
-                          PointWithLinePosition(2, 70, PositionInLine.BOTTOM),
-                          PointWithLinePosition(2, 0, PositionInLine.BOTTOM),
-                          PointWithLinePosition(0, 0, PositionInLine.BOTTOM),
-                          PointWithLinePosition(0, 61, PositionInLine.BOTTOM))
+    val expected = listOf(NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 61), NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 70),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(2, 70, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(2, 0, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 0, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 61, NewPlaceholderPainter.PositionInLine.BOTTOM))
     checkPath("""
       |class DateRange(val start: MyDate, val endInclusive: MyDate) <placeholder>{
       |    operator fun contains(d: MyDate) = d >= start && d <= endInclusive
@@ -103,20 +104,21 @@ class PlaceholderPainterTest : EduTestCase() {
   }
 
   private fun checkRectangular(text: String, start: LogicalPosition, end: LogicalPosition) {
-    val expected = listOf(PointWithLinePosition(start.line, start.column), PointWithLinePosition(start.line, end.column),
-                          PointWithLinePosition(end.line, end.column, PositionInLine.BOTTOM),
-                          PointWithLinePosition(end.line, start.column, PositionInLine.BOTTOM))
+    val expected = listOf(NewPlaceholderPainter.LogicalPositionWithLinePlacement(start.line, start.column),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(start.line, end.column),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(end.line, end.column, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(end.line, start.column, NewPlaceholderPainter.PositionInLine.BOTTOM))
     checkPath(text, expected)
   }
 
-  private fun checkPath(text: String, expected: List<PointWithLinePosition>) {
+  private fun checkPath(text: String, expected: List<NewPlaceholderPainter.LogicalPositionWithLinePlacement>) {
     val placeholders = getPlaceholders(text)
     val path = NewPlaceholderPainter.getPath(myFixture.editor, placeholders[0].offset, placeholders[0].endOffset)
     checkCyclically(expected, path)
   }
 
-  private fun checkCyclically(expected: List<PointWithLinePosition>, actual: List<Point>) {
-    checkPointsCyclically(expected.map { toPoint(it) }, actual)
+  private fun checkCyclically(expected: List<NewPlaceholderPainter.LogicalPositionWithLinePlacement>, actual: List<Point>) {
+    checkPointsCyclically(expected.map { toPoint(myFixture.editor, it) }, actual)
   }
 
   private fun checkPointsCyclically(expectedPoints: List<Point>, actual: List<Point>) {
@@ -136,18 +138,4 @@ class PlaceholderPainterTest : EduTestCase() {
   }
 
   private fun getMessage(expected: List<Point>, actual: List<Point>) = "Actual path: $actual\nExpected path:$expected"
-
-  enum class PositionInLine {
-    TOP, BOTTOM
-  }
-
-  data class PointWithLinePosition(val line: Int, val column: Int, val position: PositionInLine = PositionInLine.TOP)
-
-  private fun toPoint(pointWithLinePosition: PointWithLinePosition): Point {
-    val point = myFixture.editor.logicalPositionToXY(LogicalPosition(pointWithLinePosition.line, pointWithLinePosition.column))
-    if (pointWithLinePosition.position == PositionInLine.TOP) {
-      return point
-    }
-    return Point(point.x, point.y + myFixture.editor.lineHeight - 1)
-  }
 }
