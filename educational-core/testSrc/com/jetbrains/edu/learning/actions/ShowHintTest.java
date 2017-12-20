@@ -1,6 +1,10 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.jetbrains.edu.learning.*;
+import com.intellij.openapi.fileTypes.PlainTextLanguage;
+import com.jetbrains.edu.learning.EduState;
+import com.jetbrains.edu.learning.EduTestCase;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -79,7 +83,7 @@ public class ShowHintTest extends EduTestCase {
   protected void createCourse() throws IOException {
     myFixture.copyDirectoryToProject("lesson1", "lesson1");
     Course course = new Course();
-    course.setLanguage(EduNames.JAVA);
+    course.setLanguage(PlainTextLanguage.INSTANCE.getID());
     course.setName("Edu test course");
     StudyTaskManager.getInstance(myFixture.getProject()).setCourse(course);
 

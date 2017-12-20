@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.EditorTestUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.io.IOException
@@ -41,7 +42,7 @@ class AnswerPlaceholderExtendSelectionTest : EduTestCase() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1")
     val course = Course()
     course.name = "Edu test course"
-    course.language = EduNames.JAVA
+    course.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(myFixture.project).course = course
 
     val lesson1 = createLesson(1, 3)
