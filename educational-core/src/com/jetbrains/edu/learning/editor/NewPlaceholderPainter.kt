@@ -69,6 +69,7 @@ object NewPlaceholderPainter {
     val lineHeight = getLineHeight(editor)
 
 
+    //TODO: do we really need this are special case
     if (lineX == lineY) {
       return PlaceholderShape.Rectangular(editor, editor.offsetToLogicalPosition(x), editor.offsetToLogicalPosition(y)).points
     }
@@ -90,6 +91,18 @@ object NewPlaceholderPainter {
       val startPosition = editor.xyToLogicalPosition(Point(leftPointX, xPoint.y))
       val endPosition = editor.xyToLogicalPosition(Point(rightPointX, yPoint.y))
       return PlaceholderShape.Rectangular(editor, startPosition, endPosition).points
+    }
+
+    val rightBottom = LogicalPosition(lineY, editor.xyToLogicalPosition(Point(rightPointX, yPoint.y)).column)
+    val rightTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(rightPointX, xPoint.y)).column)
+    val leftBottom = LogicalPosition(lineY, editor.xyToLogicalPosition(Point(leftPointX, xPoint.y)).column)
+    val leftTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(leftPointX, xPoint.y)).column)
+    if (isLeftRectangular) {
+      return PlaceholderShape.LeftRectangular(editor, leftBottom, leftTop, rightTop, rightBottom).points
+    }
+
+    if (isRightRectangular) {
+      return PlaceholderShape.RightRectangular(editor, leftBottom, leftTop, rightTop, rightBottom).points
     }
 
     //add left and upper borders
@@ -176,6 +189,47 @@ object NewPlaceholderPainter {
   sealed class PlaceholderShape {
     val points = ArrayList<Point>()
 
+    protected fun getRectangularLeftBorder(editor: Editor,
+                                           bottom: LogicalPosition,
+                                           left: LogicalPosition,
+                                           right: LogicalPosition) = listOf(
+      toPoint(editor, LogicalPositionWithLinePlacement(bottom.line, bottom.column, PositionInLine.BOTTOM)),
+      editor.logicalPositionToXY(left), editor.logicalPositionToXY(right))
+
+    protected fun getRectangularRightBorder(editor: Editor, rightBottom: LogicalPosition): List<Point> = listOf(
+      toPoint(editor, LogicalPositionWithLinePlacement(rightBottom.line, rightBottom.column, PositionInLine.BOTTOM)))
+
+
+    protected fun getComplexRightBorder(editor: Editor, rightTop: LogicalPosition, rightBottom: LogicalPosition): List<Point> {
+      val rightTopPoint = editor.logicalPositionToXY(rightTop)
+      val rightBottomPoint = toPoint(editor, LogicalPositionWithLinePlacement(rightBottom.line, rightBottom.column, PositionInLine.BOTTOM))
+      if (rightTopPoint.x == rightBottomPoint.x) {
+        return listOf(Point(rightBottomPoint))
+      }
+      val topPoint = toPoint(editor, LogicalPositionWithLinePlacement(rightBottom.line - 1, rightTop.column, PositionInLine.BOTTOM))
+      return listOf(topPoint, Point(rightBottomPoint.x, topPoint.y), rightBottomPoint)
+    }
+
+    protected fun getComplexLeftBorder(editor: Editor,
+                                       leftBottom: LogicalPosition,
+                                       leftTop: LogicalPosition,
+                                       rightTop: LogicalPosition): List<Point> {
+      val leftBottomPoint = toPoint(editor, LogicalPositionWithLinePlacement(leftBottom.line, leftBottom.column, PositionInLine.BOTTOM))
+      val leftTopPoint = editor.logicalPositionToXY(leftTop)
+      val shape = mutableListOf(leftBottomPoint)
+      if (leftBottomPoint.x == leftTopPoint.x) {
+        shape.add(leftTopPoint)
+      }
+      else {
+        shape.add(toPoint(editor, LogicalPositionWithLinePlacement(leftTop.line, leftBottom.column, PositionInLine.BOTTOM)))
+        shape.add(toPoint(editor, LogicalPositionWithLinePlacement(leftTop.line, leftTop.column, PositionInLine.BOTTOM)))
+        shape.add(Point(leftTopPoint))
+      }
+      shape.add(editor.logicalPositionToXY(rightTop))
+      return shape
+    }
+
+
     class Rectangular(editor: Editor, start: LogicalPosition, end: LogicalPosition) : PlaceholderShape() {
       init {
         val startPoint = toPoint(editor, LogicalPositionWithLinePlacement(start.line, start.column))
@@ -184,14 +238,28 @@ object NewPlaceholderPainter {
       }
     }
 
-//    object LeftRectangular: PlaceholderShape() {
-//
-//    }
-//
-//    object RightRectangular: PlaceholderShape() {
-//
-//    }
-//
+    class LeftRectangular(editor: Editor,
+                          leftBottom: LogicalPosition,
+                          leftTop: LogicalPosition,
+                          rightTop: LogicalPosition,
+                          rightBottom: LogicalPosition) : PlaceholderShape() {
+      init {
+        points.addAll(getRectangularLeftBorder(editor, leftBottom, leftTop, rightTop))
+        points.addAll(getComplexRightBorder(editor, rightTop, rightBottom))
+      }
+    }
+
+    class RightRectangular(editor: Editor,
+                           leftBottom: LogicalPosition,
+                           leftTop: LogicalPosition,
+                           rightTop: LogicalPosition,
+                           rightBottom: LogicalPosition) : PlaceholderShape() {
+      init {
+        points.addAll(getRectangularRightBorder(editor, rightBottom))
+        points.addAll(getComplexLeftBorder(editor, leftBottom, leftTop, rightTop))
+      }
+    }
+
 //    object Complex: PlaceholderShape() {
 //
 //    }
@@ -203,8 +271,6 @@ object NewPlaceholderPainter {
 
   data class LogicalPositionWithLinePlacement(val line: Int, val column: Int, val position: PositionInLine = PositionInLine.TOP)
 
-  data class OffsetWithLinePlacement(val offset: Int, val placement: PositionInLine = PositionInLine.TOP)
-
   fun toPoint(editor: Editor, logicalPositionWithLinePlacement: LogicalPositionWithLinePlacement): Point {
     val point = editor.logicalPositionToXY(LogicalPosition(logicalPositionWithLinePlacement.line, logicalPositionWithLinePlacement.column))
     if (logicalPositionWithLinePlacement.position == PositionInLine.TOP) {
@@ -213,14 +279,4 @@ object NewPlaceholderPainter {
     return Point(point.x, point.y + getLineHeight(editor))
   }
 
-  fun toPoint(editor: Editor, offset: OffsetWithLinePlacement): Point {
-    val logicalPosition = editor.offsetToLogicalPosition(offset.offset)
-    return toPoint(editor, LogicalPositionWithLinePlacement(logicalPosition.line, logicalPosition.column, offset.placement))
-  }
-
-  private fun createRectangle(editor: Editor, start: LogicalPosition, end: LogicalPosition): List<Point> {
-    val startPoint = toPoint(editor, LogicalPositionWithLinePlacement(start.line, start.column))
-    val endPoint = toPoint(editor, LogicalPositionWithLinePlacement(end.line, end.column, PositionInLine.BOTTOM))
-    return listOf(startPoint, Point(endPoint.x, startPoint.y), endPoint, Point(startPoint.x, endPoint.y))
-  }
 }
