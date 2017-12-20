@@ -6,11 +6,11 @@ import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import com.jetbrains.edu.learning.intellij.EduConfiguratorBase;
+import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase;
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
-public class JConfigurator extends EduConfiguratorBase {
+public class JConfigurator extends GradleConfiguratorBase {
 
   public static final String TEST_JAVA = "Test.java";
   public static final String TASK_JAVA = "Task.java";

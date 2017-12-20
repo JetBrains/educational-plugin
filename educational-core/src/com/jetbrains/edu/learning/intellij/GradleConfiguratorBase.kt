@@ -5,7 +5,7 @@ import com.intellij.util.PathUtil
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduConfigurator
 
-abstract class EduConfiguratorBase : EduConfigurator<JdkProjectSettings> {
+abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
   override fun excludeFromArchive(path: String): Boolean {
     val name = PathUtil.getFileName(path)
@@ -14,8 +14,8 @@ abstract class EduConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
-            "out", "build", ".idea", "EduTestRunner.java",
-            "gradlew", "gradlew.bat", "local.properties", "gradle.properties",
-            "build.gradle", "settings.gradle", "gradle-wrapper.jar", "gradle-wrapper.properties")
+      "out", "build", ".idea", "EduTestRunner.java",
+      "gradlew", "gradlew.bat", "local.properties", "gradle.properties",
+      "build.gradle", "settings.gradle", "gradle-wrapper.jar", "gradle-wrapper.properties")
   }
 }
