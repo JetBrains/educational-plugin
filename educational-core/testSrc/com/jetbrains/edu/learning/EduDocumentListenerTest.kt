@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.io.IOException
 
@@ -120,7 +121,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1")
     val course = Course()
     course.name = "Edu test course"
-    course.language = EduNames.JAVA
+    course.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(myFixture.project).course = course
 
     val lesson1 = createLesson(1, 2)

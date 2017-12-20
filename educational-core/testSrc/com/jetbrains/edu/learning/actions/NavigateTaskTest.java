@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.actions;
 
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -83,7 +83,7 @@ public class NavigateTaskTest extends EduTestCase {
     myFixture.copyDirectoryToProject("lesson2", "lesson2");
     Course course = new Course();
     course.setName("Edu test course");
-    course.setLanguage(EduNames.JAVA);
+    course.setLanguage(PlainTextLanguage.INSTANCE.getID());
     StudyTaskManager.getInstance(myFixture.getProject()).setCourse(course);
 
     Lesson lesson1 = createLesson(1, 2);
