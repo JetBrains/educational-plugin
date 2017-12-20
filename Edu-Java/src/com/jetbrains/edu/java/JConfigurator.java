@@ -14,6 +14,7 @@ public class JConfigurator extends GradleConfiguratorBase {
 
   public static final String TEST_JAVA = "Test.java";
   public static final String TASK_JAVA = "Task.java";
+  public static final String SUBTASK_TEST_JAVA = "Subtask_Test.java";
 
   private final JCourseBuilder myCourseBuilder = new JCourseBuilder();
 
