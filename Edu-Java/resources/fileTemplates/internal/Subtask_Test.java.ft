@@ -1,0 +1,10 @@
+import org.junit.Assert;
+import org.junit.Test;
+
+public class ${TEST_CLASS_NAME} {
+    @Test
+    public void testSolution() {
+        //TODO: implement your test here
+        Assert.assertTrue("Tests not implemented for the task", false);
+    }
+}
