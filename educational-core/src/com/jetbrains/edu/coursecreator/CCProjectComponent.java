@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.intellij.EduCourseBuilderBase;
+import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
@@ -55,8 +55,8 @@ public class CCProjectComponent extends AbstractProjectComponent {
       EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(studyCourse.getLanguageById());
       if (configurator == null) return;
       EduCourseBuilder<?> courseBuilder = configurator.getCourseBuilder();
-      if (courseBuilder instanceof EduCourseBuilderBase && !EduUtils.isConfiguredWithGradle(myProject)) {
-        convertToGradleProject(studyCourse, ((EduCourseBuilderBase) courseBuilder).getBuildGradleTemplateName());
+      if (courseBuilder instanceof GradleCourseBuilderBase && !EduUtils.isConfiguredWithGradle(myProject)) {
+        convertToGradleProject(studyCourse, ((GradleCourseBuilderBase) courseBuilder).getBuildGradleTemplateName());
       }
     }
   }

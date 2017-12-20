@@ -32,5 +32,5 @@ class JCheckersTest : CheckersTestBase() {
   }
 
   override fun getGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings> =
-          JCourseBuilder().getCourseProjectGenerator(course)
+    JCourseBuilder().getCourseProjectGenerator(course)
 }

@@ -23,7 +23,7 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.intellij.EduCourseBuilderBase
+import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportBuilder
@@ -31,9 +31,9 @@ import org.jetbrains.plugins.gradle.service.project.wizard.GradleProjectImportPr
 import java.io.File
 import java.io.IOException
 
-abstract class GradleCourseProjectGenerator(
-        protected val myCourseBuilder: EduCourseBuilderBase,
-        course: Course
+open class GradleCourseProjectGenerator(
+  private val myCourseBuilder: GradleCourseBuilderBase,
+  course: Course
 ) : CourseProjectGenerator<JdkProjectSettings>(course) {
 
   override fun createProject(location: String, projectSettings: Any): Project? {
