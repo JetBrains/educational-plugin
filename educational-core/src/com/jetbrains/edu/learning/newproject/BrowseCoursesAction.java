@@ -38,7 +38,7 @@ public class BrowseCoursesAction extends AnAction {
                 .getCourseBuilder()
                 .getCourseProjectGenerator(course);
         if (projectGenerator != null) {
-          projectGenerator.createCourseProject(location, projectSettings);
+          projectGenerator.doCreateCourseProject(location, projectSettings);
         }
       }
     });

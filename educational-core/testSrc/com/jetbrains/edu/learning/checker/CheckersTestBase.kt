@@ -133,7 +133,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
             override fun getSdkName() = jdk.name
         })
 
-        getGenerator(course).createCourseProject(myTestDir.absolutePath, settings)
+        getGenerator(course).doCreateCourseProject(myTestDir.absolutePath, settings)
         myProject = ProjectManager.getInstance().openProjects.firstOrNull { it.name == UsefulTestCase.TEMP_DIR_MARKER + projectName() }
                     ?: error("Cannot find project with name ${projectName()}")
     }

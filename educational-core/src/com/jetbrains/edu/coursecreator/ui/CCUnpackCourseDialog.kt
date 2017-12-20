@@ -57,7 +57,7 @@ class CCUnpackCourseDialog(val course: Course) : DialogWrapper(true) {
     EduConfiguratorManager.forLanguage(language)
         ?.courseBuilder
         ?.getCourseProjectGenerator(course)
-        ?.createCourseProject(location, projectSettings)
+        ?.doCreateCourseProject(location, projectSettings)
     val project = guessProjectForFile(VfsUtil.findFileByIoFile(File(location), true))
     if (project == null) return
     val application = ApplicationManager.getApplication()

@@ -55,7 +55,7 @@ class CCCreateCoursePreviewDialog(
         try {
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
           val settings = myPanel.projectSettings
-          myConfigurator.courseBuilder.getCourseProjectGenerator(course)?.createCourseProject(location.absolutePath, settings)
+          myConfigurator.courseBuilder.getCourseProjectGenerator(course)?.doCreateCourseProject(location.absolutePath, settings)
         } catch (e: IOException) {
           LOG.error("Failed to create tmp dir for course preview", e)
           showErrorMessage()
