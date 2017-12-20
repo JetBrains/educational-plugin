@@ -65,7 +65,7 @@ object NewPlaceholderPainter {
     val lineY = document.getLineNumber(y)
     val xPoint = editor.offsetToXY(x)
     val yPoint = editor.offsetToXY(y)
-    val lineHeight = editor.lineHeight - 1
+    val lineHeight = getLineHeight(editor)
 
 
     if (lineX == lineY) {
@@ -84,16 +84,14 @@ object NewPlaceholderPainter {
     val left = boundaries.subList(1, boundaries.size).minBy(LineBoundary::left)!!
     val right = boundaries.subList(0, boundaries.size - 1).maxBy({ it.getVisualBoundaries(editor).second })!!
 
-    //TODO: it can not have specified offset, specific line should be checked?
-    val leftPoint = editor.logicalPositionToXY(LogicalPosition(left.line, left.left))
-
     val isLeftRectangular = boundaries[0].left >= editor.offsetToLogicalPosition(x).column
     val isRightRectangular = boundaries[boundaries.size - 1].right <= editor.offsetToLogicalPosition(y).column
 
 
-    //add left and upper borders
     val rightPointX = maxOf(editor.logicalPositionToXY(LogicalPosition(right.line, right.right)).x, yPoint.x)
     val leftPointX = minOf(editor.logicalPositionToXY(LogicalPosition(left.line, left.left)).x, xPoint.x)
+
+    //add left and upper borders
     if (!isLeftRectangular) {
       val nextLineY = xPoint.y + lineHeight
       points.add(Point(leftPointX, yPoint.y + lineHeight))
@@ -133,6 +131,8 @@ object NewPlaceholderPainter {
 
     return points
   }
+
+  private fun getLineHeight(editor: Editor) = editor.lineHeight - 1
 
 
   data class LineBoundary(val line: Int, val left: Int, val right: Int)
