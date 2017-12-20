@@ -57,12 +57,18 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
   protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
   }
 
+  /**
+   * Generate new project and create course structure for created project
+   *
+   * @param location location of new course project
+   * @param projectSettings new project settings
+   */
   // 'projectSettings' must have S type but due to some reasons:
   //  * We don't know generic parameter of EduPluginConfigurator after it was gotten through extension point mechanism
   //  * Kotlin and Java do type erasure a little bit differently
   // we use Object instead of S and cast to S when it needed
   @SuppressWarnings("unchecked")
-  public void createCourseProject(@NotNull String location, @NotNull Object projectSettings) {
+  public final void doCreateCourseProject(@NotNull String location, @NotNull Object projectSettings) {
     if (!beforeProjectGenerated()) {
       return;
     }
@@ -73,8 +79,7 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
 
   /**
    * Create new project in given location.
-   * It is supposed this method calls {@link CourseProjectGenerator#createCourseStructure(Project, VirtualFile, Object)}
-   * to generate course structure.
+   * To create course structure: modules, folders, files, etc. use {@link CourseProjectGenerator#createCourseStructure(Project, VirtualFile, Object)}
    *
    * @param location location of new project
    * @param projectSettings new project settings
@@ -85,12 +90,23 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
     return AbstractNewProjectStep.doGenerateProject(null, location, this, virtualFile -> projectSettings);
   }
 
+  /**
+   * Callback method of {@link DirectoryProjectGenerator} to generate project structure. <b>Don't use</b> it explicitly.
+   * If you want to generate course structure, just call {@link CourseProjectGenerator#createCourseStructure}
+   */
   @Override
   public final void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir,
                                     @NotNull S settings, @NotNull Module module) {
     createCourseStructure(project, baseDir, settings);
   }
 
+  /**
+   * Create course structure for already created project.
+   *
+   * @param project course project
+   * @param baseDir base directory of project
+   * @param settings project settings
+   */
   abstract protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull S settings);
 
   @Nls

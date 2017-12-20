@@ -31,7 +31,7 @@ class CCNewCourseDialog : DialogWrapper(true) {
       EduConfiguratorManager.forLanguage(language)
               ?.courseBuilder
               ?.getCourseProjectGenerator(course)
-              ?.createCourseProject(location, projectSettings)
+              ?.doCreateCourseProject(location, projectSettings)
     }
   }
 }

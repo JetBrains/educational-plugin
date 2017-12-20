@@ -27,7 +27,7 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
 
   protected fun <Settings> createCourseStructure(builder: EduCourseBuilder<Settings>, course: Course, settings: Settings) {
     val generator = builder.getCourseProjectGenerator(course) ?: error("given builder returns null as course project generator")
-    generator.createCourseProject(rootDir.path, settings!!)
+    generator.doCreateCourseProject(rootDir.path, settings!!)
 
     runInEdtAndWait {
       project = ProjectManager.getInstance().openProjects.firstOrNull() ?: error("Cannot find project")
