@@ -22,6 +22,40 @@
             "task": "\u003chtml\u003e\nWrite your task text here.\n\u003cbr\u003e\n\u003c/html\u003e"
           },
           "task_type": "edu"
+        },
+        {
+          "name": "OutputTask",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.java": {
+              "name": "Task.java",
+              "text": "public class Task {\n    public static void main(String[] args) {\n        System.out.println(\"OK\");\n    }\n}\n",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "output.txt": "OK"
+          },
+          "task_texts": {
+            "task": "Write task description here using markdown or html"
+          },
+          "task_type": "output"
+        },
+        {
+          "name": "TheoryTask",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.java": {
+              "name": "Task.java",
+              "text": "public class Task {\n    public static void main(String[] args) {\n        System.out.println(\"OK\");\n    }\n}\n",
+              "placeholders": []
+            }
+          },
+          "test_files": {},
+          "task_texts": {
+            "task": "Write task description here using markdown or html"
+          },
+          "task_type": "theory"
         }
       ]
     }

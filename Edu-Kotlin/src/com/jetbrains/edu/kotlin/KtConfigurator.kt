@@ -2,7 +2,7 @@ package com.jetbrains.edu.kotlin
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.kotlin.checker.KTaskCheckerProvider
+import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -28,7 +28,7 @@ open class KtConfigurator : GradleConfiguratorBase() {
     return listOf(FileUtil.join(bundledCourseRoot.absolutePath, DEFAULT_COURSE_NAME))
   }
 
-  override fun getTaskCheckerProvider() = KTaskCheckerProvider()
+  override fun getTaskCheckerProvider() = KtTaskCheckerProvider()
 
   companion object {
     const val DEFAULT_COURSE_NAME = "Kotlin Koans.zip"

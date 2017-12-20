@@ -7,6 +7,8 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.TestsOutputParser
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
@@ -15,7 +17,13 @@ class JCheckersTest : CheckersTestBase() {
   override val dataPath: String = "checker"
 
   fun testJavaCourse() {
-    CheckActionListener.expectedMessage { task -> if (task is EduTask) TestsOutputParser.CONGRATULATIONS else null }
+    CheckActionListener.expectedMessage { task ->
+      when (task) {
+        is OutputTask, is EduTask -> TestsOutputParser.CONGRATULATIONS
+        is TheoryTask -> ""
+        else -> null
+      }
+    }
     doTest()
   }
 
