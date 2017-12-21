@@ -183,6 +183,7 @@ public class StepikWrappers {
     @Expose public int position = 0;
     @Expose public int lesson = 0;
     @Expose public String progress;
+    @Expose public int cost = 1;
     public Date update_date;
 
     public StepSource(Project project, Task task, int lesson) {
