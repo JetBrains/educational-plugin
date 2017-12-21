@@ -83,6 +83,21 @@ class PlaceholderPainterTest : EduTestCase() {
     """, expected)
   }
 
+  @Test
+  fun `test left rectangular`() {
+    val expected = listOf(NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 0),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 11),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 11, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 8, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(2, 8, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(2, 0, NewPlaceholderPainter.PositionInLine.BOTTOM))
+    checkPath("""
+      |<placeholder>    example
+      |test
+      |testtets</placeholder> = 2
+    """, expected)
+  }
+
 
   @Test
   fun `test last line longer`() {
@@ -121,6 +136,7 @@ class PlaceholderPainterTest : EduTestCase() {
     checkPointsCyclically(expected.map { toPoint(myFixture.editor, it) }, actual)
   }
 
+  //TODO: check in both directions?
   private fun checkPointsCyclically(expectedPoints: List<Point>, actual: List<Point>) {
     assertEquals("Wrong number of points\n" + getMessage(expectedPoints, actual), expectedPoints.size, actual.size)
     val shift = expectedPoints.indexOf(actual[0])
