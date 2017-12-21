@@ -96,12 +96,13 @@ object NewPlaceholderPainter {
     val rightBottom = LogicalPosition(lineY, editor.xyToLogicalPosition(Point(rightPointX, yPoint.y)).column)
     val rightTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(rightPointX, xPoint.y)).column)
     val leftBottom = LogicalPosition(lineY, editor.xyToLogicalPosition(Point(leftPointX, xPoint.y)).column)
-    val leftTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(leftPointX, xPoint.y)).column)
     if (isLeftRectangular) {
+      val leftTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(leftPointX, xPoint.y)).column)
       return PlaceholderShape.LeftRectangular(editor, leftBottom, leftTop, rightTop, rightBottom).points
     }
 
     if (isRightRectangular) {
+      val leftTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(xPoint.x, xPoint.y)).column)
       return PlaceholderShape.RightRectangular(editor, leftBottom, leftTop, rightTop, rightBottom).points
     }
 
