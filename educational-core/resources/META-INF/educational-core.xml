@@ -1,234 +1,235 @@
 <idea-plugin>
-    <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.lang</depends>
 
-    <project-components>
-        <component>
-            <implementation-class>com.jetbrains.edu.learning.EduProjectComponent</implementation-class>
-            <interface-class>com.jetbrains.edu.learning.EduProjectComponent</interface-class>
-        </component>
-        <component>
-            <implementation-class>com.jetbrains.edu.coursecreator.CCProjectComponent</implementation-class>
-        </component>
-    </project-components>
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.edu.learning.EduProjectComponent</implementation-class>
+      <interface-class>com.jetbrains.edu.learning.EduProjectComponent</interface-class>
+    </component>
+    <component>
+      <implementation-class>com.jetbrains.edu.coursecreator.CCProjectComponent</implementation-class>
+    </component>
+  </project-components>
 
-    <application-components>
-        <component>
-            <implementation-class>com.jetbrains.edu.learning.stepik.StepikUpdater</implementation-class>
-        </component>
-        <component>
-            <implementation-class>com.jetbrains.edu.learning.InitializationComponent</implementation-class>
-        </component>
-        <component>
-            <implementation-class>com.jetbrains.edu.learning.SelectRoleComponent</implementation-class>
-        </component>
-    </application-components>
+  <application-components>
+    <component>
+      <implementation-class>com.jetbrains.edu.learning.stepik.StepikUpdater</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.jetbrains.edu.learning.InitializationComponent</implementation-class>
+    </component>
+    <component>
+      <implementation-class>com.jetbrains.edu.learning.SelectRoleComponent</implementation-class>
+    </component>
+  </application-components>
 
-    <extensionPoints>
-        <extensionPoint qualifiedName="Educational.configurator" beanClass="com.intellij.lang.LanguageExtensionPoint">
-            <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduConfigurator"/>
-        </extensionPoint>
-        <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
-                        interface="com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator"/>
-        <extensionPoint qualifiedName="Educational.checkListener"
-                        interface="com.jetbrains.edu.learning.checker.CheckListener"/>
-        <extensionPoint qualifiedName="Educational.optionsProvider"
-                        beanClass="com.jetbrains.edu.learning.settings.OptionsProviderEP">
-            <with attribute="instance" implements="com.jetbrains.edu.learning.settings.OptionsProvider"/>
-        </extensionPoint>
+  <extensionPoints>
+    <extensionPoint qualifiedName="Educational.configurator" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduConfigurator"/>
+    </extensionPoint>
+    <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
+                    interface="com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator"/>
+    <extensionPoint qualifiedName="Educational.checkListener"
+                    interface="com.jetbrains.edu.learning.checker.CheckListener"/>
+    <extensionPoint qualifiedName="Educational.optionsProvider"
+                    beanClass="com.intellij.openapi.options.ConfigurableEP"
+                    area="IDEA_PROJECT">
+      <with attribute="instance" implements="com.jetbrains.edu.learning.settings.OptionsProvider"/>
+    </extensionPoint>
 
-        <extensionPoint qualifiedName="educational.languageDecorator" beanClass="com.intellij.lang.LanguageExtensionPoint">
-            <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduLanguageDecorator"/>
-        </extensionPoint>
-    </extensionPoints>
+    <extensionPoint qualifiedName="educational.languageDecorator" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduLanguageDecorator"/>
+    </extensionPoint>
+  </extensionPoints>
 
-    <actions>
-        <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
-        <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
-                text="Previous Answer Placeholder"
-                description="Navigate to the previous answer placeholder">
-        </action>
-        <action id="Educational.NextPlaceholder" class="com.jetbrains.edu.learning.actions.NextPlaceholderAction"
-                text="Next Answer Placeholder"
-                description="Navigate to the next answer holder">
-        </action>
-        <action id="Educational.PreviousTask" class="com.jetbrains.edu.learning.actions.PreviousTaskAction"
-                text="Previous Task"
-                description="Navigate to the previous task"/>
-        <action id="Educational.NextTask" class="com.jetbrains.edu.learning.actions.NextTaskAction" text="Next Task"
-                description="Navigate to the next task"/>
-        <action id="Educational.RefreshTaskFile" class="com.jetbrains.edu.learning.actions.RefreshTaskFileAction"
-                text="Reset Task File"
-                description="Refresh current task"/>
-        <action id="Educational.CompareWithAnswer" class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
-                text="Compare with Answer"
-                description="Compare your solution with answer"/>
-        <action id="Educational.RefreshAnswerPlaceholder" class="com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder"
-                text="Refresh Answer Placeholder">
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-        </action>
-        <action id="Educational.WatchInput" class="com.jetbrains.edu.learning.actions.EditInputAction"
-                text="Watch Test Input"
-                description="Watch test input "/>
-        <action id="Educational.ShowHint" class="com.jetbrains.edu.learning.actions.ShowHintAction"
-                text="Show Hint for Answer Placeholder"
-                description="Show hint for answer placeholder"/>
-        <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction"
-                text="Enable Course Creator Features">
-            <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
-        </action>
-        <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction"
-                text="Switch Task Description Panel">
-        </action>
+  <actions>
+    <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
+    <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
+            text="Previous Answer Placeholder"
+            description="Navigate to the previous answer placeholder">
+    </action>
+    <action id="Educational.NextPlaceholder" class="com.jetbrains.edu.learning.actions.NextPlaceholderAction"
+            text="Next Answer Placeholder"
+            description="Navigate to the next answer holder">
+    </action>
+    <action id="Educational.PreviousTask" class="com.jetbrains.edu.learning.actions.PreviousTaskAction"
+            text="Previous Task"
+            description="Navigate to the previous task"/>
+    <action id="Educational.NextTask" class="com.jetbrains.edu.learning.actions.NextTaskAction" text="Next Task"
+            description="Navigate to the next task"/>
+    <action id="Educational.RefreshTaskFile" class="com.jetbrains.edu.learning.actions.RefreshTaskFileAction"
+            text="Reset Task File"
+            description="Refresh current task"/>
+    <action id="Educational.CompareWithAnswer" class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
+            text="Compare with Answer"
+            description="Compare your solution with answer"/>
+    <action id="Educational.RefreshAnswerPlaceholder" class="com.jetbrains.edu.learning.actions.RefreshAnswerPlaceholder"
+            text="Refresh Answer Placeholder">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+    </action>
+    <action id="Educational.WatchInput" class="com.jetbrains.edu.learning.actions.EditInputAction"
+            text="Watch Test Input"
+            description="Watch test input "/>
+    <action id="Educational.ShowHint" class="com.jetbrains.edu.learning.actions.ShowHintAction"
+            text="Show Hint for Answer Placeholder"
+            description="Show hint for answer placeholder"/>
+    <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction"
+            text="Enable Course Creator Features">
+      <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
+    </action>
+    <action id="Educational.SwitchTaskDescriptionPanel" class="com.jetbrains.edu.learning.actions.SwitchTaskPanelAction"
+            text="Switch Task Description Panel">
+    </action>
 
-        <action id="Educational.ResetCourse" popup="true" class="com.jetbrains.edu.learning.actions.ResetCourseAction">
-            <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
-        </action>
+    <action id="Educational.ResetCourse" popup="true" class="com.jetbrains.edu.learning.actions.ResetCourseAction">
+      <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
+    </action>
 
-        <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction">
-            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
-            <add-to-group group-id="FileMenu" anchor="first"/>
-        </action>
+    <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction">
+      <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
+      <add-to-group group-id="FileMenu" anchor="first"/>
+    </action>
 
-        <!--educator actions-->
-        <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction">
-            <add-to-group group-id="WelcomeScreen.QuickStart" anchor="after" relative-to-action="Educational.BrowseCourses"/>
-            <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.BrowseCourses"/>
-        </action>
+    <!--educator actions-->
+    <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction">
+      <add-to-group group-id="WelcomeScreen.QuickStart" anchor="after" relative-to-action="Educational.BrowseCourses"/>
+      <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.BrowseCourses"/>
+    </action>
 
-        <group id="Educational.Educator.NewFile">
-            <action id="Educational.Educator.CreateLesson"
-                    class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson"/>
-            <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask"/>
-            <separator/>
-            <add-to-group group-id="NewGroup" anchor="first"/>
-        </group>
+    <group id="Educational.Educator.NewFile">
+      <action id="Educational.Educator.CreateLesson"
+              class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson"/>
+      <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask"/>
+      <separator/>
+      <add-to-group group-id="NewGroup" anchor="first"/>
+    </group>
 
-        <action id="Educational.Educator.ChangeCourseInfo" class="com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo"/>
+    <action id="Educational.Educator.ChangeCourseInfo" class="com.jetbrains.edu.coursecreator.actions.CCChangeCourseInfo"/>
 
-        <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
+    <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
 
-        <group id="Educational.Educator.AddSubtask">
-            <action class="com.jetbrains.edu.coursecreator.actions.CCNewSubtaskAction" id="Educational.Educator.NewStep"/>
-            <separator/>
-            <add-to-group group-id="EditorPopupMenu" relative-to-action="Educational.Educator.AnswerPlaceholder" anchor="after"/>
-        </group>
+    <group id="Educational.Educator.AddSubtask">
+      <action class="com.jetbrains.edu.coursecreator.actions.CCNewSubtaskAction" id="Educational.Educator.NewStep"/>
+      <separator/>
+      <add-to-group group-id="EditorPopupMenu" relative-to-action="Educational.Educator.AnswerPlaceholder" anchor="after"/>
+    </group>
 
-        <group id="Educational.Educator.ProjectView" popup="true" text="Course Creator"
-               class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
-            <action id="Educational.Educator.AddTaskFile" class="com.jetbrains.edu.coursecreator.actions.CCAddAsTaskFile"/>
-            <action id="Educational.Educator.HideTaskFile" class="com.jetbrains.edu.coursecreator.actions.CCHideFromStudent"/>
-            <action id="Educational.Educator.ShowPreview" class="com.jetbrains.edu.coursecreator.actions.CCShowPreview">
-                <add-to-group group-id="EditorTabPopupMenu"/>
-            </action>
-            <separator/>
-            <action id="Educational.Educator.SwitchSubtask" class="com.jetbrains.edu.coursecreator.actions.CCSwitchSubtask"/>
-            <reference id="Educational.Educator.NewStep"/>
-            <separator/>
-            <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive"/>
-            <action id="Educational.Educator.PushTask" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushTask"/>
-            <action id="Educational.Educator.PushLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson"/>
-            <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
-            <reference id="Educational.Educator.ChangeCourseInfo"/>
-            <reference id="Educational.Educator.CreateCoursePreview"/>
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
-        </group>
+    <group id="Educational.Educator.ProjectView" popup="true" text="Course Creator"
+           class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
+      <action id="Educational.Educator.AddTaskFile" class="com.jetbrains.edu.coursecreator.actions.CCAddAsTaskFile"/>
+      <action id="Educational.Educator.HideTaskFile" class="com.jetbrains.edu.coursecreator.actions.CCHideFromStudent"/>
+      <action id="Educational.Educator.ShowPreview" class="com.jetbrains.edu.coursecreator.actions.CCShowPreview">
+        <add-to-group group-id="EditorTabPopupMenu"/>
+      </action>
+      <separator/>
+      <action id="Educational.Educator.SwitchSubtask" class="com.jetbrains.edu.coursecreator.actions.CCSwitchSubtask"/>
+      <reference id="Educational.Educator.NewStep"/>
+      <separator/>
+      <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive"/>
+      <action id="Educational.Educator.PushTask" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushTask"/>
+      <action id="Educational.Educator.PushLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson"/>
+      <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
+      <reference id="Educational.Educator.ChangeCourseInfo"/>
+      <reference id="Educational.Educator.CreateCoursePreview"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
+    </group>
 
-        <group id="Educational.Educator.File" popup="true" text="Course Creator"
-               class="com.jetbrains.edu.coursecreator.actions.CCFileActionGroup">
-            <reference id="Educational.Educator.ChangeCourseInfo"/>
-            <reference id="Educational.Educator.PackCourse"/>
-            <reference id="Educational.Educator.PushLesson"/>
-            <reference id="Educational.Educator.PushCourse"/>
-            <reference id="Educational.Educator.CreateCoursePreview"/>
-            <add-to-group group-id="FileMenu" relative-to-action="FileMainSettingsGroup" anchor="before"/>
-        </group>
+    <group id="Educational.Educator.File" popup="true" text="Course Creator"
+           class="com.jetbrains.edu.coursecreator.actions.CCFileActionGroup">
+      <reference id="Educational.Educator.ChangeCourseInfo"/>
+      <reference id="Educational.Educator.PackCourse"/>
+      <reference id="Educational.Educator.PushLesson"/>
+      <reference id="Educational.Educator.PushCourse"/>
+      <reference id="Educational.Educator.CreateCoursePreview"/>
+      <add-to-group group-id="FileMenu" relative-to-action="FileMainSettingsGroup" anchor="before"/>
+    </group>
 
-        <action id="Educational.Educator.AddAnswerPlaceholder" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholder">
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-        </action>
+    <action id="Educational.Educator.AddAnswerPlaceholder"
+            class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholder">
+      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+    </action>
 
-        <group id="Educational.Educator.AnswerPlaceholder" popup="true" text="Answer Placeholder"
-               class="com.jetbrains.edu.coursecreator.CCAnswerPlaceholderActionGroup">
-            <action id="Educational.Educator..HideFromPrevSubtasks"
-                    class="com.jetbrains.edu.coursecreator.actions.placeholder.CCHidePlaceholderFromPrevSubtasks"/>
-            <action id="Educational.Educator..MakeVisibleFromPrevSubtasks"
-                    class="com.jetbrains.edu.coursecreator.actions.placeholder.CCMakeVisibleForPrevSubtasks"/>
-            <action id="Educational.Educator..ActivatePlaceholder"
-                    class="com.jetbrains.edu.coursecreator.actions.placeholder.CCActivatePlaceholder"/>
-            <action id="Educational.Educator..DeactivatePlaceholder"
-                    class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeactivatePlaceholder"/>
-            <action id="Educational.Educator.EditAnswerPlaceholder"
-                    class="com.jetbrains.edu.coursecreator.actions.placeholder.CCEditAnswerPlaceholder"/>
-            <action id="Educational.Educator.DeleteAnswerPlaceholder"
-                    class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAnswerPlaceholder"/>
-            <action id="Educational.Educator.DeleteAllPlaceholders"
-                    class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAllAnswerPlaceholdersAction"/>
-            <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="Educational.Educator.AddAnswerPlaceholder"/>
-        </group>
+    <group id="Educational.Educator.AnswerPlaceholder" popup="true" text="Answer Placeholder"
+           class="com.jetbrains.edu.coursecreator.CCAnswerPlaceholderActionGroup">
+      <action id="Educational.Educator..HideFromPrevSubtasks"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCHidePlaceholderFromPrevSubtasks"/>
+      <action id="Educational.Educator..MakeVisibleFromPrevSubtasks"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCMakeVisibleForPrevSubtasks"/>
+      <action id="Educational.Educator..ActivatePlaceholder"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCActivatePlaceholder"/>
+      <action id="Educational.Educator..DeactivatePlaceholder"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeactivatePlaceholder"/>
+      <action id="Educational.Educator.EditAnswerPlaceholder"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCEditAnswerPlaceholder"/>
+      <action id="Educational.Educator.DeleteAnswerPlaceholder"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAnswerPlaceholder"/>
+      <action id="Educational.Educator.DeleteAllPlaceholders"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAllAnswerPlaceholdersAction"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="Educational.Educator.AddAnswerPlaceholder"/>
+    </group>
 
-        <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
-        <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepik"/>
-    </actions>
+    <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
+    <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepik"/>
+  </actions>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceInterface="com.intellij.codeInsight.documentation.DocumentationManager"
-                        serviceImplementation="com.jetbrains.edu.learning.EduDocumentationManager" overrides="true"/>
-        <applicationConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
-                                 id="Educational"
-                                 displayName="Education"/>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceInterface="com.intellij.codeInsight.documentation.DocumentationManager"
+                    serviceImplementation="com.jetbrains.edu.learning.EduDocumentationManager" overrides="true"/>
+    <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
+                         id="Educational" displayName="Education"/>
 
-        <toolWindow id="Educational.TaskDescription" anchor="right"
-                    factoryClass="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory"
-                    conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
-        <toolWindow id="Educational.TestResults" anchor="bottom"
-                    factoryClass="com.jetbrains.edu.learning.ui.TestResultsToolWindowFactory"
-                    conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
-        <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider"/>
-        <treeStructureProvider implementation="com.jetbrains.edu.learning.projectView.EduTreeStructureProvider"/>
-        <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
-        <projectService serviceInterface="com.jetbrains.edu.learning.StudyTaskManager"
-                        serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
-        <extendWordSelectionHandler
-                implementation="com.jetbrains.edu.learning.handlers.AnswerPlaceholderExtendWordHandler"/>
-        <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduRenameHandler"/>
-        <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
-        <statistics.usagesCollector implementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
-        <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
-        <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
-        <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
-        <editorTabTitleProvider implementation="com.jetbrains.edu.learning.EduTabTitleProvider"/>
-        <typedHandler implementation="com.jetbrains.edu.learning.handlers.EduTypeHandlerDelegate"
-                      order="first, before completionAutoPopup"/>
-        <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
-        <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader" />
+    <toolWindow id="Educational.TaskDescription" anchor="right"
+                factoryClass="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory"
+                conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
+    <toolWindow id="Educational.TestResults" anchor="bottom"
+                factoryClass="com.jetbrains.edu.learning.ui.TestResultsToolWindowFactory"
+                conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
+    <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider"/>
+    <treeStructureProvider implementation="com.jetbrains.edu.learning.projectView.EduTreeStructureProvider"/>
+    <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
+    <projectService serviceInterface="com.jetbrains.edu.learning.StudyTaskManager"
+                    serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
+    <extendWordSelectionHandler
+            implementation="com.jetbrains.edu.learning.handlers.AnswerPlaceholderExtendWordHandler"/>
+    <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduRenameHandler"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
+    <statistics.usagesCollector implementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
+    <editorTabTitleProvider implementation="com.jetbrains.edu.learning.EduTabTitleProvider"/>
+    <typedHandler implementation="com.jetbrains.edu.learning.handlers.EduTypeHandlerDelegate"
+                  order="first, before completionAutoPopup"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
+    <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader" />
 
-        <!--for educators-->
-        <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>
-        <treeStructureProvider implementation="com.jetbrains.edu.coursecreator.projectView.CCTreeStructureProvider"
-                               order="last"/>
-        <refactoring.elementListenerProvider
-                implementation="com.jetbrains.edu.coursecreator.CCRefactoringElementListenerProvider"/>
-        <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate"
-                                 order="first"/>
-        <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCTaskMoveHandlerDelegate"
-                                 order="first"/>
-        <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCTaskRenameHandler" order="first"/>
-        <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonRenameHandler" order="first"/>
-        <applicationService serviceInterface="com.jetbrains.edu.coursecreator.settings.CCSettings"
-                            serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
-        <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
-        <editorNotificationProvider
-                implementation="com.jetbrains.edu.coursecreator.CCSubtaskEditorNotificationProvider"/>
-        <editorTabTitleProvider implementation="com.jetbrains.edu.coursecreator.CCTestsTabTitleProvider"/>
-    </extensions>
+    <!--for educators-->
+    <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>
+    <treeStructureProvider implementation="com.jetbrains.edu.coursecreator.projectView.CCTreeStructureProvider"
+                           order="last"/>
+    <refactoring.elementListenerProvider
+        implementation="com.jetbrains.edu.coursecreator.CCRefactoringElementListenerProvider"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate"
+                             order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCTaskMoveHandlerDelegate"
+                             order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCTaskRenameHandler" order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonRenameHandler" order="first"/>
+    <applicationService serviceInterface="com.jetbrains.edu.coursecreator.settings.CCSettings"
+                        serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
+    <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
+    <editorNotificationProvider
+        implementation="com.jetbrains.edu.coursecreator.CCSubtaskEditorNotificationProvider"/>
+    <editorTabTitleProvider implementation="com.jetbrains.edu.coursecreator.CCTestsTabTitleProvider"/>
+  </extensions>
 
-    <extensions defaultExtensionNs="Educational">
-        <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
-        <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
-        <checkListener implementation="com.jetbrains.edu.learning.stepik.NextRecommendationCheckListener"/>
-        <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
-        <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
-        <!--educator-->
-        <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
-    </extensions>
+  <extensions defaultExtensionNs="Educational">
+    <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
+    <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
+    <checkListener implementation="com.jetbrains.edu.learning.stepik.NextRecommendationCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
+    <!--educator-->
+    <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
+  </extensions>
 </idea-plugin>

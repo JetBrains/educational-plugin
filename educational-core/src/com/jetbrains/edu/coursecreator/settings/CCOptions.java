@@ -1,9 +1,9 @@
 package com.jetbrains.edu.coursecreator.settings;
 
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -39,7 +39,7 @@ public class CCOptions implements OptionsProvider {
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     if (isModified()) {
       CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(myHtmlRadioButton.isSelected());
     }
@@ -53,5 +53,11 @@ public class CCOptions implements OptionsProvider {
   @Override
   public void disposeUIResources() {
 
+  }
+
+  @Nls
+  @Override
+  public String getDisplayName() {
+    return "Course Creator options";
   }
 }

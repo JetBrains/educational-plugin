@@ -16,20 +16,25 @@
 package com.jetbrains.edu.learning.settings;
 
 import com.intellij.openapi.options.CompositeConfigurable;
+import com.intellij.openapi.options.ConfigurableEP;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EduConfigurable extends CompositeConfigurable<OptionsProvider> {
   public static final String ID = "com.jetbrains.edu.learning.stepik.EduConfigurable";
   private final JPanel myMainPanel;
+  @NotNull private final Project myProject;
 
-  public EduConfigurable() {
+  public EduConfigurable(@NotNull final Project project) {
+    myProject = project;
     myMainPanel = new JPanel(new VerticalFlowLayout());
   }
 
@@ -62,7 +67,19 @@ public class EduConfigurable extends CompositeConfigurable<OptionsProvider> {
   @NotNull
   @Override
   protected List<OptionsProvider> createConfigurables() {
-    return ConfigurableWrapper.createConfigurables(OptionsProviderEP.EP_NAME);
+    final ConfigurableEP<OptionsProvider>[] extensions = OptionsProvider.EP_NAME.getExtensions(myProject);
+    List<OptionsProvider> result = new ArrayList<>(extensions.length);
+    for (ConfigurableEP<OptionsProvider> extension : extensions) {
+      if (extension == null) {
+        continue;
+      }
+      OptionsProvider wrappedConfigurable = ConfigurableWrapper.wrapConfigurable(extension);
+      if (wrappedConfigurable == null) {
+        continue;
+      }
+      result.add(wrappedConfigurable);
+    }
+    return result;
   }
 }
 
