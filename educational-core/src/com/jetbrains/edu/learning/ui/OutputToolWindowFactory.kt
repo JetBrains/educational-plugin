@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.ui
 
 import com.intellij.execution.impl.ConsoleViewImpl
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
@@ -17,7 +18,7 @@ import com.jetbrains.edu.learning.EduUtils
 class OutputToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     val currentTask = EduUtils.getCurrentTask(project)
-    if (currentTask != null) {
+    if (currentTask != null && !ApplicationManager.getApplication().isUnitTestMode) {
       val consoleView = ConsoleViewImpl(project, true)
       toolWindow.isToHideOnEmptyContent = true
 
