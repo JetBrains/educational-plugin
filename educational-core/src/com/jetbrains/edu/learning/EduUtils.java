@@ -671,7 +671,11 @@ public class EduUtils {
 
   @Nullable
   public static VirtualFile findTaskDescriptionVirtualFile(@NotNull Project project, @NotNull VirtualFile taskDir) {
-    Task task = getTaskForFile(project, taskDir.getName().contains(EduNames.TASK) ? taskDir: taskDir.getParent());
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return null;
+    }
+    Task task = getTask(taskDir, course);
     if (task == null) {
       return null;
     }
@@ -1049,7 +1053,13 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Task getTask(@NotNull final VirtualFile directory, @NotNull final Course course) {
+  public static Task getTask(@NotNull VirtualFile directory, @NotNull final Course course) {
+    if (EduNames.SRC.equals(directory.getName())) {
+      directory = directory.getParent();
+      if (directory == null) {
+        return null;
+      }
+    }
     VirtualFile lessonDir = directory.getParent();
     if (lessonDir == null) {
       return null;
