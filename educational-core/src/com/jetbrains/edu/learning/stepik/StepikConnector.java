@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.stepic.StepikLanguages;
 import com.jetbrains.edu.learning.stepic.StepikTaskBuilder;
 import org.apache.http.*;
@@ -546,8 +547,8 @@ public class StepikConnector {
     return result;
   }
 
-  @NotNull
-  static List<SolutionFile> getLastSubmission(@NotNull String stepId, boolean isSolved) throws IOException {
+  @Nullable
+  static Reply getLastSubmission(@NotNull String stepId, boolean isSolved) throws IOException {
     try {
       URI url = new URIBuilder(StepikNames.SUBMISSIONS)
         .addParameter("order", "desc")
@@ -556,20 +557,18 @@ public class StepikConnector {
         .addParameter("step", stepId).build();
       Submission[] submissions = getFromStepik(url.toString(), SubmissionsWrapper.class).submissions;
       if (submissions.length > 0) {
-        List<SolutionFile> solutionFiles = submissions[0].reply.solution;
-        if (solutionFiles != null) {
-          return solutionFiles;
-        }
+        return submissions[0].reply;
       }
     }
     catch (URISyntaxException e) {
       LOG.warn(e.getMessage());
     }
-    return Collections.emptyList();
+    return null;
   }
 
-  @Nullable
-  static String getSolutionForStepikAssignment(@NotNull Task task, boolean isSolved) throws IOException {
+  @NotNull
+  static HashMap<String, String> getSolutionForStepikAssignment(@NotNull Task task, boolean isSolved) throws IOException {
+    HashMap<String, String> taskFileToText = new HashMap<>();
     try {
       URI url = new URIBuilder(StepikNames.SUBMISSIONS)
               .addParameter("order", "desc")
@@ -580,9 +579,13 @@ public class StepikConnector {
       Language language = task.getLesson().getCourse().getLanguageById();
       String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
       for (Submission submission : submissions) {
-        Submission.Reply reply = submission.reply;
+        Reply reply = submission.reply;
         if (stepikLanguage != null && stepikLanguage.equals(reply.language)) {
-          return reply.code;
+          Collection<TaskFile> values = task.taskFiles.values();
+          assert values.size() == 1;
+          for (TaskFile value : values) {
+            taskFileToText.put(value.name, reply.code);
+          }
         }
       }
     }
@@ -590,7 +593,7 @@ public class StepikConnector {
       LOG.warn(e.getMessage());
     }
 
-    return null;
+    return taskFileToText;
   }
 
   public static StepSource getStep(int step) throws IOException {
@@ -646,8 +649,8 @@ public class StepikConnector {
         LOG.error("Failed to find task directory " + task.getName());
         return;
       }
-      for (TaskFile fileEntry : taskFiles.values()) {
-        final String fileName = fileEntry.name;
+      for (TaskFile taskFile : taskFiles.values()) {
+        final String fileName = taskFile.name;
         final VirtualFile virtualFile = taskDir.findFileByRelativePath(fileName);
         if (virtualFile != null) {
           ApplicationManager.getApplication().runReadAction(() -> {
@@ -656,11 +659,14 @@ public class StepikConnector {
               String text = document.getText();
               int insertedTextLength = 0;
               StringBuilder builder = new StringBuilder(text);
-              for (AnswerPlaceholder placeholder : fileEntry.getActivePlaceholders()) {
-                builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
-                builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
-                               CLOSE_PLACEHOLDER_TAG);
-                insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
+              if (!(task instanceof TaskWithSubtasks)) {
+
+                for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
+                  builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
+                  builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
+                                 CLOSE_PLACEHOLDER_TAG);
+                  insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
+                }
               }
               files.add(new SolutionFile(fileName, builder.toString()));
             }
@@ -668,7 +674,7 @@ public class StepikConnector {
         }
       }
 
-      postSubmission(passed, attempt, files);
+      postSubmission(passed, attempt, files, task);
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
@@ -695,10 +701,9 @@ public class StepikConnector {
   }
 
   private static void postSubmission(boolean passed, AttemptWrapper.Attempt attempt,
-                                     ArrayList<SolutionFile> files) throws IOException {
+                                     ArrayList<SolutionFile> files, Task task) throws IOException {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SUBMISSIONS);
-
-    String requestBody = new Gson().toJson(new SubmissionWrapper(attempt.id, passed ? "1" : "0", files));
+    String requestBody = new Gson().toJson(new SubmissionWrapper(attempt.id, passed ? "1" : "0", files, task));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
     final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
     if (client == null) return;
