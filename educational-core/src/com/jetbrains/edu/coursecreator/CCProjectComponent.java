@@ -26,7 +26,10 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class CCProjectComponent extends AbstractProjectComponent {
   private static final Logger LOG = Logger.getInstance(CCProjectComponent.class);

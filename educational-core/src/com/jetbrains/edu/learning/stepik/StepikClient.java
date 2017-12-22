@@ -7,8 +7,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.net.ssl.CertificateManager;
 import com.intellij.util.net.ssl.ConfirmingTrustManager;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.stepic.serialization.StepikLessonAdapter;
+import com.jetbrains.edu.learning.stepic.serialization.StepikStepOptionsAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -85,8 +86,8 @@ public class StepikClient {
   static <T> T deserializeStepikResponse(Class<T> container, String responseString) {
     Gson gson =
       new GsonBuilder()
-          .registerTypeAdapter(StepikWrappers.StepOptions.class, new SerializationUtils.Json.StepikStepOptionsAdapter())
-          .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.StepikLessonAdapter())
+          .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter())
+          .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
           .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
     return gson.fromJson(responseString, container);

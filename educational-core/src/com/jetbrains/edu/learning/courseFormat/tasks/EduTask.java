@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat.tasks;
 
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,5 +18,10 @@ public class EduTask extends Task {
   @Override
   public String getTaskType() {
     return "edu";
+  }
+
+  @Override
+  public boolean isToSubmitToStepik() {
+    return myStatus != CheckStatus.Unchecked;
   }
 }
