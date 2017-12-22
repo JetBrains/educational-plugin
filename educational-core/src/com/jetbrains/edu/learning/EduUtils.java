@@ -68,14 +68,15 @@ import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.text.MarkdownUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
-import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.OAuthDialog;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
@@ -390,11 +391,9 @@ public class EduUtils {
     if (task == null || task.getLesson() == null || task.getLesson().getCourse() == null) {
       return null;
     }
-    final Course course = task.getLesson().getCourse();
     String text = task.getTaskDescription() != null ? task.getTaskDescription() : getTaskTextByTaskName(task, taskDirectory);
 
     if (text == null) return null;
-    if (course.isAdaptive()) text = wrapAdaptiveCourseText(task, text);
 
     return text;
   }
@@ -407,26 +406,6 @@ public class EduUtils {
       fileNameWithoutExtension += EduNames.SUBTASK_MARKER + activeStepIndex;
     }
     return addExtension(fileNameWithoutExtension, defaultName);
-  }
-
-  private static String wrapAdaptiveCourseText(Task task, @NotNull String text) {
-    String finalText = text;
-    if (task instanceof TheoryTask) {
-      finalText += "\n\n<b>Note</b>: This theory task aims to help you solve difficult tasks. " +
-             "Please, read it and press \"Check\" to go further.";
-    }
-    else if (!(task instanceof ChoiceTask)) {
-      finalText += "\n\n<b>Note</b>: Use standard input to obtain input for the task.";
-    }
-    finalText += getFooterWithLink(task);
-
-    return finalText;
-  }
-
-  @NotNull
-  private static String getFooterWithLink(Task task) {
-    return
-      "<div class=\"footer\">" + "<a href=" + StepikUtils.getAdaptiveLink(task) + ">Open on Stepik</a>" + "</div>";
   }
 
   @NotNull

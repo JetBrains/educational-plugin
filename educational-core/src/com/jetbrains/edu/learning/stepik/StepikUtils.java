@@ -26,8 +26,7 @@ public class StepikUtils {
   public static String wrapStepikTasks(Task task, @NotNull String text, boolean adaptive) {
     String finalText = text;
     if (task instanceof TheoryTask) {
-      finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. " +
-          "Please, read it and press \"Check\" to go further.";
+      finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. ";
     }
     else if (task instanceof CodeTask) {
       finalText += "<br/><br/><b>Note</b>: Use standard input to obtain input for the task.";
