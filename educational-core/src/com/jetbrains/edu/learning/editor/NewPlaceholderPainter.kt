@@ -12,7 +12,6 @@ import java.awt.Graphics
 import java.awt.Graphics2D
 import java.awt.Point
 import java.awt.RenderingHints
-import java.awt.geom.GeneralPath
 
 
 object NewPlaceholderPainter {
@@ -28,21 +27,13 @@ object NewPlaceholderPainter {
       g.color = placeholder.color
       val old = (g as Graphics2D).getRenderingHint(RenderingHints.KEY_ANTIALIASING)
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-      val path = getPath(editor, placeholder.offset, placeholder.endOffset)
-      val generalPath = GeneralPath()
-      generalPath.moveTo(path[0].x.toDouble(), path[0].y.toDouble())
-      for (i in 1 until path.size) {
-        generalPath.lineTo(path[i].x.toDouble(), path[i].y.toDouble())
-      }
-      generalPath.closePath()
-      g.draw(generalPath)
+      g.draw(getPlaceholderShape(editor, placeholder.offset, placeholder.endOffset).getShape())
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, old)
     }
   }
 
 
-  //TODO: make this method return placeholder shape
-  fun getPath(editor: Editor, start: Int, end: Int): List<Point> {
+  fun getPlaceholderShape(editor: Editor, start: Int, end: Int): PlaceholderShape {
     val x = getFirstNonWhitespace(editor.document, start..end)
     val y = getFirstNonWhitespace(editor.document, end..start)
     val document = editor.document
@@ -54,7 +45,7 @@ object NewPlaceholderPainter {
 
     //TODO: do we really need this are special case
     if (lineX == lineY) {
-      return PlaceholderShape.Rectangular(editor, editor.offsetToLogicalPosition(x), editor.offsetToLogicalPosition(y)).points
+      return PlaceholderShape.Rectangular(editor, editor.offsetToLogicalPosition(x), editor.offsetToLogicalPosition(y))
     }
 
     val boundaries = (lineX..lineY).map { getBoundaries(document, it) }
@@ -73,7 +64,7 @@ object NewPlaceholderPainter {
     if (isLeftRectangular && isRightRectangular) {
       val startPosition = editor.xyToLogicalPosition(Point(leftPointX, xPoint.y))
       val endPosition = editor.xyToLogicalPosition(Point(rightPointX, yPoint.y))
-      return PlaceholderShape.Rectangular(editor, startPosition, endPosition).points
+      return PlaceholderShape.Rectangular(editor, startPosition, endPosition)
     }
 
     val rightTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(rightPointX, xPoint.y)).column)
@@ -81,18 +72,18 @@ object NewPlaceholderPainter {
     if (isLeftRectangular) {
       val leftTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(leftPointX, xPoint.y)).column)
       val rightBottom = LogicalPosition(lineY, editor.xyToLogicalPosition(Point(yPoint.x, yPoint.y)).column)
-      return PlaceholderShape.LeftRectangular(editor, leftBottom, leftTop, rightTop, rightBottom).points
+      return PlaceholderShape.LeftRectangular(editor, leftBottom, leftTop, rightTop, rightBottom)
     }
 
     if (isRightRectangular) {
       val leftTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(xPoint.x, xPoint.y)).column)
       val rightBottom = LogicalPosition(lineY, editor.xyToLogicalPosition(Point(rightPointX, yPoint.y)).column)
-      return PlaceholderShape.RightRectangular(editor, leftBottom, leftTop, rightTop, rightBottom).points
+      return PlaceholderShape.RightRectangular(editor, leftBottom, leftTop, rightTop, rightBottom)
     }
 
     val leftTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(xPoint.x, xPoint.y)).column)
     val rightBottom = LogicalPosition(lineY, editor.xyToLogicalPosition(Point(yPoint.x, yPoint.y)).column)
-    return PlaceholderShape.Complex(editor, leftBottom, leftTop, rightTop, rightBottom).points
+    return PlaceholderShape.Complex(editor, leftBottom, leftTop, rightTop, rightBottom)
   }
 
   private fun getLineHeight(editor: Editor) = editor.lineHeight - 1

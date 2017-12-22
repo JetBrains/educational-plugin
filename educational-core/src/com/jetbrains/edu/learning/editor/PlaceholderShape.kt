@@ -3,10 +3,23 @@ package com.jetbrains.edu.learning.editor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import java.awt.Point
+import java.awt.Shape
+import java.awt.geom.GeneralPath
 
 
 sealed class PlaceholderShape {
   val points = ArrayList<Point>()
+
+  fun getShape(): Shape {
+    val generalPath = GeneralPath()
+    generalPath.moveTo(points[0].x.toDouble(), points[0].y.toDouble())
+    for (i in 1 until points.size) {
+      generalPath.lineTo(points[i].x.toDouble(), points[i].y.toDouble())
+    }
+    generalPath.closePath()
+    return generalPath
+  }
+
 
   protected fun getRectangularLeftBorder(editor: Editor,
                                          bottom: LogicalPosition,

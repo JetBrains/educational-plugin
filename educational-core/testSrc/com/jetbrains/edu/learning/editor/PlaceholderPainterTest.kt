@@ -129,8 +129,8 @@ class PlaceholderPainterTest : EduTestCase() {
 
   private fun checkPath(text: String, expected: List<NewPlaceholderPainter.LogicalPositionWithLinePlacement>) {
     val placeholders = getPlaceholders(text)
-    val path = NewPlaceholderPainter.getPath(myFixture.editor, placeholders[0].offset, placeholders[0].endOffset)
-    checkCyclically(expected, path)
+    val placeholderShape = NewPlaceholderPainter.getPlaceholderShape(myFixture.editor, placeholders[0].offset, placeholders[0].endOffset)
+    checkCyclically(expected, placeholderShape.points)
   }
 
   private fun checkCyclically(expected: List<NewPlaceholderPainter.LogicalPositionWithLinePlacement>, actual: List<Point>) {
