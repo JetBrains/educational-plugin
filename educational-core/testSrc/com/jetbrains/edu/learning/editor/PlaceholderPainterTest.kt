@@ -5,19 +5,16 @@ import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.editor.NewPlaceholderPainter.toPoint
-import org.junit.Test
 import java.awt.Point
 
 class PlaceholderPainterTest : EduTestCase() {
 
-  @Test
   fun `test inline placeholder`() {
     checkRectangular("""
     |This is <placeholder>one line </placeholder> placeholder
     """, LogicalPosition(0, 8), LogicalPosition(0, 17))
   }
 
-  @Test
   fun `test one empty line`() {
     checkRectangular("""
     |fun checkSign(number: Int) = <placeholder>
@@ -25,7 +22,6 @@ class PlaceholderPainterTest : EduTestCase() {
     """, LogicalPosition(1, 4), LogicalPosition(1, 19))
   }
 
-  @Test
   fun `test multi line rectangle`() {
     checkRectangular("""
     |def f():
@@ -37,7 +33,6 @@ class PlaceholderPainterTest : EduTestCase() {
     """, LogicalPosition(1, 4), LogicalPosition(3, 8))
   }
 
-  @Test
   fun `test with left margin`(){
     checkRectangular("""
      |t <placeholder>tt
@@ -45,7 +40,6 @@ class PlaceholderPainterTest : EduTestCase() {
     """, LogicalPosition(0, 2), LogicalPosition(1, 4))
   }
 
-  @Test
   fun `test with right margin`() {
     checkRectangular("""
      |<placeholder>tt
@@ -55,7 +49,6 @@ class PlaceholderPainterTest : EduTestCase() {
 
 
 
-  @Test
   fun `test non rectangular`() {
     val expected = listOf(NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 2), NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 4),
                           NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 4, NewPlaceholderPainter.PositionInLine.BOTTOM),
@@ -70,7 +63,6 @@ class PlaceholderPainterTest : EduTestCase() {
       """, expected)
   }
 
-  @Test
   fun `test right rectangular`() {
     val expected = listOf(NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 61), NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 70),
                           NewPlaceholderPainter.LogicalPositionWithLinePlacement(2, 70, NewPlaceholderPainter.PositionInLine.BOTTOM),
@@ -84,7 +76,6 @@ class PlaceholderPainterTest : EduTestCase() {
     """, expected)
   }
 
-  @Test
   fun `test left rectangular`() {
     val expected = listOf(NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 0),
                           NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 11),
@@ -100,7 +91,6 @@ class PlaceholderPainterTest : EduTestCase() {
   }
 
 
-  @Test
   fun `test last line longer`() {
     checkRectangular("""
       |<placeholder>test
@@ -110,7 +100,6 @@ class PlaceholderPainterTest : EduTestCase() {
   }
 
 
-  @Test
   fun `test first line longer`() {
     checkRectangular("""
       |<placeholder>testtesttest
