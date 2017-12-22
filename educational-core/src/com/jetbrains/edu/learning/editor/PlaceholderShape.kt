@@ -22,12 +22,12 @@ sealed class PlaceholderShape {
 
 
   protected fun getRectangularLeftBorder(editor: Editor,
-                                         bottom: LogicalPosition,
-                                         left: LogicalPosition,
-                                         right: LogicalPosition) = listOf(
-    NewPlaceholderPainter.toPoint(editor, NewPlaceholderPainter.LogicalPositionWithLinePlacement(bottom.line, bottom.column,
+                                         leftBottom: LogicalPosition,
+                                         leftTop: LogicalPosition,
+                                         rightTop: LogicalPosition) = listOf(
+    NewPlaceholderPainter.toPoint(editor, NewPlaceholderPainter.LogicalPositionWithLinePlacement(leftBottom.line, leftBottom.column,
                                                                                                  NewPlaceholderPainter.PositionInLine.BOTTOM)),
-    editor.logicalPositionToXY(left), editor.logicalPositionToXY(right))
+    editor.logicalPositionToXY(leftTop), editor.logicalPositionToXY(rightTop))
 
   protected fun getRectangularRightBorder(editor: Editor, rightBottom: LogicalPosition): List<Point> = listOf(
     NewPlaceholderPainter.toPoint(editor, NewPlaceholderPainter.LogicalPositionWithLinePlacement(rightBottom.line, rightBottom.column,
@@ -75,11 +75,8 @@ sealed class PlaceholderShape {
 
   class Rectangular(editor: Editor, start: LogicalPosition, end: LogicalPosition) : PlaceholderShape() {
     init {
-      val startPoint = NewPlaceholderPainter.toPoint(editor,
-                                                     NewPlaceholderPainter.LogicalPositionWithLinePlacement(start.line, start.column))
-      val endPoint = NewPlaceholderPainter.toPoint(editor, NewPlaceholderPainter.LogicalPositionWithLinePlacement(end.line, end.column,
-                                                                                                                  NewPlaceholderPainter.PositionInLine.BOTTOM))
-      points.addAll(listOf(startPoint, Point(endPoint.x, startPoint.y), endPoint, Point(startPoint.x, endPoint.y)))
+      points.addAll(getRectangularLeftBorder(editor, LogicalPosition(end.line, start.column), start, LogicalPosition(start.line, end.column)))
+      points.addAll(getRectangularRightBorder(editor, end))
     }
   }
 
