@@ -23,6 +23,7 @@ import com.intellij.ui.components.JBLabel;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -169,5 +170,11 @@ public class StepikOptions implements OptionsProvider {
     boolean userDeleted = myUser == null && user != null;
     boolean userModified = myUser != null && !myUser.equals(user);
     return isTestOptionModified || (userDeleted || userModified);
+  }
+
+  @Nls
+  @Override
+  public String getDisplayName() {
+    return "Stepik options";
   }
 }
