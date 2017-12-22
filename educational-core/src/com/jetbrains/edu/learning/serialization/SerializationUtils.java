@@ -7,17 +7,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.serialization.converter.json.ToFourthVersionJsonStepOptionsConverter;
-import com.jetbrains.edu.learning.serialization.converter.json.ToSecondVersionJsonStepOptionsConverter;
-import com.jetbrains.edu.learning.serialization.converter.json.ToThirdVersionJsonStepOptionsConverter;
 import com.jetbrains.edu.learning.serialization.converter.xml.*;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -375,66 +369,6 @@ public class SerializationUtils {
     private Json() {
     }
 
-    public static class StepikStepOptionsAdapter implements JsonDeserializer<StepikWrappers.StepOptions> {
-      @Override
-      public StepikWrappers.StepOptions deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-        throws JsonParseException {
-        JsonObject stepOptionsJson = json.getAsJsonObject();
-        JsonPrimitive versionJson = stepOptionsJson.getAsJsonPrimitive(FORMAT_VERSION);
-        int version = 1;
-        if (versionJson != null) {
-          version = versionJson.getAsInt();
-        }
-        switch (version) {
-          case 1:
-            stepOptionsJson = convertToSecondVersion(stepOptionsJson);
-          case 2:
-            stepOptionsJson = convertToThirdVersion(stepOptionsJson);
-          case 3:
-            stepOptionsJson = convertToFourthVersion(stepOptionsJson);
-          // uncomment for future versions
-          //case 4:
-          //  stepOptionsJson = convertToFourthVersion(stepOptionsJson);
-        }
-        convertSubtaskInfosToMap(stepOptionsJson);
-        StepikWrappers.StepOptions stepOptions =
-          new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
-            .fromJson(stepOptionsJson, StepikWrappers.StepOptions.class);
-        stepOptions.formatVersion = StepikConnector.CURRENT_VERSION;
-        return stepOptions;
-      }
-
-      @NotNull
-      private static JsonObject convertToSecondVersion(@NotNull JsonObject stepOptionsJson) {
-        return new ToSecondVersionJsonStepOptionsConverter().convert(stepOptionsJson);
-      }
-
-      @NotNull
-      private static JsonObject convertToFourthVersion(@NotNull JsonObject stepOptionsJson) {
-        return new ToFourthVersionJsonStepOptionsConverter().convert(stepOptionsJson);
-      }
-
-      @NotNull
-      private static JsonObject convertToThirdVersion(@NotNull JsonObject stepOptionsJson) {
-        return new ToThirdVersionJsonStepOptionsConverter().convert(stepOptionsJson);
-      }
-
-      private static JsonObject convertSubtaskInfosToMap(JsonObject stepOptionsJson) {
-        final JsonArray files = stepOptionsJson.getAsJsonArray(FILES);
-        if (files != null) {
-          for (JsonElement taskFileElement : files) {
-            JsonObject taskFileObject = taskFileElement.getAsJsonObject();
-            JsonArray placeholders = taskFileObject.getAsJsonArray(PLACEHOLDERS);
-            for (JsonElement placeholder : placeholders) {
-              JsonObject placeholderObject = placeholder.getAsJsonObject();
-              removeIndexFromSubtaskInfos(placeholderObject);
-            }
-          }
-        }
-        return stepOptionsJson;
-      }
-    }
-
     public static void removeIndexFromSubtaskInfos(JsonObject placeholderObject) {
       JsonArray infos = placeholderObject.getAsJsonArray(SUBTASK_INFOS);
       Map<Integer, JsonObject> objectsToInsert = new HashMap<>();
@@ -465,78 +399,54 @@ public class SerializationUtils {
       }
     }
 
-    public static class StepikLessonAdapter implements JsonDeserializer<Lesson> {
-      @Override
-      public Lesson deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        Gson gson = new GsonBuilder()
-            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-            .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter()).create();
-        final Lesson lesson = gson.fromJson(json, Lesson.class);
-        final String name = lesson.getName();
-        if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {
-          lesson.setName(EduNames.ADDITIONAL_MATERIALS);
-        }
-        return lesson;
-      }
-    }
-
     public static class TaskAdapter implements JsonSerializer<Task>, JsonDeserializer<Task> {
 
       @Override
       public JsonElement serialize(Task src, Type typeOfSrc, JsonSerializationContext context) {
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-        JsonElement tree = gson.toJsonTree(src);
-        final JsonObject task = tree.getAsJsonObject();
-        task.add(TASK_TYPE, new JsonPrimitive(src.getTaskType()));
-        return task;
+        return serializeWithTaskType(src, gson);
       }
 
       @Override
       public Task deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-        final JsonObject object = json.getAsJsonObject();
-        if (object.has(NAME) && StepikNames.PYCHARM_ADDITIONAL.equals(object.get(NAME).getAsString())) {
-          object.remove(NAME);
-          object.add(NAME, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
-        }
-        if (object.has(TASK_TYPE)) {
-          final String taskType = object.get(TASK_TYPE).getAsString();
-          switch (taskType) {
-            case "choice": return gson.fromJson(object, ChoiceTask.class);
-            case "theory": return gson.fromJson(object, TheoryTask.class);
-            case "code": return gson.fromJson(object, CodeTask.class);
-            case "edu": return gson.fromJson(object, EduTask.class);
-            case "subtasks": return gson.fromJson(object, TaskWithSubtasks.class);
-            case "output": return gson.fromJson(object, OutputTask.class);
-            case "pycharm": return gson.fromJson(object, EduTask.class);     // deprecated: old courses have pycharm tasks
-            default: {
-              LOG.warn("Unsupported task type " + taskType);
-              return null;
-            }
-          }
-        }
-        LOG.warn("No task type found in json " + json.toString());
-        return null;
+        return doDeserialize(json, gson);
       }
     }
 
-    public static class StepikAnswerPlaceholderAdapter implements JsonSerializer<AnswerPlaceholder> {
-      @Override
-      public JsonElement serialize(AnswerPlaceholder placeholder, Type typeOfSrc, JsonSerializationContext context) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-        JsonElement answerPlaceholderJson = gson.toJsonTree(placeholder);
-        JsonObject answerPlaceholderObject = answerPlaceholderJson.getAsJsonObject();
-        JsonObject subtaskInfos = answerPlaceholderObject.getAsJsonObject(SUBTASK_INFOS);
-        JsonArray infosArray = new JsonArray();
-        for (Map.Entry<String, JsonElement> entry : subtaskInfos.entrySet()) {
-          JsonObject subtaskInfo = entry.getValue().getAsJsonObject();
-          subtaskInfo.add(INDEX, new JsonPrimitive(Integer.valueOf(entry.getKey())));
-          infosArray.add(subtaskInfo);
-        }
-        answerPlaceholderObject.remove(SUBTASK_INFOS);
-        answerPlaceholderObject.add(SUBTASK_INFOS, infosArray);
-        return answerPlaceholderJson;
+    @NotNull
+    public static JsonObject serializeWithTaskType(Task src, Gson gson) {
+      JsonElement tree = gson.toJsonTree(src);
+      final JsonObject task = tree.getAsJsonObject();
+      task.add(TASK_TYPE, new JsonPrimitive(src.getTaskType()));
+      return task;
+    }
+
+    @Nullable
+    public static Task doDeserialize(JsonElement json, Gson gson) {
+      final JsonObject object = json.getAsJsonObject();
+      if (object.has(NAME) && StepikNames.PYCHARM_ADDITIONAL.equals(object.get(NAME).getAsString())) {
+        object.remove(NAME);
+        object.add(NAME, new JsonPrimitive(EduNames.ADDITIONAL_MATERIALS));
       }
+      if (object.has(TASK_TYPE)) {
+        final String taskType = object.get(TASK_TYPE).getAsString();
+        switch (taskType) {
+          case "choice": return gson.fromJson(object, ChoiceTask.class);
+          case "theory": return gson.fromJson(object, TheoryTask.class);
+          case "code": return gson.fromJson(object, CodeTask.class);
+          case "edu": return gson.fromJson(object, EduTask.class);
+          case "subtasks": return gson.fromJson(object, TaskWithSubtasks.class);
+          case "output": return gson.fromJson(object, OutputTask.class);
+          case "pycharm": return gson.fromJson(object, EduTask.class);     // deprecated: old courses have pycharm tasks
+          default: {
+            LOG.warn("Unsupported task type " + taskType);
+            return null;
+          }
+        }
+      }
+      LOG.warn("No task type found in json " + json.toString());
+      return null;
     }
   }
 }

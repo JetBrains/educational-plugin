@@ -22,7 +22,11 @@ public class AnswerPlaceholderSubtaskInfo {
 
   // actual student's answer, used to reset file to current subtask initial state
   private String myAnswer = "";
+
+  @SerializedName("selected")
   private boolean mySelected = false;
+
+  @SerializedName("status")
   private CheckStatus myStatus = CheckStatus.Unchecked;
 
   @SerializedName("has_frame")

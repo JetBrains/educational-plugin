@@ -9,7 +9,9 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 
 public class TaskWithSubtasks extends EduTask {
+  @SerializedName("active_subtask_index")
   private int myActiveSubtaskIndex = 0;
+
   @SerializedName("last_subtask_index")
   @Expose private int myLastSubtaskIndex = 0;
 
@@ -68,5 +70,20 @@ public class TaskWithSubtasks extends EduTask {
 
   public String getTaskType() {
     return "subtasks";
+  }
+
+  @Override
+  public boolean isToSubmitToStepik() {
+    if (myStatus == CheckStatus.Unchecked) {
+      if (myActiveSubtaskIndex > 0) {
+        return true;
+      }
+
+      return taskFiles.values().stream()
+        .flatMap(taskFile -> taskFile.getAnswerPlaceholders().stream())
+        .anyMatch(placeholder -> placeholder.getStatus() != CheckStatus.Unchecked);
+    }
+
+    return true;
   }
 }

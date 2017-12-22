@@ -323,4 +323,8 @@ public abstract class Task implements StudyItem {
     }
     return true;
   }
+
+  public boolean isToSubmitToStepik() {
+    return false;
+  }
 }

@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.GsonBuilder;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
@@ -21,6 +23,8 @@ import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.SubtaskUtils;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -29,6 +33,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.stepic.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -147,11 +152,33 @@ public class StepikSolutionsLoader implements Disposable{
 
     try {
       countDownLatch.await();
-      ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(EduUtils::synchronize));
+      ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+        EduUtils.synchronize();
+        if (mySelectedTask instanceof TaskWithSubtasks) {
+          showActiveSubtask();
+        }
+      }));
       myBusConnection.disconnect();
     }
     catch (InterruptedException e) {
       LOG.warn(e.getCause());
+    }
+  }
+
+  private void showActiveSubtask() {
+    // subtask index is increased in switch subtask step, so we need to decrement it before
+    int activeSubtaskIndex = ((TaskWithSubtasks)mySelectedTask).getActiveSubtaskIndex();
+    ((TaskWithSubtasks)mySelectedTask).setActiveSubtaskIndex(Math.max(0, activeSubtaskIndex - 1));
+
+    Collection<TaskFile> taskFiles = mySelectedTask.taskFiles.values();
+    for (TaskFile file : taskFiles) {
+      file.setTrackChanges(false);
+    }
+
+    SubtaskUtils.switchStep(myProject, (TaskWithSubtasks) mySelectedTask, activeSubtaskIndex);
+
+    for (TaskFile file : taskFiles) {
+      file.setTrackChanges(true);
     }
   }
 
@@ -166,23 +193,38 @@ public class StepikSolutionsLoader implements Disposable{
   private List<Task> tasksToUpdate(@NotNull Course course) {
     List<Task> tasksToUpdate = new ArrayList<>();
     Task[] allTasks = course.getLessons().stream().flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
-    String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
-    Boolean[] taskStatuses = taskStatuses(progresses);
-    if (taskStatuses == null) return tasksToUpdate;
-    for (int j = 0; j < allTasks.length; j++) {
-      Boolean isSolved = taskStatuses[j];
-      Task task = allTasks[j];
-      boolean toUpdate = false;
-      if (isSolved != null && !(task instanceof TheoryTask)) {
-        toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
-      }
-      if (toUpdate) {
-        CheckStatus checkStatus = isSolved ? CheckStatus.Solved : CheckStatus.Failed;
-        task.setStatus(checkStatus);
-        tasksToUpdate.add(task);
+
+      String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
+      Boolean[] taskStatuses = taskStatuses(progresses);
+      if (taskStatuses == null) return tasksToUpdate;
+      for (int j = 0; j < allTasks.length; j++) {
+        Boolean isSolved = taskStatuses[j];
+        Task task = allTasks[j];
+        boolean toUpdate = false;
+        if (isSolved != null && !(task instanceof TheoryTask)) {
+          toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
+        }
+        if (toUpdate) {
+          if (task instanceof TaskWithSubtasks && isSolved ) {
+            // task isSolved on Stepik if and only if all subtasks were solved
+            ((TaskWithSubtasks)task).setActiveSubtaskIndex(((TaskWithSubtasks)task).getLastSubtaskIndex());
+          }
+          task.setStatus(checkStatus(task, isSolved));
+          tasksToUpdate.add(task);
+
       }
     }
     return tasksToUpdate;
+  }
+
+  private static CheckStatus checkStatus(@NotNull Task task, boolean solved) {
+    if (!solved && task instanceof TaskWithSubtasks) {
+      if (((TaskWithSubtasks)task).getActiveSubtaskIndex() > 0) {
+        return CheckStatus.Unchecked;
+      }
+    }
+
+    return solved ? CheckStatus.Solved : CheckStatus.Failed;
   }
 
   private void addFileOpenListener() {
@@ -234,14 +276,14 @@ public class StepikSolutionsLoader implements Disposable{
     else if (!isSolved) {
       try {
         if (task instanceof EduTask) {
-          List<StepikWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(stepId), isSolved);
-          if (!solutionFiles.isEmpty()) {
+          StepikWrappers.Reply reply = getLastSubmission(String.valueOf(stepId), isSolved);
+          if (reply != null && !reply.solution.isEmpty()) {
             return true;
           }
         }
         else {
-          String solution = getSolutionForStepikAssignment(task, isSolved);
-          if (solution != null) {
+          HashMap<String, String> solution = getSolutionForStepikAssignment(task, isSolved);
+          if (!solution.isEmpty()) {
             return true;
           }
         }
@@ -255,12 +297,8 @@ public class StepikSolutionsLoader implements Disposable{
   }
 
   private static void loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
-    if (task instanceof TaskWithSubtasks) {
-      return;
-    }
-
     try {
-      String solutionText = loadSolution(task, isSolved);
+      HashMap<String, String> solutionText = loadSolution(task, isSolved);
       if (solutionText.isEmpty()) return;
       updateFiles(project, task, solutionText);
     }
@@ -269,36 +307,106 @@ public class StepikSolutionsLoader implements Disposable{
     }
   }
 
-  private static String loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
+  private static HashMap<String, String> loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
     if (task instanceof EduTask) {
-      List<StepikWrappers.SolutionFile> solutionFiles = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
-      if (solutionFiles.isEmpty()) {
-        task.setStatus(CheckStatus.Unchecked);
-        return "";
+      return getEduTaskSolution(task, isSolved);
+    }
+    else {
+      return getStepikTaskSolution(task, isSolved);
+    }
+  }
+
+  private static HashMap<String, String> getStepikTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
+    HashMap<String, String> solutions = getSolutionForStepikAssignment(task, isSolved);
+    if (!solutions.isEmpty()) {
+      for (Map.Entry<String, String> entry : solutions.entrySet()) {
+        String solutionWithoutEduPrefix = removeEduPrefix(task, entry.getValue());
+        solutions.put(entry.getKey(), solutionWithoutEduPrefix);
       }
-      for (StepikWrappers.SolutionFile file : solutionFiles) {
-        TaskFile taskFile = task.getTaskFile(file.name);
-        if (taskFile != null) {
-          task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
-          if (setPlaceholdersFromTags(taskFile, file)) {
-            return removeAllTags(file.text);
-          }
-          else {
-            return file.text;
-          }
+      task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
+    }
+    return solutions;
+  }
+
+  private static HashMap<String, String> getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
+    HashMap<String, String> taskFileToText = new HashMap<>();
+
+    StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
+    if (reply == null || reply.solution.isEmpty()) {
+      task.setStatus(CheckStatus.Unchecked);
+      return taskFileToText;
+    }
+
+    String serializedTask = reply.edu_task;
+    if (serializedTask == null) {
+      task.setStatus(checkStatus(task, isSolved));
+      return loadSolutionTheOldWay(task, reply);
+    }
+
+    StepikWrappers.TaskWrapper updatedTask = new GsonBuilder()
+      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter())
+      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+      .create()
+      .fromJson(serializedTask, StepikWrappers.TaskWrapper.class);
+
+    if (updatedTask == null || updatedTask.task == null) {
+      return taskFileToText;
+    }
+
+    if (task instanceof TaskWithSubtasks && updatedTask.task instanceof TaskWithSubtasks) {
+      ((TaskWithSubtasks)task).setActiveSubtaskIndex(((TaskWithSubtasks)updatedTask.task).getActiveSubtaskIndex());
+    }
+    task.setStatus(updatedTask.task.getStatus());
+
+    for (StepikWrappers.SolutionFile file : reply.solution) {
+      TaskFile taskFile = task.getTaskFile(file.name);
+      TaskFile updatedTaskFile = updatedTask.task.getTaskFile(file.name);
+      if (taskFile != null && updatedTaskFile != null) {
+        setPlaceholders(taskFile, updatedTaskFile);
+        taskFileToText.put(file.name, removeAllTags(file.text));
+      }
+    }
+    return taskFileToText;
+  }
+
+  private static void setPlaceholders(@NotNull TaskFile taskFile, @NotNull TaskFile updatedTaskFile) {
+    List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
+    List<AnswerPlaceholder> updatedPlaceholders = updatedTaskFile.getAnswerPlaceholders();
+    for (int i = 0; i < answerPlaceholders.size(); i++) {
+      AnswerPlaceholder answerPlaceholder = answerPlaceholders.get(i);
+      AnswerPlaceholder updatedPlaceholder = updatedPlaceholders.get(i);
+      answerPlaceholder.setSubtaskInfos(updatedPlaceholder.getSubtaskInfos());
+      answerPlaceholder.setOffset(updatedPlaceholder.getOffset());
+      answerPlaceholder.setLength(updatedPlaceholder.getLength());
+      answerPlaceholder.setSelected(updatedPlaceholder.getSelected());
+    }
+  }
+
+  /**
+   * Before we decided to store the information about placeholders as a separate field of Stepik reply{@link StepikWrappers.Reply#edu_task},
+   * we used to pass full text of task file marking placeholders with <placeholder> </placeholder> tags
+   */
+  private static Map<String, String> loadSolutionTheOldWay(@NotNull Task task, @NotNull StepikWrappers.Reply reply) {
+    HashMap<String, String> taskFileToText = new HashMap<>();
+    List<StepikWrappers.SolutionFile> solutionFiles = reply.solution;
+    if (solutionFiles.isEmpty()) {
+      task.setStatus(CheckStatus.Unchecked);
+      return taskFileToText;
+    }
+
+    for (StepikWrappers.SolutionFile file : solutionFiles) {
+      TaskFile taskFile = task.getTaskFile(file.name);
+      if (taskFile != null) {
+        if (setPlaceholdersFromTags(taskFile, file)) {
+          taskFileToText.put(file.name, removeAllTags(file.text));
+        }
+        else {
+          taskFileToText.put(file.name, file.text);
         }
       }
     }
-    else {
-      String solution = getSolutionForStepikAssignment(task, isSolved);
-      if (solution != null) {
-        solution = removeEduPrefix(task, solution);
 
-        task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
-        return solution;
-      }
-    }
-    return "";
+    return taskFileToText;
   }
 
   private static String removeEduPrefix(@NotNull Task task, String solution) {
@@ -310,18 +418,18 @@ public class StepikSolutionsLoader implements Disposable{
     return solution;
   }
 
-  private static void updateFiles(@NotNull Project project, @NotNull Task task, String solutionText) {
+  private static void updateFiles(@NotNull Project project, @NotNull Task task, HashMap<String, String> solutionText) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       return;
     }
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       for (TaskFile taskFile : task.getTaskFiles().values()) {
-        VirtualFile vFile = taskDir.findChild(taskFile.name);
+        VirtualFile vFile = taskDir.findFileByRelativePath(taskFile.name);
         if (vFile != null) {
           try {
             taskFile.setTrackChanges(false);
-            VfsUtil.saveText(vFile, solutionText);
+            VfsUtil.saveText(vFile, solutionText.get(taskFile.name));
             SaveAndSyncHandler.getInstance().refreshOpenFiles();
             taskFile.setTrackChanges(true);
           }
