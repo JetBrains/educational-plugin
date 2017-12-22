@@ -58,7 +58,8 @@ class PlaceholderPainterTest : EduTestCase() {
   @Test
   fun `test non rectangular`() {
     val expected = listOf(NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 2), NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 4),
-                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 4), NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 2),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 4, NewPlaceholderPainter.PositionInLine.BOTTOM),
+                          NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 2, NewPlaceholderPainter.PositionInLine.BOTTOM),
                           NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 2, NewPlaceholderPainter.PositionInLine.BOTTOM),
                           NewPlaceholderPainter.LogicalPositionWithLinePlacement(1, 0, NewPlaceholderPainter.PositionInLine.BOTTOM),
                           NewPlaceholderPainter.LogicalPositionWithLinePlacement(0, 0, NewPlaceholderPainter.PositionInLine.BOTTOM),

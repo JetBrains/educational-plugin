@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.markup.CustomHighlighterRenderer
 import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.ui.AbstractPainter
 import com.intellij.openapi.wm.IdeGlassPaneUtil
-import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import java.awt.Component
 import java.awt.Graphics
@@ -59,14 +58,11 @@ object NewPlaceholderPainter {
   fun getPath(editor: Editor, start: Int, end: Int): List<Point> {
     val x = getFirstNonWhitespace(editor.document, start..end)
     val y = getFirstNonWhitespace(editor.document, end..start)
-    //TODO: kotlin api for that?
-    val points = ContainerUtil.newArrayList<Point>()
     val document = editor.document
     val lineX = document.getLineNumber(x)
     val lineY = document.getLineNumber(y)
     val xPoint = editor.offsetToXY(x)
     val yPoint = editor.offsetToXY(y)
-    val lineHeight = getLineHeight(editor)
 
 
     //TODO: do we really need this are special case
@@ -107,45 +103,9 @@ object NewPlaceholderPainter {
       return PlaceholderShape.RightRectangular(editor, leftBottom, leftTop, rightTop, rightBottom).points
     }
 
-    //add left and upper borders
-    if (!isLeftRectangular) {
-      val nextLineY = xPoint.y + lineHeight
-      points.add(Point(leftPointX, yPoint.y + lineHeight))
-      if (leftPointX == xPoint.x) {
-        points.add(Point(xPoint.x, xPoint.y))
-      }
-      else {
-        points.add(Point(leftPointX, nextLineY))
-        points.add(Point(xPoint.x, nextLineY))
-        points.add(Point(xPoint.x, xPoint.y))
-      }
-
-      points.add(Point(rightPointX, xPoint.y))
-    }
-    else {
-      points.add(Point(leftPointX, yPoint.y + lineHeight))
-      points.add(Point(leftPointX, xPoint.y))
-      points.add(Point(rightPointX, xPoint.y))
-    }
-
-    val yLineBottom = yPoint.y + lineHeight
-    //draw right and bottom borders
-    if (!isRightRectangular) {
-      val prevLineY = yLineBottom - lineHeight
-      if (rightPointX == yPoint.x) {
-        points.add(Point(yPoint.x, yLineBottom))
-      }
-      else {
-        points.add(Point(rightPointX, prevLineY))
-        points.add(Point(yPoint.x, prevLineY))
-        points.add(Point(yPoint.x, yLineBottom))
-      }
-    }
-    else {
-      points.add(Point(rightPointX, yLineBottom))
-    }
-
-    return points
+    val leftTop = LogicalPosition(lineX, editor.xyToLogicalPosition(Point(xPoint.x, xPoint.y)).column)
+    val rightBottom = LogicalPosition(lineY, editor.xyToLogicalPosition(Point(yPoint.x, yPoint.y)).column)
+    return PlaceholderShape.Complex(editor, leftBottom, leftTop, rightTop, rightBottom).points
   }
 
   private fun getLineHeight(editor: Editor) = editor.lineHeight - 1
@@ -262,9 +222,16 @@ object NewPlaceholderPainter {
       }
     }
 
-//    object Complex: PlaceholderShape() {
-//
-//    }
+    class Complex(editor: Editor,
+                  leftBottom: LogicalPosition,
+                  leftTop: LogicalPosition,
+                  rightTop: LogicalPosition,
+                  rightBottom: LogicalPosition): PlaceholderShape() {
+      init {
+        points.addAll(getComplexLeftBorder(editor, leftBottom, leftTop, rightTop))
+        points.addAll(getComplexRightBorder(editor, rightTop, rightBottom))
+      }
+    }
   }
 
   enum class PositionInLine {
