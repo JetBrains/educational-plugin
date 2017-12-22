@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,5 +30,10 @@ public class EduTask extends Task {
     Course course = getLesson().getCourse();
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     return configurator != null ? configurator.getEduTaskChecker(this, project) : super.getChecker(project);
+  }
+
+  @Override
+  public boolean isToSubmitToStepik() {
+    return myStatus != CheckStatus.Unchecked;
   }
 }

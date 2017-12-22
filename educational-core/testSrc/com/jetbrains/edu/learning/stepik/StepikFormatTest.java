@@ -9,6 +9,9 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.stepic.serialization.StepikSubmissionAnswerPlaceholderAdapter;
+import com.jetbrains.edu.learning.stepic.serialization.StepikStepOptionsAdapter;
+import com.jetbrains.edu.learning.stepic.serialization.StepikLessonAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -72,7 +75,7 @@ public class StepikFormatTest {
   @Test
   public void testPlaceholderSerialization() throws IOException {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new SerializationUtils.Json.StepikAnswerPlaceholderAdapter()).create();
+      registerTypeAdapter(AnswerPlaceholder.class, new StepikSubmissionAnswerPlaceholderAdapter()).create();
     AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
     answerPlaceholder.setOffset(1);
     answerPlaceholder.setLength(10);
@@ -307,7 +310,7 @@ public class StepikFormatTest {
     assertNotNull(submissionsWrapper);
     assertNotNull(submissionsWrapper.submissions);
     assertEquals(20, submissionsWrapper.submissions.length);
-    final StepikWrappers.Submission.Reply reply = submissionsWrapper.submissions[0].reply;
+    final StepikWrappers.Reply reply = submissionsWrapper.submissions[0].reply;
     assertNotNull(reply);
     List<StepikWrappers.SolutionFile> solutionFiles = reply.solution;
     assertEquals(1, solutionFiles.size());
@@ -318,8 +321,8 @@ public class StepikFormatTest {
   @NotNull
   private static Gson getGson() {
     return new GsonBuilder()
-          .registerTypeAdapter(StepikWrappers.StepOptions.class, new SerializationUtils.Json.StepikStepOptionsAdapter())
-          .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.StepikLessonAdapter())
+          .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter())
+          .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
           .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   }

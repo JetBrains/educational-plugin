@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.lang.Language;
@@ -17,6 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
+import com.jetbrains.edu.learning.stepic.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -180,8 +182,8 @@ public class StepikWrappers {
 
   public static class StepSource {
     @Expose public Step block;
-    @Expose public int position = 0;
-    @Expose public int lesson = 0;
+    @Expose public int position;
+    @Expose public int lesson;
     @Expose public String progress;
     @Expose public int cost = 1;
     public Date update_date;
@@ -375,31 +377,37 @@ public class StepikWrappers {
   static class SubmissionWrapper {
     Submission submission;
 
-
-    public SubmissionWrapper(int attempt, String score, ArrayList<SolutionFile> files) {
-      submission = new Submission(score, attempt, files);
+    public SubmissionWrapper(int attemptId, String score, ArrayList<SolutionFile> files, Task task) {
+      String serializedTask = new GsonBuilder()
+        .excludeFieldsWithoutExposeAnnotation()
+        .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter())
+        .create()
+        .toJson(new StepikWrappers.TaskWrapper(task));
+      submission = new Submission(score, attemptId, files, serializedTask);
     }
   }
 
-  static class Submission {
+  public static class Reply {
+    String score;
+    List<SolutionFile> solution;
+    String language;
+    String code;
+    String edu_task;
+
+    public Reply(List<SolutionFile> files, String score, String serializedTask) {
+      this.score = score;
+      solution = files;
+      edu_task = serializedTask;
+    }
+  }
+
+  public static class Submission {
     int attempt;
     public final Reply reply;
 
-    public Submission(String score, int attempt, ArrayList<SolutionFile> files) {
-      reply = new Reply(files, score);
-      this.attempt = attempt;
-    }
-
-    static class Reply {
-      String score;
-      List<SolutionFile> solution;
-      String language;
-      String code;
-
-      public Reply(ArrayList<SolutionFile> files, String score) {
-        this.score = score;
-        solution = files;
-      }
+    public Submission(String score, int attemptId, ArrayList<SolutionFile> files, String serializedTask) {
+      reply = new Reply(files, score, serializedTask);
+      this.attempt = attemptId;
     }
   }
 
@@ -559,5 +567,13 @@ public class StepikWrappers {
 
     List<Progress> progresses;
 
+  }
+
+  public static class TaskWrapper {
+    @Expose Task task;
+
+    public TaskWrapper(Task task) {
+      this.task = task;
+    }
   }
 }
