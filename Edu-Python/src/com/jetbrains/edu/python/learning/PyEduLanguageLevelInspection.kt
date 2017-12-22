@@ -8,8 +8,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.python.inspections.PyInspection
@@ -63,7 +65,14 @@ private class ConfigureInterpreterFix : LocalQuickFix {
 
   override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
     ApplicationManager.getApplication()
-      .invokeLater { ShowSettingsUtil.getInstance().showSettingsDialog(project, "Project Interpreter") }
+      .invokeLater {
+        if (PlatformUtils.isPyCharm()) {
+          ShowSettingsUtil.getInstance().showSettingsDialog(project, "Project Interpreter")
+        }
+        else {
+          ProjectSettingsService.getInstance(project).openProjectSettings()
+        }
+      }
   }
 }
 
