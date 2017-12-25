@@ -73,10 +73,11 @@ sealed class PlaceholderShape {
   }
 
 
-  class Rectangular(editor: Editor, start: LogicalPosition, end: LogicalPosition) : PlaceholderShape() {
+  class Rectangular(editor: Editor, leftTop: LogicalPosition, rightBottom: LogicalPosition) : PlaceholderShape() {
     init {
-      points.addAll(getRectangularLeftBorder(editor, LogicalPosition(end.line, start.column), start, LogicalPosition(start.line, end.column)))
-      points.addAll(getRectangularRightBorder(editor, end))
+      points.addAll(getRectangularLeftBorder(editor, LogicalPosition(rightBottom.line, leftTop.column), leftTop, LogicalPosition(
+        leftTop.line, rightBottom.column)))
+      points.addAll(getRectangularRightBorder(editor, rightBottom))
     }
   }
 
