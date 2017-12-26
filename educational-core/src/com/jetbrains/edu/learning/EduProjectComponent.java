@@ -54,6 +54,7 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
+import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
@@ -62,10 +63,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
@@ -353,23 +351,20 @@ public class EduProjectComponent implements ProjectComponent {
     ActionManager.getInstance().addAnActionListener(new AnActionListener() {
       @Override
       public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-        AnAction[] newGroupActions = ((ActionGroup)ActionManager.getInstance().getAction("NewGroup")).getChildren(null);
-        for (AnAction newAction : newGroupActions) {
-          if (newAction == action) {
-            myListener = new FileCreatedByUserListener();
-            VirtualFileManager.getInstance().addVirtualFileListener(myListener);
-            break;
-          }
+        String actionId = ActionManager.getInstance().getId(action);
+        Set<String> ids = newFilesActionsIds();
+        if (ids.contains(actionId)) {
+          myListener = new FileCreatedByUserListener();
+          VirtualFileManager.getInstance().addVirtualFileListener(myListener);
         }
       }
 
       @Override
       public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-        AnAction[] newGroupActions = ((ActionGroup)ActionManager.getInstance().getAction("NewGroup")).getChildren(null);
-        for (AnAction newAction : newGroupActions) {
-          if (newAction == action) {
-            VirtualFileManager.getInstance().removeVirtualFileListener(myListener);
-          }
+        String actionId = ActionManager.getInstance().getId(action);
+        Set<String> ids = newFilesActionsIds();
+        if (ids.contains(actionId)) {
+          VirtualFileManager.getInstance().removeVirtualFileListener(myListener);
         }
       }
 
@@ -378,6 +373,19 @@ public class EduProjectComponent implements ProjectComponent {
 
       }
     });
+  }
+
+  @NotNull
+  private static Set<String> newFilesActionsIds() {
+    Set<String> actionsIds = new HashSet<>(actionsIds("NewGroup"));
+    actionsIds.addAll(actionsIds("NewGroup1"));
+    return actionsIds;
+  }
+
+  @NotNull
+  private static List<String> actionsIds(@NotNull String actionGroupId) {
+    ActionManager actionManager = ActionManager.getInstance();
+    return ArraysKt.map(((ActionGroup)actionManager.getAction(actionGroupId)).getChildren(null), actionManager::getId);
   }
 
   @Override
