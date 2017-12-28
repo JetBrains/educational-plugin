@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.*;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.LESSONS;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 public class ToEighthVersionXmlConverter implements XmlConverter {
@@ -28,14 +28,7 @@ public class ToEighthVersionXmlConverter implements XmlConverter {
   @Override
   public Element convert(@NotNull Project project, @NotNull Element state) throws StudyUnrecognizedFormatException {
     Element taskManagerElement = state.getChild(MAIN_ELEMENT);
-    Element courseHolder = getChildWithName(taskManagerElement, COURSE);
-    Element courseElement = courseHolder.getChild(COURSE_TITLED);
-    if (courseElement == null) {
-      courseElement = courseHolder.getChild(REMOTE_COURSE);
-      if (courseElement == null) {
-        throw new StudyUnrecognizedFormatException();
-      }
-    }
+    Element courseElement = getCourseElement(taskManagerElement);
 
     Element courseMode = getChildWithName(courseElement, "courseMode");
     if (!courseMode.getAttributeValue(VALUE).equals(CCUtils.COURSE_MODE)) {
