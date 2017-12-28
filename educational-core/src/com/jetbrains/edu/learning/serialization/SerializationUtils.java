@@ -334,6 +334,26 @@ public class SerializationUtils {
       }
       return Collections.emptyMap();
     }
+
+    /**
+     * Suitable for course xml with version 5 or above
+     *
+     * @param taskManagerElement element with {@link MAIN_ELEMENT} tag
+     * @return course element
+     * @throws StudyUnrecognizedFormatException if course element can not be found
+     */
+    @NotNull
+    public static Element getCourseElement(@NotNull Element taskManagerElement) throws StudyUnrecognizedFormatException {
+      Element courseHolder = getChildWithName(taskManagerElement, COURSE);
+      Element courseElement = courseHolder.getChild(COURSE_TITLED);
+      if (courseElement == null) {
+        courseElement = courseHolder.getChild(REMOTE_COURSE);
+        if (courseElement == null) {
+          throw new StudyUnrecognizedFormatException();
+        }
+      }
+      return courseElement;
+    }
   }
 
   public static class Json {
