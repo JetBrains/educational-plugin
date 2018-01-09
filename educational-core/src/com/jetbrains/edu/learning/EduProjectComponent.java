@@ -386,7 +386,12 @@ public class EduProjectComponent implements ProjectComponent {
   @NotNull
   private static List<String> actionsIds(@NotNull String actionGroupId) {
     ActionManager actionManager = ActionManager.getInstance();
-    return ArraysKt.map(((ActionGroup)actionManager.getAction(actionGroupId)).getChildren(null), actionManager::getId);
+    AnAction action = actionManager.getAction(actionGroupId);
+    if (action instanceof ActionGroup) {
+      return ArraysKt.map(((ActionGroup)action).getChildren(null), actionManager::getId);
+    } else {
+      return Collections.emptyList();
+    }
   }
 
   @Override
