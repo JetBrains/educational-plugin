@@ -46,7 +46,6 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("src") {
           file("koansTestUtil.kt")
         }
-        dir("test") {}
       }
       file("build.gradle")
       file("settings.gradle")
@@ -64,11 +63,11 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.kt")
-            file("task.html")
           }
           dir("test") {
             file("Tests.kt")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -86,39 +85,38 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.kt")
-            file("task.html")
           }
           dir("test") {
             file("tests.kt")
           }
+          file("task.html")
         }
         dir("task2") {
           dir("src") {
             file("JavaCode.java")
             file("Task.kt")
-            file("task.html")
           }
           dir("test") {
             file("tests.kt")
           }
+          file("task.html")
         }
       }
       dir("lesson2") {
         dir("task1") {
           dir("src") {
             file("Task.kt")
-            file("task.html")
           }
           dir("test") {
             file("tests.kt")
           }
+          file("task.html")
         }
       }
       dir("util") {
         dir("src") {
           file("koansTestUtil.kt")
         }
-        dir("test") {}
       }
       file("build.gradle")
       file("settings.gradle")

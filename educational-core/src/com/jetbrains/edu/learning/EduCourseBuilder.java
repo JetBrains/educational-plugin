@@ -75,6 +75,33 @@ public interface EduCourseBuilder<Settings> {
   }
 
   /**
+   * Provides directory path where task files should be places in task folder.
+   * Can be empty.
+   *
+   * For example, task folder is `courseName/lesson1/task1` and `getTaskFilesDir` returns `src`
+   * then any task files should be placed in `courseName/lesson1/task1/src` folder
+   *
+   * @return task files directory path
+   */
+  @NotNull
+  default String getTaskFilesDir() {
+    return "";
+  }
+
+  /**
+   * Provides directory path where test files should be places in task folder.
+   * Can be empty.
+   *
+   * See {@link EduCourseBuilder#getTaskFilesDir()} javadoc for example.
+   *
+   * @return test files directory path
+   */
+  @NotNull
+  default String getTestFilesDir() {
+    return "";
+  }
+
+  /**
    * Main interface responsible for course project language settings such as JDK or interpreter
    *
    * @param <Settings> container type holds project settings state

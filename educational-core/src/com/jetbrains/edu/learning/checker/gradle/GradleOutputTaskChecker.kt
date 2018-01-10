@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.checker.CheckResult.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.testFilesDir
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 
 class GradleOutputTaskChecker(
@@ -21,9 +22,9 @@ class GradleOutputTaskChecker(
       is Ok -> result.value
     }
 
+    val testFilesDir = task.testFilesDir ?: return FAILED_TO_CHECK
     val outputFile = task.getTaskDir(project)
-                       ?.parent
-                       ?.findChild("test")
+                       ?.findChild(testFilesDir)
                        ?.findChild(OUTPUT_PATTERN_NAME)
                      ?: return FAILED_TO_CHECK
 

@@ -50,7 +50,7 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
 
     @Override
     public void undo() throws UnexpectedUndoException {
-      myTask.getTaskFiles().put(EduUtils.pathRelativeToTask(myFile), myTaskFile);
+      myTask.getTaskFiles().put(EduUtils.pathRelativeToTask(myProject, myFile), myTaskFile);
       if (!myTaskFile.getAnswerPlaceholders().isEmpty() && FileEditorManager.getInstance(myProject).isFileOpen(myFile)) {
         for (FileEditor fileEditor : FileEditorManager.getInstance(myProject).getEditors(myFile)) {
           if (fileEditor instanceof TextEditor) {
@@ -83,7 +83,7 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
         }
       }
     }
-    String taskRelativePath = EduUtils.pathRelativeToTask(file);
+    String taskRelativePath = EduUtils.pathRelativeToTask(project, file);
     taskFiles.remove(taskRelativePath);
   }
 

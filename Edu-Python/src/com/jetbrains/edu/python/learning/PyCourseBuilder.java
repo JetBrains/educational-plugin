@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
@@ -88,27 +89,31 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
   private static void createFilesFromTemplates(@NotNull Project project,
                                                @NotNull Task task,
                                                @NotNull VirtualFile taskDirectory) {
-    EduUtils.createFromTemplate(project, taskDirectory, TASK_PY);
-    EduUtils.createFromTemplate(project, taskDirectory, TESTS_PY);
+    VirtualFile tasksDir = TaskExt.findTasksDir(task, taskDirectory);
+    VirtualFile testsDir = TaskExt.findTestsDir(task, taskDirectory);
+    if (tasksDir == null || testsDir == null) return;
+    EduUtils.createFromTemplate(project, tasksDir, TASK_PY);
+    EduUtils.createFromTemplate(project, testsDir, TESTS_PY);
     task.addTaskFile(TASK_PY, task.taskFiles.size());
   }
 
   @Override
   public void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
     VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) {
-      return;
-    }
+    if (taskDir == null) return;
+    VirtualFile testDir = taskDir.findFileByRelativePath(getTestFilesDir());
+    if (testDir == null) return;
+
     int nextSubtaskIndex = task.getLastSubtaskIndex() + 1;
     String nextSubtaskTestsFileName = getSubtaskTestsFileName(nextSubtaskIndex);
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
-        PsiDirectory taskPsiDir = PsiManager.getInstance(project).findDirectory(taskDir);
+        PsiDirectory testPsiDir = PsiManager.getInstance(project).findDirectory(testDir);
         FileTemplate testsTemplate = FileTemplateManager.getInstance(project).getInternalTemplate(TESTS_PY);
-        if (taskPsiDir == null || testsTemplate == null) {
+        if (testPsiDir == null || testsTemplate == null) {
           return;
         }
-        FileTemplateUtil.createFromTemplate(testsTemplate, nextSubtaskTestsFileName, null, taskPsiDir);
+        FileTemplateUtil.createFromTemplate(testsTemplate, nextSubtaskTestsFileName, null, testPsiDir);
       }
       catch (Exception e) {
         LOG.error(e);

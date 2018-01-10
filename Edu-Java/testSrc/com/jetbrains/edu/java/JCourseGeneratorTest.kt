@@ -57,11 +57,11 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.java")
-            file("task.html")
           }
           dir("test") {
             file("Test.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")
@@ -79,31 +79,31 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
         dir("task1") {
           dir("src") {
             file("Task.java")
-            file("task.html")
           }
           dir("test") {
             file("Test.java")
           }
+          file("task.html")
         }
         dir("task2") {
           dir("src") {
             file("Task.java")
-            file("task.html")
           }
           dir("test") {
             file("Test.java")
           }
+          file("task.html")
         }
       }
       dir("lesson2") {
         dir("task1") {
           dir("src") {
             file("Task.java")
-            file("task.html")
           }
           dir("test") {
             file("Test.java")
           }
+          file("task.html")
         }
       }
       file("build.gradle")

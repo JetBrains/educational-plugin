@@ -176,12 +176,7 @@ public abstract class Task implements StudyItem {
     if (courseDir != null) {
       VirtualFile lessonDir = courseDir.findChild(lessonDirName);
       if (lessonDir != null) {
-        VirtualFile taskDir = lessonDir.findChild(taskDirName);
-        if (taskDir == null) {
-          return null;
-        }
-        VirtualFile srcDir = taskDir.findChild(EduNames.SRC);
-        return srcDir != null ? srcDir : taskDir;
+        return lessonDir.findChild(taskDirName);
       }
     }
     return null;
@@ -311,7 +306,7 @@ public abstract class Task implements StudyItem {
     VirtualFile taskDir = getTaskDir(project);
     if (taskDir == null) return false;
     for (TaskFile taskFile : getTaskFiles().values()) {
-      VirtualFile file = taskDir.findFileByRelativePath(taskFile.name);
+      VirtualFile file = taskFile.findFileInDir(taskDir);
       if (file == null) return false;
       try {
         String text = VfsUtilCore.loadText(file);

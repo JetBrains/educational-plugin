@@ -34,6 +34,7 @@ abstract class CCSubtaskTestBase : CCTestCase() {
     course.language = language.id
     val task = course.lessons[0].taskList[0]
     val taskFile = TaskFile()
+    taskFile.name = taskFileName
     taskFile.task = task
     task.taskFiles[taskFileName] = taskFile
     task.testsText[testFileName] = ""

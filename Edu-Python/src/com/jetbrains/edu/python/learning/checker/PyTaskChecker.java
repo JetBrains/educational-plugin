@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
-import one.util.streamex.EntryStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,7 +87,6 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
       VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir == null) return;
       for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-        final String name = entry.getKey();
         final TaskFile taskFile = entry.getValue();
         if (taskFile.getActivePlaceholders().size() < 2) {
           continue;
@@ -97,7 +95,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
         if (course != null && course.isStudy()) {
           CommandProcessor.getInstance().runUndoTransparentAction(
             () -> ApplicationManager.getApplication().runWriteAction(
-              () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(task, taskDir), name, taskFile, project)));
+              () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(task, taskDir), taskFile, project)));
         }
       }
       CheckUtils.navigateToFailedPlaceholder(new EduState(EduUtils.getSelectedStudyEditor(project)), task, taskDir, project);
@@ -107,11 +105,16 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
   @Nullable
   private static VirtualFile getTaskVirtualFile(@NotNull final Task task,
                                                 @NotNull final VirtualFile taskDir) {
-
-    Map<TaskFile, VirtualFile> fileMap =
-      EntryStream.of(task.getTaskFiles()).invert().mapValues(taskDir::findFileByRelativePath).nonNullValues().toMap();
-    Map.Entry<TaskFile, VirtualFile> entry = EntryStream.of(fileMap).findAny(e -> !e.getKey().getActivePlaceholders().isEmpty())
-      .orElse(fileMap.entrySet().stream().findFirst().orElse(null));
-    return entry == null ? null : entry.getValue();
+    VirtualFile firstFile = null;
+    for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
+      TaskFile taskFile = entry.getValue();
+      VirtualFile file = taskFile.findFileInDir(taskDir);
+      if (file == null) continue;
+      if (firstFile == null) {
+        firstFile = file;
+      }
+      if (!taskFile.getActivePlaceholders().isEmpty()) return file;
+    }
+    return firstFile;
   }
 }

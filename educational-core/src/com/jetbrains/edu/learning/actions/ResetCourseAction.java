@@ -3,11 +3,11 @@ package com.jetbrains.edu.learning.actions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -38,11 +38,10 @@ public class ResetCourseAction extends DumbAwareAction {
           VirtualFile taskDir = task.getTaskDir(project);
           if (taskDir == null) continue;
           for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-            String relativePath = entry.getKey();
             TaskFile taskFile = entry.getValue();
-            VirtualFile taskFileVF = taskDir.findFileByRelativePath(relativePath);
+            VirtualFile taskFileVF = taskFile.findFileInDir(taskDir);
             if (taskFileVF != null) {
-              Document document = EduUtils.getDocument(project.getBasePath(), lesson.getIndex(), task.getIndex(), relativePath);
+              Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
               if (document != null) {
                 RefreshTaskFileAction.resetDocument(document, taskFile);
                 task.setStatus(CheckStatus.Unchecked);

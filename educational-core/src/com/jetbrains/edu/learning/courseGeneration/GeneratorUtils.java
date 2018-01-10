@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
@@ -85,12 +86,11 @@ public class GeneratorUtils {
   }
 
   public static void createTaskFile(@NotNull final VirtualFile taskDir, @NotNull final TaskFile taskFile) throws IOException {
-    final String name = taskFile.name;
-    createChildFile(taskDir, name, taskFile.text);
+    createChildFile(taskDir, taskFile.getPathInTask(), taskFile.text);
   }
 
   public static void createTestFiles(@NotNull VirtualFile taskDir, @NotNull Task task) throws IOException {
-    final Map<String, String> tests = task.getTestsText();
+    final Map<String, String> tests = TaskExt.getTestTextMap(task);
     createFiles(taskDir, tests);
   }
 

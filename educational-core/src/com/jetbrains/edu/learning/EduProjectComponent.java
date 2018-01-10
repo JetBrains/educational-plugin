@@ -426,7 +426,7 @@ public class EduProjectComponent implements ProjectComponent {
       final TaskFile taskFile = new TaskFile();
       taskFile.initTaskFile(task, false);
       taskFile.setUserCreated(true);
-      final String name = pathRelativeToTask(createdFile);
+      final String name = pathRelativeToTask(myProject, createdFile);
       taskFile.name = name;
       task.getTaskFiles().put(name, taskFile);
     }

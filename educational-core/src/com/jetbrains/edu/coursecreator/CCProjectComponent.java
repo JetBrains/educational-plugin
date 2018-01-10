@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
@@ -124,19 +125,24 @@ public class CCProjectComponent extends AbstractProjectComponent {
     }
   }
 
-
+  @NotNull
   private static List<VirtualFile> getAllAnswerTaskFiles(@NotNull Course course, @NotNull Project project) {
+    String taskFilesDir = CourseExt.getTaskFilesDir(course);
+    if (taskFilesDir == null) return Collections.emptyList();
+
     List<VirtualFile> result = new ArrayList<>();
     for (Lesson lesson : course.getLessons()) {
       for (Task task : lesson.getTaskList()) {
         for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
           String name = entry.getKey();
           String answerName = FileUtil.getNameWithoutExtension(name) + CCUtils.ANSWER_EXTENSION_DOTTED + FileUtilRt.getExtension(name);
+
           String taskPath = FileUtil.join(project.getBasePath(), EduNames.LESSON + lesson.getIndex(), EduNames.TASK + task.getIndex());
-          VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.join(taskPath, answerName));
-          if (taskFile == null) {
-            taskFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.join(taskPath, EduNames.SRC, answerName));
+          if (!taskFilesDir.isEmpty()) {
+            taskPath = FileUtil.join(taskPath, taskFilesDir);
           }
+
+          VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.join(taskPath, answerName));
           if (taskFile != null) {
             result.add(taskFile);
           }

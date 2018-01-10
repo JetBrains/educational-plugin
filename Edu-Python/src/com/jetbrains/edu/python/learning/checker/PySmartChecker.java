@@ -48,7 +48,7 @@ class PySmartChecker {
       final FileDocumentManager documentManager = FileDocumentManager.getInstance();
       final Document windowDocument = documentManager.getDocument(windowCopy);
       if (windowDocument != null) {
-        TaskFile windowTaskFile = answerTaskFile.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(virtualFile));
+        TaskFile windowTaskFile = answerTaskFile.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(project, virtualFile));
         if (windowTaskFile == null) {
           return;
         }
@@ -83,15 +83,14 @@ class PySmartChecker {
   }
 
   static void runSmartTestProcess(@NotNull final VirtualFile taskDir,
-                                         @NotNull final PyTestRunner testRunner,
-                                         @NotNull final String taskFileName,
-                                         @NotNull final TaskFile taskFile,
-                                         @NotNull final Project project) {
-    final VirtualFile virtualFile = taskDir.findFileByRelativePath(taskFileName);
+                                  @NotNull final PyTestRunner testRunner,
+                                  @NotNull final TaskFile taskFile,
+                                  @NotNull final Project project) {
+    final VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
     if (virtualFile == null) {
       return;
     }
-    Pair<VirtualFile, TaskFile> pair = getCopyWithAnswers(taskDir, virtualFile, taskFile);
+    Pair<VirtualFile, TaskFile> pair = getCopyWithAnswers(project, taskDir, virtualFile, taskFile);
     if (pair == null) {
       return;
     }
@@ -112,15 +111,16 @@ class PySmartChecker {
     }
   }
 
-  static Pair<VirtualFile, TaskFile> getCopyWithAnswers(@NotNull final VirtualFile taskDir,
-                                                                @NotNull final VirtualFile file,
-                                                                @NotNull final TaskFile source) {
+  static Pair<VirtualFile, TaskFile> getCopyWithAnswers(@NotNull Project project,
+                                                        @NotNull final VirtualFile taskDir,
+                                                        @NotNull final VirtualFile file,
+                                                        @NotNull final TaskFile source) {
     try {
       VirtualFile answerFile = file.copy(taskDir, taskDir, file.getNameWithoutExtension() + EduNames.ANSWERS_POSTFIX + "." + file.getExtension());
       final FileDocumentManager documentManager = FileDocumentManager.getInstance();
       final Document document = documentManager.getDocument(answerFile);
       if (document != null) {
-        TaskFile answerTaskFile = source.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(file));
+        TaskFile answerTaskFile = source.getTask().copy().getTaskFile(EduUtils.pathRelativeToTask(project, file));
         if (answerTaskFile == null) {
           return null;
         }

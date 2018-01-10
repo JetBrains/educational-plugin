@@ -53,18 +53,13 @@ public class SubtaskUtils {
     if (taskDir == null) {
       return;
     }
-    VirtualFile srcDir = taskDir.findChild(EduNames.SRC);
-    if (srcDir != null) {
-      taskDir = srcDir;
-    }
     int fromSubtaskIndex = task.getActiveSubtaskIndex();
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-      String name = entry.getKey();
-      VirtualFile virtualFile = taskDir.findFileByRelativePath(name);
+      TaskFile taskFile = entry.getValue();
+      VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
       if (virtualFile == null) {
         continue;
       }
-      TaskFile taskFile = entry.getValue();
       Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
       if (document == null) {
         continue;

@@ -2,8 +2,13 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -167,5 +172,22 @@ public class TaskFile {
       if (!placeholder.isValid(length)) return false;
     }
     return true;
+  }
+
+  @NotNull
+  public String getPathInTask() {
+    Task task = myTask;
+    if (task == null) return name;
+    Course course = TaskExt.getCourse(task);
+    if (course == null) return name;
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
+    if (configurator == null) return name;
+    String taskFolder = configurator.getCourseBuilder().getTaskFilesDir();
+    return String.join(VfsUtilCore.VFS_SEPARATOR_CHAR + "", taskFolder, name);
+  }
+
+  @Nullable
+  public VirtualFile findFileInDir(@NotNull VirtualFile dir) {
+    return dir.findFileByRelativePath(getPathInTask());
   }
 }

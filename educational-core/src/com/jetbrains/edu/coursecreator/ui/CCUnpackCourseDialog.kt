@@ -91,13 +91,7 @@ class CCUnpackCourseDialog(val course: Course) : DialogWrapper(true) {
                                taskFileEntry: Map.Entry<String, TaskFile>) {
     val name = taskFileEntry.key
     val taskFile = taskFileEntry.value
-    var file = userFileDir.findFileByRelativePath(name)
-    if (file == null) {
-      val src = userFileDir.findFileByRelativePath(EduNames.SRC)
-      if (src != null) {
-        file = src.findFileByRelativePath(name)
-      }
-    }
+    val file = taskFile.findFileInDir(userFileDir)
     if (file == null) {
       LOG.warn("Failed to find file " + file)
       return

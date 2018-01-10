@@ -9,6 +9,8 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.ext.taskFilesDir
+import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
@@ -22,46 +24,23 @@ object EduGradleModuleGenerator {
     private val requestor = EduGradleModuleGenerator.javaClass
 
     @JvmStatic
-    fun createModule(baseDir: VirtualFile, name: String): EduGradleModule {
-        val moduleDir = VfsUtil.createDirectoryIfMissing(baseDir, name)
-        val srcDir = VfsUtil.createDirectoryIfMissing(moduleDir, EduNames.SRC)
-        val testDir = VfsUtil.createDirectoryIfMissing(moduleDir, EduNames.TEST)
-        return EduGradleModule(srcDir, testDir)
-    }
-
-    @Throws(IOException::class)
-    private fun createTests(task: Task, testDir: VirtualFile) {
-        for ((path, text) in getTestTexts(task)) {
-            GeneratorUtils.createChildFile(testDir, PathUtil.getFileName(path), text)
-        }
-    }
-
-
-    private fun getTestTexts(task: Task): Map<String, String> {
-        val additionalMaterials = task.lesson.course.additionalMaterialsTask
-        if (task.testsText.isEmpty() && additionalMaterials != null) {
-            val lessonDirName = EduNames.LESSON + task.lesson.index
-            val taskDirName = EduNames.TASK + task.index
-            return additionalMaterials.testsText.filterKeys { key -> key.contains("$lessonDirName/$taskDirName/") }
-        }
-        return task.testsText
-    }
-
+    fun createModule(baseDir: VirtualFile, name: String): VirtualFile = VfsUtil.createDirectoryIfMissing(baseDir, name)
 
     @JvmStatic
     @Throws(IOException::class)
     fun createTaskModule(lessonDir: VirtualFile, task: Task) {
         val taskDirName = EduNames.TASK + task.index
-        val (src, test) = EduGradleModuleGenerator.createModule(lessonDir, taskDirName)
+        val moduleDir = EduGradleModuleGenerator.createModule(lessonDir, taskDirName)
         for (taskFile in task.getTaskFiles().values) {
-            GeneratorUtils.createTaskFile(src, taskFile)
+            GeneratorUtils.createTaskFile(moduleDir, taskFile)
         }
-        createTests(task, test)
+        for ((path, text) in task.testTextMap) {
+            GeneratorUtils.createChildFile(moduleDir, path, text)
+        }
         if (CCUtils.COURSE_MODE == task.lesson.course.courseMode) {
-            createDescriptionFiles(src, task)
+            createDescriptionFiles(moduleDir, task)
         }
     }
-
 
     @Throws(IOException::class)
     private fun createLessonModule(moduleDir: VirtualFile, lesson: Lesson) {
@@ -73,39 +52,40 @@ object EduGradleModuleGenerator {
         }
     }
 
-
     @JvmStatic
     @Throws(IOException::class)
-    fun createUtilModule(course: Course, moduleDir: VirtualFile) {
+    fun createUtilModule(course: Course, courseDir: VirtualFile) {
         val additionalMaterials = course.additionalMaterialsTask ?: return
-        createUtilModule(additionalMaterials, moduleDir)
+        createUtilModule(additionalMaterials, courseDir)
     }
 
     @JvmStatic
     @Throws(IOException::class)
-    fun createUtilModule(additionalMaterials: Task, moduleDir: VirtualFile) {
+    fun createUtilModule(additionalMaterials: Task, courseDir: VirtualFile) {
+        val taskFilesDir = additionalMaterials.taskFilesDir ?: return
         val utilFiles = mutableMapOf<String, String>()
         additionalMaterials.getTaskFiles().mapValuesTo(utilFiles) { (_, v) -> v.text }
         additionalMaterials.testsText.filterTo(utilFiles) { (path, _) -> path.contains(EduNames.UTIL) }
         if (utilFiles.isEmpty()) {
             return
         }
-        val (src, _) = EduGradleModuleGenerator.createModule(moduleDir, EduNames.UTIL)
+
+        val utilDir = EduGradleModuleGenerator.createModule(courseDir, EduNames.UTIL)
         for ((key, value) in utilFiles) {
-            GeneratorUtils.createChildFile(src, PathUtil.getFileName(key), value)
+            GeneratorUtils.createChildFile(utilDir, "$taskFilesDir/${PathUtil.getFileName(key)}", value)
         }
     }
 
     @JvmStatic
     @Throws(IOException::class)
-    fun createCourseContent(course: Course, moduleDir: VirtualFile) {
+    fun createCourseContent(course: Course, courseDir: VirtualFile) {
         val lessons = course.lessons
         for ((i, lesson) in lessons.withIndex()) {
             lesson.index = i + 1
-            createLessonModule(moduleDir, lesson)
+            createLessonModule(courseDir, lesson)
         }
 
-        createUtilModule(course, moduleDir)
+        createUtilModule(course, courseDir)
     }
 
     @JvmStatic
@@ -120,7 +100,3 @@ object EduGradleModuleGenerator {
         createChildFile(projectDir, GradleConstants.SETTINGS_FILE_NAME, settingsTemplate.text.replace("\$PROJECT_NAME\$", projectName))
     }
 }
-
-
-
-
