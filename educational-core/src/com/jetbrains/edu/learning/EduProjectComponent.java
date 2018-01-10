@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
-import com.intellij.ide.ui.UISettings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -125,9 +124,6 @@ public class EduProjectComponent implements ProjectComponent {
         selectStep(course);
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-            UISettings instance = UISettings.getInstance();
-            instance.setHideToolStripes(false);
-            instance.fireUISettingsChanged();
             registerShortcuts();
             EduUsagesCollector.projectTypeOpened(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
           }));
