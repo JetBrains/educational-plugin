@@ -29,11 +29,8 @@ import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.newproject.CreateNewStepikCourseDialog;
-import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.StepicUser;
-import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -45,9 +42,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
 import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
-import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
 
 public class EduBuiltInServerUtils {
 
@@ -163,7 +160,10 @@ public class EduBuiltInServerUtils {
         execCancelable(() -> {
           try {
             StepicUser user = StepikAuthorizedClient.getCurrentUser();
-            Course course = StepikConnector.getCourseFromStepik(user, courseId, true);
+            RemoteCourse course = StepikConnector.getCourseFromStepik(user, courseId, true);
+            if (course != null) {
+              StepikUtils.setCourseLanguage(course);
+            }
             showDialog(course, stepId);
           } catch (IOException e) {
             LOG.warn("Tried to create a project for course with id=" + courseId, e);
