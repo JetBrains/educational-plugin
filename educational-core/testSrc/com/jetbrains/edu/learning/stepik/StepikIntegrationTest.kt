@@ -147,7 +147,7 @@ class StepikIntegrationTest : CCTestCase() {
   private fun getTokens(): StepikWrappers.TokenInfo? {
     val parameters = ArrayList<NameValuePair>(listOf(BasicNameValuePair ("grant_type", "client_credentials")))
     val clientSecret = System.getenv("STEPIK_TEST_CLIENT_SECRET")
-    if (clientSecret == null) {
+    if (clientSecret == null || clientSecret.isEmpty()) {
       LOG.error("Test client secret is not provided")
       return null
     }
