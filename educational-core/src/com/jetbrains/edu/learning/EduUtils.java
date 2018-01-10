@@ -702,6 +702,9 @@ public class EduUtils {
 
   public static void registerStudyToolWindow(Project project) {
     final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+    if (toolWindowManager == null) {
+      return;
+    }
     ToolWindow studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
     if (studyToolWindow == null) {
       studyToolWindow = toolWindowManager.registerToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW,

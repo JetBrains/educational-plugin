@@ -415,7 +415,7 @@ public class CoursesPanel extends JPanel {
         StepicUser user = EduSettings.getInstance().getUser();
         assert user != null;
         try {
-          RemoteCourse course = (RemoteCourse) StepikConnector.getCourseByLink(user, courseLink);
+          RemoteCourse course = StepikConnector.getCourseByLink(user, courseLink);
           List<Language> languages = getLanguagesUnderProgress(course);
 
           if (languages == null || languages.isEmpty()) {

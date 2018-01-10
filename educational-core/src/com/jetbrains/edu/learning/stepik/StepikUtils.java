@@ -62,4 +62,12 @@ public class StepikUtils {
     String link = getLink(task, 1);
     return link == null ? null : link + "?adaptive=true";
   }
+
+  public static void setCourseLanguage(RemoteCourse info) {
+    String courseType = info.getType();
+    final int separator = courseType.indexOf(" ");
+    assert separator != -1;
+    final String language = courseType.substring(separator + 1);
+    info.setLanguage(language);
+  }
 }
