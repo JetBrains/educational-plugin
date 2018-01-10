@@ -40,7 +40,7 @@ public class ToThirdVersionXmlConverter implements XmlConverter {
           if (taskFileStatus != null && (taskStatus == null || taskFileStatus.equals(CheckStatus.Failed.toString()))) {
             taskStatus = taskFileStatus;
           }
-          Document document = EduUtils.getDocument(project.getBasePath(), lessonIndex, taskIndex, entry.getKey());
+          Document document = EduUtils.getDocument(project, lessonIndex, taskIndex, entry.getKey());
           if (document == null) {
             continue;
           }

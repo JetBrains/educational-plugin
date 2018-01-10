@@ -69,8 +69,7 @@ public class StepikWrappers {
         ApplicationManager.getApplication().runWriteAction(() -> {
           final VirtualFile taskDir = task.getTaskDir(project);
           assert taskDir != null;
-          String name = entry.getKey();
-          VirtualFile answerFile = taskDir.findFileByRelativePath(name);
+          VirtualFile answerFile = entry.getValue().findFileInDir(taskDir);
           TaskFile studentTaskFile = EduUtils.createStudentFile(project, answerFile, null, 0);
           if (studentTaskFile == null) {
             return;

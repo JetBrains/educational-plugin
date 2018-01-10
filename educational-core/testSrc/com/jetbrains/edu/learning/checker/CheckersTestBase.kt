@@ -67,8 +67,8 @@ abstract class CheckersTestBase : UsefulTestCase() {
             for (task in lesson.getTaskList()) {
                 try {
                     val taskDir = task.getTaskDir(myProject) ?: error("Cannot find task directory for task ${task.name}")
-                    val firstTaskFileName = task.getTaskFiles().keys.first()
-                    val taskFile = taskDir.findFileByRelativePath(firstTaskFileName) ?: continue
+                    val firstTaskFile = task.getTaskFiles().values.first()
+                    val taskFile = firstTaskFile.findFileInDir(taskDir) ?: continue
 
                     FileEditorManager.getInstance(myProject).openFile(taskFile, true)
 

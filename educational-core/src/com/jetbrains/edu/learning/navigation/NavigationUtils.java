@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -15,8 +16,8 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
@@ -159,9 +160,12 @@ public class NavigationUtils {
     if (taskDir == null) {
       return;
     }
-    VirtualFile srcDir = taskDir.findChild(EduNames.SRC);
-    if (srcDir != null) {
-      taskDir = srcDir;
+    String taskFilesDir = TaskExt.getTaskFilesDir(task);
+    if (StringUtil.isNotEmpty(taskFilesDir)) {
+      VirtualFile srcDir = taskDir.findChild(taskFilesDir);
+      if (srcDir != null) {
+        taskDir = srcDir;
+      }
     }
     if (taskFiles.isEmpty()) {
       ProjectView.getInstance(project).select(taskDir, taskDir, false);
@@ -173,7 +177,7 @@ public class NavigationUtils {
       if (taskFile.getActivePlaceholders().isEmpty()) {
         continue;
       }
-      VirtualFile virtualFile = taskDir.findFileByRelativePath(entry.getKey());
+      VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
       if (virtualFile == null) {
         continue;
       }

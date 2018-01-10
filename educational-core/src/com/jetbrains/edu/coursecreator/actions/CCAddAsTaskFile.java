@@ -52,7 +52,7 @@ public class CCAddAsTaskFile extends CCTaskFileActionBase {
       if (myTaskFile != null) {
         myTask.addTaskFile(myTaskFile);
       } else {
-        final String taskRelativePath = EduUtils.pathRelativeToTask(myFile);
+        final String taskRelativePath = EduUtils.pathRelativeToTask(myProject, myFile);
         myTask.addTaskFile(taskRelativePath, myTask.getTaskFiles().size());
         myTaskFile = myTask.getTaskFile(taskRelativePath);
       }

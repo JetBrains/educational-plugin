@@ -62,9 +62,8 @@ public class CheckUtils {
       return;
     }
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-      String name = entry.getKey();
       TaskFile taskFile = entry.getValue();
-      VirtualFile virtualFile = taskDir.findFileByRelativePath(name);
+      VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
       if (virtualFile == null) {
         continue;
       }
@@ -87,11 +86,10 @@ public class CheckUtils {
     final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     if (!studyTaskManager.hasFailedAnswerPlaceholders(selectedTaskFile)) {
       for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-        String name = entry.getKey();
         TaskFile taskFile = entry.getValue();
         if (studyTaskManager.hasFailedAnswerPlaceholders(taskFile)) {
           taskFileToNavigate = taskFile;
-          VirtualFile virtualFile = taskDir.findFileByRelativePath(name);
+          VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
           if (virtualFile == null) {
             continue;
           }
@@ -126,9 +124,8 @@ public class CheckUtils {
 
   public static void flushWindows(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-      String name = entry.getKey();
       TaskFile taskFile = entry.getValue();
-      VirtualFile virtualFile = taskDir.findFileByRelativePath(name);
+      VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
       if (virtualFile == null) {
         continue;
       }

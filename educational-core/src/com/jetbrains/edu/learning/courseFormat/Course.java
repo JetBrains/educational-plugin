@@ -39,7 +39,7 @@ public class Course {
    * Initializes state of course
    */
   public void initCourse(boolean isRestarted) {
-    for (Lesson lesson : getLessons()) {
+    for (Lesson lesson : getLessons(true)) {
       lesson.initLesson(this, isRestarted);
     }
   }

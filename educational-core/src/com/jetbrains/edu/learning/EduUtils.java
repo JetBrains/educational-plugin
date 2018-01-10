@@ -68,6 +68,7 @@ import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.text.MarkdownUtil;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
@@ -82,6 +83,7 @@ import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import com.petebevin.markdown.MarkdownProcessor;
+import kotlin.text.StringsKt;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -181,7 +183,7 @@ public class EduUtils {
   public static void updateToolWindows(@NotNull final Project project) {
     final TaskDescriptionToolWindow taskDescriptionToolWindow = getStudyToolWindow(project);
     if (taskDescriptionToolWindow != null) {
-      Task task = getTaskForCurrentSelectedFile(project);
+      Task task = getCurrentTask(project);
       taskDescriptionToolWindow.updateTask(project, task);
       taskDescriptionToolWindow.updateCourseProgress(project);
     }
@@ -192,7 +194,6 @@ public class EduUtils {
     windowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW).getContentManager().removeAllContents(false);
     TaskDescriptionToolWindowFactory factory = new TaskDescriptionToolWindowFactory();
     factory.createToolWindowContent(project, windowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW));
-
   }
 
   @Nullable
@@ -202,7 +203,7 @@ public class EduUtils {
     ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
     if (toolWindow != null) {
       Content[] contents = toolWindow.getContentManager().getContents();
-      for (Content content: contents) {
+      for (Content content : contents) {
         JComponent component = content.getComponent();
         if (component != null && component instanceof TaskDescriptionToolWindow) {
           return (TaskDescriptionToolWindow)component;
@@ -236,7 +237,7 @@ public class EduUtils {
     Disposer.register(project, balloon);
   }
 
-  public static RelativePoint computeLocation(Editor editor){
+  public static RelativePoint computeLocation(Editor editor) {
 
     final Rectangle visibleRect = editor.getComponent().getVisibleRect();
     Point point = new Point(visibleRect.x + visibleRect.width + 10,
@@ -287,7 +288,7 @@ public class EduUtils {
   @Nullable
   public static TaskFile getTaskFile(@NotNull final Project project, @NotNull final VirtualFile file) {
     Task task = getTaskForFile(project, file);
-    return task == null ? null : task.getTaskFile(pathRelativeToTask(file));
+    return task == null ? null : task.getTaskFile(pathRelativeToTask(project, file));
   }
 
   public static void drawAllAnswerPlaceholders(Editor editor, TaskFile taskFile) {
@@ -437,21 +438,13 @@ public class EduUtils {
       return String.valueOf(LoadTextUtil.loadText(taskTextFile));
     }
 
-    VirtualFile srcDir = taskDirectory.findChild(EduNames.SRC);
-    if (srcDir != null) {
-      VirtualFile taskTextSrcFile = srcDir.findChild(textFilename);
-      if (taskTextSrcFile != null) {
-        return String.valueOf(LoadTextUtil.loadText(taskTextSrcFile));
-      }
-    }
-
     return null;
   }
 
   @Nullable
   public static TwitterPluginConfigurator getTwitterConfigurator(@NotNull final Project project) {
     TwitterPluginConfigurator[] extensions = TwitterPluginConfigurator.EP_NAME.getExtensions();
-    for (TwitterPluginConfigurator extension: extensions) {
+    for (TwitterPluginConfigurator extension : extensions) {
       if (extension.accept(project)) {
         return extension;
       }
@@ -478,56 +471,11 @@ public class EduUtils {
   }
 
   @Nullable
-  public static TaskFile getSelectedTaskFile(@NotNull Project project) {
-    VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
-    TaskFile taskFile = null;
-    for (VirtualFile file : files) {
-      taskFile = getTaskFile(project, file);
-      if (taskFile != null) {
-        break;
-      }
-    }
-    return taskFile;
-  }
-
-  @Nullable
   public static Task getCurrentTask(@NotNull final Project project) {
-    final TaskFile taskFile = getSelectedTaskFile(project);
-    if (taskFile != null) {
-      return taskFile.getTask();
-    }
-    return !isConfiguredWithGradle(project) ? null : findTaskFromTestFiles(project);
-  }
-
-  @Nullable
-  public static Task getTaskForCurrentSelectedFile(@NotNull Project project) {
     VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
-    Task task = null;
     for (VirtualFile file : files) {
-      task = getTaskForFile(project, file);
-      if (task != null) {
-        break;
-      }
-    }
-    return task;
-  }
-
-  @Nullable
-  private static Task findTaskFromTestFiles(@NotNull Project project) {
-    for (VirtualFile testFile : FileEditorManager.getInstance(project).getSelectedFiles()) {
-      VirtualFile parentDir = testFile.getParent();
-      if (EduNames.TEST.equals(parentDir.getName())) {
-        VirtualFile srcDir = parentDir.getParent().findChild(EduNames.SRC);
-        if (srcDir == null) {
-          return null;
-        }
-        for (VirtualFile file : srcDir.getChildren()) {
-          TaskFile taskFile = getTaskFile(project, file);
-          if (taskFile != null) {
-            return taskFile.getTask();
-          }
-        }
-      }
+      Task task = getTaskForFile(project, file);
+      if (task != null) return task;
     }
     return null;
   }
@@ -561,9 +509,6 @@ public class EduUtils {
       if (name.contains(EduNames.TASK) && parent.isDirectory()) {
         return parent;
       }
-      if (EduNames.SRC.equals(name)) {
-        return parent.getParent();
-      }
 
       parent = parent.getParent();
     }
@@ -579,13 +524,6 @@ public class EduUtils {
     VirtualFile taskDir = getTaskDir(file);
     if (taskDir == null) {
       return null;
-    }
-    //need this because of multi-module generation
-    if (EduNames.SRC.equals(taskDir.getName())) {
-      taskDir = taskDir.getParent();
-      if (taskDir == null) {
-        return null;
-      }
     }
     final String taskDirName = taskDir.getName();
     if (taskDirName.contains(EduNames.TASK)) {
@@ -677,16 +615,21 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Document getDocument(String basePath, int lessonIndex, int taskIndex, String fileName) {
-    String taskPath = FileUtil.join(basePath, EduNames.LESSON + lessonIndex, EduNames.TASK + taskIndex);
-    VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.join(taskPath, fileName));
-    if (taskFile == null) {
-      taskFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.join(taskPath, EduNames.SRC, fileName));
+  public static Document getDocument(@NotNull Project project, int lessonIndex, int taskIndex, String fileName) {
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) return null;
+    String taskFilesDir = CourseExt.getTaskFilesDir(course);
+    String taskPath = FileUtil.join(project.getBasePath(), EduNames.LESSON + lessonIndex, EduNames.TASK + taskIndex);
+    String filePath;
+    if (StringUtil.isNotEmpty(taskFilesDir)) {
+      filePath = FileUtil.join(taskPath, taskFilesDir, fileName);
     }
-    if (taskFile == null) {
-      return null;
+    else {
+      filePath = FileUtil.join(taskPath, fileName);
     }
-    return FileDocumentManager.getInstance().getDocument(taskFile);
+
+    VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(filePath);
+    return taskFile == null ? null : FileDocumentManager.getInstance().getDocument(taskFile);
   }
 
   public static void showErrorPopupOnToolbar(@NotNull Project project, String content) {
@@ -722,7 +665,8 @@ public class EduUtils {
     initToolWindow(project);
   }
 
-  @Nullable public static AnswerPlaceholder getAnswerPlaceholder(int offset, List<AnswerPlaceholder> placeholders) {
+  @Nullable
+  public static AnswerPlaceholder getAnswerPlaceholder(int offset, List<AnswerPlaceholder> placeholders) {
     for (AnswerPlaceholder placeholder : placeholders) {
       int placeholderStart = placeholder.getOffset();
       int placeholderEnd = placeholderStart + placeholder.getRealLength();
@@ -733,14 +677,31 @@ public class EduUtils {
     return null;
   }
 
-  public static String pathRelativeToTask(VirtualFile file) {
+  @NotNull
+  public static String pathRelativeToTask(@NotNull Project project, @NotNull VirtualFile file) {
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) return file.getName();
+
+    String taskFilesDir = CourseExt.getTaskFilesDir(course);
+    String testFilesDir = CourseExt.getTestFilesDir(course);
+    List<String> prefixToRemove = new ArrayList<>(2);
+    if (StringUtil.isNotEmpty(taskFilesDir)) {
+      prefixToRemove.add(taskFilesDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
+    }
+    if (StringUtil.isNotEmpty(testFilesDir)) {
+      prefixToRemove.add(testFilesDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
+    }
+
     VirtualFile taskDir = getTaskDir(file);
     if (taskDir == null) return file.getName();
-    VirtualFile srcDir = taskDir.findChild(EduNames.SRC);
-    if (srcDir != null) {
-      taskDir = srcDir;
+
+    String fullRelativePath = FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
+    if (fullRelativePath == null) return file.getName();
+
+    for (String prefix : prefixToRemove) {
+      if (fullRelativePath.startsWith(prefix)) return StringsKt.removePrefix(fullRelativePath, prefix);
     }
-    return FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
+    return fullRelativePath;
   }
 
   public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder,
@@ -782,6 +743,7 @@ public class EduUtils {
       LOG.error(e);
     }
   }
+
   public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {
     LocalFileSystem.getInstance().refresh(false);
     final Lesson firstLesson = getFirst(course.getLessons());
@@ -793,10 +755,9 @@ public class EduUtils {
     final Map<String, TaskFile> taskFiles = firstTask.getTaskFiles();
     VirtualFile activeVirtualFile = null;
     for (Map.Entry<String, TaskFile> entry : taskFiles.entrySet()) {
-      final String relativePath = entry.getKey();
       final TaskFile taskFile = entry.getValue();
       taskDir.refresh(false, true);
-      final VirtualFile virtualFile = taskDir.findFileByRelativePath(relativePath);
+      final VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
       if (virtualFile != null) {
         if (!taskFile.getActivePlaceholders().isEmpty()) {
           activeVirtualFile = virtualFile;
@@ -953,7 +914,7 @@ public class EduUtils {
         }
         task = task.copy();
       }
-      TaskFile taskFile = task.getTaskFile(pathRelativeToTask(answerFile));
+      TaskFile taskFile = task.getTaskFile(pathRelativeToTask(project, answerFile));
       if (taskFile == null) {
         return null;
       }
@@ -1077,8 +1038,7 @@ public class EduUtils {
 
   public static void deleteWindowDescriptions(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-      String name = entry.getKey();
-      VirtualFile virtualFile = taskDir.findFileByRelativePath(name);
+      VirtualFile virtualFile = entry.getValue().findFileInDir(taskDir);
       if (virtualFile == null) {
         continue;
       }
