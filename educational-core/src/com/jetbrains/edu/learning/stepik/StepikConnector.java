@@ -181,7 +181,7 @@ public class StepikConnector {
   }
 
   @Nullable
-  public static Course getCourseFromStepik(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) throws IOException {
+  public static RemoteCourse getCourseFromStepik(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) throws IOException {
     final URI url;
     try {
       url = new URIBuilder(StepikNames.COURSES + "/" + courseId)
@@ -206,7 +206,7 @@ public class StepikConnector {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse info : courses) {
       if (!info.isAdaptive() && StringUtil.isEmptyOrSpaces(info.getType())) continue;
-      setCourseLanguage(info);
+      StepikUtils.setCourseLanguage(info);
 
       if (canBeOpened(info)) {
         final ArrayList<StepicUser> authors = new ArrayList<>();
@@ -242,7 +242,7 @@ public class StepikConnector {
     return CourseVisibility.PublicVisibility.INSTANCE;
   }
 
-  public static Course getCourseByLink(@NotNull StepicUser user, @NotNull String link) throws IOException {
+  public static RemoteCourse getCourseByLink(@NotNull StepicUser user, @NotNull String link) throws IOException {
     int courseId;
     try {
       courseId = Integer.parseInt(link);
@@ -271,14 +271,6 @@ public class StepikConnector {
       LOG.warn(e.getMessage());
     }
     return -1;
-  }
-
-  private static void setCourseLanguage(RemoteCourse info) {
-    String courseType = info.getType();
-    final int separator = courseType.indexOf(" ");
-    assert separator != -1;
-    final String language = courseType.substring(separator + 1);
-    info.setLanguage(language);
   }
 
   static boolean canBeOpened(RemoteCourse courseInfo) {
