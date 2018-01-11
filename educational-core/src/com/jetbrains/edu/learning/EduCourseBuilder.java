@@ -78,13 +78,13 @@ public interface EduCourseBuilder<Settings> {
    * Provides directory path where task files should be places in task folder.
    * Can be empty.
    *
-   * For example, task folder is `courseName/lesson1/task1` and `getTaskFilesDir` returns `src`
+   * For example, task folder is `courseName/lesson1/task1` and `getSourceDir` returns `src`
    * then any task files should be placed in `courseName/lesson1/task1/src` folder
    *
    * @return task files directory path
    */
   @NotNull
-  default String getTaskFilesDir() {
+  default String getSourceDir() {
     return "";
   }
 
@@ -92,12 +92,12 @@ public interface EduCourseBuilder<Settings> {
    * Provides directory path where test files should be places in task folder.
    * Can be empty.
    *
-   * See {@link EduCourseBuilder#getTaskFilesDir()} javadoc for example.
+   * See {@link EduCourseBuilder#getSourceDir()} javadoc for example.
    *
    * @return test files directory path
    */
   @NotNull
-  default String getTestFilesDir() {
+  default String getTestDir() {
     return "";
   }
 

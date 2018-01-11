@@ -618,11 +618,11 @@ public class EduUtils {
   public static Document getDocument(@NotNull Project project, int lessonIndex, int taskIndex, String fileName) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) return null;
-    String taskFilesDir = CourseExt.getTaskFilesDir(course);
+    String sourceDir = CourseExt.getSourceDir(course);
     String taskPath = FileUtil.join(project.getBasePath(), EduNames.LESSON + lessonIndex, EduNames.TASK + taskIndex);
     String filePath;
-    if (StringUtil.isNotEmpty(taskFilesDir)) {
-      filePath = FileUtil.join(taskPath, taskFilesDir, fileName);
+    if (StringUtil.isNotEmpty(sourceDir)) {
+      filePath = FileUtil.join(taskPath, sourceDir, fileName);
     }
     else {
       filePath = FileUtil.join(taskPath, fileName);
@@ -682,14 +682,14 @@ public class EduUtils {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) return file.getName();
 
-    String taskFilesDir = CourseExt.getTaskFilesDir(course);
-    String testFilesDir = CourseExt.getTestFilesDir(course);
+    String sourceDir = CourseExt.getSourceDir(course);
+    String testDir = CourseExt.getTestDir(course);
     List<String> prefixToRemove = new ArrayList<>(2);
-    if (StringUtil.isNotEmpty(taskFilesDir)) {
-      prefixToRemove.add(taskFilesDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
+    if (StringUtil.isNotEmpty(sourceDir)) {
+      prefixToRemove.add(sourceDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
     }
-    if (StringUtil.isNotEmpty(testFilesDir)) {
-      prefixToRemove.add(testFilesDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
+    if (StringUtil.isNotEmpty(testDir)) {
+      prefixToRemove.add(testDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
     }
 
     VirtualFile taskDir = getTaskDir(file);

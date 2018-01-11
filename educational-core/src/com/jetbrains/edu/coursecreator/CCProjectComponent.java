@@ -127,8 +127,8 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
   @NotNull
   private static List<VirtualFile> getAllAnswerTaskFiles(@NotNull Course course, @NotNull Project project) {
-    String taskFilesDir = CourseExt.getTaskFilesDir(course);
-    if (taskFilesDir == null) return Collections.emptyList();
+    String sourceDir = CourseExt.getSourceDir(course);
+    if (sourceDir == null) return Collections.emptyList();
 
     List<VirtualFile> result = new ArrayList<>();
     for (Lesson lesson : course.getLessons()) {
@@ -138,8 +138,8 @@ public class CCProjectComponent extends AbstractProjectComponent {
           String answerName = FileUtil.getNameWithoutExtension(name) + CCUtils.ANSWER_EXTENSION_DOTTED + FileUtilRt.getExtension(name);
 
           String taskPath = FileUtil.join(project.getBasePath(), EduNames.LESSON + lesson.getIndex(), EduNames.TASK + task.getIndex());
-          if (!taskFilesDir.isEmpty()) {
-            taskPath = FileUtil.join(taskPath, taskFilesDir);
+          if (!sourceDir.isEmpty()) {
+            taskPath = FileUtil.join(taskPath, sourceDir);
           }
 
           VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.join(taskPath, answerName));

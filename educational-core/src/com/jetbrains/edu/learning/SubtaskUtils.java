@@ -54,8 +54,8 @@ public class SubtaskUtils {
     if (taskDir == null) {
       return;
     }
-    VirtualFile testsDir = TaskExt.findTestsDir(task, taskDir);
-    if (testsDir == null) return;
+    VirtualFile testDir = TaskExt.findTestDir(task, taskDir);
+    if (testDir == null) return;
 
     int fromSubtaskIndex = task.getActiveSubtaskIndex();
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
@@ -84,7 +84,7 @@ public class SubtaskUtils {
         taskFile.setHighlightErrors(false);
       }
     }
-    transformTestFile(project, toSubtaskIndex, testsDir);
+    transformTestFile(project, toSubtaskIndex, testDir);
 
     // We want to dump current tool window editor state to subtask
     // before we will switch subtask
@@ -93,7 +93,7 @@ public class SubtaskUtils {
     task.setActiveSubtaskIndex(toSubtaskIndex);
     updateUI(project, task, taskDir, !CCUtils.isCourseCreator(project) && navigateToTask);
     if (CCUtils.isCourseCreator(project)) {
-      updateOpenedTestFiles(project, testsDir, fromSubtaskIndex, toSubtaskIndex);
+      updateOpenedTestFiles(project, testDir, fromSubtaskIndex, toSubtaskIndex);
     }
   }
 

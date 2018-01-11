@@ -182,8 +182,12 @@ public class TaskFile {
     if (course == null) return name;
     EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
     if (configurator == null) return name;
-    String taskFolder = configurator.getCourseBuilder().getTaskFilesDir();
-    return String.join(VfsUtilCore.VFS_SEPARATOR_CHAR + "", taskFolder, name);
+    String sourceDir = configurator.getCourseBuilder().getSourceDir();
+    if (sourceDir.isEmpty()) {
+      return name;
+    } else {
+      return sourceDir + VfsUtilCore.VFS_SEPARATOR_CHAR + name;
+    }
   }
 
   @Nullable

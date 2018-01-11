@@ -89,11 +89,11 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
   private static void createFilesFromTemplates(@NotNull Project project,
                                                @NotNull Task task,
                                                @NotNull VirtualFile taskDirectory) {
-    VirtualFile tasksDir = TaskExt.findTasksDir(task, taskDirectory);
-    VirtualFile testsDir = TaskExt.findTestsDir(task, taskDirectory);
-    if (tasksDir == null || testsDir == null) return;
-    EduUtils.createFromTemplate(project, tasksDir, TASK_PY);
-    EduUtils.createFromTemplate(project, testsDir, TESTS_PY);
+    VirtualFile sourceDir = TaskExt.findSourceDir(task, taskDirectory);
+    VirtualFile testDir = TaskExt.findTestDir(task, taskDirectory);
+    if (sourceDir == null || testDir == null) return;
+    EduUtils.createFromTemplate(project, sourceDir, TASK_PY);
+    EduUtils.createFromTemplate(project, testDir, TESTS_PY);
     task.addTaskFile(TASK_PY, task.taskFiles.size());
   }
 
@@ -101,7 +101,7 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
   public void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) return;
-    VirtualFile testDir = taskDir.findFileByRelativePath(getTestFilesDir());
+    VirtualFile testDir = taskDir.findFileByRelativePath(getTestDir());
     if (testDir == null) return;
 
     int nextSubtaskIndex = task.getLastSubtaskIndex() + 1;
