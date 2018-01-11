@@ -499,8 +499,8 @@ public class StepikConnector {
    * In Stepik solution text placeholder text is wrapped in <placeholder> tags. Here we're trying to find corresponding
    * placeholder for all taskFile placeholders.
    *
-   * If we can't find at least one placholder, we mark all placeholders as invalid. Invalid placeholder isn't showing
-   * and taskfile with such placeholders couldn't be checked.
+   * If we can't find at least one placeholder, we mark all placeholders as invalid. Invalid placeholder isn't showing
+   * and task file with such placeholders couldn't be checked.
    *
    * @param taskFile for which we're updating placeholders
    * @param solutionFile from Stepik with text of last submission
@@ -814,7 +814,7 @@ public class StepikConnector {
 
   private static void markStepAsViewed(int lessonId, int stepId) throws URISyntaxException, IOException {
     final URI unitsUrl = new URIBuilder(StepikNames.UNITS).addParameter("lesson", String.valueOf(lessonId)).build();
-    final StepikWrappers.UnitContainer unitContainer = getFromStepik(unitsUrl.toString(), StepikWrappers.UnitContainer.class);
+    final UnitContainer unitContainer = getFromStepik(unitsUrl.toString(), UnitContainer.class);
     if (unitContainer.units.size() == 0) {
       LOG.warn("Got unexpected numbers of units: " + unitContainer.units.size());
       return;
@@ -825,14 +825,14 @@ public class StepikConnector {
       builder.addParameter("ids[]", String.valueOf(assignmentId));
     }
 
-    final StepikWrappers.AssignmentsWrapper assignments = getFromStepik(builder.toString(), StepikWrappers.AssignmentsWrapper.class);
+    final AssignmentsWrapper assignments = getFromStepik(builder.toString(), AssignmentsWrapper.class);
     if (assignments.assignments.size() > 0) {
-      for (StepikWrappers.Assignment assignment : assignments.assignments) {
+      for (Assignment assignment : assignments.assignments) {
         if (assignment.step != stepId) {
           continue;
         }
         final HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.VIEWS);
-        final StepikWrappers.ViewsWrapper viewsWrapper = new StepikWrappers.ViewsWrapper(assignment.id, stepId);
+        final ViewsWrapper viewsWrapper = new ViewsWrapper(assignment.id, stepId);
         post.setEntity(new StringEntity(new Gson().toJson(viewsWrapper)));
         post.addHeader(new BasicHeader("Content-Type", ContentType.APPLICATION_JSON.getMimeType()));
 
