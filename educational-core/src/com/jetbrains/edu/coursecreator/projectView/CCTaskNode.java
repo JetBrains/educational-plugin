@@ -12,6 +12,7 @@ import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.projectView.TaskNode;
@@ -39,7 +40,8 @@ public class CCTaskNode extends TaskNode {
       if (EduNames.BUILD.equals(name) || EduNames.OUT.equals(name)) {
         return null;
       }
-      if (EduNames.SRC.equals(name) || EduNames.TEST.equals(name)) {
+
+      if (name.equals(TaskExt.getSourceDir(myTask)) || name.equals(TaskExt.getTestDir(myTask))) {
         return createChildDirectoryNode(null, (PsiDirectory) value);
       }
     }

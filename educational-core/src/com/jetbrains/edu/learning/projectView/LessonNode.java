@@ -5,16 +5,17 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -61,12 +62,15 @@ public class LessonNode extends EduNode {
       if (task == null) {
         return null;
       }
-      VirtualFile srcDir = directory.getVirtualFile().findChild(EduNames.SRC);
-      boolean isCourseCreatorGradleProject = EduUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject);
-      if (srcDir != null && !isCourseCreatorGradleProject) {
-        directory = PsiManager.getInstance(myProject).findDirectory(srcDir);
-        if (directory == null) {
-          return null;
+      String sourceDir = TaskExt.getSourceDir(task);
+      if (StringUtil.isNotEmpty(sourceDir)) {
+        VirtualFile srcDir = directory.getVirtualFile().findChild(sourceDir);
+        boolean isCourseCreatorGradleProject = EduUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject);
+        if (srcDir != null && !isCourseCreatorGradleProject) {
+          directory = PsiManager.getInstance(myProject).findDirectory(srcDir);
+          if (directory == null) {
+            return null;
+          }
         }
       }
       return createChildDirectoryNode(task, directory);

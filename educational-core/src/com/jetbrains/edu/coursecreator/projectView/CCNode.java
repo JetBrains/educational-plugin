@@ -13,6 +13,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.projectView.DirectoryNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +74,12 @@ public class CCNode extends DirectoryNode {
       PsiDirectory dir = getValue();
       VirtualFile directoryFile = dir.getVirtualFile();
       String name = directoryFile.getName();
-      if (EduNames.SRC.equals(name) || EduNames.TEST.equals(name)) {
+
+      Course course = StudyTaskManager.getInstance(myProject).getCourse();
+      // course is not null because of `CCUtils.isCourseCreator(project)` check above
+      assert course != null;
+
+      if (name.equals(CourseExt.getSourceDir(course)) || name.equals(CourseExt.getTestDir(course))) {
         data.setPresentableText(name);
         return;
       }
