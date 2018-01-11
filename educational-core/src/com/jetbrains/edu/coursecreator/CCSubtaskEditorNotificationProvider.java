@@ -14,7 +14,9 @@ import com.intellij.openapi.ui.popup.ListSeparator;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import com.intellij.ui.awt.RelativePoint;
@@ -263,15 +265,19 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
       }
     }
 
-    private void deleteSubtaskFiles(VirtualFile taskDir) {
+    private void deleteSubtaskFiles(@NotNull VirtualFile taskDir) {
       ApplicationManager.getApplication().runWriteAction(() -> {
         List<VirtualFile> filesToDelete = new ArrayList<>();
-        for (VirtualFile file : taskDir.getChildren()) {
-          int index = CCUtils.getSubtaskIndex(myProject, file);
-          if (index != -1 && mySubtaskIndex == index) {
-            filesToDelete.add(file);
+        VfsUtilCore.visitChildrenRecursively(taskDir, new VirtualFileVisitor<Object>() {
+          @Override
+          public boolean visitFile(@NotNull VirtualFile file) {
+            int index = CCUtils.getSubtaskIndex(myProject, file);
+            if (index != -1 && mySubtaskIndex == index) {
+              filesToDelete.add(file);
+            }
+            return true;
           }
-        }
+        });
         for (VirtualFile file : filesToDelete) {
           try {
             file.delete(myProject);

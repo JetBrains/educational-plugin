@@ -198,34 +198,37 @@ public class CCUtils {
   /**
    * @param fromIndex -1 if task converted to TaskWithSubtasks, -2 if task converted from TaskWithSubtasks
    */
-  public static void renameFiles(VirtualFile taskDir, Project project, int fromIndex) {
+  public static void renameFiles(VirtualFile testsDir, Project project, int fromIndex) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       Map<VirtualFile, String> newNames = new HashMap<>();
-      for (VirtualFile virtualFile : taskDir.getChildren()) {
-        int subtaskIndex = getSubtaskIndex(project, virtualFile);
-        if (subtaskIndex == -1) {
-          continue;
+      VfsUtilCore.visitChildrenRecursively(testsDir, new VirtualFileVisitor<Object>() {
+        @Override
+        public boolean visitFile(@NotNull VirtualFile virtualFile) {
+            int subtaskIndex = getSubtaskIndex(project, virtualFile);
+            if (subtaskIndex == -1) return true;
+            if (subtaskIndex > fromIndex) {
+              String index;
+              if (fromIndex == -1) { // add new subtask
+                index = "0";
+              }
+              else { // remove subtask
+                index = fromIndex == -2 ? "" : Integer.toString(subtaskIndex - 1);
+              }
+              String fileName = virtualFile.getName();
+              String nameWithoutExtension = FileUtil.getNameWithoutExtension(fileName);
+              String extension = FileUtilRt.getExtension(fileName);
+              int subtaskMarkerIndex = nameWithoutExtension.indexOf(EduNames.SUBTASK_MARKER);
+              String newName = subtaskMarkerIndex == -1
+                               ? nameWithoutExtension
+                               : nameWithoutExtension.substring(0, subtaskMarkerIndex);
+              newName += index.isEmpty() ? "" : EduNames.SUBTASK_MARKER;
+              newName += index + "." + extension;
+              newNames.put(virtualFile, newName);
+            }
+            return true;
         }
-        if (subtaskIndex > fromIndex) {
-          String index;
-          if (fromIndex == -1) { // add new subtask
-            index = "0";
-          }
-          else { // remove subtask
-            index = fromIndex == -2 ? "" : Integer.toString(subtaskIndex - 1);
-          }
-          String fileName = virtualFile.getName();
-          String nameWithoutExtension = FileUtil.getNameWithoutExtension(fileName);
-          String extension = FileUtilRt.getExtension(fileName);
-          int subtaskMarkerIndex = nameWithoutExtension.indexOf(EduNames.SUBTASK_MARKER);
-          String newName = subtaskMarkerIndex == -1
-                           ? nameWithoutExtension
-                           : nameWithoutExtension.substring(0, subtaskMarkerIndex);
-          newName += index.isEmpty() ? "" : EduNames.SUBTASK_MARKER;
-          newName += index + "." + extension;
-          newNames.put(virtualFile, newName);
-        }
-      }
+      });
+
       for (Map.Entry<VirtualFile, String> entry : newNames.entrySet()) {
         try {
           entry.getKey().rename(project, entry.getValue());

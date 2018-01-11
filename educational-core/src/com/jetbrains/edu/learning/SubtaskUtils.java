@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -53,6 +54,9 @@ public class SubtaskUtils {
     if (taskDir == null) {
       return;
     }
+    VirtualFile testsDir = TaskExt.findTestsDir(task, taskDir);
+    if (testsDir == null) return;
+
     int fromSubtaskIndex = task.getActiveSubtaskIndex();
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
       TaskFile taskFile = entry.getValue();
@@ -80,7 +84,7 @@ public class SubtaskUtils {
         taskFile.setHighlightErrors(false);
       }
     }
-    transformTestFile(project, toSubtaskIndex, taskDir);
+    transformTestFile(project, toSubtaskIndex, testsDir);
 
     // We want to dump current tool window editor state to subtask
     // before we will switch subtask
@@ -89,12 +93,12 @@ public class SubtaskUtils {
     task.setActiveSubtaskIndex(toSubtaskIndex);
     updateUI(project, task, taskDir, !CCUtils.isCourseCreator(project) && navigateToTask);
     if (CCUtils.isCourseCreator(project)) {
-      updateOpenedTestFiles(project, taskDir, fromSubtaskIndex, toSubtaskIndex);
+      updateOpenedTestFiles(project, testsDir, fromSubtaskIndex, toSubtaskIndex);
     }
   }
 
   private static void updateOpenedTestFiles(@NotNull Project project,
-                                            @NotNull VirtualFile taskDir,
+                                            @NotNull VirtualFile testDir,
                                             int fromTaskNumber,
                                             int toSubtaskNumber) {
     String fromSubtaskTestName = getTestFileName(project, fromTaskNumber);
@@ -102,8 +106,8 @@ public class SubtaskUtils {
     if (fromSubtaskTestName == null || toSubtaskTestName == null) {
       return;
     }
-    VirtualFile fromTest = taskDir.findChild(fromSubtaskTestName);
-    VirtualFile toTest = taskDir.findChild(toSubtaskTestName);
+    VirtualFile fromTest = testDir.findChild(fromSubtaskTestName);
+    VirtualFile toTest = testDir.findChild(toSubtaskTestName);
     if (fromTest == null || toTest == null) {
       return;
     }
@@ -121,7 +125,7 @@ public class SubtaskUtils {
     }
   }
 
-  private static void transformTestFile(@NotNull Project project, int toSubtaskIndex, VirtualFile taskDir) {
+  private static void transformTestFile(@NotNull Project project, int toSubtaskIndex, VirtualFile testDir) {
 
     String subtaskTestFileName = getTestFileName(project, toSubtaskIndex);
     if (subtaskTestFileName == null) {
@@ -129,7 +133,7 @@ public class SubtaskUtils {
     }
     String nameWithoutExtension = FileUtil.getNameWithoutExtension(subtaskTestFileName);
     String extension = FileUtilRt.getExtension(subtaskTestFileName);
-    VirtualFile subtaskTestFile = taskDir.findChild(nameWithoutExtension + ".txt");
+    VirtualFile subtaskTestFile = testDir.findChild(nameWithoutExtension + ".txt");
     if (subtaskTestFile != null) {
       ApplicationManager.getApplication().runWriteAction(() -> {
         try {
