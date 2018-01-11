@@ -22,8 +22,8 @@ abstract class CCSubtaskTestBase : CCTestCase() {
   abstract protected val testFileName: String
   abstract protected val language: Language
 
-  private val srcDirPath: String get() = join(TASK_PATH, courseBuilder.taskFilesDir)
-  private val testDirPath: String get() = join(TASK_PATH, courseBuilder.testFilesDir)
+  private val srcDirPath: String get() = join(TASK_PATH, courseBuilder.sourceDir)
+  private val testDirPath: String get() = join(TASK_PATH, courseBuilder.testDir)
 
   override fun setUp() {
     super.setUp()

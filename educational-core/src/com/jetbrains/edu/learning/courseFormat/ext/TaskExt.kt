@@ -9,12 +9,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 val Task.course: Course? get() = lesson?.course
 
-val Task.taskFilesDir: String? get() = course?.taskFilesDir
-val Task.testFilesDir: String? get() = course?.testFilesDir
+val Task.sourceDir: String? get() = course?.sourceDir
+val Task.testDir: String? get() = course?.testDir
 
 val Task.testTextMap: Map<String, String> get() {
   val course = course ?: return emptyMap()
-  val testFilesDir = course.testFilesDir ?: return emptyMap()
+  val testDir = course.testDir ?: return emptyMap()
 
   val additionalMaterials = course.additionalMaterialsTask
   val testMap = if (testsText.isEmpty() && additionalMaterials != null) {
@@ -25,15 +25,15 @@ val Task.testTextMap: Map<String, String> get() {
   } else {
     testsText
   }
-  return if (testFilesDir.isEmpty()) testMap else testMap.mapKeys { (path, _) -> "$testFilesDir/$path" }
+  return if (testDir.isEmpty()) testMap else testMap.mapKeys { (path, _) -> "$testDir/$path" }
 }
 
-fun Task.findTasksDir(taskDir: VirtualFile): VirtualFile? {
-  val testFilesDir = taskFilesDir ?: return null
-  return taskDir.findFileByRelativePath(testFilesDir)
+fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
+  val sourceDir = sourceDir ?: return null
+  return taskDir.findFileByRelativePath(sourceDir)
 }
 
-fun Task.findTestsDir(taskDir: VirtualFile): VirtualFile? {
-  val testFilesDir = testFilesDir ?: return null
-  return taskDir.findFileByRelativePath(testFilesDir)
+fun Task.findTestDir(taskDir: VirtualFile): VirtualFile? {
+  val testDir = testDir ?: return null
+  return taskDir.findFileByRelativePath(testDir)
 }

@@ -9,7 +9,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.ext.taskFilesDir
+import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -62,7 +62,7 @@ object EduGradleModuleGenerator {
     @JvmStatic
     @Throws(IOException::class)
     fun createUtilModule(additionalMaterials: Task, courseDir: VirtualFile) {
-        val taskFilesDir = additionalMaterials.taskFilesDir ?: return
+        val sourceDir = additionalMaterials.sourceDir ?: return
         val utilFiles = mutableMapOf<String, String>()
         additionalMaterials.getTaskFiles().mapValuesTo(utilFiles) { (_, v) -> v.text }
         additionalMaterials.testsText.filterTo(utilFiles) { (path, _) -> path.contains(EduNames.UTIL) }
@@ -72,7 +72,8 @@ object EduGradleModuleGenerator {
 
         val utilDir = EduGradleModuleGenerator.createModule(courseDir, EduNames.UTIL)
         for ((key, value) in utilFiles) {
-            GeneratorUtils.createChildFile(utilDir, "$taskFilesDir/${PathUtil.getFileName(key)}", value)
+            val path = if (sourceDir.isEmpty()) PathUtil.getFileName(key) else "$sourceDir/${PathUtil.getFileName(key)}"
+            GeneratorUtils.createChildFile(utilDir, path, value)
         }
     }
 

@@ -160,9 +160,9 @@ public class NavigationUtils {
     if (taskDir == null) {
       return;
     }
-    String taskFilesDir = TaskExt.getTaskFilesDir(task);
-    if (StringUtil.isNotEmpty(taskFilesDir)) {
-      VirtualFile srcDir = taskDir.findChild(taskFilesDir);
+    String sourceDir = TaskExt.getSourceDir(task);
+    if (StringUtil.isNotEmpty(sourceDir)) {
+      VirtualFile srcDir = taskDir.findChild(sourceDir);
       if (srcDir != null) {
         taskDir = srcDir;
       }

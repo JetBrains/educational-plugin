@@ -31,8 +31,8 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   abstract val testTemplateName: String
   abstract val subtaskTestTemplateName: String
 
-  override fun getTaskFilesDir(): String = EduNames.SRC
-  override fun getTestFilesDir(): String = EduNames.TEST
+  override fun getSourceDir(): String = EduNames.SRC
+  override fun getTestDir(): String = EduNames.TEST
 
   override fun createTaskContent(project: Project, task: Task,
                                  parentDirectory: VirtualFile, course: Course): VirtualFile? {
@@ -50,7 +50,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   }
 
   override fun createTestsForNewSubtask(project: Project, task: TaskWithSubtasks) {
-    val testDir = task.getTaskDir(project)?.findFileByRelativePath(testFilesDir) ?: return
+    val testDir = task.getTaskDir(project)?.findFileByRelativePath(testDir) ?: return
     val prevSubtaskIndex = task.lastSubtaskIndex
     val taskPsiDir = PsiManager.getInstance(project).findDirectory(testDir) ?: return
     val nextSubtaskIndex = prevSubtaskIndex + 1
