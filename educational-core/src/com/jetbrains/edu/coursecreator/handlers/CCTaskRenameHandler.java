@@ -7,6 +7,7 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +26,8 @@ public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandle
 
   @Override
   protected void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiDirectory directory) {
-    if (directory.getName().equals(EduNames.SRC)) {
+    String sourceDir = CourseExt.getSourceDir(course);
+    if (directory.getName().equals(sourceDir)) {
       directory = directory.getParent();
       if (directory == null) {
         return;

@@ -5,11 +5,12 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +58,12 @@ public class CourseNode extends EduNode {
       final List<Task> tasks = lesson.getTaskList();
       if (tasks.size() == 1) {
         PsiDirectory taskDirectory = (PsiDirectory)directory.getChildren()[0];
-        PsiDirectory srcDir = taskDirectory.findSubdirectory(EduNames.SRC);
-        if (srcDir != null) {
-          taskDirectory = srcDir;
+        String sourceDir = TaskExt.getSourceDir(tasks.get(0));
+        if (StringUtil.isNotEmpty(sourceDir)) {
+          PsiDirectory srcDir = taskDirectory.findSubdirectory(sourceDir);
+          if (srcDir != null) {
+            taskDirectory = srcDir;
+          }
         }
         return new TaskNode(myProject, taskDirectory, myViewSettings, tasks.get(0));
       }

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -87,7 +88,8 @@ public class TaskNode extends EduNode {
       if (dirName.equals(EduNames.BUILD) || dirName.equals(EduNames.OUT)) {
         return null;
       }
-      if (!dirName.equals(EduNames.SRC)) {
+      String sourceDir = TaskExt.getSourceDir(myTask);
+      if (!dirName.equals(sourceDir)) {
         return createChildDirectoryNode(null, (PsiDirectory)value);
       }
     }

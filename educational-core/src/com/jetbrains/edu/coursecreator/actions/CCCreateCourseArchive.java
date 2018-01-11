@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -32,6 +33,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
@@ -197,8 +199,9 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         if (taskDir == null) {
           return testFiles;
         }
-        if (EduUtils.isConfiguredWithGradle(project)) {
-          VirtualFile testDir = taskDir.getParent().findChild(EduNames.TEST);
+        String testDirPath = TaskExt.getTestDir(task);
+        if (StringUtil.isNotEmpty(testDirPath)) {
+          VirtualFile testDir = taskDir.findFileByRelativePath(testDirPath);
           if (testDir == null) {
             return testFiles;
           }

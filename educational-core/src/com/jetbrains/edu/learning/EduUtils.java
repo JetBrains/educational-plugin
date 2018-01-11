@@ -1005,7 +1005,8 @@ public class EduUtils {
 
   @Nullable
   public static Task getTask(@NotNull VirtualFile directory, @NotNull final Course course) {
-    if (EduNames.SRC.equals(directory.getName())) {
+    String sourceDir = CourseExt.getSourceDir(course);
+    if (directory.getName().equals(sourceDir)) {
       directory = directory.getParent();
       if (directory == null) {
         return null;
