@@ -26,16 +26,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileAdapter;
+import com.intellij.openapi.vfs.VirtualFileEvent;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
 import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
@@ -74,9 +75,14 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void projectOpened() {
+    if (myProject.isDisposed()) {
+      return;
+    }
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
-
+        if (!EduUtils.isStudyProject(myProject)) {
+          return;
+        }
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
           selectProjectView();
         }
@@ -124,7 +130,10 @@ public class EduProjectComponent implements ProjectComponent {
   private void selectProjectView() {
     ProjectView projectView = ProjectView.getInstance(myProject);
     if (projectView != null) {
-      projectView.changeView(ProjectViewPane.ID);
+      String selectedViewId = ProjectView.getInstance(myProject).getCurrentViewId();
+      if (!ProjectViewPane.ID.equals(selectedViewId)) {
+        projectView.changeView(ProjectViewPane.ID);
+      }
     }
     else {
       LOG.warn("Failed to select Project View");
