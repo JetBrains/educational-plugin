@@ -268,7 +268,7 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
     private void deleteSubtaskFiles(@NotNull VirtualFile taskDir) {
       ApplicationManager.getApplication().runWriteAction(() -> {
         List<VirtualFile> filesToDelete = new ArrayList<>();
-        VfsUtilCore.visitChildrenRecursively(taskDir, new VirtualFileVisitor<Object>() {
+        VfsUtilCore.visitChildrenRecursively(taskDir, new VirtualFileVisitor<Object>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
           @Override
           public boolean visitFile(@NotNull VirtualFile file) {
             int index = CCUtils.getSubtaskIndex(myProject, file);
