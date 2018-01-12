@@ -23,7 +23,7 @@ object EduLaunchesReporter {
 
   private val LOG = Logger.getInstance(EduLaunchesReporter.javaClass)
 
-  fun sendStats() {
+  fun sendStats(isStudyProject: Boolean, isTeacher: Boolean) {
     if (ApplicationManager.getApplication().isUnitTestMode) {
       return
     }
@@ -32,7 +32,7 @@ object EduLaunchesReporter {
     val shouldUpdate = lastUpdate == 0L || System.currentTimeMillis() - lastUpdate > TimeUnit.DAYS.toMillis(1)
     if (shouldUpdate) {
       properties.setValue(LAST_UPDATE, System.currentTimeMillis().toString())
-      val url = updateUrl
+      val url = getUpdateUrl(isStudyProject, isTeacher)
       ApplicationManager.getApplication().executeOnPooledThread {
         try {
           HttpRequests.request(url).connect {
@@ -55,15 +55,16 @@ object EduLaunchesReporter {
     }
   }
 
-  private val updateUrl: String
-    get() {
-      val applicationInfo = ApplicationInfoEx.getInstanceEx()
-      val buildNumber = applicationInfo.build.asString()
-      val plugin = PluginManager.getPlugin(PluginId.getId(PLUGIN_ID))!!
-      val pluginId = plugin.pluginId.idString
-      val os = URLEncoder.encode("${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION}", Charsets.UTF_8.name())
-      val uid = PermanentInstallationID.get()
-      val baseUrl = "https://plugins.jetbrains.com/plugins/list"
-      return "$baseUrl?pluginId=$pluginId&build=$buildNumber&pluginVersion=${plugin.version}&os=$os&uuid=$uid"
-    }
+  private fun getUpdateUrl(isStudyProject: Boolean, isTeacher: Boolean): String {
+    val applicationInfo = ApplicationInfoEx.getInstanceEx()
+    val buildNumber = applicationInfo.build.asString()
+    val plugin = PluginManager.getPlugin(PluginId.getId(PLUGIN_ID))!!
+    val pluginId = plugin.pluginId.idString
+    val os = URLEncoder.encode("${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION}", Charsets.UTF_8.name())
+    val uid = PermanentInstallationID.get()
+    val baseUrl = "https://plugins.jetbrains.com/plugins/list"
+    val projectType = if (isStudyProject) "student" else "educator"
+    val role = if (isTeacher) "teacher" else "student"
+    return "$baseUrl?pluginId=$pluginId&build=$buildNumber&pluginVersion=${plugin.version}&os=$os&uuid=$uid&projectType=$projectType&role=$role"
+  }
 }

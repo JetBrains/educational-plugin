@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.editor;
 
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -32,6 +33,8 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFa
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+
+import static com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.COURSE_CREATOR_ENABLED;
 
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
@@ -91,15 +94,15 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
 
         EduEditor.addDocumentListener(document, new EduDocumentListener(taskFile, true));
 
+        boolean isStudyProject = course.isStudy();
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
-          boolean isStudyProject = course.isStudy();
           EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
           if (isStudyProject) {
             editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
           }
         }
-        EduLaunchesReporter.INSTANCE.sendStats();
+        EduLaunchesReporter.INSTANCE.sendStats(isStudyProject, PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED));
       }
     }
   }
