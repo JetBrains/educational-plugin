@@ -81,9 +81,14 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void projectOpened() {
+    if (myProject.isDisposed()) {
+      return;
+    }
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
-
+        if (!isStudyProject(myProject)) {
+          return;
+        }
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
           selectProjectView();
         }
@@ -142,7 +147,10 @@ public class EduProjectComponent implements ProjectComponent {
   private void selectProjectView() {
     ProjectView projectView = ProjectView.getInstance(myProject);
     if (projectView != null) {
-      projectView.changeView(ProjectViewPane.ID);
+      String selectedViewId = ProjectView.getInstance(myProject).getCurrentViewId();
+      if (!ProjectViewPane.ID.equals(selectedViewId)) {
+        projectView.changeView(ProjectViewPane.ID);
+      }
     }
     else {
       LOG.warn("Failed to select Project View");
