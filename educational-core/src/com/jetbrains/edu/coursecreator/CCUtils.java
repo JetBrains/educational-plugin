@@ -201,7 +201,7 @@ public class CCUtils {
   public static void renameFiles(VirtualFile testsDir, Project project, int fromIndex) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       Map<VirtualFile, String> newNames = new HashMap<>();
-      VfsUtilCore.visitChildrenRecursively(testsDir, new VirtualFileVisitor<Object>() {
+      VfsUtilCore.visitChildrenRecursively(testsDir, new VirtualFileVisitor<Object>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
         @Override
         public boolean visitFile(@NotNull VirtualFile virtualFile) {
             int subtaskIndex = getSubtaskIndex(project, virtualFile);
