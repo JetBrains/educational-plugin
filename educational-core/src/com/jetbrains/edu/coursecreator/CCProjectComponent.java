@@ -84,10 +84,6 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
       try {
         EduGradleModuleGenerator.createProjectGradleFiles(basePath, myProject.getName(), buildGradleTemplateName);
-        final Lesson lesson = CCUtils.createAdditionalLesson(course, myProject, EduNames.ADDITIONAL_MATERIALS);
-        if (lesson != null) {
-          EduGradleModuleGenerator.createUtilModule(lesson.taskList.get(0), myProject.getBaseDir());
-        }
 
         StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> transformCourseStructure(course, myProject));
 
