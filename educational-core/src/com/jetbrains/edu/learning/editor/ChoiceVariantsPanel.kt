@@ -47,6 +47,7 @@ class ChoiceVariantsPanel(task: ChoiceTask) : JScrollPane() {
         for ((index, variant) in task.choiceVariants.withIndex()) {
           val isSelected = task.selectedVariants.contains(index)
           val checkBox = CheckBox(variant)
+          checkBox.isMnemonicParsing = false
           checkBox.isSelected = isSelected
           checkBox.selectedProperty().addListener(createSelectionListener(task, index))
           setUpButtonStyle(checkBox, scene)
