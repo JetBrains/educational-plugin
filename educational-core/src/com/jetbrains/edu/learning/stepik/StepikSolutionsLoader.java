@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.ide.SaveAndSyncHandler;
+import com.intellij.lang.Language;
+import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -36,6 +38,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import static com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector.EDU_TOOLS_COMMENT;
 import static com.jetbrains.edu.learning.stepik.StepikConnector.*;
 
 public class StepikSolutionsLoader implements Disposable{
@@ -289,11 +292,22 @@ public class StepikSolutionsLoader implements Disposable{
     else {
       String solution = getSolutionForStepikAssignment(task, isSolved);
       if (solution != null) {
+        solution = removeEduPrefix(task, solution);
+
         task.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Failed);
         return solution;
       }
     }
     return "";
+  }
+
+  private static String removeEduPrefix(@NotNull Task task, String solution) {
+    Language language = task.getLesson().getCourse().getLanguageById();
+    String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(language).getLineCommentPrefix();
+    if (solution.contains(commentPrefix + EDU_TOOLS_COMMENT)) {
+      return solution.replace(commentPrefix + EDU_TOOLS_COMMENT, "");
+    }
+    return solution;
   }
 
   private static void updateFiles(@NotNull Project project, @NotNull Task task, String solutionText) {
