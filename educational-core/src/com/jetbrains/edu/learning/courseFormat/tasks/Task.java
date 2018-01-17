@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
+import com.jetbrains.edu.learning.stepic.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import one.util.streamex.EntryStream;
@@ -37,7 +38,7 @@ import java.util.Map;
  * - Go to {@link Lesson#taskList} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
  * - Update {@link SerializationUtils.Json.TaskAdapter#deserialize} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
- * - For Adaptive tasks update {@link StepicAdaptiveConnector.StepikTaskBuilder#taskTypes} so new task type can be added to a course
+ * - For Adaptive tasks update {@link StepikTaskBuilder#taskTypes} so new task type can be added to a course
  */
 public abstract class Task implements StudyItem {
   @Expose private String name;
@@ -202,7 +203,7 @@ public abstract class Task implements StudyItem {
       return taskText;
     }
     taskText = EduUtils.convertToHtml(taskText);
-    if (getLesson().getCourse() instanceof RemoteCourse) {
+    if (getLesson().getCourse() instanceof RemoteCourse && taskText != null) {
       taskText = StepikUtils.wrapStepikTasks(this, taskText, getLesson().getCourse().isAdaptive());
     }
     return EduUtils.convertToHtml(taskText);
