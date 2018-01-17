@@ -14,12 +14,11 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
-import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
 import one.util.streamex.EntryStream;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -49,9 +48,6 @@ public abstract class Task implements StudyItem {
 
   @SerializedName("stepic_id")
   @Expose private int myStepId;
-
-  @SerializedName("position")
-  @Expose private int myStepikPosition;
 
   @SerializedName("task_files")
   @Expose public Map<String, TaskFile> taskFiles = new HashMap<>();
@@ -254,14 +250,6 @@ public abstract class Task implements StudyItem {
     return myStepId;
   }
 
-  public int getStepikPosition() {
-    return myStepikPosition;
-  }
-
-  public void setStepikPosition(int myStepikPosition) {
-    this.myStepikPosition = myStepikPosition;
-  }
-
   public CheckStatus getStatus() {
     return myStatus;
   }
@@ -303,7 +291,6 @@ public abstract class Task implements StudyItem {
     setIndex(task.getIndex());
     setStatus(task.getStatus());
     setStepId(task.getStepId());
-    setStepikPosition(task.getStepikPosition());
     taskFiles = task.getTaskFiles();
     testsText = task.getTestsText();
     taskTexts = task.getTaskTexts();
