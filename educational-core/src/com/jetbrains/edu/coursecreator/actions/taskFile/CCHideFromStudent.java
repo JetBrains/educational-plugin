@@ -1,8 +1,6 @@
-package com.jetbrains.edu.coursecreator.actions;
+package com.jetbrains.edu.coursecreator.actions.taskFile;
 
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.openapi.command.undo.BasicUndoableAction;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -33,26 +31,22 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
     EduUtils.runUndoableAction(project, ACTION_NAME, new HideTaskFile(project, file, task, taskFile));
   }
 
-  private static class HideTaskFile extends BasicUndoableAction {
+  private static class HideTaskFile extends TaskUndoableAction {
 
     private final Project myProject;
-    private final VirtualFile myFile;
-    private final Task myTask;
     private final TaskFile myTaskFile;
 
     public HideTaskFile(Project project, VirtualFile file, Task task, TaskFile taskFile) {
-      super(file);
+      super(task, file);
       myProject = project;
-      myFile = file;
-      myTask = task;
       myTaskFile = taskFile;
     }
 
     @Override
-    public void undo() throws UnexpectedUndoException {
-      myTask.getTaskFiles().put(EduUtils.pathRelativeToTask(myProject, myFile), myTaskFile);
-      if (!myTaskFile.getAnswerPlaceholders().isEmpty() && FileEditorManager.getInstance(myProject).isFileOpen(myFile)) {
-        for (FileEditor fileEditor : FileEditorManager.getInstance(myProject).getEditors(myFile)) {
+    public void performUndo() {
+      getTask().getTaskFiles().put(EduUtils.pathRelativeToTask(myProject, getFile()), myTaskFile);
+      if (!myTaskFile.getAnswerPlaceholders().isEmpty() && FileEditorManager.getInstance(myProject).isFileOpen(getFile())) {
+        for (FileEditor fileEditor : FileEditorManager.getInstance(myProject).getEditors(getFile())) {
           if (fileEditor instanceof TextEditor) {
             Editor editor = ((TextEditor)fileEditor).getEditor();
             EduUtils.drawAllAnswerPlaceholders(editor, myTaskFile);
@@ -63,14 +57,9 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
     }
 
     @Override
-    public void redo() throws UnexpectedUndoException {
-      hideFromStudent(myFile, myProject, myTask.getTaskFiles(), myTaskFile);
+    public void performRedo() {
+      hideFromStudent(getFile(), myProject, getTask().getTaskFiles(), myTaskFile);
       ProjectView.getInstance(myProject).refresh();
-    }
-
-    @Override
-    public boolean isGlobal() {
-      return true;
     }
   }
 

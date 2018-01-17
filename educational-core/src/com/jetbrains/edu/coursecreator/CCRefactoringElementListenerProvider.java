@@ -21,6 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
+import com.jetbrains.edu.coursecreator.configuration.CourseChangeHandler;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -61,10 +62,6 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
 
     private static void tryToRenameTaskFile(PsiFile file, String oldName) {
       final Project project = file.getProject();
-      Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course == null) {
-        return;
-      }
       Task task = EduUtils.getTaskForFile(project, file.getVirtualFile());
       if (task == null) {
         return;
@@ -74,8 +71,10 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
       if (taskFile == null) {
         return;
       }
+      taskFile.name = file.getName();
       taskFiles.remove(oldName);
       taskFiles.put(EduUtils.pathRelativeToTask(project, file.getVirtualFile()), taskFile);
+      CourseChangeHandler.INSTANCE.taskChanged(task);
     }
 
     @Override

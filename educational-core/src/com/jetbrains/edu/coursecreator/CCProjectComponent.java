@@ -17,6 +17,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.jetbrains.edu.coursecreator.configuration.CourseInfoSynchronizer;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -219,6 +220,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
         registerListener();
         EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE);
         startTaskDescriptionFilesSynchronization();
+        CourseInfoSynchronizer.INSTANCE.startSynchronization(myProject);
       }
     });
   }

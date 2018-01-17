@@ -18,6 +18,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.configuration.CourseChangeHandler;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -142,12 +143,13 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     if (sourceLessonDir == null) {
       return;
     }
-    CCUtils.updateHigherElements(sourceLessonDir.getChildren(), file -> taskToMove.getLesson().getTask(file.getName()),
+    Lesson sourceLesson = taskToMove.getLesson();
+    CCUtils.updateHigherElements(sourceLessonDir.getChildren(), file -> sourceLesson.getTask(file.getName()),
                                  taskToMove.getIndex(),-1);
 
     final int newItemIndex = targetTask != null ? targetTask.getIndex() + indexDelta : 1;
     taskToMove.setIndex(-1);
-    taskToMove.getLesson().getTaskList().remove(taskToMove);
+    sourceLesson.getTaskList().remove(taskToMove);
     final Lesson finalTargetLesson = targetLesson;
     CCUtils.updateHigherElements(targetDirectory.getChildren(), file -> finalTargetLesson.getTask(file.getName()), newItemIndex - 1, 1);
 
@@ -169,6 +171,8 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
         }
       }
     });
+    CourseChangeHandler.INSTANCE.lessonChanged(sourceLesson);
+    CourseChangeHandler.INSTANCE.lessonChanged(targetLesson);
   }
 
   @Override

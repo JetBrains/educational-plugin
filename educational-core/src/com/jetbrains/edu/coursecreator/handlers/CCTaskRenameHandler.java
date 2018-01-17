@@ -4,6 +4,7 @@ import com.intellij.ide.TitledHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.jetbrains.edu.coursecreator.configuration.CourseChangeHandler;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -39,6 +40,7 @@ public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandle
     Task task = lesson.getTask(directoryName);
     if (task != null) {
       processRename(task, EduNames.TASK, course, project, directory.getVirtualFile());
+      CourseChangeHandler.INSTANCE.lessonChanged(lesson);
     }
   }
 

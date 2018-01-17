@@ -46,9 +46,12 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
           file("task.py")
           file("tests.py")
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       file("test_helper.py")
+      file("course-info.yaml")
     }
 
     expectedFileTree.assertEquals(rootDir)
@@ -62,21 +65,27 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
           file("hello_world.py")
           file("tests.py")
           file("task.html")
+          file("task-info.yaml")
         }
         dir("Comments") {
           file("comments.py")
           file("tests.py")
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       dir("Variables") {
         dir("Variable definition") {
           file("variable_definition.py")
           file("tests.py")
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       file("test_helper.py")
+      file("course-info.yaml")
     }
 
     expectedFileTree.assertEquals(rootDir)

@@ -3,6 +3,7 @@ buildscript {
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
     ext.studioSandbox = project.buildDir.absolutePath + File.separator + "studio-sandbox"
     ext.kotlinVersion = "1.2.40"
+    ext.jacksonVersion = "2.9.0"
     repositories {
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -128,6 +129,15 @@ allprojects {
     dependencies {
         compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
         compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
+        compile(group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion) {
+            exclude module: 'snakeyaml'
+        }
+        //transitive dependency is specified explicitly to avoid conflict with lib bundled since idea 181
+        compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+        compile(group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion) {
+            exclude module: 'kotlin-stdlib'
+            exclude module: 'kotlin-reflect'
+        }
         compile 'org.jsoup:jsoup:1.11.2'
         compile("org.jetbrains:markdown:${markdownParserVersion}") {
             exclude module: 'kotlin-runtime'

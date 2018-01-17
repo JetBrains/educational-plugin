@@ -1,8 +1,6 @@
-package com.jetbrains.edu.coursecreator.actions;
+package com.jetbrains.edu.coursecreator.actions.taskFile;
 
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.openapi.command.undo.BasicUndoableAction;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
@@ -26,42 +24,33 @@ public class CCAddAsTaskFile extends CCTaskFileActionBase {
     return EduUtils.getTaskFile(project, file) == null && !EduUtils.isTestsFile(project, file);
   }
 
-  private static class AddTaskFile extends BasicUndoableAction {
-    private final VirtualFile myFile;
+  private static class AddTaskFile extends TaskUndoableAction {
     private TaskFile myTaskFile;
     private final Project myProject;
-    private final Task myTask;
 
     public AddTaskFile(VirtualFile file, TaskFile taskFile, Project project, Task task) {
-      super(file);
-      myFile = file;
+      super(task, file);
       myTaskFile = taskFile;
       myProject = project;
-      myTask = task;
     }
 
     @Override
-    public void undo() throws UnexpectedUndoException {
+    public void performUndo() {
       if (myTaskFile == null) return;
-      CCHideFromStudent.hideFromStudent(myFile, myProject, myTask.getTaskFiles(), myTaskFile);
+      CCHideFromStudent.hideFromStudent(getFile(), myProject, getTask().getTaskFiles(), myTaskFile);
       ProjectView.getInstance(myProject).refresh();
     }
 
     @Override
-    public void redo() throws UnexpectedUndoException {
+    public void performRedo() {
       if (myTaskFile != null) {
-        myTask.addTaskFile(myTaskFile);
+        getTask().addTaskFile(myTaskFile);
       } else {
-        final String taskRelativePath = EduUtils.pathRelativeToTask(myProject, myFile);
-        myTask.addTaskFile(taskRelativePath, myTask.getTaskFiles().size());
-        myTaskFile = myTask.getTaskFile(taskRelativePath);
+        final String taskRelativePath = EduUtils.pathRelativeToTask(myProject, getFile());
+        getTask().addTaskFile(taskRelativePath, getTask().getTaskFiles().size());
+        myTaskFile = getTask().getTaskFile(taskRelativePath);
       }
       ProjectView.getInstance(myProject).refresh();
-    }
-
-    @Override
-    public boolean isGlobal() {
-      return true;
     }
   }
 }

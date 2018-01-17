@@ -7,6 +7,8 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
+import com.jetbrains.edu.coursecreator.configuration.CourseChangeHandler;
+import com.jetbrains.edu.coursecreator.configuration.CourseInfoSynchronizer;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -26,6 +28,10 @@ public class CCVirtualFileListener implements VirtualFileListener {
   @Override
   public void fileCreated(@NotNull VirtualFileEvent event) {
     VirtualFile createdFile = event.getFile();
+    if (CourseInfoSynchronizer.INSTANCE.isConfigFile(createdFile)) {
+      CourseInfoSynchronizer.INSTANCE.addSynchronizationListener(myProject, createdFile);
+      return;
+    }
     if (createdFile.isDirectory()) {
       return;
     }
@@ -68,6 +74,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
     }
 
     task.addTaskFile(taskRelativePath, task.getTaskFiles().size() + 1);
+    CourseChangeHandler.INSTANCE.taskChanged(task);
   }
 
   @Override
@@ -124,6 +131,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
       CCUtils.updateHigherElements(parentDir.getChildren(), file -> course.getItem(file.getName()), removedLesson.getIndex(), -1);
       course.removeLesson(removedLesson);
     }
+    CourseChangeHandler.INSTANCE.courseChanged(course);
   }
 
   private static void deleteSection(@NotNull final Course course, @NotNull final VirtualFile removedFile) {
@@ -147,6 +155,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
     }
     CCUtils.updateHigherElements(lessonDir.getChildren(), file -> lesson.getTask(file.getName()), task.getIndex(), -1);
     lesson.getTaskList().remove(task);
+    CourseChangeHandler.INSTANCE.lessonChanged(lesson);
   }
 
   private static void deleteTaskFile(@NotNull Project project, @NotNull final VirtualFile removedTaskFile, @NotNull TaskFile taskFile) {
@@ -155,6 +164,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
       return;
     }
     task.getTaskFiles().remove(EduUtils.pathRelativeToTask(project, removedTaskFile));
+    CourseChangeHandler.INSTANCE.taskChanged(task);
   }
 
   private static boolean insideTaskFileDirectory(@NotNull Course course, @NotNull VirtualFile createdFile) {

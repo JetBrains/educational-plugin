@@ -13,6 +13,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.MapDataContext;
 import com.jetbrains.edu.coursecreator.CCTestCase;
 import com.jetbrains.edu.coursecreator.CCTestsUtil;
+import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import org.jetbrains.annotations.NotNull;
 

@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.actions.CCEditHintAction
+import com.jetbrains.edu.coursecreator.actions.placeholder.CCEditHintAction
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -36,7 +36,8 @@ open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
       val group = DefaultActionGroup()
       val hints = myPlaceholder?.hints
       if (hints != null) {
-        group.addAll(Arrays.asList(GoBackward(), GoForward(), CCEditHintAction(myPlaceholder)))
+        group.addAll(Arrays.asList(GoBackward(), GoForward(),
+                                   CCEditHintAction(myPlaceholder)))
         hintComponent.setActionToolbar(group)
         setHintText(hints)
       }

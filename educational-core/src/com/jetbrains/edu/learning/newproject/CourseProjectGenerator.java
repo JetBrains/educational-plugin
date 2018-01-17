@@ -37,7 +37,11 @@ import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.coursecreator.configuration.CourseInfoSynchronizer;
+import com.jetbrains.edu.learning.EduCourseBuilder;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -90,6 +94,9 @@ public abstract class CourseProjectGenerator<S> {
 
   protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
     EduUtils.openFirstTask(myCourse, project);
+    if (CCUtils.isCourseCreator(project)) {
+      CourseInfoSynchronizer.INSTANCE.saveAll(project);
+    }
   }
 
   /**

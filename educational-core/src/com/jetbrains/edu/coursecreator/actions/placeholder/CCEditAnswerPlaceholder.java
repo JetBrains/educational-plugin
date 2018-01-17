@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import com.jetbrains.edu.coursecreator.configuration.CourseChangeHandler;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,13 +27,19 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
     if (answerPlaceholder == null) {
       return;
     }
+    performEditPlaceholder(project, answerPlaceholder);
+  }
+
+  public static void performEditPlaceholder(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
     CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), answerPlaceholder.getHints());
     dlg.setTitle("Edit Answer Placeholder");
     if (dlg.showAndGet()) {
       final String answerPlaceholderText = dlg.getTaskText();
       answerPlaceholder.setPlaceholderText(answerPlaceholderText);
-      answerPlaceholder.setLength(StringUtil.notNullize(answerPlaceholderText).length());
+      answerPlaceholder.setLength(StringUtil
+        .notNullize(answerPlaceholderText).length());
       answerPlaceholder.setHints(dlg.getHints());
+      CourseChangeHandler.INSTANCE.placeholderChanged(answerPlaceholder);
     }
   }
 

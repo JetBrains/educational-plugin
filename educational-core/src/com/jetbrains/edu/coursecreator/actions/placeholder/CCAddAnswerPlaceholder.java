@@ -2,8 +2,6 @@ package com.jetbrains.edu.coursecreator.actions.placeholder;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.command.undo.BasicUndoableAction;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
@@ -76,34 +74,30 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     EduUtils.runUndoableAction(project, "Add Answer Placeholder", action);
   }
 
-  static class AddAction extends BasicUndoableAction {
+  static class AddAction extends TaskFileUndoableAction {
     private final AnswerPlaceholder myPlaceholder;
-    private final TaskFile myTaskFile;
-    private final Editor myEditor;
 
-    public AddAction(AnswerPlaceholder placeholder, TaskFile taskFile, Editor editor) {
-      super(editor.getDocument());
+    public AddAction(@NotNull AnswerPlaceholder placeholder, @NotNull TaskFile taskFile, @NotNull Editor editor) {
+      super(taskFile, editor);
       myPlaceholder = placeholder;
-      myTaskFile = taskFile;
-      myEditor = editor;
     }
 
     @Override
-    public void undo() throws UnexpectedUndoException {
-      final List<AnswerPlaceholder> answerPlaceholders = myTaskFile.getAnswerPlaceholders();
+    public void performUndo() {
+      final List<AnswerPlaceholder> answerPlaceholders = getTaskFile().getAnswerPlaceholders();
       if (answerPlaceholders.contains(myPlaceholder)) {
         answerPlaceholders.remove(myPlaceholder);
-        myEditor.getMarkupModel().removeAllHighlighters();
-        EduUtils.drawAllAnswerPlaceholders(myEditor, myTaskFile);
-        AnswerPlaceholderPainter.createGuardedBlocks(myEditor, myTaskFile);
+        getEditor().getMarkupModel().removeAllHighlighters();
+        EduUtils.drawAllAnswerPlaceholders(getEditor(), getTaskFile());
+        AnswerPlaceholderPainter.createGuardedBlocks(getEditor(), getTaskFile());
       }
     }
 
     @Override
-    public void redo() throws UnexpectedUndoException {
-      myTaskFile.addAnswerPlaceholder(myPlaceholder);
-      AnswerPlaceholderPainter.drawAnswerPlaceholder(myEditor, myPlaceholder, JBColor.BLUE);
-      AnswerPlaceholderPainter.createGuardedBlocks(myEditor, myPlaceholder);
+    public void performRedo() {
+      getTaskFile().addAnswerPlaceholder(myPlaceholder);
+      AnswerPlaceholderPainter.drawAnswerPlaceholder(getEditor(), myPlaceholder, JBColor.BLUE);
+      AnswerPlaceholderPainter.createGuardedBlocks(getEditor(), myPlaceholder);
     }
   }
 

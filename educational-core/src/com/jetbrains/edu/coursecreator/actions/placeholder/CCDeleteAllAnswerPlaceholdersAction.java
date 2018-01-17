@@ -5,8 +5,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
-import com.intellij.openapi.command.undo.BasicUndoableAction;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -91,33 +89,28 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
   }
 
 
-  private static class ClearPlaceholders extends BasicUndoableAction {
+  private static class ClearPlaceholders extends TaskFileUndoableAction {
     private final List<AnswerPlaceholder> myPlaceholders;
     private final Editor myEditor;
     private final TaskFile myTaskFile;
 
-    public ClearPlaceholders(TaskFile taskFile, List<AnswerPlaceholder> placeholders, Editor editor) {
-      super(editor.getDocument());
+    public ClearPlaceholders(@NotNull TaskFile taskFile, @NotNull List<AnswerPlaceholder> placeholders, @NotNull Editor editor) {
+      super(taskFile, editor);
       myTaskFile = taskFile;
       myPlaceholders = placeholders;
       myEditor = editor;
     }
 
     @Override
-    public void undo() throws UnexpectedUndoException {
+    public void performUndo() {
       myTaskFile.getAnswerPlaceholders().addAll(myPlaceholders);
       updateView(myEditor, myTaskFile);
     }
 
     @Override
-    public void redo() throws UnexpectedUndoException {
+    public void performRedo() {
       myTaskFile.getAnswerPlaceholders().clear();
       updateView(myEditor, myTaskFile);
-    }
-
-    @Override
-    public boolean isGlobal() {
-      return true;
     }
   }
 }

@@ -17,6 +17,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
+import com.jetbrains.edu.coursecreator.configuration.CourseInfoSynchronizer;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -70,6 +71,10 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     final Document document = editor.getDocument();
     final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(document);
     if (openedFile != null) {
+      if (CourseInfoSynchronizer.INSTANCE.isConfigFile(openedFile)) {
+        CourseInfoSynchronizer.INSTANCE.loadFromConfig(project, openedFile, document, editor);
+        return;
+      }
       final TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
       if (taskFile != null) {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);

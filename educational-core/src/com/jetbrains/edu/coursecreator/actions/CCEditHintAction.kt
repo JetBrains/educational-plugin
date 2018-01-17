@@ -1,3 +1,4 @@
+
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.icons.AllIcons
@@ -25,4 +26,3 @@ class CCEditHintAction(private val myPlaceholder: AnswerPlaceholder?) : AnAction
     e.presentation.isEnabledAndVisible = CCUtils.isCourseCreator(e.project!!) && myPlaceholder != null
   }
 }
-

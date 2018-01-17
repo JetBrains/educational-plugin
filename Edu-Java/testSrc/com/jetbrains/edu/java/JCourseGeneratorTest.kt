@@ -60,10 +60,13 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Test.java")
           }
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       file("build.gradle")
       file("settings.gradle")
+      file("course-info.yaml")
     }
 
     expectedFileTree.assertEquals(rootDir)
@@ -81,6 +84,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Test.java")
           }
           file("task.html")
+          file("task-info.yaml")
         }
         dir("task2") {
           dir("src") {
@@ -90,7 +94,9 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Test.java")
           }
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       dir("lesson2") {
         dir("task1") {
@@ -101,10 +107,13 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Test.java")
           }
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       file("build.gradle")
       file("settings.gradle")
+      file("course-info.yaml")
     }
     expectedFileTree.assertEquals(rootDir)
   }

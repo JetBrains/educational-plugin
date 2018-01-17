@@ -29,7 +29,7 @@ public class EduEditor extends PsiAwareTextEditorImpl {
   public static final String BROKEN_SOLUTION_ERROR_TEXT_START = "Solution can't be loaded.";
   public static final String BROKEN_SOLUTION_ERROR_TEXT_END = " to solve it again";
   public static final String ACTION_TEXT = "Reset task";
-  private final TaskFile myTaskFile;
+  private TaskFile myTaskFile;
   private static final Map<Document, EduDocumentListener> myDocumentListeners = new HashMap<>();
 
   public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
@@ -57,6 +57,11 @@ public class EduEditor extends PsiAwareTextEditorImpl {
 
   public TaskFile getTaskFile() {
     return myTaskFile;
+  }
+
+  public void setTaskFile(@NotNull TaskFile taskFile) {
+    myTaskFile = taskFile;
+    validateTaskFile();
   }
 
   public static void addDocumentListener(@NotNull final Document document, @NotNull final EduDocumentListener listener) {

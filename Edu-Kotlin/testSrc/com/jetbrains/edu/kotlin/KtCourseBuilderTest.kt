@@ -66,10 +66,13 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("Tests.kt")
           }
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       file("build.gradle")
       file("settings.gradle")
+      file("course-info.yaml")
     }
 
     expectedFileTree.assertEquals(rootDir)
@@ -87,6 +90,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("tests.kt")
           }
           file("task.html")
+          file("task-info.yaml")
         }
         dir("Java to Kotlin conversion") {
           dir("src") {
@@ -97,7 +101,9 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("tests.kt")
           }
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       dir("Conventions") {
         dir("Comparison") {
@@ -108,7 +114,9 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("tests.kt")
           }
           file("task.html")
+          file("task-info.yaml")
         }
+        file("lesson-info.yaml")
       }
       dir("util") {
         dir("src") {
@@ -117,6 +125,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
       }
       file("build.gradle")
       file("settings.gradle")
+      file("course-info.yaml")
     }
     expectedFileTree.assertEquals(rootDir)
   }

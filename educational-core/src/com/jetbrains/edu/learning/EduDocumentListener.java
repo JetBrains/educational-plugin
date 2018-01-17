@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl;
 import com.intellij.openapi.util.TextRange;
+import com.jetbrains.edu.coursecreator.configuration.CourseChangeHandler;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 
@@ -77,6 +78,7 @@ public class EduDocumentListener implements DocumentListener {
               answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(twStart, twStart + length)));
             }
           }
+          CourseChangeHandler.INSTANCE.placeholderChanged(answerPlaceholder);
         }
       }
     }

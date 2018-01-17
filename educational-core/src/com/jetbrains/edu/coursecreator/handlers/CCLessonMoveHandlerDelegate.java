@@ -18,6 +18,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.configuration.CourseChangeHandler;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -141,6 +142,8 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
       }
     });
     ProjectView.getInstance(project).refresh();
+    CourseChangeHandler.INSTANCE.courseChanged(course);
+
   }
 
   protected int getDelta(@NotNull Project project, @NotNull StudyItem targetItem) {
