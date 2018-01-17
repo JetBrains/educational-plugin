@@ -568,7 +568,8 @@ public class EduUtils {
 
   public static String convertToHtml(@NotNull String content) {
     ArrayList<String> lines = ContainerUtil.newArrayList(content.split("\n|\r|\r\n"));
-    if ((content.contains("<h") && content.contains("</h")) || (content.contains("<code>") && content.contains("</code>"))) {
+    if ((content.contains("<h") && content.contains("</h")) ||
+        ((content.contains("<code>") || content.contains("<code ")) && content.contains("</code>"))) {
       return content;
     }
     MarkdownUtil.replaceHeaders(lines);
