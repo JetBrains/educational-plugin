@@ -630,13 +630,18 @@ public class EduUtils {
   public static String convertToHtml(@Nullable final String content) {
     if (content == null) return null;
     ArrayList<String> lines = ContainerUtil.newArrayList(content.split("\n|\r|\r\n"));
-    if ((content.contains("<h") && content.contains("</h")) ||
-        ((content.contains("<code>") || content.contains("<code ")) && content.contains("</code>"))) {
+    if (isHtml(content)) {
       return content;
     }
     MarkdownUtil.replaceHeaders(lines);
     MarkdownUtil.replaceCodeBlock(lines);
     return new MarkdownProcessor().markdown(StringUtil.join(lines, "\n"));
+  }
+
+  private static boolean isHtml(@NotNull String content) {
+    return (content.contains("<h") && content.contains("</h")) ||
+           ((content.contains("<code>") || content.contains("<code ")) && content.contains("</code>") ||
+            content.contains("<b>") || content.contains("<p>") || content.contains("<div>") || content.contains("<br"));
   }
 
   public static boolean isTaskDescriptionFile(@NotNull final String fileName) {
