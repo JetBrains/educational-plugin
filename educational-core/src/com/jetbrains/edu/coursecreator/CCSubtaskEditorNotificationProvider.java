@@ -63,7 +63,7 @@ public class CCSubtaskEditorNotificationProvider extends EditorNotifications.Pro
     if (!CCUtils.isCourseCreator(myProject)) {
       return null;
     }
-    boolean isTestFile = CCUtils.isTestsFile(myProject, file);
+    boolean isTestFile = EduUtils.isTestsFile(myProject, file);
     if (!isTestFile && EduUtils.getTaskFile(myProject, file) == null) {
       return null;
     }

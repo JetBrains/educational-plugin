@@ -112,7 +112,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     if (virtualFile == null || FileEditorManager.getInstance(project).getSelectedTextEditor() == null) {
       return;
     }
-    if (CCUtils.isTestsFile(project, virtualFile)) {
+    if (EduUtils.isTestsFile(project, virtualFile)) {
       presentation.setEnabledAndVisible(true);
     }
   }

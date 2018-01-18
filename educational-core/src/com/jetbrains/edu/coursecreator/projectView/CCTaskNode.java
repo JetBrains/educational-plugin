@@ -9,7 +9,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
@@ -62,7 +61,7 @@ public class CCTaskNode extends TaskNode {
       if (configurator == null) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       }
-      if (!CCUtils.isTestsFile(myProject, virtualFile)) {
+      if (!EduUtils.isTestsFile(myProject, virtualFile)) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       }
       if (!(myTask instanceof TaskWithSubtasks)) {

@@ -245,18 +245,20 @@ public class EduUtils {
   }
 
 
-  public static boolean isTestsFile(@NotNull Project project, @NotNull final String name) {
+  public static boolean isTestsFile(@NotNull Project project, @NotNull VirtualFile file) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
       return false;
     }
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+    Language language = course.getLanguageById();
+    if (language == null) {
+      return false;
+    }
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
     if (configurator == null) {
       return false;
     }
-    String testFileName = configurator.getTestFileName();
-    return name.equals(testFileName) ||
-           name.startsWith(FileUtil.getNameWithoutExtension(testFileName)) && name.contains(EduNames.SUBTASK_MARKER);
+    return configurator.isTestFile(file);
   }
 
   public static List<VirtualFile> getTestFiles(@NotNull Task task, @NotNull Project project) {
@@ -277,7 +279,7 @@ public class EduUtils {
       return testFiles;
     }
     testFiles.addAll(Arrays.stream(taskDir.getChildren())
-            .filter(file -> isTestsFile(project, file.getName()))
+            .filter(file -> isTestsFile(project, file))
             .collect(Collectors.toList()));
     return testFiles;
   }
@@ -350,8 +352,7 @@ public class EduUtils {
       if (file != null) {
         return false;
       }
-      String name = virtualFile.getName();
-      return !isTestsFile(project, name) && !isTaskDescriptionFile(name);
+      return !isTestsFile(project, virtualFile) && !isTaskDescriptionFile(virtualFile.getName());
     }
     if (element instanceof PsiDirectory) {
       VirtualFile virtualFile = ((PsiDirectory)element).getVirtualFile();
