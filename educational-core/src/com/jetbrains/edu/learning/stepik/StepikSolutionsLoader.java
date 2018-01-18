@@ -298,7 +298,7 @@ public class StepikSolutionsLoader implements Disposable{
 
   private static void loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     try {
-      HashMap<String, String> solutionText = loadSolution(task, isSolved);
+      Map<String, String> solutionText = loadSolution(task, isSolved);
       if (solutionText.isEmpty()) return;
       updateFiles(project, task, solutionText);
     }
@@ -307,7 +307,7 @@ public class StepikSolutionsLoader implements Disposable{
     }
   }
 
-  private static HashMap<String, String> loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
+  private static Map<String, String> loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
     if (task instanceof EduTask) {
       return getEduTaskSolution(task, isSolved);
     }
@@ -328,13 +328,11 @@ public class StepikSolutionsLoader implements Disposable{
     return solutions;
   }
 
-  private static HashMap<String, String> getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
-    HashMap<String, String> taskFileToText = new HashMap<>();
-
+  private static Map<String, String> getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
     StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
     if (reply == null || reply.solution.isEmpty()) {
       task.setStatus(CheckStatus.Unchecked);
-      return taskFileToText;
+      return Collections.emptyMap();
     }
 
     String serializedTask = reply.edu_task;
@@ -350,7 +348,7 @@ public class StepikSolutionsLoader implements Disposable{
       .fromJson(serializedTask, StepikWrappers.TaskWrapper.class);
 
     if (updatedTask == null || updatedTask.task == null) {
-      return taskFileToText;
+      return Collections.emptyMap();
     }
 
     if (task instanceof TaskWithSubtasks && updatedTask.task instanceof TaskWithSubtasks) {
@@ -358,6 +356,7 @@ public class StepikSolutionsLoader implements Disposable{
     }
     task.setStatus(updatedTask.task.getStatus());
 
+    Map<String, String> taskFileToText = new HashMap<>();
     for (StepikWrappers.SolutionFile file : reply.solution) {
       TaskFile taskFile = task.getTaskFile(file.name);
       TaskFile updatedTaskFile = updatedTask.task.getTaskFile(file.name);
@@ -418,7 +417,7 @@ public class StepikSolutionsLoader implements Disposable{
     return solution;
   }
 
-  private static void updateFiles(@NotNull Project project, @NotNull Task task, HashMap<String, String> solutionText) {
+  private static void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionText) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       return;
