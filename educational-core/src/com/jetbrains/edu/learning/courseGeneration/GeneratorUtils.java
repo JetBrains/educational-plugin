@@ -26,6 +26,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -116,7 +117,12 @@ public class GeneratorUtils {
     final List<Task> taskList = lesson.getTaskList();
     if (taskList.size() != 1) return;
     final Task task = taskList.get(0);
-    for (Map.Entry<String, String> entry : task.getTestsText().entrySet()) {
+
+    Map<String, String> filesToCreate = new HashMap<>(task.getTestsText());
+    MapsKt.mapValuesTo(task.getTaskFiles(), filesToCreate, entry -> entry.getValue().text);
+    filesToCreate.putAll(task.getAdditionalFiles());
+
+    for (Map.Entry<String, String> entry : filesToCreate.entrySet()) {
       createChildFile(courseDir, entry.getKey(), entry.getValue());
     }
   }
