@@ -81,7 +81,7 @@ open class GradleCourseProjectGenerator(
           lesson.addTask(task)
           myCourseBuilder.initNewTask(task)
         }
-        EduGradleModuleGenerator.createCourseContent(course, baseDir)
+        GeneratorUtils.createCourse(course, baseDir)
 
         setJdk(project, settings)
       } catch (e: IOException) {
