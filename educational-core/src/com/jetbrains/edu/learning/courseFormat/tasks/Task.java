@@ -58,6 +58,9 @@ public abstract class Task implements StudyItem {
   @SerializedName("task_texts")
   @Expose protected Map<String, String> taskTexts = new HashMap<>();
 
+  @SerializedName("additional_files")
+  @Expose protected Map<String, String> additionalFiles = new HashMap<>();
+
   @Transient private Lesson myLesson;
   @Expose @SerializedName("update_date") private Date myUpdateDate;
 
@@ -78,6 +81,10 @@ public abstract class Task implements StudyItem {
     for (TaskFile taskFile : getTaskFiles().values()) {
       taskFile.initTaskFile(this, isRestarted);
     }
+  }
+
+  public Map<String, TaskFile> getTaskFiles() {
+    return taskFiles;
   }
 
   @SuppressWarnings("unused")
@@ -120,6 +127,16 @@ public abstract class Task implements StudyItem {
     return taskTexts;
   }
 
+  public Map<String, String> getAdditionalFiles() {
+    return additionalFiles;
+  }
+
+  @SuppressWarnings("unused")
+  //used for deserialization
+  public void setAdditionalFiles(Map<String, String> additionalFiles) {
+    this.additionalFiles = additionalFiles;
+  }
+
   public void addTestsTexts(String name, String text) {
     testsText.put(name, text);
   }
@@ -128,8 +145,8 @@ public abstract class Task implements StudyItem {
     taskTexts.put(name, text);
   }
 
-  public Map<String, TaskFile> getTaskFiles() {
-    return taskFiles;
+  public void addAdditionalFile(String name, String text) {
+    additionalFiles.put(name, text);
   }
 
   @Nullable

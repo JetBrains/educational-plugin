@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.util.Function;
+import com.intellij.util.ThrowableConsumer;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
@@ -27,6 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.apache.commons.codec.binary.Base64;
@@ -253,14 +255,28 @@ public class CCUtils {
     task.setName(name);
     task.setIndex(1);
 
+    String sanitizedName = FileUtil.sanitizeFileName(course.getName());
+    final String archiveName = String.format("%s.zip", sanitizedName.startsWith("_") ? EduNames.COURSE : sanitizedName);
+
+    final VirtualFile utilDir = baseDir.findChild(EduNames.UTIL);
+    final String sourceDirName = CourseExt.getSourceDir(course);
+    final String testDirName = CourseExt.getTestDir(course);
+    final VirtualFile utilSourceDir;
+    final VirtualFile utilTestDir;
+    if (utilDir != null && sourceDirName != null && testDirName != null) {
+      utilSourceDir = utilDir.findChild(sourceDirName);
+      utilTestDir = utilDir.findChild(testDirName);
+    } else {
+      utilSourceDir = null;
+      utilTestDir = null;
+    }
+
     VfsUtilCore.visitChildrenRecursively(baseDir, new VirtualFileVisitor(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
       @Override
       public boolean visitFile(@NotNull VirtualFile file) {
         final String name = file.getName();
         if (name.equals(EduNames.COURSE_META_FILE) || name.equals(EduNames.HINTS) || name.startsWith(".")) return false;
-        String sanitizedName = FileUtil.sanitizeFileName(course.getName());
-        final String archiveName = sanitizedName.startsWith("_") ? EduNames.COURSE : sanitizedName;
-        if (name.equals(archiveName + ".zip")) return false;
+        if (name.equals(archiveName)) return false;
         if (GENERATED_FILES_FOLDER.equals(name) || Project.DIRECTORY_STORE_FOLDER.equals(name)) {
           return false;
         }
@@ -273,25 +289,63 @@ public class CCUtils {
         }
         final TaskFile taskFile = EduUtils.getTaskFile(project, file);
         if (taskFile == null) {
-          final String path = VfsUtilCore.getRelativePath(file, baseDir);
-          try {
-            if (EduUtils.isImage(file.getName())) {
-              task.addTestsTexts(path, Base64.encodeBase64URLSafeString(FileUtil.loadBytes(file.getInputStream())));
-            }
-            else {
-              task.addTestsTexts(path, FileUtil.loadTextAndClose(file.getInputStream()));
-            }
-          }
-          catch (IOException e) {
-            LOG.error("Can't find file " + path);
+          if (utilSourceDir != null && VfsUtilCore.isAncestor(utilSourceDir, file, true)) {
+            addTaskFile(task, baseDir, file);
+          } else if (utilTestDir != null && VfsUtilCore.isAncestor(utilTestDir, file, true)) {
+            addTestFile(task, baseDir, file);
+          } else {
+            addAdditionalFile(task, baseDir, file);
           }
         }
         return true;
       }
     });
-    if (task.getTestsText().isEmpty()) return null;
+    if (taskIsEmpty(task)) return null;
     lesson.addTask(task);
     lesson.setIndex(course.getLessons().size());
     return lesson;
+  }
+
+  private static boolean taskIsEmpty(@NotNull Task task) {
+    return task.getTaskFiles().isEmpty() &&
+           task.getTestsText().isEmpty() &&
+           task.getAdditionalFiles().isEmpty();
+  }
+
+  private static void addTaskFile(@NotNull Task task, @NotNull VirtualFile baseDir, @NotNull VirtualFile file) {
+    addToTask(baseDir, file, path -> {
+      TaskFile utilTaskFile = new TaskFile();
+      utilTaskFile.name = path;
+      utilTaskFile.text = VfsUtilCore.loadText(file);
+      utilTaskFile.setTask(task);
+      task.addTaskFile(utilTaskFile);
+    });
+  }
+
+  private static void addTestFile(@NotNull Task task, @NotNull VirtualFile baseDir, @NotNull VirtualFile file) {
+    addToTask(baseDir, file, path -> task.addTestsTexts(path, VfsUtilCore.loadText(file)));
+  }
+
+  private static void addAdditionalFile(@NotNull Task task, @NotNull VirtualFile baseDir, @NotNull VirtualFile file) {
+    addToTask(baseDir, file, path -> {
+      String text;
+      if (EduUtils.isImage(file.getName())) {
+        text = Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(file));
+      } else {
+        text = VfsUtilCore.loadText(file);
+      }
+      task.addAdditionalFile(path, text);
+    });
+  }
+
+  private static void addToTask(@NotNull VirtualFile baseDir, @NotNull VirtualFile file,
+                                @NotNull ThrowableConsumer<String, IOException> action) {
+    String path = VfsUtilCore.getRelativePath(file, baseDir);
+    if (path == null) return;
+    try {
+      action.consume(path);
+    } catch (IOException e) {
+      LOG.error(e);
+    }
   }
 }
