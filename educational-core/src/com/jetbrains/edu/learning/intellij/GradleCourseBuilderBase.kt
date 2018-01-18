@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks
-import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
@@ -37,7 +37,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
     initNewTask(task)
     runWriteAction {
       try {
-        EduGradleModuleGenerator.createTaskModule(parentDirectory, task)
+        GeneratorUtils.createTask(task, parentDirectory)
       } catch (e: IOException) {
         LOG.error("Failed to create task", e)
       }
