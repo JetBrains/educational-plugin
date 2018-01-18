@@ -364,7 +364,7 @@ public class EduProjectComponent implements ProjectComponent {
       public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
         String actionId = ActionManager.getInstance().getId(action);
         Set<String> ids = newFilesActionsIds();
-        if (ids.contains(actionId)) {
+        if (ids.contains(actionId) && myListener != null) {
           VirtualFileManager.getInstance().removeVirtualFileListener(myListener);
         }
       }
