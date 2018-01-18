@@ -32,13 +32,13 @@ public class StepikAuthorizedClient {
   @Nullable
   public static CloseableHttpClient getHttpClient() {
     StepicUser user = EduSettings.getInstance().getUser();
-    assert user != null: "User must not be null";
 
-    final boolean isUpToDate = StepikClient.isTokenUpToDate(user.getAccessToken());
+    final boolean isUpToDate = user == null || StepikClient.isTokenUpToDate(user.getAccessToken());
     if (ourClient != null && isUpToDate) {
       return ourClient;
     }
 
+    assert user != null: "User must not be null";
     if (!isUpToDate && !updateTokens(user)) {
       return null;
     }
@@ -56,6 +56,7 @@ public class StepikAuthorizedClient {
 
   /*
    * This method should be used only in project generation while project is not available.
+   * Make sure you saved stepik user in EduSettings after using this method.
    */
   @NotNull
   public static CloseableHttpClient getHttpClient(@NotNull final StepicUser user) {
