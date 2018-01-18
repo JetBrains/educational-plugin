@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public class CCCourseNode extends CourseNode {
-  private static final Collection<String> NAMES_TO_IGNORE = ContainerUtil.newHashSet("build.gradle",
+  private static final Collection<String> NAMES_TO_IGNORE = ContainerUtil.newHashSet(
     "settings.gradle", "local.properties", "gradlew", "gradlew.bat");
 
   public CCCourseNode(@NotNull Project project,
