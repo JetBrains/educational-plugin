@@ -10,7 +10,7 @@ import icons.EducationalCoreIcons
 class CCNewCourseAction : AnAction("Create New Course", "Create new educational course", EducationalCoreIcons.CreateNewCourse) {
 
   override fun actionPerformed(e: AnActionEvent) {
-    CCNewCourseDialog().show()
+    CCNewCourseDialog("Create Course", "Create").show()
   }
 
   override fun update(e: AnActionEvent) {

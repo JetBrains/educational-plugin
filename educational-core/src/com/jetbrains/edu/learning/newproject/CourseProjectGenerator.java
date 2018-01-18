@@ -68,13 +68,15 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
   //  * Kotlin and Java do type erasure a little bit differently
   // we use Object instead of S and cast to S when it needed
   @SuppressWarnings("unchecked")
-  public final void doCreateCourseProject(@NotNull String location, @NotNull Object projectSettings) {
+  @Nullable
+  public final Project doCreateCourseProject(@NotNull String location, @NotNull Object projectSettings) {
     if (!beforeProjectGenerated()) {
-      return;
+      return null;
     }
     Project createdProject = createProject(location, projectSettings);
-    if (createdProject == null) return;
+    if (createdProject == null) return null;
     afterProjectGenerated(createdProject, (S) projectSettings);
+    return createdProject;
   }
 
   /**

@@ -32,7 +32,7 @@ import javax.swing.event.DocumentEvent
 import javax.swing.text.AttributeSet
 import javax.swing.text.PlainDocument
 
-class CCNewCoursePanel : JPanel() {
+class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   private val myPanel: JPanel
   private val myLanguageComboBox: ComboBox<LanguageData> = ComboBox()
@@ -46,7 +46,7 @@ class CCNewCoursePanel : JPanel() {
 
   private val myErrorLabel = JBLabel()
 
-  private val myCourse: Course = Course().apply { courseMode = CCUtils.COURSE_MODE }
+  private val myCourse: Course = (course ?: Course()).apply { courseMode = CCUtils.COURSE_MODE }
   private lateinit var myLanguageSettings: EduCourseBuilder.LanguageSettings<*>
 
   private var myValidationListener: ValidationListener? = null
@@ -100,7 +100,13 @@ class CCNewCoursePanel : JPanel() {
 
     setupValidation()
     setDefaultValues()
-    collectSupportedLanguages()
+    collectLanguages(course)
+
+    if (course != null) {
+      myDescriptionTextArea.text = course.description
+      myTitleField.setTextManually(course.name)
+      myLanguageComboBox.isEnabled = false
+    }
   }
 
   val course: Course get() {
@@ -176,11 +182,16 @@ class CCNewCoursePanel : JPanel() {
     myAdvancedSettings.setSettingsComponents(settings)
   }
 
-  private fun collectSupportedLanguages() {
-    EduConfiguratorManager.allExtensions()
-            .mapNotNull { extension -> obtainLanguageData(extension.key) }
-            .sortedBy { (language, _) -> language.displayName }
-            .forEach { myLanguageComboBox.addItem(it) }
+  private fun collectLanguages(course: Course?) {
+    val languageData = if (course != null) {
+      listOfNotNull(obtainLanguageData(course.languageID))
+    } else {
+      EduConfiguratorManager.allExtensions()
+        .mapNotNull { extension -> obtainLanguageData(extension.key) }
+    }
+    languageData
+      .sortedBy { (language, _) -> language.displayName }
+      .forEach { myLanguageComboBox.addItem(it) }
   }
 
   private fun obtainLanguageData(languageId: String): LanguageData? {
@@ -190,18 +201,6 @@ class CCNewCoursePanel : JPanel() {
       return null
     }
     return LanguageData(language, EduLanguageDecorator.INSTANCE.forLanguage(language)?.logo)
-  }
-
-  fun setDescription(description : String) {
-    myDescriptionTextArea.text = description
-  }
-
-  fun setLanguage(language: String) {
-    myLanguageComboBox.selectedItem = obtainLanguageData(language)
-  }
-
-  fun setCourseName(courseName : String) {
-    myTitleField.text = courseName
   }
 
   companion object {
