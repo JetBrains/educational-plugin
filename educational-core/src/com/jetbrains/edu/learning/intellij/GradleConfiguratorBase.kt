@@ -20,7 +20,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
       ".idea", "EduTestRunner.java", "gradlew", "gradlew.bat", "local.properties", "gradle.properties",
-      "build.gradle", "settings.gradle", "gradle-wrapper.jar", "gradle-wrapper.properties")
+      "settings.gradle", "gradle-wrapper.jar", "gradle-wrapper.properties")
 
     private val FOLDERS_TO_EXCLUDE = ContainerUtil.newHashSet(EduNames.OUT, EduNames.BUILD)
   }
