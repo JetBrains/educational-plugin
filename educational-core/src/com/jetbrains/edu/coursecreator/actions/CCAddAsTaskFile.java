@@ -5,7 +5,6 @@ import com.intellij.openapi.command.undo.BasicUndoableAction;
 import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -24,7 +23,7 @@ public class CCAddAsTaskFile extends CCTaskFileActionBase {
   }
 
   protected boolean isAvailable(Project project, VirtualFile file) {
-    return EduUtils.getTaskFile(project, file) == null && !CCUtils.isTestsFile(project, file);
+    return EduUtils.getTaskFile(project, file) == null && !EduUtils.isTestsFile(project, file);
   }
 
   private static class AddTaskFile extends BasicUndoableAction {

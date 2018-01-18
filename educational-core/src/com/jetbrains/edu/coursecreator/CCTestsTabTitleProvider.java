@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,7 @@ public class CCTestsTabTitleProvider implements EditorTabTitleProvider {
     if (!CCUtils.isCourseCreator(project)) {
       return null;
     }
-    if (!CCUtils.isTestsFile(project, file)) {
+    if (!EduUtils.isTestsFile(project, file)) {
       return null;
     }
     Course course = StudyTaskManager.getInstance(project).getCourse();

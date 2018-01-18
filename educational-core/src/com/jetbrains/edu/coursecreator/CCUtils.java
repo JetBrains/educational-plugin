@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator;
 
 import com.google.common.collect.Collections2;
-import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -49,7 +48,7 @@ public class CCUtils {
   public static int getSubtaskIndex(@NotNull Project project, @NotNull VirtualFile file) {
     String fileName = file.getName();
     String name = FileUtil.getNameWithoutExtension(fileName);
-    boolean canBeSubtaskFile = isTestsFile(project, file) || EduUtils.isTaskDescriptionFile(fileName);
+    boolean canBeSubtaskFile = EduUtils.isTestsFile(project, file) || EduUtils.isTaskDescriptionFile(fileName);
     if (!canBeSubtaskFile) {
       return -1;
     }
@@ -190,22 +189,6 @@ public class CCUtils {
     return COURSE_MODE.equals(course.getCourseMode());
   }
 
-  public static boolean isTestsFile(@NotNull Project project, @NotNull VirtualFile file) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return false;
-    }
-    Language language = course.getLanguageById();
-    if (language == null) {
-      return false;
-    }
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
-    if (configurator == null) {
-      return false;
-    }
-    return configurator.isTestFile(file);
-  }
-
   public static void updateActionGroup(AnActionEvent e) {
     Presentation presentation = e.getPresentation();
     Project project = e.getProject();
@@ -280,7 +263,7 @@ public class CCUtils {
         }
         if (file.isDirectory()) return true;
 
-        if (EduUtils.isTaskDescriptionFile(name) || EduUtils.isTestsFile(project, name)) return true;
+        if (EduUtils.isTaskDescriptionFile(name) || EduUtils.isTestsFile(project, file)) return true;
 
         if (name.contains(".iml") || (configurator != null && configurator.excludeFromArchive(file.getPath()))) {
           return false;

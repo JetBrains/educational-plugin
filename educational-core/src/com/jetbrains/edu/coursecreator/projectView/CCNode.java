@@ -50,7 +50,7 @@ public class CCNode extends DirectoryNode {
       if (EduUtils.isTaskDescriptionFile(virtualFile.getName())) {
         return null;
       }
-      if (!CCUtils.isTestsFile(myProject, virtualFile)) {
+      if (!EduUtils.isTestsFile(myProject, virtualFile)) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       } else {
         if (EduUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject)) {

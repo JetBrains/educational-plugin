@@ -205,7 +205,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
           testFiles.addAll(Arrays.asList(testDir.getChildren()));
         } else {
           testFiles.addAll(Arrays.stream(taskDir.getChildren())
-            .filter(file -> EduUtils.isTestsFile(project, file.getName()))
+            .filter(file -> EduUtils.isTestsFile(project, file))
             .collect(Collectors.toList()));
         }
         return testFiles;
