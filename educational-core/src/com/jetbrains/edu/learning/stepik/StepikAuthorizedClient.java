@@ -30,25 +30,18 @@ public class StepikAuthorizedClient {
 
   @Nullable
   public static CloseableHttpClient getHttpClient() {
-    if (ourClient != null) {
-      return ourClient;
-    }
-
     EduSettings eduSettings = EduSettings.getInstance();
-
     assert eduSettings.getUser() != null: "User must not be null";
-
     StepicUser user = eduSettings.getUser();
     assert user != null;
 
-    if (!StepikClient.isTokenUpToDate(user.getAccessToken())) {
-      StepikWrappers.TokenInfo tokens = getUpdatedTokens(user.getRefreshToken());
-      if (tokens != null) {
-        user.setTokenInfo(tokens);
-      }
-      else {
-        return null;
-      }
+    final boolean isUpToDate = StepikClient.isTokenUpToDate(user.getAccessToken());
+    if (ourClient != null && isUpToDate) {
+      return ourClient;
+    }
+
+    if (!isUpToDate && !updateTokens(user)) {
+      return null;
     }
 
     ourClient = createInitializedClient(user.getAccessToken());
@@ -68,26 +61,30 @@ public class StepikAuthorizedClient {
    */
   @NotNull
   public static CloseableHttpClient getHttpClient(@NotNull final StepicUser user) {
-    if (ourClient != null) {
+    final boolean isUpToDate = StepikClient.isTokenUpToDate(user.getAccessToken());
+
+    if (ourClient != null && isUpToDate) {
       return ourClient;
     }
 
-    if (!StepikClient.isTokenUpToDate(user.getAccessToken())) {
-      StepikWrappers.TokenInfo tokenInfo = getUpdatedTokens(user.getRefreshToken());
-      if (tokenInfo != null) {
-        user.setTokenInfo(tokenInfo);
-      }
-      else {
-        return StepikClient.getHttpClient();
-      }
+    if (!isUpToDate && !updateTokens(user)) {
+      return StepikClient.getHttpClient();
     }
 
     ourClient = createInitializedClient(user.getAccessToken());
-
     return ourClient;
   }
 
-   /*
+  private static boolean updateTokens(@NotNull StepicUser user) {
+    StepikWrappers.TokenInfo tokenInfo = getUpdatedTokens(user.getRefreshToken());
+    if (tokenInfo != null) {
+      user.setTokenInfo(tokenInfo);
+      return true;
+    }
+    return false;
+  }
+
+  /*
    * This method should be used only in project generation while project is not available.
    * Make sure you saved stepik user in task manager after using this method.
    */
