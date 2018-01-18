@@ -1,16 +1,23 @@
 package com.jetbrains.edu.coursecreator.ui
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
 
-class CCNewCourseDialog : DialogWrapper(true) {
+class CCNewCourseDialog(
+  title: String,
+  okButtonText: String,
+  course: Course? = null,
+  private val myCallback: ((Project, Course) -> Unit)? = null
+) : DialogWrapper(true) {
 
-  private val myPanel: CCNewCoursePanel = CCNewCoursePanel()
+  private val myPanel: CCNewCoursePanel = CCNewCoursePanel(course)
 
   init {
-    title = "Create Course"
-    setOKButtonText("Create")
+    setTitle(title)
+    setOKButtonText(okButtonText)
     init()
     myPanel.setValidationListener(object : CCNewCoursePanel.ValidationListener {
       override fun onInputDataValidated(isInputDataComplete: Boolean) {
@@ -28,10 +35,13 @@ class CCNewCourseDialog : DialogWrapper(true) {
     val location = myPanel.locationString
     val language = course.languageById
     if (language != null) {
-      EduConfiguratorManager.forLanguage(language)
-              ?.courseBuilder
-              ?.getCourseProjectGenerator(course)
-              ?.doCreateCourseProject(location, projectSettings)
+      val courseProject = EduConfiguratorManager.forLanguage(language)
+        ?.courseBuilder
+        ?.getCourseProjectGenerator(course)
+        ?.doCreateCourseProject(location, projectSettings)
+      if (courseProject != null) {
+        myCallback?.invoke(courseProject, course)
+      }
     }
   }
 }

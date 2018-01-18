@@ -307,7 +307,8 @@ public class StepikConnector {
     }
   }
 
-  public static RemoteCourse getCourse(@NotNull final Project project, @NotNull final RemoteCourse remoteCourse) {
+  @Nullable
+  public static RemoteCourse getCourse(@Nullable final Project project, @NotNull final RemoteCourse remoteCourse) {
     final List<Lesson> lessons = remoteCourse.getLessons(true);
     if (!lessons.isEmpty()) return remoteCourse;
     if (!remoteCourse.isAdaptive()) {
@@ -320,6 +321,7 @@ public class StepikConnector {
       }
     }
     else {
+      if (project == null) return null;
       final Lesson lesson = new Lesson();
       lesson.setName(EduNames.ADAPTIVE);
       remoteCourse.addLesson(lesson);
