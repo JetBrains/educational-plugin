@@ -74,7 +74,7 @@ open class GradleCourseProjectGenerator(
     runWriteAction {
       try {
         val course = GeneratorUtils.initializeCourse(project, myCourse)
-        if (CCUtils.isCourseCreator(project)) {
+        if (CCUtils.isCourseCreator(project) && course.getLessons(true).isEmpty()) {
           val lesson = CCCreateLesson().createAndInitItem(course, null, EduNames.LESSON + 1, 1)
           course.addLesson(lesson)
           val task = CCCreateTask().createAndInitItem(course, lesson, EduNames.TASK + 1, 1)
