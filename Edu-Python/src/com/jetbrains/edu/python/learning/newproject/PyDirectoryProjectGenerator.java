@@ -55,16 +55,16 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
   @Override
   protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir,
                                        @NotNull PyNewProjectSettings settings) {
-    if (myCourse.isStudy()) {
-      createStudyStructure(project, baseDir, myCourse);
+    final Course course = GeneratorUtils.initializeCourse(project, myCourse);
+    if (course.isStudy()) {
+      createStudyStructure(project, baseDir, course);
     } else {
-      createCourseCreatorStructure(project, baseDir);
+      createCourseCreatorStructure(project, baseDir, course);
     }
   }
 
   public static void createStudyStructure(@NotNull final Project project, @NotNull final VirtualFile baseDir,
-                                          @NotNull final Course courseInfo) {
-    final Course course = GeneratorUtils.initializeCourse(project, courseInfo);
+                                          @NotNull final Course course) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       GeneratorUtils.createCourse(course, baseDir);
       EduUtils.openFirstTask(course, project);
@@ -80,17 +80,21 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
     });
   }
 
-  private void createCourseCreatorStructure(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    StudyTaskManager.getInstance(project).setCourse(myCourse);
+  private static void createCourseCreatorStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Course course) {
+    StudyTaskManager.getInstance(project).setCourse(course);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       createTestHelper(project, baseDir);
-      VirtualFile lessonDir = new CCCreateLesson().createItem(project, baseDir, myCourse, false);
-      if (lessonDir == null) {
-        LOG.error("Failed to create lesson");
-        return;
+      if (course.getLessons(true).isEmpty()) {
+        VirtualFile lessonDir = new CCCreateLesson().createItem(project, baseDir, course, false);
+        if (lessonDir == null) {
+          LOG.error("Failed to create lesson");
+          return;
+        }
+        new CCCreateTask().createItem(project, lessonDir, course, false);
+      } else {
+        GeneratorUtils.createCourse(course, baseDir);
       }
-      new CCCreateTask().createItem(project, lessonDir, myCourse, false);
     });
   }
 
