@@ -1,8 +1,5 @@
 package com.jetbrains.edu.learning.courseGeneration;
 
-import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -161,14 +158,14 @@ public class GeneratorUtils {
           "Error in Course Creation");
       return course;
     }
-    if (updateTaskFilesNeed(course)) {
+    if (updateTaskFilesNeeded(course)) {
       updateJavaCodeTaskFileNames(project, course);
     }
     StudyTaskManager.getInstance(project).setCourse(course);
     return course;
   }
 
-  private static boolean updateTaskFilesNeed(@NotNull final Course course) {
+  private static boolean updateTaskFilesNeeded(@NotNull final Course course) {
     return course instanceof RemoteCourse && course.isStudy() && EduNames.JAVA.equals(course.getLanguageID());
   }
 
