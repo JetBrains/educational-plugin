@@ -37,6 +37,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,15 +55,16 @@ public class CCStepikConnector {
   private CCStepikConnector() {
   }
 
-  public static RemoteCourse getCourseInfo(String courseId) {
+  @Nullable
+  public static RemoteCourse getCourseInfo(@NotNull String courseId) {
     final String url = StepikNames.COURSES + "/" + courseId;
+    final StepicUser user = EduSettings.getInstance().getUser();
     try {
-      final StepikWrappers.CoursesContainer coursesContainer =
-        StepikAuthorizedClient.getFromStepik(url, StepikWrappers.CoursesContainer.class);
+      final StepikWrappers.CoursesContainer coursesContainer = StepikConnector.getCoursesFromStepik(user, url);
       return coursesContainer == null ? null : coursesContainer.courses.get(0);
     }
     catch (IOException e) {
-      LOG.error(e.getMessage());
+      LOG.warn(e.getMessage());
     }
     return null;
   }
