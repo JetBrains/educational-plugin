@@ -161,9 +161,6 @@ public class EduBuiltInServerUtils {
           try {
             StepicUser user = StepikAuthorizedClient.getCurrentUser();
             RemoteCourse course = StepikConnector.getCourseFromStepik(user, courseId, true);
-            if (course != null) {
-              StepikUtils.setCourseLanguage(course);
-            }
             showDialog(course, stepId);
           } catch (IOException e) {
             LOG.warn("Tried to create a project for course with id=" + courseId, e);

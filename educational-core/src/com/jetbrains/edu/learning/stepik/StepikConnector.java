@@ -154,13 +154,22 @@ public class StepikConnector {
     return null;
   }
 
-  public static CoursesContainer getCoursesFromStepik(@Nullable StepicUser user, URI url) throws IOException {
+  public static CoursesContainer getCoursesFromStepik(@Nullable StepicUser user, @NotNull URI url) throws IOException {
+    return getCoursesFromStepik(user, url.toString());
+  }
+
+  public static CoursesContainer getCoursesFromStepik(@Nullable StepicUser user, @NotNull String url) throws IOException {
     final CoursesContainer coursesContainer;
     if (user != null) {
-      coursesContainer = StepikAuthorizedClient.getFromStepik(url.toString(), CoursesContainer.class, user);
+      coursesContainer = StepikAuthorizedClient.getFromStepik(url, CoursesContainer.class, user);
     }
     else {
-      coursesContainer = StepikClient.getFromStepik(url.toString(), CoursesContainer.class);
+      coursesContainer = StepikClient.getFromStepik(url, CoursesContainer.class);
+    }
+    if (coursesContainer != null) {
+      for (RemoteCourse info : coursesContainer.courses) {
+        StepikUtils.setCourseLanguage(info);
+      }
     }
     return coursesContainer;
   }
@@ -207,7 +216,6 @@ public class StepikConnector {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse info : courses) {
       if (!info.isAdaptive() && StringUtil.isEmptyOrSpaces(info.getType())) continue;
-      StepikUtils.setCourseLanguage(info);
 
       if (canBeOpened(info)) {
         final ArrayList<StepicUser> authors = new ArrayList<>();
@@ -317,7 +325,7 @@ public class StepikConnector {
         return remoteCourse;
       }
       catch (IOException e) {
-        LOG.error("IOException " + e.getMessage());
+        LOG.warn("IOException " + e.getMessage());
       }
     }
     else {
