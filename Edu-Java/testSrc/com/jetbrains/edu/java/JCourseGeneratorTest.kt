@@ -1,11 +1,8 @@
 package com.jetbrains.edu.java
 
 import com.intellij.lang.java.JavaLanguage
-import com.jetbrains.edu.learning.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
-import com.jetbrains.edu.learning.newCourse
 
 class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
@@ -73,6 +70,47 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
       file("settings.gradle")
     }
 
+    expectedFileTree.assertEquals(rootDir)
+  }
+
+  fun `test educator course structure from not empty course`() {
+    generateCourseStructure("testData/newCourse/java_course.json", CourseType.EDUCATOR)
+    val expectedFileTree = fileTree {
+      dir(".idea") {}
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.java")
+            file("task.html")
+          }
+          dir("test") {
+            file("Test.java")
+          }
+        }
+        dir("task2") {
+          dir("src") {
+            file("Task.java")
+            file("task.html")
+          }
+          dir("test") {
+            file("Test.java")
+          }
+        }
+      }
+      dir("lesson2") {
+        dir("task1") {
+          dir("src") {
+            file("Task.java")
+            file("task.html")
+          }
+          dir("test") {
+            file("Test.java")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
     expectedFileTree.assertEquals(rootDir)
   }
 }

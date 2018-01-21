@@ -12,19 +12,31 @@ import java.io.File
 import java.io.IOException
 
 @Throws(IOException::class)
-fun createCourseFromJson(pathToJson: String): Course {
+fun createCourseFromJson(pathToJson: String, courseType: CourseType): Course {
   val courseJson = File(pathToJson).readText()
   val gson = GsonBuilder()
           .registerTypeAdapter(Task::class.java, SerializationUtils.Json.TaskAdapter())
           .registerTypeAdapter(Lesson::class.java, SerializationUtils.Json.LessonAdapter())
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
           .create()
-  return gson.fromJson(courseJson, Course::class.java)
+  return gson.fromJson(courseJson, Course::class.java).apply {
+    courseMode = courseType.toString()
+  }
 }
 
-fun newCourse(courseLanguage: Language): Course = Course().apply {
+fun newCourse(courseLanguage: Language, courseType: CourseType = CourseType.EDUCATOR): Course = Course().apply {
   name = "Test Course"
   description = "Test Description"
-  courseMode = CCUtils.COURSE_MODE
+  courseMode = courseType.toString()
   language = courseLanguage.id
+}
+
+enum class CourseType {
+  STUDENT,
+  EDUCATOR;
+
+  override fun toString(): String = when (this) {
+    STUDENT -> EduNames.STUDY
+    EDUCATOR -> CCUtils.COURSE_MODE
+  }
 }

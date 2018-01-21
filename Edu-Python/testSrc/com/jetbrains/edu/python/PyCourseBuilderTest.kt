@@ -1,9 +1,6 @@
 package com.jetbrains.edu.python
 
-import com.jetbrains.edu.learning.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.newCourse
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.python.PythonLanguage
 import com.jetbrains.python.newProject.PyNewProjectSettings
@@ -59,17 +56,27 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
     expectedFileTree.assertEquals(rootDir)
   }
 
-  fun `test new course structure for student`() {
-    val course = newCourse(PythonLanguage.INSTANCE)
-    course.courseMode = "Student"
-    createCourseStructure(courseBuilder, course, defaultSettings)
-
+  fun `test educator course structure from not empty course`() {
+    generateCourseStructure("testData/newCourse/python_course.json", CourseType.EDUCATOR)
     val expectedFileTree = fileTree {
       dir(".idea") {}
       dir("lesson1") {
         dir("task1") {
-          file("task.py")
+          file("hello_world.py")
           file("tests.py")
+          file("task.html")
+        }
+        dir("task2") {
+          file("comments.py")
+          file("tests.py")
+          file("task.html")
+        }
+      }
+      dir("lesson2") {
+        dir("task1") {
+          file("variable_definition.py")
+          file("tests.py")
+          file("task.html")
         }
       }
       file("test_helper.py")
