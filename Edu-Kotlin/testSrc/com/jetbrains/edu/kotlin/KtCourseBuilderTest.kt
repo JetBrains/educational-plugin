@@ -1,10 +1,7 @@
 package com.jetbrains.edu.kotlin
 
-import com.jetbrains.edu.learning.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
-import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
@@ -78,6 +75,54 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
       file("settings.gradle")
     }
 
+    expectedFileTree.assertEquals(rootDir)
+  }
+
+  fun `test educator course structure from not empty course`() {
+    generateCourseStructure("testData/newCourse/kotlin_course.json", CourseType.EDUCATOR)
+    val expectedFileTree = fileTree {
+      dir(".idea") {}
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt")
+            file("task.html")
+          }
+          dir("test") {
+            file("tests.kt")
+          }
+        }
+        dir("task2") {
+          dir("src") {
+            file("JavaCode.java")
+            file("Task.kt")
+            file("task.html")
+          }
+          dir("test") {
+            file("tests.kt")
+          }
+        }
+      }
+      dir("lesson2") {
+        dir("task1") {
+          dir("src") {
+            file("Task.kt")
+            file("task.html")
+          }
+          dir("test") {
+            file("tests.kt")
+          }
+        }
+      }
+      dir("util") {
+        dir("src") {
+          file("koansTestUtil.kt")
+        }
+        dir("test") {}
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
     expectedFileTree.assertEquals(rootDir)
   }
 }
