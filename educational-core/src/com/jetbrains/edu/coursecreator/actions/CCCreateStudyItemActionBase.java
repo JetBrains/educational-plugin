@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -26,6 +27,7 @@ import javax.swing.*;
 import java.util.List;
 
 public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
+  protected static final Logger LOG = Logger.getInstance(CCCreateStudyItemActionBase.class);
 
   public CCCreateStudyItemActionBase(String text, String description, Icon icon) {
     super(text, description, icon);
@@ -99,10 +101,12 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     StudyItem parentItem = getParentItem(course, sourceDirectory);
     final Item item = getItem(sourceDirectory, project, course, parentItem, shouldShowInputDialog);
     if (item == null) {
+      LOG.info("Failed to create study item");
       return null;
     }
     final VirtualFile parentDir = getParentDir(project, course, sourceDirectory);
     if (parentDir == null) {
+      LOG.info("Failed to get parent directory");
       return null;
     }
     CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item),
