@@ -6,14 +6,14 @@ import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.jetbrains.edu.coursecreator.actions.CCNewCourseActionBase
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikConnector
 
-class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Course From Stepik", null) {
+class CCGetCourseFromStepik : CCNewCourseActionBase("Get Course From Stepik", "Get Course From Stepik") {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
@@ -39,7 +39,7 @@ class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Cou
       return
     }
     runInEdt {
-      CCNewCourseDialog("Get Course From Stepik", "Create", course).show()
+      CCNewCourseDialog("Get Course From Stepik", "Create", course, this::initializeCourseProject).show()
     }
   }
 
