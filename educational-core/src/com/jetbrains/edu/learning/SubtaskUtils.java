@@ -60,7 +60,7 @@ public class SubtaskUtils {
     int fromSubtaskIndex = task.getActiveSubtaskIndex();
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
       TaskFile taskFile = entry.getValue();
-      VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
+      VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
       if (virtualFile == null) {
         continue;
       }

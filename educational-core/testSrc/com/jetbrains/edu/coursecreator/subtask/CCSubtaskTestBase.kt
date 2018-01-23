@@ -10,20 +10,20 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.MapDataContext
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.actions.CCNewSubtaskAction
-import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.SubtaskUtils
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 abstract class CCSubtaskTestBase : CCTestCase() {
 
-  abstract protected val courseBuilder: EduCourseBuilder<*>
-  abstract protected val taskFileName: String
-  abstract protected val testFileName: String
-  abstract protected val language: Language
+  protected abstract val configurator: EduConfigurator<*>
+  protected abstract val taskFileName: String
+  protected abstract val testFileName: String
+  protected abstract val language: Language
 
-  private val srcDirPath: String get() = join(TASK_PATH, courseBuilder.sourceDir)
-  private val testDirPath: String get() = join(TASK_PATH, courseBuilder.testDir)
+  private val srcDirPath: String get() = join(TASK_PATH, configurator.sourceDir)
+  private val testDirPath: String get() = join(TASK_PATH, configurator.testDir)
 
   override fun setUp() {
     super.setUp()

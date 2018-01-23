@@ -101,7 +101,7 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
   public void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) return;
-    VirtualFile testDir = taskDir.findFileByRelativePath(getTestDir());
+    VirtualFile testDir = TaskExt.findTestDir(task, taskDir);
     if (testDir == null) return;
 
     int nextSubtaskIndex = task.getLastSubtaskIndex() + 1;

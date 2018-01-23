@@ -156,7 +156,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       private void convertToStudentTaskFiles(Task task, VirtualFile taskDir) {
         final HashMap<String, TaskFile> studentTaskFiles = new HashMap<>();
         for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-          VirtualFile answerFile = entry.getValue().findFileInDir(taskDir);
+          VirtualFile answerFile = EduUtils.findTaskFileInDir(entry.getValue(), taskDir);
           if (answerFile == null) {
             continue;
           }

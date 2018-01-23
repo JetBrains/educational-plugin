@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.SystemIndependent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +46,35 @@ public interface EduConfigurator<Settings> {
    */
   default boolean isTestFile(VirtualFile file) {
     return false;
+  }
+
+  /**
+   * Provides directory path where task files should be placed in task folder.
+   * Can be empty.
+   *
+   * For example, task folder is `courseName/lesson1/task1` and `getSourceDir` returns `src`
+   * then any task files should be placed in `courseName/lesson1/task1/src` folder
+   *
+   * @return task files directory path
+   */
+  @SystemIndependent
+  @NotNull
+  default String getSourceDir() {
+    return "";
+  }
+
+  /**
+   * Provides directory path where test files should be placed in task folder.
+   * Can be empty.
+   *
+   * See {@link EduConfigurator#getSourceDir()} javadoc for example.
+   *
+   * @return test files directory path
+   */
+  @SystemIndependent
+  @NotNull
+  default String getTestDir() {
+    return "";
   }
 
   /**

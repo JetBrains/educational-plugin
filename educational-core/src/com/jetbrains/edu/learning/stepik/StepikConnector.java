@@ -651,7 +651,7 @@ public class StepikConnector {
       }
       for (TaskFile taskFile : taskFiles.values()) {
         final String fileName = taskFile.name;
-        final VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
+        final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
         if (virtualFile != null) {
           ApplicationManager.getApplication().runReadAction(() -> {
             final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);

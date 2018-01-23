@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -62,7 +63,7 @@ public class TaskWithSubtasksChecker extends TaskChecker<TaskWithSubtasks> {
     }
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
       TaskFile taskFile = entry.getValue();
-      VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
+      VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
       if (virtualFile == null) {
         continue;
       }

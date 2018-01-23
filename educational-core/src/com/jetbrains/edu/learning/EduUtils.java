@@ -595,6 +595,11 @@ public class EduUtils {
   }
 
   @Nullable
+  public static VirtualFile findTaskFileInDir(@NotNull TaskFile taskFile, @NotNull VirtualFile taskDir) {
+    return taskDir.findFileByRelativePath(taskFile.getPathInTask());
+  }
+
+  @Nullable
   public static VirtualFile findTaskDescriptionVirtualFile(@NotNull Project project, @NotNull VirtualFile taskDir) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
@@ -757,7 +762,7 @@ public class EduUtils {
     for (Map.Entry<String, TaskFile> entry : taskFiles.entrySet()) {
       final TaskFile taskFile = entry.getValue();
       taskDir.refresh(false, true);
-      final VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
+      final VirtualFile virtualFile = findTaskFileInDir(taskFile, taskDir);
       if (virtualFile != null) {
         if (!taskFile.getActivePlaceholders().isEmpty()) {
           activeVirtualFile = virtualFile;
@@ -1039,7 +1044,7 @@ public class EduUtils {
 
   public static void deleteWindowDescriptions(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-      VirtualFile virtualFile = entry.getValue().findFileInDir(taskDir);
+      VirtualFile virtualFile = findTaskFileInDir(entry.getValue(), taskDir);
       if (virtualFile == null) {
         continue;
       }

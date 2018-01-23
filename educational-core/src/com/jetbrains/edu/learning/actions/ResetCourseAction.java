@@ -7,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
@@ -39,7 +40,7 @@ public class ResetCourseAction extends DumbAwareAction {
           if (taskDir == null) continue;
           for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
             TaskFile taskFile = entry.getValue();
-            VirtualFile taskFileVF = taskFile.findFileInDir(taskDir);
+            VirtualFile taskFileVF = EduUtils.findTaskFileInDir(taskFile, taskDir);
             if (taskFileVF != null) {
               Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
               if (document != null) {

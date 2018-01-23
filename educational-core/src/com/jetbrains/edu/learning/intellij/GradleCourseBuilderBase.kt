@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.SubtaskUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks
 import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator
@@ -30,9 +31,6 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   abstract val taskTemplateName: String
   abstract val testTemplateName: String
   abstract val subtaskTestTemplateName: String
-
-  override fun getSourceDir(): String = EduNames.SRC
-  override fun getTestDir(): String = EduNames.TEST
 
   override fun createTaskContent(project: Project, task: Task,
                                  parentDirectory: VirtualFile, course: Course): VirtualFile? {
@@ -50,7 +48,8 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   }
 
   override fun createTestsForNewSubtask(project: Project, task: TaskWithSubtasks) {
-    val testDir = task.getTaskDir(project)?.findFileByRelativePath(testDir) ?: return
+    val taskDir = task.getTaskDir(project) ?: return
+    val testDir = task.findTestDir(taskDir) ?: return
     val prevSubtaskIndex = task.lastSubtaskIndex
     val taskPsiDir = PsiManager.getInstance(project).findDirectory(testDir) ?: return
     val nextSubtaskIndex = prevSubtaskIndex + 1

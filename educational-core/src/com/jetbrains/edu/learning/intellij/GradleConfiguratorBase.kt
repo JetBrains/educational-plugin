@@ -14,6 +14,9 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
     return name in NAMES_TO_EXCLUDE || pathSegments.any { it in FOLDERS_TO_EXCLUDE } || "iml" == FileUtilRt.getExtension(name)
   }
 
+  override fun getSourceDir(): String = EduNames.SRC
+  override fun getTestDir(): String = EduNames.TEST
+
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
       ".idea", "EduTestRunner.java", "gradlew", "gradlew.bat", "local.properties", "gradle.properties",

@@ -11,5 +11,5 @@ val Course.configurator: EduConfigurator<*>? get() {
   return EduConfiguratorManager.forLanguage(language)
 }
 
-val Course.sourceDir: String? get() = configurator?.courseBuilder?.sourceDir
-val Course.testDir: String? get() = configurator?.courseBuilder?.testDir
+val Course.sourceDir: String? get() = configurator?.sourceDir
+val Course.testDir: String? get() = configurator?.testDir
