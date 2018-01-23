@@ -306,7 +306,7 @@ public abstract class Task implements StudyItem {
     VirtualFile taskDir = getTaskDir(project);
     if (taskDir == null) return false;
     for (TaskFile taskFile : getTaskFiles().values()) {
-      VirtualFile file = taskFile.findFileInDir(taskDir);
+      VirtualFile file = EduUtils.findTaskFileInDir(taskFile, taskDir);
       if (file == null) return false;
       try {
         String text = VfsUtilCore.loadText(file);

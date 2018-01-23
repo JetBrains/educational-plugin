@@ -120,14 +120,14 @@ public class GeneratorUtils {
     }
   }
 
-  public static void createChildFile(@NotNull VirtualFile parentDir, @NotNull String name, @NotNull String text) throws IOException {
+  public static void createChildFile(@NotNull VirtualFile parentDir, @NotNull String path, @NotNull String text) throws IOException {
     String newDirectories = null;
-    String fileName = name;
+    String fileName = path;
     VirtualFile dir = parentDir;
-    if (name.contains("/")) {
-      int pos = name.lastIndexOf("/");
-      fileName = name.substring(pos + 1);
-      newDirectories = name.substring(0, pos);
+    if (path.contains("/")) {
+      int pos = path.lastIndexOf("/");
+      fileName = path.substring(pos + 1);
+      newDirectories = path.substring(0, pos);
     }
     if (newDirectories != null) {
       dir = VfsUtil.createDirectoryIfMissing(parentDir, newDirectories);
@@ -137,7 +137,7 @@ public class GeneratorUtils {
       if (virtualTaskFile == null) {
         virtualTaskFile = dir.createChildData(parentDir, fileName);
       }
-      if (EduUtils.isImage(name)) {
+      if (EduUtils.isImage(path)) {
         virtualTaskFile.setBinaryContent(Base64.decodeBase64(text));
       }
       else {

@@ -107,7 +107,7 @@ public class CCFromCourseArchive extends DumbAwareAction {
                                       @NotNull final VirtualFile userFileDir,
                                       @NotNull final Map.Entry<String, TaskFile> taskFileEntry) {
     final TaskFile taskFile = taskFileEntry.getValue();
-    VirtualFile file = taskFile.findFileInDir(userFileDir);
+    VirtualFile file = EduUtils.findTaskFileInDir(taskFile, userFileDir);
     assert file != null;
     final Document document = FileDocumentManager.getInstance().getDocument(file);
     if (document == null) return;

@@ -198,10 +198,10 @@ public class CCUtils {
   /**
    * @param fromIndex -1 if task converted to TaskWithSubtasks, -2 if task converted from TaskWithSubtasks
    */
-  public static void renameFiles(VirtualFile testsDir, Project project, int fromIndex) {
+  public static void renameFiles(VirtualFile taskDir, Project project, int fromIndex) {
     ApplicationManager.getApplication().runWriteAction(() -> {
       Map<VirtualFile, String> newNames = new HashMap<>();
-      VfsUtilCore.visitChildrenRecursively(testsDir, new VirtualFileVisitor<Object>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
+      VfsUtilCore.visitChildrenRecursively(taskDir, new VirtualFileVisitor<Object>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
         @Override
         public boolean visitFile(@NotNull VirtualFile virtualFile) {
             int subtaskIndex = getSubtaskIndex(project, virtualFile);

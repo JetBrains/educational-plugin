@@ -86,7 +86,7 @@ class PySmartChecker {
                                   @NotNull final PyTestRunner testRunner,
                                   @NotNull final TaskFile taskFile,
                                   @NotNull final Project project) {
-    final VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
+    final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
     if (virtualFile == null) {
       return;
     }

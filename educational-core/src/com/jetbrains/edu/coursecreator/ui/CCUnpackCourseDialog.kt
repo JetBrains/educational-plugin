@@ -17,6 +17,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -89,9 +90,8 @@ class CCUnpackCourseDialog(val course: Course) : DialogWrapper(true) {
   private fun createAnswerFile(project: Project,
                                userFileDir: VirtualFile,
                                taskFileEntry: Map.Entry<String, TaskFile>) {
-    val name = taskFileEntry.key
     val taskFile = taskFileEntry.value
-    val file = taskFile.findFileInDir(userFileDir)
+    val file = EduUtils.findTaskFileInDir(taskFile, userFileDir)
     if (file == null) {
       LOG.warn("Failed to find file " + file)
       return

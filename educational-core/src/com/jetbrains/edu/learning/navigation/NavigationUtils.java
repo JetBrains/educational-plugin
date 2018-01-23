@@ -177,7 +177,7 @@ public class NavigationUtils {
       if (taskFile.getActivePlaceholders().isEmpty()) {
         continue;
       }
-      VirtualFile virtualFile = taskFile.findFileInDir(taskDir);
+      VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
       if (virtualFile == null) {
         continue;
       }
