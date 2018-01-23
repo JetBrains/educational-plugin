@@ -47,6 +47,7 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
                                       @NotNull final VirtualFile parentDirectory, @NotNull final Course course) {
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
+      LOG.info("Failed to get configurator for " + course.getLanguageID());
       return null;
     }
     return configurator.getCourseBuilder().createLessonContent(project, item, parentDirectory);
