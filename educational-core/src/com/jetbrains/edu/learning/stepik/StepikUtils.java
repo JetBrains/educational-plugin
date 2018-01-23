@@ -15,13 +15,20 @@
  */
 package com.jetbrains.edu.learning.stepik;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StepikUtils {
+
+  private static final Logger LOG = Logger.getInstance(StepikUtils.class);
+  private static final Pattern PYCHARM_COURSE_TYPE = Pattern.compile(String.format("%s(\\d*) (\\w+)", StepikNames.PYCHARM_PREFIX));
 
   public static String wrapStepikTasks(Task task, @NotNull String text, boolean adaptive) {
     String finalText = text;
@@ -63,11 +70,15 @@ public class StepikUtils {
     return link == null ? null : link + "?adaptive=true";
   }
 
-  public static void setCourseLanguage(RemoteCourse info) {
+  public static void setCourseLanguage(@NotNull RemoteCourse info) {
     String courseType = info.getType();
-    final int separator = courseType.indexOf(" ");
-    assert separator != -1;
-    final String language = courseType.substring(separator + 1);
-    info.setLanguage(language);
+    Matcher matcher = PYCHARM_COURSE_TYPE.matcher(courseType);
+    if (matcher.matches()) {
+      String language = matcher.group(2);
+      info.setLanguage(language);
+    } else {
+      LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
+                             info.getName(), courseType));
+    }
   }
 }
