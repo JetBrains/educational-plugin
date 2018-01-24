@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -398,23 +399,43 @@ public class CCStepikConnector {
 
       final Lesson postedLesson = new Gson().fromJson(responseString, RemoteCourse.class).
           getLessons(true).get(0);
-      for (Integer step : postedLesson.steps) {
-        deleteTask(step, project);
-      }
 
-      for (Task task : lesson.getTaskList()) {
-        final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-        if (indicator != null) {
-          indicator.checkCanceled();
-        }
-        postTask(project, task, lesson.getId());
-      }
+      updateLessonTasks(project, lesson, postedLesson);
       return lesson.getId();
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
     }
     return -1;
+  }
+
+  private static void updateLessonTasks(@NotNull Project project, @NotNull Lesson localLesson, @NotNull Lesson remoteLesson) {
+    final Set<Integer> localTasksIds = localLesson.getTaskList()
+      .stream()
+      .map(task -> task.getStepId())
+      .filter(id -> id > 0)
+      .collect(Collectors.toSet());
+
+    final List<Integer> taskIdsToDelete = remoteLesson.steps.stream()
+      .filter(id -> !localTasksIds.contains(id))
+      .collect(Collectors.toList());
+
+    // Remove all tasks from Stepik which are not in our lessons now
+    for (Integer step : taskIdsToDelete) {
+      deleteTask(step, project);
+    }
+
+    for (Task task : localLesson.getTaskList()) {
+      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+      if (indicator != null) {
+        indicator.checkCanceled();
+      }
+      if (task.getStepId() > 0) {
+        updateTask(project, task);
+      } else {
+        postTask(project, task, localLesson.getId());
+      }
+    }
   }
 
   private static void showErrorNotification(@NotNull Project project, String message, String responseString) {
