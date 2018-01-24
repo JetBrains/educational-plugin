@@ -536,7 +536,8 @@ public class StepikWrappers {
   }
 
   static class ProgressContainer {
-    class Progress {
+    static class Progress {
+      String id;
       boolean isPassed;
     }
 
