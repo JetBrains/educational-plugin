@@ -605,8 +605,12 @@ public class StepikConnector {
   static Boolean[] taskStatuses(String[] progresses) {
     try {
       List<ProgressContainer> progressContainers = multipleRequestToStepik(StepikNames.PROGRESS, progresses, ProgressContainer.class);
-      List<ProgressContainer.Progress> progressList = progressContainers.stream().flatMap(progressContainer -> progressContainer.progresses.stream()).collect(Collectors.toList());
-      return progressList.stream().map(progress -> progress.isPassed).toArray(Boolean[]::new);
+      Map<String, Boolean> progressMap = progressContainers.stream()
+        .flatMap(progressContainer -> progressContainer.progresses.stream())
+        .collect(Collectors.toMap(p -> p.id, p -> p.isPassed));
+      return Arrays.stream(progresses)
+        .map(progressMap::get)
+        .toArray(Boolean[]::new);
     }
     catch (URISyntaxException | IOException e) {
       LOG.warn(e.getMessage());
