@@ -155,12 +155,15 @@ public class StepikWrappers {
   public static class CourseWrapper {
     RemoteCourse course;
 
-    public CourseWrapper(Course course) {
+    public CourseWrapper(@NotNull Course course) {
       this.course = new RemoteCourse();
       this.course.setName(course.getName());
       this.course.setLanguage(course.getLanguageID());
       this.course.setDescription(course.getDescription());
       this.course.setAuthors(course.getAuthors());
+      if (course instanceof RemoteCourse) {
+        this.course.setInstructors(((RemoteCourse)course).getInstructors());
+      }
     }
   }
 
