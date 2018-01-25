@@ -195,6 +195,11 @@ public class StepikTaskBuilder {
     for (StepikWrappers.FileWrapper wrapper : myStep.options.test) {
       task.addTestsTexts(wrapper.name, wrapper.text);
     }
+    if (myStep.options.additionalFiles != null) {
+      for (StepikWrappers.FileWrapper wrapper : myStep.options.additionalFiles) {
+        task.addAdditionalFile(wrapper.name, wrapper.text);
+      }
+    }
     if (myStep.options.text != null) {
       for (StepikWrappers.FileWrapper wrapper : myStep.options.text) {
         task.addTaskText(wrapper.name, wrapper.text);
