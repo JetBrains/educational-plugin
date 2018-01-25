@@ -207,6 +207,9 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
         setTaskText(taskText, taskDir, project);
       }
     }
+    else {
+      setText(EMPTY_TASK_TEXT);
+    }
   }
 
   public void setTaskText(@NotNull String text, @Nullable VirtualFile taskDirectory, @NotNull Project project) {
