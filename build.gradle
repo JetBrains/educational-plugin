@@ -54,6 +54,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven { url 'http://dl.bintray.com/jetbrains/markdown' }
     }
 
     intellij {
@@ -84,6 +85,7 @@ allprojects {
 
     dependencies {
         compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
+        compile "org.jetbrains:markdown:${markdownParserVersion}"
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
     }
 }

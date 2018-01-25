@@ -80,7 +80,7 @@ public class CourseFormatTest {
     assertTrue(task instanceof EduTask);
     EduTask eduTask = (EduTask) task;
 
-    assertEquals("First task description", eduTask.getTaskDescription(false));
+    assertEquals("First task description", eduTask.getTaskDescription(false, null));
   }
 
   @Test

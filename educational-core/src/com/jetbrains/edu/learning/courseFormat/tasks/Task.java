@@ -202,7 +202,7 @@ public abstract class Task implements StudyItem {
   /**
    * @param wrap if true, text will be wrapped with ancillary information (e.g. to display latex)
    */
-  public String getTaskDescription(boolean wrap) {
+  public String getTaskDescription(boolean wrap, @Nullable VirtualFile taskDir) {
     String fileName = getTaskDescriptionName();
     //TODO: replace this with simple get after implementing migration for taskTexts
     Map.Entry<String, String> entry =
@@ -214,15 +214,21 @@ public abstract class Task implements StudyItem {
     if (!wrap) {
       return taskText;
     }
-    taskText = EduUtils.convertToHtml(taskText);
+    if (taskDir != null) {
+      taskText = EduUtils.convertToHtml(taskText, taskDir);
+    }
     if (getLesson().getCourse() instanceof RemoteCourse && taskText != null) {
       taskText = StepikUtils.wrapStepikTasks(this, taskText, getLesson().getCourse().isAdaptive());
     }
-    return EduUtils.convertToHtml(taskText);
+    return taskText;
   }
 
-  public String getTaskDescription() {
-    return getTaskDescription(true);
+  @Nullable
+  public String getTaskDescription(@Nullable VirtualFile taskDir) {
+    if (taskDir == null) {
+      return null;
+    }
+    return getTaskDescription(true, taskDir);
   }
 
   protected String getTaskDescriptionName() {
