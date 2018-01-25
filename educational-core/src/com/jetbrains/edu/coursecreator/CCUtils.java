@@ -250,6 +250,7 @@ public class CCUtils {
 
     final Lesson lesson = new Lesson();
     lesson.setName(name);
+    lesson.setCourse(course);
     final Task task = new EduTask();
     task.setLesson(lesson);
     task.setName(name);

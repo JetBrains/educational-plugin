@@ -50,6 +50,8 @@ public class StepikWrappers {
     @Expose public List<TaskFile> files;
     @Expose public List<FileWrapper> text;
     @Expose public List<List<String>> samples;
+    @SerializedName("additional_files")
+    @Expose public List<FileWrapper> additionalFiles;
     @Expose public Integer executionMemoryLimit;
     @Expose public Integer executionTimeLimit;
     @Expose public Map<String, String> codeTemplates;
@@ -63,6 +65,7 @@ public class StepikWrappers {
       source.lastSubtaskIndex = task instanceof TaskWithSubtasks ? ((TaskWithSubtasks)task).getLastSubtaskIndex() : 0;
       setTests(task, source, project);
       setTaskTexts(task, source);
+      setAdditionalFiles(task, source);
       source.files = new ArrayList<>();
       source.title = task.getName();
       for (final Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
@@ -101,6 +104,13 @@ public class StepikWrappers {
           source.test.add(new FileWrapper(entry.getKey(), entry.getValue()));
         }
       }
+    }
+  }
+
+  private static void setAdditionalFiles(@NotNull Task task, @NotNull StepOptions stepOptions) {
+    stepOptions.additionalFiles = new ArrayList<>();
+    for (Map.Entry<String, String> entry : task.getAdditionalFiles().entrySet()) {
+      stepOptions.additionalFiles.add(new FileWrapper(entry.getKey(), entry.getValue()));
     }
   }
 
