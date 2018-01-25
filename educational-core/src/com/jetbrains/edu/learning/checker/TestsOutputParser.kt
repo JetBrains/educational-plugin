@@ -12,7 +12,7 @@ object TestsOutputParser {
     const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
     const val CONGRATULATIONS = "Congratulations!"
 
-    private val LOG = Logger.getInstance(TestsOutputParser::class.qualifiedName!!)
+    private val LOG = Logger.getInstance(TestsOutputParser.javaClass)
 
     class TestsOutput(val isSuccess: Boolean, val message: String)
 
