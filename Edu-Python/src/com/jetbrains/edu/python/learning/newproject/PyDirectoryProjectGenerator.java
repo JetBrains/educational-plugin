@@ -57,11 +57,11 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
   @Override
   protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir,
                                        @NotNull PyNewProjectSettings settings) {
-    final Course course = GeneratorUtils.initializeCourse(project, myCourse);
-    if (course.isStudy()) {
-      createStudyStructure(project, baseDir, course);
+    GeneratorUtils.initializeCourse(project, myCourse);
+    if (myCourse.isStudy()) {
+      createStudyStructure(project, baseDir, myCourse);
     } else {
-      createCourseCreatorStructure(project, baseDir, course);
+      createCourseCreatorStructure(project, baseDir, myCourse);
     }
   }
 

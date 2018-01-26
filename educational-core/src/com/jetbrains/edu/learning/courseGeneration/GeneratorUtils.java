@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.courseGeneration;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -20,7 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import kotlin.collections.MapsKt;
 import org.apache.commons.codec.binary.Base64;
 import org.jetbrains.annotations.NotNull;
@@ -153,23 +151,17 @@ public class GeneratorUtils {
     }
   }
 
-  @NotNull
-  public static Course initializeCourse(@NotNull Project project, @NotNull Course course) {
-    if (course instanceof RemoteCourse) {
-      course = getCourseFromStepik(project, (RemoteCourse)course);
-    }
+  public static void initializeCourse(@NotNull Project project, @NotNull Course course) {
     course.initCourse(false);
 
     if (course.isAdaptive() && !EduUtils.isCourseValid(course)) {
       Messages.showWarningDialog("There is no recommended tasks for this adaptive course",
           "Error in Course Creation");
-      return course;
     }
     if (updateTaskFilesNeeded(course)) {
       updateJavaCodeTaskFileNames(project, course);
     }
     StudyTaskManager.getInstance(project).setCourse(course);
-    return course;
   }
 
   private static boolean updateTaskFilesNeeded(@NotNull final Course course) {
@@ -186,16 +178,5 @@ public class GeneratorUtils {
         }
       }
     }
-  }
-
-  private static RemoteCourse getCourseFromStepik(@NotNull Project project, RemoteCourse selectedCourse) {
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(false);
-      final RemoteCourse course = StepikConnector.getCourse(project, selectedCourse);
-      if (EduUtils.isCourseValid(course)) {
-        course.initCourse(false);
-      }
-      return course;
-    }, "Creating Course", true, project);
   }
 }
