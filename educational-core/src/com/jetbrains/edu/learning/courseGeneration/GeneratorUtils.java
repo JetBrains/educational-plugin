@@ -80,7 +80,8 @@ public class GeneratorUtils {
       createTaskFile(taskDir, taskFile.getValue());
     }
     createTestFiles(taskDir, task);
-    if (CCUtils.COURSE_MODE.equals(task.getLesson().getCourse().getCourseMode())) {
+    final Course course = TaskExt.getCourse(task);
+    if (course != null && CCUtils.COURSE_MODE.equals(course.getCourseMode())) {
       createDescriptionFiles(taskDir, task);
     }
   }

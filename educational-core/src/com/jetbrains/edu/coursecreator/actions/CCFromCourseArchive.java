@@ -67,7 +67,7 @@ public class CCFromCourseArchive extends DumbAwareAction {
 
   public static void generateFromStudentCourse(Project project, Course course) {
     StudyTaskManager.getInstance(project).setCourse(course);
-    course.setCourseMode(CCUtils.COURSE_MODE);
+    initializeCourse(project, course);
     final VirtualFile baseDir = project.getBaseDir();
     final Application application = ApplicationManager.getApplication();
 
@@ -80,6 +80,12 @@ public class CCFromCourseArchive extends DumbAwareAction {
     }));
     baseDir.refresh(false, true);
 
+    synchronize(project);
+  }
+
+  private static void initializeCourse(@NotNull final Project project, @NotNull Course course) {
+    course.setCourseMode(CCUtils.COURSE_MODE);
+    final Application application = ApplicationManager.getApplication();
     int index = 1;
     int taskIndex = 1;
     for (Lesson lesson : course.getLessons()) {
@@ -100,7 +106,6 @@ public class CCFromCourseArchive extends DumbAwareAction {
       taskIndex = 1;
     }
     course.initCourse(true);
-    synchronize(project);
   }
 
   public static void createAnswerFile(@NotNull final Project project,
