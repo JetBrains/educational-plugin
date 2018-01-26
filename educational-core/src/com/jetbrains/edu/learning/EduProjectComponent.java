@@ -253,14 +253,14 @@ public class EduProjectComponent implements ProjectComponent {
       final VirtualFile baseDir = myProject.getBaseDir();
       final VirtualFile lessonDir = baseDir.findChild(lessonDirName);
       if (lessonDir == null) {
+        lesson.setIndex(lessonIndex);
+        lesson.initLesson(currentCourse, false);
         try {
           GeneratorUtils.createLesson(lesson, baseDir);
         }
         catch (IOException e) {
           LOG.error("Failed to create lesson");
         }
-        lesson.setIndex(lessonIndex);
-        lesson.initLesson(currentCourse, false);
         for (int i = 1; i <= lesson.getTaskList().size(); i++) {
           Task task = lesson.getTaskList().get(i - 1);
           task.setIndex(i);
