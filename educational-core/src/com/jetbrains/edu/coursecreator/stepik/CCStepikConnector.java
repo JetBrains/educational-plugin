@@ -1,9 +1,6 @@
 package com.jetbrains.edu.coursecreator.stepik;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.intellij.lang.Language;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
@@ -17,15 +14,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.*;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepic.serialization.StepikSubmissionAnswerPlaceholderAdapter;
+import com.jetbrains.edu.learning.stepik.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -418,7 +417,8 @@ public class CCStepikConnector {
 
   private static void showErrorNotification(@NotNull Project project, String message, String responseString) {
     final JsonObject details = new JsonParser().parse(responseString).getAsJsonObject();
-    final String detailString = details.get("detail").getAsString();
+    final JsonElement detail = details.get("detail");
+    final String detailString = detail != null ? detail.getAsString() : responseString;
     final Notification notification =
       new Notification("Push.course", message, detailString, NotificationType.ERROR);
     notification.notify(project);
