@@ -60,7 +60,7 @@ public class StepikAdaptiveConnector {
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
   @Nullable
-  public static Task getNextRecommendation(@NotNull Project project, @NotNull RemoteCourse course) {
+  public static Task getNextRecommendation(@Nullable Project project, @NotNull RemoteCourse course) {
     try {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) {
@@ -126,8 +126,10 @@ public class StepikAdaptiveConnector {
     }
     catch (IOException e) {
       LOG.warn(e.getMessage());
-      ApplicationManager.getApplication()
-        .invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project, "Connection problems, Please, try again"));
+      if (project != null) {
+        ApplicationManager.getApplication()
+          .invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project, "Connection problems, Please, try again"));
+      }
     }
     catch (URISyntaxException e) {
       LOG.warn(e.getMessage());
@@ -135,7 +137,7 @@ public class StepikAdaptiveConnector {
     return null;
   }
 
-  private static Task skipRecommendation(@NotNull Project project, @NotNull RemoteCourse course, StepicUser user, String lessonId) {
+  private static Task skipRecommendation(@Nullable Project project, @NotNull RemoteCourse course, StepicUser user, String lessonId) {
     postRecommendationReaction(lessonId, String.valueOf(user.getId()), TOO_HARD_RECOMMENDATION_REACTION);
     return getNextRecommendation(project, course);
   }

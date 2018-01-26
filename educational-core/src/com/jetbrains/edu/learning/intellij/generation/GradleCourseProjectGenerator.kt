@@ -73,15 +73,15 @@ open class GradleCourseProjectGenerator(
   override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: JdkProjectSettings) {
     runWriteAction {
       try {
-        val course = GeneratorUtils.initializeCourse(project, myCourse)
-        if (CCUtils.isCourseCreator(project) && course.getLessons(true).isEmpty()) {
-          val lesson = CCCreateLesson().createAndInitItem(course, null, EduNames.LESSON + 1, 1)
-          course.addLesson(lesson)
-          val task = CCCreateTask().createAndInitItem(course, lesson, EduNames.TASK + 1, 1)
+        GeneratorUtils.initializeCourse(project, myCourse)
+        if (CCUtils.isCourseCreator(project) && myCourse.getLessons(true).isEmpty()) {
+          val lesson = CCCreateLesson().createAndInitItem(myCourse, null, EduNames.LESSON + 1, 1)
+          myCourse.addLesson(lesson)
+          val task = CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1)
           lesson.addTask(task)
           myCourseBuilder.initNewTask(task)
         }
-        GeneratorUtils.createCourse(course, baseDir)
+        GeneratorUtils.createCourse(myCourse, baseDir)
 
         setJdk(project, settings)
       } catch (e: IOException) {

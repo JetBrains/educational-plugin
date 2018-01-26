@@ -349,11 +349,10 @@ public class StepikConnector {
         return remoteCourse;
       }
       catch (IOException e) {
-        LOG.warn("IOException " + e.getMessage());
+        LOG.error(e);
       }
     }
     else {
-      if (project == null) return null;
       final Lesson lesson = new Lesson();
       lesson.setName(EduNames.ADAPTIVE);
       remoteCourse.addLesson(lesson);

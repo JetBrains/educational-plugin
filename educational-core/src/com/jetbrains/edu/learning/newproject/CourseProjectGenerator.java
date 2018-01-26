@@ -45,10 +45,16 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
     if (!(myCourse instanceof RemoteCourse)) return true;
     final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
     if (remoteCourse.getId() > 0) {
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return EduUtils.execCancelable(() -> StepikConnector.enrollToCourse(remoteCourse.getId(),
-                EduSettings.getInstance().getUser()));
+        EduUtils.execCancelable(() -> StepikConnector.enrollToCourse(remoteCourse.getId(), EduSettings.getInstance().getUser()));
+        RemoteCourse loadedCourse = EduUtils.execCancelable(() -> StepikConnector.getCourse(null, remoteCourse));
+        if (loadedCourse != null) {
+          myCourse = loadedCourse;
+          return true;
+        } else {
+          return false;
+        }
       }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
     }
     return true;
