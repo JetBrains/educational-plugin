@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.intellij.generation
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.options.ConfigurationException
@@ -27,6 +28,7 @@ open class GradleCourseProjectGenerator(
 ) : CourseProjectGenerator<JdkProjectSettings>(course) {
 
   override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: JdkProjectSettings) {
+    PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
     runWriteAction {
       try {
         GeneratorUtils.initializeCourse(project, myCourse)
@@ -75,5 +77,8 @@ open class GradleCourseProjectGenerator(
   companion object {
 
     private val LOG = Logger.getInstance(GradleCourseProjectGenerator::class.java)
+    // Unfortunately, org.jetbrains.plugins.gradle.service.project.GradleStartupActivity#SHOW_UNLINKED_GRADLE_POPUP is private
+    // so create own const
+    private const val SHOW_UNLINKED_GRADLE_POPUP = "show.inlinked.gradle.project.popup"
   }
 }
