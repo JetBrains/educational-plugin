@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic.serialization
+package com.jetbrains.edu.learning.stepik.serialization
 
 import com.google.gson.*
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo
@@ -14,7 +14,8 @@ class StepikSubmissionTaskAdapter : JsonSerializer<Task>, JsonDeserializer<Task>
     val gson = GsonBuilder()
       .setPrettyPrinting()
       .excludeFieldsWithoutExposeAnnotation()
-      .registerTypeAdapter(AnswerPlaceholderSubtaskInfo::class.java, StepikSubmissionSubtaskInfoAdapter())
+      .registerTypeAdapter(AnswerPlaceholderSubtaskInfo::class.java,
+                           StepikSubmissionSubtaskInfoAdapter())
       .create()
     val taskObject = SerializationUtils.Json.serializeWithTaskType(src, gson)
 
@@ -29,7 +30,8 @@ class StepikSubmissionTaskAdapter : JsonSerializer<Task>, JsonDeserializer<Task>
   override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Task? {
     val gson = GsonBuilder()
       .setPrettyPrinting()
-      .registerTypeAdapter(AnswerPlaceholderSubtaskInfo::class.java, StepikSubmissionSubtaskInfoAdapter())
+      .registerTypeAdapter(AnswerPlaceholderSubtaskInfo::class.java,
+                           StepikSubmissionSubtaskInfoAdapter())
       .create()
 
     return SerializationUtils.Json.doDeserialize(json, gson)

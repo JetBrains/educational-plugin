@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import com.jetbrains.edu.learning.stepic.StepikTaskBuilder;
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import one.util.streamex.EntryStream;

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic
+package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.EduNames
 
