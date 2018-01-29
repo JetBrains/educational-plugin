@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic;
+package com.jetbrains.edu.learning.stepik;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.GsonBuilder;
@@ -13,9 +13,6 @@ import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

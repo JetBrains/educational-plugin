@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
-import com.jetbrains.edu.learning.stepic.StepikTaskBuilder;
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
 

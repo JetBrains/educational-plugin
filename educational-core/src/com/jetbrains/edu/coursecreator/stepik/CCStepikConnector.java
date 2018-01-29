@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepic.serialization.StepikSubmissionAnswerPlaceholderAdapter;
+import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionAnswerPlaceholderAdapter;
 import com.jetbrains.edu.learning.stepik.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;

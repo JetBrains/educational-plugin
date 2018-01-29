@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepic.serialization
+package com.jetbrains.edu.learning.stepik.serialization
 
 import com.google.gson.*
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
