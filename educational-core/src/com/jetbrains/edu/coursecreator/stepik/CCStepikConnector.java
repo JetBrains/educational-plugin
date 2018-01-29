@@ -287,13 +287,18 @@ public class CCStepikConnector {
         final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
         EntityUtils.consume(responseEntity);
         final StatusLine line = response.getStatusLine();
-        if (line.getStatusCode() != HttpStatus.SC_OK) {
-          final String message = "Failed to update task ";
-          LOG.error(message + responseString);
-          showErrorNotification(project, message, responseString);
-        }
-        else {
-          showNotification(project, "Task updated");
+        switch (line.getStatusCode()) {
+          case HttpStatus.SC_OK:
+            showNotification(project, "Task updated");
+            break;
+          case HttpStatus.SC_NOT_FOUND:
+            // TODO: support case when lesson was removed from Stepik too
+            postTask(project, task, task.getLesson().getId());
+            break;
+          default:
+            final String message = "Failed to update task ";
+            LOG.error(message + responseString);
+            showErrorNotification(project, message, responseString);
         }
       }
       catch (IOException e) {
@@ -389,6 +394,7 @@ public class CCStepikConnector {
       final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
       final StatusLine line = response.getStatusLine();
       EntityUtils.consume(responseEntity);
+      // TODO: support case when lesson was removed from Stepik
       if (line.getStatusCode() != HttpStatus.SC_OK) {
         final String message = "Failed to update lesson ";
         LOG.error(message + responseString);
