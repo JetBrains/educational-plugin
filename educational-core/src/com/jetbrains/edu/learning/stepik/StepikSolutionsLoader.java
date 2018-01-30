@@ -24,10 +24,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.SubtaskUtils;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -354,7 +351,7 @@ public class StepikSolutionsLoader implements Disposable{
     if (task instanceof TaskWithSubtasks && updatedTask.task instanceof TaskWithSubtasks) {
       ((TaskWithSubtasks)task).setActiveSubtaskIndex(((TaskWithSubtasks)updatedTask.task).getActiveSubtaskIndex());
     }
-    task.setStatus(updatedTask.task.getStatus());
+    task.setStatus(checkStatus(updatedTask.task, isSolved));
 
     Map<String, String> taskFileToText = new HashMap<>();
     for (StepikWrappers.SolutionFile file : reply.solution) {
