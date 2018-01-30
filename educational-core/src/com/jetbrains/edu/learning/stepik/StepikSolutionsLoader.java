@@ -24,7 +24,10 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.SubtaskUtils;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -151,9 +154,7 @@ public class StepikSolutionsLoader implements Disposable{
       countDownLatch.await();
       ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
         EduUtils.synchronize();
-        if (mySelectedTask instanceof TaskWithSubtasks) {
-          showActiveSubtask();
-        }
+        SubtaskUtils.updateUI(myProject, mySelectedTask, mySelectedTask.getTaskDir(myProject), true);
       }));
       myBusConnection.disconnect();
     }
@@ -293,7 +294,7 @@ public class StepikSolutionsLoader implements Disposable{
     return false;
   }
 
-  private static void loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
+  private void loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     try {
       Map<String, String> solutionText = loadSolution(task, isSolved);
       if (solutionText.isEmpty()) return;
@@ -414,12 +415,17 @@ public class StepikSolutionsLoader implements Disposable{
     return solution;
   }
 
-  private static void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionText) {
+  private void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionText) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       return;
     }
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+      // we can switch subtask before we load document change, because otherwise placeholder text is inserted twice.
+      // see com.jetbrains.edu.learning.SubtaskUtils.updatePlaceholderTexts()
+      if (task instanceof TaskWithSubtasks && task.equals(mySelectedTask)) {
+        showActiveSubtask();
+      }
       for (TaskFile taskFile : task.getTaskFiles().values()) {
         VirtualFile vFile = taskDir.findFileByRelativePath(taskFile.name);
         if (vFile != null) {
