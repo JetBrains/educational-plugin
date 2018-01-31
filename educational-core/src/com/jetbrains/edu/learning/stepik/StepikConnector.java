@@ -115,10 +115,12 @@ public class StepikConnector {
     final List<Integer> inProgressCourses = getInProgressCourses();
     for (Integer courseId : inProgressCourses) {
       try {
-        final RemoteCourse remoteCourse = getCourseFromStepik(user, courseId, false);
-        if (remoteCourse != null) {
-          remoteCourse.setVisibility(CourseVisibility.InProgressVisibility.INSTANCE);
-          result.add(remoteCourse);
+        final RemoteCourse info = getCourseFromStepik(user, courseId, false);
+        if (info != null) {
+          info.setVisibility(CourseVisibility.InProgressVisibility.INSTANCE);
+          setCourseAuthors(info);
+
+          result.add(info);
         }
       }
       catch (IOException e) {
@@ -236,13 +238,7 @@ public class StepikConnector {
       if (!info.isAdaptive() && StringUtil.isEmptyOrSpaces(info.getType())) continue;
 
       if (canBeOpened(info)) {
-        final ArrayList<StepicUser> authors = new ArrayList<>();
-        for (Integer instructor : info.getInstructors()) {
-          final StepicUser author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
-                                                               AuthorWrapper.class).users.get(0);
-          authors.add(author);
-        }
-        info.setAuthors(authors);
+        setCourseAuthors(info);
 
         if (info.isAdaptive()) {
           info.setDescription("This is a Stepik Adaptive course.\n\n" + info.getDescription() + ADAPTIVE_NOTE);
@@ -254,6 +250,16 @@ public class StepikConnector {
         result.add(info);
       }
     }
+  }
+
+  private static void setCourseAuthors(@NotNull final RemoteCourse info) throws IOException {
+    final ArrayList<StepicUser> authors = new ArrayList<>();
+    for (Integer instructor : info.getInstructors()) {
+      final StepicUser author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
+                                                           AuthorWrapper.class).users.get(0);
+      authors.add(author);
+    }
+    info.setAuthors(authors);
   }
 
   private static CourseVisibility getVisibility(@NotNull RemoteCourse course, @NotNull List<Integer> featuredCourses) {
