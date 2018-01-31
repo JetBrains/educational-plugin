@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.newproject;
 
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.jetbrains.edu.learning.EduConfigurator;
@@ -13,7 +13,7 @@ import icons.EducationalCoreIcons;
 
 import java.util.List;
 
-public class BrowseCoursesAction extends AnAction {
+public class BrowseCoursesAction extends DumbAwareAction {
   public BrowseCoursesAction() {
     super("Browse Courses", "Browse list of available courses", EducationalCoreIcons.Course);
   }
