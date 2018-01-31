@@ -154,7 +154,9 @@ public class StepikSolutionsLoader implements Disposable{
       countDownLatch.await();
       ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
         EduUtils.synchronize();
-        SubtaskUtils.updateUI(myProject, mySelectedTask, mySelectedTask.getTaskDir(myProject), true);
+        if (mySelectedTask != null) {
+          SubtaskUtils.updateUI(myProject, mySelectedTask, mySelectedTask.getTaskDir(myProject), true);
+        }
       }));
       myBusConnection.disconnect();
     }
