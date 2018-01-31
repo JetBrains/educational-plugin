@@ -2,3 +2,4 @@
 5801 # Java Practice Types
 5803 # Java Practice Statements
 5804 # Java Practice Arrays
+5806 # Java Practice Classes
