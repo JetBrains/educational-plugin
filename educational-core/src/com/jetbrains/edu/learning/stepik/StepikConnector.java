@@ -71,6 +71,7 @@ public class StepikConnector {
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
   private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
+  private static final String IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/in_progress_courses.txt";
   public static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
 
   private StepikConnector() {
@@ -106,7 +107,24 @@ public class StepikConnector {
     catch (IOException e) {
       LOG.warn("Cannot load course list " + e.getMessage());
     }
+    addInProgressCourses(user, result);
     return result;
+  }
+
+  private static void addInProgressCourses(@Nullable StepicUser user, List<Course> result) {
+    final List<Integer> inProgressCourses = getInProgressCourses();
+    for (Integer courseId : inProgressCourses) {
+      try {
+        final RemoteCourse remoteCourse = getCourseFromStepik(user, courseId, false);
+        if (remoteCourse != null) {
+          remoteCourse.setVisibility(CourseVisibility.InProgressVisibility.INSTANCE);
+          result.add(remoteCourse);
+        }
+      }
+      catch (IOException e) {
+        LOG.warn("Cannot load course " + courseId + "  " + e.getMessage());
+      }
+    }
   }
 
   public static Date getCourseUpdateDate(final int courseId) {
@@ -871,18 +889,26 @@ public class StepikConnector {
 
   @NotNull
   public static List<Integer> getFeaturedCourses() {
+    return getCoursesIds(PROMOTED_COURSES_LINK);
+  }
+
+  private static List<Integer> getCoursesIds(@NotNull final String link) {
     try {
-      final URL url = new URL(PROMOTED_COURSES_LINK);
+      final URL url = new URL(link);
       URLConnection conn = url.openConnection();
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
         return reader.lines().map(s -> Integer.valueOf(s.split("#")[0].trim())).collect(Collectors.toList());
       }
     } catch (IOException e) {
-      LOG.warn("Failed to get promoted courses");
+      LOG.warn("Failed to get courses from " + link);
     }
     return Lists.newArrayList();
   }
 
+  @NotNull
+  public static List<Integer> getInProgressCourses() {
+    return getCoursesIds(IN_PROGRESS_COURSES_LINK);
+  }
 
   private static class CustomServerAuthorizer {
     private static final int DEFAULT_AUTH_SERVER_PORT = 36656;

@@ -39,7 +39,7 @@ public class EduIntellijUtils {
       PsiClassOwner fileFromText = (PsiClassOwner) file;
       PsiClass[] classes = fileFromText.getClasses();
       for (PsiClass aClass : classes) {
-        boolean isPublic = aClass.hasModifierProperty(PsiModifier.PUBLIC);
+        boolean isPublic = aClass.hasModifierProperty(PsiModifier.PUBLIC) || fileName.equals(aClass.getName());
         if (isPublic && aClass.getName() != null) {
           fileName = aClass.getName();
           break;
