@@ -18,6 +18,8 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
@@ -176,7 +178,12 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
         VfsUtil.markDirtyAndRefresh(false, true, true, VfsUtil.findFileByIoFile(myTestDir, true))
 
-        createEduProject()
+        val prevDialog = Messages.setTestDialog(TestDialog.NO)
+        try {
+            createEduProject()
+        } finally {
+          Messages.setTestDialog(prevDialog)
+        }
 
         InjectedLanguageManagerImpl.pushInjectors(myProject)
 

@@ -44,7 +44,10 @@ open class GradleCourseProjectGenerator(
     // because it is much slower and prevents showing project content at the beginning
     project.modifyModules {
       for (module in modules) {
-        renameModule(module, sanitizeName(module.name))
+        val sanitizedName = sanitizeName(module.name)
+        if (sanitizedName != module.name) {
+          renameModule(module, sanitizedName)
+        }
       }
     }
 
