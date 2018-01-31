@@ -11,6 +11,6 @@
 5803 # Java Practice Statements
 5804 # Java Practice Arrays
 5806 # Java Practice Classes
-4803 # Java Practice Collections
+5807 # Java Practice Collections
 4804 # Java Practice Functional
 4805 # Java Practice Streams
