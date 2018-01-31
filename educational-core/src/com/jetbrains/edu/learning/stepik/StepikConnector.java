@@ -117,7 +117,7 @@ public class StepikConnector {
       try {
         final RemoteCourse info = getCourseFromStepik(user, courseId, false);
         if (info != null) {
-          info.setVisibility(CourseVisibility.InProgressVisibility.INSTANCE);
+          info.setVisibility(new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId())));
           setCourseAuthors(info);
 
           result.add(info);

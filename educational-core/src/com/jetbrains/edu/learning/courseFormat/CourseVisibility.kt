@@ -42,7 +42,7 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
     override fun getDecoratedLogo(icon: Icon?) = icon
   }
 
-  object InProgressVisibility : CourseVisibility(2) {
+  class InProgressVisibility(internal val inGroup: Int) : CourseVisibility(2) {
     override val tooltipText: String? = null
 
     override fun getDecoratedLogo(icon: Icon?) = icon
@@ -54,6 +54,9 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
       return Integer.compare(weight, other.weight)
     }
     if (this is FeaturedVisibility && other is FeaturedVisibility) {
+      return Integer.compare(inGroup, other.inGroup)
+    }
+    if (this is InProgressVisibility && other is InProgressVisibility) {
       return Integer.compare(inGroup, other.inGroup)
     }
     return 0
