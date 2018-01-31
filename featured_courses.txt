@@ -9,7 +9,7 @@
 5559 # Java Practice Intro
 5801 # Java Practice Types
 5803 # Java Practice Statements
-4801 # Java Practice Arrays
+5804 # Java Practice Arrays
 4802 # Java Practice Classes
 4803 # Java Practice Collections
 4804 # Java Practice Functional
