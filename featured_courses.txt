@@ -7,7 +7,7 @@
 3212 # Django Tutorial
 2057 # Python. Functional Programming
 5559 # Java Practice Intro
-4799 # Java Practice Types
+5801 # Java Practice Types
 4800 # Java Practice Statements
 4801 # Java Practice Arrays
 4802 # Java Practice Classes
