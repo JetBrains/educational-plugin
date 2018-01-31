@@ -42,7 +42,7 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
     override fun getDecoratedLogo(icon: Icon?) = icon
   }
 
-  object InProgressVisibility : CourseVisibility(1) {
+  object InProgressVisibility : CourseVisibility(2) {
     override val tooltipText: String? = null
 
     override fun getDecoratedLogo(icon: Icon?) = icon
