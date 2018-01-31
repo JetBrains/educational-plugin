@@ -37,7 +37,13 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
   }
 
   class FeaturedVisibility(internal val inGroup: Int) : CourseVisibility(1) {
-    override val tooltipText = null
+    override val tooltipText: String? = null
+
+    override fun getDecoratedLogo(icon: Icon?) = icon
+  }
+
+  object InProgressVisibility : CourseVisibility(1) {
+    override val tooltipText: String? = null
 
     override fun getDecoratedLogo(icon: Icon?) = icon
   }

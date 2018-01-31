@@ -61,6 +61,9 @@ public class RemoteCourse extends Course {
     if (getVisibility() instanceof CourseVisibility.FeaturedVisibility) {
       tags.add(new FeaturedTag());
     }
+    if (getVisibility() instanceof CourseVisibility.InProgressVisibility) {
+      tags.add(new InProgressTag());
+    }
     return tags;
   }
 
@@ -128,8 +131,14 @@ public class RemoteCourse extends Course {
 
   private void updateType(String language) {
     final int separator = myType.indexOf(" ");
-    assert separator != -1;
-    final String version = myType.substring(StepikNames.PYCHARM_PREFIX.length(), separator);
+    final String version;
+    if (separator == -1) {
+      version = String.valueOf(StepikConnector.CURRENT_VERSION);
+    }
+    else {
+      version = myType.substring(StepikNames.PYCHARM_PREFIX.length(), separator);
+    }
+
     myType = String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, version, language);
   }
 

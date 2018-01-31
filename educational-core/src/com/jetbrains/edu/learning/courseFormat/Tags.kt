@@ -59,3 +59,5 @@ class ProgrammingLanguageTag(language: Language) :
 class HumanLanguageTag(languageName: String): Tag(languageName, searchOption = "language")
 
 class FeaturedTag: Tag("Featured", Color(151, 118, 169))
+
+class InProgressTag: Tag("In Progress", Color(255,255,224))
