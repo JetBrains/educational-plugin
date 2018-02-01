@@ -215,7 +215,9 @@ public abstract class Task implements StudyItem {
       return taskText;
     }
     if (taskDir != null) {
-      taskText = EduUtils.convertToHtml(taskText, taskDir);
+      StringBuffer text = new StringBuffer(taskText);
+      EduUtils.replaceActionIDsWithShortcuts(text);
+      taskText = EduUtils.convertToHtml(text.toString(), taskDir);
     }
     if (getLesson().getCourse() instanceof RemoteCourse && taskText != null) {
       taskText = StepikUtils.wrapStepikTasks(this, taskText, getLesson().getCourse().isAdaptive());
