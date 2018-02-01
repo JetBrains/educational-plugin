@@ -1,5 +1,6 @@
 package com.jetbrains.edu.java;
 
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduCourseBuilder;
@@ -15,6 +16,7 @@ public class JConfigurator extends GradleConfiguratorBase {
   public static final String TEST_JAVA = "Test.java";
   public static final String TASK_JAVA = "Task.java";
   public static final String SUBTASK_TEST_JAVA = "Subtask_Test.java";
+  public static final String MOCK_JAVA = "Mock.java";
 
   private final JCourseBuilder myCourseBuilder = new JCourseBuilder();
 
@@ -45,5 +47,10 @@ public class JConfigurator extends GradleConfiguratorBase {
   @Override
   public TaskCheckerProvider getTaskCheckerProvider() {
     return new JTaskCheckerProvider();
+  }
+
+  @Override
+  public String getMockTemplate() {
+    return FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_JAVA).getText();
   }
 }

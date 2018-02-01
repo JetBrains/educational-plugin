@@ -241,7 +241,12 @@ public class StepikTaskBuilder {
     }
   }
 
-  private static void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
+  private void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
+    final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
+    if (configurator != null) {
+      editorText += "\n" + configurator.getMockTemplate();
+    }
+
     final TaskFile taskFile = new TaskFile();
     taskFile.text = editorText;
     taskFile.name = taskFileName;
