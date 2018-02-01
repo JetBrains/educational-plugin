@@ -56,6 +56,8 @@ public class StepikAdaptiveConnector {
   public static final String LOADING_NEXT_RECOMMENDATION = "Loading Next Recommendation";
   private static final Logger LOG = Logger.getInstance(StepikAdaptiveConnector.class);
   private static final int CONNECTION_TIMEOUT = 60 * 1000;
+  // Stepik uses some code complexity measure, but we agreed that it's not obvious measure and should be improved
+  private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
   @Nullable
   public static Task getNextRecommendation(@NotNull Project project, @NotNull RemoteCourse course) {
@@ -436,7 +438,11 @@ public class StepikAdaptiveConnector {
           final String status = wrapper.submissions[0].status;
           final String hint = wrapper.submissions[0].hint;
           final boolean isSolved = !status.equals("wrong");
-          return new CheckResult(isSolved ? CheckStatus.Solved : CheckStatus.Failed, hint.isEmpty() ? StringUtil.capitalize(status) + " solution" : hint);
+          String message = hint;
+          if (message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
+            message = StringUtil.capitalize(status) + " solution";
+          }
+          return new CheckResult(isSolved ? CheckStatus.Solved : CheckStatus.Failed, message);
         }
         else {
           LOG.warn("Got a submission wrapper with incorrect submissions number: " + wrapper.submissions.length);
