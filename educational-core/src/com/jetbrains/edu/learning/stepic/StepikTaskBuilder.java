@@ -124,12 +124,18 @@ public class StepikTaskBuilder {
       }
     }
     else {
-      final String templateForTask = getCodeTemplateForTask(myLanguage, myStep.options.codeTemplates);
-      String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
-      String text = templateForTask == null ? (commentPrefix + " write your answer here \n") : templateForTask;
+      String editorText = getCodeTemplateForTask(myLanguage, myStep.options.codeTemplates);
+      if (editorText == null) {
+        String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
+        editorText = commentPrefix + " write your answer here \n\n";
+        final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
+        if (configurator != null) {
+          editorText += "\n" + configurator.getMockTemplate();
+        }
+      }
       String taskFileName = getTaskFileName(myLanguage);
       if (taskFileName != null) {
-        createMockTaskFile(task, text, taskFileName);
+        createMockTaskFile(task, editorText, taskFileName);
       }
     }
     return task;
@@ -156,7 +162,12 @@ public class StepikTaskBuilder {
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
     String taskFileName = getTaskFileName(myLanguage);
     if (taskFileName != null) {
-      createMockTaskFile(task, commentPrefix + " you can experiment here, it won't be checked\n", taskFileName);
+      String editorText = commentPrefix + " you can experiment here, it won't be checked\n";
+      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
+      if (configurator != null) {
+        editorText += "\n" + configurator.getMockTemplate();
+      }
+      createMockTaskFile(task, editorText, taskFileName);
     }
 
     return task;
@@ -172,7 +183,12 @@ public class StepikTaskBuilder {
     String taskFileName = getTaskFileName(myLanguage);
 
     if (taskFileName != null) {
-      createMockTaskFile(task, commentPrefix + " this is a theory task. You can use this editor as a playground\n", taskFileName);
+      String editorText = commentPrefix + " this is a theory task. You can use this editor as a playground\n";
+      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
+      if (configurator != null) {
+        editorText += "\n" + configurator.getMockTemplate();
+      }
+      createMockTaskFile(task, editorText, taskFileName);
     }
     return task;
   }
@@ -241,12 +257,7 @@ public class StepikTaskBuilder {
     }
   }
 
-  private void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
-    final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
-    if (configurator != null) {
-      editorText += "\n" + configurator.getMockTemplate();
-    }
-
+  private static void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
     final TaskFile taskFile = new TaskFile();
     taskFile.text = editorText;
     taskFile.name = taskFileName;
