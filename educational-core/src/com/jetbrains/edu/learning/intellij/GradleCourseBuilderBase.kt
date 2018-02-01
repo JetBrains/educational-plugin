@@ -70,7 +70,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   override fun getLanguageSettings(): EduCourseBuilder.LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
 
-  open fun initNewTask(task: Task) {
+  override fun initNewTask(task: Task) {
     val taskFile = TaskFile()
     taskFile.task = task
     taskFile.name = taskTemplateName

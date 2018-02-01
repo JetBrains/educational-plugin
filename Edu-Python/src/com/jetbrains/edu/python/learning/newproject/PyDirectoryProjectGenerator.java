@@ -4,11 +4,8 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -18,20 +15,13 @@ import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.python.learning.PyConfigurator;
+import com.jetbrains.edu.python.learning.PyCourseBuilder;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -48,66 +38,16 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
   private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
   private static final String NO_PYTHON_INTERPRETER = "<html><u>Add</u> python interpreter.</html>";
 
-  public PyDirectoryProjectGenerator(@NotNull Course course) {
-    super(course);
+  public PyDirectoryProjectGenerator(@NotNull PyCourseBuilder builder, @NotNull Course course) {
+    super(builder, course);
   }
 
   @Override
-  protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir,
-                                       @NotNull PyNewProjectSettings settings) {
-    GeneratorUtils.initializeCourse(project, myCourse);
-    if (myCourse.isStudy()) {
-      createStudyStructure(project, baseDir, myCourse);
-    } else {
-      createCourseCreatorStructure(project, baseDir, myCourse);
-    }
-  }
-
-  public static void createStudyStructure(@NotNull final Project project, @NotNull final VirtualFile baseDir,
-                                          @NotNull final Course course) {
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      GeneratorUtils.createCourse(course, baseDir);
-      EduUtils.openFirstTask(course, project);
-      EduUsagesCollector.projectTypeCreated(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
-
-      if (course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
-        StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
-        stepikSolutionsLoader.loadSolutions(ProgressIndicatorProvider.getGlobalProgressIndicator(), course);
-        EduUsagesCollector.progressOnGenerateCourse();
-        PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
-      }
-      createTestHelper(project, baseDir);
-    });
-  }
-
-  private static void createCourseCreatorStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Course course) {
-    StudyTaskManager.getInstance(project).setCourse(course);
-
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      createTestHelper(project, baseDir);
-      if (course.getLessons(true).isEmpty()) {
-        VirtualFile lessonDir = new CCCreateLesson().createItem(project, baseDir, course, false);
-        if (lessonDir == null) {
-          LOG.error("Failed to create lesson");
-          return;
-        }
-        new CCCreateTask().createItem(project, lessonDir, course, false);
-      } else {
-        GeneratorUtils.createCourse(course, baseDir);
-      }
-    });
-  }
-
-  private static void createTestHelper(@NotNull Project project, @NotNull VirtualFile baseDir) {
+  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
     final String testHelper = EduNames.TEST_HELPER;
     if (baseDir.findChild(testHelper) != null) return;
     final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
-    try {
-      GeneratorUtils.createChildFile(baseDir, testHelper, template.getText());
-    }
-    catch (IOException exception) {
-      LOG.error("Can't copy test_helper.py " + exception.getMessage());
-    }
+    GeneratorUtils.createChildFile(baseDir, testHelper, template.getText());
   }
 
   @NotNull

@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 
-internal class PyDirectoryProjectGenerator(course: Course) : PyDirectoryProjectGenerator(course) {
+internal class PyDirectoryProjectGenerator(builder: PyCourseBuilder, course: Course) : PyDirectoryProjectGenerator(builder, course) {
   override fun addSdk(project: Project, sdk: Sdk) {
     val model = PyConfigurableInterpreterList.getInstance(project).model
     model.addSdk(sdk)
