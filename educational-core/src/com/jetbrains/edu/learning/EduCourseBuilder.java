@@ -59,6 +59,8 @@ public interface EduCourseBuilder<Settings> {
                                 @NotNull final VirtualFile parentDirectory,
                                 @NotNull final Course course);
 
+  default void initNewTask(@NotNull final Task task) {}
+
   default void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
   }
 

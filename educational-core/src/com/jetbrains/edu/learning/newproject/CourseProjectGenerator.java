@@ -16,28 +16,47 @@
 package com.jetbrains.edu.learning.newproject;
 
 import com.intellij.facet.ui.ValidationResult;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
+import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.io.IOException;
 
 public abstract class CourseProjectGenerator<S> implements DirectoryProjectGenerator<S> {
+
+  private static final Logger LOG = Logger.getInstance(CourseProjectGenerator.class);
+
+  protected static final String GENERATE_COURSE_STRUCTURE = "Generate Course Structure";
+
+  @NotNull protected final EduCourseBuilder<S> myCourseBuilder;
   @NotNull protected Course myCourse;
 
-  public CourseProjectGenerator(@NotNull final Course course) {
+  public CourseProjectGenerator(@NotNull EduCourseBuilder<S> builder, @NotNull final Course course) {
+    myCourseBuilder = builder;
     myCourse = course;
   }
 
@@ -47,8 +66,8 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
     if (remoteCourse.getId() > 0) {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        EduUtils.execCancelable(() -> StepikConnector.enrollToCourse(remoteCourse.getId(), EduSettings.getInstance().getUser()));
-        RemoteCourse loadedCourse = EduUtils.execCancelable(() -> StepikConnector.getCourse(null, remoteCourse));
+        StepikConnector.enrollToCourse(remoteCourse.getId(), EduSettings.getInstance().getUser());
+        RemoteCourse loadedCourse = StepikConnector.getCourse(null, remoteCourse);
         if (loadedCourse != null) {
           myCourse = loadedCourse;
           return true;
@@ -115,7 +134,53 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
    * @param baseDir base directory of project
    * @param settings project settings
    */
-  abstract protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull S settings);
+  protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull S settings) {
+    GeneratorUtils.initializeCourse(project, myCourse);
+
+    if (CCUtils.isCourseCreator(project) && myCourse.getLessons(true).isEmpty()) {
+      final Lesson lesson = new CCCreateLesson().createAndInitItem(myCourse, null, EduNames.LESSON + 1, 1);
+      myCourse.addLesson(lesson);
+      final Task task = new CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1);
+      lesson.addTask(task);
+      myCourseBuilder.initNewTask(task);
+    }
+
+    try {
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        GeneratorUtils.createCourse(myCourse, baseDir);
+        createAdditionalFiles(project, baseDir);
+        EduUsagesCollector.projectTypeCreated(courseTypeId(myCourse));
+        loadSolutions(project, myCourse);
+        return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
+      }, GENERATE_COURSE_STRUCTURE, false, project);
+    } catch (IOException e) {
+      LOG.error("Failed to generate course", e);
+      return;
+    }
+
+    StudyTaskManager.getInstance(project).setCourse(myCourse);
+    EduUtils.openFirstTask(myCourse, project);
+  }
+
+  protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
+    if (course.isStudy() && course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
+      StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
+      stepikSolutionsLoader.loadSolutions(ProgressIndicatorProvider.getGlobalProgressIndicator(), course);
+      EduUsagesCollector.progressOnGenerateCourse();
+      PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
+    }
+  }
+
+  /**
+   * Creates additional files that are not in course object
+   *
+   * @param project course project
+   * @param baseDir base directory of project
+   *
+   * @throws IOException
+   */
+  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {}
 
   @Nls
   @NotNull
@@ -134,5 +199,14 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
   @Override
   public ValidationResult validate(@NotNull String baseDirPath) {
     return ValidationResult.OK;
+  }
+
+  @NotNull
+  private static String courseTypeId(@NotNull Course course) {
+    if (course.isStudy()) {
+      return course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY;
+    } else {
+      return CCUtils.COURSE_MODE;
+    }
   }
 }

@@ -12,21 +12,15 @@ import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Consumer
-import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
-import java.io.IOException
 
 open class GradleCourseProjectGenerator(
-  private val myCourseBuilder: GradleCourseBuilderBase,
+  builder: GradleCourseBuilderBase,
   course: Course
-) : CourseProjectGenerator<JdkProjectSettings>(course) {
+) : CourseProjectGenerator<JdkProjectSettings>(builder, course) {
 
   override fun createCourseStructure(project: Project, baseDir: VirtualFile, settings: JdkProjectSettings) {
     // Hack!
@@ -52,25 +46,16 @@ open class GradleCourseProjectGenerator(
     }
 
     PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, false, true)
+    super.createCourseStructure(project, baseDir, settings)
+  }
 
-    runWriteAction {
-      try {
-        GeneratorUtils.initializeCourse(project, myCourse)
-        if (CCUtils.isCourseCreator(project) && myCourse.getLessons(true).isEmpty()) {
-          val lesson = CCCreateLesson().createAndInitItem(myCourse, null, EduNames.LESSON + 1, 1)
-          myCourse.addLesson(lesson)
-          val task = CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1)
-          lesson.addTask(task)
-          myCourseBuilder.initNewTask(task)
-        }
-        EduGradleModuleGenerator.createProjectGradleFiles(project.basePath!!, project.name, myCourseBuilder.buildGradleTemplateName)
-        GeneratorUtils.createCourse(myCourse, baseDir)
+  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
+    setJdk(project, projectSettings)
+  }
 
-        setJdk(project, settings)
-      } catch (e: IOException) {
-        LOG.error("Failed to generate course", e)
-      }
-    }
+  override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
+    EduGradleModuleGenerator.createProjectGradleFiles(baseDir.path, project.name,
+                                                      (myCourseBuilder as GradleCourseBuilderBase).buildGradleTemplateName)
   }
 
   private fun setJdk(project: Project, settings: JdkProjectSettings) {

@@ -138,6 +138,16 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
   @Nullable
   @Override
   public CourseProjectGenerator<PyNewProjectSettings> getCourseProjectGenerator(@NotNull Course course) {
-    return new PyDirectoryProjectGenerator(course);
+    return new PyDirectoryProjectGenerator(this, course);
+  }
+
+  @Override
+  public void initNewTask(@NotNull Task task) {
+    TaskFile taskFile = new TaskFile();
+    taskFile.setTask(task);
+    taskFile.name = TASK_PY;
+    taskFile.text = EduUtils.getTextFromInternalTemplate(TASK_PY);
+    task.addTaskFile(taskFile);
+    task.getTestsText().put(TESTS_PY, EduUtils.getTextFromInternalTemplate(TESTS_PY));
   }
 }

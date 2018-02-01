@@ -1,11 +1,15 @@
 package com.jetbrains.edu.learning.courseGeneration;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ThrowableRunnable;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduNames;
@@ -27,25 +31,21 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GeneratorUtils {
   private static final Logger LOG = Logger.getInstance(GeneratorUtils.class.getName());
 
   private GeneratorUtils() {}
 
-  public static void createCourse(@NotNull final Course course, @NotNull final VirtualFile baseDir) {
-    try {
-      final List<Lesson> lessons = course.getLessons(true);
-      for (int i = 1; i <= lessons.size(); i++) {
-        Lesson lesson = lessons.get(i - 1);
-        lesson.setIndex(i);
-        createLesson(lesson, baseDir);
-      }
-      course.removeAdditionalLesson();
+  public static void createCourse(@NotNull final Course course, @NotNull final VirtualFile baseDir) throws IOException {
+    final List<Lesson> lessons = course.getLessons(true);
+    for (int i = 1; i <= lessons.size(); i++) {
+      Lesson lesson = lessons.get(i - 1);
+      lesson.setIndex(i);
+      createLesson(lesson, baseDir);
     }
-    catch (IOException e) {
-      LOG.error(e);
-    }
+    course.removeAdditionalLesson();
   }
 
   public static void createLesson(@NotNull final Lesson lesson, @NotNull final VirtualFile courseDir) throws IOException {
@@ -54,7 +54,7 @@ public class GeneratorUtils {
     }
     else {
       String lessonDirName = EduNames.LESSON + Integer.toString(lesson.getIndex());
-      VirtualFile lessonDir = VfsUtil.createDirectoryIfMissing(courseDir, lessonDirName);
+      VirtualFile lessonDir = runInWriteActionAndWait(() -> VfsUtil.createDirectoryIfMissing(courseDir, lessonDirName));
       final List<Task> taskList = lesson.getTaskList();
       for (int i = 1; i <= taskList.size(); i++) {
         Task task = taskList.get(i - 1);
@@ -66,7 +66,7 @@ public class GeneratorUtils {
 
   public static void createTask(@NotNull final Task task, @NotNull final VirtualFile lessonDir) throws IOException {
     String name = EduNames.TASK + Integer.toString(task.getIndex());
-    VirtualFile taskDir = VfsUtil.createDirectoryIfMissing(lessonDir, name);
+    VirtualFile taskDir = runInWriteActionAndWait(() -> VfsUtil.createDirectoryIfMissing(lessonDir, name));
     createTaskContent(task, taskDir);
   }
 
@@ -126,28 +126,55 @@ public class GeneratorUtils {
   }
 
   public static void createChildFile(@NotNull VirtualFile parentDir, @NotNull String path, @NotNull String text) throws IOException {
-    String newDirectories = null;
-    String fileName = path;
-    VirtualFile dir = parentDir;
-    if (path.contains("/")) {
-      int pos = path.lastIndexOf("/");
-      fileName = path.substring(pos + 1);
-      newDirectories = path.substring(0, pos);
-    }
-    if (newDirectories != null) {
-      dir = VfsUtil.createDirectoryIfMissing(parentDir, newDirectories);
-    }
-    if (dir != null) {
-      VirtualFile virtualTaskFile = dir.findChild(fileName);
-      if (virtualTaskFile == null) {
-        virtualTaskFile = dir.createChildData(parentDir, fileName);
+    runInWriteActionAndWait(() -> {
+      String newDirectories = null;
+      String fileName = path;
+      VirtualFile dir = parentDir;
+      if (path.contains("/")) {
+        int pos = path.lastIndexOf("/");
+        fileName = path.substring(pos + 1);
+        newDirectories = path.substring(0, pos);
       }
-      if (EduUtils.isImage(path)) {
-        virtualTaskFile.setBinaryContent(Base64.decodeBase64(text));
+      if (newDirectories != null) {
+        dir = VfsUtil.createDirectoryIfMissing(parentDir, newDirectories);
       }
-      else {
-        VfsUtil.saveText(virtualTaskFile, text);
+      if (dir != null) {
+        VirtualFile virtualTaskFile = dir.findChild(fileName);
+        if (virtualTaskFile == null) {
+          virtualTaskFile = dir.createChildData(parentDir, fileName);
+        }
+        if (EduUtils.isImage(path)) {
+          virtualTaskFile.setBinaryContent(Base64.decodeBase64(text));
+        }
+        else {
+          VfsUtil.saveText(virtualTaskFile, text);
+        }
       }
+    });
+  }
+
+  private static void runInWriteActionAndWait(@NotNull ThrowableRunnable<IOException> action) throws IOException {
+    runInWriteActionAndWait(() -> {
+      action.run();
+      return null;
+    });
+  }
+
+  private static <T> T runInWriteActionAndWait(@NotNull ThrowableComputable<T, IOException> action) throws IOException {
+    Application application = ApplicationManager.getApplication();
+    AtomicReference<T> resultRef = new AtomicReference<>();
+    AtomicReference<IOException> exceptionRef = new AtomicReference<>();
+    application.invokeAndWait(() -> application.runWriteAction(() -> {
+      try {
+        resultRef.set(action.compute());
+      } catch (IOException e) {
+        exceptionRef.set(e);
+      }
+    }));
+    if (exceptionRef.get() != null) {
+      throw new IOException(exceptionRef.get());
+    } else {
+      return resultRef.get();
     }
   }
 
