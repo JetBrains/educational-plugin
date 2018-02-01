@@ -6,6 +6,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
+import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
+import com.jetbrains.edu.learning.stepic.StepikTaskBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -113,5 +115,16 @@ public interface EduConfigurator<Settings> {
    */
   default boolean isEnabled() {
     return true;
+  }
+
+  /**
+   * Allows to customize file template used as playground in theory and choice tasks
+   * Template should work along with the according {@link TheoryTaskChecker}
+   *
+   * @see StepikTaskBuilder
+   *
+   */
+  default String getMockTemplate() {
+    return "";
   }
 }

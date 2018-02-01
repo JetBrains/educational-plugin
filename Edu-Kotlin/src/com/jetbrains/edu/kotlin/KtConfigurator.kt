@@ -1,5 +1,6 @@
 package com.jetbrains.edu.kotlin
 
+import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
@@ -30,6 +31,10 @@ open class KtConfigurator : GradleConfiguratorBase() {
 
   override fun getTaskCheckerProvider() = KtTaskCheckerProvider()
 
+  override fun getMockTemplate(): String {
+    return FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_KT).text
+  }
+
   companion object {
     const val DEFAULT_COURSE_NAME = "Kotlin Koans.zip"
 
@@ -37,5 +42,6 @@ open class KtConfigurator : GradleConfiguratorBase() {
     const val TESTS_KT = "Tests.kt"
     const val SUBTASK_TESTS_KT = "Subtask_Tests.kt"
     const val TASK_KT = "Task.kt"
+    const val MOCK_KT = "Mock.kt"
   }
 }
