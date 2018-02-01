@@ -222,6 +222,9 @@
     <editorNotificationProvider
         implementation="com.jetbrains.edu.coursecreator.CCSubtaskEditorNotificationProvider"/>
     <editorTabTitleProvider implementation="com.jetbrains.edu.coursecreator.CCTestsTabTitleProvider"/>
+    <intentionAction>
+      <className>com.jetbrains.edu.coursecreator.actions.GenerateShortcut</className>
+    </intentionAction>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
