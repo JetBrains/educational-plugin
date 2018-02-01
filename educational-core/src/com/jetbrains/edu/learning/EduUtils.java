@@ -36,6 +36,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -118,6 +119,7 @@ public class EduUtils {
   }
 
   public static final Comparator<StudyItem> INDEX_COMPARATOR = Comparator.comparingInt(StudyItem::getIndex);
+  private static final String SHORTCUT_ENTITY = "&shortcut:";
   private static final Logger LOG = Logger.getInstance(EduUtils.class.getName());
 
   public static void closeSilently(@Nullable final Closeable stream) {
@@ -614,6 +616,28 @@ public class EduUtils {
       return false;
     }
     return fileName.contains(EduNames.TASK) && fileName.contains(EduNames.SUBTASK_MARKER);
+  }
+
+  public static void replaceActionIDsWithShortcuts(StringBuffer text) {
+    int lastIndex = 0;
+    while (lastIndex < text.length()) {
+      lastIndex = text.indexOf(SHORTCUT_ENTITY, lastIndex);
+      if (lastIndex < 0) {
+        return;
+      }
+      final int actionIdStart = lastIndex + SHORTCUT_ENTITY.length();
+      int actionIdEnd = text.indexOf(";", actionIdStart);
+      if (actionIdEnd < 0) {
+        return;
+      }
+      final String actionId = text.substring(actionIdStart, actionIdEnd);
+      String shortcutText = KeymapUtil.getFirstKeyboardShortcutText(actionId);
+      if (shortcutText.isEmpty()) {
+        shortcutText = "<no shortcut for action " + actionId + ">";
+      }
+      text.replace(lastIndex, actionIdEnd + 1, shortcutText);
+      lastIndex += shortcutText.length();
+    }
   }
 
   @Nullable
