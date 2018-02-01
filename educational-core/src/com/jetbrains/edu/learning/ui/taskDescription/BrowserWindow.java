@@ -57,8 +57,8 @@ public class BrowserWindow extends JFrame {
   private WebEngine myEngine;
   private ProgressBar myProgressBar;
   private final Project myProject;
-  private boolean myLinkInNewBrowser = true;
-  private boolean myShowProgress = false;
+  private boolean myLinkInNewBrowser;
+  private boolean myShowProgress;
 
   public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow, final boolean showProgress) {
     myProject = project;
@@ -175,7 +175,7 @@ public class BrowserWindow extends JFrame {
 
     if (template == null) {
       LOG.warn("Code mirror template is null");
-      return null;
+      return content;
     }
 
     final EditorColorsScheme editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
