@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector
 
 class ChoiceTaskChecker(task: ChoiceTask, project: Project) : TaskChecker<ChoiceTask>(task, project) {
     override fun checkOnRemote(): CheckResult {
-        val user = EduSettings.getInstance().user ?: return CheckResult.FAILED_TO_CHECK
+        val user = EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
         return StepikAdaptiveConnector.checkChoiceTask(task, user)
     }
 
