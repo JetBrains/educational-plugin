@@ -82,7 +82,7 @@ class ChoiceVariantsPanel(task: ChoiceTask) : JScrollPane() {
   }
 
   private fun createSelectionListener(task: ChoiceTask, index: Int): (ObservableValue<out Boolean>, Boolean, Boolean) -> Unit {
-    return { observableValue, wasSelected, isSelected ->
+    return { _, _, isSelected ->
       if (isSelected) {
         task.selectedVariants.add(index)
       }
