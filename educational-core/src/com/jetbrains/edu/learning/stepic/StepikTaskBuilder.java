@@ -124,15 +124,9 @@ public class StepikTaskBuilder {
       }
     }
     else {
-      String editorText = getCodeTemplateForTask(myLanguage, myStep.options.codeTemplates);
-      if (editorText == null) {
-        String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
-        editorText = commentPrefix + " write your answer here \n\n";
-        final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
-        if (configurator != null) {
-          editorText += "\n" + configurator.getMockTemplate();
-        }
-      }
+      final String templateForTask = getCodeTemplateForTask(myLanguage, myStep.options.codeTemplates);
+      String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
+      String editorText = templateForTask == null ? (commentPrefix + " write your answer here \n") : templateForTask;
       String taskFileName = getTaskFileName(myLanguage);
       if (taskFileName != null) {
         createMockTaskFile(task, editorText, taskFileName);
