@@ -157,4 +157,12 @@ public class RemoteCourse extends Course {
   public void setLoadSolutions(boolean myLoadSolutions) {
     this.myLoadSolutions = myLoadSolutions;
   }
+
+  public boolean isCompatible() {
+    return isCompatible;
+  }
+
+  public void setCompatible(boolean compatible) {
+    isCompatible = compatible;
+  }
 }

@@ -184,9 +184,11 @@ public class CoursesPanel extends JPanel {
     myCoursePanel.bindCourse(selectedCourse);
     if (!isLoggedIn()) {
       myErrorLabel.setVisible(true);
+      final boolean loginRequired = selectedCourse.isAdaptive() ||
+                                    (selectedCourse instanceof RemoteCourse && !((RemoteCourse)selectedCourse).isCompatible());
       myErrorLabel.setText(
-        UIUtil.toHtml("<u><b>Log in</b></u> to Stepik " + (selectedCourse.isAdaptive() ? "to start adaptive course" : "to see more courses")));
-      myErrorLabel.setForeground((selectedCourse.isAdaptive() ? MessageType.ERROR : MessageType.WARNING).getTitleForeground());
+        UIUtil.toHtml("<u><b>Log in</b></u> to Stepik " + (loginRequired ? "to start this course" : "to see more courses")));
+      myErrorLabel.setForeground((loginRequired ? MessageType.ERROR : MessageType.WARNING).getTitleForeground());
     }
   }
 
