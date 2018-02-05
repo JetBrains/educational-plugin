@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Condition;
 public class EduCondition implements Condition, DumbAware {
   @Override
   public boolean value(Object o) {
+    // One time there will be meaningful condition
     return false;
   }
 }

@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
@@ -10,9 +11,12 @@ import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
+import com.intellij.openapi.vfs.VirtualFileListener;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +67,11 @@ public class CCVirtualFileListener extends VirtualFileAdapter {
       return;
     }
 
-    task.addTaskFile(taskRelativePath, task.getTaskFiles().size()+1);
+    if (!insideTaskFileDirectory(course, createdFile)) {
+      return;
+    }
+
+    task.addTaskFile(taskRelativePath, task.getTaskFiles().size() + 1);
   }
 
   @Override
@@ -130,5 +138,23 @@ public class CCVirtualFileListener extends VirtualFileAdapter {
       return;
     }
     task.getTaskFiles().remove(EduUtils.pathRelativeToTask(project, removedTaskFile));
+  }
+
+  private static boolean insideTaskFileDirectory(@NotNull Course course, @NotNull VirtualFile createdFile) {
+    String sourceDir = CourseExt.getSourceDir(course);
+    if (sourceDir == null || sourceDir.isEmpty()) {
+      return true;
+    }
+
+    VirtualFile taskDir = EduUtils.getTaskDir(createdFile);
+    if (taskDir == null) {
+      return false;
+    }
+    String relativePath = FileUtil.getRelativePath(taskDir.getPath(), createdFile.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
+    if (relativePath != null && relativePath.startsWith(sourceDir)) {
+      return true;
+    }
+
+    return false;
   }
 }
