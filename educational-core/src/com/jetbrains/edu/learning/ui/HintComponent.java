@@ -4,11 +4,14 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -19,9 +22,11 @@ import java.awt.*;
 public class HintComponent extends SimpleToolWindowPanel implements DataProvider, Disposable {
   private JTextPane myTaskTextPane;
   private JPanel myContentPanel;
+  private VirtualFile myTaskDir;
 
-  public HintComponent() {
+  public HintComponent(@Nullable VirtualFile taskDir) {
     super(true, true);
+    myTaskDir = taskDir;
     myContentPanel = new JPanel(new BorderLayout());
     JComponent hintPanel = createHintPanel();
     myContentPanel.add(hintPanel, BorderLayout.CENTER);
@@ -56,7 +61,12 @@ public class HintComponent extends SimpleToolWindowPanel implements DataProvider
   }
 
   public void setText(@NotNull String text) {
-    myTaskTextPane.setText(text);
+    if (myTaskDir != null) {
+      myTaskTextPane.setText(EduUtils.convertToHtml(text, myTaskDir));
+    }
+    else {
+      myTaskTextPane.setText(text);
+    }
   }
 
   public String getText() {

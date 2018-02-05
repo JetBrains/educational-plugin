@@ -20,7 +20,7 @@ open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
     val HINTS_NOT_AVAILABLE = "There is no hint for this answer placeholder"
   }
 
-  val hintComponent: HintComponent = HintComponent()
+  val hintComponent: HintComponent = HintComponent(myPlaceholder?.taskFile?.task?.getTaskDir(myProject))
 
   protected var myShownHintNumber = 0
   protected var isEditingMode = false
