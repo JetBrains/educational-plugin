@@ -11,9 +11,12 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduLanguageDecorator;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.sun.webkit.dom.ElementImpl;
@@ -28,6 +31,9 @@ import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 import org.w3c.dom.*;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
@@ -37,6 +43,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -50,6 +57,7 @@ public class BrowserWindow extends JFrame {
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
   private static final String EVENT_TYPE_CLICK = "click";
   private static final Pattern IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#");
+  public static final String SRC_ATTRIBUTE = "src";
   private JFXPanel myPanel;
   private WebView myWebComponent;
   private StackPane myPane;
@@ -139,20 +147,63 @@ public class BrowserWindow extends JFrame {
     if (course == null) {
       return;
     }
-    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(course.getLanguageById());
-    if (decorator == null) {
+
+    Task task = EduUtils.getCurrentTask(myProject);
+    if (task == null) {
       Platform.runLater(() -> myEngine.loadContent(content));
+      return;
     }
-    else {
-      String withCodeHighlighting = createHtmlWithCodeHighlighting(content, decorator.getLanguageScriptUrl(), decorator.getDefaultHighlightingMode());
+
+    VirtualFile taskDir = task.getTaskDir(myProject);
+    if (taskDir == null) {
       Platform.runLater(() -> {
         updateLookWithProgressBarIfNeeded();
-        myEngine.loadContent(withCodeHighlighting);
+        myEngine.loadContent(content);
       });
+      return;
     }
+
+    Platform.runLater(() -> {
+      updateLookWithProgressBarIfNeeded();
+      myEngine.loadContent(doProcessContent(content, taskDir));
+    });
   }
 
-  @Nullable
+  @TestOnly
+  public String processContent(@NotNull String content, @NotNull VirtualFile taskDir) {
+    return doProcessContent(content, taskDir);
+  }
+
+  private String doProcessContent(@NotNull String content, @NotNull VirtualFile taskDir) {
+    Course course = StudyTaskManager.getInstance(myProject).getCourse();
+    if (course == null) {
+      return content;
+    }
+
+    String text = content;
+    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(course.getLanguageById());
+    if (decorator != null) {
+      text = createHtmlWithCodeHighlighting(content, decorator.getLanguageScriptUrl(), decorator.getDefaultHighlightingMode());
+    }
+
+    return absolutizeImgPaths(text, taskDir);
+  }
+
+  @NotNull
+  private static String absolutizeImgPaths(@NotNull String withCodeHighlighting, @NotNull VirtualFile taskDir) {
+    org.jsoup.nodes.Document document = Jsoup.parse(withCodeHighlighting);
+    Elements imageElements = document.getElementsByTag("img");
+    for (org.jsoup.nodes.Element imageElement : imageElements) {
+      File file = new File(imageElement.attr(SRC_ATTRIBUTE));
+      if (!file.isAbsolute()) {
+        String absolutePath = new File(taskDir.getPath(), file.getPath()).toURI().toString();
+        imageElement.attr("src", absolutePath);
+      }
+    }
+    return document.outerHtml();
+  }
+
+  @NotNull
   private String createHtmlWithCodeHighlighting(@NotNull final String content,
                                                 @NotNull String languageScriptUrl,
                                                 @NotNull String defaultHighlightingMode) {

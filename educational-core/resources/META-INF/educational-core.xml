@@ -178,7 +178,7 @@
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
                          id="Educational" displayName="Education"/>
 
-    <toolWindow id="Educational.TaskDescription" anchor="right"
+    <toolWindow id="Task Description" anchor="right"
                 factoryClass="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory"
                 conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
     <toolWindow id="Educational.Output" anchor="bottom"
