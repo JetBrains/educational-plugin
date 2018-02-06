@@ -8,8 +8,10 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,12 +56,52 @@ public interface EduCourseBuilder<Settings> {
    * @param task Task to create content for. It's already properly initialized and added to corresponding lesson.
    * @return VirtualFile of created task
    */
-  VirtualFile createTaskContent(@NotNull final Project project,
-                                @NotNull final Task task,
-                                @NotNull final VirtualFile parentDirectory,
-                                @NotNull final Course course);
+  @Nullable
+  default VirtualFile createTaskContent(@NotNull final Project project,
+                                        @NotNull final Task task,
+                                        @NotNull final VirtualFile parentDirectory,
+                                        @NotNull final Course course) {
+    if (!course.isStudy() && task.taskFiles.isEmpty()) {
+      initNewTask(task);
+    }
+    try {
+      GeneratorUtils.createTask(task, parentDirectory);
+    } catch (IOException e) {
+      LOG.error("Failed to create task", e);
+    }
+    return parentDirectory.findChild(EduNames.TASK + task.getIndex());
+  }
 
-  default void initNewTask(@NotNull final Task task) {}
+  /**
+   * Add initial content for new task: task and tests files
+   *
+   * @param task initializing task
+   */
+  default void initNewTask(@NotNull final Task task) {
+    TaskFile taskFile = new TaskFile();
+    taskFile.setTask(task);
+    String taskTemplateName = getTaskTemplateName();
+    if (taskTemplateName != null) {
+      taskFile.name = taskTemplateName;
+      taskFile.text = EduUtils.getTextFromInternalTemplate(taskTemplateName);
+    }
+    task.addTaskFile(taskFile);
+
+    String testTemplateName = getTestTemplateName();
+    if (testTemplateName != null) {
+      task.getTestsText().put(testTemplateName, EduUtils.getTextFromInternalTemplate(testTemplateName));
+    }
+  }
+
+  @Nullable
+  default String getTaskTemplateName() {
+    return null;
+  }
+
+  @Nullable
+  default String getTestTemplateName() {
+    return null;
+  }
 
   default void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
   }
