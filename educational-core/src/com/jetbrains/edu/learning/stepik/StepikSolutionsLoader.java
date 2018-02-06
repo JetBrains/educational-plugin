@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector.EDU_TOOLS_COMMENT;
 import static com.jetbrains.edu.learning.stepik.StepikConnector.*;
@@ -120,18 +121,26 @@ public class StepikSolutionsLoader implements Disposable{
     }
   }
 
-  private void updateTasks(@NotNull List<Task> tasksToUpdate, @Nullable ProgressIndicator progressIndicator) {
+  private void updateTasks(@NotNull List<Task> tasks, @Nullable ProgressIndicator progressIndicator) {
     cancelUnfinishedTasks();
     myFutures.clear();
 
+    List<Task> tasksToUpdate = tasks.stream()
+      .filter(task -> !(task instanceof TheoryTask))
+      .collect(Collectors.toList());
+
     CountDownLatch countDownLatch = new CountDownLatch(tasksToUpdate.size());
-    for (Task task : tasksToUpdate) {
+    for (int i = 0; i < tasksToUpdate.size(); i++) {
+      final Task task = tasksToUpdate.get(i);
+      final int progressIndex = i + 1;
       if (progressIndicator == null || !progressIndicator.isCanceled()) {
           Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
           boolean isSolved = task.getStatus() == CheckStatus.Solved;
-          if (!(task instanceof TheoryTask)) {
-            loadSolution(myProject, task, isSolved);
+          if (progressIndicator != null) {
+            progressIndicator.setFraction((double) progressIndex / tasksToUpdate.size());
+            progressIndicator.setText(String.format("Loading solution %d from %d", progressIndex, tasksToUpdate.size()));
           }
+          loadSolution(myProject, task, isSolved);
           countDownLatch.countDown();
         });
         myFutures.put(task.getStepId(), future);
