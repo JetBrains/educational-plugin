@@ -6,23 +6,16 @@ import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator;
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings;
@@ -30,9 +23,6 @@ import com.jetbrains.python.newProject.PyNewProjectSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
-import static com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createDescriptionFiles;
 import static com.jetbrains.edu.python.learning.PyConfigurator.TASK_PY;
 import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
 
@@ -40,61 +30,16 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(PyCourseBuilder.class);
 
+  @Nullable
   @Override
-  public VirtualFile createTaskContent(@NotNull Project project,
-                                       @NotNull Task task,
-                                       @NotNull VirtualFile parentDirectory,
-                                       @NotNull Course course) {
-    final Ref<VirtualFile> taskDirectory = new Ref<>();
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      String taskDirName = EduNames.TASK + task.getIndex();
-      try {
-        taskDirectory.set(VfsUtil.createDirectoryIfMissing(parentDirectory, taskDirName));
-
-        if (taskDirectory.isNull()) return;
-
-        if (EduUtils.isStudentProject(project) && !task.getTaskFiles().isEmpty()) {
-          createFilesFromText(task, taskDirectory.get());
-        } else {
-          createFilesFromTemplates(project, task, taskDirectory.get());
-        }
-        if (CCUtils.COURSE_MODE == task.getLesson().getCourse().getCourseMode()) {
-          createDescriptionFiles(taskDirectory.get(), task);
-        }
-      } catch (IOException e) {
-        LOG.error("Failed to create task content", e);
-      }
-    });
-    return taskDirectory.get();
+  public String getTaskTemplateName() {
+    return TASK_PY;
   }
 
-  private static void createFilesFromText(@NotNull Task task, @Nullable VirtualFile taskDirectory) {
-    if (taskDirectory == null) {
-      LOG.warn("Task directory is null. Cannot create task files");
-      return;
-    }
-
-    try {
-      for (TaskFile file : task.getTaskFiles().values()) {
-        GeneratorUtils.createTaskFile(taskDirectory, file);
-      }
-      GeneratorUtils.createTestFiles(taskDirectory, task);
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-  }
-
-
-  private static void createFilesFromTemplates(@NotNull Project project,
-                                               @NotNull Task task,
-                                               @NotNull VirtualFile taskDirectory) {
-    VirtualFile sourceDir = TaskExt.findSourceDir(task, taskDirectory);
-    VirtualFile testDir = TaskExt.findTestDir(task, taskDirectory);
-    if (sourceDir == null || testDir == null) return;
-    EduUtils.createFromTemplate(project, sourceDir, TASK_PY);
-    EduUtils.createFromTemplate(project, testDir, TESTS_PY);
-    task.addTaskFile(TASK_PY, task.taskFiles.size());
+  @Nullable
+  @Override
+  public String getTestTemplateName() {
+    return TESTS_PY;
   }
 
   @Override
@@ -139,15 +84,5 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
   @Override
   public CourseProjectGenerator<PyNewProjectSettings> getCourseProjectGenerator(@NotNull Course course) {
     return new PyDirectoryProjectGenerator(this, course);
-  }
-
-  @Override
-  public void initNewTask(@NotNull Task task) {
-    TaskFile taskFile = new TaskFile();
-    taskFile.setTask(task);
-    taskFile.name = TASK_PY;
-    taskFile.text = EduUtils.getTextFromInternalTemplate(TASK_PY);
-    task.addTaskFile(taskFile);
-    task.getTestsText().put(TESTS_PY, EduUtils.getTextFromInternalTemplate(TESTS_PY));
   }
 }
