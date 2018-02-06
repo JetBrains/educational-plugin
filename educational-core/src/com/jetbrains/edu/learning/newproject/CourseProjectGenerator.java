@@ -20,7 +20,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicatorProvider;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -50,8 +50,6 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
 
   private static final Logger LOG = Logger.getInstance(CourseProjectGenerator.class);
 
-  protected static final String GENERATE_COURSE_STRUCTURE = "Generate Course Structure";
-
   @NotNull protected final EduCourseBuilder<S> myCourseBuilder;
   @NotNull protected Course myCourse;
 
@@ -74,7 +72,7 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
         } else {
           return false;
         }
-      }, "Creating Course", true, ProjectManager.getInstance().getDefaultProject());
+      }, "Loading Course", true, ProjectManager.getInstance().getDefaultProject());
     }
     return true;
   }
@@ -147,13 +145,13 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
 
     try {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        GeneratorUtils.createCourse(myCourse, baseDir);
+        ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+        GeneratorUtils.createCourse(myCourse, baseDir, indicator);
         createAdditionalFiles(project, baseDir);
         EduUsagesCollector.projectTypeCreated(courseTypeId(myCourse));
-        loadSolutions(project, myCourse);
+        loadSolutions(project, myCourse, indicator);
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
-      }, GENERATE_COURSE_STRUCTURE, false, project);
+      }, "Generating Course Structure", false, project);
     } catch (IOException e) {
       LOG.error("Failed to generate course", e);
       return;
@@ -163,10 +161,11 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
     EduUtils.openFirstTask(myCourse, project);
   }
 
-  protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
+  protected void loadSolutions(@NotNull Project project, @NotNull Course course, @NotNull ProgressIndicator indicator) {
     if (course.isStudy() && course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
+      indicator.setText("Loading existing solutions");
       StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
-      stepikSolutionsLoader.loadSolutions(ProgressIndicatorProvider.getGlobalProgressIndicator(), course);
+      stepikSolutionsLoader.loadSolutions(indicator, course);
       EduUsagesCollector.progressOnGenerateCourse();
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
     }
