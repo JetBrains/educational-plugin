@@ -303,7 +303,7 @@ public class CCUtils {
     });
     if (taskIsEmpty(task)) return null;
     lesson.addTask(task);
-    lesson.setIndex(course.getLessons().size());
+    lesson.setIndex(course.getLessons().size() + 1);
     return lesson;
   }
 

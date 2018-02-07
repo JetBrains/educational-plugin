@@ -933,7 +933,7 @@ public class EduUtils {
   }
 
   @Nullable
-  public static TaskFile createStudentFile(Project project, VirtualFile answerFile, @Nullable Task task, int targetSubtaskIndex) {
+  public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @Nullable Task task, int targetSubtaskIndex) {
     try {
       if (task == null) {
         task = getTaskForFile(project, answerFile);

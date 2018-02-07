@@ -60,26 +60,14 @@ public class StepikWrappers {
     @SerializedName("last_subtask_index")
     @Expose public int lastSubtaskIndex = 0;
 
-    public static StepOptions fromTask(final Project project, @NotNull final Task task) {
+    public static StepOptions fromTask(@NotNull final Project project, @NotNull final Task task) {
       final StepOptions source = new StepOptions();
+      source.title = task.getName();
       source.lastSubtaskIndex = task instanceof TaskWithSubtasks ? ((TaskWithSubtasks)task).getLastSubtaskIndex() : 0;
       setTests(task, source, project);
       setTaskTexts(task, source);
+      setTaskFiles(project, task, source);
       setAdditionalFiles(task, source);
-      source.files = new ArrayList<>();
-      source.title = task.getName();
-      for (final Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          final VirtualFile taskDir = task.getTaskDir(project);
-          assert taskDir != null;
-          VirtualFile answerFile = EduUtils.findTaskFileInDir(entry.getValue(), taskDir);
-          TaskFile studentTaskFile = EduUtils.createStudentFile(project, answerFile, null, 0);
-          if (studentTaskFile == null) {
-            return;
-          }
-          source.files.add(studentTaskFile);
-        });
-      }
       return source;
     }
 
@@ -87,6 +75,23 @@ public class StepikWrappers {
       stepOptions.text = new ArrayList<>();
       for (Map.Entry<String, String> entry : task.getTaskTexts().entrySet()) {
         stepOptions.text.add(new FileWrapper(entry.getKey(), entry.getValue()));
+      }
+    }
+
+    private static void setTaskFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
+      source.files = new ArrayList<>();
+      if (!StepikNames.PYCHARM_ADDITIONAL.equals(task.getLesson().getName())) {
+        final VirtualFile taskDir = task.getTaskDir(project);
+        assert taskDir != null;
+        for (final Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
+          ApplicationManager.getApplication().runWriteAction(() -> {
+            VirtualFile answerFile = EduUtils.findTaskFileInDir(entry.getValue(), taskDir);
+            if (answerFile == null) return;
+            TaskFile studentTaskFile = EduUtils.createStudentFile(project, answerFile, null, 0);
+            if (studentTaskFile == null) return;
+            source.files.add(studentTaskFile);
+          });
+        }
       }
     }
 
