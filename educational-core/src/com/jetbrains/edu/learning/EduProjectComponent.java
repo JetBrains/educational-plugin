@@ -15,13 +15,6 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.externalSystem.ExternalSystemManager;
-import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
-import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
-import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
-import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.ex.KeymapManagerEx;
@@ -39,7 +32,6 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -50,15 +42,13 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
+import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.gradle.settings.DistributionType;
-import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
-import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -67,7 +57,6 @@ import java.util.*;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
-
 
 public class EduProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(EduProjectComponent.class.getName());
@@ -116,8 +105,8 @@ public class EduProjectComponent implements ProjectComponent {
             return;
           }
 
-          if (!configuredWithGradle(myProject)) {
-            setGradleSettingsAndRefreshProject(myProject, projectBasePath);
+          if (!EduGradleUtils.configuredWithGradle(myProject)) {
+            EduGradleUtils.setGradleSettingsAndRefreshProject(myProject, projectBasePath);
           }
         }
 
@@ -426,48 +415,5 @@ public class EduProjectComponent implements ProjectComponent {
       taskFile.name = name;
       task.getTaskFiles().put(name, taskFile);
     }
-  }
-
-  private static boolean configuredWithGradle(@NotNull Project project) {
-    // inspired by AbstractExternalSystemToolWindowCondition
-    ExternalSystemManager<?, ?, ?, ?, ?> manager = ExternalSystemApiUtil.getManager(GradleConstants.SYSTEM_ID);
-    if (manager == null) return false;
-    AbstractExternalSystemSettings<?, ?, ?> settings = manager.getSettingsProvider().fun(project);
-    return settings != null && !settings.getLinkedProjectsSettings().isEmpty();
-  }
-
-  @SuppressWarnings("unchecked")
-  public static void setGradleSettingsAndRefreshProject(@NotNull Project project, @NotNull String location) {
-    AbstractExternalSystemSettings systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
-    ExternalProjectSettings existingProject = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectSettings(location);
-    if (existingProject != null) {
-      if (existingProject instanceof GradleProjectSettings) {
-        GradleProjectSettings gradleProjectSettings = (GradleProjectSettings)existingProject;
-        if (gradleProjectSettings.getDistributionType() == null) {
-          gradleProjectSettings.setDistributionType(DistributionType.DEFAULT_WRAPPED);
-        }
-        if (gradleProjectSettings.getExternalProjectPath() == null) {
-          gradleProjectSettings.setExternalProjectPath(location);
-        }
-        return;
-      }
-    }
-
-    GradleProjectSettings gradleProjectSettings = new GradleProjectSettings();
-    gradleProjectSettings.setDistributionType(DistributionType.DEFAULT_WRAPPED);
-    gradleProjectSettings.setUseAutoImport(true);
-    gradleProjectSettings.setExternalProjectPath(location);
-
-    Set<ExternalProjectSettings> projects = ContainerUtilRt.newHashSet(systemSettings.getLinkedProjectsSettings());
-    projects.add(gradleProjectSettings);
-    systemSettings.setLinkedProjectsSettings(projects);
-
-    refreshGradleProject(project, location);
-  }
-
-  private static void refreshGradleProject(@NotNull Project project, @NotNull String projectBasePath) {
-    ExternalSystemUtil.refreshProjects(
-      new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-        .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC));
   }
 }

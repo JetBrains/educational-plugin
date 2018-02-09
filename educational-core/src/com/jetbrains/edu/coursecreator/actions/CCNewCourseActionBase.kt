@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 // TODO: move `initializeCourseProject` and corresponding code into `GeneratorUtils`
-// and call it in `createCourse` after code of `GeneratorUtils` and `EduGradleModuleGenerator` will be merged
+// and call it in `createCourse` after code of `GeneratorUtils` and `EduGradleUtils` will be merged
 abstract class CCNewCourseActionBase(name: String, description: String) : DumbAwareAction(name, description, null) {
 
   protected fun initializeCourseProject(courseProject: Project, course: Course) {

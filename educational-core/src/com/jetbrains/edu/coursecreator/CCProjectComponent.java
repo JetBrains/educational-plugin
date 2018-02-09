@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase;
-import com.jetbrains.edu.learning.intellij.generation.EduGradleModuleGenerator;
+import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
@@ -83,7 +83,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       modifiableModuleModel.commit();
 
       try {
-        EduGradleModuleGenerator.createProjectGradleFiles(basePath, myProject.getName(), buildGradleTemplateName);
+        EduGradleUtils.createProjectGradleFiles(basePath, myProject.getName(), buildGradleTemplateName);
 
         StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> transformCourseStructure(course, myProject));
 
@@ -92,7 +92,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       }
     });
 
-    EduProjectComponent.setGradleSettingsAndRefreshProject(myProject, basePath);
+    EduGradleUtils.setGradleSettingsAndRefreshProject(myProject, basePath);
   }
 
   private static void transformFiles(Course course, Project project) {
