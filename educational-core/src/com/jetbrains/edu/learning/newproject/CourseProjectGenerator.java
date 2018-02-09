@@ -169,10 +169,7 @@ public abstract class CourseProjectGenerator<S> {
       }, "Generating Course Structure", false, project);
     } catch (IOException e) {
       LOG.error("Failed to generate course", e);
-      return;
     }
-
-    StudyTaskManager.getInstance(project).setCourse(myCourse);
   }
 
   protected void loadSolutions(@NotNull Project project, @NotNull Course course, @NotNull ProgressIndicator indicator) {
