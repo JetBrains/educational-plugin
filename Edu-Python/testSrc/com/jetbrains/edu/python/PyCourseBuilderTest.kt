@@ -14,7 +14,6 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/python_course.json")
     val expectedFileTree = fileTree {
-      dir(".idea") {}
       dir("lesson1") {
         dir("task1") {
           file("hello_world.py")
@@ -42,7 +41,6 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
     createCourseStructure(courseBuilder, course, defaultSettings)
 
     val expectedFileTree = fileTree {
-      dir(".idea") {}
       dir("lesson1") {
         dir("task1") {
           file("task.py")
@@ -59,7 +57,6 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
   fun `test educator course structure from not empty course`() {
     generateCourseStructure("testData/newCourse/python_course.json", CourseType.EDUCATOR)
     val expectedFileTree = fileTree {
-      dir(".idea") {}
       dir("lesson1") {
         dir("task1") {
           file("hello_world.py")
