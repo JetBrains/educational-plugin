@@ -15,17 +15,23 @@
  */
 package com.jetbrains.edu.learning.newproject;
 
-import com.intellij.facet.ui.ValidationResult;
+import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.ide.util.projectWizard.AbstractNewProjectStep;
+import com.intellij.idea.ActionsBundle;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.DirectoryProjectGenerator;
+import com.intellij.platform.PlatformProjectOpenProcessor;
+import com.intellij.projectImport.ProjectOpenedCallback;
+import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
@@ -39,14 +45,14 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 
-public abstract class CourseProjectGenerator<S> implements DirectoryProjectGenerator<S> {
+public abstract class CourseProjectGenerator<S> {
 
   private static final Logger LOG = Logger.getInstance(CourseProjectGenerator.class);
 
@@ -107,23 +113,31 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
    * Create new project in given location.
    * To create course structure: modules, folders, files, etc. use {@link CourseProjectGenerator#createCourseStructure(Project, VirtualFile, Object)}
    *
-   * @param location location of new project
+   * @param locationString location of new project
    * @param projectSettings new project settings
    * @return project of new course or null if new project can't be created
    */
   @Nullable
-  protected Project createProject(@NotNull String location, @NotNull Object projectSettings) {
-    return AbstractNewProjectStep.doGenerateProject(null, location, this, virtualFile -> projectSettings);
-  }
+  protected Project createProject(@NotNull String locationString, @NotNull Object projectSettings) {
+    final File location = new File(FileUtil.toSystemDependentName(locationString));
+    if (!location.exists() && !location.mkdirs()) {
+      String message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.getAbsolutePath());
+      Messages.showErrorDialog(message, ActionsBundle.message("action.NewDirectoryProject.title"));
+      return null;
+    }
 
-  /**
-   * Callback method of {@link DirectoryProjectGenerator} to generate project structure. <b>Don't use</b> it explicitly.
-   * If you want to generate course structure, just call {@link CourseProjectGenerator#createCourseStructure}
-   */
-  @Override
-  public final void generateProject(@NotNull Project project, @NotNull VirtualFile baseDir,
-                                    @NotNull S settings, @NotNull Module module) {
-    createCourseStructure(project, baseDir, settings);
+    final VirtualFile baseDir = WriteAction.compute(() -> LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location));
+    if (baseDir == null) {
+      LOG.error("Couldn't find '" + location + "' in VFS");
+      return null;
+    }
+    VfsUtil.markDirtyAndRefresh(false, true, true, baseDir);
+
+    RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
+
+    @SuppressWarnings("unchecked") ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, (S)projectSettings);
+    EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.of(PlatformProjectOpenProcessor.Option.FORCE_NEW_FRAME);
+    return PlatformProjectOpenProcessor.doOpenProject(baseDir, null, -1, callback, options);
   }
 
   /**
@@ -180,25 +194,6 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
    * @throws IOException
    */
   protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {}
-
-  @Nls
-  @NotNull
-  @Override
-  public String getName() {
-    return "";
-  }
-
-  @Nullable
-  @Override
-  public Icon getLogo() {
-    return null;
-  }
-
-  @NotNull
-  @Override
-  public ValidationResult validate(@NotNull String baseDirPath) {
-    return ValidationResult.OK;
-  }
 
   @NotNull
   private static String courseTypeId(@NotNull Course course) {
