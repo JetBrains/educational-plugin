@@ -70,12 +70,14 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
     val listener = EduDocumentListener(taskFile, false)
     document.addDocumentListener(listener)
     taskFile.sortAnswerPlaceholders()
+    taskFile.isTrackLengths = false
+
+    for (placeholder in taskFile.answerPlaceholders) {
+      placeholder.useLength = false
+    }
 
     for (placeholder in taskFile.activePlaceholders) {
       replaceAnswerPlaceholder(document, placeholder)
-    }
-    for (placeholder in taskFile.answerPlaceholders) {
-      placeholder.useLength = false
     }
 
     CommandProcessor.getInstance().executeCommand(project,
@@ -86,19 +88,20 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
         },
         "Create answer document", "Create answer document")
     document.removeDocumentListener(listener)
+    taskFile.isTrackLengths = true
   }
 
   private fun replaceAnswerPlaceholder(document: Document,
                                        placeholder: AnswerPlaceholder) {
     val offset = placeholder.offset
-    val text = document.getText(TextRange.create(offset, offset + placeholder.realLength))
+    val text = document.getText(TextRange.create(offset, offset + placeholder.length))
     placeholder.taskText = text
     placeholder.init()
     val replacementText = placeholder.possibleAnswer
 
     CommandProcessor.getInstance().runUndoTransparentAction {
       ApplicationManager.getApplication().runWriteAction {
-        document.replaceString(offset, offset + placeholder.realLength, replacementText)
+        document.replaceString(offset, offset + placeholder.length, replacementText)
         FileDocumentManager.getInstance().saveDocumentAsIs(document)
       }
     }
