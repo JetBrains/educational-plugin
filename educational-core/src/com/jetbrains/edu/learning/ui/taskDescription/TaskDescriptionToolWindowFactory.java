@@ -23,6 +23,7 @@ public class TaskDescriptionToolWindowFactory implements ToolWindowFactory, Dumb
     toolWindow.setIcon(EducationalCoreIcons.TaskDescription);
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course != null) {
+      toolWindow.setStripeTitle(course.getName() + ": Task");
       final TaskDescriptionToolWindow taskDescriptionToolWindow;
       if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
         taskDescriptionToolWindow = new JavaFxToolWindow();
