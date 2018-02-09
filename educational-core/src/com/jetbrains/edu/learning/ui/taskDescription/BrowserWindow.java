@@ -10,8 +10,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduLanguageDecorator;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -231,6 +233,11 @@ public class BrowserWindow extends JFrame {
 
     final EditorColorsScheme editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
     int fontSize = editorColorsScheme.getEditorFontSize();
+    final Pair<String, Integer> systemFontData = UIUtil.getSystemFontData();
+    if (systemFontData != null) {
+      final String fontName = systemFontData.first;
+      template = template.replace("${font_name}", fontName);
+    }
 
     template = template.replace("${font_size}", String.valueOf(fontSize- 2));
     template = template.replace("${codemirror}", getClass().getResource("/code-mirror/codemirror.js").toExternalForm());
