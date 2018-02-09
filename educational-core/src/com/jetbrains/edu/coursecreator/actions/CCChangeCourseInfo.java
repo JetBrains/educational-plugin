@@ -20,7 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CCChangeCourseInfo extends DumbAwareAction {
-  private static final String ACTION_TEXT = "Change Course Information";
+  private static final String ACTION_TEXT = "&Edit Course Information";
 
   public CCChangeCourseInfo() {
     super(ACTION_TEXT, ACTION_TEXT, null);

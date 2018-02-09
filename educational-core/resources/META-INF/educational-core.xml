@@ -125,22 +125,23 @@
       <action id="Educational.Educator.SwitchSubtask" class="com.jetbrains.edu.coursecreator.actions.CCSwitchSubtask"/>
       <reference id="Educational.Educator.NewStep"/>
       <separator/>
+      <reference id="Educational.Educator.CreateCoursePreview"/>
+      <reference id="Educational.Educator.ChangeCourseInfo"/>
       <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive"/>
       <action id="Educational.Educator.PushTask" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushTask"/>
       <action id="Educational.Educator.PushLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson"/>
       <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
-      <reference id="Educational.Educator.ChangeCourseInfo"/>
-      <reference id="Educational.Educator.CreateCoursePreview"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
     </group>
 
     <group id="Educational.Educator.File" popup="true" text="Course Creator"
            class="com.jetbrains.edu.coursecreator.actions.CCFileActionGroup">
+      <reference id="Educational.Educator.CreateCoursePreview"/>
       <reference id="Educational.Educator.ChangeCourseInfo"/>
       <reference id="Educational.Educator.PackCourse"/>
+      <reference id="Educational.Educator.PushTask"/>
       <reference id="Educational.Educator.PushLesson"/>
       <reference id="Educational.Educator.PushCourse"/>
-      <reference id="Educational.Educator.CreateCoursePreview"/>
       <add-to-group group-id="FileMenu" relative-to-action="FileMainSettingsGroup" anchor="before"/>
     </group>
 

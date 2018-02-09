@@ -55,7 +55,7 @@ import java.util.Calendar;
 import java.util.Collections;
 
 public class CCShowPreview extends DumbAwareAction {
-  public static final String SHOW_PREVIEW = "Show Preview";
+  public static final String SHOW_PREVIEW = "Preview Task File";
   public static final String NO_PREVIEW_MESSAGE = "Preview is available for task files with answer placeholders only";
 
   public CCShowPreview() {

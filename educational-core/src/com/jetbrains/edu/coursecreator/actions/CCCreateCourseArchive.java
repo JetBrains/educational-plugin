@@ -49,7 +49,7 @@ import java.util.zip.ZipOutputStream;
 public class CCCreateCourseArchive extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCCreateCourseArchive.class.getName());
 
-  public static final String GENERATE_COURSE_ARCHIVE = "Generate Course Archive";
+  public static final String GENERATE_COURSE_ARCHIVE = "&Generate Course Archive";
   public static final String LAST_ARCHIVE_LOCATION = "Edu.CourseCreator.LastArchiveLocation";
 
   private String myZipName;
