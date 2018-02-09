@@ -15,6 +15,7 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.externalSystem.ExternalSystemManager;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
@@ -109,17 +110,15 @@ public class EduProjectComponent implements ProjectComponent {
         }
 
         if (!isAndroidStudio() && isConfiguredWithGradle(myProject)) {
-            String projectBasePath = myProject.getBasePath();
-            if (projectBasePath == null) {
-              LOG.error("Failed to refresh gradle project");
-              return;
-            }
+          String projectBasePath = myProject.getBasePath();
+          if (projectBasePath == null) {
+            LOG.error("Failed to refresh gradle project");
+            return;
+          }
 
-            setGradleSettings(projectBasePath, myProject);
-
-            ExternalSystemUtil.refreshProjects(
-                    new ImportSpecBuilder(myProject, GradleConstants.SYSTEM_ID)
-                            .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC));
+          if (!configuredWithGradle(myProject)) {
+            setGradleSettingsAndRefreshProject(myProject, projectBasePath);
+          }
         }
 
         addStepikWidget();
@@ -231,7 +230,7 @@ public class EduProjectComponent implements ProjectComponent {
 
   private void updateCourse() {
     final Course currentCourse = StudyTaskManager.getInstance(myProject).getCourse();
-    if (currentCourse == null || !(currentCourse instanceof RemoteCourse)) return;
+    if (!(currentCourse instanceof RemoteCourse)) return;
     final Course course = StepikConnector.getCourse(myProject, (RemoteCourse)currentCourse);
     if (course == null) return;
     course.initCourse(false);
@@ -429,8 +428,16 @@ public class EduProjectComponent implements ProjectComponent {
     }
   }
 
+  private static boolean configuredWithGradle(@NotNull Project project) {
+    // inspired by AbstractExternalSystemToolWindowCondition
+    ExternalSystemManager<?, ?, ?, ?, ?> manager = ExternalSystemApiUtil.getManager(GradleConstants.SYSTEM_ID);
+    if (manager == null) return false;
+    AbstractExternalSystemSettings<?, ?, ?> settings = manager.getSettingsProvider().fun(project);
+    return settings != null && !settings.getLinkedProjectsSettings().isEmpty();
+  }
+
   @SuppressWarnings("unchecked")
-  public static void setGradleSettings(@NotNull String location, Project project) {
+  public static void setGradleSettingsAndRefreshProject(@NotNull Project project, @NotNull String location) {
     AbstractExternalSystemSettings systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID);
     ExternalProjectSettings existingProject = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectSettings(location);
     if (existingProject != null) {
@@ -448,10 +455,19 @@ public class EduProjectComponent implements ProjectComponent {
 
     GradleProjectSettings gradleProjectSettings = new GradleProjectSettings();
     gradleProjectSettings.setDistributionType(DistributionType.DEFAULT_WRAPPED);
+    gradleProjectSettings.setUseAutoImport(true);
     gradleProjectSettings.setExternalProjectPath(location);
 
     Set<ExternalProjectSettings> projects = ContainerUtilRt.newHashSet(systemSettings.getLinkedProjectsSettings());
     projects.add(gradleProjectSettings);
     systemSettings.setLinkedProjectsSettings(projects);
+
+    refreshGradleProject(project, location);
+  }
+
+  private static void refreshGradleProject(@NotNull Project project, @NotNull String projectBasePath) {
+    ExternalSystemUtil.refreshProjects(
+      new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+        .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC));
   }
 }
