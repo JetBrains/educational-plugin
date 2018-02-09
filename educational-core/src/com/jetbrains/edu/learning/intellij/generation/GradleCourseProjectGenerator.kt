@@ -59,7 +59,7 @@ open class GradleCourseProjectGenerator(
   }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
-    EduGradleModuleGenerator.createProjectGradleFiles(baseDir.path, project.name,
+    EduGradleUtils.createProjectGradleFiles(baseDir.path, project.name,
                                                       (myCourseBuilder as GradleCourseBuilderBase).buildGradleTemplateName)
   }
 
