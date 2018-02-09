@@ -15,7 +15,9 @@ class FileTree(private val rootDirectory: Entry.Directory) {
   fun assertEquals(baseDir: VirtualFile) {
 
     fun go(expected: Entry.Directory, actual: VirtualFile) {
-      val actualChildren = actual.children.associateBy { it.name }
+      val actualChildren = actual.children
+        .filter { it.name !in IGNORED_FILES }
+        .associateBy { it.name }
       check(expected.children.keys == actualChildren.keys) {
         "Mismatch in directory ${actual.path}\n" +
                 "Expected: ${expected.children.keys}\n" +
@@ -33,6 +35,10 @@ class FileTree(private val rootDirectory: Entry.Directory) {
 
     fullyRefreshDirectory(baseDir)
     go(rootDirectory, baseDir)
+  }
+
+  companion object {
+    private val IGNORED_FILES = setOf(".idea")
   }
 }
 
