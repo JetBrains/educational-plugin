@@ -9,7 +9,7 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCoursePreviewDialog
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
-class CCCreateCoursePreview : DumbAwareAction("Create Course Preview") {
+class CCCreateCoursePreview : DumbAwareAction("&Create Course Preview") {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT) ?: return
