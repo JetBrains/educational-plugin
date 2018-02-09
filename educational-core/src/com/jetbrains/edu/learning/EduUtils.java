@@ -682,9 +682,9 @@ public class EduUtils {
     if (studyToolWindow == null) {
       studyToolWindow = toolWindowManager.registerToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW,
                                                                           true, ToolWindowAnchor.RIGHT, project, true);
+      initToolWindow(project);
     }
     studyToolWindow.show(null);
-    initToolWindow(project);
   }
 
   @Nullable
