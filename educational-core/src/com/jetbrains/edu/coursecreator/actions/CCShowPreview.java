@@ -36,10 +36,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -48,7 +49,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -145,7 +145,7 @@ public class CCShowPreview extends DumbAwareAction {
     }
     JPanel header = new JPanel();
     header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
-    header.setBorder(new EmptyBorder(10, 10, 10, 10));
+    header.setBorder(JBUI.Borders.empty(10));
     header.add(new JLabel("Read-only preview."));
     String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Calendar.getInstance().getTime());
     header.add(new JLabel(String.format("Created %s.", timeStamp)));
