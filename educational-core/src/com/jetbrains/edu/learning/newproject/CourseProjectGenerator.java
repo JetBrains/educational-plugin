@@ -78,6 +78,7 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
   }
 
   protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
+    EduUtils.openFirstTask(myCourse, project);
   }
 
   /**
@@ -158,7 +159,6 @@ public abstract class CourseProjectGenerator<S> implements DirectoryProjectGener
     }
 
     StudyTaskManager.getInstance(project).setCourse(myCourse);
-    EduUtils.openFirstTask(myCourse, project);
   }
 
   protected void loadSolutions(@NotNull Project project, @NotNull Course course, @NotNull ProgressIndicator indicator) {

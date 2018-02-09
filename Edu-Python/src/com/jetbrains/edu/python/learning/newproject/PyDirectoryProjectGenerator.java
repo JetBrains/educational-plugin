@@ -67,6 +67,7 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
 
   @Override
   protected void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
+    super.afterProjectGenerated(project, settings);
     Sdk sdk = settings.getSdk();
 
     if (sdk != null && sdk.getSdkType() == PyFakeSdkType.INSTANCE) {

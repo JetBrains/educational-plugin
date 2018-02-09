@@ -50,6 +50,7 @@ open class GradleCourseProjectGenerator(
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
+    super.afterProjectGenerated(project, projectSettings)
     setJdk(project, projectSettings)
   }
 

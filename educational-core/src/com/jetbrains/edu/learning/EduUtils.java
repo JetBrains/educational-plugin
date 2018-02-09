@@ -38,6 +38,7 @@ import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -774,20 +775,11 @@ public class EduUtils {
     final VirtualFile taskDir = firstTask.getTaskDir(project);
     if (taskDir == null) return;
     final Map<String, TaskFile> taskFiles = firstTask.getTaskFiles();
-    VirtualFile activeVirtualFile = null;
-    for (Map.Entry<String, TaskFile> entry : taskFiles.entrySet()) {
-      final TaskFile taskFile = entry.getValue();
-      taskDir.refresh(false, true);
-      final VirtualFile virtualFile = findTaskFileInDir(taskFile, taskDir);
-      if (virtualFile != null) {
-        if (!taskFile.getActivePlaceholders().isEmpty()) {
-          activeVirtualFile = virtualFile;
-        }
-      }
-    }
+    final VirtualFile activeVirtualFile = getActiveVirtualFile(taskDir, taskFiles);
     if (activeVirtualFile != null) {
       final PsiFile file = PsiManager.getInstance(project).findFile(activeVirtualFile);
-      ProjectView.getInstance(project).select(file, activeVirtualFile, false);
+      StartupManager.getInstance(project).registerPostStartupActivity(
+        () -> ProjectView.getInstance(project).select(file, activeVirtualFile, false));
       final FileEditor[] editors = FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
       if (editors.length == 0) {
         return;
@@ -807,6 +799,21 @@ public class EduUtils {
         }
       }
     }
+  }
+
+  private static VirtualFile getActiveVirtualFile(VirtualFile taskDir, Map<String, TaskFile> taskFiles) {
+    VirtualFile activeVirtualFile = null;
+    for (Map.Entry<String, TaskFile> entry : taskFiles.entrySet()) {
+      final TaskFile taskFile = entry.getValue();
+      taskDir.refresh(false, true);
+      final VirtualFile virtualFile = findTaskFileInDir(taskFile, taskDir);
+      if (virtualFile != null) {
+        if (!taskFile.getActivePlaceholders().isEmpty()) {
+          activeVirtualFile = virtualFile;
+        }
+      }
+    }
+    return activeVirtualFile;
   }
 
   public static void navigateToStep(@NotNull Project project, @NotNull Course course, int stepId) {
