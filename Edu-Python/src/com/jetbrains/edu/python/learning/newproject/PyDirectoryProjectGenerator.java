@@ -1,7 +1,6 @@
 package com.jetbrains.edu.python.learning.newproject;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.facet.ui.ValidationResult;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.application.WriteAction;
@@ -50,19 +49,6 @@ public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewPro
     if (baseDir.findChild(testHelper) != null) return;
     final FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate("test_helper");
     GeneratorUtils.createChildFile(baseDir, testHelper, template.getText());
-  }
-
-  @NotNull
-  @Override
-  public ValidationResult validate(@NotNull String baseDirPath) {
-    final List<Sdk> sdks = getAllSdks();
-
-    ValidationResult validationResult = ValidationResult.OK;
-    if (sdks.isEmpty()) {
-      validationResult = new ValidationResult(NO_PYTHON_INTERPRETER);
-    }
-
-    return validationResult;
   }
 
   @Override
