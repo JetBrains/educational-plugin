@@ -196,15 +196,15 @@ public class BrowserWindow extends JFrame {
     org.jsoup.nodes.Document document = Jsoup.parse(withCodeHighlighting);
     Elements imageElements = document.getElementsByTag("img");
     for (org.jsoup.nodes.Element imageElement : imageElements) {
-      File file = new File(imageElement.attr(SRC_ATTRIBUTE));
-      if (!file.isAbsolute()) {
+      String imagePath = imageElement.attr(SRC_ATTRIBUTE);
+      if (!BrowserUtil.isAbsoluteURL(imagePath)) {
+        File file = new File(imagePath);
         String absolutePath = new File(taskDir.getPath(), file.getPath()).toURI().toString();
         imageElement.attr("src", absolutePath);
       }
     }
     return document.outerHtml();
   }
-
   @NotNull
   private String createHtmlWithCodeHighlighting(@NotNull final String content,
                                                 @NotNull String languageScriptUrl,
