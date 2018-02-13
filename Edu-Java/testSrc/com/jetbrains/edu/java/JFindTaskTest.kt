@@ -9,9 +9,7 @@ class JFindTaskTest : FindTaskFileTestBase<JdkProjectSettings>() {
   override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = JCourseBuilder()
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
-  override fun runTest() {
-    println("${JFindTaskTest::class.simpleName} is disabled in AS")
-  }
+  override fun shouldRunTest(): Boolean = false
 
   fun `test get task dir`() = doTestGetTaskDir(
           pathToCourseJson = "testData/newCourse/java_course.json",

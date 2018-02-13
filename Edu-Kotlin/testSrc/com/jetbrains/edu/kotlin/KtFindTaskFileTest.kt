@@ -1,6 +1,5 @@
 package com.jetbrains.edu.kotlin
 
-import com.jetbrains.edu.kotlin.studio.KtCourseBuilder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.FindTaskFileTestBase
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings

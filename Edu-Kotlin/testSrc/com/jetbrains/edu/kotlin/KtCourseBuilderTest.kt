@@ -48,7 +48,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
         }
         dir("test") {}
       }
-      gradleFiles()
+      file("build.gradle")
+      file("settings.gradle")
     }
     expectedFileTree.assertEquals(rootDir)
   }
@@ -69,22 +70,10 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      gradleFiles()
+      file("build.gradle")
+      file("settings.gradle")
     }
 
     expectedFileTree.assertEquals(rootDir)
-  }
-
-  private fun FileTreeBuilder.gradleFiles() {
-    dir("gradle") {
-      dir("wrapper") {
-        file("gradle-wrapper.jar")
-        file("gradle-wrapper.properties")
-      }
-    }
-    file("gradlew")
-    file("gradlew.bat")
-    file("build.gradle")
-    file("settings.gradle")
   }
 }

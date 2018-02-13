@@ -12,9 +12,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
   override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = JCourseBuilder()
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
-  override fun runTest() {
-    println("${JCourseGeneratorTest::class.simpleName} is disabled in AS")
-  }
+  override fun shouldRunTest(): Boolean = false
 
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/java_course.json")
