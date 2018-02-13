@@ -35,11 +35,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-public class PyDirectoryProjectGenerator extends CourseProjectGenerator<PyNewProjectSettings> {
-  private static final Logger LOG = Logger.getInstance(PyDirectoryProjectGenerator.class);
-  private static final String NO_PYTHON_INTERPRETER = "<html><u>Add</u> python interpreter.</html>";
+public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjectSettings> {
+  private static final Logger LOG = Logger.getInstance(PyCourseProjectGenerator.class);
 
-  public PyDirectoryProjectGenerator(@NotNull PyCourseBuilder builder, @NotNull Course course) {
+  public PyCourseProjectGenerator(@NotNull PyCourseBuilder builder, @NotNull Course course) {
     super(builder, course);
   }
 

@@ -15,7 +15,7 @@ import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator.getBaseSdk
+import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator.getBaseSdk
 import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType

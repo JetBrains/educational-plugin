@@ -12,5 +12,5 @@ class PyCourseBuilder : PyCourseBuilder() {
           PyLanguageSettings()
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings>? =
-          PyDirectoryProjectGenerator(this, course)
+          PyCourseProjectGenerator(this, course)
 }

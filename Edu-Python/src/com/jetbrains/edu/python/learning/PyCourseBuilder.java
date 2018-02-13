@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator;
+import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator;
 import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import org.jetbrains.annotations.NotNull;
@@ -83,6 +83,6 @@ public class PyCourseBuilder implements EduCourseBuilder<PyNewProjectSettings> {
   @Nullable
   @Override
   public CourseProjectGenerator<PyNewProjectSettings> getCourseProjectGenerator(@NotNull Course course) {
-    return new PyDirectoryProjectGenerator(this, course);
+    return new PyCourseProjectGenerator(this, course);
   }
 }
