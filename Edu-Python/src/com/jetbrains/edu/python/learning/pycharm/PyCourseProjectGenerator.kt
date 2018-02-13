@@ -5,10 +5,10 @@ import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.python.learning.newproject.PyDirectoryProjectGenerator
+import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator
 import com.jetbrains.python.configuration.PyConfigurableInterpreterList
 
-internal class PyDirectoryProjectGenerator(builder: PyCourseBuilder, course: Course) : PyDirectoryProjectGenerator(builder, course) {
+internal class PyCourseProjectGenerator(builder: PyCourseBuilder, course: Course) : PyCourseProjectGenerator(builder, course) {
   override fun addSdk(project: Project, sdk: Sdk) {
     val model = PyConfigurableInterpreterList.getInstance(project).model
     model.addSdk(sdk)
@@ -22,6 +22,6 @@ internal class PyDirectoryProjectGenerator(builder: PyCourseBuilder, course: Cou
   override fun getAllSdks(project: Project): List<Sdk> = PyConfigurableInterpreterList.getInstance(project).allPythonSdks
 
   companion object {
-    private val LOG: Logger = Logger.getInstance(PyDirectoryProjectGenerator::class.java)
+    private val LOG: Logger = Logger.getInstance(PyCourseProjectGenerator::class.java)
   }
 }
