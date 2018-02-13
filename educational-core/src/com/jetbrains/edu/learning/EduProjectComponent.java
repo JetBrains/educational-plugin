@@ -117,12 +117,9 @@ public class EduProjectComponent implements ProjectComponent {
 
             setGradleSettings(projectBasePath, myProject);
 
-            ExternalSystemUtil.refreshProject(projectBasePath,
+            ExternalSystemUtil.refreshProjects(
                     new ImportSpecBuilder(myProject, GradleConstants.SYSTEM_ID)
-                            .useDefaultCallback()
-                            .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
-                            .dontReportRefreshErrors()
-                            .build());
+                            .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC));
         }
 
         addStepicWidget();

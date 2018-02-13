@@ -18,7 +18,7 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
             return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
         }
 
-        ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
+        ProgramRunnerUtil.executeConfiguration(project, configuration, DefaultRunExecutor.getRunExecutorInstance())
         return CheckResult(CheckStatus.Solved, "")
     }
 
