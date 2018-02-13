@@ -13,7 +13,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <renameHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
-    <langCodeStyleSettingsProvider implementation="com.jetbrains.edu.java.JLanguageCodeStyleSettingsProvider" order="first"/>
   </extensions>
 </idea-plugin>
 
