@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.intellij.generation
 
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.options.ConfigurationException
@@ -11,6 +12,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.util.Consumer
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
@@ -52,6 +54,8 @@ open class GradleCourseProjectGenerator(
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
     setJdk(project, projectSettings)
+    CodeStyleSettingsManager.getInstance().currentSettings.getCommonSettings(JavaLanguage.INSTANCE).indentOptions!!.TAB_SIZE = 2
+    CodeStyleSettingsManager.getInstance().currentSettings.getCommonSettings(JavaLanguage.INSTANCE).indentOptions!!.INDENT_SIZE = 2
   }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
