@@ -105,7 +105,9 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
       @Override
       public void run() {
         try {
-          VirtualFile lesson1 = myFixture.getProject().getBaseDir().createChildDirectory(this, "lesson1");
+          VirtualFile rootDir = myFixture.findFileInTempDir(".");
+          assert rootDir != null : "Can't find root directory";
+          VirtualFile lesson1 = rootDir.createChildDirectory(this, "lesson1");
           lesson1.createChildDirectory(this, "task1");
         }
         catch (IOException e) {
