@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
 import java.util.*;
@@ -47,9 +48,10 @@ import java.util.stream.Collectors;
 import static com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector.EDU_TOOLS_COMMENT;
 import static com.jetbrains.edu.learning.stepik.StepikConnector.*;
 
-public class StepikSolutionsLoader implements Disposable{
+public class StepikSolutionsLoader implements Disposable {
+  public static final String PROGRESS_ID_PREFIX = "77-";
+
   private static final Logger LOG = Logger.getInstance(StepikSolutionsLoader.class);
-  private static final String PROGRESS_ID_PREFIX = "77-";
   private final HashMap<Integer, Future> myFutures = new HashMap<>();
   private final Project myProject;
   private MessageBusConnection myBusConnection;
@@ -134,10 +136,10 @@ public class StepikSolutionsLoader implements Disposable{
       final Task task = tasksToUpdate.get(i);
       final int progressIndex = i + 1;
       if (progressIndicator == null || !progressIndicator.isCanceled()) {
-          Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
           boolean isSolved = task.getStatus() == CheckStatus.Solved;
           if (progressIndicator != null) {
-            progressIndicator.setFraction((double) progressIndex / tasksToUpdate.size());
+            progressIndicator.setFraction((double)progressIndex / tasksToUpdate.size());
             progressIndicator.setText(String.format("Loading solution %d from %d", progressIndex, tasksToUpdate.size()));
           }
           loadSolution(myProject, task, isSolved);
@@ -184,7 +186,7 @@ public class StepikSolutionsLoader implements Disposable{
       file.setTrackChanges(false);
     }
 
-    SubtaskUtils.switchStep(myProject, (TaskWithSubtasks) mySelectedTask, activeSubtaskIndex);
+    SubtaskUtils.switchStep(myProject, (TaskWithSubtasks)mySelectedTask, activeSubtaskIndex);
 
     for (TaskFile file : taskFiles) {
       file.setTrackChanges(true);
@@ -199,28 +201,27 @@ public class StepikSolutionsLoader implements Disposable{
     }
   }
 
-  private List<Task> tasksToUpdate(@NotNull Course course) {
+  public List<Task> tasksToUpdate(@NotNull Course course) {
     List<Task> tasksToUpdate = new ArrayList<>();
     Task[] allTasks = course.getLessons().stream().flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
-      String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
-      Boolean[] taskStatuses = taskStatuses(progresses);
-      if (taskStatuses == null) return tasksToUpdate;
-      for (int j = 0; j < allTasks.length; j++) {
-        Boolean isSolved = taskStatuses[j];
-        Task task = allTasks[j];
-        boolean toUpdate = false;
-        if (isSolved != null && !(task instanceof TheoryTask)) {
-          toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
+    String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
+    Boolean[] taskStatuses = taskStatuses(progresses);
+    if (taskStatuses == null) return tasksToUpdate;
+    for (int j = 0; j < allTasks.length; j++) {
+      Boolean isSolved = taskStatuses[j];
+      Task task = allTasks[j];
+      boolean toUpdate = false;
+      if (isSolved != null && !(task instanceof TheoryTask)) {
+        toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
+      }
+      if (toUpdate) {
+        if (task instanceof TaskWithSubtasks && isSolved) {
+          // task isSolved on Stepik if and only if all subtasks were solved
+          ((TaskWithSubtasks)task).setActiveSubtaskIndex(((TaskWithSubtasks)task).getLastSubtaskIndex());
         }
-        if (toUpdate) {
-          if (task instanceof TaskWithSubtasks && isSolved ) {
-            // task isSolved on Stepik if and only if all subtasks were solved
-            ((TaskWithSubtasks)task).setActiveSubtaskIndex(((TaskWithSubtasks)task).getLastSubtaskIndex());
-          }
-          task.setStatus(checkStatus(task, isSolved));
-          tasksToUpdate.add(task);
-
+        task.setStatus(checkStatus(task, isSolved));
+        tasksToUpdate.add(task);
       }
     }
     return tasksToUpdate;
@@ -267,7 +268,7 @@ public class StepikSolutionsLoader implements Disposable{
           if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().name)) {
             JBLoadingPanel component = selectedEditor.getComponent();
             component.stopLoading();
-            ((EditorImpl) selectedEditor.getEditor()).setViewer(false);
+            ((EditorImpl)selectedEditor.getEditor()).setViewer(false);
             selectedEditor.validateTaskFile();
           }
         });
@@ -431,7 +432,7 @@ public class StepikSolutionsLoader implements Disposable{
     if (taskDir == null) {
       return;
     }
-    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+    ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       // we can switch subtask before we load document change, because otherwise placeholder text is inserted twice.
       // see com.jetbrains.edu.learning.SubtaskUtils.updatePlaceholderTexts()
       if (task instanceof TaskWithSubtasks && task.equals(mySelectedTask)) {
@@ -458,5 +459,10 @@ public class StepikSolutionsLoader implements Disposable{
   public void dispose() {
     myBusConnection.disconnect();
     cancelUnfinishedTasks();
+  }
+
+  @TestOnly
+  public void doLoadSolution(Task task, boolean isSolved) {
+    loadSolution(myProject, task, isSolved);
   }
 }
