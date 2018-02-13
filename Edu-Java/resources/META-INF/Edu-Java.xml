@@ -1,18 +1,19 @@
 <idea-plugin>
-    <depends>com.intellij.modules.lang</depends>
-    <depends>JUnit</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JUnit</depends>
 
-    <extensions defaultExtensionNs="Educational">
-        <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
-    </extensions>
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
+  </extensions>
 
-    <extensions defaultExtensionNs="educational">
-        <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.JLanguageDecorator" />
-    </extensions>
+  <extensions defaultExtensionNs="educational">
+    <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.JLanguageDecorator"/>
+  </extensions>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <renameHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
-        <refactoring.moveHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
-    </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <renameHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
+    <langCodeStyleSettingsProvider implementation="com.jetbrains.edu.java.JLanguageCodeStyleSettingsProvider" order="first"/>
+  </extensions>
 </idea-plugin>
 
