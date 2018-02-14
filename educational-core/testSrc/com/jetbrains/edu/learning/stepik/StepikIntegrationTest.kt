@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
@@ -36,6 +37,7 @@ class StepikIntegrationTest : CCTestCase() {
   companion object {
     private const val CLIENT_ID = "wHohrJv83oYoFYmgWYwEDW5ZNS1ntVRueWjMyQpm"
     private const val CSRF = "csrfmiddlewaretoken"
+    private val LOG = Logger.getInstance(StepikIntegrationTest::class.java)
   }
 
   private lateinit var user: StepicUser
@@ -79,7 +81,7 @@ class StepikIntegrationTest : CCTestCase() {
     extension.language = PlainTextLanguage.INSTANCE.id
     extension.implementationClass = PlainTextConfigurator::class.java.name
     PlatformTestUtil.registerExtension(
-      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.testRootDisposable)
+      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.project)
   }
 
   @Test
