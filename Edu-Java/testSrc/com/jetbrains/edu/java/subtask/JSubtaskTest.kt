@@ -11,4 +11,6 @@ class JSubtaskTest : CCSubtaskTestBase() {
   override val taskFileName: String = JConfigurator.TASK_JAVA
   override val testFileName: String = JConfigurator.TEST_JAVA
   override val language: Language = JavaLanguage.INSTANCE
+
+  override fun shouldRunTest(): Boolean = false
 }
