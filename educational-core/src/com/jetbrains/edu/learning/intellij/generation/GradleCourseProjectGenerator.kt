@@ -3,9 +3,10 @@ package com.jetbrains.edu.learning.intellij.generation
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.module.ModifiableModuleModel
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.modifyModules
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
@@ -112,4 +113,13 @@ open class GradleCourseProjectGenerator(
      */
     private fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_")
   }
+}
+
+private inline fun <T> Project.modifyModules(crossinline task: ModifiableModuleModel.() -> T): T {
+  val model = ModuleManager.getInstance(this).modifiableModel
+  val result = model.task()
+  runWriteAction {
+    model.commit()
+  }
+  return result
 }
