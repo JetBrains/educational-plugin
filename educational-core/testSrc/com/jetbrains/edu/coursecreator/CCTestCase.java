@@ -43,6 +43,9 @@ import java.util.regex.Pattern;
 
 public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase {
   private static final Logger LOG = Logger.getInstance(CCTestCase.class);
+  // BACKCOMPAT: 2017.1
+  // use com.intellij.psi.codeStyle.CodeStyleDefaults
+  private static final CommonCodeStyleSettings.IndentOptions DEFAULT_INDENT_OPTIONS = new CommonCodeStyleSettings.IndentOptions();
 
   @Nullable
   public static RangeHighlighter getHighlighter(MarkupModel model, AnswerPlaceholder placeholder) {
@@ -125,8 +128,8 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     try {
       final CommonCodeStyleSettings.IndentOptions options =
         CodeStyleSettingsManager.getInstance().getCurrentSettings().getCommonSettings(JavaLanguage.INSTANCE).getIndentOptions();
-      options.TAB_SIZE = CommonCodeStyleSettings.IndentOptions.DEFAULT_INDENT_OPTIONS.TAB_SIZE;
-      options.INDENT_SIZE = CommonCodeStyleSettings.IndentOptions.DEFAULT_INDENT_OPTIONS.INDENT_SIZE;
+      options.TAB_SIZE = DEFAULT_INDENT_OPTIONS.TAB_SIZE;
+      options.INDENT_SIZE = DEFAULT_INDENT_OPTIONS.INDENT_SIZE;
     }
     finally {
       super.tearDown();
