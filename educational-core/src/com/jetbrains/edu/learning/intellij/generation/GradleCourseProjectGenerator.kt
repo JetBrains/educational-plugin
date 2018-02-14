@@ -5,7 +5,7 @@ import com.intellij.ide.util.newProjectWizard.AddModuleWizard
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
+import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManager
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
