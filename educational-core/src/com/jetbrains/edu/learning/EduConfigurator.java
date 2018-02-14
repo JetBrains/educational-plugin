@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.SystemIndependent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,7 +56,6 @@ public interface EduConfigurator<Settings> {
    *
    * @return task files directory path
    */
-  @SystemIndependent
   @NotNull
   default String getSourceDir() {
     return "";
@@ -71,7 +69,6 @@ public interface EduConfigurator<Settings> {
    *
    * @return test files directory path
    */
-  @SystemIndependent
   @NotNull
   default String getTestDir() {
     return "";

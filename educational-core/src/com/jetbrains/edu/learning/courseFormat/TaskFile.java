@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.SystemIndependent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,7 +173,6 @@ public class TaskFile {
     return true;
   }
 
-  @SystemIndependent
   @NotNull
   public String getPathInTask() {
     if (myTask == null) return name;
