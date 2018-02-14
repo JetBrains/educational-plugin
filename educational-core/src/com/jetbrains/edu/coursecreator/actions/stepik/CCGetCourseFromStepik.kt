@@ -2,7 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -38,13 +38,13 @@ class CCGetCourseFromStepik : CCNewCourseActionBase("Get Course From Stepik", "G
       showError(courseId)
       return
     }
-    runInEdt {
+    ApplicationManager.getApplication().invokeLater {
       CCNewCourseDialog("Get Course From Stepik", "Create", course, this::initializeCourseProject).show()
     }
   }
 
   private fun showError(courseId: String) {
-    runInEdt {
+    ApplicationManager.getApplication().invokeLater {
       Messages.showWarningDialog("Can't load course info. Check that course with `$courseId` id exists", "Failed to Load Course")
     }
   }
