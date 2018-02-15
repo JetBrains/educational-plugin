@@ -8,6 +8,7 @@ import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -74,6 +75,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
+import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.StepicUser;
@@ -192,7 +194,10 @@ public class EduUtils {
     if (taskDescriptionToolWindow != null) {
       Task task = getCurrentTask(project);
       taskDescriptionToolWindow.updateTask(project, task);
-      taskDescriptionToolWindow.updateCourseProgress(project);
+      final AbstractProjectViewPane pane = ProjectView.getInstance(project).getCurrentProjectViewPane();
+      if (pane instanceof CourseViewPane) {
+        ((CourseViewPane)pane).updateCourseProgress(project);
+      }
     }
   }
 

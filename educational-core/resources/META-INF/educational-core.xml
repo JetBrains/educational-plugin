@@ -223,6 +223,8 @@
     <editorNotificationProvider
         implementation="com.jetbrains.edu.coursecreator.CCSubtaskEditorNotificationProvider"/>
     <editorTabTitleProvider implementation="com.jetbrains.edu.coursecreator.CCTestsTabTitleProvider"/>
+
+    <projectViewPane implementation="com.jetbrains.edu.learning.projectView.CourseViewPane"/>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">

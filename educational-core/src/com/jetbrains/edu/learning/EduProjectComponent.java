@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -43,6 +42,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
+import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
@@ -136,8 +136,8 @@ public class EduProjectComponent implements ProjectComponent {
     ProjectView projectView = ProjectView.getInstance(myProject);
     if (projectView != null) {
       String selectedViewId = ProjectView.getInstance(myProject).getCurrentViewId();
-      if (!ProjectViewPane.ID.equals(selectedViewId)) {
-        projectView.changeView(ProjectViewPane.ID);
+      if (!CourseViewPane.Companion.getID().equals(selectedViewId)) {
+        projectView.changeView(CourseViewPane.Companion.getID());
       }
     }
     else {
