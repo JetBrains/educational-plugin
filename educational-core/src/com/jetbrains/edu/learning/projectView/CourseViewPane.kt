@@ -87,6 +87,10 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createSelectInTarget(): SelectInTarget {
     return object : ProjectViewSelectInTarget(myProject) {
+      override fun getMinorViewId(): String? {
+        return ID
+      }
+
       override fun toString(): String {
         return ID
       }
