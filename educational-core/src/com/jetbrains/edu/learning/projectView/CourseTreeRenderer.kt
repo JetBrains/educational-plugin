@@ -20,6 +20,7 @@ import com.intellij.ide.util.treeView.NodeRenderer
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.ui.SimpleColoredComponent
 import com.intellij.ui.SimpleTextAttributes
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.ui.CourseProgressBar
@@ -54,7 +55,7 @@ internal class CourseTreeRenderer(private val myCourse: Course) : TreeCellRender
         val size = tree.parent.size
         nodePanel.preferredSize = Dimension(size.width - 45, nodePanel.preferredSize.height)
 
-        myCourseProgressBar = CourseProgressBar(0.0, 5, 5)
+        myCourseProgressBar = CourseProgressBar(0.0, JBUI.scale(5), 5)
         updateCourseProgress(myCourse)
 
         panel.add(nodePanel)
