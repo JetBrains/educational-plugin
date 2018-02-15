@@ -16,15 +16,20 @@
 
 package com.jetbrains.edu.learning.projectView
 
+import com.intellij.icons.AllIcons
 import com.intellij.ide.SelectInTarget
 import com.intellij.ide.impl.ProjectViewSelectInTarget
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
 import com.intellij.ide.projectView.impl.ProjectTreeStructure
 import com.intellij.ide.projectView.impl.ProjectViewTree
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.StudyTaskManager
 import icons.EducationalCoreIcons
@@ -33,7 +38,6 @@ import javax.swing.Icon
 import javax.swing.tree.DefaultTreeModel
 
 class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
-
   override fun createTree(treeModel: DefaultTreeModel): ProjectViewTree {
     val tree = object : ProjectViewTree(myProject, treeModel) {
       override fun toString(): String {
@@ -52,6 +56,18 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun addToolbarActions(actionGroup: DefaultActionGroup?) {
     actionGroup?.removeAll()
+    val hideSolvedLessons = object: DumbAwareToggleAction("Hide Solved Lessons", "Hide Solved Lessons", AllIcons.General.CollapseAll){
+      override fun isSelected(p0: AnActionEvent?): Boolean {
+        return PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
+      }
+
+      override fun setSelected(p0: AnActionEvent?, p1: Boolean) {
+        val hideSolved = PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
+        PropertiesComponent.getInstance().setValue(HIDE_SOLVED_LESSONS, !hideSolved)
+        ProjectView.getInstance(myProject).refresh()
+      }
+    }
+    actionGroup?.add(hideSolvedLessons)
   }
 
   fun updateCourseProgress(project: Project) {
@@ -108,5 +124,6 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   companion object {
     @NonNls
     val ID = "Course"
+    const val HIDE_SOLVED_LESSONS = "Edu.HideSolvedLessons"
   }
 }

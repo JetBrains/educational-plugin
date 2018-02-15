@@ -3,10 +3,12 @@ package com.jetbrains.edu.learning.projectView;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
@@ -17,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.jetbrains.edu.learning.projectView.CourseViewPane.HIDE_SOLVED_LESSONS;
 
 
 public class CourseNode extends EduNode {
@@ -45,6 +49,12 @@ public class CourseNode extends EduNode {
     if (value instanceof PsiDirectory) {
       PsiDirectory directory = (PsiDirectory)value;
       Lesson lesson = myCourse.getLesson(directory.getName());
+      if (lesson != null) {
+        final CheckStatus status = lesson.getStatus();
+        if (status.equals(CheckStatus.Solved) && PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)) {
+          return null;
+        }
+      }
       return lesson != null ? createChildDirectoryNode(lesson, directory) : null;
     }
     return null;
