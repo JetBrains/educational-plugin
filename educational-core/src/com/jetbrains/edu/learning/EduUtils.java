@@ -217,7 +217,7 @@ public class EduUtils {
       Content[] contents = toolWindow.getContentManager().getContents();
       for (Content content : contents) {
         JComponent component = content.getComponent();
-        if (component != null && component instanceof TaskDescriptionToolWindow) {
+        if (component instanceof TaskDescriptionToolWindow) {
           return (TaskDescriptionToolWindow)component;
         }
       }
@@ -679,6 +679,7 @@ public class EduUtils {
   }
 
   public static void registerStudyToolWindow(Project project) {
+    if (project.isDisposed()) return;
     final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
     if (toolWindowManager == null) {
       return;

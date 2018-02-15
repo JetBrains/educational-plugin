@@ -52,7 +52,7 @@ internal class CourseTreeRenderer(private val myCourse: Course) : TreeCellRender
         myProgressCount = SimpleColoredComponent()
         nodePanel.add(myProgressCount!!, BorderLayout.EAST)
         val size = tree.parent.size
-        nodePanel.preferredSize = Dimension(size.width - 40, nodePanel.preferredSize.height)
+        nodePanel.preferredSize = Dimension(size.width - 45, nodePanel.preferredSize.height)
 
         myCourseProgressBar = CourseProgressBar(0.0, 5, 5)
         updateCourseProgress(myCourse)
