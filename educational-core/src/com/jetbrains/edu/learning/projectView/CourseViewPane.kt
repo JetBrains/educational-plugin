@@ -16,7 +16,6 @@
 
 package com.jetbrains.edu.learning.projectView
 
-import com.intellij.icons.AllIcons
 import com.intellij.ide.SelectInTarget
 import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.ProjectView
@@ -56,7 +55,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun addToolbarActions(actionGroup: DefaultActionGroup?) {
     actionGroup?.removeAll()
-    val hideSolvedLessons = object: DumbAwareToggleAction("Hide Solved Lessons", "Hide Solved Lessons", AllIcons.General.CollapseAll){
+    val hideSolvedLessons = object: DumbAwareToggleAction("Hide Solved Lessons"){
       override fun isSelected(p0: AnActionEvent?): Boolean {
         return PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
       }
