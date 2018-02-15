@@ -24,6 +24,7 @@ import com.intellij.ide.projectView.impl.ProjectTreeStructure
 import com.intellij.ide.projectView.impl.ProjectViewTree
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.StudyTaskManager
 import icons.EducationalCoreIcons
@@ -47,6 +48,10 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     tree.rowHeight = -1
 
     return tree
+  }
+
+  override fun addToolbarActions(actionGroup: DefaultActionGroup?) {
+    actionGroup?.removeAll()
   }
 
   fun updateCourseProgress(project: Project) {
