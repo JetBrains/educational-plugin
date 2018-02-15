@@ -29,10 +29,8 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBCardLayout;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskTextAction;
@@ -40,20 +38,16 @@ import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.editor.EduFileEditorManagerListener;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
-import com.jetbrains.edu.learning.ui.CourseProgressBar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel implements DataProvider, Disposable {
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
@@ -64,8 +58,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   private final JBCardLayout myCardLayout;
   private final JPanel myContentPanel;
   private final OnePixelSplitter mySplitPane;
-  private JLabel myStatisticLabel;
-  private CourseProgressBar myCourseProgressBar;
 
   private Task myCurrentTask = null;
   private int myCurrentSubtaskIndex = -1;
@@ -90,18 +82,14 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     JComponent taskInfoPanel = createTaskInfoPanel(project);
     panel.add(taskInfoPanel, BorderLayout.CENTER);
 
-    final JPanel courseProgress = createCourseProgress(project);
-    if (course != null && !course.isAdaptive() && course.isStudy()) {
-      panel.add(courseProgress, BorderLayout.SOUTH);
-    }
-
     myContentPanel.add(TASK_INFO_ID, panel);
     mySplitPane.setFirstComponent(myContentPanel);
     myCardLayout.show(myContentPanel, TASK_INFO_ID);
 
     setContent(mySplitPane);
 
-    project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new EduFileEditorManagerListener(this, project));
+    project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
+                                                new EduFileEditorManagerListener(this, project));
     Task task = EduUtils.getCurrentTask(project);
     setCurrentTask(project, task);
   }
@@ -272,89 +260,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     mySplitPane.setFirstComponent(myContentPanel);
     StudyTaskManager.getInstance(project).setToolWindowMode(StudyToolWindowMode.TEXT);
     EduUtils.updateToolWindows(project);
-  }
-
-  private JPanel createCourseProgress(@NotNull final Project project) {
-    JPanel contentPanel = new JPanel();
-    contentPanel.setBackground(JBColor.WHITE);
-    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
-    contentPanel.add(Box.createRigidArea(JBUI.size(new Dimension(10, 0))));
-    contentPanel.add(Box.createRigidArea(JBUI.size(new Dimension(0, 10))));
-    myCourseProgressBar = new CourseProgressBar(0, 20, 10);
-
-    myStatisticLabel = new JLabel("", SwingConstants.LEFT);
-    contentPanel.add(myStatisticLabel);
-    contentPanel.add(myCourseProgressBar);
-
-    contentPanel.setPreferredSize(JBUI.size(new Dimension(100, 60)));
-    contentPanel.setMinimumSize(JBUI.size(new Dimension(300, 40)));
-    updateCourseProgress(project);
-    return contentPanel;
-  }
-
-  public void updateCourseProgress(@NotNull final Project project) {
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course != null) {
-      List<Lesson> lessons = course.getLessons();
-
-      Pair<Integer, Integer> progress = countProgressAsOneTaskWithSubtasks(lessons);
-      if (progress == null) {
-        progress = countProgressWithoutSubtasks(lessons);
-      }
-
-      int taskSolved = progress.getFirst();
-      int taskNum = progress.getSecond();
-      String completedTasks = String.format("%d of %d tasks completed", taskSolved, taskNum);
-      double percent = (taskSolved * 100.0) / taskNum;
-
-      myStatisticLabel.setText(completedTasks);
-      myCourseProgressBar.setFraction(percent / 100);
-    }
-  }
-
-  /**
-   * Counts current progress for course which consists of only on task with subtasks
-   * In this case we count each subtasks as task
-   * @return Pair (number of solved tasks, number of tasks) or null if lessons can't be interpreted as one task with subtasks
-   */
-  @Nullable
-  private static Pair<Integer, Integer> countProgressAsOneTaskWithSubtasks(List<Lesson> lessons) {
-    if (lessons.size() == 1 && lessons.get(0).getTaskListForProgress().size() == 1) {
-      final Lesson lesson = lessons.get(0);
-      final Task task = lesson.getTaskListForProgress().get(0);
-      if (task instanceof TaskWithSubtasks) {
-        final int lastSubtaskIndex = ((TaskWithSubtasks)task).getLastSubtaskIndex();
-        final int activeSubtaskIndex = ((TaskWithSubtasks)task).getActiveSubtaskIndex();
-        int taskNum = lastSubtaskIndex + 1;
-        boolean isLastSubtaskSolved = activeSubtaskIndex == lastSubtaskIndex && task.getStatus() == CheckStatus.Solved;
-        return Pair.create(isLastSubtaskSolved ? taskNum : activeSubtaskIndex, taskNum);
-      }
-    }
-    return null;
-  }
-
-  /**
-   * @return Pair (number of solved tasks, number of tasks)
-   */
-  @NotNull
-  public static Pair<Integer, Integer> countProgressWithoutSubtasks(List<Lesson> lessons) {
-    int taskNum = 0;
-    int taskSolved = 0;
-    for (Lesson lesson : lessons) {
-      taskNum += lesson.getTaskListForProgress().size();
-      taskSolved += getSolvedTasks(lesson);
-    }
-    return Pair.create(taskSolved, taskNum);
-  }
-
-  private static int getSolvedTasks(@NotNull final Lesson lesson) {
-    int solved = 0;
-    for (Task task : lesson.getTaskListForProgress()) {
-      if (task.getStatus() == CheckStatus.Solved) {
-        solved += 1;
-      }
-    }
-    return solved;
   }
 
   @Nullable

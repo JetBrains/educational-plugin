@@ -19,7 +19,7 @@ public class CourseProgressBar extends JComponent implements DumbAware {
   private static final int BRICK_SPACE = 2;
   private final int myHeight;
   private final int myIndent;
-  private double myFraction = 0.0;
+  private double myFraction;
   private static final Color myColor = JBColor.GREEN;
 
   public CourseProgressBar(double fraction, int height, int indent) {
@@ -53,29 +53,28 @@ public class CourseProgressBar extends JComponent implements DumbAware {
     g2.drawRoundRect(myIndent, 0, (int)width, myHeight, arcWidth, arcHeight);
     g2.setPaint(SHADOW2);
 
-    int y_center = myHeight / 2;
-    int y_steps = myHeight / 2 - 3;
-    int alpha_step = y_steps > 0 ? (255 - 70) / y_steps : 255 - 70;
-    int x_offset = 4;
+    int yCenter = myHeight / 2;
+    int ySteps = myHeight / 2;
+    int alphaStep = ySteps > 0 ? (255 - 70) / ySteps : 255 - 70;
+    int xOffset = 4;
 
-    g.setClip(4 + myIndent, 3, (int)width - 6, myHeight - 4);
+    g.setClip(myIndent + xOffset, 1, (int)width - 3, myHeight - 1);
 
     int bricksToDraw = myFraction == 0 ? 0 : getBricksToDraw(myFraction);
     for (int i = 0; i < bricksToDraw; i++) {
       g2.setPaint(myColor);
-      UIUtil.drawLine(g2, x_offset, y_center, x_offset + BRICK_WIDTH - 1, y_center);
-      for (int j = 0; j < y_steps; j++) {
-        Color color = ColorUtil.toAlpha(myColor, 255 - alpha_step * (j + 1));
+      UIUtil.drawLine(g2, xOffset, yCenter, xOffset + BRICK_WIDTH - 1, yCenter);
+      for (int j = 0; j < ySteps; j++) {
+        Color color = ColorUtil.toAlpha(myColor, 255 - alphaStep * (j + 1));
         g2.setPaint(color);
-        UIUtil.drawLine(g2, x_offset, y_center - 1 - j, x_offset + BRICK_WIDTH - 1, y_center - 1 - j);
-        if (!(y_center % 2 != 0 && j == y_steps - 1)) {
-          UIUtil.drawLine(g2, x_offset, y_center + 1 + j, x_offset + BRICK_WIDTH - 1, y_center + 1 + j);
+        UIUtil.drawLine(g2, xOffset, yCenter - 1 - j, xOffset + BRICK_WIDTH - 1, yCenter - 1 - j);
+        if (!(yCenter % 2 != 0 && j == ySteps - 1)) {
+          UIUtil.drawLine(g2, xOffset, yCenter + 1 + j, xOffset + BRICK_WIDTH - 1, yCenter + 1 + j);
         }
       }
-      g2.setColor(
-        ColorUtil.toAlpha(myColor, 255 - alpha_step * (y_steps / 2 + 1)));
-      g2.drawRect(x_offset, y_center - y_steps, BRICK_WIDTH - 1, myHeight - 7);
-      x_offset += BRICK_WIDTH + BRICK_SPACE;
+      g2.setColor(ColorUtil.toAlpha(myColor, 255 - alphaStep * (ySteps / 2 + 1)));
+      g2.drawRect(xOffset, yCenter - ySteps, BRICK_WIDTH - 1, myHeight - 7);
+      xOffset += BRICK_WIDTH + BRICK_SPACE;
     }
     config.restore();
   }

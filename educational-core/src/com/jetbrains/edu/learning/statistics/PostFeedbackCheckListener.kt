@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow
+import com.jetbrains.edu.learning.projectView.ProgressUtil
 
 
 class PostFeedbackCheckListener : CheckListener {
@@ -17,7 +17,7 @@ class PostFeedbackCheckListener : CheckListener {
     val course = lesson.course
     val lessons = course.lessons
 
-    val progress = TaskDescriptionToolWindow.countProgressWithoutSubtasks(lessons)
+    val progress = ProgressUtil.countProgressWithoutSubtasks(lessons)
     val solvedTasks = progress.getFirst()
     if (solvedTasks == lesson.taskList.size) {
       showNotification(true, course, project)
