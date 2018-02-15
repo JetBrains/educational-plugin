@@ -26,7 +26,7 @@ class TaskDescriptionToolWindowTest : EduTestCase() {
     val taskDir = task?.getTaskDir(project)
     val initialDocument = Jsoup.parse(fileText)
 
-    val processedText = BrowserWindow(project, false, false).processContent(fileText, taskDir!!)
+    val processedText = BrowserWindow.processContent(fileText, taskDir!!, project)
     val processedDocument = Jsoup.parse(processedText)
 
     val initialImgElements = initialDocument.getElementsByTag("img")
@@ -41,7 +41,7 @@ class TaskDescriptionToolWindowTest : EduTestCase() {
     val fileText = FileUtil.loadFile(File(testDataPath, name))
     val task = EduUtils.getCurrentTask(project)
     val taskDir = task?.getTaskDir(project)
-    val processedText = BrowserWindow(project, false, false).processContent(fileText, taskDir!!)
+    val processedText = BrowserWindow.processContent(fileText, taskDir!!, project)
     val document = Jsoup.parse(processedText)
     val imageElements = document.getElementsByTag("img")
     imageElements
