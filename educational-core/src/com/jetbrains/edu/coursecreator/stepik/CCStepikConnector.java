@@ -310,6 +310,18 @@ public class CCStepikConnector {
 
   public static void updateCourse(@NotNull final Project project, @NotNull final RemoteCourse course) {
     if (!checkIfAuthorized(project, "update course")) return;
+
+    // Course info can be changed from Stepik site directly
+    // so we get actual info here
+    RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
+    if (courseInfo != null) {
+      course.setName(courseInfo.getName());
+      course.setDescription(courseInfo.getDescription());
+      course.setPublic(courseInfo.isPublic());
+    } else {
+      LOG.warn("Failed to get current course info");
+    }
+
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.COURSES + "/" + String.valueOf(course.getId()));
     String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));

@@ -153,6 +153,7 @@ public class StepikWrappers {
       this.course.setAuthors(course.getAuthors());
       if (course instanceof RemoteCourse) {
         this.course.setInstructors(((RemoteCourse)course).getInstructors());
+        this.course.setPublic(((RemoteCourse)course).isPublic());
       }
     }
   }
