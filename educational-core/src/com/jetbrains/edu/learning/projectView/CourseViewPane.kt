@@ -44,6 +44,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     if (course != null) {
       tree.cellRenderer = CourseTreeRenderer(course)
     }
+    tree.rowHeight = -1
+
     return tree
   }
 
