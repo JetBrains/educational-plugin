@@ -48,4 +48,9 @@ public abstract class EduNode extends PsiDirectoryNode {
 
   public abstract PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value);
 
+  @Override
+  public String getTestPresentation() {
+    final String name = getName() != null ? getName() : this.getValue().getName();
+    return getClass().getSimpleName() + " " + name;
+  }
 }

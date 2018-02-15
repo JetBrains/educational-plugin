@@ -31,7 +31,7 @@ import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.TreeCellRenderer
 
-internal class CourseTreeRenderer(private val myCourse: Course) : TreeCellRenderer {
+class CourseTreeRenderer(private val myCourse: Course) : TreeCellRenderer {
   private var myCourseProgressBar: CourseProgressBar? = null
   private var myProgressCount: SimpleColoredComponent? = null
 
