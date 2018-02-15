@@ -347,8 +347,8 @@ public class CCStepikConnector {
       final StepikWrappers.Section section = StepikConnector.getSection(sectionId);
       if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
         final List<Lesson> lessons = StepikConnector.getLessons(course, sectionId);
-        lessons.stream().
-                filter(lesson -> EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName()))
+        lessons.stream()
+                .filter(Lesson::isAdditional)
                 .findFirst()
                 .ifPresent(lesson -> {
                         updateAdditionalFiles(course, project, lesson.getId());

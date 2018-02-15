@@ -41,7 +41,7 @@ object GeneratorUtils {
     val lessons = course.getLessons(true)
     for ((i, lesson) in lessons.withIndex()) {
       indicator.fraction = (i + 1).toDouble() / lessons.size
-      if (lesson.name != EduNames.ADDITIONAL_MATERIALS) {
+      if (!lesson.isAdditional) {
         indicator.text = "Generating lesson ${i + 1} from ${lessons.size}"
       } else {
         indicator.text = "Generating additional files"

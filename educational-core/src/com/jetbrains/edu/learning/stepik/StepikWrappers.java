@@ -80,7 +80,7 @@ public class StepikWrappers {
 
     private static void setTaskFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
       source.files = new ArrayList<>();
-      if (!StepikNames.PYCHARM_ADDITIONAL.equals(task.getLesson().getName())) {
+      if (!task.getLesson().isAdditional()) {
         final VirtualFile taskDir = task.getTaskDir(project);
         assert taskDir != null;
         for (final Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
@@ -185,6 +185,9 @@ public class StepikWrappers {
       this.lesson = lesson;
       position = task.getIndex();
       block = Step.fromTask(project, task);
+      if (task.getLesson().isAdditional()) {
+        cost = 0;
+      }
     }
   }
 

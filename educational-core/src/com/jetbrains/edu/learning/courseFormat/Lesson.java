@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 
@@ -157,5 +158,11 @@ public class Lesson implements StudyItem {
       if (!task.isUpToDate()) return false;
     }
     return !date.after(myUpdateDate);
+  }
+
+  public boolean isAdditional() {
+    // We still use `StepikNames.PYCHARM_ADDITIONAL` while Stepik interaction
+    // so we need to check it here
+    return EduNames.ADDITIONAL_MATERIALS.equals(name) || StepikNames.PYCHARM_ADDITIONAL.equals(name);
   }
 }
