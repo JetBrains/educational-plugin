@@ -150,6 +150,10 @@ public class RemoteCourse extends Course {
     return isPublic;
   }
 
+  public void setPublic(boolean isPublic) {
+    this.isPublic = isPublic;
+  }
+
   public boolean isLoadSolutions() {
     return myLoadSolutions;
   }
