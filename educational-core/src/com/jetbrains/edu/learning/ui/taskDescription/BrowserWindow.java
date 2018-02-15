@@ -167,17 +167,17 @@ public class BrowserWindow extends JFrame {
 
     Platform.runLater(() -> {
       updateLookWithProgressBarIfNeeded();
-      myEngine.loadContent(doProcessContent(content, taskDir));
+      myEngine.loadContent(doProcessContent(content, taskDir, myProject));
     });
   }
 
   @TestOnly
-  public String processContent(@NotNull String content, @NotNull VirtualFile taskDir) {
-    return doProcessContent(content, taskDir);
+  public static String processContent(@NotNull String content, @NotNull VirtualFile taskDir, Project project) {
+    return doProcessContent(content, taskDir, project);
   }
 
-  private String doProcessContent(@NotNull String content, @NotNull VirtualFile taskDir) {
-    Course course = StudyTaskManager.getInstance(myProject).getCourse();
+  private static String doProcessContent(@NotNull String content, @NotNull VirtualFile taskDir, Project project) {
+    Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
       return content;
     }
@@ -206,11 +206,12 @@ public class BrowserWindow extends JFrame {
     return document.outerHtml();
   }
   @NotNull
-  private String createHtmlWithCodeHighlighting(@NotNull final String content,
+  private static String createHtmlWithCodeHighlighting(@NotNull final String content,
                                                 @NotNull String languageScriptUrl,
                                                 @NotNull String defaultHighlightingMode) {
     String template = null;
-    InputStream stream = getClass().getResourceAsStream("/code-mirror/template.html");
+    ClassLoader classLoader = BrowserWindow.class.getClassLoader();
+    InputStream stream = classLoader.getResourceAsStream("/code-mirror/template.html");
     try {
       template = StreamUtil.readText(stream, "utf-8");
     }
@@ -240,19 +241,19 @@ public class BrowserWindow extends JFrame {
     }
 
     template = template.replace("${font_size}", String.valueOf(fontSize- 2));
-    template = template.replace("${codemirror}", getClass().getResource("/code-mirror/codemirror.js").toExternalForm());
+    template = template.replace("${codemirror}", classLoader.getResource("/code-mirror/codemirror.js").toExternalForm());
     template = template.replace("${language_script}", languageScriptUrl);
     template = template.replace("${default_mode}", defaultHighlightingMode);
-    template = template.replace("${runmode}", getClass().getResource("/code-mirror/runmode.js").toExternalForm());
-    template = template.replace("${colorize}", getClass().getResource("/code-mirror/colorize.js").toExternalForm());
-    template = template.replace("${javascript}", getClass().getResource("/code-mirror/javascript.js").toExternalForm());
+    template = template.replace("${runmode}", classLoader.getResource("/code-mirror/runmode.js").toExternalForm());
+    template = template.replace("${colorize}", classLoader.getResource("/code-mirror/colorize.js").toExternalForm());
+    template = template.replace("${javascript}", classLoader.getResource("/code-mirror/javascript.js").toExternalForm());
     if (LafManager.getInstance().getCurrentLookAndFeel() instanceof DarculaLookAndFeelInfo) {
-      template = template.replace("${css_oldcodemirror}", getClass().getResource("/code-mirror/codemirror-old-darcula.css").toExternalForm());
-      template = template.replace("${css_codemirror}", getClass().getResource("/code-mirror/codemirror-darcula.css").toExternalForm());
+      template = template.replace("${css_oldcodemirror}", classLoader.getResource("/code-mirror/codemirror-old-darcula.css").toExternalForm());
+      template = template.replace("${css_codemirror}", classLoader.getResource("/code-mirror/codemirror-darcula.css").toExternalForm());
     }
     else {
-      template = template.replace("${css_oldcodemirror}", getClass().getResource("/code-mirror/codemirror-old.css").toExternalForm());
-      template = template.replace("${css_codemirror}", getClass().getResource("/code-mirror/codemirror.css").toExternalForm());
+      template = template.replace("${css_oldcodemirror}", classLoader.getResource("/code-mirror/codemirror-old.css").toExternalForm());
+      template = template.replace("${css_codemirror}", classLoader.getResource("/code-mirror/codemirror.css").toExternalForm());
     }
     template = template.replace("${code}", content);
 
