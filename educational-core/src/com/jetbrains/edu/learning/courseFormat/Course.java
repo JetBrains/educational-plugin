@@ -8,7 +8,6 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +54,7 @@ public class Course {
    * returns service lesson as well. Meant to be used in project generation/serialization
    */
   public List<Lesson> getLessons(boolean withAdditional) {
-    return withAdditional ? lessons : lessons.stream().filter(lesson -> !EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName()))
+    return withAdditional ? lessons : lessons.stream().filter(lesson -> !lesson.isAdditional())
                                           .collect(Collectors.toList());
   }
 
@@ -76,7 +75,7 @@ public class Course {
   }
 
   public void removeAdditionalLesson() {
-    lessons.stream().filter(lesson -> lesson.getName().equals(EduNames.ADDITIONAL_MATERIALS)).findFirst().
+    lessons.stream().filter(Lesson::isAdditional).findFirst().
         ifPresent(lesson -> lessons.remove(lesson));
   }
 
@@ -222,15 +221,6 @@ public class Course {
   @Override
   public String toString() {
     return getName();
-  }
-
-  @Nullable
-  public Task getAdditionalMaterialsTask() {
-    final Lesson additionalMaterials = getLessons(true).stream().
-      filter(lesson -> EduNames.ADDITIONAL_MATERIALS.equals(lesson.getName())).
-      findFirst().
-      orElse(null);
-    return additionalMaterials == null ? null : additionalMaterials.getTaskList().get(0);
   }
 
   @NotNull
