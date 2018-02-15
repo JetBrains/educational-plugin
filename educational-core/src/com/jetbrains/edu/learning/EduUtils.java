@@ -820,8 +820,13 @@ public class EduUtils {
     final VirtualFile activeVirtualFile = getActiveVirtualFile(taskDir, taskFiles);
     if (activeVirtualFile != null) {
       final PsiFile file = PsiManager.getInstance(project).findFile(activeVirtualFile);
-      StartupManager.getInstance(project).registerPostStartupActivity(
-        () -> ProjectView.getInstance(project).select(file, activeVirtualFile, false));
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        ProjectView.getInstance(project).select(file, activeVirtualFile, false);
+      }
+      else {
+        StartupManager.getInstance(project).registerPostStartupActivity(
+          () -> ProjectView.getInstance(project).select(file, activeVirtualFile, false));
+      }
       final FileEditor[] editors = FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
       if (editors.length == 0) {
         return;

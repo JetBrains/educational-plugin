@@ -1,0 +1,1 @@
+Look!<caret> There <placeholder hint="my hint2">is</placeholder> placeholder.

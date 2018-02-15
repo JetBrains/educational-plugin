@@ -1,0 +1,1 @@
+Look! There <placeholder hint="my hint1" hint2="my hint2">i<caret>s</placeholder> placeholder.
