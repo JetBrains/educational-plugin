@@ -21,6 +21,7 @@ import java.awt.*;
 
 public class CCChangeCourseInfo extends DumbAwareAction {
   private static final String ACTION_TEXT = "&Edit Course Information";
+  public static final String COURSE_INFO_DIALOG_TITLE = "Course Information";
 
   public CCChangeCourseInfo() {
     super(ACTION_TEXT, ACTION_TEXT, null);
@@ -81,7 +82,7 @@ public class CCChangeCourseInfo extends DumbAwareAction {
   private static DialogBuilder createChangeInfoDialog(Project project, @NotNull CCCourseInfoPanel panel) {
     DialogBuilder builder = new DialogBuilder(project);
 
-    builder.setTitle(ACTION_TEXT);
+    builder.setTitle(COURSE_INFO_DIALOG_TITLE);
     JPanel changeInfoPanel = panel.getMainPanel();
     changeInfoPanel.setPreferredSize(new Dimension(450, 300));
     changeInfoPanel.setMinimumSize(new Dimension(450, 300));
