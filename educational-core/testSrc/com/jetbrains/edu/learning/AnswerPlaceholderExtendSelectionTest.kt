@@ -20,6 +20,19 @@ class AnswerPlaceholderExtendSelectionTest : EduTestCase() {
     assertEquals("is", myFixture.editor.selectionModel.selectedText)
   }
 
+  fun testAdjustedCaret() {
+    val lessonIndex = 1
+    val taskIndex = 4
+    val taskFileName = "taskFile4.txt"
+    configureByTaskFile(lessonIndex, taskIndex, taskFileName)
+    myFixture.editor.caretModel.moveToOffset(31)
+    myFixture.editor.selectionModel.removeSelection()
+    assertNull(myFixture.editor.selectionModel.selectedText)
+    EditorTestUtil.executeAction(myFixture.editor, IdeActions.ACTION_EDITOR_SELECT_WORD_AT_CARET)
+    assertEquals(31, myFixture.editor.selectionModel.selectionStart)
+    assertEquals(33, myFixture.editor.selectionModel.selectionEnd)
+  }
+
   fun testLongPlaceholder() {
     val lessonIndex = 1
     val taskIndex = 2
@@ -41,7 +54,7 @@ class AnswerPlaceholderExtendSelectionTest : EduTestCase() {
     course.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(myFixture.project).course = course
 
-    val lesson1 = createLesson(1, 3)
+    val lesson1 = createLesson(1, 4)
     course.addLesson(lesson1)
     course.initCourse(false)
   }

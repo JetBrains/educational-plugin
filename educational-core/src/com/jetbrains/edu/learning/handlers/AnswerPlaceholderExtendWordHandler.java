@@ -10,9 +10,11 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -42,20 +44,19 @@ public class AnswerPlaceholderExtendWordHandler implements ExtendWordSelectionHa
     return editor == null ? null : taskFile.getAnswerPlaceholder(offset);
   }
 
-
   @Override
-  public boolean canSelect(PsiElement e) {
-    Editor editor = FileEditorManager.getInstance(e.getProject()).getSelectedTextEditor();
+  public boolean canSelect(@NotNull PsiElement element) {
+    Editor editor = FileEditorManager.getInstance(element.getProject()).getSelectedTextEditor();
     if (editor == null) {
       return false;
     }
-    return getAnswerPlaceholder(e, editor.getCaretModel().getOffset()) != null;
+    return getAnswerPlaceholder(element, editor.getCaretModel().getOffset()) != null;
   }
 
   @Override
-  public List<TextRange> select(PsiElement e, CharSequence editorText, int cursorOffset, Editor editor) {
-    AnswerPlaceholder placeholder = getAnswerPlaceholder(e, cursorOffset);
-    assert placeholder != null;
+  public List<TextRange> select(@NotNull PsiElement element, @NotNull CharSequence editorText, int cursorOffset, @NotNull Editor editor) {
+    AnswerPlaceholder placeholder = getAnswerPlaceholder(element, editor.getCaretModel().getOffset());
+    if (placeholder == null) return ContainerUtil.newArrayList();
     final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
     return Collections.singletonList(new TextRange(offsets.getFirst(), offsets.getSecond()));
   }
