@@ -13,10 +13,9 @@ import javax.swing.event.DocumentEvent;
 
 public class CCCourseInfoPanel {
   private JPanel myPanel;
-  private JPanel myCourseInfoPanel;
   private JTextArea myDescription;
   private JTextField myName;
-  private JTextField myAuthorField;
+  private JTextField myAuthor;
   private JLabel myLanguageLevelLabel;
   private ComboBox<String> myLanguageLevelCombobox;
   private JLabel myErrorLabel;
@@ -28,7 +27,7 @@ public class CCCourseInfoPanel {
     myLanguageLevelCombobox.setVisible(false);
 
     myDescription.setBorder(BorderFactory.createLineBorder(JBColor.border()));
-    myDescription.setFont(myAuthorField.getFont());
+    myDescription.setFont(myAuthor.getFont());
 
     myErrorLabel.setVisible(false);
     myErrorLabel.setForeground(MessageType.ERROR.getTitleForeground());
@@ -36,7 +35,7 @@ public class CCCourseInfoPanel {
     setupValidation();
 
     myName.setText(name);
-    myAuthorField.setText(author);
+    myAuthor.setText(author);
     myDescription.setText(description);
   }
 
@@ -50,7 +49,7 @@ public class CCCourseInfoPanel {
 
     myName.getDocument().addDocumentListener(validator);
     myDescription.getDocument().addDocumentListener(validator);
-    myAuthorField.getDocument().addDocumentListener(validator);
+    myAuthor.getDocument().addDocumentListener(validator);
   }
 
   public JPanel getMainPanel() {
@@ -69,7 +68,7 @@ public class CCCourseInfoPanel {
 
   @NotNull
   public String[] getAuthors() {
-    return StringUtil.splitByLines(StringUtil.notNullize(myAuthorField.getText()));
+    return StringUtil.splitByLines(StringUtil.notNullize(myAuthor.getText()));
   }
 
   public void setValidationListener(ValidationListener listener) {
@@ -81,7 +80,7 @@ public class CCCourseInfoPanel {
     final String message;
     if (StringUtil.isEmpty(myName.getText())) {
       message = "Enter course title";
-    } else if (StringUtil.isEmpty(myAuthorField.getText())) {
+    } else if (StringUtil.isEmpty(myAuthor.getText())) {
       message = "Enter course instructor";
     } else if (StringUtil.isEmpty(myDescription.getText())) {
       message = "Enter course description";
@@ -99,18 +98,6 @@ public class CCCourseInfoPanel {
     if (myValidationListener != null) {
       myValidationListener.onInputDataValidated(message == null);
     }
-  }
-
-  public JTextField getAuthorField() {
-    return myAuthorField;
-  }
-
-  public JTextArea getDescriptionField() {
-    return myDescription;
-  }
-
-  public JTextField getNameField() {
-    return myName;
   }
 
   public JLabel getLanguageLevelLabel() {
