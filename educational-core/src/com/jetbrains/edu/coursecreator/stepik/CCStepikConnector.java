@@ -68,7 +68,7 @@ public class CCStepikConnector {
     return null;
   }
 
-  public static void postCourseWithProgress(final Project project, @NotNull final Course course) {
+  public static void postCourseWithProgress(@NotNull final Project project, @NotNull final Course course) {
     ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(project, "Uploading Course", true) {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
@@ -77,7 +77,7 @@ public class CCStepikConnector {
     });
   }
 
-  private static void postCourse(final Project project, @NotNull Course course) {
+  private static void postCourse(@NotNull final Project project, @NotNull Course course) {
     if (!checkIfAuthorized(project, "post course")) return;
 
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
@@ -160,7 +160,7 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static void postAdditionalFiles(Course course, @NotNull final Project project, int id) {
+  public static void postAdditionalFiles(@NotNull Course course, @NotNull final Project project, int id) {
     final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
     if (lesson != null) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
@@ -173,7 +173,7 @@ public class CCStepikConnector {
     }
   }
 
-  public static void updateAdditionalFiles(Course course, @NotNull final Project project, int stepikId) {
+  public static void updateAdditionalFiles(@NotNull Course course, @NotNull final Project project, int stepikId) {
     final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
     if (lesson != null) {
       lesson.setId(stepikId);
@@ -185,7 +185,7 @@ public class CCStepikConnector {
     }
   }
 
-  public static void postUnit(int lessonId, int position, int sectionId, Project project) {
+  public static void postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "postTask")) return;
 
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.UNITS);
@@ -217,7 +217,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static int postModule(int courseId, int position, @NotNull final String title, Project project) {
+  private static int postModule(int courseId, int position, @NotNull final String title, @NotNull Project project) {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/sections");
     final StepikWrappers.Section section = new StepikWrappers.Section();
     section.setCourse(courseId);
@@ -359,7 +359,7 @@ public class CCStepikConnector {
     return additionalMaterialsUpdated.get();
   }
 
-  private static void updateLessons(Course course, Project project) {
+  private static void updateLessons(@NotNull Course course, @NotNull Project project) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     for (Lesson lesson : course.getLessons()) {
       indicator.checkCanceled();
@@ -445,7 +445,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static void showErrorNotification(@NotNull Project project, String message, String responseString) {
+  private static void showErrorNotification(@NotNull Project project, @NotNull String message, @NotNull String responseString) {
     final JsonObject details = new JsonParser().parse(responseString).getAsJsonObject();
     final JsonElement detail = details.get("detail");
     final String detailString = detail != null ? detail.getAsString() : responseString;
@@ -515,7 +515,7 @@ public class CCStepikConnector {
     return -1;
   }
 
-  public static void deleteTask(@NotNull final Integer task, Project project) {
+  public static void deleteTask(@NotNull final Integer task, @NotNull Project project) {
     final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES + task);
     ApplicationManager.getApplication().invokeLater(() -> {
       try {
@@ -537,7 +537,7 @@ public class CCStepikConnector {
     });
   }
 
-  public static void postTask(final Project project, @NotNull final Task task, final int lessonId) {
+  public static void postTask(@NotNull final Project project, @NotNull final Task task, final int lessonId) {
     if (!checkIfAuthorized(project, "postTask")) return;
 
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/step-sources");
