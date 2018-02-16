@@ -75,11 +75,11 @@ public class CCChangeCourseInfo extends DumbAwareAction {
     }
   }
 
-  protected void setVersion(Course course, CCCourseInfoPanel panel) {}
+  protected void setVersion(@NotNull Course course, @NotNull CCCourseInfoPanel panel) {}
 
-  protected void setupLanguageLevels(Course course, CCCourseInfoPanel panel) {}
+  protected void setupLanguageLevels(@NotNull Course course, @NotNull CCCourseInfoPanel panel) {}
 
-  private static DialogBuilder createChangeInfoDialog(Project project, @NotNull CCCourseInfoPanel panel) {
+  private static DialogBuilder createChangeInfoDialog(@NotNull Project project, @NotNull CCCourseInfoPanel panel) {
     DialogBuilder builder = new DialogBuilder(project);
 
     builder.setTitle(COURSE_INFO_DIALOG_TITLE);
