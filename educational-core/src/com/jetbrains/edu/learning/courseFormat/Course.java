@@ -7,9 +7,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepicUser;
+import org.fest.util.Strings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Course {
+  public static final String DEFAULT_DESCRIPTION = "This is a course to learn ";
   @Expose protected List<Lesson> lessons = new ArrayList<>();
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
@@ -108,6 +111,10 @@ public class Course {
   }
 
   public static String getAuthorsString(@NotNull List<StepicUser> authors) {
+    if (authors.isEmpty()) {
+      StepicUser stepicUser = EduSettings.getInstance().getUser();
+      return stepicUser != null ? stepicUser.getName() : StringUtil.notNullize(System.getProperty("user.name"));
+    }
     return StringUtil.join(authors, StepicUser::getName, ", ");
   }
 
@@ -136,6 +143,9 @@ public class Course {
   }
 
   public String getDescription() {
+    if (Strings.isNullOrEmpty(description)) {
+      return DEFAULT_DESCRIPTION + StringUtil.capitalize(StringUtil.toLowerCase(myProgrammingLanguage));
+    }
     return description;
   }
 

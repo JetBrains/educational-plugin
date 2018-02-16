@@ -9,13 +9,9 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBLabel
-import com.intellij.ui.components.JBScrollPane
-import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.CCFlags
-import com.intellij.ui.layout.panel
+import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduConfiguratorManager
@@ -37,8 +33,6 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   private val myPanel: JPanel
   private val myLanguageComboBox: ComboBox<LanguageData> = ComboBox()
   private val myTitleField: CourseTitleField = CourseTitleField()
-  private val myAuthorField: JBTextField = JBTextField()
-  private val myDescriptionTextArea: JTextArea = JTextArea()
 
   private val myAdvancedSettings: AdvancedSettings = AdvancedSettings()
   private val myPathField: PathField = PathField()
@@ -53,19 +47,11 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   init {
     layout = BorderLayout()
-    preferredSize = JBUI.size(700, 400)
-    minimumSize = JBUI.size(700, 400)
+    preferredSize = JBUI.size(400, 300)
 
-    myDescriptionTextArea.rows = 10
-    myDescriptionTextArea.lineWrap = true
-    myDescriptionTextArea.wrapStyleWord = true
-
-    val scrollPane = JBScrollPane(myDescriptionTextArea)
     myPanel = panel {
       row("Title:") { myTitleField(CCFlags.pushX) }
-      row("Instructor:") { myAuthorField() }
       row("Language:") { myLanguageComboBox(CCFlags.growX) }
-      row("Description:") { scrollPane(CCFlags.growX) }
     }
 
     myTitleField.document = CourseTitleDocument()
@@ -99,11 +85,9 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     }
 
     setupValidation()
-    setDefaultValues()
     collectLanguages(course)
 
     if (course != null) {
-      myDescriptionTextArea.text = course.description
       myTitleField.setTextManually(course.name)
       myLanguageComboBox.isEnabled = false
     }
@@ -111,8 +95,6 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   val course: Course get() {
     myCourse.name = myTitleField.text
-    myCourse.description = myDescriptionTextArea.text
-    myCourse.setAuthorsAsString(StringUtil.splitByLines(myAuthorField.text.orEmpty()))
     return myCourse
   }
   val projectSettings: Any get() = myLanguageSettings.settings
@@ -131,16 +113,12 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     }
 
     myTitleField.document.addDocumentListener(validator)
-    myAuthorField.document.addDocumentListener(validator)
-    myDescriptionTextArea.document.addDocumentListener(validator)
     myLocationField.component.textField.document.addDocumentListener(validator)
   }
 
   private fun doValidation() {
     val message = when {
       myTitleField.text.isNullOrBlank() -> "Enter course title"
-      myAuthorField.text.isNullOrBlank() -> "Enter course instructor"
-      myDescriptionTextArea.text.isNullOrBlank() -> "Enter course description"
       locationString.isBlank() -> "Enter course location"
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> "Can't create course at this location"
       else -> null
@@ -155,13 +133,6 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     field.addBrowseFolderListener("Select Course Location", "Select course location", null,
             FileChooserDescriptorFactory.createSingleFolderDescriptor())
     return LabeledComponent.create(field, "Location:", BorderLayout.WEST)
-  }
-
-  private fun setDefaultValues() {
-    val userName = System.getProperty("user.name")
-    if (userName != null) {
-      myAuthorField.text = userName
-    }
   }
 
   private fun onLanguageSelected(language: Language) {
