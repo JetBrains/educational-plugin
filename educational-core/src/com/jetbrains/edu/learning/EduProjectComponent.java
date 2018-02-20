@@ -24,10 +24,8 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileAdapter;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -43,6 +41,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
@@ -52,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -98,16 +98,8 @@ public class EduProjectComponent implements ProjectComponent {
           loadSolutionsFromStepik(course);
         }
 
-        if (!isAndroidStudio() && isConfiguredWithGradle(myProject)) {
-          String projectBasePath = myProject.getBasePath();
-          if (projectBasePath == null) {
-            LOG.error("Failed to refresh gradle project");
-            return;
-          }
-
-          if (!EduGradleUtils.configuredWithGradle(myProject)) {
-            EduGradleUtils.setGradleSettingsAndRefreshProject(myProject, projectBasePath);
-          }
+        if (isConfiguredWithGradle(myProject)) {
+          setupGradleProject();
         }
 
         addStepikWidget();
@@ -130,6 +122,25 @@ public class EduProjectComponent implements ProjectComponent {
         }
       }
     });
+  }
+
+  private void setupGradleProject() {
+    String projectBasePath = myProject.getBasePath();
+    if (projectBasePath == null) {
+      LOG.error("Failed to refresh gradle project");
+      return;
+    }
+
+    // Android Studio imports gradle project itself but not in tests
+    boolean needImportForCurrentPlatform = ApplicationManager.getApplication().isUnitTestMode() || !isAndroidStudio();
+    if (needImportForCurrentPlatform && myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
+      EduGradleUtils.importGradleProject(myProject, projectBasePath);
+    }
+
+    // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
+    VfsUtil.markDirtyAndRefresh(false, true, true, myProject.getBaseDir());
+    // Android Studio creates non executable `gradlew`
+    new File(FileUtil.toSystemDependentName(projectBasePath), "gradlew").setExecutable(true);
   }
 
   private void selectProjectView() {
