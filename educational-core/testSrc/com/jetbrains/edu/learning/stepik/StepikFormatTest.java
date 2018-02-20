@@ -65,11 +65,11 @@ public class StepikFormatTest {
 
   @Test
   public void testAvailableCourses() throws IOException {
-    String responseString = loadJsonText();;
+    String responseString = loadJsonText();
     StepikWrappers.CoursesContainer container =
       StepikClient.deserializeStepikResponse(StepikWrappers.CoursesContainer.class, responseString);
     assertNotNull(container.courses);
-    assertTrue("Incorrect number of courses", container.courses.size() == 4);
+    assertEquals("Incorrect number of courses", 4, container.courses.size());
   }
 
   @Test
@@ -186,8 +186,6 @@ public class StepikFormatTest {
     String jsonText = loadJsonText();
     final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
     final StepikWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepikWrappers.Step block = step.block;
-    final StepikWrappers.StepOptions options = block.options;
     assertNotNull(step.update_date);
   }
 
@@ -352,9 +350,9 @@ public class StepikFormatTest {
         StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class, responseString).steps.get(0);
     StepikWrappers.StepOptions options = stepSource.block.options;
     List<TaskFile> files = options.files;
-    assertTrue("Wrong number of task files", files.size() == 1);
+    assertEquals("Wrong number of task files", 1, files.size());
     List<AnswerPlaceholder> placeholders = files.get(0).getAnswerPlaceholders();
-    assertTrue("Wrong number of placeholders", placeholders.size() == 1);
+    assertEquals("Wrong number of placeholders", 1, placeholders.size());
     Map<Integer, AnswerPlaceholderSubtaskInfo> infos = placeholders.get(0).getSubtaskInfos();
     assertNotNull(infos);
     assertEquals(Collections.singletonList("Type your name here."), infos.get(0).getHints());
