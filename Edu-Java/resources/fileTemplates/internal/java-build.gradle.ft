@@ -81,3 +81,7 @@ configure(subprojects.findAll {it.name != 'util'}) {
     testCompile project(':util').sourceSets.test.output
   }
 }
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '$GRADLE_VERSION$'
+}

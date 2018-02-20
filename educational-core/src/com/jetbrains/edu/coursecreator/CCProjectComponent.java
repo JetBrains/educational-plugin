@@ -92,7 +92,8 @@ public class CCProjectComponent extends AbstractProjectComponent {
       }
     });
 
-    EduGradleUtils.setGradleSettingsAndRefreshProject(myProject, basePath);
+    EduGradleUtils.setGradleSettings(myProject, basePath);
+    EduGradleUtils.importGradleProject(myProject, basePath);
   }
 
   private static void transformFiles(Course course, Project project) {

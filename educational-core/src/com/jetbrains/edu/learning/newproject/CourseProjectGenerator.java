@@ -25,6 +25,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -53,6 +54,8 @@ import java.io.IOException;
 import java.util.EnumSet;
 
 public abstract class CourseProjectGenerator<S> {
+
+  public static final Key<Boolean> EDU_PROJECT_CREATED = Key.create("edu.projectCreated");
 
   private static final Logger LOG = Logger.getInstance(CourseProjectGenerator.class);
 
@@ -137,7 +140,11 @@ public abstract class CourseProjectGenerator<S> {
 
     @SuppressWarnings("unchecked") ProjectOpenedCallback callback = (p, module) -> createCourseStructure(p, baseDir, (S)projectSettings);
     EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.of(PlatformProjectOpenProcessor.Option.FORCE_NEW_FRAME);
-    return PlatformProjectOpenProcessor.doOpenProject(baseDir, null, -1, callback, options);
+    Project project = PlatformProjectOpenProcessor.doOpenProject(baseDir, null, -1, callback, options);
+    if (project != null) {
+      project.putUserData(EDU_PROJECT_CREATED, true);
+    }
+    return project;
   }
 
   /**
