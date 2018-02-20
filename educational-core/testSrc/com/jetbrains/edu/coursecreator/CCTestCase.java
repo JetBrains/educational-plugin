@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator;
 
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -19,8 +18,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.TestActionEvent;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -43,9 +40,6 @@ import java.util.regex.Pattern;
 
 public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase {
   private static final Logger LOG = Logger.getInstance(CCTestCase.class);
-  // BACKCOMPAT: 2017.1
-  // use com.intellij.psi.codeStyle.CodeStyleDefaults
-  private static final CommonCodeStyleSettings.IndentOptions DEFAULT_INDENT_OPTIONS = new CommonCodeStyleSettings.IndentOptions();
 
   @Nullable
   public static RangeHighlighter getHighlighter(MarkupModel model, AnswerPlaceholder placeholder) {
@@ -121,19 +115,6 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
         }
       }
     });
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    try {
-      final CommonCodeStyleSettings.IndentOptions options =
-        CodeStyleSettingsManager.getInstance().getCurrentSettings().getCommonSettings(JavaLanguage.INSTANCE).getIndentOptions();
-      options.TAB_SIZE = DEFAULT_INDENT_OPTIONS.TAB_SIZE;
-      options.INDENT_SIZE = DEFAULT_INDENT_OPTIONS.INDENT_SIZE;
-    }
-    finally {
-      super.tearDown();
-    }
   }
 
   protected VirtualFile copyFileToTask(String name) {
