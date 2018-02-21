@@ -28,8 +28,9 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.progress.util.ColorProgressBar
-import com.intellij.openapi.project.DumbAwareToggleAction
+import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.ScrollPaneFactory
@@ -88,7 +89,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun addToolbarActions(actionGroup: DefaultActionGroup?) {
     actionGroup?.removeAll()
-    val hideSolvedLessons = object: DumbAwareToggleAction("Hide Solved Lessons"){
+    val hideSolvedLessons = object: ToggleAction("Hide Solved Lessons"), DumbAware {
       override fun isSelected(p0: AnActionEvent?): Boolean {
         return PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
       }
