@@ -13,11 +13,9 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.projectView.CourseTreeRenderer;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class CourseViewTest extends EduTestCase {
@@ -94,8 +92,7 @@ public class CourseViewTest extends EduTestCase {
     projectView.changeView(CourseViewPane.Companion.getID());
     final AbstractProjectViewPane pane = projectView.getCurrentProjectViewPane();
     assertInstanceOf(pane, CourseViewPane.class);
-    final JTree tree = pane.getTree();
-    assertInstanceOf(tree.getCellRenderer(), CourseTreeRenderer.class);
+    assertNotNull(((CourseViewPane)pane).getProgressBar());
   }
 
   public void testSwitchingPane() {

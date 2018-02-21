@@ -28,29 +28,62 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.DumbAwareToggleAction
 import com.intellij.openapi.project.Project
+import com.intellij.ui.Gray
+import com.intellij.ui.ScrollPaneFactory
+import com.intellij.ui.components.panels.NonOpaquePanel
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.annotations.TestOnly
+import java.awt.BorderLayout
 import javax.swing.Icon
+import javax.swing.JComponent
+import javax.swing.JPanel
+import javax.swing.JProgressBar
+import javax.swing.border.EmptyBorder
 import javax.swing.tree.DefaultTreeModel
 
 class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
+  private lateinit var progressBar: JProgressBar
+
   override fun createTree(treeModel: DefaultTreeModel): ProjectViewTree {
-    val tree = object : ProjectViewTree(myProject, treeModel) {
+    return object : ProjectViewTree(myProject, treeModel) {
       override fun toString(): String {
         return title + " " + super.toString()
       }
     }
+  }
 
-    val course = StudyTaskManager.getInstance(myProject).course
-    if (course != null) {
-      tree.cellRenderer = CourseTreeRenderer(course)
+  override fun createComponent(): JComponent {
+    val treeComponent = super.createComponent()
+
+    val panel = JPanel(BorderLayout())
+    panel.background = UIUtil.getTreeBackground()
+
+    panel.add(createProgressPanel(), BorderLayout.NORTH)
+    panel.add(treeComponent, BorderLayout.CENTER)
+
+    updateCourseProgress()
+    return ScrollPaneFactory.createScrollPane(panel)
+  }
+
+  private fun createProgressPanel(): JPanel {
+    val panel = NonOpaquePanel(BorderLayout())
+
+    progressBar = JProgressBar()
+    progressBar.foreground = ColorProgressBar.GREEN
+    if (!UIUtil.isUnderDarcula()) {
+      progressBar.background = Gray._237
     }
-    tree.rowHeight = -1
-
-    return tree
+    progressBar.isIndeterminate = false
+    progressBar.putClientProperty("ProgressBar.flatEnds", java.lang.Boolean.TRUE)
+    panel.add(progressBar, BorderLayout.NORTH)
+    panel.border = EmptyBorder(0, 0, 5, 0)
+    return panel
   }
 
   override fun addToolbarActions(actionGroup: DefaultActionGroup?) {
@@ -69,11 +102,25 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     actionGroup?.add(hideSolvedLessons)
   }
 
-  fun updateCourseProgress(project: Project) {
-    val course = StudyTaskManager.getInstance(project).course
-    if (tree.cellRenderer is CourseTreeRenderer && course != null) {
-      (tree.cellRenderer as CourseTreeRenderer).updateCourseProgress(course)
+  fun updateCourseProgress() {
+    val course = StudyTaskManager.getInstance(myProject).course
+    val lessons = course?.lessons
+
+    var progress = ProgressUtil.countProgressAsOneTaskWithSubtasks(lessons!!)
+    if (progress == null) {
+      progress = ProgressUtil.countProgressWithoutSubtasks(lessons)
     }
+
+    val taskSolved = progress.getFirst()
+    val tasksTotal = progress.getSecond()
+
+    progressBar.maximum = tasksTotal
+    progressBar.value = taskSolved
+  }
+
+  @TestOnly
+  fun getProgressBar(): JProgressBar {
+    return progressBar
   }
 
   override fun createStructure(): ProjectAbstractTreeStructureBase {
