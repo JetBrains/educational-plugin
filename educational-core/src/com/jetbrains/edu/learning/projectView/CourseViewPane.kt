@@ -23,6 +23,7 @@ import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
 import com.intellij.ide.projectView.impl.ProjectTreeStructure
 import com.intellij.ide.projectView.impl.ProjectViewTree
+import com.intellij.ide.ui.laf.darcula.ui.DarculaProgressBarUI
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
@@ -33,14 +34,15 @@ import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
+import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
-import com.intellij.ui.components.panels.NonOpaquePanel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
 import java.awt.BorderLayout
+import java.awt.Color
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -73,15 +75,19 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   }
 
   private fun createProgressPanel(): JPanel {
-    val panel = NonOpaquePanel(BorderLayout())
+    val panel = JPanel(BorderLayout())
 
     progressBar = JProgressBar()
-    progressBar.foreground = ColorProgressBar.GREEN
-    if (!UIUtil.isUnderDarcula()) {
-      progressBar.background = Gray._237
+
+    progressBar.ui = object : DarculaProgressBarUI() {
+      override fun getRemainderColor(): Color {
+        return JBColor(Gray._237, Color(76, 77, 79))
+      }
     }
+    progressBar.foreground = ColorProgressBar.GREEN
     progressBar.isIndeterminate = false
     progressBar.putClientProperty("ProgressBar.flatEnds", java.lang.Boolean.TRUE)
+    panel.background = UIUtil.getTreeBackground()
     panel.add(progressBar, BorderLayout.NORTH)
     panel.border = EmptyBorder(0, 0, 5, 0)
     return panel
