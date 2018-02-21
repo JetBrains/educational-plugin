@@ -60,13 +60,13 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   }
 
   override fun createComponent(): JComponent {
-    val treeComponent = super.createComponent()
+    super.createComponent()
 
     val panel = JPanel(BorderLayout())
     panel.background = UIUtil.getTreeBackground()
 
     panel.add(createProgressPanel(), BorderLayout.NORTH)
-    panel.add(treeComponent, BorderLayout.CENTER)
+    panel.add(tree, BorderLayout.CENTER)
 
     updateCourseProgress()
     return ScrollPaneFactory.createScrollPane(panel)
