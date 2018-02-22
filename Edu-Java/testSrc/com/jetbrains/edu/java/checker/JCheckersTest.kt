@@ -16,6 +16,8 @@ class JCheckersTest : CheckersTestBase() {
 
   override val dataPath: String = "checker"
 
+  override fun shouldRunTest(): Boolean = false
+
   fun testJavaCourse() {
     CheckActionListener.expectedMessage { task ->
       when (task) {
