@@ -149,11 +149,11 @@ public class CoursesPanel extends JPanel {
   }
 
   private void updateCoursesList() {
+    myErrorLabel.setVisible(false);
     Course selectedCourse = myCoursesList.getSelectedValue();
     List<Course> courses = EduUtils.getCoursesUnderProgress();
     myCourses = courses != null ? courses : Lists.newArrayList();
     updateModel(myCourses, selectedCourse.getName());
-    myErrorLabel.setVisible(false);
     notifyListeners(true);
   }
 
