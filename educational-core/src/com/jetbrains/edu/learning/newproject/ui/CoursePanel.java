@@ -3,14 +3,15 @@ package com.jetbrains.edu.learning.newproject.ui;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.FilterComponent;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.components.panels.HorizontalLayout;
 import com.intellij.util.PathUtil;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.ui.JBUI;
@@ -26,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -40,7 +40,7 @@ public class CoursePanel extends JPanel {
   private static final int HORIZONTAL_MARGIN = 10;
   private static final int LARGE_HORIZONTAL_MARGIN = 15;
 
-  private JPanel myCoursePanel;
+
   private JBLabel myCourseNameLabel;
   private JPanel myTagsPanel;
   private JEditorPane myInstructorField;
@@ -57,9 +57,32 @@ public class CoursePanel extends JPanel {
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
 
   public CoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
-    setLayout(new BorderLayout());
-    add(myCoursePanel, BorderLayout.CENTER);
+    createMainPanel();
     initUI(isIndependentPanel, isLocationFieldNeeded);
+  }
+
+  private void createMainPanel() {
+    createCourseInfoPanel();
+    myAdvancedSettings = new AdvancedSettings();
+
+    setLayout(new BorderLayout());
+    add(myCourseDescriptionPanel, BorderLayout.PAGE_START);
+    add(myAdvancedSettings, BorderLayout.PAGE_END);
+  }
+
+  private void createCourseInfoPanel() {
+    myCourseDescriptionPanel= new JPanel(new VerticalFlowLayout());
+    myCourseNameLabel = new JBLabel();
+    myTagsPanel = new JPanel(new HorizontalLayout(JBUI.scale(5)));
+    myInstructorField = new JEditorPane();
+
+    myDescriptionTextArea = new JEditorPane();
+    myInfoScroll = new JBScrollPane(myDescriptionTextArea);
+
+    myCourseDescriptionPanel.add(myCourseNameLabel);
+    myCourseDescriptionPanel.add(myTagsPanel);
+    myCourseDescriptionPanel.add(myInstructorField);
+    myCourseDescriptionPanel.add(myInfoScroll);
   }
 
   private void initUI(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
@@ -80,11 +103,6 @@ public class CoursePanel extends JPanel {
     setTextAreaAttributes(myDescriptionTextArea, leftMargin);
 
     myInfoScroll.setBorder(null);
-
-    // We want to show left part of border only if panel is independent
-    int leftBorder = isIndependentPanel ? 1 : 0;
-    Border border = JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, leftBorder, 1, 1);
-    myCoursePanel.setBorder(border);
 
     myAdvancedSettings.setVisible(false);
 

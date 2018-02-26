@@ -56,12 +56,9 @@ public class CoursesPanel extends JPanel {
   private static final Logger LOG = Logger.getInstance(CoursesPanel.class);
   private static final String NO_COURSES = "No courses found";
 
-  private JPanel myMainPanel;
   private JPanel myCourseListPanel;
-  private FilterComponent mySearchField;
   private JBLabel myErrorLabel;
-  private JSplitPane mySplitPane;
-  private JPanel mySplitPaneRoot;
+  private JBSplitter mySplitPane;
   private JBList<Course> myCoursesList;
   private CoursePanel myCoursePanel;
   private List<Course> myCourses;
@@ -69,18 +66,61 @@ public class CoursesPanel extends JPanel {
 
   public CoursesPanel(@NotNull List<Course> courses) {
     myCourses = courses;
-    setLayout(new BorderLayout());
-    add(myMainPanel, BorderLayout.CENTER);
+    createMainPanel();
     initUI();
   }
 
+  private void createMainPanel() {
+    JPanel panel = new JPanel(new BorderLayout());
+    myErrorLabel = new JBLabel();
+    createSplitter();
+
+    panel.add(myErrorLabel, BorderLayout.SOUTH);
+    panel.add(mySplitPane, BorderLayout.CENTER);
+
+    setLayout(new BorderLayout());
+    add(panel, BorderLayout.CENTER);
+  }
+
+  private void createSplitter() {
+    JPanel panel = new JPanel(new BorderLayout());
+    myCoursePanel = new CoursePanel(false, true);
+    myCourseListPanel = new JPanel(new BorderLayout());
+    FilterComponent searchField = courseSearchField();
+    myCoursePanel.bindSearchField(searchField);
+    UIUtil.setBackgroundRecursively(searchField, UIUtil.getTextFieldBackground());
+    panel.add(searchField, BorderLayout.NORTH);
+    panel.add(myCourseListPanel, BorderLayout.CENTER);
+
+    mySplitPane = new JBSplitter(false);
+    mySplitPane.setFirstComponent(panel);
+    mySplitPane.setSecondComponent(myCoursePanel);
+  }
+
+  private FilterComponent courseSearchField() {
+    return new FilterComponent("Edu.NewCourse", 5, true) {
+      @Override
+      public void filter() {
+        Course selectedCourse = myCoursesList.getSelectedValue();
+        String filter = getFilter();
+        List<Course> filtered = new ArrayList<>();
+        for (Course course : myCourses) {
+          if (accept(filter, course)) {
+            filtered.add(course);
+          }
+        }
+        updateModel(filtered, selectedCourse != null ? selectedCourse.getName() : null);
+      }
+    };
+  }
+
   private void initUI() {
-    GuiUtils.replaceJSplitPaneWithIDEASplitter(mySplitPaneRoot, true);
-    mySplitPane.setDividerLocation(0.5);
-    mySplitPane.setResizeWeight(0.5);
+    mySplitPane.setProportion(0.5f);
+
     myCoursesList = new JBList<>();
     myCoursesList.setEmptyText(NO_COURSES);
     updateModel(myCourses, null);
+
     myErrorLabel.setVisible(false);
     myErrorLabel.setBorder(JBUI.Borders.empty(20, 10, 0, 0));
 
@@ -207,26 +247,6 @@ public class CoursesPanel extends JPanel {
 
   public Course getSelectedCourse() {
     return myCoursesList.getSelectedValue();
-  }
-
-  private void createUIComponents() {
-    myCoursePanel = new CoursePanel(false, true);
-    mySearchField = new FilterComponent("Edu.NewCourse", 5, true) {
-      @Override
-      public void filter() {
-        Course selectedCourse = myCoursesList.getSelectedValue();
-        String filter = getFilter();
-        List<Course> filtered = new ArrayList<>();
-        for (Course course : myCourses) {
-          if (accept(filter, course)) {
-            filtered.add(course);
-          }
-        }
-        updateModel(filtered, selectedCourse != null ? selectedCourse.getName() : null);
-      }
-    };
-    myCoursePanel.bindSearchField(mySearchField);
-    UIUtil.setBackgroundRecursively(mySearchField, UIUtil.getTextFieldBackground());
   }
 
   private static boolean accept(@NonNls String filter, Course course) {
