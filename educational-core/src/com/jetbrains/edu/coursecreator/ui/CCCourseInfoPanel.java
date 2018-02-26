@@ -2,14 +2,15 @@ package com.jetbrains.edu.coursecreator.ui;
 
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CCCourseInfoPanel {
   private JPanel myPanel;
@@ -19,8 +20,9 @@ public class CCCourseInfoPanel {
   private JLabel myLanguageLevelLabel;
   private ComboBox<String> myLanguageLevelCombobox;
   private JLabel myErrorLabel;
+  private JLabel myAuthorLabel;
 
-  private ValidationListener myValidationListener;
+  private List<Validator> myValidators = new ArrayList<>();
 
   public CCCourseInfoPanel(String name, String author, String description) {
     myLanguageLevelLabel.setVisible(false);
@@ -32,24 +34,12 @@ public class CCCourseInfoPanel {
     myErrorLabel.setVisible(false);
     myErrorLabel.setForeground(MessageType.ERROR.getTitleForeground());
 
-    setupValidation();
+    Validator inputValidator = createInputValidator();
+    myValidators.add(inputValidator);
 
     myName.setText(name);
     myAuthor.setText(author);
     myDescription.setText(description);
-  }
-
-  private void setupValidation() {
-    DocumentAdapter validator = new DocumentAdapter() {
-      @Override
-      protected void textChanged(DocumentEvent e) {
-        doValidation();
-      }
-    };
-
-    myName.getDocument().addDocumentListener(validator);
-    myDescription.getDocument().addDocumentListener(validator);
-    myAuthor.getDocument().addDocumentListener(validator);
   }
 
   public JPanel getMainPanel() {
@@ -71,33 +61,35 @@ public class CCCourseInfoPanel {
     return StringUtil.splitByLines(StringUtil.notNullize(myAuthor.getText()));
   }
 
-  public void setValidationListener(ValidationListener listener) {
-    myValidationListener = listener;
-    doValidation();
+
+  public ValidationInfo validate() {
+    for (Validator validator : myValidators) {
+      ValidationInfo validationInfo = validator.validate();
+      if (validationInfo != null) {
+        return validationInfo;
+      }
+    }
+    return null;
   }
 
-  private void doValidation() {
-    final String message;
-    if (StringUtil.isEmpty(myName.getText())) {
-      message = "Enter course title";
-    } else if (StringUtil.isEmpty(myAuthor.getText())) {
-      message = "Enter course instructor";
-    } else if (StringUtil.isEmpty(myDescription.getText())) {
-      message = "Enter course description";
-    } else {
-      message = null;
-    }
-
-    if (message != null) {
-      myErrorLabel.setVisible(true);
-      myErrorLabel.setText(message);
-    } else {
-      myErrorLabel.setVisible(false);
-    }
-
-    if (myValidationListener != null) {
-      myValidationListener.onInputDataValidated(message == null);
-    }
+  private Validator createInputValidator() {
+    return new Validator() {
+      @Override
+      public ValidationInfo validate() {
+        if (StringUtil.isEmpty(myName.getText())) {
+          return new ValidationInfo("Enter course title", myName);
+        }
+        else if (StringUtil.isEmpty(myAuthor.getText())) {
+          return new ValidationInfo("Enter course instructor", myAuthor);
+        }
+        else if (StringUtil.isEmpty(myDescription.getText())) {
+          return new ValidationInfo("Enter course description", myDescription);
+        }
+        else {
+          return null;
+        }
+      }
+    };
   }
 
   public JLabel getLanguageLevelLabel() {
@@ -116,7 +108,12 @@ public class CCCourseInfoPanel {
     return (String)myLanguageLevelCombobox.getSelectedItem();
   }
 
-  public interface ValidationListener {
-    void onInputDataValidated(boolean isInputDataComplete);
+  public void showAuthorField(boolean isVisible) {
+    myAuthor.setVisible(isVisible);
+    myAuthorLabel.setVisible(isVisible);
+  }
+
+  public interface Validator {
+    ValidationInfo validate();
   }
 }

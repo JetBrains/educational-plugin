@@ -7,8 +7,6 @@ import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -28,7 +26,6 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduLanguageDecorator;
@@ -39,8 +36,9 @@ import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.UserSettingObserver;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +66,6 @@ public class CoursesPanel extends JPanel {
   private CoursePanel myCoursePanel;
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
-  private MessageBusConnection myBusConnection;
 
   public CoursesPanel(@NotNull List<Course> courses) {
     myCourses = courses;
@@ -106,7 +103,7 @@ public class CoursesPanel extends JPanel {
       @Override
       public void mouseClicked(MouseEvent e) {
         if (!isLoggedIn() && myErrorLabel.isVisible()) {
-          addLoginListener(CoursesPanel.this::updateCoursesList);
+          new UserSettingObserver(CoursesPanel.this::updateCoursesList).observe();
           StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
         }
       }
@@ -127,25 +124,6 @@ public class CoursesPanel extends JPanel {
     });
 
     processSelectionChanged();
-  }
-
-  private void addLoginListener(Runnable... postLoginActions) {
-    if (myBusConnection != null) {
-      myBusConnection.disconnect();
-    }
-    myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, () -> {
-      StepicUser user = EduSettings.getInstance().getUser();
-      if (user != null) {
-        ApplicationManager.getApplication().invokeLater(() -> {
-          for (Runnable action : postLoginActions) {
-            action.run();
-          }
-          myBusConnection.disconnect();
-          myBusConnection = null;
-        }, ModalityState.any());
-      }
-    });
   }
 
   private void updateCoursesList() {
@@ -362,7 +340,7 @@ public class CoursesPanel extends JPanel {
               if (EduSettings.getInstance().getUser() == null) {
                 int result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik", "Log in", "Cancel", null);
                 if (result == Messages.OK) {
-                  addLoginListener(CoursesPanel.this::updateCoursesList,  () -> importStepikCourse());
+                  new UserSettingObserver(CoursesPanel.this::updateCoursesList, () -> importStepikCourse()).observe();
                   StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
                 }
               }

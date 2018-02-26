@@ -1,26 +1,21 @@
 package com.jetbrains.edu.coursecreator.actions;
 
 import com.intellij.ide.IdeView;
-import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogBuilder;
-import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.ui.CCCourseInfoPanel;
+import com.jetbrains.edu.coursecreator.ui.CCEditCourseInfoDialog;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
-
 public class CCChangeCourseInfo extends DumbAwareAction {
   private static final String ACTION_TEXT = "&Edit Course Information";
+  public static final String ACTION_ID = "Educational.Educator.ChangeCourseInfo";
   public static final String COURSE_INFO_DIALOG_TITLE = "Course Information";
 
   public CCChangeCourseInfo() {
@@ -60,34 +55,11 @@ public class CCChangeCourseInfo extends DumbAwareAction {
       return;
     }
 
-    CCCourseInfoPanel panel =
-      new CCCourseInfoPanel(course.getName(), Course.getAuthorsString(course.getAuthors()), course.getDescription());
-    setupLanguageLevels(course, panel);
-    DialogBuilder builder = createChangeInfoDialog(project, panel);
-    panel.setValidationListener(builder::setOkActionEnabled);
-    if (builder.showAndGet()) {
-      course.setAuthorsAsString(panel.getAuthors());
-      course.setName(panel.getName());
-      course.setDescription(panel.getDescription());
-      setVersion(course, panel);
-      ProjectView.getInstance(project).refresh();
-      ProjectInspectionProfileManager.getInstance(project).fireProfileChanged();
-    }
+    createDialog(project, course, COURSE_INFO_DIALOG_TITLE).showAndApply();
   }
 
-  protected void setVersion(@NotNull Course course, @NotNull CCCourseInfoPanel panel) {}
-
-  protected void setupLanguageLevels(@NotNull Course course, @NotNull CCCourseInfoPanel panel) {}
-
-  private static DialogBuilder createChangeInfoDialog(@NotNull Project project, @NotNull CCCourseInfoPanel panel) {
-    DialogBuilder builder = new DialogBuilder(project);
-
-    builder.setTitle(COURSE_INFO_DIALOG_TITLE);
-    JPanel changeInfoPanel = panel.getMainPanel();
-    changeInfoPanel.setPreferredSize(new Dimension(450, 300));
-    changeInfoPanel.setMinimumSize(new Dimension(450, 300));
-    builder.setCenterPanel(changeInfoPanel);
-
-    return builder;
+  @NotNull
+  public CCEditCourseInfoDialog createDialog(@NotNull Project project, @NotNull Course course, @NotNull String title) {
+    return new CCEditCourseInfoDialog(project, course, title);
   }
 }
