@@ -62,8 +62,9 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   }
 
   override fun createComponent(): JComponent {
-    super.createComponent()
-
+    val component = super.createComponent()
+    val course = StudyTaskManager.getInstance(myProject).course
+    if (course != null && !course.isStudy) return component
     val panel = JPanel(BorderLayout())
     panel.background = UIUtil.getTreeBackground()
 
