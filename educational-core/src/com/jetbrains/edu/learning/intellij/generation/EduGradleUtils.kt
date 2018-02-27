@@ -22,6 +22,11 @@ object EduGradleUtils {
     private const val DEFAULT_GRADLE_VERSION = "4.5"
 
     @JvmStatic
+    fun isConfiguredWithGradle(project: Project): Boolean {
+        return File(project.basePath, GradleConstants.DEFAULT_SCRIPT_NAME).exists()
+    }
+
+    @JvmStatic
     @Throws(IOException::class)
     fun createProjectGradleFiles(projectPath: String, projectName: String, buildGradleTemplateName: String) {
         val projectDir = VfsUtil.findFileByIoFile(File(FileUtil.toSystemDependentName(projectPath)), true) ?: return

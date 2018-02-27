@@ -97,7 +97,6 @@ import org.intellij.markdown.parser.MarkdownParser;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -1040,10 +1039,6 @@ public class EduUtils {
 
   public static boolean isAndroidStudio() {
     return "AndroidStudio".equals(PlatformUtils.getPlatformPrefix());
-  }
-
-  public static boolean isConfiguredWithGradle(@NotNull Project project) {
-    return new File(project.getBasePath(), GradleConstants.DEFAULT_SCRIPT_NAME).exists();
   }
 
   public static void runUndoableAction(Project project, String name, UndoableAction action) {
