@@ -6,8 +6,10 @@ import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -40,7 +42,17 @@ public class CourseNode extends EduNode {
 
   @Override
   protected void updateImpl(PresentationData data) {
-    setPresentation(data, myCourse.getName(), EducationalCoreIcons.Course);
+    Pair<Integer, Integer> progress = ProgressUtil.INSTANCE.countProgressAsOneTaskWithSubtasks(myCourse.getLessons());
+    if (progress == null) {
+      progress = ProgressUtil.INSTANCE.countProgressWithoutSubtasks(myCourse.getLessons());
+    }
+
+    final Integer tasksSolved = progress.getFirst();
+    final Integer tasksTotal = progress.getSecond();
+    data.clearText();
+    data.addText(myCourse.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    data.setIcon(EducationalCoreIcons.Course);
+    data.addText("  " + tasksSolved.toString() + "/" + tasksTotal.toString(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
   }
 
   @Nullable
