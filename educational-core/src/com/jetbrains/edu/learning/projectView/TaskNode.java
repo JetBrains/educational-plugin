@@ -10,15 +10,14 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.JBColor;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,13 +47,13 @@ public class TaskNode extends EduNode {
   protected void updateImpl(PresentationData data) {
     CheckStatus status = myTask.getStatus();
     String subtaskInfo = myTask instanceof TaskWithSubtasks ? getSubtaskInfo((TaskWithSubtasks)myTask) : null;
+    Icon icon = myTask.getIcon();
     if (status == CheckStatus.Unchecked) {
-      updatePresentation(data, myTask.getName(), JBColor.BLACK, EducationalCoreIcons.Task, subtaskInfo);
+      updatePresentation(data, myTask.getName(), JBColor.BLACK, icon, subtaskInfo);
       return;
     }
     boolean isSolved = status == CheckStatus.Solved;
     JBColor color = isSolved ? LIGHT_GREEN : JBColor.RED;
-    Icon icon = isSolved ? EducationalCoreIcons.TaskCompl : EducationalCoreIcons.TaskProbl;
     updatePresentation(data, myTask.getName(), color, icon, subtaskInfo);
   }
 
