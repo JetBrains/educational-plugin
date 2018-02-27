@@ -147,8 +147,8 @@ public class EduProjectComponent implements ProjectComponent {
     ProjectView projectView = ProjectView.getInstance(myProject);
     if (projectView != null) {
       String selectedViewId = ProjectView.getInstance(myProject).getCurrentViewId();
-      if (!CourseViewPane.Companion.getID().equals(selectedViewId)) {
-        projectView.changeView(CourseViewPane.Companion.getID());
+      if (!CourseViewPane.ID.equals(selectedViewId)) {
+        projectView.changeView(CourseViewPane.ID);
       }
     }
     else {
