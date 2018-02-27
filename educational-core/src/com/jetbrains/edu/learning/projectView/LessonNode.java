@@ -11,12 +11,12 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,7 +65,7 @@ public class LessonNode extends EduNode {
       String sourceDir = TaskExt.getSourceDir(task);
       if (StringUtil.isNotEmpty(sourceDir)) {
         VirtualFile srcDir = directory.getVirtualFile().findChild(sourceDir);
-        boolean isCourseCreatorGradleProject = EduUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject);
+        boolean isCourseCreatorGradleProject = EduGradleUtils.isConfiguredWithGradle(myProject) && CCUtils.isCourseCreator(myProject);
         if (srcDir != null && !isCourseCreatorGradleProject) {
           directory = PsiManager.getInstance(myProject).findDirectory(srcDir);
           if (directory == null) {

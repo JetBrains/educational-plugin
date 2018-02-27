@@ -98,7 +98,7 @@ public class EduProjectComponent implements ProjectComponent {
           loadSolutionsFromStepik(course);
         }
 
-        if (isConfiguredWithGradle(myProject)) {
+        if (EduGradleUtils.isConfiguredWithGradle(myProject)) {
           setupGradleProject();
         }
 
