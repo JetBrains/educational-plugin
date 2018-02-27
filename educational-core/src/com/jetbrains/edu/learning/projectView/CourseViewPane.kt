@@ -26,9 +26,7 @@ import com.intellij.ide.projectView.impl.ProjectViewTree
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -37,8 +35,13 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ObjectUtils
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.projectView.CCLessonNode
+import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
@@ -55,6 +58,9 @@ import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
 class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
+
+  private val myStudyItemDeleteProvider = CCStudyItemDeleteProvider()
+
   private lateinit var progressBar: JProgressBar
 
   override fun createTree(treeModel: DefaultTreeModel): ProjectViewTree {
@@ -154,9 +160,25 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   override fun supportsFoldersAlwaysOnTop(): Boolean = false
   override fun supportsSortByType(): Boolean = false
 
+  override fun getData(dataId: String?): Any? {
+    if (CCUtils.isCourseCreator(myProject)) {
+      val userObject = selectedNode?.userObject
+      val studyItem = (userObject as? CCTaskNode)?.myTask ?: (userObject as? CCLessonNode)?.myLesson
+      if (studyItem != null) {
+        when {
+          PlatformDataKeys.DELETE_ELEMENT_PROVIDER.`is`(dataId) -> return myStudyItemDeleteProvider
+          STUDY_ITEM.`is`(dataId) -> return studyItem
+        }
+      }
+    }
+    return super.getData(dataId)
+  }
+
   companion object {
     @NonNls
     const val ID = "Course"
     const val HIDE_SOLVED_LESSONS = "Edu.HideSolvedLessons"
+
+    val STUDY_ITEM = DataKey.create<StudyItem>("Edu.studyItem")
   }
 }
