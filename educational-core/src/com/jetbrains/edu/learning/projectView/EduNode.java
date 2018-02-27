@@ -24,11 +24,6 @@ public abstract class EduNode extends PsiDirectoryNode {
     super(project, value, viewSettings);
   }
 
-  protected void setPresentation(PresentationData data, String name, Icon icon) {
-    data.setPresentableText(name);
-    data.setIcon(icon);
-  }
-
   protected static void updatePresentation(PresentationData data, String name, JBColor color, Icon icon, @Nullable String additionalInfo) {
     data.clearText();
     data.addText(name, new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, color));
