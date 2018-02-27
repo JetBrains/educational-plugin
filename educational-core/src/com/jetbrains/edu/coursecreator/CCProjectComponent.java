@@ -59,7 +59,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(studyCourse.getLanguageById());
       if (configurator == null) return;
       EduCourseBuilder<?> courseBuilder = configurator.getCourseBuilder();
-      if (courseBuilder instanceof GradleCourseBuilderBase && !EduUtils.isConfiguredWithGradle(myProject)) {
+      if (courseBuilder instanceof GradleCourseBuilderBase && !EduGradleUtils.isConfiguredWithGradle(myProject)) {
         convertToGradleProject(studyCourse, ((GradleCourseBuilderBase) courseBuilder).getBuildGradleTemplateName());
       }
     }
