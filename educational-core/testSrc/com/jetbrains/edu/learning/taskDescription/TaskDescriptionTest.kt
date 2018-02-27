@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.taskDescription
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.keymap.KeymapManager
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
@@ -12,10 +13,20 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow
 import org.jsoup.Jsoup
+import java.awt.event.InputEvent
+import java.awt.event.KeyEvent
 import java.io.File
 import java.io.IOException
+import javax.swing.KeyStroke
 
 class TaskDescriptionTest : EduTestCase() {
+  companion object {
+    private val overrideMethodShortcut: String = getKeystrokeText(KeyEvent.VK_O, InputEvent.CTRL_MASK)
+    private val goToActionShortcut: String = getKeystrokeText(KeyEvent.VK_A, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK)
+
+    private fun getKeystrokeText(keyChar: Int, modifiers: Int) = KeymapUtil.getKeystrokeText(KeyStroke.getKeyStroke(keyChar, modifiers))
+  }
+
   fun testSimpleImg() {
     doTestImage()
   }
@@ -56,19 +67,20 @@ class TaskDescriptionTest : EduTestCase() {
 
   fun testShortcutRendering() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods"
-    val taskTextWithShortcuts = "You can use Ctrl+O to override methods"
+    val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods"
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
   fun testSeveralShortcutsRendering() {
     val taskText = "You can use &shortcut:OverrideMethods; to override methods. One more useful shortcut: &shortcut:GotoAction;"
-    val taskTextWithShortcuts = "You can use Ctrl+O to override methods. One more useful shortcut: Ctrl+Shift+A"
+    val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods. " +
+                                "One more useful shortcut: $goToActionShortcut"
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
   fun testShortcutInsideTag() {
     val taskText = "You can use <code>&shortcut:OverrideMethods;</code> to override methods. One more useful shortcut: &shortcut:GotoAction;"
-    val taskTextWithShortcuts = "You can use Ctrl+O to override methods. One more useful shortcut: Ctrl+Shift+A"
+    val taskTextWithShortcuts = "You can use $overrideMethodShortcut to override methods. One more useful shortcut: $goToActionShortcut"
     doTestShortcut(taskText, taskTextWithShortcuts)
   }
 
