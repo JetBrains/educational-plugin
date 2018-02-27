@@ -64,9 +64,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
         return if (path == null) null else ObjectUtils.tryCast(path.lastPathComponent, DefaultMutableTreeNode::class.java)
       }
 
-      override fun toString(): String {
-        return title + " " + super.toString()
-      }
+      override fun toString(): String = "$title ${super.toString()}"
     }
   }
 
@@ -136,57 +134,29 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   }
 
   @TestOnly
-  fun getProgressBar(): JProgressBar {
-    return progressBar
-  }
+  fun getProgressBar(): JProgressBar = progressBar
 
-  override fun createStructure(): ProjectAbstractTreeStructureBase {
-    return object : ProjectTreeStructure(myProject, ID) {}
-  }
+  override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID) {}
+  override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = AbstractTreeUpdater(treeBuilder)
 
-  override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater {
-    return AbstractTreeUpdater(treeBuilder)
-  }
-
-  override fun getTitle(): String {
-    return ID
-  }
-
-  override fun getIcon(): Icon {
-    return EducationalCoreIcons.Course
-  }
-
-  override fun getId(): String {
-    return ID
-  }
-
-  override fun getWeight(): Int {
-    return 10
-  }
+  override fun getTitle(): String = ID
+  override fun getIcon(): Icon = EducationalCoreIcons.Course
+  override fun getId(): String = ID
+  override fun getWeight(): Int = 10
 
   override fun createSelectInTarget(): SelectInTarget {
     return object : ProjectViewSelectInTarget(myProject) {
-      override fun getMinorViewId(): String? {
-        return ID
-      }
-
-      override fun toString(): String {
-        return ID
-      }
+      override fun getMinorViewId(): String? = ID
+      override fun toString(): String = ID
     }
   }
 
-  override fun supportsFoldersAlwaysOnTop(): Boolean {
-    return false
-  }
-
-  override fun supportsSortByType(): Boolean {
-    return false
-  }
+  override fun supportsFoldersAlwaysOnTop(): Boolean = false
+  override fun supportsSortByType(): Boolean = false
 
   companion object {
     @NonNls
-    val ID = "Course"
+    const val ID = "Course"
     const val HIDE_SOLVED_LESSONS = "Edu.HideSolvedLessons"
   }
 }
