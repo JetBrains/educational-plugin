@@ -432,6 +432,7 @@ public class SerializationUtils {
       if (object.has(TASK_TYPE)) {
         final String taskType = object.get(TASK_TYPE).getAsString();
         switch (taskType) {
+          case "ide": return gson.fromJson(object, IdeTask.class);
           case "choice": return gson.fromJson(object, ChoiceTask.class);
           case "theory": return gson.fromJson(object, TheoryTask.class);
           case "code": return gson.fromJson(object, CodeTask.class);
