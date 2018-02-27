@@ -34,6 +34,11 @@ public interface TaskCheckerProvider {
     }
 
     @NotNull
+    default TaskChecker getIdeTaskChecker(@NotNull IdeTask task, @NotNull Project project) {
+        return new IdeTaskChecker(task, project);
+    }
+
+    @NotNull
     default TaskChecker getTaskChecker(@NotNull Task task, @NotNull Project project) {
         if (task instanceof TaskWithSubtasks) {
             return getTaskWithSubtasksTaskChecker((TaskWithSubtasks) task, project);
@@ -52,6 +57,9 @@ public interface TaskCheckerProvider {
         }
         else if (task instanceof ChoiceTask) {
             return getChoiceTaskChecker((ChoiceTask) task, project);
+        }
+        else if (task instanceof IdeTask) {
+            return getIdeTaskChecker((IdeTask) task, project);
         }
         else {
             throw new IllegalStateException("Unknown task type: " + task.getTaskType());

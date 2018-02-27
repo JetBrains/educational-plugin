@@ -35,7 +35,8 @@ public class Lesson implements StudyItem {
     TheoryTask.class,
     CodeTask.class,
     TaskWithSubtasks.class,
-    OutputTask.class
+    OutputTask.class,
+    IdeTask.class
   })
   public List<Task> taskList = new ArrayList<>();
 

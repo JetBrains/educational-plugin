@@ -17,14 +17,16 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
+import icons.EducationalCoreIcons;
 import one.util.streamex.EntryStream;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -346,5 +348,12 @@ public abstract class Task implements StudyItem {
 
   public boolean isToSubmitToStepik() {
     return false;
+  }
+
+  public Icon getIcon() {
+    if (myStatus == CheckStatus.Unchecked) {
+      return EducationalCoreIcons.Task;
+    }
+    return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskCompl : EducationalCoreIcons.TaskProbl;
   }
 }
