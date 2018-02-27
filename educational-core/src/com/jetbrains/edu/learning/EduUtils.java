@@ -197,7 +197,7 @@ public class EduUtils {
       Task task = getCurrentTask(project);
       taskDescriptionToolWindow.updateTask(project, task);
       final AbstractProjectViewPane pane = ProjectView.getInstance(project).getCurrentProjectViewPane();
-      if (pane instanceof CourseViewPane) {
+      if (pane instanceof CourseViewPane && isStudentProject(project)) {
         ((CourseViewPane)pane).updateCourseProgress();
       }
     }

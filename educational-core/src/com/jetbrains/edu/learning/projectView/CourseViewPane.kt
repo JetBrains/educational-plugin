@@ -37,6 +37,7 @@ import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
@@ -63,8 +64,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createComponent(): JComponent {
     val component = super.createComponent()
-    val course = StudyTaskManager.getInstance(myProject).course
-    if (course != null && !course.isStudy) return component
+    if (!EduUtils.isStudentProject(myProject)) return component
     val panel = JPanel(BorderLayout())
     panel.background = UIUtil.getTreeBackground()
 
