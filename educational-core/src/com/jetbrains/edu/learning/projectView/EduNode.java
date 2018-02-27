@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public abstract class EduNode extends PsiDirectoryNode {
   protected static final JBColor LIGHT_GREEN = new JBColor(new Color(0, 134, 0), new Color(98, 150, 85));
@@ -45,7 +46,12 @@ public abstract class EduNode extends PsiDirectoryNode {
 
   @Override
   public String getTestPresentation() {
-    final String name = getName() != null ? getName() : this.getValue().getName();
-    return getClass().getSimpleName() + " " + name;
+    final PresentationData presentation = getPresentation();
+    final List<ColoredFragment> fragments = presentation.getColoredText();
+    final StringBuilder builder = new StringBuilder();
+    for (ColoredFragment fragment : fragments) {
+      builder.append(fragment.getText());
+    }
+    return getClass().getSimpleName() + " " + builder.toString();
   }
 }

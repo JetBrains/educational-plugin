@@ -35,7 +35,7 @@ public class CourseViewTest extends EduTestCase {
     final AbstractProjectViewPSIPane pane = createPane();
 
     String structure = "-Project\n" +
-                       " -CourseNode Edu test course\n" +
+                       " -CourseNode Edu test course  0/4\n" +
                        "  -LessonNode lesson1\n" +
                        "   +TaskNode task1\n" +
                        "   +TaskNode task2\n" +
@@ -49,7 +49,7 @@ public class CourseViewTest extends EduTestCase {
     ProjectView projectView = ProjectView.getInstance(getProject());
     projectView.changeView(CourseViewPane.Companion.getID());
     String structure = "-Project\n" +
-                       " -CourseNode Edu test course\n" +
+                       " -CourseNode Edu test course  0/4\n" +
                        "  -LessonNode lesson1\n" +
                        "   -TaskNode task1\n" +
                        "    taskFile1.txt\n" +
@@ -69,7 +69,7 @@ public class CourseViewTest extends EduTestCase {
 
     final AbstractProjectViewPane pane = projectView.getCurrentProjectViewPane();
     String structure = "-Project\n" +
-                       " -CourseNode Edu test course\n" +
+                       " -CourseNode Edu test course  0/4\n" +
                        "  -LessonNode lesson1\n" +
                        "   +TaskNode task1\n" +
                        "   -TaskNode task2\n" +
