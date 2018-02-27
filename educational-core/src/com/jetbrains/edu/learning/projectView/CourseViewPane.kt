@@ -23,7 +23,6 @@ import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
 import com.intellij.ide.projectView.impl.ProjectTreeStructure
 import com.intellij.ide.projectView.impl.ProjectViewTree
-import com.intellij.ide.ui.laf.darcula.ui.DarculaProgressBarUI
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
@@ -36,6 +35,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
+import com.intellij.util.ObjectUtils
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import icons.EducationalCoreIcons
@@ -43,11 +43,14 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
 import java.awt.BorderLayout
 import java.awt.Color
+import java.awt.Dimension
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JProgressBar
 import javax.swing.border.EmptyBorder
+import javax.swing.plaf.basic.BasicProgressBarUI
+import javax.swing.tree.DefaultMutableTreeNode
 import javax.swing.tree.DefaultTreeModel
 
 class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
@@ -55,6 +58,11 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createTree(treeModel: DefaultTreeModel): ProjectViewTree {
     return object : ProjectViewTree(myProject, treeModel) {
+      override fun getSelectedNode(): DefaultMutableTreeNode? {
+        val path = selectedPath
+        return if (path == null) null else ObjectUtils.tryCast(path.lastPathComponent, DefaultMutableTreeNode::class.java)
+      }
+
       override fun toString(): String {
         return title + " " + super.toString()
       }
@@ -80,11 +88,12 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
     progressBar = JProgressBar()
 
-    progressBar.ui = object : DarculaProgressBarUI() {
-      override fun getRemainderColor(): Color {
-        return JBColor(Gray._237, Color(76, 77, 79))
+    progressBar.ui = object : BasicProgressBarUI() {
+      override fun getPreferredSize(c: JComponent?): Dimension {
+        return Dimension(super.getPreferredSize(c).width, 4)
       }
     }
+    progressBar.background = JBColor(Gray._237, Color(76, 77, 79))
     progressBar.foreground = ColorProgressBar.GREEN
     progressBar.isIndeterminate = false
     progressBar.putClientProperty("ProgressBar.flatEnds", java.lang.Boolean.TRUE)
