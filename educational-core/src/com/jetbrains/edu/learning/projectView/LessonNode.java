@@ -43,7 +43,7 @@ public class LessonNode extends EduNode {
     CheckStatus status = myLesson.getStatus();
     boolean isSolved = status != CheckStatus.Solved;
     JBColor color = isSolved ? JBColor.BLACK : LIGHT_GREEN;
-    Icon icon = isSolved ? EducationalCoreIcons.Lesson : EducationalCoreIcons.LessonCompl;
+    Icon icon = isSolved ? EducationalCoreIcons.Lesson : EducationalCoreIcons.LessonSolved;
     updatePresentation(data, myLesson.getName(), color, icon, null);
   }
 
