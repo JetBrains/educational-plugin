@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.newproject.ui;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.roots.ui.componentsList.components.ScrollablePanel;
@@ -31,12 +30,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CoursePanel extends JPanel {
@@ -44,159 +42,77 @@ public class CoursePanel extends JPanel {
   private static final int HORIZONTAL_MARGIN = 10;
   private static final int LARGE_HORIZONTAL_MARGIN = 25;
 
-  private JBLabel myCourseNameLabel;
-  private JPanel myTagsPanel;
-  private JEditorPane myInstructorField;
-  private JBScrollPane myInfoScroll;
-  private JPanel myInfoPanel;
-  private JEditorPane myDescriptionPane;
+  private static final String RENDERED_VIEW = "Rendered";
+  private static final String EDIT_VIEW = "Edit";
+
+  private JPanel myMainPanel;
+
+  private JLabel myEditLabel;
 
   private AdvancedSettings myAdvancedSettings;
-  private JPanel myCourseDescriptionPanel;
-  private EduCourseBuilder.LanguageSettings<?> myLanguageSettings;
-  @Nullable
-  private FilterComponent mySearchField;
+  @Nullable private FilterComponent mySearchField;
 
-  @Nullable
-  private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
-  private JPanel myCourseNamePanel;
 
+  @Nullable private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
   private String myDescription;
+  private RenderedViewPanel myRenderedViewPanel;
 
   public CoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded, boolean isEditable) {
-    createMainPanel(isEditable);
-    initUI(isIndependentPanel, isLocationFieldNeeded, isEditable);
-  }
-
-  private void createMainPanel(boolean isEditable) {
-    createCourseInfoPanel(isEditable);
     myAdvancedSettings = new AdvancedSettings();
+    if (isEditable) {
+      CardLayout layout = new CardLayout();
+      setLayout(layout);
+      EditViewPanel editViewPanel = new EditViewPanel();
+      myRenderedViewPanel = new RenderedViewPanel(isIndependentPanel, isLocationFieldNeeded);
+      JPanel cardsPanel = new JPanel(layout);
+      cardsPanel.add(editViewPanel, EDIT_VIEW);
+      cardsPanel.add(myRenderedViewPanel, RENDERED_VIEW);
+      layout.show(cardsPanel, RENDERED_VIEW);
+      JPanel editLabelPanel = createEditLabelPanel(cardsPanel, layout, editViewPanel, myRenderedViewPanel);
+
+      myMainPanel = new JPanel(new BorderLayout());
+      myMainPanel.add(editLabelPanel, BorderLayout.PAGE_START);
+      myMainPanel.add(cardsPanel, BorderLayout.CENTER);
+    }
+    else {
+      myRenderedViewPanel = new RenderedViewPanel(isIndependentPanel, isLocationFieldNeeded);
+      myMainPanel = new JPanel(new BorderLayout());
+      myMainPanel.add(myRenderedViewPanel, BorderLayout.CENTER);
+    }
 
     setLayout(new BorderLayout());
-    add(myCourseDescriptionPanel, BorderLayout.PAGE_START);
-    add(myAdvancedSettings, BorderLayout.PAGE_END);
+    add(myMainPanel, BorderLayout.CENTER);
+    myMainPanel.setVisible(false);
   }
 
-  private void createCourseInfoPanel(boolean isEditable) {
-    myCourseDescriptionPanel= new JPanel(new VerticalFlowLayout());
+  private JPanel createEditLabelPanel(JPanel cardsPanel, CardLayout layout,
+                                    EditViewPanel editViewPanel,
+                                    RenderedViewPanel renderedViewPanel) {
+    JPanel editLabelPanel = new JPanel(new BorderLayout());
+    String editText = "Edit";
+    String doneText = "Done";
 
-    createCourseNamePanel(isEditable);
-
-    myTagsPanel = new JPanel(new HorizontalLayout(JBUI.scale(5)));
-    myInstructorField = new JEditorPane();
-
-    myDescriptionPane = new JEditorPane();
-    myInfoScroll = new JBScrollPane(myDescriptionPane);
-
-    createCourseDescriptionPanel(isEditable);
-
-    myCourseDescriptionPanel.add(myCourseNamePanel);
-    myCourseDescriptionPanel.add(myTagsPanel);
-    myCourseDescriptionPanel.add(myInstructorField);
-    myCourseDescriptionPanel.add(myInfoPanel);
-  }
-
-  private void createCourseDescriptionPanel(boolean isEditable) {
-    if (isEditable) {
-      String rendered = "Rendered";
-      String edit = "Edit";
-      CardLayout layout = new CardLayout();
-      myInfoPanel = new ScrollablePanel(layout);
-
-      JTextArea textArea = new JTextArea();
-      textArea.setRows(30);
-      textArea.setFont(myInstructorField.getFont());
-      MouseAdapter renderListener = editCourseNameListener(() -> {
-        myDescription = textArea.getText();
-        myDescriptionPane.setText(UIUtil.toHtml(myDescription.replace("\n", "<br>")));
-        layout.show(myInfoPanel, rendered);
-      });
-      JPanel editPanel = createEditPanel(textArea, renderListener, AllIcons.Modules.Edit, BorderLayout.NORTH);
-      textArea.addFocusListener(new FocusAdapter() {
-        @Override
-        public void focusLost(FocusEvent e) {
-          myDescription = textArea.getText();
-          myDescriptionPane.setText(UIUtil.toHtml(myDescription.replace("\n", "<br>")));
-          layout.show(myInfoPanel, rendered);
+    myEditLabel = new JLabel(UIUtil.toHtml(wrapLabelText(editText)));
+    editLabelPanel.add(myEditLabel, BorderLayout.EAST);
+    myEditLabel.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        boolean toEditMode = myEditLabel.getText().contains(editText);
+        if (toEditMode) {
+          myEditLabel.setText(UIUtil.toHtml(wrapLabelText(doneText)));
+          layout.show(cardsPanel, EDIT_VIEW);
+          editViewPanel.setAllFields(renderedViewPanel.getCourseName(), renderedViewPanel.myTagsPanel.getTags(),
+                                     renderedViewPanel.getAuthor(), renderedViewPanel.getLanguage(),
+                                     renderedViewPanel.getDescription());
         }
-      });
-
-      textArea.setFont(myInstructorField.getFont());
-      MouseAdapter editListener = editCourseNameListener(() -> {
-        textArea.setText(myDescription);
-        layout.show(myInfoPanel, edit);
-      });
-      JPanel renderPanel = createEditPanel(myInfoScroll, editListener, AllIcons.Modules.Edit, BorderLayout.NORTH);
-
-      myInfoPanel.add(renderPanel, rendered);
-      myInfoPanel.add(editPanel, edit);
-      return;
-    }
-
-    myInfoPanel = new ScrollablePanel(new BorderLayout());
-    myInfoPanel.add(myInfoScroll, BorderLayout.CENTER);
-  }
-
-  private void createCourseNamePanel(boolean isEditable) {
-    myCourseNameLabel = new JBLabel();
-    if (isEditable) {
-      String rendered = "Rendered";
-      String edit = "Edit";
-      CardLayout layout = new CardLayout();
-      myCourseNamePanel = new JPanel(layout);
-
-
-      JTextField textField = new JTextField(myCourseNameLabel.getText());
-      MouseAdapter renderListener = editCourseNameListener(() -> {
-        myCourseNameLabel.setText(textField.getText());
-        layout.show(myCourseNamePanel, rendered);
-      });
-      JPanel editPanel = createEditPanel(textField, renderListener, AllIcons.Modules.Edit, BorderLayout.SOUTH);
-      textField.addFocusListener(new FocusAdapter() {
-        @Override
-        public void focusLost(FocusEvent e) {
-          myCourseNameLabel.setText(textField.getText());
-          layout.show(myCourseNamePanel, rendered);
+        else {
+          myEditLabel.setText(UIUtil.toHtml(wrapLabelText(editText)));
+          layout.show(cardsPanel, RENDERED_VIEW);
+          renderedViewPanel
+            .setAllFields(editViewPanel.getCourseName(), editViewPanel.getTags(), editViewPanel.getAuthor(), editViewPanel.getLanguage(),
+                          editViewPanel.getDescription());
         }
-      });
-
-      MouseAdapter editListener = editCourseNameListener(() -> {
-        textField.setText(myCourseNameLabel.getText());
-        layout.show(myCourseNamePanel, edit);
-      });
-      JPanel renderedPanel = createEditPanel(myCourseNameLabel, editListener, AllIcons.Modules.Edit, BorderLayout.SOUTH);
-
-      myCourseNamePanel.add(renderedPanel, rendered);
-      myCourseNamePanel.add(editPanel, edit);
-      return;
-    }
-
-    myCourseNamePanel = new JPanel(new BorderLayout());
-    myCourseNamePanel.add(myCourseNameLabel, BorderLayout.LINE_START);
-  }
-
-  @NotNull
-  private static JPanel createEditPanel(JComponent component, MouseAdapter listener, Icon icon, String labelPosition) {
-    JPanel doneLabelPanel = createLabel(listener, icon, labelPosition);
-    JPanel editPanel = new JPanel(new BorderLayout());
-    editPanel.add(component, BorderLayout.CENTER);
-    editPanel.add(doneLabelPanel, BorderLayout.WEST);
-    return editPanel;
-  }
-
-  @NotNull
-  private static JPanel createLabel(@NotNull MouseAdapter listener, @NotNull Icon icon, String labelPosition) {
-    JPanel doneLabelPanel = new JPanel(new BorderLayout());
-    JLabel doneLabel = new JLabel(icon);
-    doneLabelPanel.setBorder(JBUI.Borders.empty(0,0, 5, 5));
-    doneLabelPanel.add(doneLabel, labelPosition);
-    doneLabel.addMouseListener(listener);
-    return doneLabelPanel;
-  }
-
-  @NotNull
-  private static MouseAdapter editCourseNameListener(Runnable onClickAction) {
-    return new MouseAdapter() {
+      }
 
       @Override
       public void mouseEntered(MouseEvent e) {
@@ -207,53 +123,256 @@ public class CoursePanel extends JPanel {
       public void mouseExited(MouseEvent e) {
         e.getComponent().setCursor(Cursor.getDefaultCursor());
       }
+    });
 
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        onClickAction.run();
-      }
-    };
+    return editLabelPanel;
   }
 
-  private void initUI(boolean isIndependentPanel, boolean isLocationFieldNeeded, boolean isEditable) {
-    int leftMargin;
-    if (isIndependentPanel) {
-      leftMargin = LARGE_HORIZONTAL_MARGIN;
-    } else {
-      leftMargin = HORIZONTAL_MARGIN;
+  @NotNull
+  private static String wrapLabelText(String text) {
+    return "<u><i>" + text+ "</i></u>";
+  }
+
+  private class EditViewPanel extends JPanel {
+    JTextField courseNameField = new JTextField();
+    JTextField tagsField = new JTextField();
+    JTextField authorField = new JTextField();
+    JTextField humanLanguageField = new JTextField();
+    JTextField descriptionArea = new JTextField();
+
+    public EditViewPanel() {
+      setLayout(new VerticalFlowLayout());
+      setAllFields("", Collections.emptyList(), "", "", "");
+      initUI();
     }
 
-    int editableLeftMargin = isEditable ? 0 : leftMargin;
-    myCourseNameLabel.setBorder(JBUI.Borders.empty(20, editableLeftMargin, 5, HORIZONTAL_MARGIN));
-    Font labelFont = UIUtil.getLabelFont();
-    myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
+    public void setAllFields(String courseName, List<Tag> tags, String author, String language, String description) {
+      courseNameField.setText(courseName);
+      tagsField.setText(StringUtil.join(tags, ", "));
+      authorField.setText(author);
+      humanLanguageField.setText(language);
+      descriptionArea.setText(description);
+      initUI();
+    }
 
-    myTagsPanel.setBorder(JBUI.Borders.empty(0, leftMargin, 0, HORIZONTAL_MARGIN));
+    private void initUI() {
+      courseNameField.setBorder(JBUI.Borders.empty(20, HORIZONTAL_MARGIN, 5, HORIZONTAL_MARGIN));
+      tagsField.setBorder(JBUI.Borders.empty(0, HORIZONTAL_MARGIN));
 
-    setTextAreaAttributes(myInstructorField, leftMargin, 15);
-    int topMargin = isEditable ? 0 : 15;
-    setTextAreaAttributes(myDescriptionPane, editableLeftMargin, topMargin);
+      int TOP_MARGIN = 15;
+      authorField.setBorder(JBUI.Borders.empty(TOP_MARGIN, HORIZONTAL_MARGIN, 10, HORIZONTAL_MARGIN));
 
-    myInfoScroll.setBorder(null);
+      descriptionArea.setBorder(null);
 
-    myAdvancedSettings.setVisible(false);
+      myAdvancedSettings.setVisible(false);
 
-    if (isLocationFieldNeeded) {
       myLocationField = createLocationComponent();
     }
 
-    myDescriptionPane.addHyperlinkListener(new BrowserHyperlinkListener());
+    public String getCourseName() {
+      return courseNameField.getText();
+    }
+
+    public List<Tag> getTags() {
+      ArrayList<Tag> tags = new ArrayList<>();
+      for (String tagName: tagsField.getText().split(", ")) {
+        tags.add(new Tag(tagName));
+      }
+
+      return tags;
+    }
+
+    public String getAuthor() {
+      return authorField.getText();
+    }
+
+    public String getLanguage() {
+      return humanLanguageField.getText();
+    }
+
+    public String getDescription() {
+      return myDescription;
+    }
+  }
+
+  private class RenderedViewPanel extends JPanel {
+    private JBLabel myCourseNameLabel;
+    private TagsPanel myTagsPanel;
+    private JLabel myHumanLanguage;
+    private JEditorPane myInstructorField;
+    private JBScrollPane myInfoScroll;
+    private JPanel myInfoPanel;
+    private JEditorPane myDescriptionPane;
+    private EduCourseBuilder.LanguageSettings<?> myLanguageSettings;
+    private String myRawLanguage;
+    private String myRawDescription;
+
+    boolean isIndependentPanel;
+    boolean isLocationFieldNeeded;
+
+    public RenderedViewPanel(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
+      this.isIndependentPanel = isIndependentPanel;
+      this.isLocationFieldNeeded = isLocationFieldNeeded;
+
+      setLayout(new VerticalFlowLayout());
+
+      myCourseNameLabel = new JBLabel();
+
+      myTagsPanel = new TagsPanel();
+      myInstructorField = new JEditorPane();
+      myHumanLanguage = new JLabel();
+
+      myDescriptionPane = new JEditorPane();
+      myInfoScroll = new JBScrollPane(myDescriptionPane);
+      myInfoPanel = new ScrollablePanel(new BorderLayout());
+      myInfoPanel.add(myInfoScroll, BorderLayout.CENTER);
+
+      add(myCourseNameLabel);
+      add(myTagsPanel);
+      add(myHumanLanguage);
+      add(myInstructorField);
+      add(myInfoPanel);
+
+      initUI(isIndependentPanel, isLocationFieldNeeded);
+    }
+
+    public void setAllFields(String courseName, List<Tag> tags, String instructorText, String language, String description) {
+      myCourseNameLabel.setText(courseName);
+      myTagsPanel.updateTags(tags);
+
+      if (instructorText == null) {
+        myInstructorField.setPreferredSize(JBUI.size(0, 0));
+      } else {
+        myInstructorField.setPreferredSize(null);
+        myInstructorField.setText(instructorText);
+      }
+      myRawLanguage = language;
+      myRawDescription = description;
+      myHumanLanguage.setText(UIUtil.toHtml("<b>Language<b> " + myRawLanguage));
+      myDescriptionPane.setText(htmlDescription(description));
+
+      initUI(isIndependentPanel, isLocationFieldNeeded);
+    }
+
+    private void initUI(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
+      int leftMargin;
+      if (isIndependentPanel) {
+        leftMargin = LARGE_HORIZONTAL_MARGIN;
+      } else {
+        leftMargin = HORIZONTAL_MARGIN;
+      }
+
+      myCourseNameLabel.setBorder(JBUI.Borders.empty(20, leftMargin, 5, HORIZONTAL_MARGIN));
+      Font labelFont = UIUtil.getLabelFont();
+      myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
+
+      myTagsPanel.setBorder(JBUI.Borders.empty(0, leftMargin, 0, HORIZONTAL_MARGIN));
+
+      setTextAreaAttributes(myInstructorField, leftMargin);
+      setTextAreaAttributes(myDescriptionPane, leftMargin);
+
+      myInfoScroll.setBorder(null);
+
+      myAdvancedSettings.setVisible(false);
+
+      if (isLocationFieldNeeded) {
+        myLocationField = createLocationComponent();
+      }
+
+      myDescriptionPane.addHyperlinkListener(new BrowserHyperlinkListener());
+    }
+
+    private void updateAdvancedSettings(@NotNull Course course) {
+      if (myLocationField != null) {
+        myLocationField.getComponent().setText(nameToLocation(course));
+      }
+      EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+      if (configurator == null) {
+        return;
+      }
+      myLanguageSettings = configurator.getCourseBuilder().getLanguageSettings();
+
+      List<LabeledComponent> settingsComponents = new ArrayList<>();
+      if (myLocationField != null) {
+        settingsComponents.add(myLocationField);
+      }
+      LabeledComponent<JComponent> component = myLanguageSettings.getLanguageSettingsComponent(course);
+      if (component != null) {
+        settingsComponents.add(component);
+      }
+
+      if (settingsComponents.isEmpty()) {
+        myAdvancedSettings.setVisible(false);
+      } else {
+        myAdvancedSettings.setVisible(true);
+        myAdvancedSettings.setSettingsComponents(settingsComponents);
+      }
+    }
+
+    private void updateCourseDescriptionPanel(@NotNull Course course) {
+      String instructorText = htmlInstructorText(course);
+      setAllFields(course.getName(), course.getTags(), instructorText,
+                   course.getHumanLanguage(),
+                   course.getDescription() != null ? course.getDescription() : "");
+    }
+
+    public Object getSettings() {
+      return myLanguageSettings.getSettings();
+    }
+
+    public String getCourseName() {
+      return myCourseNameLabel.getText();
+    }
+
+    public String getAuthor() {
+      return myInstructorField.getText();
+    }
+
+    public String getLanguage() {
+      return myRawLanguage;
+    }
+
+    public String getDescription() {
+      return myRawDescription;
+    }
+  }
+
+  private class TagsPanel extends JPanel {
+    private List<Tag> myTags = new ArrayList<>();
+
+
+    public TagsPanel() {
+      setLayout(new HorizontalLayout(JBUI.scale(5)));
+    }
+
+    private void addTags(List<Tag> tags) {
+      for (Tag tag : tags) {
+        add(createTagLabel(tag));
+      }
+    }
+
+    private void updateTags(List<Tag> tags) {
+      myTags = tags;
+      removeAll();
+      addTags(tags);
+      revalidate();
+      repaint();
+    }
+
+    public List<Tag> getTags() {
+      return myTags;
+    }
   }
 
   public void bindCourse(@NotNull Course course) {
     myDescription = course.getDescription();
-    myCourseDescriptionPanel.setVisible(true);
-    updateCourseDescriptionPanel(course);
-    updateAdvancedSettings(course);
+    myMainPanel.setVisible(true);
+    myRenderedViewPanel.updateCourseDescriptionPanel(course);
+    myRenderedViewPanel.updateAdvancedSettings(course);
   }
 
   public void hideContent() {
-    myCourseDescriptionPanel.setVisible(false);
+    myMainPanel.setVisible(false);
   }
 
   @Nullable
@@ -262,11 +381,11 @@ public class CoursePanel extends JPanel {
   }
 
   public Object getProjectSettings() {
-    return myLanguageSettings.getSettings();
+    return myRenderedViewPanel.getSettings();
   }
 
   public String getCourseName() {
-    return myCourseNameLabel.getText();
+    return myRenderedViewPanel.getCourseName();
   }
 
   public String getDescription() {
@@ -282,24 +401,11 @@ public class CoursePanel extends JPanel {
     }
   }
 
-  private static void setTextAreaAttributes(JEditorPane textArea, int leftMargin, int topMargin) {
-    textArea.setBorder(JBUI.Borders.empty(topMargin, leftMargin, 10, HORIZONTAL_MARGIN));
+  private static void setTextAreaAttributes(JEditorPane textArea, int leftMargin) {
+    textArea.setBorder(JBUI.Borders.empty(15, leftMargin, 10, HORIZONTAL_MARGIN));
     textArea.setEditorKit(UIUtil.getHTMLEditorKit());
     textArea.setEditable(false);
     textArea.setBackground(UIUtil.getPanelBackground());
-  }
-
-  private void updateCourseDescriptionPanel(@NotNull Course course) {
-    myCourseNameLabel.setText(course.getName());
-    updateTags(course);
-    String instructorText = htmlInstructorText(course);
-    if (instructorText == null) {
-      myInstructorField.setPreferredSize(JBUI.size(0, 0));
-    } else {
-      myInstructorField.setPreferredSize(null);
-      myInstructorField.setText(instructorText);
-    }
-    myDescriptionPane.setText(htmlDescription(course));
   }
 
   @Nullable
@@ -317,43 +423,8 @@ public class CoursePanel extends JPanel {
   }
 
   @NotNull
-  private static String htmlDescription(@NotNull Course course) {
-    String description = course.getDescription() != null ? course.getDescription() : "";
+  private static String htmlDescription(String description) {
     return UIUtil.toHtml(description.replace("\n", "<br>"));
-  }
-
-  private void updateTags(@NotNull Course course) {
-    myTagsPanel.removeAll();
-    addTags(myTagsPanel, course);
-    myTagsPanel.revalidate();
-    myTagsPanel.repaint();
-  }
-
-  private void updateAdvancedSettings(@NotNull Course course) {
-    if (myLocationField != null) {
-      myLocationField.getComponent().setText(nameToLocation(course));
-    }
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
-    if (configurator == null) {
-      return;
-    }
-    myLanguageSettings = configurator.getCourseBuilder().getLanguageSettings();
-
-    List<LabeledComponent> settingsComponents = new ArrayList<>();
-    if (myLocationField != null) {
-      settingsComponents.add(myLocationField);
-    }
-    LabeledComponent<JComponent> component = myLanguageSettings.getLanguageSettingsComponent(course);
-    if (component != null) {
-      settingsComponents.add(component);
-    }
-
-    if (settingsComponents.isEmpty()) {
-      myAdvancedSettings.setVisible(false);
-    } else {
-      myAdvancedSettings.setVisible(true);
-      myAdvancedSettings.setSettingsComponents(settingsComponents);
-    }
   }
 
   @NotNull
@@ -379,12 +450,6 @@ public class CoursePanel extends JPanel {
     }
 
     return FileUtil.findSequentNonexistentFile(new File(ProjectUtil.getBaseDir()), name, "").getAbsolutePath();
-  }
-
-  private void addTags(JPanel tagsPanel, @NotNull Course course) {
-    for (Tag tag : course.getTags()) {
-      tagsPanel.add(createTagLabel(tag));
-    }
   }
 
   @NotNull
