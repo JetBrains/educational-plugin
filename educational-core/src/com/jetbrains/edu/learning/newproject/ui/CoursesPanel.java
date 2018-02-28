@@ -84,7 +84,7 @@ public class CoursesPanel extends JPanel {
 
   private void createSplitter() {
     JPanel panel = new JPanel(new BorderLayout());
-    myCoursePanel = new CoursePanel(false, true);
+    myCoursePanel = new CoursePanel(false, true, false);
     myCourseListPanel = new JPanel(new BorderLayout());
     FilterComponent searchField = courseSearchField();
     myCoursePanel.bindSearchField(searchField);

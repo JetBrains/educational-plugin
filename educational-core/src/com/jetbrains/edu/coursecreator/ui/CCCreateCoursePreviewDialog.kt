@@ -25,7 +25,7 @@ class CCCreateCoursePreviewDialog(
         private val myConfigurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
-  private val myPanel: CoursePanel = CoursePanel(true, false).apply {
+  private val myPanel: CoursePanel = CoursePanel(true, false, true).apply {
     preferredSize = JBUI.size(WIDTH, HEIGHT)
     minimumSize = JBUI.size(WIDTH, HEIGHT)
   }
@@ -41,6 +41,8 @@ class CCCreateCoursePreviewDialog(
 
   override fun doOKAction() {
     val folder = CCUtils.getGeneratedFilesFolder(myProject, myModule)
+    myCourse.description = myPanel.description
+    myCourse.name = myPanel.courseName
     val courseName = myCourse.name
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path

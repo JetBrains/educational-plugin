@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning.newproject.ui;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.roots.ui.componentsList.components.ScrollablePanel;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.VerticalFlowLayout;
@@ -29,6 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -38,14 +42,14 @@ import java.util.List;
 public class CoursePanel extends JPanel {
 
   private static final int HORIZONTAL_MARGIN = 10;
-  private static final int LARGE_HORIZONTAL_MARGIN = 15;
-
+  private static final int LARGE_HORIZONTAL_MARGIN = 25;
 
   private JBLabel myCourseNameLabel;
   private JPanel myTagsPanel;
   private JEditorPane myInstructorField;
   private JBScrollPane myInfoScroll;
-  private JEditorPane myDescriptionTextArea;
+  private JPanel myInfoPanel;
+  private JEditorPane myDescriptionPane;
 
   private AdvancedSettings myAdvancedSettings;
   private JPanel myCourseDescriptionPanel;
@@ -55,14 +59,17 @@ public class CoursePanel extends JPanel {
 
   @Nullable
   private LabeledComponent<TextFieldWithBrowseButton> myLocationField;
+  private JPanel myCourseNamePanel;
 
-  public CoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
-    createMainPanel();
-    initUI(isIndependentPanel, isLocationFieldNeeded);
+  private String myDescription;
+
+  public CoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded, boolean isEditable) {
+    createMainPanel(isEditable);
+    initUI(isIndependentPanel, isLocationFieldNeeded, isEditable);
   }
 
-  private void createMainPanel() {
-    createCourseInfoPanel();
+  private void createMainPanel(boolean isEditable) {
+    createCourseInfoPanel(isEditable);
     myAdvancedSettings = new AdvancedSettings();
 
     setLayout(new BorderLayout());
@@ -70,22 +77,145 @@ public class CoursePanel extends JPanel {
     add(myAdvancedSettings, BorderLayout.PAGE_END);
   }
 
-  private void createCourseInfoPanel() {
+  private void createCourseInfoPanel(boolean isEditable) {
     myCourseDescriptionPanel= new JPanel(new VerticalFlowLayout());
-    myCourseNameLabel = new JBLabel();
+
+    createCourseNamePanel(isEditable);
+
     myTagsPanel = new JPanel(new HorizontalLayout(JBUI.scale(5)));
     myInstructorField = new JEditorPane();
 
-    myDescriptionTextArea = new JEditorPane();
-    myInfoScroll = new JBScrollPane(myDescriptionTextArea);
+    myDescriptionPane = new JEditorPane();
+    myInfoScroll = new JBScrollPane(myDescriptionPane);
 
-    myCourseDescriptionPanel.add(myCourseNameLabel);
+    createCourseDescriptionPanel(isEditable);
+
+    myCourseDescriptionPanel.add(myCourseNamePanel);
     myCourseDescriptionPanel.add(myTagsPanel);
     myCourseDescriptionPanel.add(myInstructorField);
-    myCourseDescriptionPanel.add(myInfoScroll);
+    myCourseDescriptionPanel.add(myInfoPanel);
   }
 
-  private void initUI(boolean isIndependentPanel, boolean isLocationFieldNeeded) {
+  private void createCourseDescriptionPanel(boolean isEditable) {
+    if (isEditable) {
+      String rendered = "Rendered";
+      String edit = "Edit";
+      CardLayout layout = new CardLayout();
+      myInfoPanel = new ScrollablePanel(layout);
+
+      JTextArea textArea = new JTextArea();
+      textArea.setRows(30);
+      textArea.setFont(myInstructorField.getFont());
+      MouseAdapter renderListener = editCourseNameListener(() -> {
+        myDescription = textArea.getText();
+        myDescriptionPane.setText(UIUtil.toHtml(myDescription.replace("\n", "<br>")));
+        layout.show(myInfoPanel, rendered);
+      });
+      JPanel editPanel = createEditPanel(textArea, renderListener, AllIcons.Modules.Edit, BorderLayout.NORTH);
+      textArea.addFocusListener(new FocusAdapter() {
+        @Override
+        public void focusLost(FocusEvent e) {
+          myDescription = textArea.getText();
+          myDescriptionPane.setText(UIUtil.toHtml(myDescription.replace("\n", "<br>")));
+          layout.show(myInfoPanel, rendered);
+        }
+      });
+
+      textArea.setFont(myInstructorField.getFont());
+      MouseAdapter editListener = editCourseNameListener(() -> {
+        textArea.setText(myDescription);
+        layout.show(myInfoPanel, edit);
+      });
+      JPanel renderPanel = createEditPanel(myInfoScroll, editListener, AllIcons.Modules.Edit, BorderLayout.NORTH);
+
+      myInfoPanel.add(renderPanel, rendered);
+      myInfoPanel.add(editPanel, edit);
+      return;
+    }
+
+    myInfoPanel = new ScrollablePanel(new BorderLayout());
+    myInfoPanel.add(myInfoScroll, BorderLayout.CENTER);
+  }
+
+  private void createCourseNamePanel(boolean isEditable) {
+    myCourseNameLabel = new JBLabel();
+    if (isEditable) {
+      String rendered = "Rendered";
+      String edit = "Edit";
+      CardLayout layout = new CardLayout();
+      myCourseNamePanel = new JPanel(layout);
+
+
+      JTextField textField = new JTextField(myCourseNameLabel.getText());
+      MouseAdapter renderListener = editCourseNameListener(() -> {
+        myCourseNameLabel.setText(textField.getText());
+        layout.show(myCourseNamePanel, rendered);
+      });
+      JPanel editPanel = createEditPanel(textField, renderListener, AllIcons.Modules.Edit, BorderLayout.SOUTH);
+      textField.addFocusListener(new FocusAdapter() {
+        @Override
+        public void focusLost(FocusEvent e) {
+          myCourseNameLabel.setText(textField.getText());
+          layout.show(myCourseNamePanel, rendered);
+        }
+      });
+
+      MouseAdapter editListener = editCourseNameListener(() -> {
+        textField.setText(myCourseNameLabel.getText());
+        layout.show(myCourseNamePanel, edit);
+      });
+      JPanel renderedPanel = createEditPanel(myCourseNameLabel, editListener, AllIcons.Modules.Edit, BorderLayout.SOUTH);
+
+      myCourseNamePanel.add(renderedPanel, rendered);
+      myCourseNamePanel.add(editPanel, edit);
+      return;
+    }
+
+    myCourseNamePanel = new JPanel(new BorderLayout());
+    myCourseNamePanel.add(myCourseNameLabel, BorderLayout.LINE_START);
+  }
+
+  @NotNull
+  private static JPanel createEditPanel(JComponent component, MouseAdapter listener, Icon icon, String labelPosition) {
+    JPanel doneLabelPanel = createLabel(listener, icon, labelPosition);
+    JPanel editPanel = new JPanel(new BorderLayout());
+    editPanel.add(component, BorderLayout.CENTER);
+    editPanel.add(doneLabelPanel, BorderLayout.WEST);
+    return editPanel;
+  }
+
+  @NotNull
+  private static JPanel createLabel(@NotNull MouseAdapter listener, @NotNull Icon icon, String labelPosition) {
+    JPanel doneLabelPanel = new JPanel(new BorderLayout());
+    JLabel doneLabel = new JLabel(icon);
+    doneLabelPanel.setBorder(JBUI.Borders.empty(0,0, 5, 5));
+    doneLabelPanel.add(doneLabel, labelPosition);
+    doneLabel.addMouseListener(listener);
+    return doneLabelPanel;
+  }
+
+  @NotNull
+  private static MouseAdapter editCourseNameListener(Runnable onClickAction) {
+    return new MouseAdapter() {
+
+      @Override
+      public void mouseEntered(MouseEvent e) {
+        e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+      }
+
+      @Override
+      public void mouseExited(MouseEvent e) {
+        e.getComponent().setCursor(Cursor.getDefaultCursor());
+      }
+
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        onClickAction.run();
+      }
+    };
+  }
+
+  private void initUI(boolean isIndependentPanel, boolean isLocationFieldNeeded, boolean isEditable) {
     int leftMargin;
     if (isIndependentPanel) {
       leftMargin = LARGE_HORIZONTAL_MARGIN;
@@ -93,14 +223,16 @@ public class CoursePanel extends JPanel {
       leftMargin = HORIZONTAL_MARGIN;
     }
 
-    myCourseNameLabel.setBorder(JBUI.Borders.empty(20, leftMargin, 5, HORIZONTAL_MARGIN));
+    int editableLeftMargin = isEditable ? 0 : leftMargin;
+    myCourseNameLabel.setBorder(JBUI.Borders.empty(20, editableLeftMargin, 5, HORIZONTAL_MARGIN));
     Font labelFont = UIUtil.getLabelFont();
     myCourseNameLabel.setFont(new Font(labelFont.getName(), Font.BOLD, JBUI.scaleFontSize(18.0f)));
 
     myTagsPanel.setBorder(JBUI.Borders.empty(0, leftMargin, 0, HORIZONTAL_MARGIN));
 
-    setTextAreaAttributes(myInstructorField, leftMargin);
-    setTextAreaAttributes(myDescriptionTextArea, leftMargin);
+    setTextAreaAttributes(myInstructorField, leftMargin, 15);
+    int topMargin = isEditable ? 0 : 15;
+    setTextAreaAttributes(myDescriptionPane, editableLeftMargin, topMargin);
 
     myInfoScroll.setBorder(null);
 
@@ -110,10 +242,11 @@ public class CoursePanel extends JPanel {
       myLocationField = createLocationComponent();
     }
 
-    myDescriptionTextArea.addHyperlinkListener(new BrowserHyperlinkListener());
+    myDescriptionPane.addHyperlinkListener(new BrowserHyperlinkListener());
   }
 
   public void bindCourse(@NotNull Course course) {
+    myDescription = course.getDescription();
     myCourseDescriptionPanel.setVisible(true);
     updateCourseDescriptionPanel(course);
     updateAdvancedSettings(course);
@@ -132,6 +265,14 @@ public class CoursePanel extends JPanel {
     return myLanguageSettings.getSettings();
   }
 
+  public String getCourseName() {
+    return myCourseNameLabel.getText();
+  }
+
+  public String getDescription() {
+    return myDescription;
+  }
+
   public void addLocationFieldDocumentListener(@NotNull DocumentListener listener) {
     if (myLocationField != null) {
       myLocationField.getComponent()
@@ -141,8 +282,8 @@ public class CoursePanel extends JPanel {
     }
   }
 
-  private static void setTextAreaAttributes(JEditorPane textArea, int leftMargin) {
-    textArea.setBorder(JBUI.Borders.empty(15, leftMargin, 10, HORIZONTAL_MARGIN));
+  private static void setTextAreaAttributes(JEditorPane textArea, int leftMargin, int topMargin) {
+    textArea.setBorder(JBUI.Borders.empty(topMargin, leftMargin, 10, HORIZONTAL_MARGIN));
     textArea.setEditorKit(UIUtil.getHTMLEditorKit());
     textArea.setEditable(false);
     textArea.setBackground(UIUtil.getPanelBackground());
@@ -158,7 +299,7 @@ public class CoursePanel extends JPanel {
       myInstructorField.setPreferredSize(null);
       myInstructorField.setText(instructorText);
     }
-    myDescriptionTextArea.setText(htmlDescription(course));
+    myDescriptionPane.setText(htmlDescription(course));
   }
 
   @Nullable
