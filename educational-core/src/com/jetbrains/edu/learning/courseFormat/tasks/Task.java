@@ -354,6 +354,6 @@ public abstract class Task implements StudyItem {
     if (myStatus == CheckStatus.Unchecked) {
       return EducationalCoreIcons.Task;
     }
-    return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskCompl : EducationalCoreIcons.TaskProbl;
+    return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskSolved : EducationalCoreIcons.TaskFailed;
   }
 }
