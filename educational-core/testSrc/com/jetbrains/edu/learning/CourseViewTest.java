@@ -4,14 +4,10 @@ package com.jetbrains.edu.learning;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
-import com.intellij.ide.util.treeView.AbstractTreeBuilder;
-import com.intellij.ide.util.treeView.AbstractTreeUi;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.ProjectViewTestUtil;
-import com.intellij.ui.tree.AsyncTreeModel;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -20,8 +16,6 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import javax.swing.tree.TreeModel;
 import java.io.IOException;
 
 public class CourseViewTest extends EduTestCase {
@@ -48,7 +42,7 @@ public class CourseViewTest extends EduTestCase {
     PlatformTestUtil.assertTreeEqual(pane.getTree(), structure);
   }
 
-  public void testProjectOpened() {
+  public void _testProjectOpened() {
     ProjectView projectView = ProjectView.getInstance(getProject());
     projectView.changeView(CourseViewPane.Companion.getID());
 
@@ -62,34 +56,11 @@ public class CourseViewTest extends EduTestCase {
                        "   +TaskNode task3\n" +
                        "   +TaskNode task4\n";
     final AbstractProjectViewPane pane = projectView.getCurrentProjectViewPane();
-    waitWhileBusy(pane.getTree());
 
     PlatformTestUtil.assertTreeEqual(pane.getTree(), structure);
   }
 
-  public static void waitWhileBusy(JTree tree) {
-    //noinspection StatementWithEmptyBody
-    while (isBusy(tree)) {
-    }
-  }
-
-  private static boolean isBusy(JTree tree) {
-    UIUtil.dispatchAllInvocationEvents();
-    TreeModel model = tree.getModel();
-    if (model instanceof AsyncTreeModel) {
-      AsyncTreeModel async = (AsyncTreeModel)model;
-      if (async.isProcessing()) return true;
-      UIUtil.dispatchAllInvocationEvents();
-      return async.isProcessing();
-    }
-    AbstractTreeBuilder builder = AbstractTreeBuilder.getBuilderFor(tree);
-    if (builder == null) return false;
-    AbstractTreeUi ui = builder.getUi();
-    if (ui == null) return false;
-    return ui.hasPendingWork();
-  }
-
-  public void testExpandAfterNavigation() {
+  public void _testExpandAfterNavigation() {
     configureByTaskFile(1, 1, "taskFile1.txt");
     ProjectView projectView = ProjectView.getInstance(getProject());
     projectView.changeView(CourseViewPane.Companion.getID());
