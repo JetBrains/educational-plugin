@@ -28,6 +28,10 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.ToggleAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -39,9 +43,11 @@ import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.projectView.CCLessonNode
 import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
+import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+import com.jetbrains.edu.learning.courseFormat.Course
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
@@ -75,7 +81,16 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     panel.add(createProgressPanel(), BorderLayout.NORTH)
     panel.add(tree, BorderLayout.CENTER)
 
-    updateCourseProgress()
+    if (StudyTaskManager.getInstance(myProject).course != null) {
+      updateCourseProgress()
+    }
+    else {
+      myProject.messageBus.connect().subscribe(StudyTaskManager.COURSE_SET, object : CourseSetListener {
+        override fun courseSet(course: Course) {
+          updateCourseProgress()
+        }
+      })
+    }
     return ScrollPaneFactory.createScrollPane(panel)
   }
 
@@ -116,9 +131,13 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   fun updateCourseProgress() {
     val course = StudyTaskManager.getInstance(myProject).course
-    val lessons = course?.lessons
+    if (course == null) {
+      Logger.getInstance(CourseViewPane::class.java).error("course is null")
+      return
+    }
+    val lessons = course.lessons
 
-    var progress = ProgressUtil.countProgressAsOneTaskWithSubtasks(lessons!!)
+    var progress = ProgressUtil.countProgressAsOneTaskWithSubtasks(lessons)
     if (progress == null) {
       progress = ProgressUtil.countProgressWithoutSubtasks(lessons)
     }
