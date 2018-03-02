@@ -24,6 +24,9 @@ class CCStudyItemDeleteProvider : DeleteProvider {
     val project = dataContext.getData(CommonDataKeys.PROJECT) ?: return
     val virtualFile = dataContext.getData(CommonDataKeys.VIRTUAL_FILE) ?: return
     val studyItem = dataContext.getData(CourseViewPane.STUDY_ITEM) ?: return
+    // currently, only gradle projects have module for lessons and tasks
+    // so we can skip other projects
+    val module = if (EduGradleUtils.isConfiguredWithGradle(project)) dataContext.getData(LangDataKeys.MODULE) else null
     val itemType = when (studyItem) {
       is Lesson -> "Lesson"
       is Task -> "Task"
@@ -35,9 +38,6 @@ class CCStudyItemDeleteProvider : DeleteProvider {
     val result = Messages.showOkCancelDialog(message, title, Messages.getQuestionIcon())
     if (result != Messages.OK) return
 
-    // currently, only gradle projects have module for lessons and tasks
-    // so we can skip other projects
-    val module = if (EduGradleUtils.isConfiguredWithGradle(project)) dataContext.getData(LangDataKeys.MODULE) else null
     val modifiableModel = ModuleManager.getInstance(project).modifiableModel
     if (module != null) {
       ModuleDeleteProvider.removeModule(module, Collections.emptyList(), modifiableModel)
