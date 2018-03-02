@@ -74,15 +74,15 @@ public class EduProjectComponent implements ProjectComponent {
     if (myProject.isDisposed()) {
       return;
     }
+
+    if (!isStudyProject(myProject)) {
+      return;
+    }
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      ToolWindowManager.getInstance(myProject).invokeLater(() -> selectProjectView());
+    }
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
-        if (!isStudyProject(myProject)) {
-          return;
-        }
-        if (!ApplicationManager.getApplication().isUnitTestMode()) {
-          selectProjectView();
-        }
-
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course == null) {
           LOG.warn("Opened project is with null course");
