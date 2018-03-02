@@ -40,7 +40,7 @@ class CCStudyItemDeleteProvider : DeleteProvider {
 
     val modifiableModel = ModuleManager.getInstance(project).modifiableModel
     if (module != null) {
-      ModuleDeleteProvider.removeModule(module, Collections.emptyList(), modifiableModel)
+      ModuleDeleteProvider.removeModule(module, null, Collections.emptyList(), modifiableModel)
     }
 
     runWriteAction {
