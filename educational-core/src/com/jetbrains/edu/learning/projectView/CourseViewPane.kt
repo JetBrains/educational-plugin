@@ -152,6 +152,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   override fun supportsSortByType(): Boolean = false
 
   override fun getData(dataId: String?): Any? {
+    if (myProject.isDisposed) return null
+
     if (CCUtils.isCourseCreator(myProject)) {
       val userObject = selectedNode?.userObject
       val studyItem = (userObject as? CCTaskNode)?.myTask ?: (userObject as? CCLessonNode)?.myLesson
