@@ -15,6 +15,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
 import com.intellij.util.containers.hash.HashMap;
+import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -41,6 +42,7 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.RE
 
 @State(name = "StudySettings", storages = @Storage(value = "study_project.xml", roamingType = RoamingType.DISABLED))
 public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware {
+  public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
   public static final int CURRENT_VERSION = 8;
   private Course myCourse;
@@ -63,8 +65,10 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
 
   public void setCourse(Course course) {
     myCourse = course;
-    if (ApplicationManager.getApplication().isUnitTestMode()) return;
-    ApplicationManager.getApplication().invokeLater(()->EduUtils.registerStudyToolWindow(myProject));
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      ApplicationManager.getApplication().invokeLater(() -> EduUtils.registerStudyToolWindow(myProject));
+    }
+    myProject.getMessageBus().syncPublisher(COURSE_SET).courseSet(course);
   }
 
   @Nullable

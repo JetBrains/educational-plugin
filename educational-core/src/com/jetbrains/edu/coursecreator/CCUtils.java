@@ -188,7 +188,10 @@ public class CCUtils {
       return false;
     }
 
-    return COURSE_MODE.equals(course.getCourseMode());
+    if (COURSE_MODE.equals(course.getCourseMode())) {
+      return true;
+    }
+    return COURSE_MODE.equals(EduUtils.getCourseModeForNewlyCreatedProject(project));
   }
 
   public static void updateActionGroup(AnActionEvent e) {

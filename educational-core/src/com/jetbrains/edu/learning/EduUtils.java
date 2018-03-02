@@ -76,6 +76,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
+import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
@@ -494,12 +495,24 @@ public class EduUtils {
   }
 
   public static boolean isStudyProject(@NotNull Project project) {
-    return StudyTaskManager.getInstance(project).getCourse() != null;
+    return StudyTaskManager.getInstance(project).getCourse() != null || getCourseModeForNewlyCreatedProject(project) != null;
+  }
+
+  @Nullable
+  public static String getCourseModeForNewlyCreatedProject(@NotNull Project project) {
+    VirtualFile baseDir = project.getBaseDir();
+    if (baseDir == null) {
+      return null;
+    }
+    return baseDir.getUserData(CourseProjectGenerator.COURSE_MODE_TO_CREATE);
   }
 
   public static boolean isStudentProject(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    return course != null && course.isStudy();
+    if (course != null && course.isStudy()) {
+      return true;
+    }
+    return EduNames.STUDY.equals(getCourseModeForNewlyCreatedProject(project));
   }
 
   public static boolean hasJavaFx() {
