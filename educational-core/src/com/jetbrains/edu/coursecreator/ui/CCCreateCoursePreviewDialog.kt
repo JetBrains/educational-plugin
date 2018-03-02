@@ -34,6 +34,7 @@ class CCCreateCoursePreviewDialog(
     title = "Course Preview"
     setOKButtonText("Create")
     myPanel.bindCourse(myCourse)
+    myPanel.addValidationListener { isInputDataComplete -> isOKActionEnabled = isInputDataComplete }
     init()
   }
 
@@ -41,8 +42,7 @@ class CCCreateCoursePreviewDialog(
 
   override fun doOKAction() {
     val folder = CCUtils.getGeneratedFilesFolder(myProject, myModule)
-    myCourse.description = myPanel.description
-    myCourse.name = myPanel.courseName
+    myPanel.applyChanges(myCourse)
     val courseName = myCourse.name
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path
@@ -76,7 +76,7 @@ class CCCreateCoursePreviewDialog(
     private val LOG: Logger = Logger.getInstance(CCCreateCoursePreviewDialog::class.java)
 
     private const val WIDTH: Int = 370
-    private const val HEIGHT: Int = 330
+    private const val HEIGHT: Int = 400
 
     private val PREVIEW_FOLDER_PREFIX: String = "course_preview"
   }
