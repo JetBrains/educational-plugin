@@ -44,7 +44,7 @@ public class CourseViewTest extends EduTestCase {
 
   public void _testProjectOpened() {
     ProjectView projectView = ProjectView.getInstance(getProject());
-    projectView.changeView(CourseViewPane.Companion.getID());
+    projectView.changeView(CourseViewPane.ID);
 
     EduUtils.openFirstTask(myCourse, getProject());
     String structure = "-Project\n" +
@@ -63,7 +63,7 @@ public class CourseViewTest extends EduTestCase {
   public void _testExpandAfterNavigation() {
     configureByTaskFile(1, 1, "taskFile1.txt");
     ProjectView projectView = ProjectView.getInstance(getProject());
-    projectView.changeView(CourseViewPane.Companion.getID());
+    projectView.changeView(CourseViewPane.ID);
     navigateToNextTask();
 
     String structure = "-Project\n" +
@@ -90,7 +90,7 @@ public class CourseViewTest extends EduTestCase {
   public void testCourseProgress() {
     configureByTaskFile(1, 1, "taskFile1.txt");
     ProjectView projectView = ProjectView.getInstance(getProject());
-    projectView.changeView(CourseViewPane.Companion.getID());
+    projectView.changeView(CourseViewPane.ID);
     final AbstractProjectViewPane pane = projectView.getCurrentProjectViewPane();
     assertInstanceOf(pane, CourseViewPane.class);
     assertNotNull(((CourseViewPane)pane).getProgressBar());
@@ -98,8 +98,8 @@ public class CourseViewTest extends EduTestCase {
 
   public void testSwitchingPane() {
     ProjectView projectView = ProjectView.getInstance(getProject());
-    projectView.changeView(CourseViewPane.Companion.getID());
-    assertEquals(CourseViewPane.Companion.getID(), projectView.getCurrentViewId());
+    projectView.changeView(CourseViewPane.ID);
+    assertEquals(CourseViewPane.ID, projectView.getCurrentViewId());
   }
 
   @Override
