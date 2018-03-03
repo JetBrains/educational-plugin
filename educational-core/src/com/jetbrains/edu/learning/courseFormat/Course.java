@@ -75,6 +75,10 @@ public class Course {
     return mySections;
   }
 
+  public void setSections(List<Section> sections) {
+    mySections = sections;
+  }
+
   public void addLesson(@NotNull final Lesson lesson) {
     lessons.add(lesson);
   }
