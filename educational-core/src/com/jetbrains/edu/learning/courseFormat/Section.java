@@ -35,4 +35,8 @@ public class Section {
   public int getCourse() {
     return course;
   }
+
+  public int getPosition() {
+    return position;
+  }
 }
