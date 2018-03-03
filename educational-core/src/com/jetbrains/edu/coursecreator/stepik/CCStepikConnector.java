@@ -15,14 +15,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionAnswerPlaceholderAdapter;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionAnswerPlaceholderAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -219,7 +219,7 @@ public class CCStepikConnector {
 
   private static int postModule(int courseId, int position, @NotNull final String title, Project project) {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/sections");
-    final StepikWrappers.Section section = new StepikWrappers.Section();
+    final Section section = new Section();
     section.setCourse(courseId);
     section.setTitle(title);
     section.setPosition(position);
@@ -241,8 +241,7 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, responseString);
         return -1;
       }
-      final StepikWrappers.Section
-        postedSection = new Gson().fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
+      final Section postedSection = new Gson().fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
       return postedSection.getId();
     }
     catch (IOException e) {
@@ -344,7 +343,7 @@ public class CCStepikConnector {
       final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
       updateLessons(course, project);
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
-      if (!updateAdditionalMaterials(project, course, postedCourse.getSections())) {
+      if (!updateAdditionalMaterials(project, course, postedCourse.getSectionIds())) {
         postAdditionalFiles(course, project, course.getId());
       }
     } catch (IOException e) {
@@ -353,10 +352,10 @@ public class CCStepikConnector {
   }
 
   private static boolean updateAdditionalMaterials(@NotNull Project project, @NotNull final RemoteCourse course,
-                                                   @NotNull final List<Integer> sections) throws IOException {
+                                                   @NotNull final List<Integer> sectionsIds) throws IOException {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
-    for (Integer sectionId : sections) {
-      final StepikWrappers.Section section = StepikConnector.getSection(sectionId);
+    for (Integer sectionId : sectionsIds) {
+      final Section section = StepikConnector.getSection(sectionId);
       if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
         final List<Lesson> lessons = StepikConnector.getLessons(course, sectionId);
         lessons.stream()
@@ -383,8 +382,8 @@ public class CCStepikConnector {
       else {
         final int lessonId = postLesson(project, lesson);
         if (lessonId != -1) {
-          final List<Integer> sections = ((RemoteCourse)course).getSections();
-          final Integer sectionId = sections.get(sections.size() - 1);
+          final List<Integer> sectionIds = ((RemoteCourse)course).getSectionIds();
+          final Integer sectionId = sectionIds.get(sectionIds.size() - 1);
           postUnit(lessonId, lesson.getIndex(), sectionId, project);
         }
       }

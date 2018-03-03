@@ -20,7 +20,7 @@ public class RemoteCourse extends Course {
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, StepikConnector.CURRENT_VERSION, getLanguageID());
   @SerializedName("is_idea_compatible") private boolean isCompatible = true;
-  List<Integer> sections;
+  @SerializedName("sections") List<Integer> sectionIds;
   List<Integer> instructors = new ArrayList<>();
   @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate;
@@ -38,12 +38,12 @@ public class RemoteCourse extends Course {
     updateType(language);
   }
 
-  public List<Integer> getSections() {
-    return sections;
+  public List<Integer> getSectionIds() {
+    return sectionIds;
   }
 
-  public void setSections(List<Integer> sections) {
-    this.sections = sections;
+  public void setSectionIds(List<Integer> sectionIds) {
+    this.sectionIds = sectionIds;
   }
 
   public void setInstructors(List<Integer> instructors) {
