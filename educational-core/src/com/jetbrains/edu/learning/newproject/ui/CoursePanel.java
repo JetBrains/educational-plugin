@@ -273,20 +273,20 @@ public class CoursePanel extends JPanel {
       final String message;
       if (StringUtil.isEmpty(myCourseNameField.getText())) {
         message = "Enter course name";
-        myCourseNameField.setBorder(new RoundedBorderWithPadding(ARC_SIZE, true, MessageType.ERROR.getPopupBackground(), UIUtil.getTextFieldBackground()));
+        myCourseNameField.setBorder(createErrorFieldBorder());
       }
       else if (myInstructorField.isVisible() && StringUtil.isEmpty(myInstructorField.getText())) {
         message = "Enter course instructor";
-        myInstructorField.setBorder(new RoundedBorderWithPadding(ARC_SIZE, true, MessageType.ERROR.getPopupBackground(), UIUtil.getTextFieldBackground()));
+        myInstructorField.setBorder(createErrorFieldBorder());
       }
       else if (StringUtil.isEmpty(myHumanLanguageField.getText())) {
         message = "Enter course language";
         // TODO: add validation from liana's yaml commits
-        myHumanLanguageField.setBorder(new RoundedBorderWithPadding(ARC_SIZE, true, MessageType.ERROR.getPopupBackground(), UIUtil.getTextFieldBackground()));
+        myHumanLanguageField.setBorder(createErrorFieldBorder());
       }
       else if (StringUtil.isEmpty(myDescriptionArea.getText())) {
         message = "Enter course description";
-        myDescriptionArea.setBorder(new RoundedBorderWithPadding(ARC_SIZE, true, MessageType.ERROR.getPopupBackground(), UIUtil.getTextFieldBackground()));
+        myDescriptionArea.setBorder(createErrorFieldBorder());
       }
       else {
         message = null;
@@ -297,10 +297,10 @@ public class CoursePanel extends JPanel {
         myErrorLabel.setText(message);
       }
       else {
-        myCourseNameField.setBorder(new RoundedBorderWithPadding(ARC_SIZE, false, JBColor.border(), UIUtil.getTextFieldBackground()));
-        myInstructorField.setBorder(new RoundedBorderWithPadding(ARC_SIZE, false, JBColor.border(), UIUtil.getTextFieldBackground()));
-        myHumanLanguageField.setBorder(new RoundedBorderWithPadding(ARC_SIZE, false, JBColor.border(), UIUtil.getTextFieldBackground()));
-        myDescriptionArea.setBorder(new RoundedBorderWithPadding(ARC_SIZE, false, JBColor.border(), UIUtil.getTextFieldBackground()));
+        myCourseNameField.setBorder(createFieldBorder());
+        myInstructorField.setBorder(createFieldBorder());
+        myHumanLanguageField.setBorder(createFieldBorder());
+        myDescriptionArea.setBorder(createFieldBorder());
 
         myErrorLabel.setVisible(false);
       }
@@ -308,6 +308,11 @@ public class CoursePanel extends JPanel {
       for (ValidationListener listener : myValidationListeners) {
        listener.onInputDataValidated(message == null);
       }
+    }
+
+    @NotNull
+    private RoundedBorderWithPadding createErrorFieldBorder() {
+      return new RoundedBorderWithPadding(ARC_SIZE, true, MessageType.ERROR.getPopupBackground(), UIUtil.getTextFieldBackground());
     }
 
     public String getCourseName() {
