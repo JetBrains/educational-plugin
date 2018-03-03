@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Course {
+  protected List<Section> mySections = new ArrayList<>();
   @Expose protected List<Lesson> lessons = new ArrayList<>();
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
@@ -64,6 +65,14 @@ public class Course {
 
   public void addLessons(List<Lesson> lessons) {
     this.lessons.addAll(lessons);
+  }
+
+  public void addSections(List<Section> sections) {
+    mySections.addAll(sections);
+  }
+
+  public List<Section> getSections() {
+    return mySections;
   }
 
   public void addLesson(@NotNull final Lesson lesson) {

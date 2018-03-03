@@ -347,7 +347,7 @@ public class StepikConnector {
     if (!lessons.isEmpty()) return remoteCourse;
     if (!remoteCourse.isAdaptive()) {
       try {
-        remoteCourse.addLessons(getLessons(remoteCourse, remoteCourse.getSections()));
+        remoteCourse.addLessons(getLessons(remoteCourse));
         return remoteCourse;
       }
       catch (IOException e) {
@@ -368,10 +368,9 @@ public class StepikConnector {
     return null;
   }
 
-  public static List<Lesson> getLessons(RemoteCourse remoteCourse, List<Integer> sections) throws IOException {
-    String[] sectionIds = sections.stream().map(id -> String.valueOf(id)).toArray(String[]::new);
+  public static List<Lesson> getLessons(RemoteCourse remoteCourse) throws IOException {
     try {
-      String[] unitIds = getUnitsIds(sectionIds);
+      String[] unitIds = getUnitsIds(remoteCourse);
       if (unitIds.length > 0) {
         return getLessonsFromUnits(remoteCourse, unitIds);
       }
@@ -395,9 +394,13 @@ public class StepikConnector {
     return new ArrayList<>(getLessonsFromUnits(remoteCourse, unitIds));
   }
 
-  private static String[] getUnitsIds(String[] sectionIds) throws IOException, URISyntaxException {
+  private static String[] getUnitsIds(RemoteCourse remoteCourse) throws IOException, URISyntaxException {
+    String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
+    for (SectionContainer container : containers) {
+      remoteCourse.addSections(container.sections);
+    }
     return allSections
             .map(section -> section.units)
             .flatMap(unitList -> unitList.stream())
@@ -406,7 +409,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  private static List<Lesson> getLessons(String[] unitIds) throws IOException, URISyntaxException {
+  private static List<Lesson> getLessons(RemoteCourse remoteCourse, String[] unitIds) throws IOException, URISyntaxException {
     List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitIds, UnitContainer.class);
     Stream<Unit> allUnits = unitContainers.stream().flatMap(container -> container.units.stream());
     String[] lessonIds = allUnits.map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
@@ -414,6 +417,15 @@ public class StepikConnector {
     List<LessonContainer> lessonContainers = multipleRequestToStepik(StepikNames.LESSONS, lessonIds, LessonContainer.class);
     List<Lesson> lessons = lessonContainers.stream().flatMap(lessonContainer -> lessonContainer.lessons.stream()).collect(Collectors.toList());
     List<Unit> units = unitContainers.stream().flatMap(container -> container.units.stream()).collect(Collectors.toList());
+
+    final Map<Integer, Integer> unitToLesson = unitContainers.stream().flatMap(container -> container.units.stream()).
+      collect(Collectors.toMap(Unit::getId, unit -> unit.lesson));
+
+    for (Section section : remoteCourse.getSections()) {
+      for (Integer unit : section.units) {
+        section.lessonIds.add(unitToLesson.get(unit));
+      }
+    }
     return sortLessonsByUnits(units, lessons);
   }
 
@@ -439,7 +451,7 @@ public class StepikConnector {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
     try {
-      List<Lesson> lessonsFromUnits = getLessons(unitIds);
+      List<Lesson> lessonsFromUnits = getLessons(remoteCourse, unitIds);
 
       final int lessonCount = lessonsFromUnits.size();
       for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
@@ -499,8 +511,8 @@ public class StepikConnector {
 
   @NotNull
   private static Map<String, String> getFirstCodeTemplates(@NotNull RemoteCourse remoteCourse) throws IOException, URISyntaxException {
-    String[] unitsIds = getUnitsIds(remoteCourse.getSections().stream().map(section -> String.valueOf(section)).toArray(String[]::new));
-    List<Lesson> lessons = getLessons(unitsIds);
+    String[] unitsIds = getUnitsIds(remoteCourse);
+    List<Lesson> lessons = getLessons(remoteCourse, unitsIds);
     for (Lesson lesson : lessons) {
       String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
       List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class);
