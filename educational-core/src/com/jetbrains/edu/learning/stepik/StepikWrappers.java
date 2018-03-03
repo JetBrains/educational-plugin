@@ -9,10 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
@@ -202,39 +199,6 @@ public class StepikWrappers {
     }
   }
 
-  public static class Section {
-    List<Integer> units;
-    int course;
-    String title;
-
-    public int getId() {
-      return id;
-    }
-
-    public void setCourse(int course) {
-      this.course = course;
-    }
-
-    public void setTitle(String title) {
-      this.title = title;
-    }
-
-    public String getTitle() {
-      return title;
-    }
-
-    public void setPosition(int position) {
-      this.position = position;
-    }
-
-    int position;
-    int id;
-
-    public int getCourse() {
-      return course;
-    }
-  }
-
   public static class SectionWrapper {
     Section section;
 
@@ -245,10 +209,6 @@ public class StepikWrappers {
 
   public static class SectionContainer {
     List<Section> sections;
-    List<Lesson> lessons;
-
-    List<Unit> units;
-
     public List<Section> getSections() {
       return sections;
     }

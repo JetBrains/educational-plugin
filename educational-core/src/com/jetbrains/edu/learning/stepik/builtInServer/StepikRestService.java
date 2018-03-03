@@ -27,11 +27,8 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.AppIcon;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.StepicUser;
-import com.jetbrains.edu.learning.stepik.StepikWrappers;
-import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.stepik.*;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
@@ -138,7 +135,7 @@ public class StepikRestService extends RestService {
         return log("Unrecognized the Unit id");
       }
 
-      StepikWrappers.Section section = StepikConnector.getSection(unit.getSection());
+      Section section = StepikConnector.getSection(unit.getSection());
       courseId = section.getCourse();
       if (courseId == 0) {
         return log("Unrecognized the course id");

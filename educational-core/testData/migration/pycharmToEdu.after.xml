@@ -76,7 +76,7 @@
         </option>
         <option name="loadSolutions" value="true" />
         <option name="name" value="Python Course" />
-        <option name="sections">
+        <option name="sectionIds">
           <list />
         </option>
         <option name="updateDate" value="1510578358332" />
