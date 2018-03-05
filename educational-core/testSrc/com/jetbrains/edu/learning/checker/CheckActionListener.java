@@ -43,6 +43,7 @@ public class CheckActionListener implements CheckListener {
 
     @Override
     public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
+        System.out.println("Check completed. Status: " + result.getStatus() + " , Message: " + result.getMessage());
         checkStatus.invoke(task, result);
         if (expectedMessageForTask != null) {
             String expectedMessage = expectedMessageForTask.invoke(task);
