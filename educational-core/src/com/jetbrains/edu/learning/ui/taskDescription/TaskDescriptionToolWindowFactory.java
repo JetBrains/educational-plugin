@@ -34,6 +34,7 @@ public class TaskDescriptionToolWindowFactory implements ToolWindowFactory, Dumb
       taskDescriptionToolWindow.init(project);
       final ContentManager contentManager = toolWindow.getContentManager();
       final Content content = contentManager.getFactory().createContent(taskDescriptionToolWindow, null, false);
+      content.setCloseable(false);
       contentManager.addContent(content);
       Disposer.register(project, taskDescriptionToolWindow);
     }
