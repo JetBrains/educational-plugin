@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DirectoryNode extends EduNode {
+public class DirectoryNode extends EduPsiNode {
 
   @NotNull protected final Project myProject;
   protected final ViewSettings myViewSettings;
