@@ -8,13 +8,15 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class EduTreeStructureProvider implements TreeStructureProvider, DumbAware {
   @NotNull
@@ -43,6 +45,13 @@ public class EduTreeStructureProvider implements TreeStructureProvider, DumbAwar
         }
       }
     }
+    if (parent instanceof CourseNode) {
+      final List<Section> sections = course.getSections();
+      for (Section section : sections) {
+        modifiedNodes.add(new SectionNode(project, settings, section, course, ((CourseNode)parent).getValue()));
+      }
+    }
+
     return modifiedNodes;
   }
 
