@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class LessonNode extends EduNode {
+public class LessonNode extends EduPsiNode {
   @NotNull protected final Project myProject;
   protected final ViewSettings myViewSettings;
   @NotNull protected final Lesson myLesson;

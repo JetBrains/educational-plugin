@@ -16,6 +16,10 @@ public class Section {
     return id;
   }
 
+  public void setId(int id) {
+    this.id = id;
+  }
+
   public void setCourse(int course) {
     this.course = course;
   }
