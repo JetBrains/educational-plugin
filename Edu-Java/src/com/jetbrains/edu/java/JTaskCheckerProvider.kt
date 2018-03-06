@@ -100,7 +100,7 @@ class JTaskCheckerProvider : GradleTaskCheckerProvider() {
 
         val equalsToText = componentType.equalsToText(CommonClassNames.JAVA_LANG_STRING)
         if (!equalsToText) {
-            println("Component type: ${componentType.presentableText}")
+            println("Component type: ${componentType.canonicalText}")
         }
         return equalsToText
     }
