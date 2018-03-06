@@ -133,12 +133,17 @@ private fun findMainClass(project: Project, task: Task, mainClassForFile: (Proje
       }
     }
 
-    val taskDir = task.getTaskDir(project) ?: return@runReadAction null
+    val taskDir = task.getTaskDir(project)
+    if (taskDir == null) {
+      println("Task dir not found for task")
+      return@runReadAction null
+    }
 
     for ((name, _) in task.taskFiles) {
       val file = taskDir.findChild(name) ?: continue
       return@runReadAction mainClassForFile(project, file) ?: continue
     }
+    println("Main class not found in any file")
     null
   }
 
