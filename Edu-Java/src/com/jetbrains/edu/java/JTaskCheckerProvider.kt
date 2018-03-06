@@ -17,7 +17,12 @@ class JTaskCheckerProvider : GradleTaskCheckerProvider() {
             println("PsiFile ${file.name} not found")
             return null
         }
-        val mainClass = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java).find { psiClass ->
+
+        val classes = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java)
+        for (clazz in classes) {
+            println("Class found: ${clazz.text}")
+        }
+        val mainClass = classes.find { psiClass ->
             PsiMethodUtil.MAIN_CLASS.value(psiClass) && PsiMethodUtil.hasMainMethod(psiClass)
         }
         if (mainClass == null) {
