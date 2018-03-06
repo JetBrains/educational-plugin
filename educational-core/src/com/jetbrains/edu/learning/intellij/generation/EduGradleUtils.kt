@@ -62,6 +62,7 @@ object EduGradleUtils {
         val projects = ContainerUtilRt.newHashSet<Any>(systemSettings.getLinkedProjectsSettings())
         projects.add(gradleProjectSettings)
         systemSettings.setLinkedProjectsSettings(projects)
+        ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
     }
 
     @JvmStatic
