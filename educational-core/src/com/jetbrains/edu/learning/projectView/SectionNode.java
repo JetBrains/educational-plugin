@@ -41,7 +41,19 @@ public class SectionNode extends ProjectViewNode<Section> implements EduNode {
 
   @Nullable
   public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
-    return CourseNode.modifyLessonNode(myCourse, myProject, myViewSettings, childNode);
+    final Object value = childNode.getValue();
+    if (value instanceof PsiDirectory) {
+      Lesson lesson = myCourse.getLesson(((PsiDirectory)value).getName());
+      if (lesson != null) {
+        final CheckStatus status = lesson.getStatus();
+        if (status.equals(CheckStatus.Solved) && PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)) {
+          return null;
+        }
+      }
+      if (lesson == null || !mySection.lessonIds.contains(lesson.getId())) return null;
+      return CourseNode.modifyLessonNode(myCourse, myProject, myViewSettings, childNode);
+    }
+    return null;
   }
 
   @Override
