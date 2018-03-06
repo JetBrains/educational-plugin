@@ -12,11 +12,23 @@ import com.jetbrains.edu.learning.checker.gradle.GradleTaskCheckerProvider
 class JTaskCheckerProvider : GradleTaskCheckerProvider() {
 
     override fun mainClassForFile(project: Project, file: VirtualFile): String? {
-        val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
+        val psiFile = PsiManager.getInstance(project).findFile(file)
+        if (psiFile == null) {
+            println("PsiFile ${file.name} not found")
+            return null
+        }
         val mainClass = PsiTreeUtil.findChildrenOfType(psiFile, PsiClass::class.java).find { psiClass ->
             PsiMethodUtil.MAIN_CLASS.value(psiClass) && PsiMethodUtil.hasMainMethod(psiClass)
-        } ?: return null
+        }
+        if (mainClass == null) {
+            println("Main class in ${psiFile.name} not found")
+            return null
+        }
 
-        return JavaExecutionUtil.getRuntimeQualifiedName(mainClass)
+        val runtimeQualifiedName = JavaExecutionUtil.getRuntimeQualifiedName(mainClass)
+        if (runtimeQualifiedName == null) {
+            println("Runtime qualified name not found")
+        }
+        return runtimeQualifiedName
     }
 }
