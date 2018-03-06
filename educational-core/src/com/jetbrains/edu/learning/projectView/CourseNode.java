@@ -54,9 +54,7 @@ public class CourseNode extends EduPsiNode {
 
   @Nullable
   public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
-    final List<Section> sections = myCourse.getSections();
-    if (sections.isEmpty() ||
-        sections.size() == 1 && sections.get(0).getTitle().equals(myCourse.getName())) {
+    if (!EduTreeStructureProvider.hasVisibleSections(myCourse)) {
       return modifyLessonNode(myCourse, myProject, myViewSettings, childNode);
     }
     return null;
