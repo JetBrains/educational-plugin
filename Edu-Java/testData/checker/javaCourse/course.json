@@ -29,7 +29,7 @@
           "task_files": {
             "Task.java": {
               "name": "Task.java",
-              "text": "public class Task {\n    public static void main(String[] args) {\n        System.out.println(\"OK\");\n    }\n}\n",
+              "text": "public class Task {\n    public static void main(java.lang.String[] args) {\n        System.out.println(\"OK\");\n    }\n}\n",
               "placeholders": []
             }
           },
@@ -47,7 +47,7 @@
           "task_files": {
             "Task.java": {
               "name": "Task.java",
-              "text": "public class Task {\n    public static void main(String[] args) {\n        System.out.println(\"OK\");\n    }\n}\n",
+              "text": "public class Task {\n    public static void main(java.lang.String[] args) {\n        System.out.println(\"OK\");\n    }\n}\n",
               "placeholders": []
             }
           },
