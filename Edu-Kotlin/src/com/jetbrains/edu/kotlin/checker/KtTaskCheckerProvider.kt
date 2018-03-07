@@ -14,6 +14,13 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
     val ktElements = PsiTreeUtil.findChildrenOfType(psiFile, KtElement::class.java)
     val container = KotlinRunConfigurationProducer.getEntryPointContainer(ktElements.first())
-    return KotlinRunConfigurationProducer.getStartClassFqName(container)
+    if (container == null) {
+      println("container is null")
+    }
+    val qualifiedName = KotlinRunConfigurationProducer.getStartClassFqName(container)
+    if (qualifiedName == null) {
+      println("Qualified name is null for $container")
+    }
+    return qualifiedName
   }
 }
