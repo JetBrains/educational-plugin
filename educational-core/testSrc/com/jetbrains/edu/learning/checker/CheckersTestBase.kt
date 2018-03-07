@@ -13,8 +13,8 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
@@ -56,7 +56,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
     private lateinit var myTestDir: File
 
-    private val MY_TEST_JDK_NAME = "Test JDK"
+    private var MY_TEST_JDK_NAME = "Test JDK"
 
     open protected val dataPath: String = ""
     protected val testDataPath: String get() = "testData/$dataPath"
@@ -168,7 +168,9 @@ abstract class CheckersTestBase : UsefulTestCase() {
                     ProjectJdkTable.getInstance().removeJdk(oldJdk)
                 }
                 val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
-                val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, MY_TEST_JDK_NAME)
+                val jdk = JavaAwareProjectJdkTableImpl.getInstanceEx().internalJdk
+                MY_TEST_JDK_NAME = jdk.name
+//                val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, MY_TEST_JDK_NAME)
                 Assert.assertNotNull("Cannot create JDK for " + myJdkHome, jdk)
                 ProjectJdkTable.getInstance().addJdk(jdk!!)
             }
