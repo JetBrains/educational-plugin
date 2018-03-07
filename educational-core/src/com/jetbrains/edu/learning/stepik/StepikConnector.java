@@ -398,8 +398,10 @@ public class StepikConnector {
     String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
-    for (SectionContainer container : containers) {
-      remoteCourse.addSections(container.sections);
+    if (remoteCourse.getSections().isEmpty()) {
+      for (SectionContainer container : containers) {
+        remoteCourse.addSections(container.sections);
+      }
     }
     return allSections
             .map(section -> section.units)
