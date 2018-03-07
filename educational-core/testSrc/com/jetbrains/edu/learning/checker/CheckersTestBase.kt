@@ -156,6 +156,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
         CheckActionListener.reset()
 
         val myJdkHome = IdeaTestUtil.requireRealJdkHome()
+        println(myJdkHome)
         VfsRootAccess.allowRootAccess(testRootDisposable, myJdkHome)
 
         myApplication = IdeaTestApplication.getInstance()
