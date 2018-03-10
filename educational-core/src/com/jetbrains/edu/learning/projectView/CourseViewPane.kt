@@ -28,9 +28,6 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.DumbAware
@@ -46,8 +43,8 @@ import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
@@ -191,6 +188,6 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     const val ID = "Course"
     const val HIDE_SOLVED_LESSONS = "Edu.HideSolvedLessons"
 
-    val STUDY_ITEM = DataKey.create<StudyItem>("Edu.studyItem")
+    val STUDY_ITEM: DataKey<StudyItem> = DataKey.create<StudyItem>("Edu.studyItem")
   }
 }
