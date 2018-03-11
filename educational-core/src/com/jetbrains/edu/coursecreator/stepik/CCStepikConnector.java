@@ -38,10 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -125,30 +122,101 @@ public class CCStepikConnector {
       courseOnRemote.setAuthors(course.getAuthors());
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
       courseOnRemote.setLanguage(course.getLanguageID());
-      final int sectionId = postModule(courseOnRemote.getId(), 1, String.valueOf(courseOnRemote.getName()), project);
-      int position = 1;
-      for (Lesson lesson : course.getLessons()) {
-        if (indicator != null) {
-          indicator.checkCanceled();
-          indicator.setText2("Publishing lesson " + lesson.getIndex());
+      courseOnRemote.setSections(course.getSections());
+
+      int sectionCount = 1;
+      final List<Section> sections = course.getSections();
+      if (sections.isEmpty()) {
+        postAsOneSection(project, courseOnRemote);
+      }
+      else {
+        final HashMap<Integer, Section> lessonToSection = new HashMap<>();
+        for (Section section : sections) {
+          section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
         }
-        final int lessonId = postLesson(project, lesson);
-        postUnit(lessonId, position, sectionId, project);
-        if (indicator != null) {
-          indicator.setFraction((double)lesson.getIndex()/course.getLessons().size());
-          indicator.checkCanceled();
+
+        final ArrayList<Section> sectionsToPost = getSectionsToPost(course, lessonToSection);
+        for (Section section : sectionsToPost) {
+          section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
         }
-        position += 1;
+
+        for (int i = 0; i < sectionsToPost.size(); i++) {
+          Section section = sectionsToPost.get(i);
+          section.setPosition(i+1);
+          final int id = postModule(courseOnRemote.getId(), section, project);
+          section.setId(id);
+        }
+        sectionCount = sectionsToPost.size();
+
+        int position = 1;
+        for (Lesson lesson : course.getLessons()) {
+          if (indicator != null) {
+            indicator.checkCanceled();
+            indicator.setText2("Publishing lesson " + lesson.getIndex());
+          }
+          final int lessonId = postLesson(project, lesson);
+          final int sectionId = lessonToSection.get(lesson.getIndex()).getId();
+          postUnit(lessonId, position, sectionId, project);
+          if (indicator != null) {
+            indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
+            indicator.checkCanceled();
+          }
+          position += 1;
+        }
       }
 
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
-      ApplicationManager.getApplication().runReadAction(() -> postAdditionalFiles(course, project, courseOnRemote.getId()));
+      final int finalSectionCount = sectionCount;
+      ApplicationManager.getApplication().runReadAction(() -> postAdditionalFiles(course, project, courseOnRemote.getId(), finalSectionCount + 1));
       StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
       showNotification(project, "Course published");
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
     }
+  }
+
+  private static void postAsOneSection(@NotNull Project project, @NotNull RemoteCourse course) {
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    final Section section = new Section();
+    section.setTitle(String.valueOf(course.getName()));
+    section.setPosition(1);
+
+    final int sectionId = postModule(course.getId(), section, project);
+    int position = 1;
+    for (Lesson lesson : course.getLessons()) {
+      if (indicator != null) {
+        indicator.checkCanceled();
+        indicator.setText2("Publishing lesson " + lesson.getIndex());
+      }
+      final int lessonId = postLesson(project, lesson);
+      postUnit(lessonId, position, sectionId, project);
+      if (indicator != null) {
+        indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
+        indicator.checkCanceled();
+      }
+      position += 1;
+    }
+  }
+
+  @NotNull
+  private static ArrayList<Section> getSectionsToPost(@NotNull Course course, HashMap<Integer, Section> lessonToSection) {
+    final ArrayList<Section> sectionsToPost = new ArrayList<>();
+    for (Lesson lesson : course.getLessons()) {
+      if (lessonToSection.containsKey(lesson.getIndex())) {
+        final Section section = lessonToSection.get(lesson.getIndex());
+        if (!sectionsToPost.contains(section)) {
+          sectionsToPost.add(section);
+        }
+      }
+      else {
+        final Section section = new Section();
+        section.setTitle(lesson.getName());
+        section.lessonIndexes.add(lesson.getIndex());
+        sectionsToPost.add(section);
+      }
+    }
+    return sectionsToPost;
   }
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
@@ -160,14 +228,17 @@ public class CCStepikConnector {
     return true;
   }
 
-  public static void postAdditionalFiles(Course course, @NotNull final Project project, int id) {
+  public static void postAdditionalFiles(Course course, @NotNull final Project project, int id, int position) {
     final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
     if (lesson != null) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
         indicator.setText2("Publishing additional files");
       }
-      final int sectionId = postModule(id, 2, StepikNames.PYCHARM_ADDITIONAL, project);
+      final Section section = new Section();
+      section.setTitle(StepikNames.PYCHARM_ADDITIONAL);
+      section.setPosition(position);
+      final int sectionId = postModule(id, section, project);
       final int lessonId = postLesson(project, lesson);
       postUnit(lessonId, 1, sectionId, project);
     }
@@ -217,12 +288,9 @@ public class CCStepikConnector {
     }
   }
 
-  private static int postModule(int courseId, int position, @NotNull final String title, Project project) {
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/sections");
-    final Section section = new Section();
+  private static int postModule(int courseId, Section section, Project project) {
+    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS);
     section.setCourse(courseId);
-    section.setTitle(title);
-    section.setPosition(position);
     final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
     sectionContainer.setSection(section);
     String requestBody = new Gson().toJson(sectionContainer);
@@ -343,8 +411,9 @@ public class CCStepikConnector {
       final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
       updateLessons(course, project);
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
-      if (!updateAdditionalMaterials(project, course, postedCourse.getSectionIds())) {
-        postAdditionalFiles(course, project, course.getId());
+      final List<Integer> sectionIds = postedCourse.getSectionIds();
+      if (!updateAdditionalMaterials(project, course, sectionIds)) {
+        postAdditionalFiles(course, project, course.getId(), sectionIds.size());
       }
     } catch (IOException e) {
       LOG.error(e.getMessage());

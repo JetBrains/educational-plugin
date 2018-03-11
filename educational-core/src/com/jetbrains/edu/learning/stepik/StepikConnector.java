@@ -383,7 +383,7 @@ public class StepikConnector {
   }
 
   public static List<Lesson> getLessons(RemoteCourse remoteCourse, int sectionId) throws IOException {
-    final SectionContainer sectionContainer = getFromStepik(StepikNames.SECTIONS + String.valueOf(sectionId),
+    final SectionContainer sectionContainer = getFromStepik(StepikNames.SECTIONS + "/" + String.valueOf(sectionId),
             SectionContainer.class);
     if (sectionContainer.sections.isEmpty()) {
       return Collections.emptyList();

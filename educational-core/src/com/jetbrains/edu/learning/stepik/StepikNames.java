@@ -19,7 +19,7 @@ public class StepikNames {
   public static final String COURSES = "/courses";
   public static final String STEPS = "/steps/";
   public static final String PROGRESS = "/progresses/";
-  public static final String SECTIONS = "/sections/";
+  public static final String SECTIONS = "/sections";
   public static final String ENROLLMENTS = "/enrollments";
   public static final String VIEWS = "/views";
   public static final String ASSIGNMENTS = "/assignments";

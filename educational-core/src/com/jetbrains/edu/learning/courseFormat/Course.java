@@ -92,6 +92,7 @@ public class Course {
         ifPresent(lesson -> lessons.remove(lesson));
   }
 
+  @Nullable
   public Lesson getLesson(@NotNull final String name) {
     int lessonIndex = EduUtils.getIndex(name, EduNames.LESSON);
     if (!EduUtils.indexIsValid(lessonIndex, lessons)) {
