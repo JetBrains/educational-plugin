@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.actions;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -67,6 +68,14 @@ public class CCAddSection extends DumbAwareAction {
     final VirtualFile[] virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.getDataContext());
     if (virtualFiles == null || virtualFiles.length == 0) {
       presentation.setEnabledAndVisible(false);
+    }
+    final Object[] selectedItems = PlatformDataKeys.SELECTED_ITEMS.getData(e.getDataContext());
+    if (selectedItems != null) {
+      for (Object item : selectedItems) {
+        if (item instanceof Section) {
+          presentation.setEnabledAndVisible(false);
+        }
+      }
     }
   }
 }
