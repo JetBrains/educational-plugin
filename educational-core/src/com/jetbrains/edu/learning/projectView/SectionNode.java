@@ -10,23 +10,22 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.SimpleTextAttributes;
-import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.projectView.CCLessonNode;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.function.BiFunction;
 
 
 public class SectionNode extends ProjectViewNode<Section> {
-  protected final Section mySection;
-  private final Course myCourse;
   private final PsiDirectory myCourseDir;
 
-  public SectionNode(@NotNull Project project, ViewSettings viewSettings, @NotNull Section section,
-                     Course course, PsiDirectory courseDir) {
+  public SectionNode(@NotNull Project project, ViewSettings viewSettings, @NotNull Section section, PsiDirectory courseDir) {
     super(project, section, viewSettings);
-    mySection = section;
-    myCourse = course;
     myCourseDir = courseDir;
   }
 
@@ -47,14 +46,27 @@ public class SectionNode extends ProjectViewNode<Section> {
   @NotNull
   @Override
   public Collection<? extends AbstractTreeNode> getChildren() {
-    return CourseNode.getLessonNodes(myProject, myCourse, myCourseDir,
-                                     getSettings(), lesson -> mySection.lessonIndexes.contains(lesson.getIndex()),
-                                     (lesson, lessonDir) -> new LessonNode(myProject, lessonDir, getSettings(), lesson));
+    final BiFunction<Lesson, PsiDirectory, LessonNode> createLessonNode =
+      (lesson, lessonDir) -> CCUtils.isCourseCreator(myProject) ? new CCLessonNode(myProject, lessonDir, getSettings(), lesson) :
+                             new LessonNode(myProject, lessonDir, getSettings(), lesson);
+
+    return CourseNode.getLessonNodes(myProject, myCourseDir,
+                                     getSettings(), lesson -> getValue().lessonIndexes.contains(lesson.getIndex()),
+                                     createLessonNode);
+  }
+
+  @Override
+  public int getWeight() {
+    final List<Integer> lessonIndexes = getValue().lessonIndexes;
+    if (!lessonIndexes.isEmpty()) {
+      return lessonIndexes.get(lessonIndexes.size() - 1);
+    }
+    return 0;
   }
 
   @Override
   protected void update(PresentationData data) {
-    data.addText(mySection.getTitle(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    data.addText(getValue().getTitle(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
     data.setIcon(AllIcons.Ide.Error);
   }
 }
