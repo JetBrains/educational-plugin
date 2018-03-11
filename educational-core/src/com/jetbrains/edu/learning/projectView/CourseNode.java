@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.projectView;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper;
+import com.intellij.ide.projectView.impl.nodes.PsiFileSystemItemFilter;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
@@ -10,6 +11,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.EduNames;
@@ -74,9 +76,34 @@ public class CourseNode extends EduNode {
 
       result.addAll(getLessonNodes(myProject, getValue(), getSettings(), (lesson -> !lessonsInSections.contains(lesson.getIndex())),
                                    (lesson, lessonDirectory) -> new LessonNode(myProject, lessonDirectory, getSettings(), lesson)));
+
+      final Collection<AbstractTreeNode> children =
+        ProjectViewDirectoryHelper.getInstance(myProject).getDirectoryChildren(getValue(), getSettings(), true,
+                                                                               getNoLessonFilter());
+
+      for (AbstractTreeNode child : children) {
+        final AbstractTreeNode node = modifyChildNode(child);
+        if (node != null) {
+          result.add(node);
+        }
+      }
       return result;
     }
     return getTaskNodes();
+  }
+
+  protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
+    return null;
+  }
+
+  @NotNull
+  private static PsiFileSystemItemFilter getNoLessonFilter() {
+    return new PsiFileSystemItemFilter() {
+      @Override
+      public boolean shouldShow(@NotNull PsiFileSystemItem item) {
+        return !item.getName().startsWith(EduNames.LESSON);
+      }
+    };
   }
 
   @NotNull
@@ -107,7 +134,7 @@ public class CourseNode extends EduNode {
     return Collections.singleton(new TaskNode(myProject, taskDirectory, getSettings(), task));
   }
 
-  private boolean hasVisibleLessons() {
+  protected boolean hasVisibleLessons() {
     return myCourse.getLessons().size() != 1 || myCourse.getLessons().get(0).getTaskList().size() != 1;
   }
 
