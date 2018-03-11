@@ -61,16 +61,16 @@ public class CCTaskNode extends TaskNode {
       }
       EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
       if (configurator == null) {
-        return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
+        return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings());
       }
       if (!EduUtils.isTestsFile(myProject, virtualFile)) {
-        return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
+        return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings());
       }
       if (!(myTask instanceof TaskWithSubtasks)) {
-        return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings, getTestNodeName(configurator, psiElement));
+        return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings(), getTestNodeName(configurator, psiElement));
       }
       String testFileName = getTestNodeName(configurator, psiElement);
-      return isActiveSubtaskTest(virtualFile) ? new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings, testFileName) : null;
+      return isActiveSubtaskTest(virtualFile) ? new CCStudentInvisibleFileNode(myProject, psiFile, getSettings(), testFileName) : null;
     }
     return null;
   }
@@ -104,6 +104,6 @@ public class CCTaskNode extends TaskNode {
 
   @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
-    return new CCNode(myProject, value, myViewSettings);
+    return new CCNode(myProject, value, getSettings());
   }
 }
