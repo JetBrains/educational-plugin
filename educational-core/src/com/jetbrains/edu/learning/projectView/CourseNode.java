@@ -70,9 +70,9 @@ public class CourseNode extends EduNode {
   public Collection<AbstractTreeNode> getChildrenImpl() {
     final ArrayList<AbstractTreeNode> result = new ArrayList<>(getSectionNodes());
     if (hasVisibleLessons()) {
-      final List<Section> sections = myCourse.getSections();
+      final List<Section> visibleSections = getVisibleSections();
       final List<Integer> lessonsInSections =
-        sections.stream().map(section -> section.lessonIndexes).flatMap(lessonIndexes -> lessonIndexes.stream()).collect(Collectors.toList());
+        visibleSections.stream().map(section -> section.lessonIndexes).flatMap(lessonIndexes -> lessonIndexes.stream()).collect(Collectors.toList());
 
       result.addAll(getLessonNodes(myProject, getValue(), getSettings(), (lesson -> !lessonsInSections.contains(lesson.getIndex())),
                                    (lesson, lessonDirectory) -> new LessonNode(myProject, lessonDirectory, getSettings(), lesson)));
@@ -90,6 +90,26 @@ public class CourseNode extends EduNode {
       return result;
     }
     return getTaskNodes();
+  }
+
+  @NotNull
+  private List<Section> getVisibleSections() {
+    final List<Section> sections = myCourse.getSections();
+    final List<Section> sectionsToShow = new ArrayList<>();
+    for (Section section : sections) {
+      if (section.lessonIndexes.size() == 1) {
+        final Integer lessonIndex = section.lessonIndexes.get(0);
+        final Lesson lesson = myCourse.getLesson(EduNames.LESSON + lessonIndex);
+        if (lesson != null && lesson.getName().equals(section.getTitle())) {
+          continue;
+        }
+      }
+      if (section.getTitle().equals(StepikNames.PYCHARM_ADDITIONAL)) {
+        continue;
+      }
+      sectionsToShow.add(section);
+    }
+    return sectionsToShow;
   }
 
   protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
@@ -135,6 +155,7 @@ public class CourseNode extends EduNode {
   }
 
   protected boolean hasVisibleLessons() {
+    if (getVisibleSections().isEmpty()) return false;
     return myCourse.getLessons().size() != 1 || myCourse.getLessons().get(0).getTaskList().size() != 1;
   }
 
@@ -144,7 +165,7 @@ public class CourseNode extends EduNode {
     }
     final ArrayList<AbstractTreeNode> result = new ArrayList<>();
 
-    final List<Section> sections = myCourse.getSections();
+    final List<Section> sections = getVisibleSections();
     for (Section section : sections) {
       result.add(new SectionNode(myProject, getSettings(), section, getValue()));
     }
