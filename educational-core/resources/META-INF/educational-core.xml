@@ -121,6 +121,7 @@
       <action id="Educational.Educator.ShowPreview" class="com.jetbrains.edu.coursecreator.actions.CCShowPreview">
         <add-to-group group-id="EditorTabPopupMenu"/>
       </action>
+      <action id="Educational.Educator.CCAddSection" class="com.jetbrains.edu.coursecreator.actions.CCAddSection"/>
       <separator/>
       <action id="Educational.Educator.SwitchSubtask" class="com.jetbrains.edu.coursecreator.actions.CCSwitchSubtask"/>
       <reference id="Educational.Educator.NewStep"/>
