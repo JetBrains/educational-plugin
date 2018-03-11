@@ -15,13 +15,17 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.projectView.CourseNode;
+import com.jetbrains.edu.learning.projectView.LessonNode;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CCCourseNode extends CourseNode {
   private static final Collection<String> NAMES_TO_IGNORE = ContainerUtil.newHashSet(
@@ -37,10 +41,16 @@ public class CCCourseNode extends CourseNode {
   @NotNull
   @Override
   public Collection<AbstractTreeNode> getChildrenImpl() {
-    final Collection<AbstractTreeNode> lessonNodes =
-      getLessonNodes(myProject, myCourse, getValue(),
-                     getSettings(), null, (lesson, lessonDir) -> new CCLessonNode(myProject, lessonDir, getSettings(), lesson));
-    final ArrayList<AbstractTreeNode> result = new ArrayList<>(lessonNodes);
+    final ArrayList<AbstractTreeNode> nodes = new ArrayList<>(getSectionNodes());
+
+    final List<Section> sections = myCourse.getSections();
+    final List<Integer> lessonsInSections =
+      sections.stream().map(section -> section.lessonIndexes).flatMap(lessonIndexes -> lessonIndexes.stream()).collect(Collectors.toList());
+
+    nodes.addAll(getLessonNodes(myProject, getValue(), getSettings(), (lesson -> !lessonsInSections.contains(lesson.getIndex())),
+                                   (lesson, lessonDirectory) -> new LessonNode(myProject, lessonDirectory, getSettings(), lesson)));
+
+    final ArrayList<AbstractTreeNode> result = new ArrayList<>(nodes);
 
     final Collection<AbstractTreeNode> children =
       ProjectViewDirectoryHelper.getInstance(myProject).getDirectoryChildren(getValue(), getSettings(), true, getNoLessonFilter());

@@ -13,6 +13,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -30,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.EduUtils.getFirst;
 import static com.jetbrains.edu.learning.projectView.CourseViewPane.HIDE_SOLVED_LESSONS;
@@ -64,15 +66,17 @@ public class CourseNode extends EduNode {
   @Override
   @NotNull
   public Collection<AbstractTreeNode> getChildrenImpl() {
-    if (hasVisibleSections(myCourse)) {
-      return getSectionNodes();
-    }
-    if (!hasVisibleLessons()) {
-      return getTaskNodes();
-    }
+    final ArrayList<AbstractTreeNode> result = new ArrayList<>(getSectionNodes());
+    if (hasVisibleLessons()) {
+      final List<Section> sections = myCourse.getSections();
+      final List<Integer> lessonsInSections =
+        sections.stream().map(section -> section.lessonIndexes).flatMap(lessonIndexes -> lessonIndexes.stream()).collect(Collectors.toList());
 
-    return getLessonNodes(myProject, myCourse, getValue(), getSettings(), null,
-                          (lesson, lessonDirectory) -> new LessonNode(myProject, lessonDirectory, getSettings(), lesson));
+      result.addAll(getLessonNodes(myProject, getValue(), getSettings(), (lesson -> !lessonsInSections.contains(lesson.getIndex())),
+                                   (lesson, lessonDirectory) -> new LessonNode(myProject, lessonDirectory, getSettings(), lesson)));
+      return result;
+    }
+    return getTaskNodes();
   }
 
   @NotNull
@@ -107,23 +111,29 @@ public class CourseNode extends EduNode {
     return myCourse.getLessons().size() != 1 || myCourse.getLessons().get(0).getTaskList().size() != 1;
   }
 
-  private Collection<AbstractTreeNode> getSectionNodes() {
+  protected Collection<AbstractTreeNode> getSectionNodes() {
+    if (!hasVisibleSections(myCourse)) {
+      return Collections.emptyList();
+    }
     final ArrayList<AbstractTreeNode> result = new ArrayList<>();
 
     final List<Section> sections = myCourse.getSections();
     for (Section section : sections) {
-      result.add(new SectionNode(myProject, getSettings(), section, myCourse, getValue()));
+      result.add(new SectionNode(myProject, getSettings(), section, getValue()));
     }
     return result;
   }
 
   public static Collection<AbstractTreeNode> getLessonNodes(@NotNull final Project project,
-                                                            @NotNull final Course course,
                                                             @NotNull final PsiDirectory directory,
                                                             @NotNull final ViewSettings settings,
                                                             @Nullable Predicate<Lesson> filter,
                                                             @NotNull BiFunction<Lesson, PsiDirectory, LessonNode> createLessonNode) {
     final ArrayList<AbstractTreeNode> result = new ArrayList<>();
+    final Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return result;
+    }
 
     final Collection<AbstractTreeNode> children =
       ProjectViewDirectoryHelper.getInstance(project).getDirectoryChildren(directory, settings, true, null);
