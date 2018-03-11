@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions;
 
+import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -52,6 +53,7 @@ public class CCAddSection extends DumbAwareAction {
     section.setTitle(sectionName);
     section.lessonIndexes.addAll(lessonsToWrap);
     course.addSections(Collections.singletonList(section));
+    ProjectView.getInstance(project).refresh();
   }
 
   @Override
