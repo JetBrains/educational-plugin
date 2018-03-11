@@ -48,7 +48,7 @@ public class SectionNode extends ProjectViewNode<Section> {
   @Override
   public Collection<? extends AbstractTreeNode> getChildren() {
     return CourseNode.getLessonNodes(myProject, myCourse, myCourseDir,
-                                     getSettings(), lesson -> mySection.lessonIds.contains(lesson.getId()),
+                                     getSettings(), lesson -> mySection.lessonIndexes.contains(lesson.getIndex()),
                                      (lesson, lessonDir) -> new LessonNode(myProject, lessonDir, getSettings(), lesson));
   }
 
