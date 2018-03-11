@@ -10,7 +10,7 @@ public class Section {
   private int position;
   private int id;
 
-  public List<Integer> lessonIds = new ArrayList<>();
+  public List<Integer> lessonIndexes = new ArrayList<>();
 
   public int getId() {
     return id;

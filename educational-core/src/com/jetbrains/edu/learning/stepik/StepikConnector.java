@@ -420,15 +420,27 @@ public class StepikConnector {
     List<Lesson> lessons = lessonContainers.stream().flatMap(lessonContainer -> lessonContainer.lessons.stream()).collect(Collectors.toList());
     List<Unit> units = unitContainers.stream().flatMap(container -> container.units.stream()).collect(Collectors.toList());
 
+    final List<Lesson> lessonsSorted = sortLessonsByUnits(units, lessons);
+    for (int i = 0; i < lessonsSorted.size(); i++) {
+      Lesson lesson = lessonsSorted.get(i);
+      lesson.setIndex(i + 1);
+    }
+
     final Map<Integer, Integer> unitToLesson = unitContainers.stream().flatMap(container -> container.units.stream()).
-      collect(Collectors.toMap(Unit::getId, unit -> unit.lesson));
+      collect(Collectors.toMap(Unit::getId, unit -> {
+        final Optional<Lesson> lesson = lessonsSorted.stream().filter(l -> l.getId() == unit.lesson).findFirst();
+        return lesson.isPresent() ? lesson.get().getIndex() : null;
+      }));
 
     for (Section section : remoteCourse.getSections()) {
       for (Integer unit : section.units) {
-        section.lessonIds.add(unitToLesson.get(unit));
+        final Integer index = unitToLesson.get(unit);
+        if (index != null) {
+          section.lessonIndexes.add(index);
+        }
       }
     }
-    return sortLessonsByUnits(units, lessons);
+    return lessonsSorted;
   }
 
   /**

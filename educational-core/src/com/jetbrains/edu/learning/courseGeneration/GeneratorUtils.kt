@@ -46,7 +46,6 @@ object GeneratorUtils {
       } else {
         indicator.text = "Generating additional files"
       }
-      lesson.index = i + 1
       createLesson(lesson, baseDir)
     }
     course.removeAdditionalLesson()
