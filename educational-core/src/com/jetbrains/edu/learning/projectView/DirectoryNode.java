@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DirectoryNode extends EduPsiNode {
+public class DirectoryNode extends EduNode {
 
   @NotNull protected final Project myProject;
   protected final ViewSettings myViewSettings;
@@ -50,7 +50,6 @@ public class DirectoryNode extends EduPsiNode {
     return null;
   }
 
-  @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
     return new DirectoryNode(myProject, value, myViewSettings);
   }

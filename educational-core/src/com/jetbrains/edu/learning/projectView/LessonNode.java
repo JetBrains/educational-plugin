@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
-import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -11,9 +10,8 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.JBColor;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
@@ -23,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class LessonNode extends EduPsiNode {
+public class LessonNode extends EduNode {
   @NotNull protected final Project myProject;
   protected final ViewSettings myViewSettings;
   @NotNull protected final Lesson myLesson;
@@ -54,8 +52,8 @@ public class LessonNode extends EduPsiNode {
 
   @Nullable
   @Override
-  public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
-    Object value = childNode.getValue();
+  protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
+    Object value = child.getValue();
     if (value instanceof PsiDirectory) {
       PsiDirectory directory = (PsiDirectory)value;
       Task task = myLesson.getTask(directory.getName());
@@ -73,13 +71,18 @@ public class LessonNode extends EduPsiNode {
           }
         }
       }
-      return createChildDirectoryNode(task, directory);
+      return createTaskNode(directory, task);
     }
     return null;
   }
 
-  @Override
-  public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory directory) {
-    return new TaskNode(myProject, directory, myViewSettings, ((Task)item));
+  @NotNull
+  protected TaskNode createTaskNode(PsiDirectory directory, Task task) {
+    return new TaskNode(myProject, directory, myViewSettings, task);
+  }
+
+  @NotNull
+  public Lesson getLesson() {
+    return myLesson;
   }
 }

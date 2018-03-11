@@ -19,12 +19,14 @@ package com.jetbrains.edu.learning.projectView
 import com.intellij.ide.SelectInTarget
 import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
 import com.intellij.ide.projectView.impl.ProjectTreeStructure
 import com.intellij.ide.projectView.impl.ProjectViewTree
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
+import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
@@ -34,6 +36,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
+import com.intellij.util.ArrayUtil
 import com.intellij.util.ObjectUtils
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
@@ -158,7 +161,20 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   @TestOnly
   fun getProgressBar(): JProgressBar = progressBar
 
-  override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID) {}
+  override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID) {
+    override fun createRoot(project: Project?, settings: ViewSettings?): AbstractTreeNode<*> {
+      return RootNode(myProject, settings, StudyTaskManager.getInstance(myProject).course)
+    }
+
+    override fun getChildElements(element: Any?): Array<Any> {
+      if (element !is AbstractTreeNode<*>) {
+        return ArrayUtil.EMPTY_OBJECT_ARRAY
+      }
+      val elements = element.children
+      elements.forEach { node -> node.setParent(element) }
+      return ArrayUtil.toObjectArray(elements)
+    }
+  }
   override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = AbstractTreeUpdater(treeBuilder)
 
   override fun getTitle(): String = ID
@@ -181,7 +197,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
     if (CCUtils.isCourseCreator(myProject)) {
       val userObject = selectedNode?.userObject
-      val studyItem = (userObject as? CCTaskNode)?.myTask ?: (userObject as? CCLessonNode)?.myLesson
+      val studyItem = (userObject as? CCTaskNode)?.task ?: (userObject as? CCLessonNode)?.lesson
       if (studyItem != null) {
         when {
           PlatformDataKeys.DELETE_ELEMENT_PROVIDER.`is`(dataId) -> return myStudyItemDeleteProvider
