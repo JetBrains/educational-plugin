@@ -163,7 +163,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID) {
     override fun createRoot(project: Project?, settings: ViewSettings?): AbstractTreeNode<*> {
-      return RootNode(myProject, settings, StudyTaskManager.getInstance(myProject).course)
+      return RootNode(myProject, settings)
     }
 
     override fun getChildElements(element: Any?): Array<Any> {
