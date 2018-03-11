@@ -11,12 +11,15 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.JBColor;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.projectView.CourseNode;
+import com.jetbrains.edu.learning.projectView.LessonNode;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.function.BiFunction;
 
 public class CCCourseNode extends CourseNode {
   private static final Collection<String> NAMES_TO_IGNORE = ContainerUtil.newHashSet(
@@ -51,6 +54,12 @@ public class CCCourseNode extends CourseNode {
   @Override
   protected boolean hasVisibleLessons() {
     return true;
+  }
+
+  @NotNull
+  @Override
+  protected BiFunction<Lesson, PsiDirectory, LessonNode> createLessonFunction() {
+    return (lesson, lessonDir) -> new CCLessonNode(myProject, lessonDir, getSettings(), lesson);
   }
 
   @Override
