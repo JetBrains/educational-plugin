@@ -23,9 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class TaskNode extends EduPsiNode {
-  @NotNull protected final Project myProject;
-  protected final ViewSettings myViewSettings;
+public class TaskNode extends EduNode {
   @NotNull protected final Task myTask;
 
   public TaskNode(@NotNull Project project,
@@ -33,8 +31,6 @@ public class TaskNode extends EduPsiNode {
                   ViewSettings viewSettings,
                   @NotNull Task task) {
     super(project, value, viewSettings);
-    myProject = project;
-    myViewSettings = viewSettings;
     myTask = task;
   }
 
@@ -57,7 +53,7 @@ public class TaskNode extends EduPsiNode {
     updatePresentation(data, myTask.getName(), color, icon, subtaskInfo);
   }
 
-  private String getSubtaskInfo(TaskWithSubtasks task) {
+  private static String getSubtaskInfo(TaskWithSubtasks task) {
     int index = task.getActiveSubtaskIndex() + 1;
     int subtasksNum = task.getLastSubtaskIndex() + 1;
     return EduNames.SUBTASK + " " + index + "/" + subtasksNum;
@@ -78,8 +74,8 @@ public class TaskNode extends EduPsiNode {
     NavigationUtils.navigateToTask(myProject, myTask);
   }
 
-  @Nullable
   @Override
+  @Nullable
   public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
     Object value = childNode.getValue();
     if (value instanceof PsiDirectory) {
@@ -104,8 +100,12 @@ public class TaskNode extends EduPsiNode {
     return null;
   }
 
-  @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
-    return new DirectoryNode(myProject, value, myViewSettings);
+    return new DirectoryNode(myProject, value, getSettings());
+  }
+
+  @NotNull
+  public Task getTask() {
+    return myTask;
   }
 }
