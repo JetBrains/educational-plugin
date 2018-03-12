@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class EduNode extends PsiDirectoryNode {
-  JBColor LIGHT_GREEN = new JBColor(new Color(0, 134, 0), new Color(98, 150, 85));
+  protected static final JBColor LIGHT_GREEN = new JBColor(new Color(0, 134, 0), new Color(98, 150, 85));
 
   public EduNode(@NotNull final Project project,
                  PsiDirectory value,
