@@ -3,19 +3,26 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
-import java.awt.Dimension
+import com.jetbrains.edu.learning.newproject.ui.CoursePanel
 import javax.swing.JComponent
 
 open class CCEditCourseInfoDialog(val project: Project,
                                   val course: Course,
-                                  private val dialogTitle: String) : DialogWrapper (project) {
-  private val panel: CCCourseInfoPanel = CCCourseInfoPanel(course.name, Course.getAuthorsString(course.authors), course.description)
+                                  dialogTitle: String) : DialogWrapper (project) {
+  private val myPanel: CoursePanel = CoursePanel(true, false, true).apply {
+    preferredSize = JBUI.size(WIDTH, HEIGHT)
+    minimumSize = JBUI.size(WIDTH, HEIGHT)
+  }
 
   init {
     super.init()
+    title = dialogTitle
+    myPanel.bindCourse(course)
+    myPanel.addValidationListener { isInputDataComplete -> isOKActionEnabled = isInputDataComplete }
+    this.setupLanguageLevels(course, myPanel)
     initValidation()
   }
 
@@ -26,10 +33,8 @@ open class CCEditCourseInfoDialog(val project: Project,
   fun showAndApply(): Boolean {
     setValidationDelay(0)
     if (showAndGet()) {
-      course.setAuthorsAsString(panel.authors)
-      course.name = panel.name
-      course.description = panel.description
-      setVersion(course, panel)
+      myPanel.applyChanges(course)
+      setVersion(course, myPanel)
       ProjectView.getInstance(project).refresh()
       ProjectInspectionProfileManager.getInstance(project).fireProfileChanged()
       return true
@@ -37,27 +42,21 @@ open class CCEditCourseInfoDialog(val project: Project,
     return false
   }
 
-  open fun setVersion(course: Course, panel: CCCourseInfoPanel) {}
-
-  open fun setupLanguageLevels(course: Course, panel: CCCourseInfoPanel) {}
-
-  override fun doValidate(): ValidationInfo? {
-    return panel.validate()
+  fun showAuthor(isToShow: Boolean) {
+    myPanel.isAuthorEditable(isToShow)
   }
+
+  open fun setVersion(course: Course, panel: CoursePanel) {}
+
+  open fun setupLanguageLevels(course: Course, panel: CoursePanel) {}
 
   override fun createCenterPanel(): JComponent? {
-    title = this.dialogTitle
-    setupLanguageLevels(course, panel)
-
-
-    val mainPanel = panel.mainPanel
-    mainPanel.preferredSize = Dimension(450, 300)
-    mainPanel.minimumSize = Dimension(450, 300)
-
-    return mainPanel
+    return myPanel
   }
 
-  fun showAuthor(isVisible: Boolean) {
-    panel.showAuthorField(isVisible)
+  companion object {
+
+    private const val WIDTH: Int = 370
+    private const val HEIGHT: Int = 400
   }
 }

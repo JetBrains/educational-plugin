@@ -3,10 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui;
 import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.roots.ui.componentsList.components.ScrollablePanel;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.ui.VerticalFlowLayout;
+import com.intellij.openapi.ui.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.*;
@@ -49,9 +46,7 @@ public class CoursePanel extends JPanel {
   public static final String DONE_LABEL_TEXT = "Render";
 
   private JPanel myMainPanel;
-
   private JLabel myEditLabel;
-
   private AdvancedSettings myAdvancedSettings;
   @Nullable private FilterComponent mySearchField;
 
@@ -61,6 +56,8 @@ public class CoursePanel extends JPanel {
   private EditViewPanel myEditViewPanel;
   private List<ValidationListener> myValidationListeners = new ArrayList<>();
   private Course myCourse;
+
+  private boolean isAuthorEditable = true;
 
   public CoursePanel(boolean isIndependentPanel, boolean isLocationFieldNeeded, boolean isEditable) {
     myAdvancedSettings = new AdvancedSettings();
@@ -152,9 +149,30 @@ public class CoursePanel extends JPanel {
     myValidationListeners.add(validationListener);
   }
 
+  public void isAuthorEditable(boolean isEditable) {
+    isAuthorEditable = isEditable;
+    if (myEditViewPanel != null) {
+      myEditViewPanel.showAuthors(isEditable);
+    }
+    myRenderedViewPanel.showAuthors(isEditable);
+  }
+
   @NotNull
   private static String wrapLabelText(String text) {
     return "<u><i>" + text+ "</i></u>";
+  }
+
+  public String getLanguageVersion() {
+    if (myEditViewPanel != null) {
+      return myEditViewPanel.getLanguageVersion();
+    }
+    return null;
+  }
+
+  public void setUpLanguageLevels(String languageName, List<String> levels, String selectedItem) {
+    if (myEditViewPanel != null) {
+      myEditViewPanel.setupLanguageLevelComponent(languageName, levels, selectedItem);
+    }
   }
 
   private class EditViewPanel extends JPanel {
@@ -162,14 +180,17 @@ public class CoursePanel extends JPanel {
     private final JBLabel myCourseNameLabel = new JBLabel("Course name:");
     private final JBLabel myInstructorLabel = new JBLabel("Instructor: ");
     private final JBLabel myLanguageLabel = new JBLabel("Language: ");
+    private final JBLabel myLanguageLevelLabel = new JBLabel("Language: ");
     private final JBLabel myDescriptionLabel = new JBLabel("Description: ");
 
 
     private final JTextField myCourseNameField = new JTextField();
     private final JTextField myInstructorField = new JTextField();
     private final JTextField myHumanLanguageField = new JTextField();
+    private final ComboBox<String> myLanguageLevelCombobox = new ComboBox<>();
     private final JTextArea myDescriptionArea = new JTextArea();
     private final JLabel myErrorLabel = new JBLabel();
+    private final JPanel myLanguageLevelPanel;
 
     public EditViewPanel() {
       VerticalFlowLayout flowLayout = new VerticalFlowLayout();
@@ -183,9 +204,16 @@ public class CoursePanel extends JPanel {
 
       add(myInstructorLabel);
       add(myInstructorField);
+      showAuthors(isAuthorEditable);
 
       add(myLanguageLabel);
       add(myHumanLanguageField);
+
+
+      myLanguageLevelPanel = new JPanel(new HorizontalLayout(5));
+      myLanguageLevelPanel.setVisible(false);
+      myLanguageLevelPanel.add(myLanguageLevelLabel);
+      myLanguageLevelPanel.add(myLanguageLevelCombobox);
 
       add(myDescriptionLabel);
       JBScrollPane scrollPane = new JBScrollPane(myDescriptionArea);
@@ -205,12 +233,34 @@ public class CoursePanel extends JPanel {
       });
     }
 
+    public void showAuthors(boolean isVisible) {
+      myInstructorLabel.setVisible(isVisible);
+      myInstructorField.setVisible(isAuthorEditable);
+    }
+
     public void setAllFields(String courseName, String author, String language, String description) {
       initUI();
       myCourseNameField.setText(courseName);
       myInstructorField.setText(author);
       myHumanLanguageField.setText(language);
       myDescriptionArea.setText(description);
+    }
+
+    public void setupLanguageLevelComponent(String languageName, List<String> levels, String selectedItem) {
+      myLanguageLevelLabel.setText(languageName);
+      myLanguageLevelPanel.setVisible(true);
+      for (String level : levels) {
+        myLanguageLevelCombobox.addItem(level);
+      }
+      myLanguageLevelCombobox.setSelectedItem(selectedItem);
+    }
+
+    @Nullable
+    public String getLanguageVersion() {
+      if (!myLanguageLevelCombobox.isVisible() || myLanguageLevelCombobox.getItemCount() == 0) {
+        return null;
+      }
+      return (String)myLanguageLevelCombobox.getSelectedItem();
     }
 
     private void initUI() {
@@ -232,6 +282,11 @@ public class CoursePanel extends JPanel {
 
       myLanguageLabel.setBorder(JBUI.Borders.emptyTop(topLabelOffset));
       myHumanLanguageField.setBorder(createFieldBorder());
+
+      if (myLanguageLevelLabel.isVisible()) {
+        myLanguageLevelLabel.setBorder(JBUI.Borders.emptyTop(topLabelOffset));
+        myLanguageLevelCombobox.setBorder(createFieldBorder());
+      }
 
       myDescriptionLabel.setBorder(JBUI.Borders.emptyTop(topLabelOffset));
       myDescriptionArea.setBorder(createFieldBorder());
@@ -370,6 +425,7 @@ public class CoursePanel extends JPanel {
 
       myTagsPanel = new TagsPanel();
       myInstructorPane = new JEditorPane();
+      showAuthors(isAuthorEditable);
 
       myDescriptionPane = new JEditorPane();
       myInfoScroll = new JBScrollPane(myDescriptionPane);
@@ -382,6 +438,10 @@ public class CoursePanel extends JPanel {
       add(myInfoPanel);
 
       initUI(isIndependentPanel, isLocationFieldNeeded);
+    }
+
+    public void showAuthors(boolean editable) {
+      myInstructorPane.setVisible(editable);
     }
 
     public void setAllFields(@NotNull String courseName, @Nullable List<Tag> tags, @Nullable String authorsString, @NotNull String language, @NotNull String description) {
@@ -593,6 +653,8 @@ public class CoursePanel extends JPanel {
   public Object getProjectSettings() {
     return myRenderedViewPanel.getSettings();
   }
+
+
 
   public void addLocationFieldDocumentListener(@NotNull DocumentListener listener) {
     if (myLocationField != null) {
