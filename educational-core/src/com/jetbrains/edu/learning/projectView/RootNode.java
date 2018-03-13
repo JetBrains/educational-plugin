@@ -4,6 +4,7 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper;
 import com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -38,18 +39,27 @@ public class RootNode extends ProjectViewProjectNode {
     }
     else {
       final ArrayList<AbstractTreeNode> nodes = new ArrayList<>();
-      List<VirtualFile> topLevelContentRoots = ProjectViewDirectoryHelper.getInstance(myProject).getTopLevelRoots();
-      for (VirtualFile root : topLevelContentRoots) {
-        final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(root);
-        if (CCUtils.isCourseCreator(myProject)) {
-          nodes.add(new CCCourseNode(myProject, psiDirectory, getSettings(), course));
-        }
-        else {
-          nodes.add(new CourseNode(myProject, psiDirectory, getSettings(), course));
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(myProject.getBaseDir());
+        addCourseNode(course, nodes, psiDirectory);
+      }
+      else {
+        List<VirtualFile> topLevelContentRoots = ProjectViewDirectoryHelper.getInstance(myProject).getTopLevelRoots();
+        for (VirtualFile root : topLevelContentRoots) {
+          final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(root);
+          addCourseNode(course, nodes, psiDirectory);
         }
       }
       return nodes;
     }
   }
 
+  private void addCourseNode(Course course, ArrayList<AbstractTreeNode> nodes, PsiDirectory psiDirectory) {
+    if (CCUtils.isCourseCreator(myProject)) {
+      nodes.add(new CCCourseNode(myProject, psiDirectory, getSettings(), course));
+    }
+    else {
+      nodes.add(new CourseNode(myProject, psiDirectory, getSettings(), course));
+    }
+  }
 }
