@@ -11,10 +11,7 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtensionPoint;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.CommandProcessor;
@@ -389,7 +386,7 @@ public class EduUtils {
     return true;
   }
 
-  public static boolean canRenameOrMove(DataContext dataContext) {
+  public static boolean renameAndMoveForbidden(DataContext dataContext) {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
     if (element == null || project == null) {
