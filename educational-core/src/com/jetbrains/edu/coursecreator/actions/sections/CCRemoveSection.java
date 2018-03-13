@@ -32,7 +32,7 @@ public class CCRemoveSection extends DumbAwareAction {
     if (selectedItems != null && selectedItems.length == 1 && selectedItems[0] instanceof Section) {
       final Section selectedSection = (Section)selectedItems[0];
       final List<Section> sections = course.getSections();
-      sections.removeIf(section1 -> section1.equals(selectedSection));
+      sections.removeIf(section -> section.equals(selectedSection));
     }
 
     ProjectView.getInstance(project).refresh();
