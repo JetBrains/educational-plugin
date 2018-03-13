@@ -95,9 +95,6 @@ public class Course {
   @Nullable
   public Lesson getLesson(@NotNull final String name) {
     int lessonIndex = EduUtils.getIndex(name, EduNames.LESSON);
-    if (!EduUtils.indexIsValid(lessonIndex, lessons)) {
-      return null;
-    }
     for (Lesson lesson : lessons) {
       if (lesson.getIndex() - 1 == lessonIndex) {
         return lesson;
