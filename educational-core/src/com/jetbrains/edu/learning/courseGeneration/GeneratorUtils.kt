@@ -56,10 +56,16 @@ object GeneratorUtils {
       createAdditionalFiles(lesson, courseDir)
     } else {
       val lessonDir = createUniqueDir(courseDir, lesson)
-      val taskList = lesson.getTaskList()
-      for ((i, task) in taskList.withIndex()) {
-        task.index = i + 1
-        createTask(task, lessonDir)
+      if (lesson.isFrameworkLesson) {
+        val firstTask = lesson.getTaskList().firstOrNull() ?: return
+        firstTask.index = 1
+        createTask(firstTask, lessonDir)
+      } else {
+        val taskList = lesson.getTaskList()
+        for ((i, task) in taskList.withIndex()) {
+          task.index = i + 1
+          createTask(task, lessonDir)
+        }
       }
     }
   }
