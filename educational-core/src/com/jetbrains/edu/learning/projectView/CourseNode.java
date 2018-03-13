@@ -101,7 +101,7 @@ public class CourseNode extends EduNode {
     final List<Section> sections = myCourse.getSections();
     final List<Section> sectionsToShow = new ArrayList<>();
     for (Section section : sections) {
-      if (section.lessonIndexes.size() == 1) {
+      if (section.lessonIndexes.size() == 1 && myCourse.getLessons().size() == 1) {
         final Integer lessonIndex = section.lessonIndexes.get(0);
         final Lesson lesson = myCourse.getLesson(EduNames.LESSON + lessonIndex);
         if (lesson != null && lesson.getName().equals(section.getTitle())) {
