@@ -15,7 +15,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.editor.selectionModel.removeSelection()
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
-    val task = lesson.getTask("task$taskIndex")
+    val task = lesson!!.getTask("task$taskIndex")
     val taskFile = task.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(1, answerPlaceholders.size)
@@ -32,7 +32,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.editor.selectionModel.removeSelection()
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
-    val task = lesson.getTask("task$taskIndex")
+    val task = lesson!!.getTask("task$taskIndex")
     val taskFile = task.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(1, answerPlaceholders.size)
@@ -49,7 +49,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.editor.selectionModel.removeSelection()
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
-    val task = lesson.getTask("task$taskIndex")
+    val task = lesson!!.getTask("task$taskIndex")
     val taskFile = task.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
@@ -68,7 +68,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.editor.selectionModel.removeSelection()
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
-    val task = lesson.getTask("task$taskIndex")
+    val task = lesson!!.getTask("task$taskIndex")
     val taskFile = task.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
@@ -87,7 +87,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.editor.selectionModel.removeSelection()
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
-    val task = lesson.getTask("task$taskIndex")
+    val task = lesson!!.getTask("task$taskIndex")
     val taskFile = task.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
@@ -106,7 +106,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.editor.selectionModel.removeSelection()
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
-    val task = lesson.getTask("task$taskIndex")
+    val task = lesson!!.getTask("task$taskIndex")
     val taskFile = task.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
