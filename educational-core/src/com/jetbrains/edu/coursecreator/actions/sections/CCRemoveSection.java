@@ -1,15 +1,15 @@
 package com.jetbrains.edu.coursecreator.actions.sections;
 
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
-
-import java.util.List;
 
 public class CCRemoveSection extends DumbAwareAction {
   public static final String TITLE = "Unwrap Section";
@@ -31,8 +31,7 @@ public class CCRemoveSection extends DumbAwareAction {
     }
     if (selectedItems != null && selectedItems.length == 1 && selectedItems[0] instanceof Section) {
       final Section selectedSection = (Section)selectedItems[0];
-      final List<Section> sections = course.getSections();
-      sections.removeIf(section1 -> section1.equals(selectedSection));
+      course.removeSection(selectedSection);
     }
 
     ProjectView.getInstance(project).refresh();
