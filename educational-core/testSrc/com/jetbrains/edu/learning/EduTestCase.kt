@@ -16,6 +16,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -126,4 +127,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun getCourse(): Course = StudyTaskManager.getInstance(project).course!!
+
+  fun findPlaceholder(lessonIndex: Int, taskIndex: Int, taskFile: String, placeholderIndex: Int) : AnswerPlaceholder {
+    return getCourse().lessons[lessonIndex].taskList[taskIndex].taskFiles[taskFile]!!.answerPlaceholders[placeholderIndex]
+  }
 }
