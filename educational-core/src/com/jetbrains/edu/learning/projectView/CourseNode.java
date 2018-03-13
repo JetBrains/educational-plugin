@@ -214,7 +214,7 @@ public class CourseNode extends EduNode {
       return false;
     }
     final String firstSectionTitle = sections.get(0).getTitle();
-    if (firstSectionTitle.equals(course.getName())) {
+    if (firstSectionTitle != null && firstSectionTitle.equals(course.getName())) {
       if (sections.size() == 1) {
         return false;
       }
