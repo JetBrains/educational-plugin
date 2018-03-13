@@ -1,17 +1,18 @@
 package com.jetbrains.edu.kotlin.checker
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.kotlin.KtCourseBuilder
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckActionListener.expectedMessage
 import com.jetbrains.edu.learning.checker.CheckActionListener.shouldFail
-import com.jetbrains.edu.learning.checker.CheckersTestBase
+import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
+import com.jetbrains.edu.learning.checker.CheckersTestBase
 import com.jetbrains.edu.learning.checker.TestsOutputParser.CONGRATULATIONS
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -30,7 +31,7 @@ class KotlinCheckersTest : CheckersTestBase() {
                 else -> null
             }
         }
-        doTest()
+        DumbService.getInstance(myProject).runWhenSmart { doTest() }
     }
 
     fun testErrors() {
