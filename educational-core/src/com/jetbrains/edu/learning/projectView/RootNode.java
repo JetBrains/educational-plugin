@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.projectView;
 
 import com.intellij.ide.projectView.ViewSettings;
+import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper;
 import com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -12,8 +14,10 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 
 public class RootNode extends ProjectViewProjectNode {
@@ -33,11 +37,16 @@ public class RootNode extends ProjectViewProjectNode {
       return Collections.emptyList();
     }
     else {
-      final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(myProject.getBaseDir());
-      if (CCUtils.isCourseCreator(myProject)) {
-        return Collections.singleton(new CCCourseNode(myProject, psiDirectory, getSettings(), course));
+      final ArrayList<AbstractTreeNode> nodes = new ArrayList<>();
+      List<VirtualFile> topLevelContentRoots = ProjectViewDirectoryHelper.getInstance(myProject).getTopLevelRoots();
+      for (VirtualFile root : topLevelContentRoots) {
+        final PsiDirectory psiDirectory = PsiManager.getInstance(myProject).findDirectory(root);
+        if (CCUtils.isCourseCreator(myProject)) {
+          nodes.add(new CCCourseNode(myProject, psiDirectory, getSettings(), course));
+        }
+        nodes.add(new CourseNode(myProject, psiDirectory, getSettings(), course));
       }
-      return Collections.singleton(new CourseNode(myProject, psiDirectory, getSettings(), course));
+      return nodes;
     }
   }
 

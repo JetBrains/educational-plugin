@@ -159,7 +159,6 @@ public class CourseNode extends EduNode {
   }
 
   protected boolean hasVisibleLessons() {
-    if (getVisibleSections().isEmpty()) return false;
     return myCourse.getLessons().size() != 1 || myCourse.getLessons().get(0).getTaskList().size() != 1;
   }
 
