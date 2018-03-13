@@ -433,10 +433,12 @@ public class StepikConnector {
       }));
 
     for (Section section : remoteCourse.getSections()) {
-      for (Integer unit : section.units) {
-        final Integer index = unitToLesson.get(unit);
-        if (index != null && !section.lessonIndexes.contains(index)) {
-          section.lessonIndexes.add(index);
+      if (section.lessonIndexes.isEmpty()) {
+        for (Integer unit : section.units) {
+          final Integer index = unitToLesson.get(unit);
+          if (index != null) {
+            section.lessonIndexes.add(index);
+          }
         }
       }
     }
