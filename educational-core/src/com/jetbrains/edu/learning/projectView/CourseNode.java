@@ -125,7 +125,7 @@ public class CourseNode extends EduNode {
     return new PsiFileSystemItemFilter() {
       @Override
       public boolean shouldShow(@NotNull PsiFileSystemItem item) {
-        return !item.getName().startsWith(EduNames.LESSON);
+        return item instanceof PsiDirectory && !item.getName().startsWith(EduNames.LESSON);
       }
     };
   }
