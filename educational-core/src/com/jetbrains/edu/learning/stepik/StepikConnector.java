@@ -98,7 +98,11 @@ public class StepikConnector {
     final List<Integer> featuredCourses = getFeaturedCourses();
     try {
       int pageNumber = 1;
+      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       while (addCoursesFromStepik(user, result, pageNumber, featuredCourses)) {
+        if (indicator != null && indicator.isCanceled()) {
+          break;
+        }
         pageNumber += 1;
       }
     }
