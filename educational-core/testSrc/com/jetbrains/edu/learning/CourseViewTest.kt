@@ -52,22 +52,22 @@ class CourseViewTest : EduTestCase() {
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 
-  fun testProjectOpened() {
-    EduUtils.openFirstTask(myCourse!!, project)
-    val projectView = ProjectView.getInstance(project)
-    projectView.changeView(CourseViewPane.ID)
-    val structure = "-Project\n" +
-                    " -CourseNode Edu test course  0/4\n" +
-                    "  -LessonNode lesson1\n" +
-                    "   -TaskNode task1\n" +
-                    "    taskFile1.txt\n" +
-                    "   +TaskNode task2\n" +
-                    "   +TaskNode task3\n" +
-                    "   +TaskNode task4\n"
-    val pane = projectView.currentProjectViewPane
-    PlatformTestUtil.waitWhileBusy(pane.tree)
-    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-  }
+//  fun testProjectOpened() {
+//    EduUtils.openFirstTask(myCourse!!, project)
+//    val projectView = ProjectView.getInstance(project)
+//    projectView.changeView(CourseViewPane.ID)
+//    val structure = "-Project\n" +
+//                    " -CourseNode Edu test course  0/4\n" +
+//                    "  -LessonNode lesson1\n" +
+//                    "   -TaskNode task1\n" +
+//                    "    taskFile1.txt\n" +
+//                    "   +TaskNode task2\n" +
+//                    "   +TaskNode task3\n" +
+//                    "   +TaskNode task4\n"
+//    val pane = projectView.currentProjectViewPane
+//    PlatformTestUtil.waitWhileBusy(pane.tree)
+//    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+//  }
 
   fun testExpandAfterNavigation() {
     configureByTaskFile(1, 1, "taskFile1.txt")
@@ -102,22 +102,22 @@ class CourseViewTest : EduTestCase() {
     TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
   }
 
-  fun testCheckTask() {
-    configureByTaskFile(1, 1, "taskFile1.txt")
-    val projectView = ProjectView.getInstance(project)
-    projectView.changeView(CourseViewPane.ID)
-
-    val fileName = "lesson1/task1/taskFile1.txt"
-    val taskFile = myFixture.findFileInTempDir(fileName)
-    val action = CheckAction()
-    launchAction(taskFile, action)
-
-    val pane = projectView.currentProjectViewPane
-    val structure = "-Project\n" +
-                          " +CourseNode Edu test course  1/4\n"
-    PlatformTestUtil.waitWhileBusy(pane.tree)
-    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-  }
+//  fun testCheckTask() {
+//    configureByTaskFile(1, 1, "taskFile1.txt")
+//    val projectView = ProjectView.getInstance(project)
+//    projectView.changeView(CourseViewPane.ID)
+//
+//    val fileName = "lesson1/task1/taskFile1.txt"
+//    val taskFile = myFixture.findFileInTempDir(fileName)
+//    val action = CheckAction()
+//    launchAction(taskFile, action)
+//
+//    val pane = projectView.currentProjectViewPane
+//    val structure = "-Project\n" +
+//                          " +CourseNode Edu test course  1/4\n"
+//    PlatformTestUtil.waitWhileBusy(pane.tree)
+//    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+//  }
 
   private fun launchAction(taskFile: VirtualFile, action: CheckAction) {
     val e = getActionEvent(taskFile, action)
