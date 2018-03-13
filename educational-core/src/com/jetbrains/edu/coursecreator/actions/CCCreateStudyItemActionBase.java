@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialog;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -111,6 +112,9 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     }
     CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item),
                                  item.getIndex() - 1, getItemName(), 1);
+    if (EduNames.LESSON.equals(getItemName())) {
+      CCUtils.updateSections(course, item.getIndex(), 1);
+    }
     addItem(course, item);
     sortSiblings(course, parentItem);
     return createItemDir(project, item, parentDir, course);

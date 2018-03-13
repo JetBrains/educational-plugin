@@ -24,10 +24,7 @@ import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -350,6 +347,21 @@ public class CCUtils {
       action.consume(path);
     } catch (IOException e) {
       LOG.error(e);
+    }
+  }
+
+  public static void updateSections(Course course, int threshhold, int delta) {
+    for (Section section : course.getSections()) {
+      final ArrayList<Integer> indexes = new ArrayList<>();
+      for (Integer index : section.lessonIndexes) {
+        if (index >= threshhold) {
+          indexes.add(index + delta);
+        }
+        else {
+          indexes.add(index);
+        }
+      }
+      section.lessonIndexes = indexes;
     }
   }
 }

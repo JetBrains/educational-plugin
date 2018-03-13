@@ -105,7 +105,9 @@ public class CCVirtualFileListener implements VirtualFileListener {
       return;
     }
     VirtualFile courseDir = project.getBaseDir();
-    CCUtils.updateHigherElements(courseDir.getChildren(), file -> course.getLesson(file.getName()), removedLesson.getIndex(), EduNames.LESSON, -1);
+    CCUtils.updateHigherElements(courseDir.getChildren(), file -> course.getLesson(file.getName()), removedLesson.getIndex(),
+                                 EduNames.LESSON, -1);
+    CCUtils.updateSections(course, removedLesson.getIndex(), -1);
     course.removeLesson(removedLesson);
   }
 
