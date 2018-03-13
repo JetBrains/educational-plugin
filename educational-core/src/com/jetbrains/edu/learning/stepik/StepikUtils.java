@@ -16,8 +16,10 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +34,8 @@ public class StepikUtils {
 
   public static String wrapStepikTasks(Task task, @NotNull String text, boolean adaptive) {
     String finalText = text;
-    if (task instanceof TheoryTask) {
+    final Course course = TaskExt.getCourse(task);
+    if (task instanceof TheoryTask && course != null && course.isAdaptive()) {
       finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. ";
     }
     else if (task instanceof CodeTask) {
