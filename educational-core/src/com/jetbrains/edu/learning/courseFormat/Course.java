@@ -79,6 +79,10 @@ public class Course {
     mySections = sections;
   }
 
+  public void removeSection(@NotNull final Section toRemove) {
+    mySections.removeIf(section -> section.equals(toRemove));
+  }
+
   public void addLesson(@NotNull final Lesson lesson) {
     lessons.add(lesson);
   }
