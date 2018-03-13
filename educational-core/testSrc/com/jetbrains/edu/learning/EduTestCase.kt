@@ -4,6 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.components.impl.ComponentManagerImpl
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -129,7 +130,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     extension.language = PlainTextLanguage.INSTANCE.id
     extension.implementationClass = PlainTextConfigurator::class.java.name
     PlatformTestUtil.registerExtension(
-      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.testRootDisposable)
+      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.project)
   }
 
   class PlainTextConfigurator : EduConfigurator<Unit> {
@@ -253,7 +254,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
         answerPlaceholder.subtaskInfos[0] = answerPlaceholderSubtaskInfo
         answerPlaceholder.offset = openingMatcher.start()
         if (!closingMatcher.find(openingMatcher.end())) {
-          LOG.error("No matching closing tag found")
+          Logger.getInstance(EduTestCase::class.java).error("No matching closing tag found")
         }
         answerPlaceholder.length = closingMatcher.start() - openingMatcher.end()
         placeholders.add(answerPlaceholder)
