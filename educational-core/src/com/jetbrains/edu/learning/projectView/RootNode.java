@@ -44,7 +44,9 @@ public class RootNode extends ProjectViewProjectNode {
         if (CCUtils.isCourseCreator(myProject)) {
           nodes.add(new CCCourseNode(myProject, psiDirectory, getSettings(), course));
         }
-        nodes.add(new CourseNode(myProject, psiDirectory, getSettings(), course));
+        else {
+          nodes.add(new CourseNode(myProject, psiDirectory, getSettings(), course));
+        }
       }
       return nodes;
     }
