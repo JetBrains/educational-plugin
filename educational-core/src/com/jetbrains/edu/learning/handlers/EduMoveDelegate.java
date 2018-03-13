@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class EduMoveDelegate extends MoveHandlerDelegate{
   @Override
   public boolean canMove(DataContext dataContext) {
-    return EduUtils.canRenameOrMove(dataContext);
+    return EduUtils.renameAndMoveForbidden(dataContext);
   }
 
   @Override
