@@ -46,12 +46,12 @@ class CourseBuilder {
 
   fun lesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit) {
     val lessonBuilder = LessonBuilder(course)
+    val lesson = lessonBuilder.lesson
+    lesson.index = course.lessons.size + 1
     val nextLessonIndex = course.lessons.size + 1
     lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
     lessonBuilder.buildLesson()
-    val lesson = lessonBuilder.lesson
     course.addLesson(lesson)
-    lesson.index = course.lessons.size
   }
 }
 
@@ -68,11 +68,11 @@ class LessonBuilder(val course: Course) {
 
   fun task(task: Task, name: String? = null, buildTask: TaskBuilder.() -> Unit) {
     val taskBuilder = TaskBuilder(lesson, task)
+    taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
     taskBuilder.withName(name?: EduNames.TASK + nextTaskIndex)
     taskBuilder.buildTask()
     lesson.addTask(taskBuilder.task)
-    taskBuilder.task.index = lesson.taskList.size
   }
 
   fun eduTask(name: String? = null, buildTask: TaskBuilder.() -> Unit) = task(EduTask(), name, buildTask)
@@ -147,8 +147,12 @@ class TaskFileBuilder(val task: Task) {
     }
   }
 
-  fun placeholder(index: Int, taskText: String = "type here") {
+  fun placeholder(index: Int, taskText: String = "type here", dependency: String = "") {
     val answerPlaceholder = taskFile.answerPlaceholders[index]
     answerPlaceholder.taskText = taskText
+    val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency)
+    if (createdDependency != null) {
+      answerPlaceholder.placeholderDependency = createdDependency
+    }
   }
 }

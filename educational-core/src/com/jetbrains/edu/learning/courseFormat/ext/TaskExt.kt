@@ -2,8 +2,15 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 val Task.course: Course? get() = lesson?.course
@@ -25,4 +32,29 @@ fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
 fun Task.findTestDir(taskDir: VirtualFile): VirtualFile? {
   val testDir = testDir ?: return null
   return taskDir.findFileByRelativePath(testDir)
+}
+
+fun Task.getDependencies(): List<AnswerPlaceholderDependency> =
+  taskFiles.values.flatMap { it.answerPlaceholders.mapNotNull { it.placeholderDependency } }
+
+fun Task.getUnsolvedTaskDependencies(): List<Task> {
+  return getDependencies()
+    .mapNotNull { it.resolve(course ?: return@mapNotNull null)?.taskFile?.task }
+    .filter { it.status != CheckStatus.Solved }
+}
+
+fun Task.hasChangedFiles(project: Project): Boolean {
+  for (taskFile in taskFiles.values) {
+    val document = getDocument(project, taskFile) ?: continue
+    if (taskFile.text != null && document.text != taskFile.text) {
+      return true
+    }
+  }
+  return false
+}
+
+fun Task.getDocument(project: Project, taskFile: TaskFile): Document? {
+  val taskDir = getTaskDir(project) ?: return null
+  val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: return null
+  return FileDocumentManager.getInstance().getDocument(virtualFile)
 }
