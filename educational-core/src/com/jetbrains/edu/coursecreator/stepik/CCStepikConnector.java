@@ -130,39 +130,7 @@ public class CCStepikConnector {
         postAsOneSection(project, courseOnRemote);
       }
       else {
-        final HashMap<Integer, Section> lessonToSection = new HashMap<>();
-        for (Section section : sections) {
-          section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
-        }
-
-        final ArrayList<Section> sectionsToPost = getSectionsToPost(course, lessonToSection);
-        for (Section section : sectionsToPost) {
-          section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
-        }
-
-        for (int i = 0; i < sectionsToPost.size(); i++) {
-          Section section = sectionsToPost.get(i);
-          section.setPosition(i+1);
-          final int id = postModule(courseOnRemote.getId(), section, project);
-          section.setId(id);
-        }
-        sectionCount = sectionsToPost.size();
-
-        int position = 1;
-        for (Lesson lesson : course.getLessons()) {
-          if (indicator != null) {
-            indicator.checkCanceled();
-            indicator.setText2("Publishing lesson " + lesson.getIndex());
-          }
-          final int lessonId = postLesson(project, lesson);
-          final int sectionId = lessonToSection.get(lesson.getIndex()).getId();
-          postUnit(lessonId, position, sectionId, project);
-          if (indicator != null) {
-            indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
-            indicator.checkCanceled();
-          }
-          position += 1;
-        }
+        sectionCount = postSections(project, courseOnRemote);
       }
 
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
@@ -174,6 +142,45 @@ public class CCStepikConnector {
     catch (IOException e) {
       LOG.error(e.getMessage());
     }
+  }
+
+  private static int postSections(Project project, @NotNull RemoteCourse course) {
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+
+    final List<Section> sections = course.getSections();
+    final HashMap<Integer, Section> lessonToSection = new HashMap<>();
+    for (Section section : sections) {
+      section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
+    }
+
+    final ArrayList<Section> sectionsToPost = getSectionsToPost(course, lessonToSection);
+    for (Section section : sectionsToPost) {
+      section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
+    }
+
+    for (int i = 0; i < sectionsToPost.size(); i++) {
+      Section section = sectionsToPost.get(i);
+      section.setPosition(i+1);
+      final int id = postModule(course.getId(), section, project);
+      section.setId(id);
+    }
+
+    int position = 1;
+    for (Lesson lesson : course.getLessons()) {
+      if (indicator != null) {
+        indicator.checkCanceled();
+        indicator.setText2("Publishing lesson " + lesson.getIndex());
+      }
+      final int lessonId = postLesson(project, lesson);
+      final int sectionId = lessonToSection.get(lesson.getIndex()).getId();
+      postUnit(lessonId, position, sectionId, project);
+      if (indicator != null) {
+        indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
+        indicator.checkCanceled();
+      }
+      position += 1;
+    }
+    return sectionsToPost.size();
   }
 
   private static void postAsOneSection(@NotNull Project project, @NotNull RemoteCourse course) {
