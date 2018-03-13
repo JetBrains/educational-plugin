@@ -67,7 +67,7 @@ public class SectionNode extends ProjectViewNode<Section> {
   @Override
   protected void update(PresentationData data) {
     data.addText(getValue().getTitle(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-    data.setIcon(AllIcons.Ide.Error);
+    data.setIcon(AllIcons.Nodes.Folder);
   }
 
   @Override
