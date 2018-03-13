@@ -68,9 +68,13 @@ public class CourseNode extends EduNode {
   @Override
   @NotNull
   public Collection<AbstractTreeNode> getChildrenImpl() {
-    final ArrayList<AbstractTreeNode> result = new ArrayList<>(getSectionNodes());
+    final ArrayList<AbstractTreeNode> result = new ArrayList<>();
+
+    final List<Section> visibleSections = getVisibleSections();
+    for (Section section : visibleSections) {
+      result.add(new SectionNode(myProject, getSettings(), section, getValue()));
+    }
     if (hasVisibleLessons()) {
-      final List<Section> visibleSections = getVisibleSections();
       final List<Integer> lessonsInSections =
         visibleSections.stream().map(section -> section.lessonIndexes).flatMap(lessonIndexes -> lessonIndexes.stream()).collect(Collectors.toList());
 
@@ -98,6 +102,9 @@ public class CourseNode extends EduNode {
 
   @NotNull
   private List<Section> getVisibleSections() {
+    if (!hasVisibleSections(myCourse)) {
+      return Collections.emptyList();
+    }
     final List<Section> sections = myCourse.getSections();
     final List<Section> sectionsToShow = new ArrayList<>();
     for (Section section : sections) {
@@ -160,19 +167,6 @@ public class CourseNode extends EduNode {
 
   protected boolean hasVisibleLessons() {
     return myCourse.getLessons().size() != 1 || myCourse.getLessons().get(0).getTaskList().size() != 1;
-  }
-
-  protected Collection<AbstractTreeNode> getSectionNodes() {
-    if (!hasVisibleSections(myCourse)) {
-      return Collections.emptyList();
-    }
-    final ArrayList<AbstractTreeNode> result = new ArrayList<>();
-
-    final List<Section> sections = getVisibleSections();
-    for (Section section : sections) {
-      result.add(new SectionNode(myProject, getSettings(), section, getValue()));
-    }
-    return result;
   }
 
   public static Collection<AbstractTreeNode> getLessonNodes(@NotNull final Project project,
