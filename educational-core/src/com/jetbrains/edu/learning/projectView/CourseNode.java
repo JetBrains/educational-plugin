@@ -108,7 +108,7 @@ public class CourseNode extends EduNode {
           continue;
         }
       }
-      if (section.getTitle().equals(StepikNames.PYCHARM_ADDITIONAL)) {
+      if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
         continue;
       }
       sectionsToShow.add(section);
