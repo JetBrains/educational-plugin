@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class EduRenameHandler implements RenameHandler {
   @Override
   public boolean isAvailableOnDataContext(DataContext dataContext) {
-    return EduUtils.canRenameOrMove(dataContext);
+    return EduUtils.renameAndMoveForbidden(dataContext);
   }
 
   @Override
