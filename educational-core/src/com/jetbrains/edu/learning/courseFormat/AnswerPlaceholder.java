@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,12 +38,21 @@ public class AnswerPlaceholder {
 
   @SerializedName("subtask_infos")
   @Expose private Map<Integer, AnswerPlaceholderSubtaskInfo> mySubtaskInfos = new HashMap<>();
+
+  @Expose
+  @SerializedName("dependency")
+  @Nullable
+  private AnswerPlaceholderDependency myPlaceholderDependency = null;
+
   public AnswerPlaceholder() {
   }
 
   public void initAnswerPlaceholder(final TaskFile file, boolean isRestarted) {
     setTaskFile(file);
     if (!isRestarted) {
+      if (myPlaceholderDependency != null) {
+        myPlaceholderDependency.setAnswerPlaceholder(this);
+      }
       setInitialState(new MyInitialState(myOffset, myLength));
       for (AnswerPlaceholderSubtaskInfo info : getSubtaskInfos().values()) {
         info.setStatus(file.getTask().getStatus());
@@ -302,5 +312,17 @@ public class AnswerPlaceholder {
   boolean isValid(int textLength) {
     int end = getOffset() + getRealLength();
     return getOffset() >= 0 && getRealLength() >= 0 && end <= textLength;
+  }
+
+  @Nullable
+  public AnswerPlaceholderDependency getPlaceholderDependency() {
+    return myPlaceholderDependency;
+  }
+
+  public void setPlaceholderDependency(@Nullable AnswerPlaceholderDependency placeholderDependency) {
+    myPlaceholderDependency = placeholderDependency;
+    if (placeholderDependency != null) {
+      myPlaceholderDependency.setAnswerPlaceholder(this);
+    }
   }
 }
