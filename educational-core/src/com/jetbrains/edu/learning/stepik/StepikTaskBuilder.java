@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,21 +29,42 @@ public class StepikTaskBuilder {
   private final StepikWrappers.StepSource myStepSource;
   private int myStepId;
   private int myUserId;
-  private String myName;
+  @NonNls private String myName;
   private final Language myLanguage;
   private StepikWrappers.Step myStep;
-  private final Map<String, Computable<Task>> taskTypes = ImmutableMap.of(
-    "code", this::codeTask,
-    "choice", this::choiceTask,
-    "text", this::theoryTask,
-    "pycharm", this::pycharmTask
-  );
-  private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.of(
-          "code", "Programming",
-          "choice", "Choice",
-          "text", "Theory",
-          "pycharm", "Programming"
-  );
+  private final Map<String, Computable<Task>> taskTypes = ImmutableMap.<String, Computable<Task>>builder()
+    .put("code", this::codeTask)
+    .put("choice", this::choiceTask)
+    .put("text", this::theoryTask)
+    .put("pycharm", this::pycharmTask)
+    .put("video", this::unsupportedTask)
+    .put("number", this::unsupportedTask)
+    .put("sorting", this::unsupportedTask)
+    .put("matching", this::unsupportedTask)
+    .put("string", this::unsupportedTask)
+    .put("math", this::unsupportedTask)
+    .put("free-answer", this::unsupportedTask)
+    .put("table", this::unsupportedTask)
+    .put("dataset", this::unsupportedTask)
+    .put("admin", this::unsupportedTask)
+    .build();
+
+  private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.<String, String>builder()
+    .put("code", "Programming")
+    .put("choice", "Choice")
+    .put("text", "Theory")
+    .put("pycharm", "Programming")
+    .put("video", "Video")
+    .put("number", "Number")
+    .put("sorting", "Sorting")
+    .put("matching", "Matching")
+    .put("string", "Text")
+    .put("math", "Math")
+    .put("free-answer", "Free Response")
+    .put("table", "Table")
+    .put("dataset", "Data")
+    .put("admin", "Linux")
+    .build();
   private static final String EMPTY_NAME = "";
 
   public StepikTaskBuilder(@NotNull RemoteCourse course,
@@ -175,6 +197,27 @@ public class StepikTaskBuilder {
 
     if (taskFileName != null) {
       String editorText = commentPrefix + " this is a theory task. You can use this editor as a playground\n";
+      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
+      if (configurator != null) {
+        editorText += "\n" + configurator.getMockTemplate();
+      }
+      createMockTaskFile(task, editorText, taskFileName);
+    }
+    return task;
+  }
+
+  @NotNull
+  private Task unsupportedTask() {
+    TheoryTask task = new TheoryTask(myName);
+    task.setStepId(myStepId);
+    task.setIndex(myStepSource.position);
+    final String stepText = "This is " + myName.toLowerCase() + " task.";
+    task.addTaskText(EduNames.TASK, stepText);
+    String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
+    String taskFileName = getTaskFileName(myLanguage);
+
+    if (taskFileName != null) {
+      String editorText = commentPrefix + " this is a " + myName.toLowerCase() + " task. You can use this editor as a playground\n";
       final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
       if (configurator != null) {
         editorText += "\n" + configurator.getMockTemplate();
