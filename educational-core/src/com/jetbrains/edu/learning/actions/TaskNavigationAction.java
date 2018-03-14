@@ -24,12 +24,13 @@ abstract public class TaskNavigationAction extends DumbAwareActionWithShortcut {
     if (!eduState.isValid()) {
       return;
     }
-    Task targetTask = getTargetTask(eduState.getTask());
+    Task currentTask = eduState.getTask();
+    Task targetTask = getTargetTask(currentTask);
     if (targetTask == null) {
       return;
     }
 
-    NavigationUtils.navigateToTask(project, targetTask);
+    NavigationUtils.navigateToTask(project, targetTask, currentTask);
 
   }
 
