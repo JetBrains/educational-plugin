@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Course {
-  protected List<Section> mySections = new ArrayList<>();
+  @Expose @SerializedName("sections") protected List<Section> mySections = new ArrayList<>();
   @Expose protected List<Lesson> lessons = new ArrayList<>();
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
