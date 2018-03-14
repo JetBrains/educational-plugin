@@ -57,8 +57,10 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     }
     PsiFile file = PsiManager.getInstance(project).findFile(eduState.getVirtualFile());
     final Editor editor = eduState.getEditor();
+    final TaskFile taskFile = eduState.getTaskFile();
+    if (taskFile == null || editor == null) return;
     int offset = editor.getCaretModel().getOffset();
-    AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(offset);
+    AnswerPlaceholder answerPlaceholder = taskFile.getAnswerPlaceholder(offset);
     if (file == null) {
       return;
     }
