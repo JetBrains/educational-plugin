@@ -82,6 +82,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     }
     final Editor editor = eduState.getEditor();
     final TaskFile taskFile = eduState.getTaskFile();
+    if (taskFile == null || editor == null) return null;
     return taskFile.getAnswerPlaceholder(editor.getCaretModel().getOffset());
   }
 }

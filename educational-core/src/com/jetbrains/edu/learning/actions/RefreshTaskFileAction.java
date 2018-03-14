@@ -64,6 +64,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
   private static void refreshFile(@NotNull final EduState eduState, @NotNull final Project project) {
     final Editor editor = eduState.getEditor();
     final TaskFile taskFile = eduState.getTaskFile();
+    if (taskFile == null || editor == null) return;
     final Task task = taskFile.getTask();
     if (task instanceof TaskWithSubtasks) {
       for (AnswerPlaceholder placeholder : taskFile.getActivePlaceholders()) {
