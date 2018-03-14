@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.navigation
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -11,17 +12,22 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.util.ui.tree.TreeUtil
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
+import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import java.util.*
 import javax.swing.tree.TreePath
+import kotlin.collections.HashSet
 
 object NavigationUtils {
 
@@ -106,12 +112,20 @@ object NavigationUtils {
     ApplicationManager.getApplication().invokeLater { navigateToTask(project, task) }
   }
 
+  @JvmOverloads
   @JvmStatic
-  fun navigateToTask(project: Project, task: Task) {
+  fun navigateToTask(project: Project, task: Task, fromTask: Task? = null) {
     for (file in FileEditorManager.getInstance(project).openFiles) {
       FileEditorManager.getInstance(project).closeFile(file)
     }
     val taskFiles = task.getTaskFiles()
+
+    val lesson = task.lesson
+
+    if (lesson.isFrameworkLesson && fromTask != null && fromTask.lesson == lesson) {
+      prepareNextTask(project, fromTask, task)
+    }
+
     var taskDir = task.getTaskDir(project) ?: return
     val sourceDir = task.sourceDir
     if (StringUtil.isNotEmpty(sourceDir)) {
@@ -138,6 +152,50 @@ object NavigationUtils {
 
     EduUtils.selectFirstAnswerPlaceholder(EduUtils.getSelectedStudyEditor(project), project)
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
+  }
+
+  private fun prepareNextTask(project: Project, currentTask: Task, targetTask: Task) {
+    val dir = currentTask.getTaskDir(project) ?: return
+    runWriteAction {
+      dir.rename(NavigationUtils::class.java, "${EduNames.TASK}${targetTask.index}")
+    }
+
+    if (currentTask.index + 1 == targetTask.index) {
+
+      currentTask.findSourceDir(dir)?.also { srcDir ->
+        val nextFiles = targetTask.taskFiles.mapValues { (_, v) -> v.text }
+        val currentFiles = currentTask.taskFiles.mapValues { (_, v) -> v.text }
+        applyDiff(srcDir, currentFiles = currentFiles, nextFiles = nextFiles)
+      }
+
+      currentTask.findTestDir(dir)?.also { testDir ->
+        applyDiff(testDir, currentTask.testsText, targetTask.testsText)
+      }
+    } else {
+      dir.children.forEach { runWriteAction { it.delete(NavigationUtils::class.java) } }
+      GeneratorUtils.createTask(targetTask, dir.parent)
+    }
+  }
+
+  private fun applyDiff(
+    dir: VirtualFile,
+    currentFiles: Map<String, String>,
+    nextFiles: Map<String, String>
+  ) {
+    val allPaths = HashSet(currentFiles.keys)
+    allPaths += nextFiles.keys
+
+    for (path in allPaths) {
+      val text = currentFiles[path]
+      val nextText = nextFiles[path]
+      if (nextText == null) {
+        runWriteAction {
+          dir.findFileByRelativePath(path)?.delete(NavigationUtils::class.java)
+        }
+      } else if (text != nextText) {
+        GeneratorUtils.createChildFile(dir, path, nextText)
+      }
+    }
   }
 
   private fun updateProjectView(project: Project, fileToActivate: VirtualFile) {
