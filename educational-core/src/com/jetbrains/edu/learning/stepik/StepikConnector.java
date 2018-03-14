@@ -496,9 +496,7 @@ public class StepikConnector {
             }
           }
         }
-        if (!lesson.taskList.isEmpty()) {
-          lessons.add(lesson);
-        }
+        lessons.add(lesson);
       }
     }
     catch (URISyntaxException e) {
