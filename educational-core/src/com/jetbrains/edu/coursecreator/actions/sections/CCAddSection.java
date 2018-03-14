@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class CCAddSection extends DumbAwareAction {
   public static final String TITLE = "Wrap With Section";
-  private final String SECTION = "Section";
+  private static final String SECTION = "Section";
 
   public CCAddSection() {
     super(TITLE, TITLE, null);
@@ -84,6 +84,9 @@ public class CCAddSection extends DumbAwareAction {
     if (course == null) {
       return;
     }
+    final List<Section> sections = course.getSections();
+    final List<Integer> lessonsInSections =
+      sections.stream().map(section -> section.lessonIndexes).flatMap(lessonIndexes -> lessonIndexes.stream()).collect(Collectors.toList());
     final Object[] selectedItems = PlatformDataKeys.SELECTED_ITEMS.getData(e.getDataContext());
     if (selectedItems != null) {
       for (Object item : selectedItems) {
@@ -93,6 +96,10 @@ public class CCAddSection extends DumbAwareAction {
         else if (item instanceof PsiDirectory) {
           final Lesson lesson = course.getLesson(((PsiDirectory)item).getName());
           if (lesson != null) {
+            if (lessonsInSections.contains(lesson.getIndex())) {
+              presentation.setEnabledAndVisible(false);
+              return;
+            }
             presentation.setEnabledAndVisible(true);
           }
         }
