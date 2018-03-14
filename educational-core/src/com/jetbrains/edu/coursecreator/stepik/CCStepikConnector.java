@@ -65,7 +65,7 @@ public class CCStepikConnector {
     return null;
   }
 
-  public static void postCourseWithProgress(final Project project, @NotNull final Course course) {
+  public static void postCourseWithProgress(@NotNull final Project project, @NotNull final Course course) {
     ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Modal(project, "Uploading Course", true) {
       @Override
       public void run(@NotNull final ProgressIndicator indicator) {
@@ -74,7 +74,7 @@ public class CCStepikConnector {
     });
   }
 
-  private static void postCourse(final Project project, @NotNull Course course) {
+  private static void postCourse(@NotNull final Project project, @NotNull Course course) {
     if (!checkIfAuthorized(project, "post course")) return;
 
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
@@ -144,7 +144,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static int postSections(Project project, @NotNull RemoteCourse course) {
+  private static int postSections(@NotNull Project project, @NotNull RemoteCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
 
     final List<Section> sections = course.getSections();

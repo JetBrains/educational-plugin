@@ -398,6 +398,7 @@ public class StepikConnector {
     String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
+    // course sections could be filled already in getSupportedLanguages if we got course by link
     if (remoteCourse.getSections().isEmpty()) {
       for (SectionContainer container : containers) {
         remoteCourse.addSections(container.sections);
@@ -433,6 +434,7 @@ public class StepikConnector {
       }));
 
     for (Section section : remoteCourse.getSections()) {
+      // lessonIndexes could be filled already in getSupportedLanguages if we got course by link
       if (section.lessonIndexes.isEmpty()) {
         for (Integer unit : section.units) {
           final Integer index = unitToLesson.get(unit);
