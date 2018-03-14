@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.NonEmptyInputValidator;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -32,7 +33,8 @@ public class CCRenameSection extends DumbAwareAction {
     }
     if (selectedItems != null && selectedItems.length == 1 && selectedItems[0] instanceof Section) {
       final Section selectedSection = (Section)selectedItems[0];
-      final String sectionName = Messages.showInputDialog("Enter Section Name", "Section", null);
+      final String sectionName = Messages.showInputDialog("Enter Section Name", "Section", null, selectedSection.getTitle(),
+                                                          new NonEmptyInputValidator());
       selectedSection.setTitle(sectionName);
     }
 

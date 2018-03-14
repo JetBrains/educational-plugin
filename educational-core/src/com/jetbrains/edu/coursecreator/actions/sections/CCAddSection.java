@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.NonEmptyInputValidator;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -59,7 +60,7 @@ public class CCAddSection extends DumbAwareAction {
     }
     final int index = sections.size() + 1;
     final String sectionName = Messages.showInputDialog("Enter Section Name", SECTION, null,
-                                                        SECTION.toLowerCase() + index, null);
+                                                        SECTION.toLowerCase() + index, new NonEmptyInputValidator());
     if (sectionName != null) {
       final Section section = new Section();
       section.setTitle(sectionName);
