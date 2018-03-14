@@ -99,7 +99,6 @@ public class CCAddSection extends DumbAwareAction {
           final Lesson lesson = course.getLesson(((PsiDirectory)item).getName());
           if (lesson != null) {
             if (lessonsInSections.contains(lesson.getIndex())) {
-              presentation.setEnabledAndVisible(false);
               return;
             }
             presentation.setEnabledAndVisible(true);
