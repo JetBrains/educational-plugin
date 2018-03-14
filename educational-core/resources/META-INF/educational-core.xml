@@ -124,7 +124,8 @@
       <action id="Educational.Educator.CCAddSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCAddSection"/>
       <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRemoveSection"
       use-shortcut-of="$Delete"/>
-      <action id="Educational.Educator.CCRenameSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRenameSection"/>
+      <action id="Educational.Educator.CCRenameSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRenameSection"
+      use-shortcut-of="RenameElement"/>
       <separator/>
       <action id="Educational.Educator.SwitchSubtask" class="com.jetbrains.edu.coursecreator.actions.CCSwitchSubtask"/>
       <reference id="Educational.Educator.NewStep"/>
