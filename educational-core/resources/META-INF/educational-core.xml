@@ -122,7 +122,8 @@
         <add-to-group group-id="EditorTabPopupMenu"/>
       </action>
       <action id="Educational.Educator.CCAddSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCAddSection"/>
-      <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRemoveSection"/>
+      <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRemoveSection"
+      use-shortcut-of="$Delete"/>
       <action id="Educational.Educator.CCRenameSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRenameSection"/>
       <separator/>
       <action id="Educational.Educator.SwitchSubtask" class="com.jetbrains.edu.coursecreator.actions.CCSwitchSubtask"/>
