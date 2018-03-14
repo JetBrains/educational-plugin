@@ -15,8 +15,10 @@ import com.jetbrains.edu.coursecreator.projectView.CCLessonNode;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -24,7 +26,7 @@ import java.util.function.BiFunction;
 public class SectionNode extends ProjectViewNode<Section> {
   private final PsiDirectory myCourseDir;
 
-  public SectionNode(@NotNull Project project, ViewSettings viewSettings, @NotNull Section section, PsiDirectory courseDir) {
+  public SectionNode(@NotNull Project project, @NotNull ViewSettings viewSettings, @NotNull Section section, @Nullable PsiDirectory courseDir) {
     super(project, section, viewSettings);
     myCourseDir = courseDir;
   }
@@ -46,6 +48,9 @@ public class SectionNode extends ProjectViewNode<Section> {
   @NotNull
   @Override
   public Collection<? extends AbstractTreeNode> getChildren() {
+    if (myCourseDir == null) {
+      return Collections.emptyList();
+    }
     final BiFunction<Lesson, PsiDirectory, LessonNode> createLessonNode =
       (lesson, lessonDir) -> CCUtils.isCourseCreator(myProject) ? new CCLessonNode(myProject, lessonDir, getSettings(), lesson) :
                              new LessonNode(myProject, lessonDir, getSettings(), lesson);
