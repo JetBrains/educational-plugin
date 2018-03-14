@@ -1,16 +1,19 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Section {
   public List<Integer> units;
   private int course;
-  private String title;
+  @Expose private String title;
   private int position;
   private int id;
 
-  public List<Integer> lessonIndexes = new ArrayList<>();
+  @Expose @SerializedName("lessons") public List<Integer> lessonIndexes = new ArrayList<>();
 
   public int getId() {
     return id;
