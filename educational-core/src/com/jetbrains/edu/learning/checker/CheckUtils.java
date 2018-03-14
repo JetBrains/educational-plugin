@@ -80,6 +80,7 @@ public class CheckUtils {
                                                  @NotNull final VirtualFile taskDir,
                                                  @NotNull final Project project) {
     TaskFile selectedTaskFile = eduState.getTaskFile();
+    if (selectedTaskFile == null) return;
     Editor editor = eduState.getEditor();
     TaskFile taskFileToNavigate = selectedTaskFile;
     VirtualFile fileToNavigate = eduState.getVirtualFile();

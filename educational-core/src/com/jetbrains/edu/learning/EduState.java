@@ -23,10 +23,12 @@ public class EduState {
     myTask = myTaskFile != null ? myTaskFile.getTask() : null;
   }
 
+  @Nullable
   public Editor getEditor() {
     return myEditor;
   }
 
+  @Nullable
   public TaskFile getTaskFile() {
     return myTaskFile;
   }

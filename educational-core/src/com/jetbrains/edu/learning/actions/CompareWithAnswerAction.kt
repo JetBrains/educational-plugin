@@ -46,14 +46,12 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     val fullAnswer = StringBuilder(myDocument.text)
 
     val studyState = EduState(EduUtils.getSelectedStudyEditor(project))
-    studyState.taskFile.activePlaceholders
-      .sortedBy { it.offset }
-      .reversed()
-      .forEach { placeholder ->
-        placeholder.possibleAnswer?.let { answer ->
-          fullAnswer.replace(placeholder.offset, placeholder.offset + placeholder.realLength, answer)
-        }
+    val taskFile = studyState.taskFile
+    taskFile?.activePlaceholders?.sortedBy { it.offset }?.reversed()?.forEach { placeholder ->
+      placeholder.possibleAnswer?.let { answer ->
+        fullAnswer.replace(placeholder.offset, placeholder.offset + placeholder.realLength, answer)
       }
+    }
 
     return fullAnswer.toString()
   }
@@ -76,7 +74,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
         return
       }
       val taskFile = studyState.taskFile
-      if (taskFile.activePlaceholders.isEmpty()) {
+      if (taskFile == null || taskFile.activePlaceholders.isEmpty()) {
         presentation.isEnabledAndVisible = false
       }
     }
