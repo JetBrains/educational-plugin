@@ -350,11 +350,11 @@ public class CCUtils {
     }
   }
 
-  public static void updateSections(Course course, int threshhold, int delta) {
+  public static void updateSections(Course course, int threshold, int delta) {
     for (Section section : course.getSections()) {
       final ArrayList<Integer> indexes = new ArrayList<>();
       for (Integer index : section.lessonIndexes) {
-        if (index >= threshhold) {
+        if (index >= threshold) {
           indexes.add(index + delta);
         }
         else {
