@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 public class CCAddSection extends DumbAwareAction {
   public static final String TITLE = "Wrap With Section";
+  private final String SECTION = "Section";
 
   public CCAddSection() {
     super(TITLE, TITLE, null);
@@ -55,12 +56,16 @@ public class CCAddSection extends DumbAwareAction {
     if (lessonsToWrap.isEmpty()) {
       return;
     }
-    final String sectionName = Messages.showInputDialog("Enter Section Name", "Section", null);
-    final Section section = new Section();
-    section.setTitle(sectionName);
-    section.lessonIndexes.addAll(lessonsToWrap);
-    course.addSections(Collections.singletonList(section));
-    ProjectView.getInstance(project).refresh();
+    final int index = sections.size() + 1;
+    final String sectionName = Messages.showInputDialog("Enter Section Name", SECTION, null,
+                                                        SECTION + index, null);
+    if (sectionName != null) {
+      final Section section = new Section();
+      section.setTitle(sectionName);
+      section.lessonIndexes.addAll(lessonsToWrap);
+      course.addSections(Collections.singletonList(section));
+      ProjectView.getInstance(project).refresh();
+    }
   }
 
   @Override
