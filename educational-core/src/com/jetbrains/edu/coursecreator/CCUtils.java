@@ -354,10 +354,10 @@ public class CCUtils {
     for (Section section : course.getSections()) {
       final ArrayList<Integer> indexes = new ArrayList<>();
       for (Integer index : section.lessonIndexes) {
-        if (index >= threshold) {
+        if (index > threshold) {
           indexes.add(index + delta);
         }
-        else {
+        else if (index != threshold || delta != -1) {
           indexes.add(index);
         }
       }
