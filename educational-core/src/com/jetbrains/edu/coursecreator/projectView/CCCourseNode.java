@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
 
 public class CCCourseNode extends CourseNode {
   private static final Collection<String> NAMES_TO_IGNORE = ContainerUtil.newHashSet(
-    "settings.gradle", "local.properties", "gradlew", "gradlew.bat", "build.gradle");
+    "settings.gradle", "local.properties", "gradlew", "gradlew.bat");
 
   public CCCourseNode(@NotNull Project project,
                       PsiDirectory value,
