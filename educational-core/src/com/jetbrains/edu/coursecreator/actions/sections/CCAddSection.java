@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
+import org.jetbrains.annotations.NonNls;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 public class CCAddSection extends DumbAwareAction {
   public static final String TITLE = "Wrap With Section";
-  private static final String SECTION = "Section";
+  @NonNls private static final String SECTION = "Section";
 
   public CCAddSection() {
     super(TITLE, TITLE, null);
@@ -58,7 +59,7 @@ public class CCAddSection extends DumbAwareAction {
     }
     final int index = sections.size() + 1;
     final String sectionName = Messages.showInputDialog("Enter Section Name", SECTION, null,
-                                                        SECTION + index, null);
+                                                        SECTION.toLowerCase() + index, null);
     if (sectionName != null) {
       final Section section = new Section();
       section.setTitle(sectionName);
