@@ -1,11 +1,8 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.lang.Language
-import com.intellij.lang.LanguageExtensionPoint
-import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
@@ -13,18 +10,12 @@ import com.intellij.openapi.fileEditor.impl.EditorHistoryManager
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
-import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -47,7 +38,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
-    registerPlainTextConfigurator()
+    registerPlainTextConfigurator(myFixture.testRootDisposable)
     createCourse()
 
     val dockManager = DockManager.getInstance(myFixture.project)
@@ -129,32 +120,6 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String {
     return "testData"
   }
-
-  private fun registerPlainTextConfigurator() {
-    val extension = LanguageExtensionPoint<Annotator>()
-    extension.language = PlainTextLanguage.INSTANCE.id
-    extension.implementationClass = PlainTextConfigurator::class.java.name
-    PlatformTestUtil.registerExtension(
-      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.project)
-  }
-
-  class PlainTextConfigurator : EduConfigurator<Unit> {
-    override fun getCourseBuilder() = object : EduCourseBuilder<Unit> {
-      override fun createTaskContent(project: Project, task: Task, parentDirectory: VirtualFile, course: Course): VirtualFile? = null
-      override fun getLanguageSettings(): EduCourseBuilder.LanguageSettings<Unit> = EduCourseBuilder.LanguageSettings { Unit }
-    }
-
-    override fun getTestFileName() = "test.txt"
-
-    override fun excludeFromArchive(name: String) = false
-
-    override fun getTaskCheckerProvider() = TaskCheckerProvider{ task, project -> object: TaskChecker<EduTask>(task, project) {
-      override fun check(): CheckResult {
-        return CheckResult(CheckStatus.Solved, "")
-      }
-    }}
-  }
-
 
   fun course(name: String = "Test Course", language: Language = PlainTextLanguage.INSTANCE, buildCourse: CourseBuilder.() -> Unit): Course {
     val builder = CourseBuilder()
@@ -300,5 +265,3 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   fun getCourse(): Course = StudyTaskManager.getInstance(project).course!!
 
 }
-
-
