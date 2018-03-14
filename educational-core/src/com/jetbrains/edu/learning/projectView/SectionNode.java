@@ -9,18 +9,26 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.projectView.CCLessonNode;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
+
+import static com.jetbrains.edu.learning.projectView.EduNode.LIGHT_GREEN;
 
 
 public class SectionNode extends ProjectViewNode<Section> {
@@ -71,8 +79,30 @@ public class SectionNode extends ProjectViewNode<Section> {
 
   @Override
   protected void update(PresentationData data) {
-    data.addText(getValue().getTitle(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-    data.setIcon(AllIcons.Nodes.Folder);
+    boolean allSolved = isSolved();
+    JBColor color = allSolved ? LIGHT_GREEN : JBColor.BLACK;
+    Icon icon = allSolved ? AllIcons.Nodes.Package : AllIcons.Nodes.Folder; //TODO: use proper icons
+    final SimpleTextAttributes textAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, color);
+    data.addText(getValue().getTitle(), textAttributes);
+    data.setIcon(icon);
+  }
+
+  private boolean isSolved() {
+    final Course course = StudyTaskManager.getInstance(myProject).getCourse();
+    boolean allSolved = true;
+    if (course != null) {
+      for (Integer lessonIndex : getValue().lessonIndexes) {
+        final Lesson lesson = course.getLesson(EduNames.LESSON + lessonIndex);
+        if (lesson != null) {
+          CheckStatus status = lesson.getStatus();
+          boolean isSolved = status == CheckStatus.Solved;
+          if (!isSolved) {
+            allSolved = false;
+          }
+        }
+      }
+    }
+    return allSolved;
   }
 
   @Override
