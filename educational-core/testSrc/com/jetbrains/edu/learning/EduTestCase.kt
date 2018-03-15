@@ -174,8 +174,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
         val sourceDir = if (course.sourceDir.isNullOrEmpty()) "" else "${course.sourceDir}/"
         for (taskFile in task.getTaskFiles().values) {
           val path = "${myFixture.project.baseDir.path}/$lessonDirName/$taskDirName/$sourceDir${taskFile.name}"
-          val file = myFixture.tempDirFixture.createFile(path, taskFile.text)
-          myFixture.openFileInEditor(file)
+          myFixture.tempDirFixture.createFile(path, taskFile.text)
         }
       }
     }
