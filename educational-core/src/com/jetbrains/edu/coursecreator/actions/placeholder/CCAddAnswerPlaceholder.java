@@ -10,10 +10,9 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.JBColor;
 import com.intellij.util.DocumentUtil;
-import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.NewPlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -63,8 +62,8 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
     String answerPlaceholderText = dlg.getTaskText();
     answerPlaceholder.setPossibleAnswer(model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText);
-    answerPlaceholder.setPlaceholderText(StringUtil.notNullize(answerPlaceholderText));
-    answerPlaceholder.setLength(StringUtil.notNullize(answerPlaceholderText).length());
+    answerPlaceholder.setPlaceholderText(answerPlaceholderText);
+    answerPlaceholder.setLength(answerPlaceholderText.length());
     answerPlaceholder.setHints(dlg.getHints());
 
     if (!model.hasSelection()) {
@@ -93,17 +92,14 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
       final List<AnswerPlaceholder> answerPlaceholders = myTaskFile.getAnswerPlaceholders();
       if (answerPlaceholders.contains(myPlaceholder)) {
         answerPlaceholders.remove(myPlaceholder);
-        myEditor.getMarkupModel().removeAllHighlighters();
-        EduUtils.drawAllAnswerPlaceholders(myEditor, myTaskFile);
-        AnswerPlaceholderPainter.createGuardedBlocks(myEditor, myTaskFile);
+        NewPlaceholderPainter.INSTANCE.removePainter(myEditor, myPlaceholder);
       }
     }
 
     @Override
     public void redo() throws UnexpectedUndoException {
       myTaskFile.addAnswerPlaceholder(myPlaceholder);
-      AnswerPlaceholderPainter.drawAnswerPlaceholder(myEditor, myPlaceholder, JBColor.BLUE);
-      AnswerPlaceholderPainter.createGuardedBlocks(myEditor, myPlaceholder);
+      NewPlaceholderPainter.INSTANCE.paintPlaceholder(myEditor, myPlaceholder);
     }
   }
 

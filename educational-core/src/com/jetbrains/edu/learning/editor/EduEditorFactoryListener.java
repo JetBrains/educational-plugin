@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.editor;
 
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -19,6 +18,7 @@ import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
 import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.NewPlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -33,17 +33,12 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFa
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.List;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
-  private static final Logger LOG = Logger.getInstance(EduEditorFactoryListener.class);
+  private TaskFile myTaskFile;
 
-  private static class WindowSelectionListener extends EditorMouseAdapter {
-    private final TaskFile myTaskFile;
-
-    WindowSelectionListener(@NotNull final TaskFile taskFile) {
-      myTaskFile = taskFile;
-    }
-
+  private class WindowSelectionListener extends EditorMouseAdapter {
     @Override
     public void mouseClicked(EditorMouseEvent e) {
       final Editor editor = e.getEditor();
@@ -53,7 +48,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       if (answerPlaceholder == null || answerPlaceholder.getSelected()) {
         return;
       }
-      final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder, editor.getDocument());
+      final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder);
       editor.getSelectionModel().setSelection(offsets.getFirst(), offsets.getSecond());
       answerPlaceholder.setSelected(true);
     }
@@ -70,8 +65,8 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     final Document document = editor.getDocument();
     final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(document);
     if (openedFile != null) {
-      final TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
-      if (taskFile != null) {
+      myTaskFile = EduUtils.getTaskFile(project, openedFile);
+      if (myTaskFile != null) {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
         final ToolWindow studyToolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
         if (studyToolWindow != null) {
@@ -83,20 +78,20 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
           return;
         }
 
-        Task task = taskFile.getTask();
+        Task task = myTaskFile.getTask();
         if (task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
           task.setStatus(CheckStatus.Solved);
           StepikConnector.postTheory(task, project);
         }
 
-        EduEditor.addDocumentListener(document, new EduDocumentListener(taskFile, true));
+        EduEditor.addDocumentListener(document, new EduDocumentListener(project, myTaskFile));
 
         boolean isStudyProject = course.isStudy();
-        if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
-          NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
-          EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
+        if (!myTaskFile.getAnswerPlaceholders().isEmpty() && myTaskFile.isValid(editor.getDocument().getText())) {
+          NavigationUtils.navigateToFirstAnswerPlaceholder(editor, myTaskFile);
+          EduUtils.drawAllAnswerPlaceholders(editor, myTaskFile);
           if (isStudyProject) {
-            editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
+            editor.addEditorMouseListener(new WindowSelectionListener());
           }
         }
         EduLaunchesReporter.INSTANCE.sendStats(isStudyProject, CCPluginToggleAction.isCourseCreatorFeaturesEnabled());
@@ -109,7 +104,12 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     final Editor editor = event.getEditor();
     final Document document = editor.getDocument();
     EduEditor.removeListener(document);
-    editor.getMarkupModel().removeAllHighlighters();
+    if (myTaskFile != null) {
+      final List<AnswerPlaceholder> placeholders = myTaskFile.getAnswerPlaceholders();
+      for (AnswerPlaceholder placeholder : placeholders) {
+        NewPlaceholderPainter.INSTANCE.getPlaceholderPainters().remove(placeholder);
+      }
+    }
     editor.getSelectionModel().removeSelection();
   }
 }

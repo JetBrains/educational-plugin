@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.command.undo.BasicUndoableAction;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -16,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.NewPlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +62,6 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
 
   private static void updateView(@NotNull final Editor editor,
                                  @NotNull final TaskFile taskFile) {
-    editor.getMarkupModel().removeAllHighlighters();
     EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
   }
 
@@ -104,14 +103,18 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
     }
 
     @Override
-    public void undo() throws UnexpectedUndoException {
+    public void undo() {
       myTaskFile.getAnswerPlaceholders().addAll(myPlaceholders);
       updateView(myEditor, myTaskFile);
     }
 
     @Override
-    public void redo() throws UnexpectedUndoException {
-      myTaskFile.getAnswerPlaceholders().clear();
+    public void redo() {
+      List<AnswerPlaceholder> placeholders = myTaskFile.getAnswerPlaceholders();
+      for (AnswerPlaceholder placeholder : placeholders) {
+        NewPlaceholderPainter.INSTANCE.removePainter(myEditor, placeholder);
+      }
+      placeholders.clear();
       updateView(myEditor, myTaskFile);
     }
 

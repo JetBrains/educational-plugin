@@ -9,10 +9,9 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.markup.MarkupModel;
-import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
+import com.intellij.openapi.ui.AbstractPainter;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -23,8 +22,12 @@ import com.intellij.testFramework.TestActionEvent;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.NewPlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +37,9 @@ import org.junit.ComparisonFailure;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,19 +47,27 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   private static final Logger LOG = Logger.getInstance(CCTestCase.class);
 
   @Nullable
-  public static RangeHighlighter getHighlighter(MarkupModel model, AnswerPlaceholder placeholder) {
-    for (RangeHighlighter highlighter : model.getAllHighlighters()) {
-      int endOffset = placeholder.getOffset() + placeholder.getRealLength();
-      if (highlighter.getStartOffset() == placeholder.getOffset() && highlighter.getEndOffset() == endOffset) {
-        return highlighter;
+  public static AbstractPainter getPainter(AnswerPlaceholder placeholder) {
+    final HashMap<AnswerPlaceholder, AbstractPainter> painters = NewPlaceholderPainter.INSTANCE.getPlaceholderPainters();
+    final AbstractPainter painter = painters.get(placeholder);
+    if (painter == null) {
+      for (Map.Entry<AnswerPlaceholder, AbstractPainter> entry : painters.entrySet()) {
+        final AnswerPlaceholder placeholder1 = entry.getKey();
+        if (placeholder1.getOffset() == placeholder.getOffset() &&
+            placeholder1.getLength() == placeholder.getLength()) {
+          return entry.getValue();
+        }
       }
     }
-    return null;
+    return painter;
   }
 
-  protected static void checkHighlighters(TaskFile taskFile, MarkupModel markupModel) {
+  protected static void checkPainters(TaskFile taskFile) {
+    final HashMap<AnswerPlaceholder, AbstractPainter> painters = NewPlaceholderPainter.INSTANCE.getPlaceholderPainters();
+
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-      if (getHighlighter(markupModel, answerPlaceholder) == null) {
+      final AbstractPainter painter = painters.get(answerPlaceholder);
+      if (painter == null) {
         throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(answerPlaceholder));
       }
     }

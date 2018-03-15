@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.command.undo.BasicUndoableAction;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -10,11 +9,14 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.NewPlaceholderPainter;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
 public class CCHideFromStudent extends CCTaskFileActionBase {
@@ -49,7 +51,7 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
     }
 
     @Override
-    public void undo() throws UnexpectedUndoException {
+    public void undo() {
       myTask.getTaskFiles().put(EduUtils.pathRelativeToTask(myProject, myFile), myTaskFile);
       if (!myTaskFile.getAnswerPlaceholders().isEmpty() && FileEditorManager.getInstance(myProject).isFileOpen(myFile)) {
         for (FileEditor fileEditor : FileEditorManager.getInstance(myProject).getEditors(myFile)) {
@@ -63,7 +65,7 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
     }
 
     @Override
-    public void redo() throws UnexpectedUndoException {
+    public void redo() {
       hideFromStudent(myFile, myProject, myTask.getTaskFiles(), myTaskFile);
       ProjectView.getInstance(myProject).refresh();
     }
@@ -75,11 +77,14 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
   }
 
   public static void hideFromStudent(VirtualFile file, Project project, Map<String, TaskFile> taskFiles, @NotNull final TaskFile taskFile) {
-    if (!taskFile.getAnswerPlaceholders().isEmpty() && FileEditorManager.getInstance(project).isFileOpen(file)) {
+    final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
+    if (!placeholders.isEmpty() && FileEditorManager.getInstance(project).isFileOpen(file)) {
       for (FileEditor fileEditor : FileEditorManager.getInstance(project).getEditors(file)) {
         if (fileEditor instanceof TextEditor) {
           Editor editor = ((TextEditor)fileEditor).getEditor();
-          editor.getMarkupModel().removeAllHighlighters();
+          for (AnswerPlaceholder placeholder : placeholders) {
+            NewPlaceholderPainter.INSTANCE.removePainter(editor, placeholder);
+          }
         }
       }
     }

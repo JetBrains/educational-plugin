@@ -21,7 +21,7 @@ public class CCTaskFileActionTest extends CCTestCase {
     UndoManager.getInstance(getProject()).undo(FileEditorManager.getInstance(getProject()).getSelectedEditor(virtualFile));
     TaskFile taskFile = EduUtils.getTaskFile(getProject(), virtualFile);
     assertNotNull(taskFile);
-    checkHighlighters(taskFile, myFixture.getEditor().getMarkupModel());
+    checkPainters(taskFile);
   }
 
   public void testAddTaskFile() {

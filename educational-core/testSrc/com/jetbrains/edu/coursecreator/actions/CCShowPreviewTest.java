@@ -49,7 +49,7 @@ public class CCShowPreviewTest extends CCTestCase {
       assertEquals("Files don't match", pair.getFirst().getText(), editor.getDocument().getText());
       for (AnswerPlaceholder placeholder : pair.getSecond()) {
         assertNotNull("No highlighter for placeholder:" + CCTestsUtil.getPlaceholderPresentation(placeholder),
-                      getHighlighter(editor.getMarkupModel(), placeholder));
+                      getPainter(placeholder));
       }
     }
     finally {

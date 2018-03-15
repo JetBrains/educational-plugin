@@ -33,8 +33,9 @@ public class CCCreateAnswerPlaceholderDialog extends DialogWrapper {
     initValidation();
   }
 
+  @NotNull
   public String getTaskText() {
-    return StringUtil.notNullize(myPanel.getAnswerPlaceholderText());
+    return StringUtil.notNullize(myPanel.getAnswerPlaceholderText()).trim();
   }
 
   public List<String> getHints() {
