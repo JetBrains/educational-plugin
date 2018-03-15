@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.jetbrains.edu.learning.EduDocumentListener
+import com.jetbrains.edu.learning.EduDocumentTransformListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 
@@ -68,7 +68,7 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
     val taskFile = taskFileEntry.value
     val file = EduUtils.findTaskFileInDir(taskFile, userFileDir)
     if (file == null) {
-      LOG.warn("Failed to find file " + file)
+      LOG.warn("Failed to find file $file")
       return
     }
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return
@@ -80,7 +80,7 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
                                                     }
                                                   },
                                                   "Create answer document", "Create answer document")
-    val listener = EduDocumentListener(taskFile, false)
+    val listener = EduDocumentTransformListener(project, taskFile)
     document.addDocumentListener(listener)
     taskFile.sortAnswerPlaceholders()
     taskFile.isTrackLengths = false

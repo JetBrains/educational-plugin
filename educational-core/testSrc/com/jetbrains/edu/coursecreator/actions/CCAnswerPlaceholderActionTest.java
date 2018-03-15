@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +31,7 @@ public class CCAnswerPlaceholderActionTest extends CCTestCase {
         }
 
         @Override
+        @NotNull
         public String getTaskText() {
           return "type here";
         }
@@ -65,7 +67,7 @@ public class CCAnswerPlaceholderActionTest extends CCTestCase {
     myFixture.testAction(action);
     TaskFile taskFile = EduUtils.getTaskFile(getProject(), virtualFile);
     checkByFile(taskFile, name + CCTestsUtil.AFTER_POSTFIX, false);
-    checkHighlighters(taskFile, myFixture.getEditor().getMarkupModel());
+    checkPainters(taskFile);
     UndoManager.getInstance(getProject()).undo(FileEditorManager.getInstance(getProject()).getSelectedEditor(virtualFile));
     checkByFile(taskFile, name + CCTestsUtil.BEFORE_POSTFIX, false);
   }

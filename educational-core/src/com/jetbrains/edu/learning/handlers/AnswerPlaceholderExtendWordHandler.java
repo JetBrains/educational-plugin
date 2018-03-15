@@ -57,7 +57,7 @@ public class AnswerPlaceholderExtendWordHandler implements ExtendWordSelectionHa
   public List<TextRange> select(@NotNull PsiElement element, @NotNull CharSequence editorText, int cursorOffset, @NotNull Editor editor) {
     AnswerPlaceholder placeholder = getAnswerPlaceholder(element, editor.getCaretModel().getOffset());
     if (placeholder == null) return ContainerUtil.newArrayList();
-    final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
+    final Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(placeholder);
     return Collections.singletonList(new TextRange(offsets.getFirst(), offsets.getSecond()));
   }
 }

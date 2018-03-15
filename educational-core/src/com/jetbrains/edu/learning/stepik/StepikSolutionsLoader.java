@@ -451,7 +451,6 @@ public class StepikSolutionsLoader implements Disposable {
             taskFile.setTrackChanges(false);
             VfsUtil.saveText(vFile, solutionText.get(taskFile.name));
             SaveAndSyncHandler.getInstance().refreshOpenFiles();
-            CheckUtils.drawAllPlaceholders(project, task);
             taskFile.setTrackChanges(true);
           }
           catch (IOException e) {
@@ -474,7 +473,6 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static void updateUI(@NotNull Project project, @NotNull Task task) {
-    CheckUtils.drawAllPlaceholders(project, task);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
     VirtualFile taskDir = task.getTaskDir(project);

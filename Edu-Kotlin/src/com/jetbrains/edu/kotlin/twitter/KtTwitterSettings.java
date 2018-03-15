@@ -31,7 +31,7 @@ class KtTwitterSettings implements PersistentStateComponent<KtTwitterSettings.St
     }
 
     @Override
-    public void loadState(State state) {
+    public void loadState(@NotNull State state) {
         myState = state;
     }
 
