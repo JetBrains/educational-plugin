@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.serialization.converter.xml.*;
@@ -370,6 +371,8 @@ public class SerializationUtils {
     public static final String NAME = "name";
     public static final String TITLE = "title";
     public static final String LAST_SUBTASK = "last_subtask_index";
+    public static final String LESSON_TYPE = "type";
+    public static final String FRAMEWORK_TYPE = "framework";
 
     private Json() {
     }
@@ -395,12 +398,25 @@ public class SerializationUtils {
       public Lesson deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
             .registerTypeAdapter(Task.class, new TaskAdapter()).create();
-        final Lesson lesson = gson.fromJson(json, Lesson.class);
+        final Lesson lesson = deserializeLesson(json, gson);
         final String name = lesson.getName();
         if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {
           lesson.setName(EduNames.ADDITIONAL_MATERIALS);
         }
         return lesson;
+      }
+
+      private static Lesson deserializeLesson(@NotNull JsonElement json, @NotNull Gson gson) {
+        JsonObject object = json.getAsJsonObject();
+        if (!object.has(LESSON_TYPE)) {
+          return gson.fromJson(object, Lesson.class);
+        } else {
+          String lessonType = object.get(LESSON_TYPE).getAsString();
+          switch (lessonType) {
+            case FRAMEWORK_TYPE: return gson.fromJson(object, FrameworkLesson.class);
+            default: throw new IllegalArgumentException("Unsupported lesson type: " + lessonType);
+          }
+        }
       }
     }
 

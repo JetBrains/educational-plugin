@@ -15,10 +15,7 @@ import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
@@ -122,7 +119,7 @@ object NavigationUtils {
 
     val lesson = task.lesson
 
-    if (lesson.isFrameworkLesson && fromTask != null && fromTask.lesson == lesson) {
+    if (lesson is FrameworkLesson && fromTask != null && fromTask.lesson == lesson) {
       prepareNextTask(project, fromTask, task)
     }
 
