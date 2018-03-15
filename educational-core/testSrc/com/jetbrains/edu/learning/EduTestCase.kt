@@ -231,7 +231,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     fun taskFile(name: String, text: String, buildTaskFile: (TaskFileBuilder.() -> Unit)? = null) {
       val taskFileBuilder = TaskFileBuilder(task)
       taskFileBuilder.withName(name)
-      val textBuffer = StringBuffer(text)
+      val textBuffer = StringBuilder(text)
       val placeholders = extractPlaceholdersFromText(textBuffer)
       taskFileBuilder.withText(textBuffer.toString())
       taskFileBuilder.withPlaceholders(placeholders)
@@ -243,7 +243,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
       task.addTaskFile(taskFile)
     }
 
-    private fun extractPlaceholdersFromText(text: StringBuffer): List<AnswerPlaceholder> {
+    private fun extractPlaceholdersFromText(text: StringBuilder): List<AnswerPlaceholder> {
       val openingMatcher = Pattern.compile("<p>").matcher(text)
       val closingMatcher = Pattern.compile("</p>").matcher(text)
       val placeholders = mutableListOf<AnswerPlaceholder>()
