@@ -35,8 +35,4 @@ class GradleOutputTaskChecker(
 
     return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
   }
-
-  override fun clearState() {
-    CheckUtils.drawAllPlaceholders(project, task)
-  }
 }

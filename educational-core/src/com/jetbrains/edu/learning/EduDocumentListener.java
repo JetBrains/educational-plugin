@@ -4,31 +4,23 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Listens changes in study files and updates
- * coordinates of all the windows in current task file
+ * coordinates of all the placeholders in current task file
  */
 public class EduDocumentListener implements DocumentListener {
-  private final TaskFile myTaskFile;
-  private final boolean myTrackLength;
-  private final List<AnswerPlaceholderWrapper> myAnswerPlaceholders = new ArrayList<>();
+  protected final Project myProject;
+  protected final TaskFile myTaskFile;
 
-
-  public EduDocumentListener(TaskFile taskFile) {
+  public EduDocumentListener(Project project, TaskFile taskFile) {
+    myProject = project;
     myTaskFile = taskFile;
-    myTrackLength = true;
-  }
-
-  public EduDocumentListener(TaskFile taskFile, boolean trackLength) {
-    myTaskFile = taskFile;
-    myTrackLength = trackLength;
   }
 
   @Override
@@ -37,13 +29,6 @@ public class EduDocumentListener implements DocumentListener {
       return;
     }
     myTaskFile.setHighlightErrors(true);
-    myAnswerPlaceholders.clear();
-    for (AnswerPlaceholder answerPlaceholder : myTaskFile.getAnswerPlaceholders()) {
-      int twStart = answerPlaceholder.getOffset();
-      int length = answerPlaceholder.getRealLength();
-      int twEnd = twStart + length;
-      myAnswerPlaceholders.add(new AnswerPlaceholderWrapper(answerPlaceholder, twStart, twEnd));
-    }
   }
 
   @Override
@@ -51,58 +36,54 @@ public class EduDocumentListener implements DocumentListener {
     if (!myTaskFile.isTrackChanges()) {
       return;
     }
-    if (myAnswerPlaceholders.isEmpty()) return;
-    if (e instanceof DocumentEventImpl) {
-      DocumentEventImpl event = (DocumentEventImpl)e;
-      Document document = e.getDocument();
-      int offset = e.getOffset();
-      int change = event.getNewLength() - event.getOldLength();
-      for (AnswerPlaceholderWrapper answerPlaceholderWrapper : myAnswerPlaceholders) {
-        int twStart = answerPlaceholderWrapper.getTwStart();
-        if (twStart > offset) {
-          twStart += change;
-        }
-        int twEnd = answerPlaceholderWrapper.getTwEnd();
-        if (twEnd >= offset) {
-          twEnd += change;
-        }
-        AnswerPlaceholder answerPlaceholder = answerPlaceholderWrapper.getAnswerPlaceholder();
-        int length = twEnd - twStart;
-        answerPlaceholder.setOffset(twStart);
-        if (myTrackLength) {
-          if (answerPlaceholder.getUseLength()) {
-            answerPlaceholder.setLength(length);
-          } else {
-            if (myTaskFile.isTrackLengths()) {
-              answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(twStart, twStart + length)));
-            }
-          }
-        }
+    if (myTaskFile.getAnswerPlaceholders().isEmpty()) return;
+
+    if (!(e instanceof DocumentEventImpl)) {
+      return;
+    }
+
+    DocumentEventImpl event = (DocumentEventImpl)e;
+    Document document = e.getDocument();
+
+    int offset = e.getOffset();
+    int change = event.getNewLength() - event.getOldLength();
+
+    final CharSequence fragment = e.getNewFragment();
+    CharSequence oldFragment = e.getOldFragment();
+
+    for (AnswerPlaceholder placeholder : myTaskFile.getAnswerPlaceholders()) {
+      int start = placeholder.getOffset();
+      if (start - 1 == offset && fragment.toString().isEmpty() && oldFragment.toString().startsWith("\n")) {
+        start -= 1;
       }
+
+      if (start > offset) {
+        start += change;
+      }
+      int end = placeholder.getEndOffset();
+      if (end >= offset) {
+        end += change;
+      }
+      if (start == offset && oldFragment.toString().isEmpty() && fragment.toString().startsWith("\n")) {
+        start += 1;
+      }
+
+      int length = end - start;
+      assert length >= 0;
+      assert start >= 0;
+      updatePlaceholder(placeholder, document, start, length);
     }
   }
 
-  private static class AnswerPlaceholderWrapper {
-    public AnswerPlaceholder myAnswerPlaceholder;
-    public int myTwStart;
-    public int myTwEnd;
-
-    public AnswerPlaceholderWrapper(AnswerPlaceholder answerPlaceholder, int twStart, int twEnd) {
-      myAnswerPlaceholder = answerPlaceholder;
-      myTwStart = twStart;
-      myTwEnd = twEnd;
-    }
-
-    public int getTwStart() {
-      return myTwStart;
-    }
-
-    public int getTwEnd() {
-      return myTwEnd;
-    }
-
-    public AnswerPlaceholder getAnswerPlaceholder() {
-      return myAnswerPlaceholder;
+  protected void updatePlaceholder(@NotNull AnswerPlaceholder answerPlaceholder,
+                                   @NotNull Document document, int start, int length) {
+    answerPlaceholder.setOffset(start);
+    if (answerPlaceholder.getUseLength()) {
+      answerPlaceholder.setLength(length);
+    } else {
+      if (myTaskFile.isTrackLengths()) {
+        answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(start, start + length)));
+      }
     }
   }
 }
