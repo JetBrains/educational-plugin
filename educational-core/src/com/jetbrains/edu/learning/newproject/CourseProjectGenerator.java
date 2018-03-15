@@ -15,6 +15,7 @@
  */
 package com.jetbrains.edu.learning.newproject;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.RecentProjectsManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.idea.ActionsBundle;
@@ -156,7 +157,8 @@ public abstract class CourseProjectGenerator<S> {
    * @param baseDir base directory of project
    * @param settings project settings
    */
-  protected void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull S settings) {
+  @VisibleForTesting
+  public void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull S settings) {
     GeneratorUtils.initializeCourse(project, myCourse);
 
     if (CCUtils.isCourseCreator(project) && myCourse.getLessons(true).isEmpty()) {
