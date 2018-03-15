@@ -44,10 +44,6 @@ public class Lesson extends StudyItem {
   @Transient
   private Course myCourse = null;
 
-  @Expose
-  @SerializedName("is_framework_lesson")
-  private boolean isFrameworkLesson;
-
   public Lesson() {
   }
 
@@ -149,13 +145,5 @@ public class Lesson extends StudyItem {
     // We still use `StepikNames.PYCHARM_ADDITIONAL` while Stepik interaction
     // so we need to check it here
     return EduNames.ADDITIONAL_MATERIALS.equals(name) || StepikNames.PYCHARM_ADDITIONAL.equals(name);
-  }
-
-  public boolean isFrameworkLesson() {
-    return isFrameworkLesson;
-  }
-
-  public void setFrameworkLesson(boolean frameworkLesson) {
-    isFrameworkLesson = frameworkLesson;
   }
 }

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializer;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -19,7 +20,13 @@ import java.util.stream.Collectors;
 
 public class Course {
   @Expose @SerializedName("section_list") protected List<Section> mySections = new ArrayList<>();
-  @Expose protected List<Lesson> lessons = new ArrayList<>();
+
+  @AbstractCollection(elementTypes = {
+    Lesson.class,
+    FrameworkLesson.class,
+  })
+  @Expose
+  protected List<Lesson> lessons = new ArrayList<>();
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;

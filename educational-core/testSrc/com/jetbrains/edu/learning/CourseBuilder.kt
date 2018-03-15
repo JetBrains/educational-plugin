@@ -45,19 +45,17 @@ class CourseBuilder {
   }
 
   fun lesson(name: String? = null, isFramework: Boolean = false, buildLesson: LessonBuilder.() -> Unit) {
-    val lessonBuilder = LessonBuilder(course)
+    val lessonBuilder = LessonBuilder(course, if (isFramework) FrameworkLesson() else Lesson())
     val lesson = lessonBuilder.lesson
     lesson.index = course.lessons.size + 1
     val nextLessonIndex = course.lessons.size + 1
     lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
-    lessonBuilder.lesson.isFrameworkLesson = isFramework
     lessonBuilder.buildLesson()
     course.addLesson(lesson)
   }
 }
 
-class LessonBuilder(val course: Course) {
-  val lesson = Lesson()
+class LessonBuilder(val course: Course, val lesson: Lesson = Lesson()) {
 
   init {
     lesson.course = course

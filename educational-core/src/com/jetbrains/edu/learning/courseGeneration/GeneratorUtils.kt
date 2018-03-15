@@ -59,7 +59,7 @@ object GeneratorUtils {
       val taskList = lesson.getTaskList()
       for ((i, task) in taskList.withIndex()) {
         task.index = i + 1
-        if (!lesson.isFrameworkLesson || i == 0) {
+        if (lesson !is FrameworkLesson || i == 0) {
           createTask(task, lessonDir)
         }
       }
