@@ -131,7 +131,7 @@ object NavigationUtils {
   @JvmStatic
   fun navigateToAnswerPlaceholder(editor: Editor, answerPlaceholder: AnswerPlaceholder) {
     if (editor.isDisposed) return
-    val offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder, editor.document)
+    val offsets = EduUtils.getPlaceholderOffsets(answerPlaceholder)
     editor.caretModel.moveToOffset(offsets.first)
     editor.scrollingModel.scrollToCaret(ScrollType.CENTER)
     editor.selectionModel.setSelection(offsets.first, offsets.second)

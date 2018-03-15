@@ -16,6 +16,7 @@ public class AnswerPlaceholderDeleteHandler implements ReadonlyFragmentModificat
 
   @Override
   public void handle(ReadOnlyFragmentModificationException e) {
+    if (myEditor.isDisposed()) return;
     HintManager.getInstance().showErrorHint(myEditor, "It's not allowed to delete answer placeholders");
   }
 }

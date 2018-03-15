@@ -59,7 +59,7 @@ object PlaceholderDependencyManager {
     val startOffset = placeholderToReplace.offset
     val endOffset = startOffset + placeholderToReplace.realLength
     val isFileOpen = FileEditorManager.getInstance(project).isFileOpen(placeholderToReplace.taskFile.getVirtualFile(project)!!)
-    val eduDocumentListener = if (isFileOpen) null else EduDocumentListener(placeholderToReplace.taskFile)
+    val eduDocumentListener = if (isFileOpen) null else EduDocumentListener(project, placeholderToReplace.taskFile)
     if (eduDocumentListener != null) {
       document.addDocumentListener(eduDocumentListener)
     }

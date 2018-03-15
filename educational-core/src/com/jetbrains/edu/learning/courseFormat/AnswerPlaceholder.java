@@ -2,10 +2,13 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.intellij.ui.ColorUtil;
+import com.intellij.ui.JBColor;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +26,7 @@ public class AnswerPlaceholder {
 
   private int myIndex = -1;
   private MyInitialState myInitialState;
-  private boolean myUseLength = true;
+  private boolean myUseLength = true; // if true -- taskText length used, else -- possible answer. Always true in student view
 
   @Transient private TaskFile myTaskFile;
 
@@ -236,5 +239,41 @@ public class AnswerPlaceholder {
     if (placeholderDependency != null) {
       myPlaceholderDependency.setAnswerPlaceholder(this);
     }
+  }
+
+  public int getEndOffset() {
+    return myOffset + getRealLength();
+  }
+
+  @NotNull
+  public JBColor getColor() {
+    final CheckStatus status = getStatus();
+    if (status == CheckStatus.Solved) {
+
+      Color colorLight = ColorUtil.fromHex("26993D", JBColor.LIGHT_GRAY);
+      colorLight = ColorUtil.toAlpha(colorLight, 90);
+
+      Color colorDark = ColorUtil.fromHex("47CC5E", JBColor.LIGHT_GRAY);
+      colorDark = ColorUtil.toAlpha(colorDark, 82);
+
+      return new JBColor(colorLight, colorDark);
+    }
+    if (status == CheckStatus.Failed) {
+      Color colorLight = ColorUtil.fromHex("CC0000", JBColor.GRAY);
+      colorLight = ColorUtil.toAlpha(colorLight, 64);
+      Color colorDark = ColorUtil.fromHex("FF7373", JBColor.GRAY);
+      colorDark = ColorUtil.toAlpha(colorDark, 90);
+      return new JBColor(colorLight, colorDark);
+    }
+    return getDefaultPlaceholderColor();
+  }
+
+  @NotNull
+  public static JBColor getDefaultPlaceholderColor() {
+    Color colorLight = ColorUtil.fromHex("284B73", JBColor.GRAY);
+    colorLight = ColorUtil.toAlpha(colorLight, 64);
+    Color colorDark = ColorUtil.fromHex("A1C1E6", JBColor.GRAY);
+    colorDark = ColorUtil.toAlpha(colorDark, 72);
+    return new JBColor(colorLight, colorDark);
   }
 }

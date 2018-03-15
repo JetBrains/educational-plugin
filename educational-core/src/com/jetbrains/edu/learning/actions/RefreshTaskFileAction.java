@@ -18,7 +18,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -80,8 +79,6 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
 
     WolfTheProblemSolver.getInstance(project).clearProblems(eduState.getVirtualFile());
     taskFile.setHighlightErrors(false);
-    EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
-    AnswerPlaceholderPainter.createGuardedBlocks(editor, taskFile);
     ApplicationManager.getApplication().invokeLater(
       () -> IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true));
 
