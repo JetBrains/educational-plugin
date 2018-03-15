@@ -13,7 +13,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.JBColor;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -97,17 +96,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     if (userTests != null) {
       userTests.remove(userTest);
     }
-  }
-
-  public JBColor getColor(@NotNull final AnswerPlaceholder placeholder) {
-    final CheckStatus status = placeholder.getStatus();
-    if (status == CheckStatus.Solved) {
-      return JBColor.GREEN;
-    }
-    if (status == CheckStatus.Failed) {
-      return JBColor.RED;
-    }
-    return JBColor.BLUE;
   }
 
   public boolean hasFailedAnswerPlaceholders(@NotNull final TaskFile taskFile) {

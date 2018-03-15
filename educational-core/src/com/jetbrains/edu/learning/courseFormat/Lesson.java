@@ -176,7 +176,7 @@ public class Lesson extends StudyItem {
       else {
         VirtualFile sectionDir = courseDir.findChild(mySection.getName());
         if (sectionDir != null) {
-          return  sectionDir.findChild(getName());
+          return sectionDir.findChild(getName());
         }
       }
     }

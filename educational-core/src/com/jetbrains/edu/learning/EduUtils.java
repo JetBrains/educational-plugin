@@ -67,10 +67,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
-import com.intellij.util.*;
+import com.intellij.util.PathUtil;
+import com.intellij.util.PlatformUtils;
+import com.intellij.util.TimeoutUtil;
 import com.intellij.util.io.ZipUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
@@ -78,7 +79,6 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -300,20 +300,16 @@ public class EduUtils {
   }
 
   public static void drawAllAnswerPlaceholders(Editor editor, TaskFile taskFile) {
-    editor.getMarkupModel().removeAllHighlighters();
     final Project project = editor.getProject();
     if (project == null) return;
     if (!taskFile.isValid(editor.getDocument().getText())) return;
-    final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-      final JBColor color = studyTaskManager.getColor(answerPlaceholder);
-      AnswerPlaceholderPainter.drawAnswerPlaceholder(editor, answerPlaceholder, color);
+      NewPlaceholderPainter.INSTANCE.paintPlaceholder(editor, answerPlaceholder);
     }
 
     final Document document = editor.getDocument();
     EditorActionManager.getInstance()
       .setReadonlyFragmentModificationHandler(document, new AnswerPlaceholderDeleteHandler(editor));
-    AnswerPlaceholderPainter.createGuardedBlocks(editor, taskFile);
     editor.getColorsScheme().setColor(EditorColors.READONLY_FRAGMENT_BACKGROUND_COLOR, null);
   }
 
@@ -674,7 +670,7 @@ public class EduUtils {
     final List<AnswerPlaceholder> placeholders = eduEditor.getTaskFile().getAnswerPlaceholders();
     if (placeholders.isEmpty() || !eduEditor.getTaskFile().isValid(editor.getDocument().getText())) return;
     final AnswerPlaceholder placeholder = placeholders.get(0);
-    Pair<Integer, Integer> offsets = getPlaceholderOffsets(placeholder, editor.getDocument());
+    Pair<Integer, Integer> offsets = getPlaceholderOffsets(placeholder);
     editor.getSelectionModel().setSelection(offsets.first, offsets.second);
     editor.getCaretModel().moveToOffset(offsets.first);
     editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
@@ -719,17 +715,10 @@ public class EduUtils {
     return fullRelativePath;
   }
 
-  public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder,
-                                                             @NotNull final Document document) {
+  public static Pair<Integer, Integer> getPlaceholderOffsets(@NotNull final AnswerPlaceholder answerPlaceholder) {
     int startOffset = answerPlaceholder.getOffset();
-    int delta = 0;
     final int length = answerPlaceholder.getRealLength();
-    int nonSpaceCharOffset = DocumentUtil.getFirstNonSpaceCharOffset(document, startOffset, startOffset + length);
-    if (nonSpaceCharOffset != startOffset) {
-      delta = startOffset - nonSpaceCharOffset;
-      startOffset = nonSpaceCharOffset;
-    }
-    final int endOffset = startOffset + length + delta;
+    final int endOffset = startOffset + length;
     return Pair.create(startOffset, endOffset);
   }
 
@@ -941,7 +930,7 @@ public class EduUtils {
       if (studentDocument == null) {
         return null;
       }
-      EduDocumentListener listener = new EduDocumentListener(taskFile, false);
+      EduDocumentListener listener = new EduDocumentTransformListener(project, taskFile);
       studentDocument.addDocumentListener(listener);
       taskFile.setTrackLengths(false);
       for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {

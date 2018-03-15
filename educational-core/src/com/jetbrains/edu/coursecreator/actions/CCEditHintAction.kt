@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -16,7 +15,7 @@ class CCEditHintAction(private val myPlaceholder: AnswerPlaceholder?) : AnAction
     if (dlg.showAndGet()) {
       val answerPlaceholderText = dlg.taskText
       myPlaceholder.placeholderText = answerPlaceholderText
-      myPlaceholder.length = StringUtil.notNullize(answerPlaceholderText).length
+      myPlaceholder.length = answerPlaceholderText.length
       myPlaceholder.hints = dlg.hints
     }
   }

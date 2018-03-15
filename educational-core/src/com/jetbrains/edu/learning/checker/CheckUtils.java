@@ -56,25 +56,6 @@ public class CheckUtils {
   private CheckUtils() {
   }
 
-  public static void drawAllPlaceholders(@NotNull final Project project, @NotNull final Task task) {
-    VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) {
-      return;
-    }
-    for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-      TaskFile taskFile = entry.getValue();
-      VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
-      if (virtualFile == null) {
-        continue;
-      }
-      FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
-      if (fileEditor instanceof EduEditor) {
-        EduEditor eduEditor = (EduEditor)fileEditor;
-        EduUtils.drawAllAnswerPlaceholders(eduEditor.getEditor(), taskFile);
-      }
-    }
-  }
-
   public static void navigateToFailedPlaceholder(@NotNull final EduState eduState,
                                                  @NotNull final Task task,
                                                  @NotNull final VirtualFile taskDir,

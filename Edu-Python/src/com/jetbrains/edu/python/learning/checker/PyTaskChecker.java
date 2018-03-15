@@ -72,7 +72,6 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
   @Override
   public void clearState() {
     ApplicationManager.getApplication().invokeLater(() -> {
-      CheckUtils.drawAllPlaceholders(project, task);
       VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir != null) {
         EduUtils.deleteWindowDescriptions(task, taskDir);

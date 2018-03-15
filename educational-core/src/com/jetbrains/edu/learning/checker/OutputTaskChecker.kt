@@ -81,9 +81,5 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
     return CheckResult(CheckStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
   }
 
-  override fun clearState() {
-    CheckUtils.drawAllPlaceholders(project, task)
-  }
-
   private fun String.dropLastLineBreak() : String = if (this.endsWith('\n')) this.dropLast(1) else this
 }
