@@ -38,6 +38,11 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   private lateinit var myOldManager: FileEditorManager
   private lateinit var myOldDockContainers: Set<DockContainer>
 
+  companion object {
+    private val OPENING_TAG: Pattern = Pattern.compile("<p>")
+    private val CLOSING_TAG: Pattern = Pattern.compile("</p>")
+  }
+
 
   @Throws(Exception::class)
   override fun setUp() {
@@ -244,8 +249,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     }
 
     private fun extractPlaceholdersFromText(text: StringBuilder): List<AnswerPlaceholder> {
-      val openingMatcher = Pattern.compile("<p>").matcher(text)
-      val closingMatcher = Pattern.compile("</p>").matcher(text)
+      val openingMatcher = OPENING_TAG.matcher(text)
+      val closingMatcher = CLOSING_TAG.matcher(text)
       val placeholders = mutableListOf<AnswerPlaceholder>()
       var pos = 0
       while (openingMatcher.find(pos)) {
