@@ -44,12 +44,13 @@ class CourseBuilder {
     course.name = name
   }
 
-  fun lesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit) {
+  fun lesson(name: String? = null, isFramework: Boolean = false, buildLesson: LessonBuilder.() -> Unit) {
     val lessonBuilder = LessonBuilder(course)
     val lesson = lessonBuilder.lesson
     lesson.index = course.lessons.size + 1
     val nextLessonIndex = course.lessons.size + 1
     lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
+    lessonBuilder.lesson.isFrameworkLesson = isFramework
     lessonBuilder.buildLesson()
     course.addLesson(lesson)
   }
