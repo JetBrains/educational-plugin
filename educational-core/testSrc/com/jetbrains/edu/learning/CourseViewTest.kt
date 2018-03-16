@@ -2,6 +2,8 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.projectView.impl.AbstractProjectViewPane
+import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.actionSystem.AnAction
@@ -12,6 +14,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.*
+import com.intellij.ui.tree.AsyncTreeModel
+import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -28,9 +32,11 @@ import junit.framework.TestCase
 import org.junit.Assert
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.TimeUnit
+import javax.swing.JTree
 
 class CourseViewTest : EduTestCase() {
-
+  private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
   private var myCourse: Course? = null
 
   @Throws(Exception::class)
@@ -55,22 +61,22 @@ class CourseViewTest : EduTestCase() {
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 
-//  fun testProjectOpened() {
-//    EduUtils.openFirstTask(myCourse!!, project)
-//    val projectView = ProjectView.getInstance(project)
-//    projectView.changeView(CourseViewPane.ID)
-//    val structure = "-Project\n" +
-//                    " -CourseNode Edu test course  0/4\n" +
-//                    "  -LessonNode lesson1\n" +
-//                    "   -TaskNode task1\n" +
-//                    "    taskFile1.txt\n" +
-//                    "   +TaskNode task2\n" +
-//                    "   +TaskNode task3\n" +
-//                    "   +TaskNode task4\n"
-//    val pane = projectView.currentProjectViewPane
-//    PlatformTestUtil.waitWhileBusy(pane.tree)
-//    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-//  }
+  fun testProjectOpened() {
+    EduUtils.openFirstTask(myCourse!!, project)
+    val projectView = ProjectView.getInstance(project)
+    projectView.changeView(CourseViewPane.ID)
+    val structure = "-Project\n" +
+                    " -CourseNode Edu test course  0/4\n" +
+                    "  -LessonNode lesson1\n" +
+                    "   -TaskNode task1\n" +
+                    "    taskFile1.txt\n" +
+                    "   +TaskNode task2\n" +
+                    "   +TaskNode task3\n" +
+                    "   +TaskNode task4\n"
+    val pane = projectView.currentProjectViewPane
+    waitWhileBusy(pane)
+    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+  }
 
   fun testSections() {
     val section = Section()
@@ -95,9 +101,9 @@ class CourseViewTest : EduTestCase() {
                           "     taskFile3.txt\n" +
                           "    -TaskNode task4\n" +
                           "     taskFile4.txt\n"
-    PlatformTestUtil.waitWhileBusy(tree)
+    waitWhileBusy(pane)
     TreeUtil.expandAll(tree)
-    PlatformTestUtil.waitWhileBusy(tree)
+    waitWhileBusy(pane)
     PlatformTestUtil.assertTreeEqual(tree, structure)
     myCourse!!.sections.clear()
   }
@@ -135,22 +141,50 @@ class CourseViewTest : EduTestCase() {
     TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
   }
 
-//  fun testCheckTask() {
-//    configureByTaskFile(1, 1, "taskFile1.txt")
-//    val projectView = ProjectView.getInstance(project)
-//    projectView.changeView(CourseViewPane.ID)
-//
-//    val fileName = "lesson1/task1/taskFile1.txt"
-//    val taskFile = myFixture.findFileInTempDir(fileName)
-//    val action = CheckAction()
-//    launchAction(taskFile, action)
-//
-//    val pane = projectView.currentProjectViewPane
-//    val structure = "-Project\n" +
-//                          " +CourseNode Edu test course  1/4\n"
-//    PlatformTestUtil.waitWhileBusy(pane.tree)
-//    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-//  }
+  fun testCheckTask() {
+    configureByTaskFile(1, 1, "taskFile1.txt")
+    val projectView = ProjectView.getInstance(project)
+    projectView.changeView(CourseViewPane.ID)
+
+    val fileName = "lesson1/task1/taskFile1.txt"
+    val taskFile = myFixture.findFileInTempDir(fileName)
+    val action = CheckAction()
+    launchAction(taskFile, action)
+
+    val pane = projectView.currentProjectViewPane
+    val structure = "-Project\n" +
+                          " +CourseNode Edu test course  1/4\n"
+    waitWhileBusy(pane)
+    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+  }
+
+  private fun waitWhileBusy(pane: AbstractProjectViewPane) {
+    val startTimeMillis = System.currentTimeMillis()
+    while (isBusy(pane.tree)) {
+      assertMaxWaitTimeSince(startTimeMillis)
+    }
+  }
+
+  private fun getMillisSince(startTimeMillis: Long): Long {
+    return System.currentTimeMillis() - startTimeMillis
+  }
+
+  private fun assertMaxWaitTimeSince(startTimeMillis: Long) {
+    assert(getMillisSince(startTimeMillis) <= MAX_WAIT_TIME) { "the waiting takes too long" }
+  }
+
+  private fun isBusy(tree: JTree): Boolean {
+    UIUtil.dispatchAllInvocationEvents()
+    val model = tree.model
+    if (model is AsyncTreeModel) {
+      if (model.isProcessing) return true
+      UIUtil.dispatchAllInvocationEvents()
+      return model.isProcessing
+    }
+    val builder = AbstractTreeBuilder.getBuilderFor(tree) ?: return false
+    val ui = builder.ui ?: return false
+    return ui.hasPendingWork()
+  }
 
   private fun launchAction(taskFile: VirtualFile, action: CheckAction) {
     val e = getActionEvent(taskFile, action)
