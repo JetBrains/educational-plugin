@@ -83,7 +83,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createComponent(): JComponent {
     val component = super.createComponent()
-    installComparator(AlphaComparator.INSTANCE)
+    installComparator(treeBuilder, AlphaComparator.INSTANCE)
 
     if (!EduUtils.isStudentProject(myProject)) return component
     val panel = JPanel(BorderLayout())
