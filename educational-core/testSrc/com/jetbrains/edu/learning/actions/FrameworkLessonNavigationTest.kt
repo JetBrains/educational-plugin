@@ -11,26 +11,26 @@ class FrameworkLessonNavigationTest : EduTestCase() {
 
   private val rootDir: VirtualFile get() = LightPlatformTestCase.getSourceRoot()
 
-  fun `test next`() = doTest("lesson1/task1/file-1.txt", NEXT) {
+  fun `test next`() = doTest("lesson1/task/file-1.txt", NEXT) {
     dir("lesson1") {
-      dir("task2") {
+      dir("task") {
         file("file-1.txt")
         file("file-2.txt")
       }
     }
   }
 
-  fun `test next next`() = doTest("lesson1/task1/file-1.txt", NEXT, NEXT) {
+  fun `test next next`() = doTest("lesson1/task/file-1.txt", NEXT, NEXT) {
     dir("lesson1") {
-      dir("task3") {
+      dir("task") {
         file("file-3.txt")
       }
     }
   }
 
-  fun `test next prev`() = doTest("lesson1/task1/file-1.txt", NEXT, PREV) {
+  fun `test next prev`() = doTest("lesson1/task/file-1.txt", NEXT, PREV) {
     dir("lesson1") {
-      dir("task1") {
+      dir("task") {
         file("file-1.txt")
       }
     }

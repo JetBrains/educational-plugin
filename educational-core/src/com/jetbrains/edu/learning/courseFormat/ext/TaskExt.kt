@@ -4,9 +4,11 @@ package com.jetbrains.edu.learning.courseFormat.ext
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 val Task.course: Course? get() = lesson?.course
@@ -19,6 +21,8 @@ val Task.testTextMap: Map<String, String> get() {
   val testDir = course.testDir ?: return emptyMap()
   return if (testDir.isEmpty()) testsText else testsText.mapKeys { (path, _) -> "$testDir/$path" }
 }
+
+val Task.dirName: String get() = if (lesson is FrameworkLesson) EduNames.TASK else name
 
 fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
   val sourceDir = sourceDir ?: return null

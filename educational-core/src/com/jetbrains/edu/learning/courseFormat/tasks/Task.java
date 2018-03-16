@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
@@ -173,7 +174,7 @@ public abstract class Task extends StudyItem {
     if (courseDir != null) {
       VirtualFile lessonDir = courseDir.findChild(myLesson.getName());
       if (lessonDir != null) {
-        return lessonDir.findChild(getName());
+        return lessonDir.findChild(TaskExt.getDirName(this));
       }
     }
     return null;
