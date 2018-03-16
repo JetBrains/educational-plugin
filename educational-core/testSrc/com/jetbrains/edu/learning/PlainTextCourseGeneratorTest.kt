@@ -59,7 +59,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
 
     val expectedFileTree = fileTree {
       dir("lesson1") {
-        dir("task1") {
+        dir("task") {
           file("Fizz.kt")
         }
       }
