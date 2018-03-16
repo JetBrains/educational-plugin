@@ -204,6 +204,9 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
           STUDY_ITEM.`is`(dataId) -> return studyItem
         }
       }
+      if (PlatformDataKeys.SELECTED_ITEMS.`is`(dataId)) {
+        return selectedElements
+      }
     }
     return super.getData(dataId)
   }
