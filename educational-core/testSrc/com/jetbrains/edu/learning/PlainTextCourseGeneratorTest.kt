@@ -39,4 +39,36 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
 
     expectedFileTree.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
+
+  fun `test course with framework lesson structure creation`() {
+    courseWithFiles {
+      lesson(isFramework = true) {
+        eduTask {
+          taskFile("Fizz.kt")
+        }
+        eduTask {
+          taskFile("Buzz.kt")
+        }
+      }
+      lesson {
+        eduTask {
+          taskFile("FizzBuzz.kt")
+        }
+      }
+    }
+
+    val expectedFileTree = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("Fizz.kt")
+        }
+      }
+      dir("lesson2") {
+        dir("task1") {
+          file("FizzBuzz.kt")
+        }
+      }
+    }
+    expectedFileTree.assertEquals(LightPlatformTestCase.getSourceRoot())
+  }
 }
