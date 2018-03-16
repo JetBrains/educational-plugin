@@ -114,7 +114,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     return "testData"
   }
 
-  fun course(
+  fun courseWithFiles(
     name: String = "Test Course",
     language: Language = PlainTextLanguage.INSTANCE,
     settings: Any = Unit,
