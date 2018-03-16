@@ -43,7 +43,6 @@ class CourseViewTest : EduTestCase() {
   override fun setUp() {
     super.setUp()
     myCourse?.language = PlainTextLanguage.INSTANCE.id
-    registerPlainTextConfigurator()
     ProjectViewTestUtil.setupImpl(project, true)
   }
 
@@ -175,12 +174,6 @@ class CourseViewTest : EduTestCase() {
 
   private fun isBusy(tree: JTree): Boolean {
     UIUtil.dispatchAllInvocationEvents()
-    val model = tree.model
-    if (model is AsyncTreeModel) {
-      if (model.isProcessing) return true
-      UIUtil.dispatchAllInvocationEvents()
-      return model.isProcessing
-    }
     val builder = AbstractTreeBuilder.getBuilderFor(tree) ?: return false
     val ui = builder.ui ?: return false
     return ui.hasPendingWork()
@@ -227,31 +220,6 @@ class CourseViewTest : EduTestCase() {
     pane.createComponent()
     Disposer.register(project, pane)
     return pane
-  }
-
-  private fun registerPlainTextConfigurator() {
-    val extension = LanguageExtensionPoint<Annotator>()
-    extension.language = PlainTextLanguage.INSTANCE.id
-    extension.implementationClass = PlainTextConfigurator::class.java.name
-    PlatformTestUtil.registerExtension(
-      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.testRootDisposable)
-  }
-
-  class PlainTextConfigurator : EduConfigurator<Unit> {
-    override fun getCourseBuilder() = object : EduCourseBuilder<Unit> {
-      override fun createTaskContent(project: Project, task: Task, parentDirectory: VirtualFile, course: Course): VirtualFile? = null
-      override fun getLanguageSettings(): EduCourseBuilder.LanguageSettings<Unit> = EduCourseBuilder.LanguageSettings { Unit }
-    }
-
-    override fun getTestFileName() = "test.txt"
-
-    override fun excludeFromArchive(name: String) = false
-
-    override fun getTaskCheckerProvider() = TaskCheckerProvider{ task, project -> object: TaskChecker<EduTask>(task, project) {
-      override fun check(): CheckResult {
-        return CheckResult(CheckStatus.Solved, "")
-      }
-    }}
   }
 
   override fun getTestDataPath(): String {

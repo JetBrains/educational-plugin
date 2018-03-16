@@ -20,10 +20,7 @@ import com.intellij.ide.SelectInTarget
 import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ViewSettings
-import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
-import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
-import com.intellij.ide.projectView.impl.ProjectTreeStructure
-import com.intellij.ide.projectView.impl.ProjectViewTree
+import com.intellij.ide.projectView.impl.*
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeNode
@@ -83,7 +80,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createComponent(): JComponent {
     val component = super.createComponent()
-    installComparator(treeBuilder, AlphaComparator.INSTANCE)
+    treeBuilder.setNodeDescriptorComparator(AlphaComparator.INSTANCE)
 
     if (!EduUtils.isStudentProject(myProject)) return component
     val panel = JPanel(BorderLayout())
