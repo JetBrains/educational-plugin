@@ -5,7 +5,7 @@ import com.intellij.testFramework.LightPlatformTestCase
 class PlainTextCourseGeneratorTest : EduTestCase() {
 
   fun `test course structure creation`() {
-    course {
+    courseWithFiles {
       lesson {
         eduTask {
           taskFile("Fizz.kt")
