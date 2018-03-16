@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.course
+import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -238,7 +239,8 @@ object GeneratorUtils {
   }
 
   private fun createUniqueDir(parentDir: VirtualFile, item: StudyItem): VirtualFile {
-    val uniqueDirName = getUniqueValidName(parentDir, item.name)
+    val name = (item as? Task)?.dirName ?: item.name
+    val uniqueDirName = getUniqueValidName(parentDir, name)
     if (uniqueDirName != item.name) {
       item.customPresentableName = item.name
       item.name = uniqueDirName

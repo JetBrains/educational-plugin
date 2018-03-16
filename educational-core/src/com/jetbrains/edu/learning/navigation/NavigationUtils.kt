@@ -120,7 +120,7 @@ object NavigationUtils {
     val lesson = task.lesson
 
     if (lesson is FrameworkLesson && fromTask != null && fromTask.lesson == lesson) {
-      prepareNextTask(project, fromTask, task)
+      prepareNextTask(project, lesson, fromTask, task)
     }
 
     var taskDir = task.getTaskDir(project) ?: return
@@ -151,11 +151,8 @@ object NavigationUtils {
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
   }
 
-  private fun prepareNextTask(project: Project, currentTask: Task, targetTask: Task) {
+  private fun prepareNextTask(project: Project, frameworkLesson: FrameworkLesson, currentTask: Task, targetTask: Task) {
     val dir = currentTask.getTaskDir(project) ?: return
-    runWriteAction {
-      dir.rename(NavigationUtils::class.java, "${EduNames.TASK}${targetTask.index}")
-    }
 
     if (currentTask.index + 1 == targetTask.index) {
 
@@ -172,6 +169,7 @@ object NavigationUtils {
       dir.children.forEach { runWriteAction { it.delete(NavigationUtils::class.java) } }
       GeneratorUtils.createTask(targetTask, dir.parent)
     }
+    frameworkLesson.currentTaskIndex = targetTask.index - 1
   }
 
   private fun applyDiff(
