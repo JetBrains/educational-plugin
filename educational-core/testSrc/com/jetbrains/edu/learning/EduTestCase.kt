@@ -31,7 +31,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
-    registerPlainTextConfigurator(myFixture.testRootDisposable)
+    registerPlainTextConfigurator(myFixture.project)
     createCourse()
 
     val dockManager = DockManager.getInstance(myFixture.project)
