@@ -9,8 +9,7 @@ import com.jetbrains.edu.learning.checker.OutputTaskChecker
  */
 class OutputTask : Task() {
   companion object {
-    @JvmField
-    val OUTPUT_TASK_TYPE = "output"
+    const val OUTPUT_TASK_TYPE = "output"
   }
 
   override fun getTaskType() = OUTPUT_TASK_TYPE
