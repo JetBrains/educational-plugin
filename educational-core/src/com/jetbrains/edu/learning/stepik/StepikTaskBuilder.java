@@ -49,6 +49,13 @@ public class StepikTaskBuilder {
     .put("admin", this::unsupportedTask)
     .build();
 
+  private final Map<String, Computable<Task>> eduTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
+    .put("edu", StepikTaskBuilder::eduTask)
+    .put("subtask", this::taskWithSubtask)
+    .put("output", StepikTaskBuilder::outputTask)
+    .put("ide", StepikTaskBuilder::ideTask)
+    .build();
+
   private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.<String, String>builder()
     .put("code", "Programming")
     .put("choice", "Quiz")
@@ -233,11 +240,7 @@ public class StepikTaskBuilder {
       LOG.error("Got a block with non-pycharm prefix: " + myStep.name + " for step: " + myStepId);
       return null;
     }
-    final int lastSubtaskIndex = myStep.options.lastSubtaskIndex;
-    Task task = new EduTask();
-    if (lastSubtaskIndex != 0) {
-      task = createTaskWithSubtasks(lastSubtaskIndex);
-    }
+    Task task = createEduTask();
     task.setStepId(myStepId);
     task.setUpdateDate(myStepSource.update_date);
     task.setName(myStep.options != null ? myStep.options.title : (PYCHARM_PREFIX + StepikConnector.CURRENT_VERSION));
@@ -269,10 +272,35 @@ public class StepikTaskBuilder {
   }
 
   @NotNull
-  private static Task createTaskWithSubtasks(int lastSubtaskIndex) {
+  private Task createEduTask() {
+    String type = myStep.options.taskType;
+    if (type == null || !eduTaskTypes.containsKey(type)) {
+      return eduTask();
+    }
+    if (myStep.options.lastSubtaskIndex != 0) {
+      return taskWithSubtask();
+    }
+    return eduTaskTypes.get(type).compute();
+  }
+
+  @NotNull
+  private Task taskWithSubtask() {
+    final int lastSubtaskIndex = myStep.options.lastSubtaskIndex;
     TaskWithSubtasks task = new TaskWithSubtasks();
     task.setLastSubtaskIndex(lastSubtaskIndex);
     return task;
+  }
+
+  private static Task eduTask() {
+    return new EduTask();
+  }
+
+  private static Task ideTask() {
+    return new IdeTask();
+  }
+
+  private static Task outputTask() {
+    return new OutputTask();
   }
 
   private static void addPlaceholdersTexts(TaskFile file) {

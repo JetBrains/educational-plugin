@@ -42,6 +42,8 @@ public class StepikWrappers {
   }
 
   public static class StepOptions {
+    @SerializedName("task_type")
+    @Expose public String taskType;
     @Expose public List<FileWrapper> test;
     @Expose public String title;
     @Expose public List<TaskFile> files;
@@ -65,6 +67,7 @@ public class StepikWrappers {
       setTaskTexts(task, source);
       setTaskFiles(project, task, source);
       setAdditionalFiles(task, source);
+      source.taskType = task.getTaskType();
       return source;
     }
 
