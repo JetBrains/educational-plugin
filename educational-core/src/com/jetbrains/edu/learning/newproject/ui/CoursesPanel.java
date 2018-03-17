@@ -184,12 +184,16 @@ public class CoursesPanel extends JPanel {
     myCoursePanel.bindCourse(selectedCourse);
     if (!isLoggedIn()) {
       myErrorLabel.setVisible(true);
-      final boolean loginRequired = selectedCourse.isAdaptive() ||
-                                    (selectedCourse instanceof RemoteCourse && !((RemoteCourse)selectedCourse).isCompatible());
+      final boolean loginRequired = isLoginRequired(selectedCourse);
       myErrorLabel.setText(
         UIUtil.toHtml("<u><b>Log in</b></u> to Stepik " + (loginRequired ? "to start this course" : "to see more courses")));
       myErrorLabel.setForeground((loginRequired ? MessageType.ERROR : MessageType.WARNING).getTitleForeground());
     }
+  }
+
+  private static boolean isLoginRequired(Course selectedCourse) {
+    return selectedCourse.isAdaptive()
+           || (selectedCourse instanceof RemoteCourse && !((RemoteCourse)selectedCourse).isCompatible());
   }
 
   private static boolean isLoggedIn() {
@@ -328,7 +332,7 @@ public class CoursesPanel extends JPanel {
       return true;
     }
 
-    return !selectedCourse.isAdaptive();
+    return !isLoginRequired(selectedCourse);
   }
 
   public interface CourseValidationListener {
