@@ -1,6 +1,4 @@
-5559 # Java Practice Intro
-5801 # Java Practice Types
-5803 # Java Practice Statements
-5804 # Java Practice Arrays
-5806 # Java Practice Classes
-5807 # Java Practice Collections
+6858 # Java. Introduction
+6859 # Java. Statements and Arrays
+6864 # Java. Classes
+6860 # Java. Collections
