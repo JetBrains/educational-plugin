@@ -24,6 +24,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.SubtaskUtils;
+import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -445,6 +446,7 @@ public class StepikSolutionsLoader implements Disposable {
             taskFile.setTrackChanges(false);
             VfsUtil.saveText(vFile, solutionText.get(taskFile.name));
             SaveAndSyncHandler.getInstance().refreshOpenFiles();
+            CheckUtils.drawAllPlaceholders(project, task);
             taskFile.setTrackChanges(true);
           }
           catch (IOException e) {
