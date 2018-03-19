@@ -51,7 +51,7 @@ public class StepikTaskBuilder {
 
   private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.<String, String>builder()
     .put("code", "Programming")
-    .put("choice", "Choice")
+    .put("choice", "Quiz")
     .put("text", "Theory")
     .put("pycharm", "Programming")
     .put("video", "Video")
