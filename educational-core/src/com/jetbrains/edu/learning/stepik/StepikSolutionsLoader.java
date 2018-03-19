@@ -432,7 +432,7 @@ public class StepikSolutionsLoader implements Disposable {
     if (taskDir == null) {
       return;
     }
-    ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       // we can switch subtask before we load document change, because otherwise placeholder text is inserted twice.
       // see com.jetbrains.edu.learning.SubtaskUtils.updatePlaceholderTexts()
       if (task instanceof TaskWithSubtasks && task.equals(mySelectedTask)) {
