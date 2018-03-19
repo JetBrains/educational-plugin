@@ -438,7 +438,7 @@ public class StepikSolutionsLoader implements Disposable{
         showActiveSubtask();
       }
       for (TaskFile taskFile : task.getTaskFiles().values()) {
-        VirtualFile vFile = taskDir.findFileByRelativePath(taskFile.name);
+        VirtualFile vFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
         if (vFile != null) {
           try {
             taskFile.setTrackChanges(false);
