@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
+import com.twelvemonkeys.lang.StringUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -414,7 +415,7 @@ public class CCStepikConnector {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
     for (Integer sectionId : sectionsIds) {
       final Section section = StepikConnector.getSection(sectionId);
-      if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
+      if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
         final List<Lesson> lessons = StepikConnector.getLessons(course, sectionId);
         lessons.stream()
                 .filter(Lesson::isAdditional)

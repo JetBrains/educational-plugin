@@ -1,0 +1,36 @@
+{
+  "id": 8490,
+  "update_date": "Apr 17, 2018 3:09:23 PM",
+  "items": [
+    {
+      "id": 1,
+      "title": "lesson1",
+      "update_date": "Apr 17, 2018 3:09:23 PM",
+      "task_list": [
+        {
+          "name": "task1",
+          "stepic_id": 1,
+          "update_date": "Apr 17, 2018 3:09:23 PM",
+          "task_files": {
+            "Task.java": {
+              "name": "Task.java",
+              "text": "class Task {\n  //put your task here\n}",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "Test.java": "class Test {\n    // put your test here\n}"
+          },
+          "task_texts": {
+            "task": "Write task description here using markdown or html"
+          },
+          "task_type": "edu"
+        }
+      ]
+    }
+  ],
+  "summary": "Test Java Course",
+  "title": "Java Course",
+  "programming_language": "JAVA",
+  "language": "en"
+}

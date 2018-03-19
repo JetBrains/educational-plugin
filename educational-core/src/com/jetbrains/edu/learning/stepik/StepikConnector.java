@@ -5,11 +5,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.Language;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -43,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.BuiltInServerOptions;
 import org.jetbrains.ide.BuiltInServerManager;
 
+import javax.swing.event.HyperlinkEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -133,26 +138,64 @@ public class StepikConnector {
   }
 
   public static Date getCourseUpdateDate(final int courseId) {
-    final String url = StepikNames.COURSES + "/" + courseId;
-    try {
-      final List<RemoteCourse> courses = StepikClient.getFromStepik(url, CoursesContainer.class).courses;
-      if (!courses.isEmpty()) {
-        return courses.get(0).getUpdateDate();
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Could not retrieve course with id=" + courseId);
+    RemoteCourse course = getCourseFromStepik(EduSettings.getInstance().getUser(), courseId, true);
+
+    return course == null ? null : course.getUpdateDate();
+  }
+
+  public static void updateCourseIfNeeded(@NotNull Project project, @NotNull RemoteCourse course) {
+    int id = course.getId();
+
+    if (id == 0) {
+      return;
     }
 
-    return null;
+    if (!course.isStudy()) {
+      return;
+    }
+
+    ProgressManager.getInstance().runProcessWithProgressAsynchronously(new Backgroundable(project, "Updating Course") {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        if (!course.isUpToDate()) {
+          showUpdateAvailableNotification(project, course);
+        }
+      }
+    }, new EmptyProgressIndicator());
+  }
+
+  private static void showUpdateAvailableNotification(@NotNull Project project, @NotNull Course course) {
+    final Notification notification =
+      new Notification("Update.course", "Course Updates", "Course is ready to <a href=\"update\">update</a>", NotificationType.INFORMATION,
+                       new NotificationListener() {
+                         @Override
+                         public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+                           FileEditorManagerEx.getInstanceEx(project).closeAllFiles();
+
+                           ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+                             ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+                             new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
+                           }, "Updating Course", true, project);
+
+                           course.setUpdated();
+                         }
+                       });
+    notification.notify(project);
   }
 
   public static Date getLessonUpdateDate(final int lessonId) {
+    Lesson lesson = getLessonFromServer(lessonId);
+
+    return lesson == null ? null : lesson.getUpdateDate();
+  }
+
+  @Nullable
+  public static Lesson getLessonFromServer(final int lessonId) {
     final String url = StepikNames.LESSONS + "/" + lessonId;
     try {
       List<Lesson> lessons = StepikClient.getFromStepik(url, LessonContainer.class).lessons;
       if (!lessons.isEmpty()) {
-        return lessons.get(0).getUpdateDate();
+        return lessons.get(0);
       }
     }
     catch (IOException e) {
@@ -214,18 +257,19 @@ public class StepikConnector {
   }
 
   @Nullable
-  public static RemoteCourse getCourseFromStepik(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) throws IOException {
+  public static RemoteCourse getCourseFromStepik(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) {
     final URI url;
+    final CoursesContainer coursesContainer;
     try {
       url = new URIBuilder(StepikNames.COURSES + "/" + courseId)
         .addParameter("is_idea_compatible", String.valueOf(isIdeaCompatible))
         .build();
+      coursesContainer = getCoursesFromStepik(user, url);
     }
-    catch (URISyntaxException e) {
+    catch (URISyntaxException | IOException e) {
       LOG.error(e.getMessage());
       return null;
     }
-    final CoursesContainer coursesContainer = getCoursesFromStepik(user, url);
 
     if (coursesContainer != null && !coursesContainer.courses.isEmpty()) {
       return coursesContainer.courses.get(0);
@@ -279,7 +323,7 @@ public class StepikConnector {
     return CourseVisibility.PublicVisibility.INSTANCE;
   }
 
-  public static RemoteCourse getCourseByLink(@NotNull StepicUser user, @NotNull String link) throws IOException {
+  public static RemoteCourse getCourseByLink(@NotNull StepicUser user, @NotNull String link) {
     int courseId;
     try {
       courseId = Integer.parseInt(link);
@@ -694,7 +738,7 @@ public class StepikConnector {
     return null;
   }
 
-  private static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
+  public static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
     List<T> result = new ArrayList<>();
 
     int length = ids.length;
@@ -845,6 +889,7 @@ public class StepikConnector {
     return new Unit();
   }
 
+  @NotNull
   public static Section getSection(int sectionId) {
     try {
       List<Section> sections =
@@ -857,6 +902,10 @@ public class StepikConnector {
       LOG.warn("Failed getting section: " + sectionId);
     }
     return new Section();
+  }
+
+  public static Date getSectionUpdateDate(int sectionId) {
+    return getSection(sectionId).getUpdateDate();
   }
 
   public static Lesson getLesson(int lessonId) {
