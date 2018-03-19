@@ -108,6 +108,7 @@ public class StepikTaskBuilder {
     CodeTask task = new CodeTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
+    task.setUpdateDate(myStepSource.update_date);
 
     task.setStatus(CheckStatus.Unchecked);
     final StringBuilder taskDescription = new StringBuilder(myStep.text);
@@ -167,6 +168,7 @@ public class StepikTaskBuilder {
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
     task.setDescriptionText(myStep.text);
+    task.setUpdateDate(myStepSource.update_date);
 
     final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = StepikAdaptiveConnector.getAttemptForStep(myStepId, myUserId);
     if (attempt != null) {
@@ -198,6 +200,7 @@ public class StepikTaskBuilder {
     TheoryTask task = new TheoryTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
+    task.setUpdateDate(myStepSource.update_date);
     task.setDescriptionText(myStep.text);
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
     String taskFileName = getTaskFileName(myLanguage);

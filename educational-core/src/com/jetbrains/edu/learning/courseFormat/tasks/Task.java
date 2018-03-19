@@ -167,14 +167,9 @@ public abstract class Task extends StudyItem {
 
   @Nullable
   public VirtualFile getTaskDir(@NotNull final Project project) {
-    VirtualFile courseDir = EduUtils.getCourseDir(project);
-    if (courseDir != null) {
-      final VirtualFile lessonDir = myLesson.getLessonDir(project);
-      if (lessonDir != null) {
-        return lessonDir.findChild(TaskExt.getDirName(this));
-      }
-    }
-    return null;
+    final VirtualFile lessonDir = myLesson.getLessonDir(project);
+
+    return lessonDir == null ? null : lessonDir.findChild(TaskExt.getDirName(this));
   }
 
   /**

@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.KeyedLazyInstance;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -35,7 +36,6 @@ public class RemoteCourse extends Course {
   List<Integer> instructors = new ArrayList<>();
   @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate;
-  private Boolean isUpToDate = true;
   @Expose private boolean isAdaptive = false;
   @Expose @SerializedName("is_public") boolean isPublic;
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses
@@ -84,34 +84,51 @@ public class RemoteCourse extends Course {
     if (id == 0) return true;
     if (!isStudy()) return true;
 
-    ProgressManager.getInstance().runProcessWithProgressAsynchronously(new Backgroundable(null, "Updating Course") {
-      @Override
-      public void run(@NotNull ProgressIndicator indicator) {
-        final Date date = StepikConnector.getCourseUpdateDate(id);
-        if (date == null) return;
-        if (date.after(myUpdateDate)) {
-          isUpToDate = false;
-        }
-        visitLessons((lesson, index) -> {
-          if (!lesson.isUpToDate()) {
-            isUpToDate = false;
-          }
-          return true;
-        });
-      }
-    }, new EmptyProgressIndicator());
 
-    return isUpToDate;
+    RemoteCourse courseFromServer = StepikConnector.getCourseFromStepik(EduSettings.getInstance().getUser(), id, isCompatible);
+    if (courseFromServer == null) return true;
+
+    final Date date = courseFromServer.getUpdateDate();
+    if (date == null) return true;
+    if (date.after(myUpdateDate)) {
+      return false;
+    }
+
+    int itemsWithoutAdditional = courseFromServer.sectionIds.size() - 1;
+    int itemsSize = getLessons(false).size() + getSections().size();
+    if (itemsSize < itemsWithoutAdditional) {
+      return false;
+    }
+
+    for (StudyItem item : items) {
+      if (item instanceof Section) {
+        if (!((Section)item).isUpToDate()) {
+          return false;
+        }
+      }
+      else if (item instanceof Lesson) {
+        if (!((Lesson)item).isUpToDate()) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   @Override
   public void setUpdated() {
     setUpdateDate(StepikConnector.getCourseUpdateDate(id));
-    visitLessons((lesson, index) -> {
+    visitLessons((lesson) -> {
       lesson.setUpdateDate(StepikConnector.getLessonUpdateDate(lesson.getId()));
       for (Task task : lesson.getTaskList()) {
         task.setUpdateDate(StepikConnector.getTaskUpdateDate(task.getStepId()));
       }
+      return true;
+    });
+
+    visitSections((section) -> {
+      section.setUpdateDate(StepikConnector.getSectionUpdateDate((section).getId()));
       return true;
     });
   }

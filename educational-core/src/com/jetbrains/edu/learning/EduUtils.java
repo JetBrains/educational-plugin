@@ -517,7 +517,7 @@ public class EduUtils {
     return null;
   }
 
-  @Nullable
+  @NotNull
   public static VirtualFile getCourseDir(@NotNull Project project) {
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       return project.getBaseDir();
@@ -824,7 +824,7 @@ public class EduUtils {
   @Nullable
   private static Task getTask(@NotNull Course course, int stepId) {
     Ref<Task> taskRef = new Ref<>();
-    course.visitLessons((lesson, index) -> {
+    course.visitLessons((lesson) -> {
       Task task = lesson.getTask(stepId);
       if (task != null) {
         taskRef.set(task);

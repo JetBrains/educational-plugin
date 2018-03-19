@@ -2,9 +2,6 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
@@ -13,12 +10,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.ex.KeymapManagerEx;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
@@ -33,8 +28,11 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
@@ -46,9 +44,7 @@ import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
@@ -85,8 +81,8 @@ public class EduProjectComponent implements ProjectComponent {
           return;
         }
 
-        if (!course.isAdaptive() && !course.isUpToDate()) {
-          updateAvailable(course);
+        if (!course.isAdaptive() && course instanceof RemoteCourse) {
+          StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
         }
 
         final StepicUser currentUser = EduSettings.getInstance().getUser();
@@ -184,28 +180,6 @@ public class EduProjectComponent implements ProjectComponent {
     }
   }
 
-  private void updateAvailable(Course course) {
-    final Notification notification =
-      new Notification("Update.course", "Course Updates", "Course is ready to <a href=\"update\">update</a>", NotificationType.INFORMATION,
-                       new NotificationListener() {
-                         @Override
-                         public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                           FileEditorManagerEx.getInstanceEx(myProject).closeAllFiles();
-
-                           ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-                             ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-                             return execCancelable(() -> {
-                               updateCourse();
-                               return true;
-                             });
-                           }, "Updating Course", true, myProject);
-                           synchronize();
-                           course.setUpdated();
-                         }
-                       });
-    notification.notify(myProject);
-  }
-
   private void registerShortcuts() {
     TaskDescriptionToolWindow window = getStudyToolWindow(myProject);
     if (window != null) {
@@ -222,81 +196,6 @@ public class EduProjectComponent implements ProjectComponent {
       addShortcut(NextPlaceholderAction.ACTION_ID, new String[]{NextPlaceholderAction.SHORTCUT, NextPlaceholderAction.SHORTCUT2});
       addShortcut(PrevPlaceholderAction.ACTION_ID, new String[]{PrevPlaceholderAction.SHORTCUT});
     }
-  }
-
-  private void updateCourse() {
-    final Course currentCourse = StudyTaskManager.getInstance(myProject).getCourse();
-    if (!(currentCourse instanceof RemoteCourse)) return;
-    final Course course = StepikConnector.getCourse(myProject, (RemoteCourse)currentCourse);
-    if (course == null) return;
-    course.init(null, null, false);
-
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
-    if (configurator == null) {
-      LOG.info("EduConfigurator not found for language " + course.getLanguageById().getDisplayName());
-      return;
-    }
-
-    final ArrayList<Lesson> updatedLessons = new ArrayList<>();
-
-    int lessonIndex = 0;
-
-    //TODO: handle sections
-    for (Lesson lesson : course.getLessons(true)) {
-      lessonIndex += 1;
-      Lesson studentLesson = currentCourse.getLesson(lesson.getId());
-
-      final VirtualFile baseDir = myProject.getBaseDir();
-      final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
-      if (lessonDir == null) {
-        lesson.setIndex(lessonIndex);
-        lesson.init(currentCourse, null, false);
-        try {
-          GeneratorUtils.createLesson(lesson, baseDir);
-        }
-        catch (IOException e) {
-          LOG.error("Failed to create lesson");
-        }
-        for (int i = 1; i <= lesson.getTaskList().size(); i++) {
-          Task task = lesson.getTaskList().get(i - 1);
-          task.setIndex(i);
-        }
-        updatedLessons.add(lesson);
-        continue;
-      }
-      studentLesson.setIndex(lessonIndex);
-      updatedLessons.add(studentLesson);
-
-      int index = 0;
-      final ArrayList<Task> tasks = new ArrayList<>();
-      for (Task task : lesson.getTaskList()) {
-        index += 1;
-        final Task studentTask = studentLesson.getTask(task.getStepId());
-        if (studentTask != null && CheckStatus.Solved.equals(studentTask.getStatus())) {
-          studentTask.setIndex(index);
-          tasks.add(studentTask);
-          continue;
-        }
-        task.init(currentCourse, studentLesson, false);
-        task.setIndex(index);
-
-        final VirtualFile taskDir = lessonDir.findChild(task.getName());
-
-        if (taskDir != null) return;
-        try {
-          GeneratorUtils.createTask(task, lessonDir);
-        }
-        catch (IOException e) {
-          LOG.error("Failed to create task");
-        }
-        tasks.add(task);
-      }
-      studentLesson.updateTaskList(tasks);
-    }
-
-    final Notification notification =
-      new Notification("Update.course", "Course update", "Current course is synchronized", NotificationType.INFORMATION);
-    notification.notify(myProject);
   }
 
   private void addShortcut(@NotNull final String actionIdString, @NotNull final String[] shortcuts) {
