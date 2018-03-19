@@ -34,6 +34,10 @@ class FileTree(private val rootDirectory: Entry.Directory) {
               fixture.openFileInEditor(child)
               fixture.checkResult(entry.text)
             }
+            else if(entry.text != null) {
+              val actualText = VfsUtil.loadText(child)
+              check(actualText == entry.text, { "Expected: \n${entry.text} \n Actual: \n${actualText}" })
+            }
           }
           is Entry.Directory -> go(entry, child)
         }

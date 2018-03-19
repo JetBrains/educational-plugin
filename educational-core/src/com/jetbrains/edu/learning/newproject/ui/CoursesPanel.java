@@ -53,7 +53,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -446,40 +445,34 @@ public class CoursesPanel extends JPanel {
         String courseLink = dialogWrapper.courseLink();
         StepicUser user = EduSettings.getInstance().getUser();
         assert user != null;
-        try {
-          RemoteCourse course = StepikConnector.getCourseByLink(user, courseLink);
-          List<Language> languages = getLanguagesUnderProgress(course);
+        RemoteCourse course = StepikConnector.getCourseByLink(user, courseLink);
+        List<Language> languages = getLanguagesUnderProgress(course);
 
-          if (languages == null || languages.isEmpty()) {
-            Messages.showErrorDialog("No supported languages available for the course", "Failed to Import Course");
-            return;
-          }
-          if (course == null) {
-            showFailedToAddCourseNotification();
-            return;
-          }
-          Language language;
-          if (languages.size() == 1) {
-            language = languages.get(0);
+        if (languages == null || languages.isEmpty()) {
+          Messages.showErrorDialog("No supported languages available for the course", "Failed to Import Course");
+          return;
+        }
+        if (course == null) {
+          showFailedToAddCourseNotification();
+          return;
+        }
+        Language language;
+        if (languages.size() == 1) {
+          language = languages.get(0);
+        }
+        else {
+          ChooseStepikCourseLanguageDialog chooseLanguageDialog = new ChooseStepikCourseLanguageDialog(languages, course.getName());
+          if (chooseLanguageDialog.showAndGet()) {
+            language = chooseLanguageDialog.selectedLanguage();
           }
           else {
-            ChooseStepikCourseLanguageDialog chooseLanguageDialog = new ChooseStepikCourseLanguageDialog(languages, course.getName());
-            if (chooseLanguageDialog.showAndGet()) {
-              language = chooseLanguageDialog.selectedLanguage();
-            }
-            else {
-              return;
-            }
+            return;
           }
-          course.setType("pycharm2 " + language.getID());
-          course.setLanguage(language.getID());
-          myCourses.add(course);
-          updateModel(myCourses, course.getName());
         }
-        catch (IOException e) {
-          LOG.warn(e.getMessage());
-          showFailedToAddCourseNotification();
-        }
+        course.setType("pycharm2 " + language.getID());
+        course.setLanguage(language.getID());
+        myCourses.add(course);
+        updateModel(myCourses, course.getName());
       }
     }
 
