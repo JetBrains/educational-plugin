@@ -426,12 +426,12 @@ public class SerializationUtils {
         if (!object.has(ITEM_TYPE)) {
           return gson.fromJson(object, Lesson.class);
         } else {
-          String lessonType = object.get(ITEM_TYPE).getAsString();
-          switch (lessonType) {
+          String itemType = object.get(ITEM_TYPE).getAsString();
+          switch (itemType) {
             case EduNames.LESSON: return gson.fromJson(object, Lesson.class);
             case FRAMEWORK_TYPE: return gson.fromJson(object, FrameworkLesson.class);
             case EduNames.SECTION: return gson.fromJson(object, Section.class);
-            default: throw new IllegalArgumentException("Unsupported lesson type: " + lessonType);
+            default: throw new IllegalArgumentException("Unsupported lesson type: " + itemType);
           }
         }
       }

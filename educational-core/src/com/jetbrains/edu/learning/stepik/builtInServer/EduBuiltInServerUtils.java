@@ -158,13 +158,9 @@ public class EduBuiltInServerUtils {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
         execCancelable(() -> {
-          try {
-            StepicUser user = StepikAuthorizedClient.getCurrentUser();
-            RemoteCourse course = StepikConnector.getCourseFromStepik(user, courseId, true);
-            showDialog(course, stepId);
-          } catch (IOException e) {
-            LOG.warn("Tried to create a project for course with id=" + courseId, e);
-          }
+          StepicUser user = StepikAuthorizedClient.getCurrentUser();
+          RemoteCourse course = StepikConnector.getCourseFromStepik(user, courseId, true);
+          showDialog(course, stepId);
           return null;
         });
       }, "Getting Course", true, defaultProject);
