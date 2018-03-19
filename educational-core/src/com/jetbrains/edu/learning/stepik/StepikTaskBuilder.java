@@ -32,7 +32,7 @@ public class StepikTaskBuilder {
   @NonNls private String myName;
   private final Language myLanguage;
   private StepikWrappers.Step myStep;
-  private final Map<String, Computable<Task>> taskTypes = ImmutableMap.<String, Computable<Task>>builder()
+  private final Map<String, Computable<Task>> stepikTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
     .put("code", this::codeTask)
     .put("choice", this::choiceTask)
     .put("text", this::theoryTask)
@@ -49,7 +49,7 @@ public class StepikTaskBuilder {
     .put("admin", this::unsupportedTask)
     .build();
 
-  private final Map<String, Computable<Task>> eduTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
+  private final Map<String, Computable<Task>> pluginTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
     .put("edu", StepikTaskBuilder::eduTask)
     .put("subtask", this::taskWithSubtask)
     .put("output", StepikTaskBuilder::outputTask)
@@ -96,11 +96,11 @@ public class StepikTaskBuilder {
   @Nullable
   public Task createTask(String type) {
     myName = myName == EMPTY_NAME ? DEFAULT_NAMES.get(type) : myName;
-    return taskTypes.get(type).compute();
+    return stepikTaskTypes.get(type).compute();
   }
 
   public boolean isSupported(String type) {
-    return taskTypes.containsKey(type);
+    return stepikTaskTypes.containsKey(type);
   }
 
   @NotNull
@@ -240,7 +240,7 @@ public class StepikTaskBuilder {
       LOG.error("Got a block with non-pycharm prefix: " + myStep.name + " for step: " + myStepId);
       return null;
     }
-    Task task = createEduTask();
+    Task task = createPluginTask();
     task.setStepId(myStepId);
     task.setUpdateDate(myStepSource.update_date);
     task.setName(myStep.options != null ? myStep.options.title : (PYCHARM_PREFIX + StepikConnector.CURRENT_VERSION));
@@ -272,15 +272,15 @@ public class StepikTaskBuilder {
   }
 
   @NotNull
-  private Task createEduTask() {
+  private Task createPluginTask() {
     String type = myStep.options.taskType;
-    if (type == null || !eduTaskTypes.containsKey(type)) {
+    if (type == null || !pluginTaskTypes.containsKey(type)) {
       return eduTask();
     }
     if (myStep.options.lastSubtaskIndex != 0) {
       return taskWithSubtask();
     }
-    return eduTaskTypes.get(type).compute();
+    return pluginTaskTypes.get(type).compute();
   }
 
   @NotNull
