@@ -2,8 +2,10 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Date;
 import java.util.List;
 
 public class Section extends ItemContainer {
@@ -14,7 +16,11 @@ public class Section extends ItemContainer {
   private String name;
 
   private int position;
+  @Expose
   private int id;
+  @Expose
+  @SerializedName("update_date")
+  private Date myUpdateDate;
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     int index = 1;
@@ -59,5 +65,28 @@ public class Section extends ItemContainer {
   @Override
   public void setName(String name) {
     this.name = name;
+  }
+
+  public boolean isUpToDate() {
+    if (id == 0) return true;
+    Section section = StepikConnector.getSection(id);
+    if (section.getUpdateDate() == null) return true;
+    if (myUpdateDate == null) return false;
+    if (section.units.size() != getLessons().size()) return false;
+    for (Lesson lesson : getLessons()) {
+      if (!lesson.isUpToDate()) {
+        return false;
+      }
+    }
+
+    return !section.getUpdateDate().after(myUpdateDate);
+  }
+
+  public void setUpdateDate(Date updateDate) {
+    myUpdateDate = updateDate;
+  }
+
+  public Date getUpdateDate() {
+    return myUpdateDate;
   }
 }

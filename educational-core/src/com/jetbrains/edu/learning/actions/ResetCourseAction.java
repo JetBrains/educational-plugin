@@ -37,7 +37,7 @@ public class ResetCourseAction extends DumbAwareAction {
     ((RemoteCourse)course).setLoadSolutions(false);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      course.visitLessons((lesson, index) -> {
+      course.visitLessons((lesson) -> {
         for (Task task : lesson.getTaskList()) {
           VirtualFile taskDir = task.getTaskDir(project);
           if (taskDir == null) continue;

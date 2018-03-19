@@ -54,7 +54,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       return;
     }
     final Ref<Integer> countTasks = new Ref<>(0);
-    course.visitLessons((lesson, index) -> {
+    course.visitLessons((lesson) -> {
       countTasks.set(countTasks.get() + lesson.getTaskList().size());
       return true;
     });

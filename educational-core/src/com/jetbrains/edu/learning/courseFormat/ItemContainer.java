@@ -27,6 +27,12 @@ public abstract class ItemContainer extends StudyItem {
   }
 
   @Nullable
+  public Lesson getLesson(int id) {
+    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
+      .findFirst(item -> id == ((Lesson)item).getId()).orElse(null);
+  }
+
+  @Nullable
   public StudyItem getItem(@NotNull final String name) {
     return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
@@ -58,25 +64,29 @@ public abstract class ItemContainer extends StudyItem {
   }
 
   public void visitLessons(@NotNull LessonVisitor visitor) {
-    int index = 1;
     for (StudyItem item : items) {
       if (item instanceof Lesson) {
-        final boolean visitNext = visitor.visitLesson((Lesson)item, index);
+        final boolean visitNext = visitor.visit((Lesson)item);
         if (!visitNext) {
           return;
         }
       }
       else if (item instanceof Section) {
-        index = 1;
         for (Lesson lesson : ((Section)item).getLessons()) {
-          final boolean visitNext = visitor.visitLesson(lesson, index);
+          final boolean visitNext = visitor.visit(lesson);
           if (!visitNext) {
             return;
           }
         }
-        index += 1;
       }
-      index += 1;
+    }
+  }
+
+  public void visitSections(@NotNull SectionVisitor visitor) {
+    for (StudyItem item : items) {
+      if (item instanceof Section) {
+        visitor.visit((Section)item);
+      }
     }
   }
 }
