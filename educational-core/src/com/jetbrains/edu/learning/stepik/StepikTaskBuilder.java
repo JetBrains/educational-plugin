@@ -39,7 +39,7 @@ public class StepikTaskBuilder {
   );
   private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.of(
           "code", "Programming",
-          "choice", "Choice",
+          "choice", "Quiz",
           "text", "Theory",
           "pycharm", "Programming"
   );
