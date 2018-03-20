@@ -29,8 +29,7 @@ object PlaceholderDependencyManager {
     if (task.status != CheckStatus.Unchecked) {
       return
     }
-    val dependencies = task.getDependencies()
-    if (dependencies.isEmpty()) {
+    if (task.placeholderDependencies.isEmpty()) {
       return
     }
 
@@ -44,7 +43,7 @@ object PlaceholderDependencyManager {
       return
     }
 
-    for (dependency in dependencies) {
+    for (dependency in task.placeholderDependencies) {
       val replacementText = getReplacementText(project, dependency)
       val placeholderToReplace = dependency.answerPlaceholder
       val document = getDocument(project, placeholderToReplace)!!

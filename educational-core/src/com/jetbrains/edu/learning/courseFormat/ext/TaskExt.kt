@@ -34,11 +34,11 @@ fun Task.findTestDir(taskDir: VirtualFile): VirtualFile? {
   return taskDir.findFileByRelativePath(testDir)
 }
 
-fun Task.getDependencies(): List<AnswerPlaceholderDependency> =
-  taskFiles.values.flatMap { it.answerPlaceholders.mapNotNull { it.placeholderDependency } }
+val Task.placeholderDependencies: List<AnswerPlaceholderDependency>
+  get() = taskFiles.values.flatMap { it.answerPlaceholders.mapNotNull { it.placeholderDependency } }
 
 fun Task.getUnsolvedTaskDependencies(): List<Task> {
-  return getDependencies()
+  return placeholderDependencies
     .mapNotNull { it.resolve(course ?: return@mapNotNull null)?.taskFile?.task }
     .filter { it.status != CheckStatus.Solved }
 }
