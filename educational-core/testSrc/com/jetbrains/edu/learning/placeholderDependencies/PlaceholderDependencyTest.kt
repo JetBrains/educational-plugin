@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
-import junit.framework.TestCase
 
 class PlaceholderDependencyTest : EduTestCase() {
 
@@ -97,9 +96,9 @@ class PlaceholderDependencyTest : EduTestCase() {
   private fun checkEditorNotification(virtualFile: VirtualFile, taskNames: List<String>) {
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
     val notificationPanel = fileEditor.getUserData(UnsolvedDependenciesNotificationProvider.KEY)
-    TestCase.assertNotNull("Notification not shown", notificationPanel != null)
+    assertNotNull("Notification not shown", notificationPanel != null)
     val panelText = notificationPanel?.getText()
-    TestCase.assertEquals("Panel text is incorrect", UnsolvedDependenciesNotificationProvider.getText(taskNames),
+    assertEquals("Panel text is incorrect", UnsolvedDependenciesNotificationProvider.getText(taskNames),
                           notificationPanel?.getText())
   }
 
@@ -110,7 +109,7 @@ class PlaceholderDependencyTest : EduTestCase() {
     val endOffset = startOffset + answerPlaceholder.realLength
     val actualContent = document.getText(TextRange.create(startOffset, endOffset))
 
-    TestCase.assertEquals("Placeholder content is incorrect", expectedContent, actualContent)
+    assertEquals("Placeholder content is incorrect", expectedContent, actualContent)
   }
 
   private fun findVirtualFile(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {

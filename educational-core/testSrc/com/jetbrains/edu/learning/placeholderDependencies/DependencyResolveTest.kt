@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.placeholderDependencies
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import junit.framework.TestCase
 
 
 class DependencyResolveTest : EduTestCase() {
@@ -57,7 +56,7 @@ class DependencyResolveTest : EduTestCase() {
           }
         }
       }
-      TestCase.fail("Exception is expected")
+      fail("Exception is expected")
     }
     catch (e: AnswerPlaceholderDependency.InvalidDependencyException) {
       println("Exception is correctly thrown")
@@ -95,7 +94,7 @@ class DependencyResolveTest : EduTestCase() {
   private fun checkPlaceholder(expectedOffset: Int, expectedLength: Int, actualPlaceholder: AnswerPlaceholder) {
     val actualOffset = actualPlaceholder.offset
     val actualLength = actualPlaceholder.realLength
-    TestCase.assertTrue("Resolved to wrong placeholder. Expected offset=$expectedOffset, length=$expectedLength, " +
+    assertTrue("Resolved to wrong placeholder. Expected offset=$expectedOffset, length=$expectedLength, " +
                         "but got offset=$actualOffset, length=$actualLength",
                         expectedOffset == actualOffset && expectedLength == expectedLength)
   }
