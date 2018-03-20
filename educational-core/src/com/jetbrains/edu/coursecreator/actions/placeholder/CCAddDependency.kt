@@ -34,7 +34,6 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
 
       override fun canClose(inputString: String): Boolean = errorText == null
     }
-    val task = answerPlaceholder.taskFile.task
     val dependency = Messages.showInputDialog(state.project, "", getActionName(answerPlaceholder), null, getInitialValue(answerPlaceholder), validator, null)
     if (dependency.isNullOrEmpty()) {
       return
