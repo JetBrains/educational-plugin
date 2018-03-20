@@ -420,6 +420,7 @@ public class StepikConnector {
   @NotNull
   private static List<Lesson> sortLessonsByUnits(List<Unit> units, List<Lesson> lessons) {
     HashMap<Integer, Lesson> idToLesson = new HashMap<>();
+    units.sort(Comparator.comparingInt(unit -> unit.section));
     for (Lesson lesson : lessons) {
       idToLesson.put(lesson.getId(), lesson);
     }
@@ -430,7 +431,6 @@ public class StepikConnector {
     }
     return sorted;
   }
-
   private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds) throws IOException {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
