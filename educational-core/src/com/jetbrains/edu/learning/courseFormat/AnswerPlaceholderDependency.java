@@ -98,7 +98,7 @@ public class AnswerPlaceholderDependency {
         throw new InvalidDependencyException(text, "dependencies should refer to previous tasks, not next ones");
       }
       String file = FileUtil.toSystemIndependentName(matcher.group(3));
-      int placeholderIndex = Integer.parseInt(matcher.group(5)) - 1;
+      int placeholderIndex = Integer.parseInt(matcher.group(4)) - 1;
       AnswerPlaceholderDependency dependency = new AnswerPlaceholderDependency(answerPlaceholder, lessonIndex, taskIndex, file, placeholderIndex);
       AnswerPlaceholder targetPlaceholder = dependency.resolve(course);
       if (targetPlaceholder == null) {
