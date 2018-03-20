@@ -174,7 +174,7 @@ public class StepikTaskBuilder {
     String taskFileName = getTaskFileName(myLanguage);
 
     if (taskFileName != null) {
-      String editorText = commentPrefix + " this is a theory task. You can use this editor as a playground\n";
+      String editorText = commentPrefix + " you can experiment here, it won’t be checked\n";
       final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
       if (configurator != null) {
         editorText += "\n" + configurator.getMockTemplate();
