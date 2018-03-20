@@ -41,6 +41,7 @@ fun Task.getUnsolvedTaskDependencies(): List<Task> {
   return placeholderDependencies
     .mapNotNull { it.resolve(course ?: return@mapNotNull null)?.taskFile?.task }
     .filter { it.status != CheckStatus.Solved }
+    .distinct()
 }
 
 fun Task.hasChangedFiles(project: Project): Boolean {
