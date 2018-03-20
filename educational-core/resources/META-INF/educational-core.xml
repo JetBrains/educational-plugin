@@ -162,7 +162,7 @@
               class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeactivatePlaceholder"/>
       <action id="Educational.Educator.EditAnswerPlaceholder"
               class="com.jetbrains.edu.coursecreator.actions.placeholder.CCEditAnswerPlaceholder"/>
-      <action  id="Educational.Educator.AddDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddDependency"/>
+      <action id="Educational.Educator.AddDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddDependency"/>
       <action id="Educational.Educator.RemoveDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCRemoveDependency"/>
       <action id="Educational.Educator.DeleteAnswerPlaceholder"
               class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAnswerPlaceholder"/>
