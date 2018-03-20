@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.*
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -140,9 +141,12 @@ class CourseViewTest : EduTestCase() {
                           " +CourseNode Edu test course  1/4\n"
     PlatformTestUtil.waitWhileBusy(pane.tree)
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+
+    val refreshTaskFileAction = RefreshTaskFileAction()
+    launchAction(taskFile, refreshTaskFileAction)
   }
 
-  private fun launchAction(taskFile: VirtualFile, action: CheckAction) {
+  private fun launchAction(taskFile: VirtualFile, action: AnAction) {
     val e = getActionEvent(taskFile, action)
     action.beforeActionPerformedUpdate(e)
     Assert.assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
