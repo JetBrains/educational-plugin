@@ -13,10 +13,8 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
   override fun performAnswerPlaceholderAction(state: CCState) {
     val answerPlaceholder = state.answerPlaceholder ?: return
     val validator: InputValidator = object : InputValidatorEx {
-      private var errorText = "";
-      override fun getErrorText(inputString: String): String? {
-        return if (errorText.isEmpty()) null else errorText
-      }
+      private var errorText: String? = null
+      override fun getErrorText(inputString: String): String? = errorText
 
       override fun checkInput(inputString: String): Boolean {
         return try {
@@ -25,7 +23,7 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
             errorText = "invalid dependency"
             return false
           }
-          errorText = ""
+          errorText = null
           true
         }
         catch (e: AnswerPlaceholderDependency.InvalidDependencyException) {
@@ -34,9 +32,7 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
         }
       }
 
-      override fun canClose(inputString: String): Boolean {
-        return errorText.isEmpty()
-      }
+      override fun canClose(inputString: String): Boolean = errorText == null
     }
     val task = answerPlaceholder.taskFile.task
     val dependency = Messages.showInputDialog(state.project, "", getActionName(answerPlaceholder), null, getInitialValue(answerPlaceholder), validator, null)
