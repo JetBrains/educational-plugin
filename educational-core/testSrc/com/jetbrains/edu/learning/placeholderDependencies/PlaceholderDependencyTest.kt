@@ -96,7 +96,7 @@ class PlaceholderDependencyTest : EduTestCase() {
   private fun checkEditorNotification(virtualFile: VirtualFile, taskNames: List<String>) {
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
     val notificationPanel = fileEditor.getUserData(UnsolvedDependenciesNotificationProvider.KEY)
-    assertNotNull("Notification not shown", notificationPanel != null)
+    assertNotNull("Notification not shown", notificationPanel)
     assertEquals("Panel text is incorrect", UnsolvedDependenciesNotificationProvider.getText(taskNames),
                           notificationPanel?.getText())
   }
