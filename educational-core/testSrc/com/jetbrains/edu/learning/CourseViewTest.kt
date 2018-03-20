@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -156,6 +157,9 @@ class CourseViewTest : EduTestCase() {
                           " +CourseNode Edu test course  1/4\n"
     waitWhileBusy(pane)
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+
+    val refreshTaskFileAction = RefreshTaskFileAction()
+    launchAction(taskFile, refreshTaskFileAction)
   }
 
   private fun waitWhileBusy(pane: AbstractProjectViewPane) {
@@ -186,7 +190,7 @@ class CourseViewTest : EduTestCase() {
     return ui.hasPendingWork()
   }
 
-  private fun launchAction(taskFile: VirtualFile, action: CheckAction) {
+  private fun launchAction(taskFile: VirtualFile, action: AnAction) {
     val e = getActionEvent(taskFile, action)
     action.beforeActionPerformedUpdate(e)
     Assert.assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
