@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 
 object PlaceholderDependencyManager {
+  @JvmStatic
   fun currentTaskChanged(project: Project, task: Task) {
     if (CCUtils.isCourseCreator(project)) {
       return
