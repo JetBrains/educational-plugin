@@ -35,7 +35,7 @@ public class StepikUtils {
     if (task instanceof TheoryTask) {
       finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. ";
     }
-    else if (task instanceof CodeTask) {
+    else if (task instanceof CodeTask && adaptive) {
       finalText += "<br/><br/><b>Note</b>: Use standard input to obtain input for the task.";
     }
     if (!(task instanceof EduTask) && !(task instanceof OutputTask)) {
