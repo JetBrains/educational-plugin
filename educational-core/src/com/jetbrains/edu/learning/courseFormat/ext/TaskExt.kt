@@ -2,15 +2,11 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 val Task.course: Course? get() = lesson?.course
@@ -46,16 +42,10 @@ fun Task.getUnsolvedTaskDependencies(): List<Task> {
 
 fun Task.hasChangedFiles(project: Project): Boolean {
   for (taskFile in taskFiles.values) {
-    val document = getDocument(project, taskFile) ?: continue
+    val document = taskFile.getDocument(project) ?: continue
     if (taskFile.text != null && document.text != taskFile.text) {
       return true
     }
   }
   return false
-}
-
-fun Task.getDocument(project: Project, taskFile: TaskFile): Document? {
-  val taskDir = getTaskDir(project) ?: return null
-  val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: return null
-  return FileDocumentManager.getInstance().getDocument(virtualFile)
 }

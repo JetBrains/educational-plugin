@@ -103,7 +103,7 @@ class PlaceholderDependencyTest : EduTestCase() {
 
   private fun checkPlaceholderContent(expectedContent: String, answerPlaceholder: AnswerPlaceholder) {
     val taskFile = answerPlaceholder.taskFile
-    val document = taskFile.task.getDocument(project, taskFile)!!
+    val document = taskFile.getDocument(project)!!
     val startOffset = answerPlaceholder.offset
     val endOffset = startOffset + answerPlaceholder.realLength
     val actualContent = document.getText(TextRange.create(startOffset, endOffset))

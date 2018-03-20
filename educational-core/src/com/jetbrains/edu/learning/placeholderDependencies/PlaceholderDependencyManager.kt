@@ -66,6 +66,6 @@ object PlaceholderDependencyManager {
 
   private fun getDocument(project: Project, placeholder: AnswerPlaceholder): Document {
     val taskFile = placeholder.taskFile
-    return taskFile.task.getDocument(project, taskFile)!!
+    return taskFile.getDocument(project)!!
   }
 }
