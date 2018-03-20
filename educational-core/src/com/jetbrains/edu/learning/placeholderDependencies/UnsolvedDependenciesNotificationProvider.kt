@@ -28,7 +28,7 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
   override fun getKey() = KEY
 
   override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): UnsolvedDependenciesNotificationPanel? {
-    if (!EduUtils.isStudyProject(project)) {
+    if (!EduUtils.isStudentProject(project)) {
       return null
     }
     val task = EduUtils.getTaskForFile(project, file) ?: return null
