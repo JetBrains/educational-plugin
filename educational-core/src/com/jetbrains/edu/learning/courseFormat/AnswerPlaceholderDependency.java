@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnswerPlaceholderDependency {
-  private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("lesson(\\d+)#task(\\d+)#((\\w+[\\/])*\\w+.\\w+)#(\\d+)");
+  private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("lesson(\\d+)#task(\\d+)#((\\w+[\\\\/])*\\w+.\\w+)#(\\d+)");
 
   @Expose
   @SerializedName("lesson")
