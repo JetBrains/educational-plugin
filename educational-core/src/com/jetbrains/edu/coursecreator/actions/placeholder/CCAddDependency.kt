@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 
 
-class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency of another answer placeholder") {
+class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency on another answer placeholder") {
   override fun performAnswerPlaceholderAction(state: CCState) {
     val answerPlaceholder = state.answerPlaceholder ?: return
     val validator: InputValidator = object : InputValidatorEx {
