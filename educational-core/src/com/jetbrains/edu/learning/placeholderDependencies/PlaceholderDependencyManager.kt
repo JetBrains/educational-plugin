@@ -46,7 +46,7 @@ object PlaceholderDependencyManager {
     for (dependency in task.placeholderDependencies) {
       val replacementText = getReplacementText(project, dependency)
       val placeholderToReplace = dependency.answerPlaceholder
-      val document = getDocument(project, placeholderToReplace)!!
+      val document = getDocument(project, placeholderToReplace)
       runUndoTransparentWriteAction {
         val startOffset = placeholderToReplace.offset
         val endOffset = startOffset + placeholderToReplace.realLength
@@ -58,14 +58,14 @@ object PlaceholderDependencyManager {
   private fun getReplacementText(project: Project, dependency: AnswerPlaceholderDependency): String {
     val course = dependency.answerPlaceholder.taskFile.task.course!!
     val dependencyPlaceholder = dependency.resolve(course)!!
-    val document = getDocument(project, dependencyPlaceholder)!!
+    val document = getDocument(project, dependencyPlaceholder)
     val startOffset = dependencyPlaceholder.offset
     val endOffset = startOffset + dependencyPlaceholder.realLength
     return document.getText(TextRange.create(startOffset, endOffset))
   }
 
-  private fun getDocument(project: Project, placeholder: AnswerPlaceholder): Document? {
+  private fun getDocument(project: Project, placeholder: AnswerPlaceholder): Document {
     val taskFile = placeholder.taskFile
-    return taskFile.task.getDocument(project, taskFile)
+    return taskFile.task.getDocument(project, taskFile)!!
   }
 }
