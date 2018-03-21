@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -75,9 +76,15 @@ object PlaceholderDependencyManager {
   private fun getReplacementText(project: Project, dependency: AnswerPlaceholderDependency): String {
     val course = dependency.answerPlaceholder.taskFile.task.course!!
     val dependencyPlaceholder = dependency.resolve(course)!!
-    val document = dependencyPlaceholder.taskFile.getDocument(project)!!
-    val startOffset = dependencyPlaceholder.offset
-    val endOffset = startOffset + dependencyPlaceholder.realLength
-    return document.getText(TextRange.create(startOffset, endOffset))
+    val dependencyTask = dependencyPlaceholder.taskFile.task
+    val dependencyLesson = dependencyTask.lesson
+    return if (dependencyLesson is FrameworkLesson && dependencyLesson.currentTaskIndex != dependencyTask.index - 1) {
+      dependencyPlaceholder.studentAnswer ?: error("Student answer should be not null here")
+    } else {
+      val document = dependencyPlaceholder.taskFile.getDocument(project)!!
+      val startOffset = dependencyPlaceholder.offset
+      val endOffset = startOffset + dependencyPlaceholder.realLength
+      document.getText(TextRange.create(startOffset, endOffset))
+    }
   }
 }
