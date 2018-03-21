@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
@@ -75,7 +76,7 @@ abstract class StepikTestCase : CCTestCase() {
     extension.language = PlainTextLanguage.INSTANCE.id
     extension.implementationClass = PlainTextConfigurator::class.java.name
     PlatformTestUtil.registerExtension(
-      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.testRootDisposable)
+      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.project)
   }
 
   /**
@@ -142,7 +143,7 @@ abstract class StepikTestCase : CCTestCase() {
     val parameters = ArrayList<NameValuePair>(listOf(BasicNameValuePair ("grant_type", "client_credentials")))
     val clientSecret = System.getenv("STEPIK_TEST_CLIENT_SECRET")
     if (clientSecret == null || clientSecret.isEmpty()) {
-      LOG.error("Test client secret is not provided")
+      Logger.getInstance(StepikTestCase::class.java).error("Test client secret is not provided")
       return null
     }
     return StepikAuthorizedClient.getTokens(parameters, "$CLIENT_ID:$clientSecret")
