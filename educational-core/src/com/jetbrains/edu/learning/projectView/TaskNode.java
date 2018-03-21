@@ -45,12 +45,12 @@ public class TaskNode extends EduNode {
     String subtaskInfo = myTask instanceof TaskWithSubtasks ? getSubtaskInfo((TaskWithSubtasks)myTask) : null;
     Icon icon = myTask.getIcon();
     if (status == CheckStatus.Unchecked) {
-      updatePresentation(data, myTask.getName(), JBColor.BLACK, icon, subtaskInfo);
+      updatePresentation(data, myTask.getPresentableName(), JBColor.BLACK, icon, subtaskInfo);
       return;
     }
     boolean isSolved = status == CheckStatus.Solved;
     JBColor color = isSolved ? LIGHT_GREEN : JBColor.RED;
-    updatePresentation(data, myTask.getName(), color, icon, subtaskInfo);
+    updatePresentation(data, myTask.getPresentableName(), color, icon, subtaskInfo);
   }
 
   private static String getSubtaskInfo(TaskWithSubtasks task) {

@@ -205,7 +205,6 @@
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
-    <editorTabTitleProvider implementation="com.jetbrains.edu.learning.EduTabTitleProvider"/>
     <typedHandler implementation="com.jetbrains.edu.learning.handlers.EduTypeHandlerDelegate"
                   order="first, before completionAutoPopup"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>

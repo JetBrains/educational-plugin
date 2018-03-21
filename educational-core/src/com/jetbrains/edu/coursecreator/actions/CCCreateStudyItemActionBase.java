@@ -110,8 +110,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       LOG.info("Failed to get parent directory");
       return null;
     }
-    CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item),
-                                 item.getIndex() - 1, getItemName(), 1);
+    CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item), item.getIndex() - 1, 1);
     if (EduNames.LESSON.equals(getItemName())) {
       CCUtils.updateSections(course, item.getIndex(), 1);
     }
@@ -139,14 +138,14 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     if (isAddedAsLast(sourceDirectory, project, course)) {
       itemIndex = getSiblingsSize(course, parentItem) + 1;
       String suggestedName = getItemName() + itemIndex;
-      itemName = shouldShowInputDialog ? Messages.showInputDialog("Name:", getTitle(), null, suggestedName, null) : suggestedName;
+      itemName = shouldShowInputDialog ? Messages.showInputDialog("Name:", getTitle(), null, suggestedName, new CCUtils.PathInputValidator(sourceDirectory)) : suggestedName;
     } else {
       StudyItem thresholdItem = getThresholdItem(course, sourceDirectory);
       if (thresholdItem == null) {
         return null;
       }
       final int index = thresholdItem.getIndex();
-      CCCreateStudyItemDialog dialog = new CCCreateStudyItemDialog(project, getItemName(), thresholdItem.getName(), index);
+      CCCreateStudyItemDialog dialog = new CCCreateStudyItemDialog(project, getItemName(), thresholdItem.getName(), index, sourceDirectory.getParent());
       dialog.show();
       if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
         return null;

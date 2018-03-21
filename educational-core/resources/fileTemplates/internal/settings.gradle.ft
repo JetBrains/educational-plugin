@@ -1,9 +1,16 @@
-rootProject.name = '$PROJECT_NAME$'
+static String sanitizeName(String name) {
+    return name.replaceAll("[ /\\\\:<>\"?*|]", "_")
+}
+
+rootProject.name = sanitizeName('$PROJECT_NAME$')
+
+
 
 def lessons = rootProject.projectDir.listFiles(new FilenameFilter() {
     @Override
     boolean accept(File dir, String name) {
-        return dir.isDirectory() && name.startsWith("lesson")
+        def ignoredNames = ["gradle", ".idea", "util"]
+        return new File(dir.path, name).isDirectory() && !ignoredNames.contains(name) && !name.startsWith(".")
     }
 })
 
@@ -15,11 +22,13 @@ def includeLesson(File lessonDir) {
     def tasks = lessonDir.listFiles(new FilenameFilter() {
         @Override
         boolean accept(File dir, String name) {
-            return dir.isDirectory() && name.startsWith("task")
+            return dir.isDirectory()
         }
     })
     for (task in tasks) {
-        include "${lessonDir.name}:${task.name}"
+        String moduleName = "${sanitizeName(lessonDir.name)}-${sanitizeName(task.name)}"
+        include "$moduleName"
+        project(":$moduleName").projectDir = new File(lessonDir.name, task.name)
     }
 }
 

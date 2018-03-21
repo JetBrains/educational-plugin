@@ -40,9 +40,8 @@ public interface EduCourseBuilder<Settings> {
                                           @NotNull VirtualFile parentDirectory) {
     final VirtualFile[] lessonDirectory = new VirtualFile[1];
     ApplicationManager.getApplication().runWriteAction(() -> {
-      String lessonDirName = EduNames.LESSON + lesson.getIndex();
       try {
-        lessonDirectory[0] = VfsUtil.createDirectoryIfMissing(parentDirectory, lessonDirName);
+        lessonDirectory[0] = VfsUtil.createDirectoryIfMissing(parentDirectory, lesson.getName());
       } catch (IOException e) {
         LOG.error("Failed to create lesson directory", e);
       }
@@ -69,7 +68,7 @@ public interface EduCourseBuilder<Settings> {
     } catch (IOException e) {
       LOG.error("Failed to create task", e);
     }
-    return parentDirectory.findChild(EduNames.TASK + task.getIndex());
+    return parentDirectory.findChild(task.getName());
   }
 
   /**
