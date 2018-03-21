@@ -12,8 +12,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/kotlin_course.json")
     val expectedFileTree = fileTree {
-      dir("lesson1") {
-        dir("task1") {
+      dir("Introduction") {
+        dir("Hello, world!") {
           dir("src") {
             file("Task.kt")
           }
@@ -21,7 +21,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
             file("tests.kt")
           }
         }
-        dir("task2") {
+        dir("Java to Kotlin conversion") {
           dir("src") {
             file("JavaCode.java")
             file("Task.kt")
@@ -31,8 +31,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
         }
       }
-      dir("lesson2") {
-        dir("task1") {
+      dir("Conventions") {
+        dir("Comparison") {
           dir("src") {
             file("Task.kt")
           }
@@ -78,8 +78,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
   fun `test educator course structure from not empty course`() {
     generateCourseStructure("testData/newCourse/kotlin_course.json", CourseType.EDUCATOR)
     val expectedFileTree = fileTree {
-      dir("lesson1") {
-        dir("task1") {
+      dir("Introduction") {
+        dir("Hello, world!") {
           dir("src") {
             file("Task.kt")
           }
@@ -88,7 +88,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           }
           file("task.html")
         }
-        dir("task2") {
+        dir("Java to Kotlin conversion") {
           dir("src") {
             file("JavaCode.java")
             file("Task.kt")
@@ -99,8 +99,8 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
           file("task.html")
         }
       }
-      dir("lesson2") {
-        dir("task1") {
+      dir("Conventions") {
+        dir("Comparison") {
           dir("src") {
             file("Task.kt")
           }

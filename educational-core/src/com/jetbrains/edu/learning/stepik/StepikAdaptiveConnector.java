@@ -251,6 +251,7 @@ public class StepikAdaptiveConnector {
     }
 
     indicator.checkCanceled();
+    String oldTaskName = lesson.getTaskList().get(lesson.getTaskList().size() - 1).getName();
     final Task task = getNextRecommendation(project, (RemoteCourse)course);
     if (task == null) {
       ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
@@ -261,7 +262,7 @@ public class StepikAdaptiveConnector {
     task.initTask(lesson, false);
     boolean replaceCurrentTask = reactionToPost == TOO_HARD_RECOMMENDATION_REACTION || reactionToPost == TOO_BORING_RECOMMENDATION_REACTION;
     if (replaceCurrentTask) {
-      replaceCurrentTask(project, task, lesson);
+      replaceCurrentTask(project, task, oldTaskName, lesson);
     }
     else {
       addAsNextTask(project, task, lesson);
@@ -282,15 +283,13 @@ public class StepikAdaptiveConnector {
     task.setIndex(lesson.getTaskList().size());
     lesson.initLesson(course, true);
 
-    final String lessonName = EduNames.LESSON + lesson.getIndex();
-    createFilesForNewTask(project, task, lessonName, course.getLanguageById());
+    createFilesForNewTask(project, task, course.getLanguageById());
   }
 
   private static void createFilesForNewTask(@NotNull Project project,
                                             @NotNull Task task,
-                                            @NotNull String lessonName,
                                             @NotNull Language language) {
-    final VirtualFile lessonDir = project.getBaseDir().findChild(lessonName);
+    final VirtualFile lessonDir = project.getBaseDir().findChild(task.getLesson().getName());
     if (lessonDir == null) {
       return;
     }
@@ -303,7 +302,7 @@ public class StepikAdaptiveConnector {
     }));
   }
 
-  public static void replaceCurrentTask(@NotNull Project project, @NotNull Task task, @NotNull Lesson lesson) {
+  public static void replaceCurrentTask(@NotNull Project project, @NotNull Task task, String oldTaskName, @NotNull Lesson lesson) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
 
@@ -312,20 +311,19 @@ public class StepikAdaptiveConnector {
     task.setIndex(taskIndex);
     lesson.getTaskList().set(taskIndex - 1, task);
 
-    final String lessonName = EduNames.LESSON + lesson.getIndex();
-    updateProjectFiles(project, task, lessonName, course.getLanguageById());
+    updateProjectFiles(project, task, oldTaskName, course.getLanguageById());
     setToolWindowText(project, task);
   }
 
-  private static void updateProjectFiles(@NotNull Project project, @NotNull Task task, @NotNull String lessonName, Language language) {
-    final VirtualFile lessonDir = project.getBaseDir().findChild(lessonName);
+  private static void updateProjectFiles(@NotNull Project project, @NotNull Task task, String oldTaskName, Language language) {
+    final VirtualFile lessonDir = project.getBaseDir().findChild(task.getLesson().getName());
     if (lessonDir == null) {
       return;
     }
 
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {
-        removeOldProjectFiles(lessonDir, task.getIndex());
+        removeOldProjectFiles(project, task, oldTaskName);
         EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
         if (configurator != null) {
           configurator.getCourseBuilder().createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
@@ -337,8 +335,13 @@ public class StepikAdaptiveConnector {
     }));
   }
 
-  private static void removeOldProjectFiles(@NotNull VirtualFile lessonDir, int taskIndex) throws IOException {
-    final VirtualFile taskDir = lessonDir.findChild(EduNames.TASK + taskIndex);
+  private static void removeOldProjectFiles(@NotNull Project project, @NotNull Task task, @NotNull String oldTaskName) throws IOException {
+    VirtualFile lessonDir = project.getBaseDir().findChild(task.getLesson().getName());
+    if (lessonDir == null) {
+      LOG.warn("Failed to update files for a new recommendation: lesson directory is null");
+      return;
+    }
+    final VirtualFile taskDir = lessonDir.findChild(oldTaskName);
     if (taskDir == null) {
       LOG.warn("Failed to update files for a new recommendation: task directory is null");
       return;

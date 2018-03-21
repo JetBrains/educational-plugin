@@ -13,16 +13,16 @@ class PyFindTaskFileTest : FindTaskFileTestBase<PyNewProjectSettings>() {
 
   fun `test get task dir`() = doTestGetTaskDir(
           pathToCourseJson = "testData/newCourse/python_course.json",
-          filePath = "./lesson1/task1/hello_world.py",
-          taskDirPath = "./lesson1/task1")
+          filePath = "./Introduction/Our first program/hello_world.py",
+          taskDirPath = "./Introduction/Our first program")
 
   fun `test get task for file`() = doTestGetTaskForFile(
           pathToCourseJson = "testData/newCourse/python_course.json",
-          filePath = "./lesson1/task1/hello_world.py"
+          filePath = "./Introduction/Our first program/hello_world.py"
   ) { it.lessons[0].taskList[0] }
 
   fun `test get task file`() = doTestGetTaskFile(
           pathToCourseJson = "testData/newCourse/python_course.json",
-          filePath = "./lesson1/task1/hello_world.py"
+          filePath = "./Introduction/Our first program/hello_world.py"
   ) { it.lessons[0].taskList[0].taskFiles["hello_world.py"]!! }
 }

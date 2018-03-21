@@ -5,18 +5,19 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import kotlin.collections.CollectionsKt;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Lesson implements StudyItem {
+public class Lesson extends StudyItem {
   @Expose @SerializedName("id") private int myId;
   @Transient public List<Integer> steps;
   @Transient public List<String> tags;
@@ -43,9 +44,6 @@ public class Lesson implements StudyItem {
   @Transient
   private Course myCourse = null;
 
-  // index is visible to user number of lesson from 1 to lesson number
-  private int myIndex = -1;
-
   public Lesson() {
   }
 
@@ -62,14 +60,6 @@ public class Lesson implements StudyItem {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public int getIndex() {
-    return myIndex;
-  }
-
-  public void setIndex(int index) {
-    myIndex = index;
   }
 
   public List<Task> getTaskList() {
@@ -95,17 +85,7 @@ public class Lesson implements StudyItem {
   }
 
   public Task getTask(@NotNull final String name) {
-    int index = EduUtils.getIndex(name, EduNames.TASK);
-    List<Task> tasks = getTaskList();
-    if (!EduUtils.indexIsValid(index, tasks)) {
-      return null;
-    }
-    for (Task task : tasks) {
-      if (task.getIndex() - 1 == index) {
-        return task;
-      }
-    }
-    return null;
+    return StreamEx.of(taskList).findFirst(task -> name.equals(task.getName())).orElse(null);
   }
 
   public Task getTask(int id) {

@@ -1,10 +1,10 @@
 package com.jetbrains.edu.coursecreator.handlers;
 
 import com.intellij.ide.IdeView;
+import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -19,14 +19,13 @@ import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
 
@@ -48,13 +47,14 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     }
 
     final PsiDirectory sourceDirectory = directories[0];
-    return CCUtils.isLessonDir(sourceDirectory);
+    return EduUtils.isLessonDirectory(sourceDirectory.getProject(), sourceDirectory.getVirtualFile());
   }
 
   @Override
   public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
     if (elements.length > 0 && elements[0] instanceof PsiDirectory) {
-      return CCUtils.isLessonDir(((PsiDirectory)elements[0]));
+      PsiDirectory element = (PsiDirectory)elements[0];
+      return EduUtils.isLessonDirectory(element.getProject(), element.getVirtualFile());
     }
     return false;
   }
@@ -88,42 +88,20 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
       return;
     }
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          sourceDirectory.getVirtualFile().rename(this, "tmp");
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-      }
-    });
     final VirtualFile[] lessonDirs = project.getBaseDir().getChildren();
     final Function<VirtualFile, StudyItem> getStudyItem = file -> course.getLesson(file.getName());
 
     int sourceLessonIndex = sourceLesson.getIndex();
     sourceLesson.setIndex(-1);
-    CCUtils.updateHigherElements(lessonDirs, getStudyItem, sourceLessonIndex, EduNames.LESSON, -1);
+    CCUtils.updateHigherElements(lessonDirs, getStudyItem, sourceLessonIndex, -1);
 
     final int newItemIndex = targetLesson.getIndex() + dialog.getIndexDelta();
 
-    CCUtils.updateHigherElements(lessonDirs, getStudyItem,
-                                 newItemIndex - 1, EduNames.LESSON, 1);
+    CCUtils.updateHigherElements(lessonDirs, getStudyItem, newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);
     course.sortLessons();
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          sourceDirectory.getVirtualFile().rename(this, EduNames.LESSON + newItemIndex);
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-      }
-    });
+    ProjectView.getInstance(project).refresh();
   }
 
   @Override

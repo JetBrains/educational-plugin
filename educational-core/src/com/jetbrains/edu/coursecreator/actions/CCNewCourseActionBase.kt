@@ -28,11 +28,11 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
     var index = 1
     var taskIndex = 1
     for (lesson in course.lessons) {
-      val lessonDir = courseProject.baseDir.findChild(EduNames.LESSON + index.toString())
+      val lessonDir = courseProject.baseDir.findChild(lesson.name)
       lesson.index = index
       if (lessonDir == null) continue
       for (task in lesson.getTaskList()) {
-        val taskDir = lessonDir.findChild(EduNames.TASK + taskIndex.toString())
+        val taskDir = lessonDir.findChild(task.name)
         task.index = taskIndex
         task.lesson = lesson
         if (taskDir == null) continue

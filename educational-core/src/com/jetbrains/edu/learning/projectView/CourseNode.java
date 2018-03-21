@@ -132,7 +132,14 @@ public class CourseNode extends EduNode {
     return new PsiFileSystemItemFilter() {
       @Override
       public boolean shouldShow(@NotNull PsiFileSystemItem item) {
-        return !(item instanceof PsiDirectory && item.getName().startsWith(EduNames.LESSON));
+        if (!(item instanceof PsiDirectory)) {
+          return true;
+        }
+        Course course = StudyTaskManager.getInstance(item.getProject()).getCourse();
+        if (course == null) {
+          return true;
+        }
+        return course.getLesson(item.getName()) == null;
       }
     };
   }

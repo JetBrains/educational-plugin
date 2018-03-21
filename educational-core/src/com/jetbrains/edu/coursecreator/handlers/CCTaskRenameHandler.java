@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -13,15 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandler {
   @Override
-  protected boolean isAvailable(VirtualFile dir) {
-    if (dir.getName().contains(EduNames.TASK)) {
-      return true;
-    }
-    VirtualFile parent = dir.getParent();
-    if (parent != null && parent.getName().contains(EduNames.TASK)) {
-      return true;
-    }
-    return false;
+  protected boolean isAvailable(@NotNull Project project, @NotNull VirtualFile dir) {
+    return EduUtils.isTaskDirectory(project, dir);
   }
 
   @Override
@@ -34,7 +28,7 @@ public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandle
       }
     }
     PsiDirectory lessonDir = directory.getParent();
-    if (lessonDir == null || !lessonDir.getName().contains(EduNames.LESSON)) {
+    if (lessonDir == null) {
       return;
     }
     Lesson lesson = course.getLesson(lessonDir.getName());
@@ -44,7 +38,7 @@ public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandle
     String directoryName = directory.getName();
     Task task = lesson.getTask(directoryName);
     if (task != null) {
-      processRename(task, EduNames.TASK, project);
+      processRename(task, EduNames.TASK, project, directory.getVirtualFile());
     }
   }
 

@@ -13,7 +13,6 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -43,13 +42,14 @@ public class CCPushTask extends DumbAwareAction {
       return;
     }
     final PsiDirectory taskDir = directories[0];
-
-    if (taskDir == null || !taskDir.getName().contains(EduNames.TASK)) {
+    if (taskDir == null) {
       return;
     }
     final PsiDirectory lessonDir = taskDir.getParentDirectory();
-    if (lessonDir == null) return;
-    final Lesson lesson = course.getLesson(lessonDir.getName());
+    if (lessonDir == null) {
+      return;
+    }
+    Lesson lesson = course.getLesson(lessonDir.getName());
     if (lesson != null && lesson.getId() > 0 && ((RemoteCourse)course).getId() > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       final com.jetbrains.edu.learning.courseFormat.tasks.Task task = lesson.getTask(taskDir.getName());
@@ -77,7 +77,7 @@ public class CCPushTask extends DumbAwareAction {
 
     final PsiDirectory taskDir = directories[0];
 
-    if (taskDir == null || !taskDir.getName().contains(EduNames.TASK)) {
+    if (taskDir == null) {
       return;
     }
     final PsiDirectory lessonDir = taskDir.getParentDirectory();
