@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseFormat;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -79,7 +80,7 @@ public class AnswerPlaceholderDependency {
   @Nullable
   public static AnswerPlaceholderDependency create(@NotNull AnswerPlaceholder answerPlaceholder, @NotNull String text)
     throws InvalidDependencyException {
-    if (text.isEmpty()) {
+    if (StringUtil.isEmptyOrSpaces(text)) {
       return null;
     }
     Task task = answerPlaceholder.getTaskFile().getTask();
