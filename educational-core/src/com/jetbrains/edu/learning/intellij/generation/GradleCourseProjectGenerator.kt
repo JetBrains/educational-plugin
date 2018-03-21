@@ -16,6 +16,7 @@ import com.intellij.util.Consumer
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
+import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils.sanitizeName
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 open class GradleCourseProjectGenerator(
@@ -92,13 +93,6 @@ open class GradleCourseProjectGenerator(
     // Unfortunately, org.jetbrains.plugins.gradle.service.project.GradleStartupActivity#SHOW_UNLINKED_GRADLE_POPUP is private
     // so create own const
     private const val SHOW_UNLINKED_GRADLE_POPUP = "show.inlinked.gradle.project.popup"
-
-    private val INVALID_SYMBOLS = "[ /\\\\:<>\"?*|]".toRegex()
-
-    /**
-     * Replaces ' ', '/', '\', ':', '<', '>', '"', '?', '*', '|' symbols by '_'
-     */
-    private fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_")
   }
 }
 

@@ -9,21 +9,18 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.util.Function;
+import com.intellij.util.PathUtil;
 import com.intellij.util.ThrowableConsumer;
 import com.intellij.util.containers.hash.HashMap;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
@@ -74,14 +71,12 @@ public class CCUtils {
    * @param dirs         directories that are used to get tasks/lessons
    * @param getStudyItem function that is used to get task/lesson from VirtualFile. This function can return null
    * @param threshold    index is used as threshold
-   * @param prefix       task or lesson directory name prefix
    */
   public static void updateHigherElements(VirtualFile[] dirs,
                                           @NotNull final Function<VirtualFile, ? extends StudyItem> getStudyItem,
                                           final int threshold,
-                                          final String prefix,
                                           final int delta) {
-    ArrayList<VirtualFile> dirsToRename = new ArrayList<>
+    ArrayList<VirtualFile> itemsToUpdate = new ArrayList<>
       (Collections2.filter(Arrays.asList(dirs), dir -> {
         final StudyItem item = getStudyItem.fun(dir);
         if (item == null) {
@@ -90,43 +85,19 @@ public class CCUtils {
         int index = item.getIndex();
         return index > threshold;
       }));
-    Collections.sort(dirsToRename, (o1, o2) -> {
+    Collections.sort(itemsToUpdate, (o1, o2) -> {
       StudyItem item1 = getStudyItem.fun(o1);
       StudyItem item2 = getStudyItem.fun(o2);
       //if we delete some dir we should start increasing numbers in dir names from the end
       return (-delta) * EduUtils.INDEX_COMPARATOR.compare(item1, item2);
     });
 
-    for (final VirtualFile dir : dirsToRename) {
+    for (final VirtualFile dir : itemsToUpdate) {
       final StudyItem item = getStudyItem.fun(dir);
       final int newIndex = item.getIndex() + delta;
       item.setIndex(newIndex);
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            dir.rename(this, prefix + newIndex);
-          }
-          catch (IOException e) {
-            LOG.error(e);
-          }
-        }
-      });
     }
   }
-
-  public static boolean isLessonDir(PsiDirectory sourceDirectory) {
-    if (sourceDirectory == null) {
-      return false;
-    }
-    Project project = sourceDirectory.getProject();
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course != null && isCourseCreator(project) && course.getLesson(sourceDirectory.getName()) != null) {
-      return true;
-    }
-    return false;
-  }
-
 
   public static VirtualFile getGeneratedFilesFolder(@NotNull Project project, @NotNull Module module) {
     VirtualFile baseDir = project.getBaseDir();
@@ -362,6 +333,50 @@ public class CCUtils {
         }
       }
       section.lessonIndexes = indexes;
+    }
+  }
+
+  public static class PathInputValidator implements InputValidatorEx {
+    @Nullable private final VirtualFile myParentDir;
+    @Nullable private final String myName;
+    @Nullable private String myErrorText;
+
+    public PathInputValidator(@Nullable VirtualFile parentDir) {
+      myParentDir = parentDir;
+      myName = null;
+    }
+
+    public PathInputValidator(@Nullable VirtualFile parentDir, @NotNull String name) {
+      myParentDir = parentDir;
+      myName = name;
+    }
+
+    @Override
+    public boolean checkInput(String inputString) {
+      if (myParentDir == null) {
+        myErrorText = "invalid parent directory";
+        return false;
+      }
+      myErrorText = null;
+      if (!PathUtil.isValidFileName(inputString)) {
+        myErrorText = "invalid name";
+        return false;
+      }
+      if (myParentDir.findChild(inputString) != null && !inputString.equals(myName)) {
+        myErrorText = String.format("%s already contains directory named %s", myParentDir.getName(), inputString);
+      }
+      return myErrorText == null;
+    }
+
+    @Override
+    public boolean canClose(String inputString) {
+      return checkInput(inputString);
+    }
+
+    @Nullable
+    @Override
+    public String getErrorText(String inputString) {
+      return myErrorText;
     }
   }
 }

@@ -15,10 +15,11 @@ import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.checker.CheckUtils.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 
-fun getGradleProjectName(task: Task) = ":lesson${task.lesson.index}:task${task.index}"
+fun getGradleProjectName(task: Task) = ":${EduGradleUtils.sanitizeName(task.lesson.name)}-${EduGradleUtils.sanitizeName(task.name)}"
 
 fun generateGradleCommandLine(project: Project, command: String, vararg additionalParams: String): GeneralCommandLine? {
   val cmd = GeneralCommandLine()

@@ -59,7 +59,7 @@ public class SyncCourseAction extends DumbAwareAction {
 
         if (lastRecommendationOnStepik != null && lastRecommendationOnStepik.getStepId() != lastRecommendationInCourse.getStepId()) {
           lastRecommendationOnStepik.initTask(adaptiveLesson, false);
-          StepikAdaptiveConnector.replaceCurrentTask(project, lastRecommendationOnStepik, adaptiveLesson);
+          StepikAdaptiveConnector.replaceCurrentTask(project, lastRecommendationOnStepik, lastRecommendationInCourse.getName(), adaptiveLesson);
 
           ApplicationManager.getApplication().invokeLater(() -> {
             VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);

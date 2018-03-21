@@ -73,4 +73,12 @@ object EduGradleUtils {
     }
 
     private fun gradleVersion(): String = maxOf(GradleVersion.current(), GradleVersion.version(DEFAULT_GRADLE_VERSION)).version
+
+
+    private val INVALID_SYMBOLS = "[ /\\\\:<>\"?*|]".toRegex()
+
+    /**
+     * Replaces ' ', '/', '\', ':', '<', '>', '"', '?', '*', '|' symbols with '_' as they are invalid in gradle module names
+     */
+    fun sanitizeName(name: String): String = name.replace(INVALID_SYMBOLS, "_")
 }

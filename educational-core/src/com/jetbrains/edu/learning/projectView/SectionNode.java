@@ -13,7 +13,6 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.projectView.CCLessonNode;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -92,7 +91,7 @@ public class SectionNode extends ProjectViewNode<Section> {
     boolean allSolved = true;
     if (course != null) {
       for (Integer lessonIndex : getValue().lessonIndexes) {
-        final Lesson lesson = course.getLesson(EduNames.LESSON + lessonIndex);
+        final Lesson lesson = course.getLessons().get(lessonIndex - 1);
         if (lesson != null) {
           CheckStatus status = lesson.getStatus();
           boolean isSolved = status == CheckStatus.Solved;

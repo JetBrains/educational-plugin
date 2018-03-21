@@ -7,11 +7,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Settings>() {
 
   protected fun doTestGetTaskDir(pathToCourseJson: String, filePath: String, taskDirPath: String) {
-    generateCourseStructure(pathToCourseJson)
+    val course = generateCourseStructure(pathToCourseJson)
 
     val file = findFile(filePath)
     val expectedTaskDir = findFile(taskDirPath)
-    assertEquals(expectedTaskDir, EduUtils.getTaskDir(file))
+    assertEquals(expectedTaskDir, EduUtils.getTaskDir(course, file))
   }
 
   protected fun doTestGetTaskForFile(pathToCourseJson: String, filePath: String, expectedTask: (Course) -> Task) {
