@@ -44,6 +44,12 @@ public class AnswerPlaceholder {
   @Nullable
   private AnswerPlaceholderDependency myPlaceholderDependency = null;
 
+  /*
+   * Actual student's answer, used to restore state of task of framework lesson after navigation actions
+   */
+  @Nullable
+  private String myStudentAnswer = null;
+
   public AnswerPlaceholder() {
   }
 
@@ -203,6 +209,15 @@ public class AnswerPlaceholder {
 
   public boolean isActive() {
     return getActiveSubtaskInfo() != null;
+  }
+
+  @Nullable
+  public String getStudentAnswer() {
+    return myStudentAnswer;
+  }
+
+  public void setStudentAnswer(@Nullable String studentAnswer) {
+    myStudentAnswer = studentAnswer;
   }
 
   public static class MyInitialState {

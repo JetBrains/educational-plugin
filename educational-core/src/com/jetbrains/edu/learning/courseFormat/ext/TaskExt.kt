@@ -2,9 +2,12 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -52,4 +55,19 @@ fun Task.hasChangedFiles(project: Project): Boolean {
     }
   }
   return false
+}
+
+fun Task.saveStudentAnswersIfNeeded(project: Project) {
+  if (lesson !is FrameworkLesson) return
+
+  val taskDir = getTaskDir(project) ?: return
+  for ((_, taskFile) in getTaskFiles()) {
+    val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
+    val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: continue
+    for (placeholder in taskFile.activePlaceholders) {
+      val startOffset = placeholder.offset
+      val endOffset = startOffset + placeholder.realLength
+      placeholder.studentAnswer = document.getText(TextRange.create(startOffset, endOffset))
+    }
+  }
 }
