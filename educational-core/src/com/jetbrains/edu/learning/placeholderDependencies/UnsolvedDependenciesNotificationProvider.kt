@@ -5,6 +5,7 @@ import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
@@ -19,9 +20,8 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
 
     @VisibleForTesting
     fun getText(taskNames: List<String>): String {
-      val pluralEndingIfNeeded = if (taskNames.size > 1) "s" else ""
       val taskNamesString = taskNames.joinToString(separator = ", ") { "'$it'" }
-      return "Task$pluralEndingIfNeeded $taskNamesString should be solved first"
+      return "${StringUtil.pluralize("Task", taskNames.size)} $taskNamesString should be solved first"
     }
   }
 
