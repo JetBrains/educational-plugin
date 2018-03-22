@@ -140,13 +140,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     }
     val lessons = course.lessons
 
-    var progress = ProgressUtil.countProgressAsOneTaskWithSubtasks(lessons)
-    if (progress == null) {
-      progress = ProgressUtil.countProgressWithoutSubtasks(lessons)
-    }
-
-    val taskSolved = progress.getFirst()
-    val tasksTotal = progress.getSecond()
+    val (taskSolved, tasksTotal) = ProgressUtil.countProgressAsOneTaskWithSubtasks(lessons) ?:
+                                   ProgressUtil.countProgressWithoutSubtasks(lessons)
 
     progressBar.maximum = tasksTotal
     progressBar.value = taskSolved
