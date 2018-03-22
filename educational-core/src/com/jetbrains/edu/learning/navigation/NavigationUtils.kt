@@ -139,6 +139,7 @@ object NavigationUtils {
       fileToActivate = virtualFile
     }
     EduUsagesCollector.taskNavigation()
+    ProjectView.getInstance(project).refresh()
     if (fileToActivate != null) {
       updateProjectView(project, fileToActivate)
     }
