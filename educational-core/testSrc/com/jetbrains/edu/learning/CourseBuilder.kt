@@ -50,8 +50,8 @@ class CourseBuilder {
     lesson.index = course.lessons.size + 1
     val nextLessonIndex = course.lessons.size + 1
     lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
-    lessonBuilder.buildLesson()
     course.addLesson(lesson)
+    lessonBuilder.buildLesson()
   }
 }
 
@@ -90,9 +90,9 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   fun taskFile(name: String, text: String = "", buildTaskFile: (TaskFileBuilder.() -> Unit)? = null) {
     val taskFileBuilder = TaskFileBuilder(task)
     taskFileBuilder.withName(name)
-    val textBuffer = StringBuilder(text)
-    val placeholders = extractPlaceholdersFromText(textBuffer)
-    taskFileBuilder.withText(textBuffer.toString())
+    val textBuilder = StringBuilder(text.trimIndent())
+    val placeholders = extractPlaceholdersFromText(textBuilder)
+    taskFileBuilder.withText(textBuilder.toString())
     taskFileBuilder.withPlaceholders(placeholders)
     if (buildTaskFile != null) {
       taskFileBuilder.buildTaskFile()
