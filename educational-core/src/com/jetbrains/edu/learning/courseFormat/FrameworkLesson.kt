@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.courseFormat
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.xmlb.annotations.Transient
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -11,7 +10,6 @@ import com.jetbrains.edu.learning.courseGeneration.*
 
 class FrameworkLesson : Lesson() {
 
-  @Transient
   var currentTaskIndex: Int = 0
 
   /**
@@ -21,6 +19,8 @@ class FrameworkLesson : Lesson() {
    */
   @Transient
   private var myDiffs: List<List<TaskDiff>>? = null
+
+  fun currentTask(): Task = taskList[currentTaskIndex]
 
   override fun initLesson(course: Course?, isRestarted: Boolean) {
     super.initLesson(course, isRestarted)
