@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
 
-object ProjectViewUtils {
+object CourseViewUtils {
 
   @JvmStatic
   inline fun modifyTaskChildNode(
