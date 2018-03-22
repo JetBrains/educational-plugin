@@ -15,10 +15,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -97,7 +94,13 @@ public class CourseNode extends EduNode {
 
   @NotNull
   protected BiFunction<Lesson, PsiDirectory, LessonNode> createLessonFunction() {
-    return (lesson, lessonDir) -> new LessonNode(myProject, lessonDir, getSettings(), lesson);
+    return (lesson, lessonDir) -> {
+      if (lesson instanceof FrameworkLesson) {
+        return new FrameworkLessonNode(myProject, lessonDir, getSettings(), (FrameworkLesson) lesson);
+      } else {
+        return new LessonNode(myProject, lessonDir, getSettings(), lesson);
+      }
+    };
   }
 
   @NotNull

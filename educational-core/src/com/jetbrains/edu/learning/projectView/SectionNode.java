@@ -14,10 +14,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.projectView.CCLessonNode;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,10 +55,15 @@ public class SectionNode extends ProjectViewNode<Section> {
     if (myCourseDir == null) {
       return Collections.emptyList();
     }
-    final BiFunction<Lesson, PsiDirectory, LessonNode> createLessonNode =
-      (lesson, lessonDir) -> CCUtils.isCourseCreator(myProject) ? new CCLessonNode(myProject, lessonDir, getSettings(), lesson) :
-                             new LessonNode(myProject, lessonDir, getSettings(), lesson);
-
+    final BiFunction<Lesson, PsiDirectory, LessonNode> createLessonNode = (lesson, lessonDir) -> {
+      if (CCUtils.isCourseCreator(myProject)) {
+        return new CCLessonNode(myProject, lessonDir, getSettings(), lesson);
+      } else if (lesson instanceof FrameworkLesson) {
+        return new FrameworkLessonNode(myProject, lessonDir, getSettings(), (FrameworkLesson) lesson);
+      } else {
+        return new LessonNode(myProject, lessonDir, getSettings(), lesson);
+      }
+    };
     return CourseNode.getLessonNodes(myProject, myCourseDir,
                                      getSettings(), lesson -> getValue().lessonIndexes.contains(lesson.getIndex()),
                                      createLessonNode);

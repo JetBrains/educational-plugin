@@ -54,7 +54,7 @@ public class LessonNode extends EduNode {
       if (task == null) {
         return null;
       }
-      PsiDirectory taskDirectory = ProjectViewUtils.findTaskDirectory(myProject, directory, task);
+      PsiDirectory taskDirectory = CourseViewUtils.findTaskDirectory(myProject, directory, task);
       if (taskDirectory == null) return null;
       return createTaskNode(taskDirectory, task);
     }
