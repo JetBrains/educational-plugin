@@ -32,10 +32,6 @@ class FrameworkLesson : Lesson() {
     }
   }
 
-  override fun getTask(name: String): Task? {
-    return if (name == EduNames.TASK) taskList.getOrNull(currentTaskIndex) else null
-  }
-
   fun prepareNextTask(project: Project, taskDir: VirtualFile) {
     currentTaskIndex++
     myDiffs?.get(currentTaskIndex)?.forEach { diff -> diff.apply(project, taskDir) }

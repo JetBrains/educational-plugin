@@ -2,17 +2,18 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 
 fun fileTree(block: FileTreeBuilder.() -> Unit): FileTree = FileTree(FileTreeBuilderImpl().apply(block).intoDirectory())
 
 interface FileTreeBuilder {
   fun dir(name: String, block: FileTreeBuilder.() -> Unit)
-  fun file(name: String, code: String = "")
+  fun file(name: String, code: String? = null)
 }
 
 class FileTree(private val rootDirectory: Entry.Directory) {
 
-  fun assertEquals(baseDir: VirtualFile) {
+  fun assertEquals(baseDir: VirtualFile, fixture: CodeInsightTestFixture? = null) {
 
     fun go(expected: Entry.Directory, actual: VirtualFile) {
       val actualChildren = actual.children
@@ -27,7 +28,13 @@ class FileTree(private val rootDirectory: Entry.Directory) {
       for ((name, entry) in expected.children) {
         val child = actualChildren[name]!!
         when (entry) {
-          is Entry.File -> check(!child.isDirectory)
+          is Entry.File -> {
+            check(!child.isDirectory)
+            if (fixture != null && entry.text != null) {
+              fixture.openFileInEditor(child)
+              fixture.checkResult(entry.text)
+            }
+          }
           is Entry.Directory -> go(entry, child)
         }
       }
@@ -52,15 +59,15 @@ private class FileTreeBuilderImpl(val directory: MutableMap<String, Entry> = mut
     directory[name] = FileTreeBuilderImpl().apply(block).intoDirectory()
   }
 
-  override fun file(name: String, code: String) {
+  override fun file(name: String, code: String?) {
     check('/' !in name) { "Bad file name `$name`" }
-    directory[name] = Entry.File(code.trimIndent())
+    directory[name] = Entry.File(code?.trimIndent())
   }
 
   fun intoDirectory() = Entry.Directory(directory)
 }
 
 sealed class Entry {
-  class File(val text: String) : Entry()
+  class File(val text: String?) : Entry()
   class Directory(val children: MutableMap<String, Entry>) : Entry()
 }
