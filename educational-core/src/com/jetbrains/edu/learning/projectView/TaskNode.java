@@ -5,16 +5,10 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.ui.JBColor;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -77,30 +71,10 @@ public class TaskNode extends EduNode {
   @Override
   @Nullable
   public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
-    Object value = childNode.getValue();
-    if (value instanceof PsiDirectory) {
-      String dirName = ((PsiDirectory) value).getName();
-      if (dirName.equals(EduNames.BUILD) || dirName.equals(EduNames.OUT)) {
-        return null;
-      }
-      String sourceDir = TaskExt.getSourceDir(myTask);
-      if (!dirName.equals(sourceDir)) {
-        return createChildDirectoryNode(null, (PsiDirectory)value);
-      }
-    }
-    if (value instanceof PsiElement) {
-      PsiFile psiFile = ((PsiElement) value).getContainingFile();
-      if (psiFile == null) return null;
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-      if (virtualFile == null) {
-        return null;
-      }
-      return EduUtils.getTaskFile(myProject, virtualFile) != null ? childNode : null;
-    }
-    return null;
+    return ProjectViewUtils.modifyTaskChildNode(myProject, childNode, myTask, this::createChildDirectoryNode);
   }
 
-  public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
+  public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
     return new DirectoryNode(myProject, value, getSettings());
   }
 
