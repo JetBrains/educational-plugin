@@ -7,7 +7,6 @@ import com.intellij.ide.projectView.impl.nodes.PsiFileSystemItemFilter;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -24,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import icons.EducationalCoreIcons;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,9 +52,9 @@ public class CourseNode extends EduNode {
 
   @Override
   protected void updateImpl(PresentationData data) {
-    Pair<Integer, Integer> progress = ProgressUtil.INSTANCE.countProgressAsOneTaskWithSubtasks(myCourse.getLessons());
+    Pair<Integer, Integer> progress = ProgressUtil.countProgressAsOneTaskWithSubtasks(myCourse.getLessons());
     if (progress == null) {
-      progress = ProgressUtil.INSTANCE.countProgressWithoutSubtasks(myCourse.getLessons());
+      progress = ProgressUtil.countProgressWithoutSubtasks(myCourse.getLessons());
     }
 
     final Integer tasksSolved = progress.getFirst();
