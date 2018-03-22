@@ -11,7 +11,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -42,7 +41,7 @@ public class CCTaskNode extends TaskNode {
       }
 
       if (name.equals(TaskExt.getSourceDir(myTask)) || name.equals(TaskExt.getTestDir(myTask))) {
-        return createChildDirectoryNode(null, (PsiDirectory) value);
+        return createChildDirectoryNode((PsiDirectory) value);
       }
     }
     if (value instanceof PsiElement) {
@@ -103,7 +102,7 @@ public class CCTaskNode extends TaskNode {
   }
 
   @Override
-  public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
+  public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
     return new CCNode(myProject, value, getSettings());
   }
 }
