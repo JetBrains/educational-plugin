@@ -1,11 +1,12 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
 import com.intellij.openapi.application.runUndoTransparentWriteAction
-import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
@@ -46,26 +47,34 @@ object PlaceholderDependencyManager {
     for (dependency in task.placeholderDependencies) {
       val replacementText = getReplacementText(project, dependency)
       val placeholderToReplace = dependency.answerPlaceholder
-      val document = getDocument(project, placeholderToReplace)
+      val document = placeholderToReplace.taskFile.getDocument(project)!!
       runUndoTransparentWriteAction {
-        val startOffset = placeholderToReplace.offset
-        val endOffset = startOffset + placeholderToReplace.realLength
-        document.replaceString(startOffset, endOffset, replacementText)
+        replaceWithListener(project, placeholderToReplace, replacementText)
       }
+    }
+  }
+
+  private fun replaceWithListener(project: Project, placeholderToReplace: AnswerPlaceholder, replacementText: String) {
+    val document = placeholderToReplace.taskFile.getDocument(project)!!
+    val startOffset = placeholderToReplace.offset
+    val endOffset = startOffset + placeholderToReplace.realLength
+    val isFileOpen = FileEditorManager.getInstance(project).isFileOpen(placeholderToReplace.taskFile.getVirtualFile(project)!!)
+    val eduDocumentListener = if (isFileOpen) null else EduDocumentListener(placeholderToReplace.taskFile)
+    if (eduDocumentListener != null) {
+      document.addDocumentListener(eduDocumentListener)
+    }
+    document.replaceString(startOffset, endOffset, replacementText)
+    if (eduDocumentListener != null) {
+      document.removeDocumentListener(eduDocumentListener)
     }
   }
 
   private fun getReplacementText(project: Project, dependency: AnswerPlaceholderDependency): String {
     val course = dependency.answerPlaceholder.taskFile.task.course!!
     val dependencyPlaceholder = dependency.resolve(course)!!
-    val document = getDocument(project, dependencyPlaceholder)
+    val document = dependencyPlaceholder.taskFile.getDocument(project)!!
     val startOffset = dependencyPlaceholder.offset
     val endOffset = startOffset + dependencyPlaceholder.realLength
     return document.getText(TextRange.create(startOffset, endOffset))
-  }
-
-  private fun getDocument(project: Project, placeholder: AnswerPlaceholder): Document {
-    val taskFile = placeholder.taskFile
-    return taskFile.getDocument(project)!!
   }
 }
