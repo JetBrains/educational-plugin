@@ -93,6 +93,43 @@ class PlaceholderDependencyTest : EduTestCase() {
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "Task.kt", 1))
   }
 
+  fun `test several files`() {
+    courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("Task.kt", """
+          |def f():
+          |  <p>print(1)</p>
+        """.trimMargin("|"))
+        }
+      }
+      lesson {
+        eduTask {
+          taskFile("Task.kt", """
+          |def foo():
+          |  <p>type here</p>
+          """.trimMargin("|")) {
+            placeholder(0, dependency = "lesson1#task1#Task.kt#1")
+          }
+          taskFile("Task1.kt", """
+            |def bar():
+            |<p>type here</p>
+          """.trimMargin("|")) {
+            placeholder(0, dependency = "lesson1#task1#Task.kt#1")
+          }
+        }
+      }
+    }
+
+    getCourse().lessons[0].taskList[0].status = CheckStatus.Solved
+
+    val virtualFile = findVirtualFile(1, 0, "Task.kt")
+    myFixture.openFileInEditor(virtualFile)
+
+    checkPlaceholderContent("print(1)", findPlaceholder(1, 0, "Task.kt", 0))
+    checkPlaceholderContent("print(1)", findPlaceholder(1, 0, "Task1.kt", 0))
+  }
+
   private fun checkEditorNotification(virtualFile: VirtualFile, taskNames: List<String>) {
     val fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile)!!
     val notificationPanel = fileEditor.getUserData(UnsolvedDependenciesNotificationProvider.KEY)
