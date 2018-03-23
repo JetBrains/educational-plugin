@@ -38,7 +38,7 @@ class UnsolvedDependenciesNotificationProvider(val project: Project) : EditorNot
     }
     val panel = UnsolvedDependenciesNotificationPanel()
     panel.setText(getText(taskDependencies.map { it.name }))
-    panel.createActionLabel("Solve '${taskDependencies[0].name}'") { NavigationUtils.navigateToTask(project, taskDependencies[0]) }
+    panel.createActionLabel("Solve '${taskDependencies[0].name}'") { NavigationUtils.navigateToTask(project, taskDependencies[0], task) }
     return panel
   }
 
