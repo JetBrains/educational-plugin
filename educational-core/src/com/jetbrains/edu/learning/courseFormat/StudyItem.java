@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseFormat;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class StudyItem {
-  // index is visible to user number of lesson from 1 to lesson number
+  // from 1 to number of items
   private int myIndex = -1;
 
   @Nullable private String myCustomPresentableName = null;
