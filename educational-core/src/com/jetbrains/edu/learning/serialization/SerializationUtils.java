@@ -158,7 +158,8 @@ public class SerializationUtils {
       return new ToEighthVersionXmlConverter().convert(project, state);
     }
 
-    public static Element convertToNinthVersion(Element state, Project project) throws StudyUnrecognizedFormatException {
+    public static Element convertToNinthVersion(@NotNull Project project,
+                                                @NotNull Element state) throws StudyUnrecognizedFormatException {
       return new ToNinthVersionXmlConverter().convert(project, state);
     }
 
