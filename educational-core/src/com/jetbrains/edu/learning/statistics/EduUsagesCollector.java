@@ -15,17 +15,17 @@
  */
 package com.jetbrains.edu.learning.statistics;
 
-import com.intellij.internal.statistic.UsagesCollector;
-import com.intellij.internal.statistic.beans.GroupDescriptor;
 import com.intellij.internal.statistic.beans.UsageDescriptor;
+import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.hash.HashSet;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class EduUsagesCollector extends UsagesCollector {
+public class EduUsagesCollector extends ProjectUsagesCollector {
   private static final String GROUP_ID = "educational";
 
   public static void projectTypeCreated(@NotNull String projectTypeId) {
@@ -94,7 +94,7 @@ public class EduUsagesCollector extends UsagesCollector {
 
   @NotNull
   @Override
-  public Set<UsageDescriptor> getUsages() {
+  public Set<UsageDescriptor> getUsages(@NotNull Project project) {
     HashSet<UsageDescriptor> descriptors = new HashSet<>();
     getDescriptors().forEachEntry((key, value) -> {
       descriptors.add(new UsageDescriptor(key, value));
@@ -104,11 +104,10 @@ public class EduUsagesCollector extends UsagesCollector {
     return descriptors;
   }
 
-
   @NotNull
   @Override
-  public GroupDescriptor getGroupId() {
-    return GroupDescriptor.create(GROUP_ID);
+  public String getGroupId() {
+    return GROUP_ID;
   }
 
   private static void advanceKey(@NotNull String key) {
