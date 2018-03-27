@@ -26,10 +26,6 @@ public class CCCreateStudyItemPanel extends JPanel {
     return myNameField.getText();
   }
 
-  public JTextField getNameField() {
-    return myNameField;
-  }
-
   public int getIndexDelta() {
     return myPositionalPanel.getIndexDelta();
   }
