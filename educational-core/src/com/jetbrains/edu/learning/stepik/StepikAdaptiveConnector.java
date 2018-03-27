@@ -350,7 +350,7 @@ public class StepikAdaptiveConnector {
   private static void setToolWindowText(@NotNull Project project, @NotNull Task task) {
     final TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
     if (window != null) {
-      window.setCurrentTask(project, task);
+      ApplicationManager.getApplication().invokeLater(() -> window.setCurrentTask(project, task));
     }
   }
 
