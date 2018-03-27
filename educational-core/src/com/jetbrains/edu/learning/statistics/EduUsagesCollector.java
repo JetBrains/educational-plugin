@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class EduUsagesCollector extends ProjectUsagesCollector {
-  private static final String GROUP_ID = "educational";
+  public static final String GROUP_ID = "educational";
 
   public static void projectTypeCreated(@NotNull String projectTypeId) {
     advanceKey("project.created." + projectTypeId);
@@ -95,6 +95,11 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
   @NotNull
   @Override
   public Set<UsageDescriptor> getUsages(@NotNull Project project) {
+    return collectUsages();
+  }
+
+  @NotNull
+  static Set<UsageDescriptor> collectUsages() {
     HashSet<UsageDescriptor> descriptors = new HashSet<>();
     getDescriptors().forEachEntry((key, value) -> {
       descriptors.add(new UsageDescriptor(key, value));
