@@ -311,7 +311,6 @@ public class StepikAdaptiveConnector {
     task.setIndex(taskIndex);
     lesson.getTaskList().set(taskIndex - 1, task);
 
-    final String lessonName = EduNames.LESSON + lesson.getIndex();
     updateProjectFiles(project, task, oldTaskName, course.getLanguageById());
     setToolWindowText(project, task);
   }
