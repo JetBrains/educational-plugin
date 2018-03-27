@@ -62,9 +62,13 @@ object PlaceholderDependencyManager {
     if (eduDocumentListener != null) {
       document.addDocumentListener(eduDocumentListener)
     }
-    document.replaceString(startOffset, endOffset, replacementText)
-    if (eduDocumentListener != null) {
-      document.removeDocumentListener(eduDocumentListener)
+    try {
+      document.replaceString(startOffset, endOffset, replacementText)
+    }
+    finally {
+      if (eduDocumentListener != null) {
+        document.removeDocumentListener(eduDocumentListener)
+      }
     }
   }
 
