@@ -9,7 +9,7 @@ rootProject.name = sanitizeName('$PROJECT_NAME$')
 def lessons = rootProject.projectDir.listFiles(new FilenameFilter() {
     @Override
     boolean accept(File dir, String name) {
-        def ignoredNames = ["gradle", ".idea", "util"]
+        def ignoredNames = ["gradle", "build", "out", "util"]
         return new File(dir.path, name).isDirectory() && !ignoredNames.contains(name) && !name.startsWith(".")
     }
 })
@@ -22,7 +22,8 @@ def includeLesson(File lessonDir) {
     def tasks = lessonDir.listFiles(new FilenameFilter() {
         @Override
         boolean accept(File dir, String name) {
-            return dir.isDirectory()
+            def ignoredNames = ["build", "out"]
+            return dir.isDirectory() && !ignoredNames.contains(name)
         }
     })
     for (task in tasks) {
