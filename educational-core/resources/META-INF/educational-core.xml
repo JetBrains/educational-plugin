@@ -201,7 +201,7 @@
         implementation="com.jetbrains.edu.learning.handlers.AnswerPlaceholderExtendWordHandler"/>
     <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduRenameHandler"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
-    <statistics.usagesCollector implementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
+    <statistics.projectUsagesCollector implementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
