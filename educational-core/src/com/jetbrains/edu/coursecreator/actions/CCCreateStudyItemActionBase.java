@@ -138,7 +138,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     if (isAddedAsLast(sourceDirectory, project, course)) {
       itemIndex = getSiblingsSize(course, parentItem) + 1;
       String suggestedName = getItemName() + itemIndex;
-      itemName = shouldShowInputDialog ? Messages.showInputDialog("Name:", getTitle(), null, suggestedName, new CCUtils.PathInputValidator(sourceDirectory)) : suggestedName;
+      itemName = shouldShowInputDialog ? showInputDialog(sourceDirectory, suggestedName) : suggestedName;
     } else {
       StudyItem thresholdItem = getThresholdItem(course, sourceDirectory);
       if (thresholdItem == null) {
@@ -157,6 +157,10 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       return null;
     }
     return createAndInitItem(course, parentItem, itemName, itemIndex);
+  }
+
+  private String showInputDialog(@NotNull VirtualFile sourceDirectory, @Nullable String suggestedName) {
+    return Messages.showInputDialog("Name:", getTitle(), null, suggestedName, new CCUtils.PathInputValidator(sourceDirectory));
   }
 
   protected abstract int getSiblingsSize(@NotNull final Course course, @Nullable final StudyItem parentItem);
