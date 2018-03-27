@@ -158,6 +158,11 @@ public class SerializationUtils {
       return new ToEighthVersionXmlConverter().convert(project, state);
     }
 
+    public static Element convertToNinthVersion(@NotNull Project project,
+                                                @NotNull Element state) throws StudyUnrecognizedFormatException {
+      return new ToNinthVersionXmlConverter().convert(project, state);
+    }
+
     @Nullable
     public static VirtualFile getTaskDir(@NotNull Project project, @NotNull Element lesson, @NotNull Element task)
       throws StudyUnrecognizedFormatException {

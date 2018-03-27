@@ -91,10 +91,10 @@ public class CCVirtualFileListener implements VirtualFileListener {
       deleteTaskFile(myProject, removedFile, taskFile);
       return;
     }
-    if (removedFile.getName().contains(EduNames.TASK)) {
+    if (EduUtils.isTaskDirectory(myProject, removedFile)) {
       deleteTask(course, removedFile);
     }
-    if (removedFile.getName().contains(EduNames.LESSON)) {
+    if (course.getLesson(removedFile.getName()) != null) {
       deleteLesson(course, removedFile, myProject);
     }
   }
@@ -105,26 +105,21 @@ public class CCVirtualFileListener implements VirtualFileListener {
       return;
     }
     VirtualFile courseDir = project.getBaseDir();
-    CCUtils.updateHigherElements(courseDir.getChildren(), file -> course.getLesson(file.getName()), removedLesson.getIndex(),
-                                 EduNames.LESSON, -1);
+    CCUtils.updateHigherElements(courseDir.getChildren(), file -> course.getLesson(file.getName()), removedLesson.getIndex(), -1);
     CCUtils.updateSections(course, removedLesson.getIndex(), -1);
     course.removeLesson(removedLesson);
   }
 
   private static void deleteTask(@NotNull final Course course, @NotNull final VirtualFile removedTask) {
     VirtualFile lessonDir = removedTask.getParent();
-    if (lessonDir == null || !lessonDir.getName().contains(EduNames.LESSON)) {
-      return;
-    }
-    final Lesson lesson = course.getLesson(lessonDir.getName());
-    if (lesson == null) {
-      return;
-    }
+    assert lessonDir != null;
+    Lesson lesson = course.getLesson(lessonDir.getName());
+    assert lesson != null;
     Task task = lesson.getTask(removedTask.getName());
     if (task == null) {
       return;
     }
-    CCUtils.updateHigherElements(lessonDir.getChildren(), file -> lesson.getTask(file.getName()), task.getIndex(), EduNames.TASK, -1);
+    CCUtils.updateHigherElements(lessonDir.getChildren(), file -> lesson.getTask(file.getName()), task.getIndex(), -1);
     lesson.getTaskList().remove(task);
   }
 
@@ -142,7 +137,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
       return true;
     }
 
-    VirtualFile taskDir = EduUtils.getTaskDir(createdFile);
+    VirtualFile taskDir = EduUtils.getTaskDir(course, createdFile);
     if (taskDir == null) {
       return false;
     }

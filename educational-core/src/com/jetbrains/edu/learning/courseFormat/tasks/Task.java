@@ -42,11 +42,9 @@ import java.util.Map;
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
  * - Update {@link StepikTaskBuilder#eduTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#taskTypes} otherwise
  */
-public abstract class Task implements StudyItem {
+public abstract class Task extends StudyItem {
   @Expose private String name;
 
-  // index is visible to user number of task from 1 to task number
-  private int myIndex;
   protected CheckStatus myStatus = CheckStatus.Unchecked;
 
   @SerializedName("stepic_id")
@@ -103,16 +101,6 @@ public abstract class Task implements StudyItem {
   @Override
   public void setName(String name) {
     this.name = name;
-  }
-
-  @Override
-  public int getIndex() {
-    return myIndex;
-  }
-
-  @Override
-  public void setIndex(int index) {
-    myIndex = index;
   }
 
   public Map<String, String> getTestsText() {
@@ -185,17 +173,15 @@ public abstract class Task implements StudyItem {
 
   @Nullable
   public VirtualFile getTaskDir(@NotNull final Project project) {
-    String lessonDirName = EduNames.LESSON + String.valueOf(myLesson.getIndex());
-    String taskDirName = EduNames.TASK + String.valueOf(myIndex);
     VirtualFile courseDir = project.getBaseDir();
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       final Module module = ModuleManager.getInstance(project).getModules()[0];
       courseDir = ModuleRootManager.getInstance(module).getContentRoots()[0];
     }
     if (courseDir != null) {
-      VirtualFile lessonDir = courseDir.findChild(lessonDirName);
+      VirtualFile lessonDir = courseDir.findChild(myLesson.getName());
       if (lessonDir != null) {
-        return lessonDir.findChild(taskDirName);
+        return lessonDir.findChild(getName());
       }
     }
     return null;
@@ -246,7 +232,7 @@ public abstract class Task implements StudyItem {
 
     Task task = (Task)o;
 
-    if (myIndex != task.myIndex) return false;
+    if (getIndex() != task.getIndex()) return false;
     if (name != null ? !name.equals(task.name) : task.name != null) return false;
     if (taskFiles != null ? !taskFiles.equals(task.taskFiles) : task.taskFiles != null) return false;
     if (taskTexts != null ? !taskTexts.equals(task.taskTexts) : task.taskTexts != null) return false;
@@ -258,7 +244,7 @@ public abstract class Task implements StudyItem {
   @Override
   public int hashCode() {
     int result = name != null ? name.hashCode() : 0;
-    result = 31 * result + myIndex;
+    result = 31 * result + getIndex();
     result = 31 * result + (taskFiles != null ? taskFiles.hashCode() : 0);
     result = 31 * result + (taskTexts != null ? taskTexts.hashCode() : 0);
     result = 31 * result + (testsText != null ? testsText.hashCode() : 0);

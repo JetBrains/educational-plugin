@@ -134,7 +134,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
           String name = entry.getKey();
           String answerName = FileUtil.getNameWithoutExtension(name) + CCUtils.ANSWER_EXTENSION_DOTTED + FileUtilRt.getExtension(name);
 
-          String taskPath = FileUtil.join(project.getBasePath(), EduNames.LESSON + lesson.getIndex(), EduNames.TASK + task.getIndex());
+          String taskPath = FileUtil.join(project.getBasePath(), lesson.getName(), task.getName());
           if (!sourceDir.isEmpty()) {
             taskPath = FileUtil.join(taskPath, sourceDir);
           }

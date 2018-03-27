@@ -523,17 +523,21 @@ public class EduUtils {
   }
 
   @Nullable
-  public static VirtualFile getTaskDir(@NotNull VirtualFile taskFile) {
-    VirtualFile parent = taskFile.getParent();
-
-    while (parent != null) {
-      String name = parent.getName();
-
-      if (name.contains(EduNames.TASK) && parent.isDirectory()) {
-        return parent;
+  public static VirtualFile getTaskDir(@NotNull Course course, @NotNull VirtualFile taskFile) {
+    VirtualFile file = taskFile.getParent();
+    while (file != null) {
+      VirtualFile lessonDirCandidate = file.getParent();
+      if (lessonDirCandidate == null) {
+        return null;
+      }
+      //TODO: check sections
+      Lesson lesson = course.getLesson(lessonDirCandidate.getName());
+      if (lesson != null) {
+        if (lesson.getTask(file.getName()) != null)
+        return file;
       }
 
-      parent = parent.getParent();
+      file = lessonDirCandidate;
     }
     return null;
   }
@@ -544,29 +548,16 @@ public class EduUtils {
     if (course == null) {
       return null;
     }
-    VirtualFile taskDir = getTaskDir(file);
+    VirtualFile taskDir = getTaskDir(course, file);
     if (taskDir == null) {
       return null;
     }
-    final String taskDirName = taskDir.getName();
-    if (taskDirName.contains(EduNames.TASK)) {
-      final VirtualFile lessonDir = taskDir.getParent();
-      if (lessonDir != null) {
-        int lessonIndex = getIndex(lessonDir.getName(), EduNames.LESSON);
-        List<Lesson> lessons = course.getLessons();
-        if (!indexIsValid(lessonIndex, lessons)) {
-          return null;
-        }
-        final Lesson lesson = lessons.get(lessonIndex);
-        int taskIndex = getIndex(taskDirName, EduNames.TASK);
-        final List<Task> tasks = lesson.getTaskList();
-        if (!indexIsValid(taskIndex, tasks)) {
-          return null;
-        }
-        return tasks.get(taskIndex);
-      }
+    VirtualFile lessonDir = taskDir.getParent();
+    Lesson lesson = course.getLesson(lessonDir.getName());
+    if (lesson == null) {
+      return null;
     }
-    return null;
+    return lesson.getTask(taskDir.getName());
   }
 
   // supposed to be called under progress
@@ -679,7 +670,9 @@ public class EduUtils {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) return null;
     String sourceDir = CourseExt.getSourceDir(course);
-    String taskPath = FileUtil.join(project.getBasePath(), EduNames.LESSON + lessonIndex, EduNames.TASK + taskIndex);
+    Lesson lesson = course.getLessons().get(lessonIndex - 1);
+    Task task = lesson.getTaskList().get(taskIndex - 1);
+    String taskPath = FileUtil.join(project.getBasePath(), lesson.getName(), task.getName());
     String filePath;
     if (StringUtil.isNotEmpty(sourceDir)) {
       filePath = FileUtil.join(taskPath, sourceDir, fileName);
@@ -753,7 +746,7 @@ public class EduUtils {
       prefixToRemove.add(testDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
     }
 
-    VirtualFile taskDir = getTaskDir(file);
+    VirtualFile taskDir = getTaskDir(course, file);
     if (taskDir == null) return file.getName();
 
     String fullRelativePath = FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
@@ -1240,5 +1233,35 @@ public class EduUtils {
       LOG.error(e);
     }
     return null;
+  }
+
+  public static boolean isTaskDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    if (!virtualFile.isDirectory()) {
+      return false;
+    }
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return false;
+    }
+    VirtualFile lessonDirCandidate = virtualFile.getParent();
+    if (lessonDirCandidate == null || !isLessonDirectory(project, lessonDirCandidate)) {
+      return false;
+    }
+    Lesson lesson = course.getLesson(lessonDirCandidate.getName());
+    if (lesson == null) {
+      return false;
+    }
+    return lesson.getTask(virtualFile.getName()) != null;
+  }
+
+  public static boolean isLessonDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    if (!virtualFile.isDirectory()) {
+      return false;
+    }
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return false;
+    }
+    return course.getLesson(virtualFile.getName()) != null;
   }
 }

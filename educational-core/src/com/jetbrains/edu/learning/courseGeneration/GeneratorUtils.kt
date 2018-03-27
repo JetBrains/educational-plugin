@@ -14,10 +14,7 @@ import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.course
 import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
@@ -58,10 +55,7 @@ object GeneratorUtils {
     if (EduNames.ADDITIONAL_MATERIALS == lesson.name) {
       createAdditionalFiles(lesson, courseDir)
     } else {
-      val lessonDirName = "${EduNames.LESSON}${lesson.index}"
-      val lessonDir = runInWriteActionAndWait(ThrowableComputable {
-        VfsUtil.createDirectoryIfMissing(courseDir, lessonDirName)
-      })
+      val lessonDir = createUniqueDir(courseDir, lesson)
       val taskList = lesson.getTaskList()
       for ((i, task) in taskList.withIndex()) {
         task.index = i + 1
@@ -73,10 +67,7 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createTask(task: Task, lessonDir: VirtualFile) {
-    val name = "${EduNames.TASK}${task.index}"
-    val taskDir = runInWriteActionAndWait(ThrowableComputable {
-      VfsUtil.createDirectoryIfMissing(lessonDir, name)
-    })
+    val taskDir = createUniqueDir(lessonDir, task)
     createTaskContent(task, taskDir)
   }
 
@@ -228,5 +219,30 @@ object GeneratorUtils {
         }
       }
     }
+  }
+
+  /**
+   * Non unique lesson/task/section names can be received from stepik
+   */
+  @JvmStatic
+  fun getUniqueValidName(parentDir: VirtualFile, name: String): String  {
+    var index = 0
+    var candidateName = name
+    while (parentDir.findChild(candidateName) != null) {
+      index++
+      candidateName = "$name ($index)"
+    }
+    return candidateName
+  }
+
+  private fun createUniqueDir(parentDir: VirtualFile, item: StudyItem): VirtualFile {
+    val uniqueDirName = getUniqueValidName(parentDir, item.name)
+    if (uniqueDirName != item.name) {
+      item.customPresentableName = item.name
+      item.name = uniqueDirName
+    }
+    return runInWriteActionAndWait(ThrowableComputable {
+      VfsUtil.createDirectoryIfMissing(parentDir, item.name)
+    })
   }
 }

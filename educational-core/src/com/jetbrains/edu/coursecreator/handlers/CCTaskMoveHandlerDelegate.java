@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.handlers;
 
 import com.intellij.ide.IdeView;
+import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -18,9 +19,9 @@ import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -48,27 +49,16 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     }
 
     final PsiDirectory sourceDirectory = directories[0];
-    return isTaskDir(sourceDirectory);
+    return EduUtils.isTaskDirectory(sourceDirectory.getProject(), sourceDirectory.getVirtualFile());
   }
 
   @Override
   public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
     if (elements.length > 0 && elements[0] instanceof PsiDirectory) {
-      return isTaskDir(((PsiDirectory)elements[0]));
+      PsiDirectory element = (PsiDirectory)elements[0];
+      return EduUtils.isTaskDirectory(element.getProject(), element.getVirtualFile());
     }
     return false;
-  }
-
-  private static boolean isTaskDir(PsiDirectory sourceDirectory) {
-    if (sourceDirectory == null) {
-      return false;
-    }
-    Project project = sourceDirectory.getProject();
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null || !CCUtils.isCourseCreator(project)) {
-      return false;
-    }
-    return EduUtils.getTask(sourceDirectory.getVirtualFile(), course) != null;
   }
 
   @Override
@@ -86,7 +76,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     }
 
     PsiDirectory targetDir = (PsiDirectory)targetContainer;
-    if (!isTaskDir(targetDir) && !CCUtils.isLessonDir(targetDir)) {
+    if (!EduUtils.isTaskDirectory(project, targetDir.getVirtualFile()) && !EduUtils.isLessonDirectory(project, targetDir.getVirtualFile())) {
       Messages.showInfoMessage("Tasks can be moved only to other lessons or inside lesson", "Incorrect Target For Move");
       return;
     }
@@ -101,10 +91,14 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
       return;
     }
 
-    if (CCUtils.isLessonDir(targetDir)) {
+    if (EduUtils.isLessonDirectory(project, targetDir.getVirtualFile())) {
       //if user moves task to any lesson, this task is inserted as the last task in this lesson
       Lesson targetLesson = course.getLesson(targetDir.getName());
       if (targetLesson == null) {
+        return;
+      }
+      if (targetDir.getVirtualFile().findChild(taskToMove.getName()) != null) {
+        Messages.showInfoMessage("Lesson contains task with the same name", "Incorrect Target For Move");
         return;
       }
       List<Task> taskList = targetLesson.getTaskList();
@@ -128,6 +122,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
       moveTask(sourceDirectory, taskToMove, targetTask, dialog.getIndexDelta(),
                lessonDir.getVirtualFile(), targetTask.getLesson());
     }
+    ProjectView.getInstance(project).refresh();
 
   }
 
@@ -137,35 +132,23 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
                         int indexDelta,
                         final VirtualFile targetDirectory,
                         Lesson targetLesson) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          sourceDirectory.getVirtualFile().rename(this, "tmp");
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-      }
-    });
     final VirtualFile sourceLessonDir = sourceDirectory.getVirtualFile().getParent();
     if (sourceLessonDir == null) {
       return;
     }
-    CCUtils.updateHigherElements(sourceLessonDir.getChildren(), file -> taskToMove.getLesson().getTask(file.getName()), taskToMove.getIndex(), EduNames.TASK, -1);
+    CCUtils.updateHigherElements(sourceLessonDir.getChildren(), file -> taskToMove.getLesson().getTask(file.getName()), taskToMove.getIndex(),
+                                 -1);
 
     final int newItemIndex = targetTask != null ? targetTask.getIndex() + indexDelta : 1;
     taskToMove.setIndex(-1);
     taskToMove.getLesson().getTaskList().remove(taskToMove);
     final Lesson finalTargetLesson = targetLesson;
-    CCUtils.updateHigherElements(targetDirectory.getChildren(), file -> finalTargetLesson.getTask(file.getName()),
-                                 newItemIndex - 1, EduNames.TASK, 1);
+    CCUtils.updateHigherElements(targetDirectory.getChildren(), file -> finalTargetLesson.getTask(file.getName()), newItemIndex - 1, 1);
 
     taskToMove.setIndex(newItemIndex);
     taskToMove.setLesson(targetLesson);
     targetLesson.getTaskList().add(taskToMove);
     Collections.sort(targetLesson.getTaskList(), EduUtils.INDEX_COMPARATOR);
-
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
@@ -174,7 +157,6 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
           if (!targetDirectory.equals(sourceLessonDir)) {
             sourceDirectory.getVirtualFile().move(this, targetDirectory);
           }
-          sourceDirectory.getVirtualFile().rename(this, EduNames.TASK + newItemIndex);
         }
         catch (IOException e) {
           LOG.error(e);

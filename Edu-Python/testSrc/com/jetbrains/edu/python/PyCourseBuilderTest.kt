@@ -14,18 +14,18 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
   fun `test study course structure`() {
     generateCourseStructure("testData/newCourse/python_course.json")
     val expectedFileTree = fileTree {
-      dir("lesson1") {
-        dir("task1") {
+      dir("Introduction") {
+        dir("Our first program") {
           file("hello_world.py")
           file("tests.py")
         }
-        dir("task2") {
+        dir("Comments") {
           file("comments.py")
           file("tests.py")
         }
       }
-      dir("lesson2") {
-        dir("task1") {
+      dir("Variables") {
+        dir("Variable definition") {
           file("variable_definition.py")
           file("tests.py")
         }
@@ -57,20 +57,20 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
   fun `test educator course structure from not empty course`() {
     generateCourseStructure("testData/newCourse/python_course.json", CourseType.EDUCATOR)
     val expectedFileTree = fileTree {
-      dir("lesson1") {
-        dir("task1") {
+      dir("Introduction") {
+        dir("Our first program") {
           file("hello_world.py")
           file("tests.py")
           file("task.html")
         }
-        dir("task2") {
+        dir("Comments") {
           file("comments.py")
           file("tests.py")
           file("task.html")
         }
       }
-      dir("lesson2") {
-        dir("task1") {
+      dir("Variables") {
+        dir("Variable definition") {
           file("variable_definition.py")
           file("tests.py")
           file("task.html")

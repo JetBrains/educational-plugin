@@ -3,6 +3,8 @@ package com.jetbrains.edu.coursecreator.handlers;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.Project;
@@ -19,21 +21,23 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+
 public abstract class CCRenameHandler implements RenameHandler {
   @Override
   public boolean isAvailableOnDataContext(DataContext dataContext) {
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if (element == null || !(element instanceof PsiDirectory)) {
+    if (!(element instanceof PsiDirectory)) {
       return false;
     }
     if (!CCUtils.isCourseCreator(element.getProject())) {
       return false;
     }
     VirtualFile directory = ((PsiDirectory)element).getVirtualFile();
-    return isAvailable(directory);
+    return isAvailable(element.getProject(), directory);
   }
 
-  protected abstract boolean isAvailable(VirtualFile directory);
+  protected abstract boolean isAvailable(@NotNull Project project, @NotNull VirtualFile directory);
 
   @Override
   public boolean isRenaming(DataContext dataContext) {
@@ -60,12 +64,20 @@ public abstract class CCRenameHandler implements RenameHandler {
   protected abstract void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiDirectory directory);
 
 
-  protected static void processRename(@NotNull final StudyItem item, String namePrefix, @NotNull final Project project) {
+  protected static void processRename(@NotNull final StudyItem item, String namePrefix, @NotNull final Project project, @NotNull VirtualFile directory) {
     String name = item.getName();
     String text = "Rename " + StringUtil.toTitleCase(namePrefix);
-    String newName = Messages.showInputDialog(project, text + " '" + name + "' to", text, null, name, null);
+    String newName = Messages.showInputDialog(project, text + " '" + name + "' to", text, null, name, new CCUtils.PathInputValidator(directory.getParent(), name));
     if (newName != null) {
       item.setName(newName);
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        try {
+          directory.rename(CCRenameHandler.class, newName);
+        }
+        catch (IOException e) {
+          Logger.getInstance(CCRenameHandler.class).error(e);
+        }
+      });
     }
   }
 

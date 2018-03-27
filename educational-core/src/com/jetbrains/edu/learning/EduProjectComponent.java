@@ -247,10 +247,9 @@ public class EduProjectComponent implements ProjectComponent {
     for (Lesson lesson : course.getLessons(true)) {
       lessonIndex += 1;
       Lesson studentLesson = currentCourse.getLesson(lesson.getId());
-      final String lessonDirName = EduNames.LESSON + String.valueOf(lessonIndex);
 
       final VirtualFile baseDir = myProject.getBaseDir();
-      final VirtualFile lessonDir = baseDir.findChild(lessonDirName);
+      final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
       if (lessonDir == null) {
         lesson.setIndex(lessonIndex);
         lesson.initLesson(currentCourse, false);
@@ -283,8 +282,7 @@ public class EduProjectComponent implements ProjectComponent {
         task.initTask(studentLesson, false);
         task.setIndex(index);
 
-        final String taskDirName = EduNames.TASK + String.valueOf(index);
-        final VirtualFile taskDir = lessonDir.findChild(taskDirName);
+        final VirtualFile taskDir = lessonDir.findChild(task.getName());
 
         if (taskDir != null) return;
         try {

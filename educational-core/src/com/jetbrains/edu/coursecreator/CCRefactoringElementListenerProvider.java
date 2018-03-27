@@ -69,18 +69,7 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
       if (course == null) {
         return;
       }
-      if (taskDir == null || !taskDir.getName().contains(EduNames.TASK)) {
-        return;
-      }
-      PsiDirectory lessonDir = taskDir.getParent();
-      if (lessonDir == null || !lessonDir.getName().contains(EduNames.LESSON)) {
-        return;
-      }
-      Lesson lesson = course.getLesson(lessonDir.getName());
-      if (lesson == null) {
-        return;
-      }
-      Task task = lesson.getTask(taskDir.getName());
+      Task task = EduUtils.getTaskForFile(project, file.getVirtualFile());
       if (task == null) {
         return;
       }

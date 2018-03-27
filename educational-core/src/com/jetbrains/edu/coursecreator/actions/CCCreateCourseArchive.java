@@ -140,8 +140,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
 
       private void replaceAnswerFilesWithTaskFiles(Course courseCopy) {
         for (Lesson lesson : courseCopy.getLessons()) {
-          String lessonDirName = EduNames.LESSON + String.valueOf(lesson.getIndex());
-          final VirtualFile lessonDir = baseDir.findChild(lessonDirName);
+          final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
           if (lessonDir == null) continue;
           for (Task task : lesson.getTaskList()) {
             final VirtualFile taskDir = task.getTaskDir(project);

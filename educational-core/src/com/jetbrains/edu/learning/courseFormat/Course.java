@@ -9,6 +9,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.stepik.StepicUser;
+import one.util.streamex.StreamEx;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -98,13 +99,7 @@ public class Course {
 
   @Nullable
   public Lesson getLesson(@NotNull final String name) {
-    int lessonIndex = EduUtils.getIndex(name, EduNames.LESSON);
-    for (Lesson lesson : lessons) {
-      if (lesson.getIndex() - 1 == lessonIndex) {
-        return lesson;
-      }
-    }
-    return null;
+    return StreamEx.of(lessons).findFirst(lesson -> name.equals(lesson.getName())).orElse(null);
   }
 
   public Lesson getLesson(int lessonId) {
