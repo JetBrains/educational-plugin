@@ -47,7 +47,6 @@ object PlaceholderDependencyManager {
     for (dependency in task.placeholderDependencies) {
       val replacementText = getReplacementText(project, dependency)
       val placeholderToReplace = dependency.answerPlaceholder
-      val document = placeholderToReplace.taskFile.getDocument(project)!!
       runUndoTransparentWriteAction {
         replaceWithListener(project, placeholderToReplace, replacementText)
       }
