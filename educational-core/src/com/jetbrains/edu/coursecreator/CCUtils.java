@@ -360,6 +360,7 @@ public class CCUtils {
       myErrorText = null;
       if (!PathUtil.isValidFileName(inputString)) {
         myErrorText = "invalid name";
+        return false;
       }
       if (myParentDir.findChild(inputString) != null && !inputString.equals(myName)) {
         myErrorText = String.format("%s already contains directory named %s", myParentDir.getName(), inputString);
