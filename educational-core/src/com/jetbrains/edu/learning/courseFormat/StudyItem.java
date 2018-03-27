@@ -6,6 +6,8 @@ public abstract class StudyItem {
   // from 1 to number of items
   private int myIndex = -1;
 
+  // Non unique lesson/task/section names can be received from stepik. In this case unique directory name is generated,
+  // but original non unique name is displayed
   @Nullable private String myCustomPresentableName = null;
 
   //TODO: move name to this class

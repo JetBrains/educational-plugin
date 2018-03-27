@@ -221,6 +221,9 @@ object GeneratorUtils {
     }
   }
 
+  /**
+   * Non unique lesson/task/section names can be received from stepik
+   */
   @JvmStatic
   fun getUniqueValidName(parentDir: VirtualFile, name: String): String  {
     var index = 0
