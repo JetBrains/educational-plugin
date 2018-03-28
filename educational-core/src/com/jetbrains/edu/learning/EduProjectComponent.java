@@ -26,7 +26,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.containers.hash.HashMap;
@@ -45,7 +44,6 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 
@@ -326,10 +324,6 @@ public class EduProjectComponent implements ProjectComponent {
   public void projectClosed() {
     final Course course = StudyTaskManager.getInstance(myProject).getCourse();
     if (course != null) {
-      final ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-      if (toolWindow != null) {
-        toolWindow.getContentManager().removeAllContents(false);
-      }
       KeymapManagerEx keymapManager = KeymapManagerEx.getInstanceEx();
       for (Keymap keymap : keymapManager.getAllKeymaps()) {
         List<Pair<String, String>> pairs = myDeletedShortcuts.get(keymap);
