@@ -5,8 +5,10 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -18,7 +20,9 @@ class SwitchTaskPanelAction : AnAction() {
     val project = e?.project
     val result = createDialog().showAndGet()
     if (result && project != null) {
-      EduUtils.initToolWindow(project)
+      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
+      toolWindow.contentManager.removeAllContents(false)
+      TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
     }
   }
   
