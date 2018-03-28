@@ -26,6 +26,7 @@ def buildNumber = System.getenv("BUILD_NUMBER")
 version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
 import de.undercouch.gradle.tasks.download.Download
+import org.apache.tools.ant.taskdefs.condition.Os
 
 
 task downloadJavaFx(type: Download) {
@@ -59,10 +60,10 @@ allprojects {
     }
 
     intellij {
-        if (project.hasProperty("ideaVersion")) {
-            version ideaVersion
-        } else if (project.hasProperty("ideaPath")) {
-            localPath ideaPath
+        if (project.hasProperty("androidStudioPath")) {
+            localPath androidStudioPath
+        } else {
+            localPath "${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion/${studioContentPath()}"
         }
     }
 
@@ -98,10 +99,31 @@ allprojects {
 
 
 intellij {
-    if (project.hasProperty("ideaVersion")) {
-        version ideaVersion
-    } else if (project.hasProperty("ideaPath")) {
-        localPath ideaPath
+    if (project.hasProperty("androidStudioPath")) {
+        localPath androidStudioPath
+    } else {
+        if (!rootProject.hasProperty("studioVersion")) throw IllegalStateException("studioVersion is unspecified")
+        if (!rootProject.hasProperty("studioBuildVersion")) throw IllegalStateException("studioBuildVersion is unspecified")
+        def osFamily = getOsFamily()
+        if (osFamily == null) throw IllegalStateException("current os family is unsupported")
+
+        def studioZip = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.zip")
+        if (!studioZip.exists()) {
+            download {
+                src "http://dl.google.com/dl/android/studio/ide-zips/$studioVersion/android-studio-ide-$studioBuildVersion-${osFamily}.zip"
+                dest studioZip
+            }
+        }
+
+        def studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
+        if (!studioFolder.exists()) {
+            copy {
+                from zipTree(studioZip)
+                into studioFolder
+            }
+        }
+
+        localPath "$studioFolder/${studioContentPath()}"
     }
     if (project.hasProperty("customSinceBuild")) {
         patchPluginXml.sinceBuild = customSinceBuild
@@ -113,6 +135,23 @@ intellij {
     updateSinceUntilBuild true
     downloadSources false
     plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
+}
+
+static String getOsFamily() {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) return "windows"
+    if (Os.isFamily(Os.FAMILY_MAC)) return "mac"
+    if (Os.isFamily(Os.FAMILY_UNIX) && !Os.isFamily(Os.FAMILY_MAC)) return "linux"
+    return null
+}
+
+static String studioContentPath() {
+    def osFamily = getOsFamily()
+    if (osFamily == null) throw IllegalStateException("current os family is unsupported")
+    if (osFamily == "mac") {
+        return "Android Studio.app/Contents"
+    } else {
+        return "android-studio"
+    }
 }
 
 task configurePyCharm {
@@ -198,11 +237,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]
 }
 
 configure([project(':educational-core'), project(':Edu-Java')]) {
-    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
+    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy', 'smali'
 }
 
 configure(project(':Edu-Kotlin')) {
-    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
+    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy', 'smali'
 
 
     task createTwitterProperties() {
