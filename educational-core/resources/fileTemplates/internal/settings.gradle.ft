@@ -1,4 +1,8 @@
-rootProject.name = '$PROJECT_NAME$'
+static String sanitizeName(String name) {
+  return name.replaceAll("[ /\\\\:<>\"?*|]", "_")
+}
+
+rootProject.name = sanitizeName('$PROJECT_NAME$')
 
 def lessons = rootProject.projectDir.listFiles(new FilenameFilter() {
     @Override
