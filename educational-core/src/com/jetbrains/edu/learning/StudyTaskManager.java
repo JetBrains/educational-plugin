@@ -65,9 +65,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
 
   public void setCourse(Course course) {
     myCourse = course;
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      ApplicationManager.getApplication().invokeLater(() -> EduUtils.registerStudyToolWindow(myProject));
-    }
     myProject.getMessageBus().syncPublisher(COURSE_SET).courseSet(course);
   }
 

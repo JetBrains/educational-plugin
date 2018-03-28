@@ -206,13 +206,6 @@ public class EduUtils {
     }
   }
 
-  public static void initToolWindow(@NotNull final Project project) {
-    final ToolWindowManager windowManager = ToolWindowManager.getInstance(project);
-    windowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW).getContentManager().removeAllContents(false);
-    TaskDescriptionToolWindowFactory factory = new TaskDescriptionToolWindowFactory();
-    factory.createToolWindowContent(project, windowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW));
-  }
-
   @Nullable
   public static TaskDescriptionToolWindow getStudyToolWindow(@NotNull final Project project) {
     if (project.isDisposed()) return null;
@@ -723,21 +716,6 @@ public class EduUtils {
     editor.getSelectionModel().setSelection(offsets.first, offsets.second);
     editor.getCaretModel().moveToOffset(offsets.first);
     editor.getScrollingModel().scrollToCaret(ScrollType.CENTER);
-  }
-
-  public static void registerStudyToolWindow(Project project) {
-    if (project.isDisposed()) return;
-    final ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-    if (toolWindowManager == null) {
-      return;
-    }
-    ToolWindow studyToolWindow = toolWindowManager.getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-    if (studyToolWindow == null) {
-      studyToolWindow = toolWindowManager.registerToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW,
-                                                                          true, ToolWindowAnchor.RIGHT, project, true);
-      initToolWindow(project);
-    }
-    studyToolWindow.show(null);
   }
 
   @Nullable
