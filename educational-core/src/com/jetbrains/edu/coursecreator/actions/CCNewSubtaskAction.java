@@ -50,10 +50,6 @@ public class CCNewSubtaskAction extends DumbAwareAction {
     assert task != null;
 
     if (!(task instanceof TaskWithSubtasks)) {
-      // We want dump current tool window editor state to task
-      // before it will be converted to TaskWithSubtasks
-      EduUtils.saveToolWindowTextIfNeeded(project);
-
       task = convertToTaskWithSubtasks(task, project);
     }
     addSubtask((TaskWithSubtasks)task, project);

@@ -51,9 +51,6 @@ public class CCTaskNode extends TaskNode {
       if (virtualFile == null) {
         return null;
       }
-      if (EduUtils.isTaskDescriptionFile(virtualFile.getName())) {
-        return null;
-      }
       Course course = StudyTaskManager.getInstance(myProject).getCourse();
       if (course == null) {
         return null;

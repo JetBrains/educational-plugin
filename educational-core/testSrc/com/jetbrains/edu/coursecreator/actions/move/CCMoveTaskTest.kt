@@ -19,7 +19,7 @@ class CCMoveTaskTest : EduTestCase() {
         eduTask {  }
       }
       lesson {
-        eduTask ("task2", {})
+        eduTask("task2") { }
       }
     }
     course.courseMode = CCUtils.COURSE_MODE
@@ -103,8 +103,8 @@ class CCMoveTaskTest : EduTestCase() {
         eduTask {  }
       }
       lesson {
-        eduTask ("task3", {  })
-        eduTask ("task4", {  })
+        eduTask("task3") { }
+        eduTask("task4") { }
       }
     }
     course.courseMode = CCUtils.COURSE_MODE
@@ -135,8 +135,8 @@ class CCMoveTaskTest : EduTestCase() {
         eduTask {  }
       }
       lesson {
-        eduTask ("task3", {  })
-        eduTask ("task4", {  })
+        eduTask("task3") { }
+        eduTask("task4") { }
       }
     }
     course.courseMode = CCUtils.COURSE_MODE
