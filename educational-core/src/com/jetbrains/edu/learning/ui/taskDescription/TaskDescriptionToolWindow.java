@@ -15,25 +15,17 @@
  */
 package com.jetbrains.edu.learning.ui.taskDescription;
 
-import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.EditorSettings;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.ex.EditorEx;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBCardLayout;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.coursecreator.actions.CCEditTaskTextAction;
+import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
@@ -149,7 +141,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     if (configurator != null) {
       group.addAll(configurator.getTaskDescriptionActionGroup());
     }
-    group.add(new CCEditTaskTextAction());
+    group.add(new CCEditTaskDescription());
     return group;
   }
 
@@ -177,10 +169,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
       subtaskIndex = ((TaskWithSubtasks) task).getActiveSubtaskIndex();
     }
     if (myCurrentTask != null && myCurrentTask == task && myCurrentSubtaskIndex == subtaskIndex) return;
-    if (StudyTaskManager.getInstance(project).getToolWindowMode() == StudyToolWindowMode.EDITING) {
-      // Dump current description into file and leave editing mode
-      leaveEditingMode(project);
-    }
 
     setTaskText(project, task);
     myCurrentTask = task;
@@ -192,7 +180,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
       VirtualFile taskDir = task.getTaskDir(project);
       String taskText = EduUtils.getTaskText(project);
       if (taskText != null) {
-        setTaskText(taskText, taskDir, project);
+        setText(taskText);
       }
     }
     else {
@@ -200,66 +188,8 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     }
   }
 
-  public void setTaskText(@NotNull String text, @Nullable VirtualFile taskDirectory, @NotNull Project project) {
-    if (!EMPTY_TASK_TEXT.equals(text) && StudyTaskManager.getInstance(project).isTurnEditingMode()) {
-      if (taskDirectory == null) {
-        LOG.info("Failed to enter editing mode for StudyToolWindow");
-        return;
-      }
-      VirtualFile taskTextFile = EduUtils.findTaskDescriptionVirtualFile(project, taskDirectory);
-      enterEditingMode(taskTextFile, project);
-      StudyTaskManager.getInstance(project).setTurnEditingMode(false);
-    }
-    if (taskDirectory != null && StudyTaskManager.getInstance(project).getToolWindowMode() == StudyToolWindowMode.EDITING) {
-      VirtualFile taskTextFile = EduUtils.findTaskDescriptionVirtualFile(project, taskDirectory);
-      enterEditingMode(taskTextFile, project);
-    }
-    else {
-      setText(text);
-    }
-  }
-
   public void setEmptyText(@NotNull Project project) {
-    if (StudyTaskManager.getInstance(project).getToolWindowMode() == StudyToolWindowMode.EDITING) {
-      mySplitPane.setFirstComponent(myContentPanel);
-      StudyTaskManager.getInstance(project).setTurnEditingMode(true);
-    }
-    setTaskText(EMPTY_TASK_TEXT, null, project);
-  }
-
-  public void enterEditingMode(VirtualFile taskFile, @NotNull Project project) {
-    final EditorFactory factory = EditorFactory.getInstance();
-    Document document = FileDocumentManager.getInstance().getDocument(taskFile);
-    if (document == null) {
-      return;
-    }
-    WebBrowserManager.getInstance().setShowBrowserHover(false);
-    final EditorEx createdEditor = (EditorEx)factory.createEditor(document, project, taskFile, false);
-    Disposer.register(project, new Disposable() {
-      public void dispose() {
-        factory.releaseEditor(createdEditor);
-      }
-    });
-
-    JComponent editorComponent = createdEditor.getComponent();
-    editorComponent.setBorder(JBUI.Borders.empty(10, 20, 0, 10));
-    editorComponent.setBackground(EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground());
-    EditorSettings editorSettings = createdEditor.getSettings();
-    editorSettings.setLineMarkerAreaShown(false);
-    editorSettings.setLineNumbersShown(false);
-    editorSettings.setFoldingOutlineShown(false);
-    mySplitPane.setFirstComponent(editorComponent);
-    mySplitPane.repaint();
-
-    StudyTaskManager.getInstance(project).setToolWindowMode(StudyToolWindowMode.EDITING);
-  }
-
-
-  public void leaveEditingMode(@NotNull Project project) {
-    WebBrowserManager.getInstance().setShowBrowserHover(true);
-    mySplitPane.setFirstComponent(myContentPanel);
-    StudyTaskManager.getInstance(project).setToolWindowMode(StudyToolWindowMode.TEXT);
-    EduUtils.updateToolWindows(project);
+    setText(EMPTY_TASK_TEXT);
   }
 
   @Nullable

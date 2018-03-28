@@ -929,20 +929,6 @@ public class EduUtils {
     return new File(jarPath, "courses");
   }
 
-  /**
-   * Save current description into task if `StudyToolWindow` in editing mode
-   * and exit from this mode. Otherwise do nothing.
-   *
-   * @param project current project
-   */
-  public static void saveToolWindowTextIfNeeded(@NotNull Project project) {
-    TaskDescriptionToolWindow toolWindow = getStudyToolWindow(project);
-    TaskDescriptionToolWindow.StudyToolWindowMode toolWindowMode = StudyTaskManager.getInstance(project).getToolWindowMode();
-    if (toolWindow != null && toolWindowMode == TaskDescriptionToolWindow.StudyToolWindowMode.EDITING) {
-      toolWindow.leaveEditingMode(project);
-    }
-  }
-
   public static void enableAction(@NotNull final AnActionEvent event, boolean isEnable) {
     final Presentation presentation = event.getPresentation();
     presentation.setVisible(isEnable);

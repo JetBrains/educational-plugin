@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
@@ -49,9 +48,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   public int VERSION = CURRENT_VERSION;
 
   public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();
-
-  private TaskDescriptionToolWindow.StudyToolWindowMode myToolWindowMode = TaskDescriptionToolWindow.StudyToolWindowMode.TEXT;
-  private boolean myTurnEditingMode = false;
 
   @Transient private final Project myProject;
 
@@ -242,21 +238,4 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   public static StudyTaskManager getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, StudyTaskManager.class);
   }
-
-  public TaskDescriptionToolWindow.StudyToolWindowMode getToolWindowMode() {
-    return myToolWindowMode;
-  }
-
-  public void setToolWindowMode(TaskDescriptionToolWindow.StudyToolWindowMode toolWindowMode) {
-    myToolWindowMode = toolWindowMode;
-  }
-
-  public boolean isTurnEditingMode() {
-    return myTurnEditingMode;
-  }
-
-  public void setTurnEditingMode(boolean turnEditingMode) {
-    myTurnEditingMode = turnEditingMode;
-  }
-
 }

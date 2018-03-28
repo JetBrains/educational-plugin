@@ -4,6 +4,8 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -177,6 +179,37 @@ public class CCProjectComponent extends AbstractProjectComponent {
     return result;
   }
 
+  private static List<VirtualFile> getAllTaskDescriptionFiles(@NotNull Course course, @NotNull Project project) {
+    List<VirtualFile> result = new ArrayList<>();
+    for (Lesson lesson : course.getLessons()) {
+      for (Task task : lesson.getTaskList()) {
+        VirtualFile taskDir = task.getTaskDir(project);
+        if (taskDir == null) {
+          continue;
+        }
+        VirtualFile file = EduUtils.findTaskDescriptionVirtualFile(project, taskDir);
+        if (file != null) {
+          result.add(file);
+        }
+      }
+    }
+    return result;
+  }
+
+  private void startTaskDescriptionFilesSynchronization() {
+    Course course = StudyTaskManager.getInstance(myProject).getCourse();
+    if (course == null) {
+      return;
+    }
+    for (VirtualFile file : getAllTaskDescriptionFiles(course, myProject)) {
+      Document document = FileDocumentManager.getInstance().getDocument(file);
+      if (document == null) {
+        continue;
+      }
+      document.addDocumentListener(new SynchronizeTaskDescription(myProject), myProject);
+    }
+  }
+
   @NotNull
   public String getComponentName() {
     return "CCProjectComponent";
@@ -188,6 +221,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       if (CCUtils.isCourseCreator(myProject)) {
         registerListener();
         EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE);
+        startTaskDescriptionFilesSynchronization();
       }
     });
   }
