@@ -2,10 +2,12 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
+import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
@@ -15,6 +17,8 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 val Task.course: Course? get() = lesson?.course
+
+val Task.project: Project? get() = course?.project
 
 val Task.sourceDir: String? get() = course?.sourceDir
 val Task.testDir: String? get() = course?.testDir
@@ -72,4 +76,10 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
       placeholder.studentAnswer = document.getText(TextRange.create(startOffset, endOffset))
     }
   }
+}
+
+fun Task.addDefaultTaskDescription() {
+  val fileName = EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
+  val template = FileTemplateManager.getDefaultInstance().getInternalTemplate(fileName) ?: return
+  addTaskText(EduNames.TASK, template.text)
 }
