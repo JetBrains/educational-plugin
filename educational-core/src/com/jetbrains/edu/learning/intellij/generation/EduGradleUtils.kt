@@ -72,7 +72,8 @@ object EduGradleUtils {
                                             .useDefaultCallback()
                                             .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
                                             .dontReportRefreshErrors()
-                                            .build())
+                                            .build(),
+                                          false)
     }
 
     private fun gradleVersion(): String = maxOf(GradleVersion.current(), GradleVersion.version(DEFAULT_GRADLE_VERSION)).version
