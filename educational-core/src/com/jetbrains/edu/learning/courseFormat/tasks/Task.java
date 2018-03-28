@@ -2,11 +2,7 @@ package com.jetbrains.edu.learning.courseFormat.tasks;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -173,11 +169,7 @@ public abstract class Task extends StudyItem {
 
   @Nullable
   public VirtualFile getTaskDir(@NotNull final Project project) {
-    VirtualFile courseDir = project.getBaseDir();
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      final Module module = ModuleManager.getInstance(project).getModules()[0];
-      courseDir = ModuleRootManager.getInstance(module).getContentRoots()[0];
-    }
+    VirtualFile courseDir = EduUtils.getCourseDir(project);
     if (courseDir != null) {
       VirtualFile lessonDir = courseDir.findChild(myLesson.getName());
       if (lessonDir != null) {
