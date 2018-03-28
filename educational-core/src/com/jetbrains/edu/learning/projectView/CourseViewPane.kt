@@ -19,6 +19,7 @@ package com.jetbrains.edu.learning.projectView
 import com.intellij.ide.SelectInTarget
 import com.intellij.ide.impl.ProjectViewSelectInTarget
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.ide.projectView.ViewSettings
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane
 import com.intellij.ide.projectView.impl.ProjectAbstractTreeStructureBase
 import com.intellij.ide.projectView.impl.ProjectTreeStructure
@@ -26,11 +27,10 @@ import com.intellij.ide.projectView.impl.ProjectViewTree
 import com.intellij.ide.ui.laf.darcula.ui.DarculaProgressBarUI
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
+import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
+import com.intellij.ide.util.treeView.AlphaComparator
 import com.intellij.openapi.actionSystem.*
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.util.ColorProgressBar
 import com.intellij.openapi.project.DumbAware
@@ -38,6 +38,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
+import com.intellij.util.ArrayUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -46,8 +47,8 @@ import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import icons.EducationalCoreIcons
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.annotations.TestOnly
@@ -74,6 +75,8 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createComponent(): JComponent {
     val component = super.createComponent()
+    installComparator(treeBuilder, AlphaComparator.INSTANCE)
+
     if (!EduUtils.isStudentProject(myProject)) return component
     val panel = JPanel(BorderLayout())
     panel.background = UIUtil.getTreeBackground()
@@ -152,7 +155,20 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   @TestOnly
   fun getProgressBar(): JProgressBar = progressBar
 
-  override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID) {}
+  override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID) {
+    override fun createRoot(project: Project?, settings: ViewSettings?): AbstractTreeNode<*> {
+      return RootNode(myProject, settings)
+    }
+
+    override fun getChildElements(element: Any?): Array<Any> {
+      if (element !is AbstractTreeNode<*>) {
+        return ArrayUtil.EMPTY_OBJECT_ARRAY
+      }
+      val elements = element.children
+      elements.forEach { node -> node.setParent(element) }
+      return ArrayUtil.toObjectArray(elements)
+    }
+  }
   override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = AbstractTreeUpdater(treeBuilder)
 
   override fun getTitle(): String = ID
@@ -175,7 +191,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
     if (CCUtils.isCourseCreator(myProject)) {
       val userObject = selectedNode?.userObject
-      val studyItem = (userObject as? CCTaskNode)?.myTask ?: (userObject as? CCLessonNode)?.myLesson
+      val studyItem = (userObject as? CCTaskNode)?.task ?: (userObject as? CCLessonNode)?.lesson
       if (studyItem != null) {
         when {
           PlatformDataKeys.DELETE_ELEMENT_PROVIDER.`is`(dataId) -> return myStudyItemDeleteProvider
@@ -191,6 +207,6 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     const val ID = "Course"
     const val HIDE_SOLVED_LESSONS = "Edu.HideSolvedLessons"
 
-    val STUDY_ITEM = DataKey.create<StudyItem>("Edu.studyItem")
+    val STUDY_ITEM: DataKey<StudyItem> = DataKey.create<StudyItem>("Edu.studyItem")
   }
 }

@@ -50,7 +50,6 @@ public class DirectoryNode extends EduNode {
     return null;
   }
 
-  @Override
   public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
     return new DirectoryNode(myProject, value, myViewSettings);
   }

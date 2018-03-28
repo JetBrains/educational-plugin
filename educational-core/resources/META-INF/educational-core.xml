@@ -186,8 +186,6 @@
                 factoryClass="com.jetbrains.edu.learning.ui.OutputToolWindowFactory"
                 conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
     <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider"/>
-    <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->
-    <treeStructureProvider implementation="com.jetbrains.edu.learning.projectView.EduTreeStructureProvider" order="last"/>
     <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
     <projectService serviceInterface="com.jetbrains.edu.learning.StudyTaskManager"
                     serviceImplementation="com.jetbrains.edu.learning.StudyTaskManager"/>
@@ -207,8 +205,6 @@
 
     <!--for educators-->
     <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>
-    <treeStructureProvider implementation="com.jetbrains.edu.coursecreator.projectView.CCTreeStructureProvider"
-                           order="last"/>
     <refactoring.elementListenerProvider
         implementation="com.jetbrains.edu.coursecreator.CCRefactoringElementListenerProvider"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate"

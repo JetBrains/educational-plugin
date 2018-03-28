@@ -2,18 +2,20 @@ package com.jetbrains.edu.learning.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
+import com.intellij.ide.projectView.impl.nodes.ProjectViewDirectoryHelper;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class EduNode extends PsiDirectoryNode {
@@ -39,11 +41,6 @@ public abstract class EduNode extends PsiDirectoryNode {
     return false;
   }
 
-  @Nullable
-  public abstract AbstractTreeNode modifyChildNode(AbstractTreeNode childNode);
-
-  public abstract PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value);
-
   @Override
   public String getTestPresentation() {
     final PresentationData presentation = getPresentation();
@@ -53,5 +50,24 @@ public abstract class EduNode extends PsiDirectoryNode {
       builder.append(fragment.getText());
     }
     return getClass().getSimpleName() + " " + builder.toString();
+  }
+
+  @Override
+  public Collection<AbstractTreeNode> getChildrenImpl() {
+    final ArrayList<AbstractTreeNode> result = new ArrayList<>();
+    final Collection<AbstractTreeNode> children =
+      ProjectViewDirectoryHelper.getInstance(myProject).getDirectoryChildren(getValue(), getSettings(),
+                                                                             true, null);
+    for (AbstractTreeNode child : children) {
+      final AbstractTreeNode node = modifyChildNode(child);
+      if (node != null) {
+        result.add(node);
+      }
+    }
+    return result;
+  }
+
+  protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
+    return child;
   }
 }
