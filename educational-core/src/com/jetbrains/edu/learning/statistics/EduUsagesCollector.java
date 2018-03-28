@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class EduUsagesCollector extends ProjectUsagesCollector {
-  public static final String GROUP_ID = "educational";
+  public static final String GROUP_ID = "statistics.educational";
 
   public static void projectTypeCreated(@NotNull String projectTypeId) {
     advanceKey("project.created." + projectTypeId);
