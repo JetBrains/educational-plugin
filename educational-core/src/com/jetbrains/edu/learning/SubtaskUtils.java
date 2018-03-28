@@ -85,11 +85,6 @@ public class SubtaskUtils {
       }
     }
     transformTestFile(project, toSubtaskIndex, testDir);
-
-    // We want to dump current tool window editor state to subtask
-    // before we will switch subtask
-    EduUtils.saveToolWindowTextIfNeeded(project);
-
     task.setActiveSubtaskIndex(toSubtaskIndex);
     updateUI(project, task, taskDir, !CCUtils.isCourseCreator(project) && navigateToTask);
     if (CCUtils.isCourseCreator(project)) {
@@ -172,7 +167,7 @@ public class SubtaskUtils {
             toolWindow.setEmptyText(project);
             return;
         }
-        toolWindow.setTaskText(text, taskDir, project);
+        toolWindow.setText(text);
     }
     if (navigateToTask) {
       NavigationUtils.navigateToTask(project, task);

@@ -17,10 +17,12 @@ private val CLOSING_TAG: Pattern = Pattern.compile("</p>")
 fun course(
   name: String = "Test Course",
   language: Language = PlainTextLanguage.INSTANCE,
+  courseMode: String = EduNames.STUDY,
   buildCourse: CourseBuilder.() -> Unit
 ): Course {
   val builder = CourseBuilder()
   builder.withName(name)
+  builder.withMode(courseMode)
   builder.buildCourse()
   val course = builder.course
   course.language = language.id
@@ -42,6 +44,10 @@ class CourseBuilder {
 
   fun withName(name: String) {
     course.name = name
+  }
+
+  fun withMode(courseMode: String) {
+    course.courseMode = courseMode
   }
 
   fun lesson(name: String? = null, isFramework: Boolean = false, buildLesson: LessonBuilder.() -> Unit) {
@@ -90,18 +96,19 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     lesson.name = name
   }
 
-  fun task(task: Task, name: String? = null, buildTask: TaskBuilder.() -> Unit) {
+  fun task(task: Task, name: String? = null, taskDescription: String? = null, buildTask: TaskBuilder.() -> Unit) {
     val taskBuilder = TaskBuilder(lesson, task)
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
     taskBuilder.withName(name?: EduNames.TASK + nextTaskIndex)
+    taskBuilder.withTaskDescription(taskDescription?: "solve task")
     taskBuilder.buildTask()
     lesson.addTask(taskBuilder.task)
   }
 
-  fun eduTask(name: String? = null, buildTask: TaskBuilder.() -> Unit) = task(EduTask(), name, buildTask)
+  fun eduTask(name: String? = null, taskDescription: String? = null, buildTask: TaskBuilder.() -> Unit) = task(EduTask(), name, taskDescription, buildTask)
 
-  fun theoryTask(name: String? = null, text: String, buildTask: TaskBuilder.()-> Unit) = task(TheoryTask(), name, buildTask)
+  fun theoryTask(name: String? = null, taskDescription: String? = null, buildTask: TaskBuilder.() -> Unit) = task(TheoryTask(), name, taskDescription, buildTask)
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {
@@ -110,6 +117,10 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   }
   fun withName(name: String) {
     task.name = name
+  }
+
+  fun withTaskDescription(text: String) {
+    task.addTaskText(EduNames.TASK, text)
   }
 
   fun taskFile(name: String, text: String = "", buildTaskFile: (TaskFileBuilder.() -> Unit)? = null) {

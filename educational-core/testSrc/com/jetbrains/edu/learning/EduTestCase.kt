@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.ui.docking.DockContainer
@@ -117,18 +118,28 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
   fun courseWithFiles(
     name: String = "Test Course",
+    courseMode: String = EduNames.STUDY,
     language: Language = PlainTextLanguage.INSTANCE,
     settings: Any = Unit,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
-    return course(name, language, buildCourse).apply {
+    return course(name, language, courseMode, buildCourse).apply {
       createCourseFiles(project, LightPlatformTestCase.getSourceRoot(), settings)
     }
   }
 
-  fun getCourse(): Course = StudyTaskManager.getInstance(project).course!!
+  protected fun getCourse(): Course = StudyTaskManager.getInstance(project).course!!
 
-  fun findPlaceholder(lessonIndex: Int, taskIndex: Int, taskFile: String, placeholderIndex: Int) : AnswerPlaceholder {
+  protected fun findPlaceholder(lessonIndex: Int, taskIndex: Int, taskFile: String, placeholderIndex: Int) : AnswerPlaceholder {
     return getCourse().lessons[lessonIndex].taskList[taskIndex].taskFiles[taskFile]!!.answerPlaceholders[placeholderIndex]
+  }
+
+  protected fun findTask(lessonIndex: Int, taskIndex: Int): Task = getCourse().lessons[lessonIndex].taskList[taskIndex]
+
+  protected fun findVirtualFile(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {
+    val task = findTask(lessonIndex, taskIndex)
+    val taskDir = task.getTaskDir(project)!!
+    val taskFile = task.getTaskFile(taskFilePath)!!
+    return EduUtils.findTaskFileInDir(taskFile, taskDir)!!
   }
 }

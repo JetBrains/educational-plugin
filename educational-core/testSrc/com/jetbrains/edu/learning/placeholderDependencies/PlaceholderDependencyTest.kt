@@ -4,7 +4,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
@@ -146,13 +145,5 @@ class PlaceholderDependencyTest : EduTestCase() {
     val actualContent = document.getText(TextRange.create(startOffset, endOffset))
 
     assertEquals("Placeholder content is incorrect", expectedContent, actualContent)
-  }
-
-  private fun findVirtualFile(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {
-    val task = getCourse().lessons[lessonIndex].taskList[taskIndex]
-    val taskDir = task.getTaskDir(project)!!
-    val taskFile = task.getTaskFile(taskFilePath)!!
-
-    return EduUtils.findTaskFileInDir(taskFile, taskDir)!!
   }
 }
