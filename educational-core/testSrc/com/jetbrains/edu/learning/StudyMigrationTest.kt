@@ -20,6 +20,27 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
 
   fun testPycharmToEdu() = doTest(7)
 
+  fun testFromEighthToNinth() {
+    myFixture.copyDirectoryToProject("toNinth/lesson1", "lesson1")
+
+    val element = loadElement(Paths.get(testDataPath).resolve("${getTestName(true)}.xml"))
+    SerializationUtils.Xml.convertToNinthVersion(project, element)
+
+    val expectedFileTree = fileTree {
+      dir("Introduction") {
+        dir("First task") {
+          file("task.html")
+          file("task.txt")
+        }
+        dir("First task (1)") {
+          file("task.html")
+          file("task.txt")
+        }
+      }
+    }
+    expectedFileTree.assertEquals(EduUtils.getCourseDir(project)!!);
+  }
+
   private fun doTest(version: Int) {
     val name = getTestName(true)
     val before = Paths.get(testDataPath).resolve("$name.xml")

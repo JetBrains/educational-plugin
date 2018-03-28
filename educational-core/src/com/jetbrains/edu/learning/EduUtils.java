@@ -11,7 +11,10 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtensionPoint;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.CommandProcessor;
@@ -34,9 +37,12 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.keymap.KeymapUtil;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -540,6 +546,15 @@ public class EduUtils {
       file = lessonDirCandidate;
     }
     return null;
+  }
+
+  @Nullable
+  public static VirtualFile getCourseDir(@NotNull Project project) {
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      return project.getBaseDir();
+    }
+    Module module = ModuleManager.getInstance(project).getModules()[0];
+    return ModuleRootManager.getInstance(module).getContentRoots()[0];
   }
 
   @Nullable
