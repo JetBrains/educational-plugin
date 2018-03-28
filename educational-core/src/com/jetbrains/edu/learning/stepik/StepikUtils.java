@@ -32,7 +32,7 @@ public class StepikUtils {
 
   public static String wrapStepikTasks(Task task, @NotNull String text, boolean adaptive) {
     String finalText = text;
-    if (task instanceof TheoryTask) {
+    if (task instanceof TheoryTask && adaptive) {
       finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. ";
     }
     else if (task instanceof CodeTask && adaptive) {
