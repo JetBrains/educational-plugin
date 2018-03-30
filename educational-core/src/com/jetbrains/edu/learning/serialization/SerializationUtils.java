@@ -35,6 +35,7 @@ public class SerializationUtils {
   public static final String OFFSET = "offset";
   public static final String TEXT = "text";
   public static final String LESSONS = "lessons";
+  public static final String ITEMS = "items";
   public static final String COURSE = "course";
   public static final String ID = "id";
   public static final String COURSE_TITLED = "Course";
