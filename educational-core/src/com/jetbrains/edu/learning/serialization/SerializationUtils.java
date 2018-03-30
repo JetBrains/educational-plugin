@@ -7,9 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.serialization.converter.xml.*;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -371,7 +369,7 @@ public class SerializationUtils {
     public static final String NAME = "name";
     public static final String TITLE = "title";
     public static final String LAST_SUBTASK = "last_subtask_index";
-    public static final String LESSON_TYPE = "type";
+    public static final String ITEM_TYPE = "type";
     public static final String FRAMEWORK_TYPE = "framework";
 
     private Json() {
@@ -393,27 +391,47 @@ public class SerializationUtils {
       }
     }
 
-    public static class LessonAdapter implements JsonDeserializer<Lesson> {
+    public static class LessonSectionAdapter implements JsonDeserializer<StudyItem>, JsonSerializer<StudyItem> {
+
       @Override
-      public Lesson deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
-            .registerTypeAdapter(Task.class, new TaskAdapter()).create();
-        final Lesson lesson = deserializeLesson(json, gson);
-        final String name = lesson.getName();
-        if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {
-          lesson.setName(EduNames.ADDITIONAL_MATERIALS);
+      public JsonElement serialize(StudyItem item, Type type, JsonSerializationContext context) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Task.class, new TaskAdapter())
+          .excludeFieldsWithoutExposeAnnotation().create();
+        JsonElement tree = gson.toJsonTree(item);
+        if (item instanceof FrameworkLesson) {
+          final JsonObject lesson = tree.getAsJsonObject();
+          lesson.add(ITEM_TYPE, new JsonPrimitive(FRAMEWORK_TYPE));
+          return lesson;
         }
-        return lesson;
+        else if (item instanceof Section) {
+          final JsonObject section = tree.getAsJsonObject();
+          section.add(ITEM_TYPE, new JsonPrimitive(EduNames.SECTION));
+          return section;
+        }
+        return tree;
       }
 
-      private static Lesson deserializeLesson(@NotNull JsonElement json, @NotNull Gson gson) {
+      @Override
+      public StudyItem deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
+            .registerTypeAdapter(Task.class, new TaskAdapter()).create();
+        final StudyItem item = deserializeItem(json, gson);
+        final String name = item.getName();
+        if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {
+          item.setName(EduNames.ADDITIONAL_MATERIALS);
+        }
+        return item;
+      }
+
+      private static StudyItem deserializeItem(@NotNull JsonElement json, @NotNull Gson gson) {
         JsonObject object = json.getAsJsonObject();
-        if (!object.has(LESSON_TYPE)) {
+        if (!object.has(ITEM_TYPE)) {
           return gson.fromJson(object, Lesson.class);
         } else {
-          String lessonType = object.get(LESSON_TYPE).getAsString();
+          String lessonType = object.get(ITEM_TYPE).getAsString();
           switch (lessonType) {
             case FRAMEWORK_TYPE: return gson.fromJson(object, FrameworkLesson.class);
+            case EduNames.SECTION: return gson.fromJson(object, Section.class);
             default: throw new IllegalArgumentException("Unsupported lesson type: " + lessonType);
           }
         }

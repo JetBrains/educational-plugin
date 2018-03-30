@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -212,7 +212,7 @@ public class CourseFormatTest {
 
     Gson gson = new GsonBuilder()
         .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-        .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.LessonAdapter())
+        .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.LessonSectionAdapter())
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
     return gson.fromJson(courseJson, Course.class);
