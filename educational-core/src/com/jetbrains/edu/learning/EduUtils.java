@@ -356,7 +356,7 @@ public class EduUtils {
     }
   }
 
-  public static boolean isRenameableOrMoveable(@NotNull final Project project, @NotNull final Course course, @NotNull final PsiElement element) {
+  public static boolean isRenameAndMoveForbidden(@NotNull final Project project, @NotNull final Course course, @NotNull final PsiElement element) {
     if (element instanceof PsiFile) {
       VirtualFile virtualFile = ((PsiFile)element).getVirtualFile();
       if (project.getBaseDir().equals(virtualFile.getParent())) {
@@ -399,7 +399,7 @@ public class EduUtils {
       return false;
     }
 
-    return !isRenameableOrMoveable(project, course, element);
+    return !isRenameAndMoveForbidden(project, course, element);
   }
 
   @Nullable
