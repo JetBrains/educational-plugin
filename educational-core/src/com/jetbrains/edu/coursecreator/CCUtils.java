@@ -21,7 +21,10 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.ThrowableConsumer;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -274,7 +277,7 @@ public class CCUtils {
     });
     if (taskIsEmpty(task)) return null;
     lesson.addTask(task);
-    lesson.setIndex(course.getLessons().size() + 1);
+    lesson.setIndex(course.getItems().size() + 1);
     return lesson;
   }
 
@@ -318,21 +321,6 @@ public class CCUtils {
       action.consume(path);
     } catch (IOException e) {
       LOG.error(e);
-    }
-  }
-
-  public static void updateSections(Course course, int threshold, int delta) {
-    for (Section section : course.getSections()) {
-      final ArrayList<Integer> indexes = new ArrayList<>();
-      //for (Integer index : section.lessonIndexes) {
-      //  if (index > threshold) {
-      //    indexes.add(index + delta);
-      //  }
-      //  else if (index != threshold || delta != -1) {
-      //    indexes.add(index);
-      //  }
-      //}
-      //section.lessonIndexes = indexes;
     }
   }
 
