@@ -27,7 +27,7 @@ public class EduMoveDelegate extends MoveHandlerDelegate{
       if (course == null || !course.isStudy()) {
         return false;
       }
-      return !EduUtils.isRenameableOrMoveable(project, course, elements[0]);
+      return !EduUtils.isRenameAndMoveForbidden(project, course, elements[0]);
     }
     return false;
   }

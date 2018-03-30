@@ -61,7 +61,7 @@ public class JMoveRenameHandler extends EduMoveDelegate implements RenameHandler
 
     assert course != null;
     PsiElement elementToMove = getElementToMove(element, course);
-    return !EduUtils.isRenameableOrMoveable(project, course, elementToMove);
+    return !EduUtils.isRenameAndMoveForbidden(project, course, elementToMove);
   }
 
   private static PsiElement getElementToMove(@NotNull PsiElement element, @NotNull Course course) {
