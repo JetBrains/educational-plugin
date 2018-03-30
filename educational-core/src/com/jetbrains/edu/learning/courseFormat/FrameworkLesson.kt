@@ -22,8 +22,8 @@ class FrameworkLesson : Lesson() {
 
   fun currentTask(): Task = taskList[currentTaskIndex]
 
-  override fun initLesson(course: Course?, isRestarted: Boolean) {
-    super.initLesson(course, isRestarted)
+  override fun initLesson(course: Course, section: Section?, isRestarted: Boolean) {
+    super.initLesson(course, section, isRestarted)
     myDiffs = List(taskList.size) { index ->
       if (index == 0) return@List emptyList<TaskDiff>()
       val task = taskList[index]

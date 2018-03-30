@@ -118,11 +118,11 @@ public class CCStepikConnector {
         return;
       }
       final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
-      courseOnRemote.setLessons(course.getLessons(true));
+      //courseOnRemote.setLessons(course.getLessons(true));
       courseOnRemote.setAuthors(course.getAuthors());
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
       courseOnRemote.setLanguage(course.getLanguageID());
-      courseOnRemote.setSections(course.getSections());
+      //courseOnRemote.setSections(course.getSections());
 
       int sectionCount = 1;
       final List<Section> sections = course.getSections();
@@ -149,14 +149,14 @@ public class CCStepikConnector {
 
     final List<Section> sections = course.getSections();
     final HashMap<Integer, Section> lessonToSection = new HashMap<>();
-    for (Section section : sections) {
-      section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
-    }
+    //for (Section section : sections) {
+    //  section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
+    //}
 
     final ArrayList<Section> sectionsToPost = getSectionsToPost(course, lessonToSection);
-    for (Section section : sectionsToPost) {
-      section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
-    }
+    //for (Section section : sectionsToPost) {
+    //  section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
+    //}
 
     for (int i = 0; i < sectionsToPost.size(); i++) {
       Section section = sectionsToPost.get(i);
@@ -186,7 +186,7 @@ public class CCStepikConnector {
   private static void postAsOneSection(@NotNull Project project, @NotNull RemoteCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     final Section section = new Section();
-    section.setTitle(String.valueOf(course.getName()));
+    section.setName(String.valueOf(course.getName()));
     section.setPosition(1);
 
     final int sectionId = postModule(course.getId(), section, project);
@@ -218,8 +218,8 @@ public class CCStepikConnector {
       }
       else {
         final Section section = new Section();
-        section.setTitle(lesson.getName());
-        section.lessonIndexes.add(lesson.getIndex());
+        section.setName(lesson.getName());
+        //section.lessonIndexes.add(lesson.getIndex());
         sectionsToPost.add(section);
       }
     }
@@ -243,7 +243,7 @@ public class CCStepikConnector {
         indicator.setText2("Publishing additional files");
       }
       final Section section = new Section();
-      section.setTitle(StepikNames.PYCHARM_ADDITIONAL);
+      section.setName(StepikNames.PYCHARM_ADDITIONAL);
       section.setPosition(position);
       final int sectionId = postModule(id, section, project);
       final int lessonId = postLesson(project, lesson);
@@ -432,7 +432,7 @@ public class CCStepikConnector {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
     for (Integer sectionId : sectionsIds) {
       final Section section = StepikConnector.getSection(sectionId);
-      if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getTitle())) {
+      if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
         final List<Lesson> lessons = StepikConnector.getLessons(course, sectionId);
         lessons.stream()
                 .filter(Lesson::isAdditional)

@@ -324,15 +324,15 @@ public class CCUtils {
   public static void updateSections(Course course, int threshold, int delta) {
     for (Section section : course.getSections()) {
       final ArrayList<Integer> indexes = new ArrayList<>();
-      for (Integer index : section.lessonIndexes) {
-        if (index > threshold) {
-          indexes.add(index + delta);
-        }
-        else if (index != threshold || delta != -1) {
-          indexes.add(index);
-        }
-      }
-      section.lessonIndexes = indexes;
+      //for (Integer index : section.lessonIndexes) {
+      //  if (index > threshold) {
+      //    indexes.add(index + delta);
+      //  }
+      //  else if (index != threshold || delta != -1) {
+      //    indexes.add(index);
+      //  }
+      //}
+      //section.lessonIndexes = indexes;
     }
   }
 

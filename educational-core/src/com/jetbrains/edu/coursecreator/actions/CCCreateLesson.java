@@ -79,7 +79,7 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
 
   @Override
   protected void sortSiblings(@NotNull Course course, @Nullable StudyItem parentItem) {
-    course.sortLessons();
+    course.sortItems();
   }
 
   @Override
