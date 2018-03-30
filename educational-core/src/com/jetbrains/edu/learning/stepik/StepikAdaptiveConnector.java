@@ -281,7 +281,7 @@ public class StepikAdaptiveConnector {
 
     lesson.addTask(task);
     task.setIndex(lesson.getTaskList().size());
-    lesson.initLesson(course, true);
+    //lesson.initLesson(course, true);
 
     createFilesForNewTask(project, task, course.getLanguageById());
   }

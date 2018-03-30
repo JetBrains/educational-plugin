@@ -100,7 +100,7 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     CCUtils.updateHigherElements(lessonDirs, getStudyItem, newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);
-    course.sortLessons();
+    course.sortItems();
     ProjectView.getInstance(project).refresh();
   }
 

@@ -19,14 +19,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Course {
-  @Expose @SerializedName("section_list") protected List<Section> mySections = new ArrayList<>();
-
   @AbstractCollection(elementTypes = {
+    Section.class,
     Lesson.class,
-    FrameworkLesson.class,
+    FrameworkLesson.class
   })
-  @Expose
-  protected List<Lesson> lessons = new ArrayList<>();
+  @Expose protected List<StudyItem> items = new ArrayList<>();
+
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
@@ -47,8 +46,36 @@ public class Course {
    * Initializes state of course
    */
   public void initCourse(boolean isRestarted) {
-    for (Lesson lesson : getLessons(true)) {
-      lesson.initLesson(this, isRestarted);
+    for (StudyItem item : items) {
+      if (item instanceof Lesson) {
+        ((Lesson)item).initLesson(this, null, isRestarted);
+      }
+      else if (item instanceof Section){
+        ((Section)item).initSection(this, isRestarted);
+      }
+    }
+  }
+
+  public void visitLessons(LessonVisitor visitor) {
+    int index = 1;
+    for (StudyItem item : items) {
+      if (item instanceof Lesson) {
+        final boolean visitNext = visitor.visitLesson((Lesson)item, index);
+        if (!visitNext) {
+          return;
+        }
+      }
+      else if (item instanceof Section){
+        index = 1;
+        for (Lesson lesson : ((Section)item).getLessons()) {
+          final boolean visitNext = visitor.visitLesson(lesson, index);
+          if (!visitNext) {
+            return;
+          }
+        }
+        index += 1;
+      }
+      index += 1;
     }
   }
 
@@ -56,66 +83,70 @@ public class Course {
    * exclude service lesson containing additional files for the course. Returns lessons copy.
    */
   public List<Lesson> getLessons() {
-    return getLessons(false);
+    return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
   }
 
   /**
    * returns service lesson as well. Meant to be used in project generation/serialization
    */
   public List<Lesson> getLessons(boolean withAdditional) {
-    return withAdditional ? lessons : lessons.stream().filter(lesson -> !lesson.isAdditional())
-                                          .collect(Collectors.toList());
-  }
-
-  public void setLessons(List<Lesson> lessons) {
-    this.lessons = lessons;
+    return withAdditional ? getLessons() : getLessons().stream().filter(lesson -> !lesson.isAdditional())
+      .collect(Collectors.toList());
   }
 
   public void addLessons(List<Lesson> lessons) {
-    this.lessons.addAll(lessons);
+    items.addAll(lessons);
   }
 
   public void addSections(List<Section> sections) {
-    mySections.addAll(sections);
+    items.addAll(sections);
+  }
+
+  public void addSection(Section section) {
+    items.add(section);
   }
 
   public List<Section> getSections() {
-    return mySections;
-  }
-
-  public void setSections(List<Section> sections) {
-    mySections = sections;
+    return items.stream().filter(Section.class::isInstance).map(Section.class::cast).collect(Collectors.toList());
   }
 
   public void removeSection(@NotNull final Section toRemove) {
-    mySections.removeIf(section -> section.equals(toRemove));
+    items.remove(toRemove);
   }
 
   public void addLesson(@NotNull final Lesson lesson) {
-    lessons.add(lesson);
+    items.add(lesson);
   }
 
   public void removeLesson(Lesson lesson) {
-    lessons.remove(lesson);
+    items.remove(lesson);
   }
 
   public void removeAdditionalLesson() {
-    lessons.stream().filter(Lesson::isAdditional).findFirst().
-        ifPresent(lesson -> lessons.remove(lesson));
+    items.stream().filter(it -> it instanceof Lesson && ((Lesson)it).isAdditional()).findFirst().
+      ifPresent(lesson -> items.remove(lesson));
   }
 
   @Nullable
   public Lesson getLesson(@NotNull final String name) {
-    return StreamEx.of(lessons).findFirst(lesson -> name.equals(lesson.getName())).orElse(null);
+    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
+      .findFirst(lesson -> name.equals(lesson.getName())).orElse(null);
+  }
+
+  @Nullable
+  public StudyItem getItem(@NotNull final String name) {
+    return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
+  }
+
+  @Nullable
+  public Section getSection(@NotNull final String name) {
+    return (Section)items.stream().filter(Section.class::isInstance).
+      filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
 
   public Lesson getLesson(int lessonId) {
-    for (Lesson lesson : lessons) {
-      if (lesson.getId() == lessonId) {
-        return lesson;
-      }
-    }
-    return null;
+    return (Lesson)items.stream().filter(Lesson.class::isInstance).
+      filter(item -> ((Lesson)item).getId() == lessonId).findFirst().orElse(null);
   }
 
   @NotNull
@@ -231,8 +262,11 @@ public class Course {
     return EduNames.STUDY.equals(courseMode);
   }
 
-  public void sortLessons() {
-    Collections.sort(lessons, EduUtils.INDEX_COMPARATOR);
+  public void sortItems() {
+    Collections.sort(items, EduUtils.INDEX_COMPARATOR);
+    for (Section section : getSections()) {
+      section.sortLessons();
+    }
   }
 
   @Override
@@ -243,8 +277,8 @@ public class Course {
   @NotNull
   public List<String> getAuthorFullNames() {
     return authors.stream()
-            .map(user -> StringUtil.join(Arrays.asList(user.getFirstName(), user.getLastName()), " "))
-            .collect(Collectors.toList());
+      .map(user -> StringUtil.join(Arrays.asList(user.getFirstName(), user.getLastName()), " "))
+      .collect(Collectors.toList());
   }
 
   @NotNull
@@ -279,5 +313,17 @@ public class Course {
   @Transient
   public void setVisibility(CourseVisibility visibility) {
     myVisibility = visibility;
+  }
+
+  public List<StudyItem> getItems() {
+    return items;
+  }
+
+  public void setItems(List<StudyItem> items) {
+    this.items = items;
+  }
+
+  public void addItem(StudyItem item, int index) {
+    items.add(index, item);
   }
 }

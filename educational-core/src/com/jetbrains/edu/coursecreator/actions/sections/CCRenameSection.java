@@ -33,9 +33,9 @@ public class CCRenameSection extends DumbAwareAction {
     }
     if (selectedItems != null && selectedItems.length == 1 && selectedItems[0] instanceof Section) {
       final Section selectedSection = (Section)selectedItems[0];
-      final String sectionName = Messages.showInputDialog("Enter Section Name", "Section", null, selectedSection.getTitle(),
+      final String sectionName = Messages.showInputDialog("Enter Section Name", "Section", null, selectedSection.getName(),
                                                           new NonEmptyInputValidator());
-      selectedSection.setTitle(sectionName);
+      selectedSection.setName(sectionName);
     }
 
     ProjectView.getInstance(project).refresh();
