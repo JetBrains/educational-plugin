@@ -28,6 +28,46 @@ version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 import de.undercouch.gradle.tasks.download.Download
 import org.apache.tools.ant.taskdefs.condition.Os
 
+String downloadStudioIfNeededAndGetPath() {
+    if (!rootProject.hasProperty("studioVersion")) throw IllegalStateException("studioVersion is unspecified")
+    if (!rootProject.hasProperty("studioBuildVersion")) throw IllegalStateException("studioBuildVersion is unspecified")
+    def osFamily = getOsFamily()
+    if (osFamily == null) throw IllegalStateException("current os family is unsupported")
+
+    def studioZip = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.zip")
+    if (!studioZip.exists()) {
+        download {
+            src "http://dl.google.com/dl/android/studio/ide-zips/$studioVersion/android-studio-ide-$studioBuildVersion-${osFamily}.zip"
+            dest studioZip
+        }
+    }
+
+    def studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
+    if (!studioFolder.exists()) {
+        copy {
+            from zipTree(studioZip)
+            into studioFolder
+        }
+    }
+    return "$studioFolder/${studioContentPath()}"
+}
+
+static String getOsFamily() {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) return "windows"
+    if (Os.isFamily(Os.FAMILY_MAC)) return "mac"
+    if (Os.isFamily(Os.FAMILY_UNIX) && !Os.isFamily(Os.FAMILY_MAC)) return "linux"
+    return null
+}
+
+static String studioContentPath() {
+    def osFamily = getOsFamily()
+    if (osFamily == null) throw IllegalStateException("current os family is unsupported")
+    if (osFamily == "mac") {
+        return "Android Studio.app/Contents"
+    } else {
+        return "android-studio"
+    }
+}
 
 task downloadJavaFx(type: Download) {
     overwrite true
@@ -63,7 +103,7 @@ allprojects {
         if (project.hasProperty("androidStudioPath")) {
             localPath androidStudioPath
         } else {
-            localPath "${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion/${studioContentPath()}"
+            localPath downloadStudioIfNeededAndGetPath()
         }
     }
 
@@ -102,28 +142,7 @@ intellij {
     if (project.hasProperty("androidStudioPath")) {
         localPath androidStudioPath
     } else {
-        if (!rootProject.hasProperty("studioVersion")) throw IllegalStateException("studioVersion is unspecified")
-        if (!rootProject.hasProperty("studioBuildVersion")) throw IllegalStateException("studioBuildVersion is unspecified")
-        def osFamily = getOsFamily()
-        if (osFamily == null) throw IllegalStateException("current os family is unsupported")
-
-        def studioZip = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.zip")
-        if (!studioZip.exists()) {
-            download {
-                src "http://dl.google.com/dl/android/studio/ide-zips/$studioVersion/android-studio-ide-$studioBuildVersion-${osFamily}.zip"
-                dest studioZip
-            }
-        }
-
-        def studioFolder = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion")
-        if (!studioFolder.exists()) {
-            copy {
-                from zipTree(studioZip)
-                into studioFolder
-            }
-        }
-
-        localPath "$studioFolder/${studioContentPath()}"
+        localPath downloadStudioIfNeededAndGetPath()
     }
     if (project.hasProperty("customSinceBuild")) {
         patchPluginXml.sinceBuild = customSinceBuild
@@ -135,23 +154,6 @@ intellij {
     updateSinceUntilBuild true
     downloadSources false
     plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
-}
-
-static String getOsFamily() {
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) return "windows"
-    if (Os.isFamily(Os.FAMILY_MAC)) return "mac"
-    if (Os.isFamily(Os.FAMILY_UNIX) && !Os.isFamily(Os.FAMILY_MAC)) return "linux"
-    return null
-}
-
-static String studioContentPath() {
-    def osFamily = getOsFamily()
-    if (osFamily == null) throw IllegalStateException("current os family is unsupported")
-    if (osFamily == "mac") {
-        return "Android Studio.app/Contents"
-    } else {
-        return "android-studio"
-    }
 }
 
 task configurePyCharm {
