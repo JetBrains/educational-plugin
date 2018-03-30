@@ -25,7 +25,9 @@ val Task.testTextMap: Map<String, String> get() {
   return if (testDir.isEmpty()) testsText else testsText.mapKeys { (path, _) -> "$testDir/$path" }
 }
 
-val Task.dirName: String get() = if (lesson is FrameworkLesson) EduNames.TASK else name
+val Task.isFrameworkTask: Boolean get() = lesson is FrameworkLesson
+
+val Task.dirName: String get() = if (isFrameworkTask) EduNames.TASK else name
 
 fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
   val sourceDir = sourceDir ?: return null
