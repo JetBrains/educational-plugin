@@ -84,6 +84,7 @@
       ]]>
     </change-notes>
     <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.androidstudio</depends>
 
     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
     <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
