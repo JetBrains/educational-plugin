@@ -50,7 +50,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
 
   public static void refresh(@NotNull final Project project) {
     ApplicationManager.getApplication().runWriteAction(() -> {
-      EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+      EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
       EduState eduState = new EduState(eduEditor);
       if (eduEditor == null || !eduState.isValid()) {
         LOG.info("RefreshTaskFileAction was invoked outside of Study Editor");
@@ -113,7 +113,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     BalloonBuilder balloonBuilder =
       JBPopupFactory.getInstance().createHtmlTextBalloonBuilder("You can start again now", messageType, null);
     final Balloon balloon = balloonBuilder.createBalloon();
-    EduEditor selectedEduEditor = EduUtils.getSelectedStudyEditor(project);
+    EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(project);
     assert selectedEduEditor != null;
     balloon.show(EduUtils.computeLocation(selectedEduEditor.getEditor()), Balloon.Position.above);
     Disposer.register(project, balloon);
@@ -157,7 +157,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     EduUtils.updateAction(event);
     final Project project = event.getProject();
     if (project != null) {
-      EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+      EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
       EduState eduState = new EduState(eduEditor);
       Presentation presentation = event.getPresentation();
       if (!eduState.isValid()) {

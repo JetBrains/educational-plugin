@@ -98,7 +98,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
               () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(task, taskDir), taskFile, project)));
         }
       }
-      CheckUtils.navigateToFailedPlaceholder(new EduState(EduUtils.getSelectedStudyEditor(project)), task, taskDir, project);
+      CheckUtils.navigateToFailedPlaceholder(new EduState(EduUtils.getSelectedEduEditor(project)), task, taskDir, project);
     });
   }
 

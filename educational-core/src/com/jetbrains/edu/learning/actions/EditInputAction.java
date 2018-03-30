@@ -105,7 +105,7 @@ public class EditInputAction extends DumbAwareAction {
           .setMovable(true)
           .setRequestFocus(true)
           .createPopup();
-      EduEditor selectedEduEditor = EduUtils.getSelectedStudyEditor(project);
+      EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(project);
       assert selectedEduEditor != null;
       hint.showInCenterOf(selectedEduEditor.getComponent());
       hint.addListener(new HintClosedListener(currentTask, studyTaskManager));
@@ -228,7 +228,7 @@ public class EditInputAction extends DumbAwareAction {
 
     final Project project = e.getProject();
     if (project != null) {
-      EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+      EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
       if (eduEditor != null) {
         final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(eduEditor.getTaskFile().getTask());
         if (!userTests.isEmpty()) {

@@ -35,7 +35,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (answerPlaceholder == null) {
       return;
     }
-    EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+    EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     if (eduEditor != null) {
       SubtaskUtils.refreshPlaceholder(eduEditor.getEditor(), answerPlaceholder);
       final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
@@ -75,7 +75,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (project == null) {
       return null;
     }
-    EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+    EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     final EduState eduState = new EduState(eduEditor);
     if (eduEditor == null || !eduState.isValid()) {
       return null;

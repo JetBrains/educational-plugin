@@ -20,7 +20,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
 
-    val studyEditor = EduUtils.getSelectedStudyEditor(project)
+    val studyEditor = EduUtils.getSelectedEduEditor(project)
     val studyState = EduState(studyEditor)
     if (!studyState.isValid) {
       return
@@ -45,7 +45,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
   private fun getFileTextWithAnswers(project: Project, myDocument: Document): String {
     val fullAnswer = StringBuilder(myDocument.text)
 
-    val studyState = EduState(EduUtils.getSelectedStudyEditor(project))
+    val studyState = EduState(EduUtils.getSelectedEduEditor(project))
     val taskFile = studyState.taskFile
     taskFile?.activePlaceholders?.sortedBy { it.offset }?.reversed()?.forEach { placeholder ->
       placeholder.possibleAnswer?.let { answer ->
@@ -67,7 +67,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
         presentation.isVisible = true
         return
       }
-      val studyEditor = EduUtils.getSelectedStudyEditor(project)
+      val studyEditor = EduUtils.getSelectedEduEditor(project)
       val studyState = EduState(studyEditor)
       if (!studyState.isValid) {
         presentation.isEnabledAndVisible = false

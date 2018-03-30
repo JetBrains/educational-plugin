@@ -51,7 +51,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     if (course == null) {
       return;
     }
-    EduState eduState = new EduState(EduUtils.getSelectedStudyEditor(project));
+    EduState eduState = new EduState(EduUtils.getSelectedEduEditor(project));
     if (!eduState.isValid()) {
       return;
     }

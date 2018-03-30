@@ -144,7 +144,7 @@ object NavigationUtils {
       updateProjectView(project, fileToActivate)
     }
 
-    EduUtils.selectFirstAnswerPlaceholder(EduUtils.getSelectedStudyEditor(project), project)
+    EduUtils.selectFirstAnswerPlaceholder(EduUtils.getSelectedEduEditor(project), project)
     ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.RUN)?.hide(null)
   }
 
