@@ -539,8 +539,10 @@ public class EduUtils {
       //TODO: check sections
       Lesson lesson = course.getLesson(lessonDirCandidate.getName());
       if (lesson != null) {
-        if (lesson.getTask(file.getName()) != null)
-        return file;
+        if (lesson instanceof FrameworkLesson && EduNames.TASK.equals(file.getName()) ||
+            lesson.getTask(file.getName()) != null) {
+          return file;
+        }
       }
 
       file = lessonDirCandidate;
@@ -572,7 +574,11 @@ public class EduUtils {
     if (lesson == null) {
       return null;
     }
-    return lesson.getTask(taskDir.getName());
+    if (lesson instanceof FrameworkLesson) {
+      return ((FrameworkLesson)lesson).currentTask();
+    } else {
+      return lesson.getTask(taskDir.getName());
+    }
   }
 
   // supposed to be called under progress
