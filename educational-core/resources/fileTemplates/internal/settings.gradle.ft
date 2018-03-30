@@ -4,33 +4,22 @@ static String sanitizeName(String name) {
 
 rootProject.name = sanitizeName('$PROJECT_NAME$')
 
-
-
-def lessons = rootProject.projectDir.listFiles(new FilenameFilter() {
-    @Override
-    boolean accept(File dir, String name) {
-        def ignoredNames = ["gradle", "build", "out", "util"]
-        return new File(dir.path, name).isDirectory() && !ignoredNames.contains(name) && !name.startsWith(".")
+rootProject.projectDir.eachDirRecurse {
+    if (!isTaskDir(it) || it.path.contains(".idea")) {
+        return
     }
-})
-
-for (lesson in lessons) {
-    includeLesson(lesson)
+    def taskRelativePath = rootDir.toPath().relativize(it.toPath())
+    def parts = []
+    for (name in taskRelativePath) {
+        parts.add(sanitizeName(name.toString()))
+    }
+    def moduleName =  parts.join("-")
+    include "$moduleName"
+    project(":$moduleName").projectDir = it
 }
 
-def includeLesson(File lessonDir) {
-    def tasks = lessonDir.listFiles(new FilenameFilter() {
-        @Override
-        boolean accept(File dir, String name) {
-            def ignoredNames = ["build", "out"]
-            return dir.isDirectory() && !ignoredNames.contains(name)
-        }
-    })
-    for (task in tasks) {
-        String moduleName = "${sanitizeName(lessonDir.name)}-${sanitizeName(task.name)}"
-        include "$moduleName"
-        project(":$moduleName").projectDir = new File(lessonDir.name, task.name)
-    }
+def isTaskDir(File dir) {
+    return new File(dir, "src").exists()
 }
 
 include 'util'
