@@ -435,14 +435,14 @@ public class StepikConnector {
 
     for (Section section : remoteCourse.getSections()) {
       // lessonIndexes could be filled already in getSupportedLanguages if we got course by link
-      if (section.lessonIndexes.isEmpty()) {
-        for (Integer unit : section.units) {
-          final Integer index = unitToLesson.get(unit);
-          if (index != null) {
-            section.lessonIndexes.add(index);
-          }
-        }
-      }
+      //if (section.lessonIndexes.isEmpty()) {
+      //  for (Integer unit : section.units) {
+      //    final Integer index = unitToLesson.get(unit);
+      //    if (index != null) {
+      //      section.lessonIndexes.add(index);
+      //    }
+      //  }
+      //}
     }
     return lessonsSorted;
   }

@@ -2,18 +2,31 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.jetbrains.edu.learning.EduUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Section {
+public class Section extends StudyItem {
   public List<Integer> units;
   private int course;
-  @Expose private String title;
+  @Expose
+  @SerializedName("title")
+  private String name;
+
   private int position;
   private int id;
 
-  @Expose @SerializedName("lessons") public List<Integer> lessonIndexes = new ArrayList<>();
+  @Expose @SerializedName("lessons") private List<Lesson> lessons = new ArrayList<>();
+
+  public void initSection(Course course, boolean isRestarted) {
+    for (Lesson lesson : lessons) {
+      lesson.initLesson(course, this, isRestarted);
+    }
+  }
 
   public int getId() {
     return id;
@@ -27,14 +40,6 @@ public class Section {
     this.course = course;
   }
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
   public void setPosition(int position) {
     this.position = position;
   }
@@ -45,5 +50,44 @@ public class Section {
 
   public int getPosition() {
     return position;
+  }
+
+  @Nullable
+  public Lesson getLesson(@NotNull final String name) {
+    return lessons.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
+  }
+
+  public List<Lesson> getLessons() {
+    return lessons;
+  }
+
+  public void setLessons(List<Lesson> lessons) {
+    this.lessons = lessons;
+  }
+
+  public void addLessons(@NotNull final List<Lesson> lessons) {
+    this.lessons.addAll(lessons);
+  }
+
+  public void addLesson(@NotNull final Lesson lesson) {
+    this.lessons.add(lesson);
+  }
+
+  public void removeLesson(Lesson lesson) {
+    lessons.remove(lesson);
+  }
+
+  @Override
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void sortLessons() {
+    Collections.sort(lessons, EduUtils.INDEX_COMPARATOR);
   }
 }

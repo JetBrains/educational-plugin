@@ -34,9 +34,11 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
@@ -50,7 +52,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
@@ -241,59 +242,59 @@ public class EduProjectComponent implements ProjectComponent {
 
     final ArrayList<Lesson> updatedLessons = new ArrayList<>();
 
-    int lessonIndex = 0;
-    for (Lesson lesson : course.getLessons(true)) {
-      lessonIndex += 1;
-      Lesson studentLesson = currentCourse.getLesson(lesson.getId());
-
-      final VirtualFile baseDir = myProject.getBaseDir();
-      final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
-      if (lessonDir == null) {
-        lesson.setIndex(lessonIndex);
-        lesson.initLesson(currentCourse, false);
-        try {
-          GeneratorUtils.createLesson(lesson, baseDir);
-        }
-        catch (IOException e) {
-          LOG.error("Failed to create lesson");
-        }
-        for (int i = 1; i <= lesson.getTaskList().size(); i++) {
-          Task task = lesson.getTaskList().get(i - 1);
-          task.setIndex(i);
-        }
-        updatedLessons.add(lesson);
-        continue;
-      }
-      studentLesson.setIndex(lessonIndex);
-      updatedLessons.add(studentLesson);
-
-      int index = 0;
-      final ArrayList<Task> tasks = new ArrayList<>();
-      for (Task task : lesson.getTaskList()) {
-        index += 1;
-        final Task studentTask = studentLesson.getTask(task.getStepId());
-        if (studentTask != null && CheckStatus.Solved.equals(studentTask.getStatus())) {
-          studentTask.setIndex(index);
-          tasks.add(studentTask);
-          continue;
-        }
-        task.initTask(studentLesson, false);
-        task.setIndex(index);
-
-        final VirtualFile taskDir = lessonDir.findChild(task.getName());
-
-        if (taskDir != null) return;
-        try {
-          GeneratorUtils.createTask(task, lessonDir);
-        }
-        catch (IOException e) {
-          LOG.error("Failed to create task");
-        }
-        tasks.add(task);
-      }
-      studentLesson.updateTaskList(tasks);
-    }
-    currentCourse.setLessons(updatedLessons);
+    //int lessonIndex = 0;
+    //for (Lesson lesson : course.getLessons(true)) {
+    //  lessonIndex += 1;
+    //  Lesson studentLesson = currentCourse.getLesson(lesson.getId());
+    //
+    //  final VirtualFile baseDir = myProject.getBaseDir();
+    //  final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
+    //  if (lessonDir == null) {
+    //    lesson.setIndex(lessonIndex);
+    //    lesson.initLesson(currentCourse, false);
+    //    try {
+    //      GeneratorUtils.createLesson(lesson, baseDir);
+    //    }
+    //    catch (IOException e) {
+    //      LOG.error("Failed to create lesson");
+    //    }
+    //    for (int i = 1; i <= lesson.getTaskList().size(); i++) {
+    //      Task task = lesson.getTaskList().get(i - 1);
+    //      task.setIndex(i);
+    //    }
+    //    updatedLessons.add(lesson);
+    //    continue;
+    //  }
+    //  studentLesson.setIndex(lessonIndex);
+    //  updatedLessons.add(studentLesson);
+    //
+    //  int index = 0;
+    //  final ArrayList<Task> tasks = new ArrayList<>();
+    //  for (Task task : lesson.getTaskList()) {
+    //    index += 1;
+    //    final Task studentTask = studentLesson.getTask(task.getStepId());
+    //    if (studentTask != null && CheckStatus.Solved.equals(studentTask.getStatus())) {
+    //      studentTask.setIndex(index);
+    //      tasks.add(studentTask);
+    //      continue;
+    //    }
+    //    task.initTask(studentLesson, false);
+    //    task.setIndex(index);
+    //
+    //    final VirtualFile taskDir = lessonDir.findChild(task.getName());
+    //
+    //    if (taskDir != null) return;
+    //    try {
+    //      GeneratorUtils.createTask(task, lessonDir);
+    //    }
+    //    catch (IOException e) {
+    //      LOG.error("Failed to create task");
+    //    }
+    //    tasks.add(task);
+    //  }
+    //  studentLesson.updateTaskList(tasks);
+    //}
+    //currentCourse.setLessons(updatedLessons);
 
     final Notification notification =
       new Notification("Update.course", "Course update", "Current course is synchronized", NotificationType.INFORMATION);

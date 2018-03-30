@@ -79,11 +79,15 @@ public class RemoteCourse extends Course {
         if (date.after(myUpdateDate)) {
           isUpToDate = false;
         }
-        for (Lesson lesson : lessons) {
-          if (!lesson.isUpToDate()) {
-            isUpToDate = false;
+        visitLessons(new LessonVisitor() {
+          @Override
+          public boolean visitLesson(Lesson lesson, int index) {
+            if (!lesson.isUpToDate()) {
+              isUpToDate = false;
+            }
+            return true;
           }
-        }
+        });
       }
     }, new EmptyProgressIndicator());
 
@@ -92,12 +96,16 @@ public class RemoteCourse extends Course {
 
   public void setUpdated() {
     setUpdateDate(StepikConnector.getCourseUpdateDate(id));
-    for (Lesson lesson : lessons) {
-      lesson.setUpdateDate(StepikConnector.getLessonUpdateDate(lesson.getId()));
-      for (Task task : lesson.getTaskList()) {
-        task.setUpdateDate(StepikConnector.getTaskUpdateDate(task.getStepId()));
+    visitLessons(new LessonVisitor() {
+      @Override
+      public boolean visitLesson(Lesson lesson, int index) {
+        lesson.setUpdateDate(StepikConnector.getLessonUpdateDate(lesson.getId()));
+        for (Task task : lesson.getTaskList()) {
+          task.setUpdateDate(StepikConnector.getTaskUpdateDate(task.getStepId()));
+        }
+        return true;
       }
-    }
+    });
   }
 
   public void setUpdateDate(Date date) {

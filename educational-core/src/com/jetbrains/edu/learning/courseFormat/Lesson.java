@@ -44,10 +44,14 @@ public class Lesson extends StudyItem {
   @Transient
   private Course myCourse = null;
 
+  @Transient
+  private Section mySection = null;
+
   public Lesson() {
   }
 
-  public void initLesson(final Course course, boolean isRestarted) {
+  public void initLesson(@NotNull final Course course, @Nullable final Section section, boolean isRestarted) {
+    mySection = section;
     setCourse(course);
     for (Task task : getTaskList()) {
       task.initTask(this, isRestarted);
@@ -145,5 +149,15 @@ public class Lesson extends StudyItem {
     // We still use `StepikNames.PYCHARM_ADDITIONAL` while Stepik interaction
     // so we need to check it here
     return EduNames.ADDITIONAL_MATERIALS.equals(name) || StepikNames.PYCHARM_ADDITIONAL.equals(name);
+  }
+
+  @Transient
+  public Section getSection() {
+    return mySection;
+  }
+
+  @Transient
+  public void setSection(Section section) {
+    mySection = section;
   }
 }
