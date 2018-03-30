@@ -28,11 +28,9 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -139,17 +137,21 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       }
 
       private void replaceAnswerFilesWithTaskFiles(Course courseCopy) {
-        for (Lesson lesson : courseCopy.getLessons()) {
-          final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
-          if (lessonDir == null) continue;
-          for (Task task : lesson.getTaskList()) {
-            final VirtualFile taskDir = task.getTaskDir(project);
-            if (taskDir == null) continue;
-            convertToStudentTaskFiles(task, taskDir);
-            addTestsToTask(task);
-            addDescriptions(task);
+        courseCopy.visitLessons(new LessonVisitor() {
+          @Override
+          public boolean visitLesson(Lesson lesson, int index) {
+            final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
+            if (lessonDir == null) return true;
+            for (Task task : lesson.getTaskList()) {
+              final VirtualFile taskDir = task.getTaskDir(project);
+              if (taskDir == null) continue;
+              convertToStudentTaskFiles(task, taskDir);
+              addTestsToTask(task);
+              addDescriptions(task);
+            }
+            return true;
           }
-        }
+        });
       }
 
       private void convertToStudentTaskFiles(Task task, VirtualFile taskDir) {
@@ -207,8 +209,8 @@ public class CCCreateCourseArchive extends DumbAwareAction {
           testFiles.addAll(Arrays.asList(testDir.getChildren()));
         } else {
           testFiles.addAll(Arrays.stream(taskDir.getChildren())
-            .filter(file -> EduUtils.isTestsFile(project, file))
-            .collect(Collectors.toList()));
+                             .filter(file -> EduUtils.isTestsFile(project, file))
+                             .collect(Collectors.toList()));
         }
         return testFiles;
       }
@@ -253,6 +255,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
 
   private static void generateJson(VirtualFile parentDir, Course course) throws IOException {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
+      registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter()).
       registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter()).create();
     final String json = gson.toJson(course);
     final File courseJson = new File(parentDir.getPath(), EduNames.COURSE_META_FILE);
