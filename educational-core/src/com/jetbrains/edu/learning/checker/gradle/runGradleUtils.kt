@@ -20,7 +20,9 @@ import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 
-fun getGradleProjectName(task: Task) = ":${EduGradleUtils.sanitizeName(task.lesson.name)}-${EduGradleUtils.sanitizeName(task.dirName)}"
+fun getGradleProjectName(task: Task) = if (task.lesson.section != null) ":${EduGradleUtils.sanitizeName(task.lesson.section.name)}-${EduGradleUtils.sanitizeName(task.lesson.name)}-${EduGradleUtils.sanitizeName(task.dirName)}"
+                                       else ":${EduGradleUtils.sanitizeName(task.lesson.name)}-${EduGradleUtils.sanitizeName(task.dirName)}"
+
 
 fun generateGradleCommandLine(project: Project, command: String, vararg additionalParams: String): GeneralCommandLine? {
   val cmd = GeneralCommandLine()
