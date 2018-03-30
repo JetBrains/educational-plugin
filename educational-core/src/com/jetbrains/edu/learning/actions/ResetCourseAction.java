@@ -34,28 +34,31 @@ public class ResetCourseAction extends DumbAwareAction {
     ((RemoteCourse)course).setLoadSolutions(false);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      for (Lesson lesson : course.getLessons()) {
-        for (Task task : lesson.getTaskList()) {
-          VirtualFile taskDir = task.getTaskDir(project);
-          if (taskDir == null) continue;
-          for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-            TaskFile taskFile = entry.getValue();
-            VirtualFile taskFileVF = EduUtils.findTaskFileInDir(taskFile, taskDir);
-            if (taskFileVF != null) {
-              Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
-              if (document != null) {
-                RefreshTaskFileAction.resetDocument(document, taskFile);
-                task.setStatus(CheckStatus.Unchecked);
-                if (task instanceof ChoiceTask) {
-                  ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
+      course.visitLessons(new LessonVisitor() {
+        @Override
+        public boolean visitLesson(Lesson lesson, int index) {
+          for (Task task : lesson.getTaskList()) {
+            VirtualFile taskDir = task.getTaskDir(project);
+            if (taskDir == null) continue;
+            for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
+              TaskFile taskFile = entry.getValue();
+              VirtualFile taskFileVF = EduUtils.findTaskFileInDir(taskFile, taskDir);
+              if (taskFileVF != null) {
+                Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
+                if (document != null) {
+                  RefreshTaskFileAction.resetDocument(document, taskFile);
+                  task.setStatus(CheckStatus.Unchecked);
+                  if (task instanceof ChoiceTask) {
+                    ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
+                  }
+                  RefreshTaskFileAction.resetAnswerPlaceholders(taskFile, project);
                 }
-                RefreshTaskFileAction.resetAnswerPlaceholders(taskFile, project);
               }
             }
           }
+          return true;
         }
-      }
-
+      });
       RefreshTaskFileAction.refresh(project);
     });
   }
