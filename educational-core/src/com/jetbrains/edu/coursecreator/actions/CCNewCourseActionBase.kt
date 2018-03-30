@@ -12,41 +12,58 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.learning.EduDocumentListener
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 
 // TODO: move `initializeCourseProject` and corresponding code into `GeneratorUtils`
 // and call it in `createCourse` after code of `GeneratorUtils` and `EduGradleUtils` will be merged
 abstract class CCNewCourseActionBase(name: String, description: String) : DumbAwareAction(name, description, null) {
 
   protected fun initializeCourseProject(courseProject: Project, course: Course) {
-    val application = ApplicationManager.getApplication()
 
     var index = 1
-    var taskIndex = 1
-    for (lesson in course.lessons) {
-      val lessonDir = courseProject.baseDir.findChild(lesson.name)
-      lesson.index = index
-      if (lessonDir == null) continue
-      for (task in lesson.getTaskList()) {
-        val taskDir = lessonDir.findChild(task.name)
-        task.index = taskIndex
-        task.lesson = lesson
-        if (taskDir == null) continue
-        for (entry in task.getTaskFiles().entries) {
-          application.invokeAndWait { application.runWriteAction { createAnswerFile(courseProject, taskDir, entry) } }
-        }
-        taskIndex += 1
+    for (item in course.items) {
+      if (item is Lesson) {
+        initializeLesson(courseProject, item)
       }
+      else {
+        initializeSection(courseProject, item as Section)
+      }
+      item.index = index
       index += 1
-      taskIndex = 1
     }
     course.initCourse(true)
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
     ProjectView.getInstance(courseProject).refresh()
+  }
+
+  private fun initializeSection(courseProject: Project, section: Section) {
+    val sectionDir = courseProject.baseDir.findChild(section.name)
+    if (sectionDir == null) return
+
+    var index = 1
+    for (item in section.lessons) {
+      initializeLesson(courseProject, item)
+      index += 1
+    }
+  }
+
+  private fun initializeLesson(courseProject: Project, item: Lesson) {
+    val application = ApplicationManager.getApplication()
+    var taskIndex = 1
+    val lessonDir = courseProject.baseDir.findChild(item.name)
+
+    if (lessonDir == null) return
+    for (task in item.getTaskList()) {
+      val taskDir = lessonDir.findChild(task.name)
+      task.index = taskIndex
+      task.lesson = item
+      if (taskDir == null) continue
+      for (entry in task.getTaskFiles().entries) {
+        application.invokeAndWait { application.runWriteAction { createAnswerFile(courseProject, taskDir, entry) } }
+      }
+      taskIndex += 1
+    }
   }
 
   private fun createAnswerFile(project: Project,
@@ -61,12 +78,12 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return
 
     CommandProcessor.getInstance().executeCommand(project,
-        {
-          ApplicationManager.getApplication().runWriteAction {
-            document.replaceString(0, document.textLength, document.charsSequence)
-          }
-        },
-        "Create answer document", "Create answer document")
+                                                  {
+                                                    ApplicationManager.getApplication().runWriteAction {
+                                                      document.replaceString(0, document.textLength, document.charsSequence)
+                                                    }
+                                                  },
+                                                  "Create answer document", "Create answer document")
     val listener = EduDocumentListener(taskFile, false)
     document.addDocumentListener(listener)
     taskFile.sortAnswerPlaceholders()
@@ -81,12 +98,12 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
     }
 
     CommandProcessor.getInstance().executeCommand(project,
-        {
-          ApplicationManager.getApplication().runWriteAction {
-            FileDocumentManager.getInstance().saveDocumentAsIs(document)
-          }
-        },
-        "Create answer document", "Create answer document")
+                                                  {
+                                                    ApplicationManager.getApplication().runWriteAction {
+                                                      FileDocumentManager.getInstance().saveDocumentAsIs(document)
+                                                    }
+                                                  },
+                                                  "Create answer document", "Create answer document")
     document.removeDocumentListener(listener)
     taskFile.isTrackLengths = true
   }
