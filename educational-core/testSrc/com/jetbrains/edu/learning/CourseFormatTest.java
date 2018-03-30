@@ -212,7 +212,7 @@ public class CourseFormatTest {
 
     Gson gson = new GsonBuilder()
         .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-        .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.LessonAdapter())
+        .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.LessonSectionAdapter())
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
     return gson.fromJson(courseJson, Course.class);
