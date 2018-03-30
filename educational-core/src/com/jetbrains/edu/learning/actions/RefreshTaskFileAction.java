@@ -17,16 +17,15 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.problems.WolfTheProblemSolver;
-import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.SubtaskUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -50,7 +49,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
 
   public static void refresh(@NotNull final Project project) {
     ApplicationManager.getApplication().runWriteAction(() -> {
-      EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+      EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
       EduState eduState = new EduState(eduEditor);
       if (eduEditor == null || !eduState.isValid()) {
         LOG.info("RefreshTaskFileAction was invoked outside of Study Editor");
@@ -113,7 +112,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     BalloonBuilder balloonBuilder =
       JBPopupFactory.getInstance().createHtmlTextBalloonBuilder("You can start again now", messageType, null);
     final Balloon balloon = balloonBuilder.createBalloon();
-    EduEditor selectedEduEditor = EduUtils.getSelectedStudyEditor(project);
+    EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(project);
     assert selectedEduEditor != null;
     balloon.show(EduUtils.computeLocation(selectedEduEditor.getEditor()), Balloon.Position.above);
     Disposer.register(project, balloon);
@@ -157,7 +156,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     EduUtils.updateAction(event);
     final Project project = event.getProject();
     if (project != null) {
-      EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+      EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
       EduState eduState = new EduState(eduEditor);
       Presentation presentation = event.getPresentation();
       if (!eduState.isValid()) {

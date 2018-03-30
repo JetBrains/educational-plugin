@@ -18,15 +18,15 @@ import com.intellij.ui.tree.AsyncTreeModel
 import com.intellij.util.ui.UIUtil
 import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import junit.framework.TestCase
@@ -205,7 +205,7 @@ class CourseViewTest : EduTestCase() {
   }
 
   private fun navigateToNextTask() {
-    val eduEditor = EduUtils.getSelectedStudyEditor(project)
+    val eduEditor = EduUtils.getSelectedEduEditor(project)
     val eduState = EduState(eduEditor)
     TestCase.assertTrue(eduState.isValid)
     val targetTask = NavigationUtils.nextTask(eduState.task)

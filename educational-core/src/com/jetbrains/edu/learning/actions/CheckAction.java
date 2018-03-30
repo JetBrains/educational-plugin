@@ -86,7 +86,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       return;
     }
 
-    final EduEditor studyEditor = EduUtils.getSelectedStudyEditor(project);
+    final EduEditor studyEditor = EduUtils.getSelectedEduEditor(project);
     if (studyEditor != null) {
       final Task task = studyEditor.getTaskFile().getTask();
       if (task instanceof TheoryTask) {
@@ -121,7 +121,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     final Presentation presentation = e.getPresentation();
     final Project project = e.getProject();
     if (project != null) {
-      final EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+      final EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
       if (eduEditor != null) {
         final Task task = eduEditor.getTaskFile().getTask();
         if (task instanceof TheoryTask) {

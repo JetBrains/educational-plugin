@@ -56,7 +56,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
-import com.intellij.openapi.wm.*;
+import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -187,7 +190,7 @@ public class EduUtils {
     presentation.setEnabled(false);
     final Project project = e.getProject();
     if (project != null) {
-      final EduEditor eduEditor = getSelectedStudyEditor(project);
+      final EduEditor eduEditor = getSelectedEduEditor(project);
       if (eduEditor != null) {
         presentation.setEnabledAndVisible(true);
       }
@@ -240,7 +243,7 @@ public class EduUtils {
    * shows pop up in the center of "check task" button in study editor
    */
   public static void showCheckPopUp(@NotNull final Project project, @NotNull final Balloon balloon) {
-    final EduEditor eduEditor = getSelectedStudyEditor(project);
+    final EduEditor eduEditor = getSelectedEduEditor(project);
     Editor editor = eduEditor != null ? eduEditor.getEditor() : FileEditorManager.getInstance(project).getSelectedTextEditor();
     assert editor != null;
     balloon.show(computeLocation(editor), Balloon.Position.above);
@@ -320,7 +323,7 @@ public class EduUtils {
   }
 
   @Nullable
-  public static EduEditor getSelectedStudyEditor(@NotNull final Project project) {
+  public static EduEditor getSelectedEduEditor(@NotNull final Project project) {
     try {
       final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
         getSelectedEditor().getSelectedEditorWithProvider().getFirst();
@@ -336,7 +339,7 @@ public class EduUtils {
 
   @Nullable
   public static Editor getSelectedEditor(@NotNull final Project project) {
-    final EduEditor eduEditor = getSelectedStudyEditor(project);
+    final EduEditor eduEditor = getSelectedEduEditor(project);
     if (eduEditor != null) {
       return eduEditor.getEditor();
     }
