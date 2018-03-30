@@ -71,7 +71,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private void init() {
-    EduEditor selectedEduEditor = EduUtils.getSelectedStudyEditor(myProject);
+    EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
     if (selectedEduEditor != null && selectedEduEditor.getTaskFile() != null) {
       mySelectedTask = selectedEduEditor.getTaskFile().getTask();
     }
@@ -155,7 +155,7 @@ public class StepikSolutionsLoader implements Disposable {
 
     ApplicationManager.getApplication().invokeLater(() -> {
       if (mySelectedTask != null && tasksToUpdate.contains(mySelectedTask)) {
-        EduEditor selectedEduEditor = EduUtils.getSelectedStudyEditor(myProject);
+        EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
         assert selectedEduEditor != null;
         selectedEduEditor.showLoadingPanel();
         enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getStepId()));
@@ -243,7 +243,7 @@ public class StepikSolutionsLoader implements Disposable {
     myBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        EduEditor eduEditor = EduUtils.getSelectedStudyEditor(myProject);
+        EduEditor eduEditor = EduUtils.getSelectedEduEditor(myProject);
         TaskFile taskFile = EduUtils.getTaskFile(myProject, file);
         if (eduEditor != null && taskFile != null) {
           mySelectedTask = taskFile.getTask();
@@ -265,7 +265,7 @@ public class StepikSolutionsLoader implements Disposable {
       try {
         future.get();
         ApplicationManager.getApplication().invokeLater(() -> {
-          EduEditor selectedEditor = EduUtils.getSelectedStudyEditor(myProject);
+          EduEditor selectedEditor = EduUtils.getSelectedEduEditor(myProject);
           if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().name)) {
             JBLoadingPanel component = selectedEditor.getComponent();
             component.stopLoading();

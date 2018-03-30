@@ -22,7 +22,7 @@ abstract class TaskNavigationAction(
   override fun update(e: AnActionEvent) {
     EduUtils.updateAction(e)
     val project = e.project ?: return
-    val eduEditor = EduUtils.getSelectedStudyEditor(project)
+    val eduEditor = EduUtils.getSelectedEduEditor(project)
     val eduState = EduState(eduEditor)
     if (!eduState.isValid) return
     if (getTargetTask(eduState.task) == null) {
@@ -31,7 +31,7 @@ abstract class TaskNavigationAction(
   }
 
   private fun navigateTask(project: Project) {
-    val eduEditor = EduUtils.getSelectedStudyEditor(project)
+    val eduEditor = EduUtils.getSelectedEduEditor(project)
     val eduState = EduState(eduEditor)
     if (!eduState.isValid) return
     val currentTask = eduState.task

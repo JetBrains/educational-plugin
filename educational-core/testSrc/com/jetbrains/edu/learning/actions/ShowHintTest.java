@@ -17,7 +17,7 @@ import java.io.IOException;
 public class ShowHintTest extends EduTestCase {
   public void testOneHint() {
     configureByTaskFile(1, 1, "taskFile1.txt");
-    EduState eduState = new EduState(EduUtils.getSelectedStudyEditor(myFixture.getProject()));
+    EduState eduState = new EduState(EduUtils.getSelectedEduEditor(myFixture.getProject()));
     int offset = myFixture.getCaretOffset();
     AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(offset);
 
@@ -29,7 +29,7 @@ public class ShowHintTest extends EduTestCase {
 
   public void testOutsidePlaceholder() {
     configureByTaskFile(1, 2, "taskFile2.txt");
-    EduState eduState = new EduState(EduUtils.getSelectedStudyEditor(myFixture.getProject()));
+    EduState eduState = new EduState(EduUtils.getSelectedEduEditor(myFixture.getProject()));
     AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(5);
 
     final AnswerPlaceholderHint hint = ShowHintAction.getHint(myFixture.getProject(), answerPlaceholder);
@@ -40,7 +40,7 @@ public class ShowHintTest extends EduTestCase {
 
   public void testSecondHints() {
     configureByTaskFile(1, 3, "taskFile3.txt");
-    EduState eduState = new EduState(EduUtils.getSelectedStudyEditor(myFixture.getProject()));
+    EduState eduState = new EduState(EduUtils.getSelectedEduEditor(myFixture.getProject()));
     int offset = myFixture.getCaretOffset();
     AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(offset);
 
@@ -54,7 +54,7 @@ public class ShowHintTest extends EduTestCase {
 
   public void testGoBackwardHints() {
     configureByTaskFile(1, 3, "taskFile3.txt");
-    EduState eduState = new EduState(EduUtils.getSelectedStudyEditor(myFixture.getProject()));
+    EduState eduState = new EduState(EduUtils.getSelectedEduEditor(myFixture.getProject()));
     int offset = myFixture.getCaretOffset();
     AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(offset);
 
@@ -69,7 +69,7 @@ public class ShowHintTest extends EduTestCase {
 
   public void testNoHints() {
     configureByTaskFile(1, 4, "taskFile4.txt");
-    EduState eduState = new EduState(EduUtils.getSelectedStudyEditor(myFixture.getProject()));
+    EduState eduState = new EduState(EduUtils.getSelectedEduEditor(myFixture.getProject()));
     int offset = myFixture.getCaretOffset();
     AnswerPlaceholder answerPlaceholder = eduState.getTaskFile().getAnswerPlaceholder(offset);
 

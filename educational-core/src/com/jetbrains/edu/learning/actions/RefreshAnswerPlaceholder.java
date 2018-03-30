@@ -7,12 +7,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.SubtaskUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +35,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (answerPlaceholder == null) {
       return;
     }
-    EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+    EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     if (eduEditor != null) {
       SubtaskUtils.refreshPlaceholder(eduEditor.getEditor(), answerPlaceholder);
       final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
@@ -75,7 +75,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (project == null) {
       return null;
     }
-    EduEditor eduEditor = EduUtils.getSelectedStudyEditor(project);
+    EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     final EduState eduState = new EduState(eduEditor);
     if (eduEditor == null || !eduState.isValid()) {
       return null;
