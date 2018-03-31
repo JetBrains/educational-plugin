@@ -49,6 +49,7 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -377,6 +378,7 @@ public class EduUtils {
       if (project.getBaseDir().equals(parent)) {
         return false;
       }
+      //TODO: handle sections
       Lesson lesson = course.getLesson(parent.getName());
       if (lesson != null) {
         Task task = lesson.getTask(virtualFile.getName());
@@ -525,23 +527,31 @@ public class EduUtils {
   }
 
   @Nullable
-  public static VirtualFile getTaskDir(@NotNull Course course, @NotNull VirtualFile taskFile) {
-    VirtualFile file = taskFile.getParent();
-    while (file != null) {
-      VirtualFile lessonDirCandidate = file.getParent();
-      if (lessonDirCandidate == null) {
-        return null;
-      }
-      //TODO: check sections
-      Lesson lesson = course.getLesson(lessonDirCandidate.getName());
+  public static VirtualFile getTaskDir(@NotNull Course course, Project project, @NotNull VirtualFile taskFile) {
+    final VirtualFile baseDir = project.getBaseDir();
+    final String relativePath = VfsUtilCore.getRelativePath(taskFile, baseDir);
+    if (relativePath == null) return null;
+    final List<String> path = StringUtil.split(relativePath, "/");
+    if (path.size() < 2) return null;
+    final StudyItem item = course.getItem(path.get(0));
+
+    if (item instanceof Section && path.size() > 2) {
+      final String lessonDirName = path.get(1);
+      final String taskDirName = path.get(2);
+      final Lesson lesson = ((Section)item).getLesson(lessonDirName);
       if (lesson != null) {
-        if (lesson instanceof FrameworkLesson && EduNames.TASK.equals(file.getName()) ||
-            lesson.getTask(file.getName()) != null) {
-          return file;
+        final Task task = lesson.getTask(taskDirName);
+        if (task != null || lesson instanceof FrameworkLesson && EduNames.TASK.equals(taskDirName)) {
+          return VfsUtil.findRelativeFile(baseDir, path.get(0), lessonDirName, taskDirName);
         }
       }
-
-      file = lessonDirCandidate;
+    }
+    else if (item instanceof Lesson) {
+      final String taskDirName = path.get(1);
+      final Task task = ((Lesson)item).getTask(taskDirName);
+      if (task != null || item instanceof FrameworkLesson && EduNames.TASK.equals(taskDirName)) {
+        return VfsUtil.findRelativeFile(baseDir, path.get(0), taskDirName);
+      }
     }
     return null;
   }
@@ -561,20 +571,32 @@ public class EduUtils {
     if (course == null) {
       return null;
     }
-    VirtualFile taskDir = getTaskDir(course, file);
+    VirtualFile taskDir = getTaskDir(course, project, file);
     if (taskDir == null) {
       return null;
     }
-    VirtualFile lessonDir = taskDir.getParent();
-    Lesson lesson = course.getLesson(lessonDir.getName());
-    if (lesson == null) {
-      return null;
+    final VirtualFile lessonDir = taskDir.getParent();
+    if (lessonDir != null) {
+      final VirtualFile lessonParent = lessonDir.getParent();
+
+      Lesson lesson = course.getLesson(lessonDir.getName());
+      if (!lessonParent.equals(project.getBaseDir())) {
+        final Section section = course.getSection(lessonParent.getName());
+        if (section != null) {
+          lesson = section.getLesson(lessonDir.getName());
+        }
+      }
+      if (lesson == null) {
+        return null;
+      }
+
+      if (lesson instanceof FrameworkLesson) {
+        return ((FrameworkLesson)lesson).currentTask();
+      } else {
+        return lesson.getTask(taskDir.getName());
+      }
     }
-    if (lesson instanceof FrameworkLesson) {
-      return ((FrameworkLesson)lesson).currentTask();
-    } else {
-      return lesson.getTask(taskDir.getName());
-    }
+    return null;
   }
 
   // supposed to be called under progress
@@ -748,7 +770,7 @@ public class EduUtils {
       prefixToRemove.add(testDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
     }
 
-    VirtualFile taskDir = getTaskDir(course, file);
+    VirtualFile taskDir = getTaskDir(course, project, file);
     if (taskDir == null) return file.getName();
 
     String fullRelativePath = FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
@@ -802,8 +824,18 @@ public class EduUtils {
 
   public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {
     LocalFileSystem.getInstance().refresh(false);
-    final Lesson firstLesson = getFirst(course.getLessons());
-    if (firstLesson == null) return;
+    final StudyItem firstItem = getFirst(course.getItems());
+    if (firstItem == null) return;
+    final Lesson firstLesson;
+    if (firstItem instanceof Section) {
+      firstLesson = getFirst(((Section)firstItem).getLessons());
+    }
+    else {
+      firstLesson = (Lesson)firstItem;
+    }
+    if (firstLesson == null) {
+      return;
+    }
     final Task firstTask = getFirst(firstLesson.getTaskList());
     if (firstTask == null) return;
     final VirtualFile taskDir = firstTask.getTaskDir(project);
@@ -867,12 +899,18 @@ public class EduUtils {
 
   @Nullable
   private static Task getTask(@NotNull Course course, int stepId) {
-    for (Lesson lesson : course.getLessons()) {
-      Task task = lesson.getTask(stepId);
-      if (task != null) {
-        return task;
+    Ref<Task> taskRef = new Ref<>();
+    course.visitLessons(new LessonVisitor() {
+      @Override
+      public boolean visitLesson(Lesson lesson, int index) {
+        Task task = lesson.getTask(stepId);
+        if (task != null) {
+          taskRef.set(task);
+          return false;
+        }
+        return true;
       }
-    }
+    });
     return null;
   }
 
@@ -1067,23 +1105,40 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Task getTask(@NotNull VirtualFile directory, @NotNull final Course course) {
+  public static Task getTask(@NotNull VirtualFile taskDir, @NotNull final Course course) {
+    final String taskDirName = taskDir.getName();
+    if (!taskDirName.contains(EduNames.TASK)) return null;
+
     String sourceDir = CourseExt.getSourceDir(course);
-    if (directory.getName().equals(sourceDir)) {
-      directory = directory.getParent();
-      if (directory == null) {
+    if (taskDir.getName().equals(sourceDir)) {
+      taskDir = taskDir.getParent();
+      if (taskDir == null) {
         return null;
       }
     }
-    VirtualFile lessonDir = directory.getParent();
+    VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir == null) {
       return null;
     }
-    Lesson lesson = course.getLesson(lessonDir.getName());
+    Lesson lesson = getLesson(lessonDir, course);
     if (lesson == null) {
       return null;
     }
-    return lesson.getTask(directory.getName());
+    return lesson.getTask(taskDir.getName());
+  }
+
+  public static Lesson getLesson(@NotNull VirtualFile lessonDir, @NotNull final Course course) {
+    VirtualFile sectionDir = lessonDir.getParent();
+    if (sectionDir == null) {
+      return null;
+    }
+    final Section section = course.getSection(sectionDir.getName());
+    Lesson lesson = course.getLesson(lessonDir.getName());
+
+    if (section != null) {
+      lesson = section.getLesson(lessonDir.getName());
+    }
+    return lesson;
   }
 
   static void deleteWindowsFile(@NotNull final VirtualFile taskDir, @NotNull final String name) {
@@ -1224,7 +1279,7 @@ public class EduUtils {
       final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
       Gson gson = new GsonBuilder()
           .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-          .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.LessonSectionAdapter())
+          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
           .create();
       zipFile.close();
