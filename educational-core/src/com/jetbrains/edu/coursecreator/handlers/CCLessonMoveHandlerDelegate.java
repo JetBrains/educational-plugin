@@ -69,7 +69,7 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
                      PsiElement[] elements,
                      @Nullable PsiElement targetContainer,
                      @Nullable MoveCallback callback) {
-    if (targetContainer == null || !(targetContainer instanceof PsiDirectory)) {
+    if (!(targetContainer instanceof PsiDirectory)) {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
@@ -77,8 +77,14 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
       return;
     }
     final PsiDirectory sourceDirectory = (PsiDirectory)elements[0];
+    //TODO: handle sections
     final Lesson sourceLesson = course.getLesson(sourceDirectory.getName());
-    final Lesson targetLesson = course.getLesson(((PsiDirectory)targetContainer).getName());
+    if (sourceLesson == null) {
+      Messages.showInfoMessage("Can't find source lesson to move", "Incorrect Source For Move");
+      return;
+    }
+    //TODO: handle sections
+    final StudyItem targetLesson = course.getItem(((PsiDirectory)targetContainer).getName());
     if (targetLesson == null) {
       Messages.showInfoMessage("Lessons can be moved only to other lessons", "Incorrect Target For Move");
       return;

@@ -35,7 +35,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null || !(course instanceof RemoteCourse)) {
+    if (!(course instanceof RemoteCourse)) {
       return;
     }
     if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;
@@ -65,7 +65,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null || !(course instanceof RemoteCourse)) {
+    if (!(course instanceof RemoteCourse)) {
       return;
     }
     final PsiDirectory[] directories = view.getDirectories();
@@ -77,6 +77,7 @@ public class CCPushLesson extends DumbAwareAction {
     if (lessonDir == null || !lessonDir.getName().contains("lesson")) {
       return;
     }
+    //TODO: handle sections
     final Lesson lesson = course.getLesson(lessonDir.getName());
     if (lesson == null) {
       return;

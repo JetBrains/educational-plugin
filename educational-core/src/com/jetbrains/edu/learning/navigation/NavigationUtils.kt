@@ -99,6 +99,7 @@ object NavigationUtils {
   @JvmStatic
   fun navigateToTask(project: Project, lessonName: String, taskName: String) {
     val course = StudyTaskManager.getInstance(project).course ?: return
+    //TODO: handle sections
     val lesson = course.getLesson(lessonName) ?: return
     val task = lesson.getTask(taskName) ?: return
     ApplicationManager.getApplication().invokeLater { navigateToTask(project, task) }

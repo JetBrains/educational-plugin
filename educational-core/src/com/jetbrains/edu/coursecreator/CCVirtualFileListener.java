@@ -105,8 +105,8 @@ public class CCVirtualFileListener implements VirtualFileListener {
       return;
     }
     VirtualFile courseDir = project.getBaseDir();
+    //TODO: handle sections
     CCUtils.updateHigherElements(courseDir.getChildren(), file -> course.getLesson(file.getName()), removedLesson.getIndex(), -1);
-    //CCUtils.updateSections(course, removedLesson.getIndex(), -1);
     course.removeLesson(removedLesson);
   }
 
@@ -115,6 +115,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
     assert lessonDir != null;
     Lesson lesson = course.getLesson(lessonDir.getName());
     assert lesson != null;
+    //TODO: handle sections
     Task task = lesson.getTask(removedTask.getName());
     if (task == null) {
       return;

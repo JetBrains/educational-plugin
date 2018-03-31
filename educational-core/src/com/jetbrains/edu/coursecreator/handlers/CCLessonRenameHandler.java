@@ -18,6 +18,7 @@ public class CCLessonRenameHandler extends CCRenameHandler implements TitledHand
 
   @Override
   protected void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiDirectory directory) {
+    //TODO:handle sections
     Lesson lesson = course.getLesson(directory.getName());
     if (lesson != null) {
       processRename(lesson, EduNames.LESSON, project, directory.getVirtualFile());
