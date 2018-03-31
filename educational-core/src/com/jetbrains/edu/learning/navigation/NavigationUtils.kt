@@ -55,14 +55,91 @@ object NavigationUtils {
   }
 
   private fun nextLesson(lesson: Lesson): Lesson? {
-    val lessons = lesson.course.lessons
-    val nextLessonIndex = lesson.index
-    return lessons.getOrNull(nextLessonIndex)
+    if (lesson.section != null) {
+      val section = lesson.section
+      val siblings = section.lessons
+      val nextLessonIndex = lesson.index
+      if (nextLessonIndex < siblings.size) {
+        return siblings[nextLessonIndex]
+      }
+      val items = lesson.course.items
+      val nextIndex = section.index
+      if (nextIndex >= items.size) {
+        return null
+      }
+      val item = items[nextIndex]
+      if (item is Lesson) {
+        return item
+      }
+      else if (item is Section) {
+        val sectionLessons = item.lessons
+        if (!sectionLessons.isEmpty()) {
+          return sectionLessons[0]
+        }
+      }
+    }
+    else {
+      val items = lesson.course.items
+      val nextIndex = lesson.index
+      if (nextIndex >= items.size) {
+        return null
+      }
+      val item = items[nextIndex]
+      if (item is Lesson) {
+        return item
+      }
+      else if (item is Section) {
+        val sectionLessons = item.lessons
+        if (!sectionLessons.isEmpty()) {
+          return sectionLessons[0]
+        }
+      }
+    }
+    return null
   }
 
   private fun previousLesson(lesson: Lesson): Lesson? {
-    val prevLessonIndex = lesson.index - 2
-    return lesson.course.lessons.getOrNull(prevLessonIndex)
+    if (lesson.section != null) {
+      val section = lesson.section
+      val siblings = section.lessons
+      val prevLessonIndex = lesson.index - 2
+      if (prevLessonIndex >= 0) {
+        return siblings[prevLessonIndex]
+      }
+      val items = lesson.course.items
+      val previousItemIndex = section.index - 2
+      if (previousItemIndex < 0) {
+        return null
+      }
+      val item = items[previousItemIndex]
+      if (item is Lesson) {
+        return item
+      }
+      else if (item is Section) {
+        val sectionLessons = item.lessons
+        if (!sectionLessons.isEmpty()) {
+          return sectionLessons[sectionLessons.size - 1]
+        }
+      }
+    }
+    else {
+      val items = lesson.course.items
+      val prevItemIndex = lesson.index - 2
+      if (prevItemIndex < 0) {
+        return null
+      }
+      val item = items[prevItemIndex]
+      if (item is Lesson) {
+        return item
+      }
+      else if (item is Section) {
+        val sectionLessons = item.lessons
+        if (!sectionLessons.isEmpty()) {
+          return sectionLessons[sectionLessons.size - 1]
+        }
+      }
+    }
+    return null
   }
 
   @JvmStatic
