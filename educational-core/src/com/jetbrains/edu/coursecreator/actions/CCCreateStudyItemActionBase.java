@@ -95,9 +95,12 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
   }
 
   @Nullable
-  protected abstract VirtualFile getParentDir(@NotNull final Project project,
-                                               @NotNull final Course course,
-                                               @NotNull final VirtualFile directory);
+  protected VirtualFile getParentDir(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile directory) {
+    if (isAddedAsLast(directory, project, course)) {
+      return directory;
+    }
+    return directory.getParent();
+  }
 
   @Nullable
   public VirtualFile createItem(@NotNull final Project project, @NotNull final VirtualFile sourceDirectory,
@@ -114,9 +117,6 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       return null;
     }
     CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item), item.getIndex() - 1, 1);
-    //if (EduNames.LESSON.equals(getItemName())) {
-    //  CCUtils.updateSections(course, item.getIndex(), 1);
-    //}
     addItem(course, item);
     sortSiblings(course, parentItem);
     return createItemDir(project, item, parentDir, course);

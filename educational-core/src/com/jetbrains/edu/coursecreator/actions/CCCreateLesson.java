@@ -6,8 +6,10 @@ import com.intellij.util.Function;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -20,22 +22,26 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
     super(EduNames.LESSON_TITLED, TITLE, EducationalCoreIcons.Lesson);
   }
 
-  @Nullable
-  @Override
-  protected VirtualFile getParentDir(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile directory) {
-    return project.getBaseDir();
-  }
-
   @Override
   protected void addItem(@NotNull Course course, @NotNull Lesson item) {
-    course.addLesson(item);
+    final Section section = item.getSection();
+    if (section != null) {
+      section.addLesson(item);
+    }
+    else {
+      course.addLesson(item);
+    }
   }
 
   @Override
   protected Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item) {
     return (Function<VirtualFile, StudyItem>)file -> {
       if (item instanceof Lesson) {
-        return ((Lesson)item).getCourse().getLesson(file.getName());
+        final Section section = ((Lesson)item).getSection();
+        if (section != null) {
+          return section.getLesson(file.getName());
+        }
+        return ((Lesson)item).getCourse().getItem(file.getName());
       }
       return null;
     };
@@ -54,32 +60,45 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
   }
 
   @Override
-  protected int getSiblingsSize(@NotNull Course course, @Nullable StudyItem item) {
-    return course.getLessons().size();
+  protected int getSiblingsSize(@NotNull Course course, @Nullable StudyItem parentItem) {
+    if (parentItem instanceof Section) {
+      return ((Section)parentItem).getLessons().size();
+    }
+    return course.getItems().size();
   }
 
   @Nullable
   @Override
   protected StudyItem getParentItem(@NotNull Course course, @NotNull VirtualFile directory) {
-    return null;
+    final Lesson lesson = EduUtils.getLesson(directory, course);
+    if (lesson == null) {
+      return course.getSection(directory.getName());
+    }
+    return lesson.getSection();
   }
 
   @Nullable
   @Override
   protected StudyItem getThresholdItem(@NotNull final Course course, @NotNull final VirtualFile sourceDirectory) {
-    return course.getLesson(sourceDirectory.getName());
+    return EduUtils.getLesson(sourceDirectory, course);
   }
 
   @Override
   protected boolean isAddedAsLast(@NotNull VirtualFile sourceDirectory,
                                   @NotNull Project project,
                                   @NotNull Course course) {
-    return sourceDirectory.equals(project.getBaseDir());
+    final Section section = course.getSection(sourceDirectory.getName());
+    return section != null || sourceDirectory.equals(project.getBaseDir());
   }
 
   @Override
   protected void sortSiblings(@NotNull Course course, @Nullable StudyItem parentItem) {
-    course.sortItems();
+    if (parentItem instanceof Section) {
+      ((Section)parentItem).sortLessons();
+    }
+    else {
+      course.sortItems();
+    }
   }
 
   @Override
@@ -93,6 +112,9 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
     lesson.setName(name);
     lesson.setCourse(course);
     lesson.setIndex(index);
+    if (parentItem instanceof Section) {
+      lesson.setSection((Section)parentItem);
+    }
     return lesson;
   }
 }
