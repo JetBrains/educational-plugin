@@ -22,11 +22,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +67,7 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
       if (course == null) {
         return;
       }
+      //TODO: handle sections
       Task task = EduUtils.getTaskForFile(project, file.getVirtualFile());
       if (task == null) {
         return;
