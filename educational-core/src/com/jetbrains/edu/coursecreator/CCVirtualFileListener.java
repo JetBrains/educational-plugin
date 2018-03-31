@@ -113,9 +113,8 @@ public class CCVirtualFileListener implements VirtualFileListener {
   private static void deleteTask(@NotNull final Course course, @NotNull final VirtualFile removedTask) {
     VirtualFile lessonDir = removedTask.getParent();
     assert lessonDir != null;
-    Lesson lesson = course.getLesson(lessonDir.getName());
+    Lesson lesson = EduUtils.getLesson(lessonDir, course);
     assert lesson != null;
-    //TODO: handle sections
     Task task = lesson.getTask(removedTask.getName());
     if (task == null) {
       return;
