@@ -31,8 +31,7 @@ public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandle
     if (lessonDir == null) {
       return;
     }
-    //TODO: handle sections
-    Lesson lesson = course.getLesson(lessonDir.getName());
+    Lesson lesson = EduUtils.getLesson(lessonDir.getVirtualFile(), course);
     if (lesson == null) {
       return;
     }
