@@ -92,6 +92,7 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
     }
 
     if (EduUtils.isLessonDirectory(project, targetDir.getVirtualFile())) {
+      //TODO: handle sections
       //if user moves task to any lesson, this task is inserted as the last task in this lesson
       Lesson targetLesson = course.getLesson(targetDir.getName());
       if (targetLesson == null) {

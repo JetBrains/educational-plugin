@@ -33,7 +33,7 @@ public class CCPushTask extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null || !(course instanceof RemoteCourse)) {
+    if (!(course instanceof RemoteCourse)) {
       return;
     }
     if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;
@@ -82,6 +82,7 @@ public class CCPushTask extends DumbAwareAction {
     }
     final PsiDirectory lessonDir = taskDir.getParentDirectory();
     if (lessonDir == null) return;
+    //TODO: handle sections
     final Lesson lesson = course.getLesson(lessonDir.getName());
     if (lesson == null) return;
 
