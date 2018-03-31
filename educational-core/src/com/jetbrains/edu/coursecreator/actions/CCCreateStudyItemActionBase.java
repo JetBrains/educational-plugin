@@ -9,6 +9,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
@@ -18,13 +19,13 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.LessonVisitor;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.statistics.FeedbackSenderKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
 
 public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCCreateStudyItemActionBase.class);
@@ -53,12 +54,15 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     if (FeedbackSenderKt.isFeedbackAsked()) {
       return;
     }
-    final List<Lesson> lessons = course.getLessons();
-    int countTasks = 0;
-    for (Lesson lesson : lessons) {
-      countTasks += lesson.getTaskList().size();
-    }
-    if (countTasks == 5) {
+    final Ref<Integer> countTasks = new Ref<>(0);
+    course.visitLessons(new LessonVisitor() {
+      @Override
+      public boolean visitLesson(Lesson lesson, int index) {
+        countTasks.set(countTasks.get() + lesson.getTaskList().size());
+        return true;
+      }
+    });
+    if (countTasks.get() == 5) {
       FeedbackSenderKt.showNotification(false, course, project);
     }
   }
