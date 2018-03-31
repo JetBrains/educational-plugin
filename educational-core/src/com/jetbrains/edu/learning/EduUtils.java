@@ -1284,10 +1284,10 @@ public class EduUtils {
       return false;
     }
     VirtualFile lessonDirCandidate = virtualFile.getParent();
-    if (lessonDirCandidate == null || !isLessonDirectory(project, lessonDirCandidate)) {
+    if (lessonDirCandidate == null) {
       return false;
     }
-    Lesson lesson = course.getLesson(lessonDirCandidate.getName());
+    Lesson lesson = getLesson(lessonDirCandidate, course);
     if (lesson == null) {
       return false;
     }
