@@ -58,7 +58,7 @@ import static com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL;
 public class BrowserWindow extends JFrame {
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
   private static final String EVENT_TYPE_CLICK = "click";
-  private static final Pattern IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#");
+  private static final Pattern IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?");
   public static final String SRC_ATTRIBUTE = "src";
   private JFXPanel myPanel;
   private WebView myWebComponent;
@@ -302,9 +302,19 @@ public class BrowserWindow extends JFrame {
             final Matcher matcher = IN_COURSE_LINK.matcher(hrefAttribute);
             if (matcher.matches()) {
               EduUsagesCollector.inCourseLinkClicked();
-              final String lessonName = matcher.group(1);
-              final String taskName = matcher.group(2);
-              NavigationUtils.navigateToTask(myProject, lessonName, taskName);
+              String sectionName = null;
+              String lessonName;
+              String taskName;
+              if (matcher.group(3) != null) {
+                sectionName = matcher.group(1);
+                lessonName = matcher.group(2);
+                taskName = matcher.group(4);
+              }
+              else {
+                lessonName = matcher.group(1);
+                taskName = matcher.group(2);
+              }
+              NavigationUtils.navigateToTask(myProject, sectionName, lessonName, taskName);
             }
             else {
               EduUsagesCollector.externalLinkClicked();

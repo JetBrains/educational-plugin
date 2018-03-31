@@ -134,6 +134,18 @@ public class Course {
   }
 
   @Nullable
+  public Lesson getLesson(@Nullable final String sectionName, @NotNull final String lessonName) {
+    if (sectionName != null) {
+      final Section section = getSection(sectionName);
+      if (section != null) {
+        return section.getLesson(lessonName);
+      }
+    }
+    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
+      .findFirst(lesson -> lessonName.equals(lesson.getName())).orElse(null);
+  }
+
+  @Nullable
   public StudyItem getItem(@NotNull final String name) {
     return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
