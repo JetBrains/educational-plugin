@@ -38,7 +38,7 @@ public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandle
     String directoryName = directory.getName();
     Task task = lesson.getTask(directoryName);
     if (task != null) {
-      processRename(task, EduNames.TASK, project, directory.getVirtualFile());
+      processRename(task, EduNames.TASK, course, project, directory.getVirtualFile());
     }
   }
 
