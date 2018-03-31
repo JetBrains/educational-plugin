@@ -28,15 +28,6 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
     super(EduNames.TASK_TITLED, TITLE, EducationalCoreIcons.Task);
   }
 
-  @Nullable
-  @Override
-  protected VirtualFile getParentDir(@NotNull Project project, @NotNull Course course, @NotNull VirtualFile directory) {
-    if (isAddedAsLast(directory, project, course)) {
-      return directory;
-    }
-    return directory.getParent();
-  }
-
   @Override
   protected void addItem(@NotNull Course course, @NotNull Task item) {
     item.getLesson().addTask(item);
@@ -74,7 +65,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   @Nullable
   @Override
   protected StudyItem getParentItem(@NotNull Course course, @NotNull VirtualFile directory) {
-    Task task = (Task)getThresholdItem(course, directory);
+    Task task = EduUtils.getTask(directory, course);
     if (task == null) {
       return EduUtils.getLesson(directory, course);
     }
