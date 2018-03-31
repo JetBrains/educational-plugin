@@ -49,6 +49,7 @@ public class AnswerPlaceholderDependency {
 
   @Nullable
   public AnswerPlaceholder resolve(@NotNull Course course) {
+    // TODO: handle sections
     if (!EduUtils.indexIsValid(myLessonIndex, course.getLessons())) {
       return null;
     }

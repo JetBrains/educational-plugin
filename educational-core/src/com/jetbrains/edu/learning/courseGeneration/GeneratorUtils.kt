@@ -37,18 +37,36 @@ object GeneratorUtils {
     indicator.isIndeterminate = false
     indicator.fraction = 0.0
 
-    val lessons = course.getLessons(true)
-    for ((i, lesson) in lessons.withIndex()) {
-      indicator.fraction = (i + 1).toDouble() / lessons.size
-      if (!lesson.isAdditional) {
-        indicator.text = "Generating lesson ${i + 1} from ${lessons.size}"
+    //TODO: handle sections in indicator text
+    val items = course.items
+    for ((i, item) in items.withIndex()) {
+      indicator.fraction = (i + 1).toDouble() / items.size
+      if (item is Lesson && !item.isAdditional) {
+        indicator.text = "Generating lesson ${i + 1} from ${items.size}"
       } else {
         indicator.text = "Generating additional files"
       }
-      lesson.index = i + 1
-      createLesson(lesson, baseDir)
+      item.index = i + 1
+      if (item is Lesson) {
+        createLesson(item, baseDir)
+      }
+      else if (item is Section) {
+        createSection(item, baseDir)
+      }
     }
     course.removeAdditionalLesson()
+  }
+
+  private fun createSection(item: Section, baseDir: VirtualFile) {
+    val sectionDirName = item.name
+    val sectionDir = runInWriteActionAndWait(ThrowableComputable {
+      VfsUtil.createDirectoryIfMissing(baseDir, sectionDirName)
+    })
+
+    for ((i, lesson) in item.lessons.withIndex()) {
+      lesson.index = i + 1
+      createLesson(lesson, sectionDir)
+    }
   }
 
   @Throws(IOException::class)
@@ -214,7 +232,7 @@ object GeneratorUtils {
   }
 
   private fun updateJavaCodeTaskFileNames(project: Project, course: Course) {
-    for (lesson in course.lessons) {
+    course.visitLessons({ lesson, _ ->
       for (task in lesson.getTaskList()) {
         if (task is CodeTask) {
           for (taskFile in task.getTaskFiles().values) {
@@ -222,7 +240,8 @@ object GeneratorUtils {
           }
         }
       }
-    }
+      true
+    })
   }
 
   /**
