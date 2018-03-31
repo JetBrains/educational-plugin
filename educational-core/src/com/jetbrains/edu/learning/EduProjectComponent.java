@@ -242,6 +242,7 @@ public class EduProjectComponent implements ProjectComponent {
 
     final ArrayList<Lesson> updatedLessons = new ArrayList<>();
 
+    //TODO: handle sections
     //int lessonIndex = 0;
     //for (Lesson lesson : course.getLessons(true)) {
     //  lessonIndex += 1;

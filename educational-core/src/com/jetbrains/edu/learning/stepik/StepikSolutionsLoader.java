@@ -204,6 +204,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   public List<Task> tasksToUpdate(@NotNull Course course) {
     List<Task> tasksToUpdate = new ArrayList<>();
+    //TODO: handle sections
     Task[] allTasks = course.getLessons().stream().flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
     String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
