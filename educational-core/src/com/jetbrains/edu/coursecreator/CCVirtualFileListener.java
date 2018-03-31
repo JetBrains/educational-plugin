@@ -132,13 +132,13 @@ public class CCVirtualFileListener implements VirtualFileListener {
     task.getTaskFiles().remove(EduUtils.pathRelativeToTask(project, removedTaskFile));
   }
 
-  private static boolean insideTaskFileDirectory(@NotNull Course course, @NotNull VirtualFile createdFile) {
+  private boolean insideTaskFileDirectory(@NotNull Course course, @NotNull VirtualFile createdFile) {
     String sourceDir = CourseExt.getSourceDir(course);
     if (sourceDir == null || sourceDir.isEmpty()) {
       return true;
     }
 
-    VirtualFile taskDir = EduUtils.getTaskDir(course, createdFile);
+    VirtualFile taskDir = EduUtils.getTaskDir(course, myProject, createdFile);
     if (taskDir == null) {
       return false;
     }
