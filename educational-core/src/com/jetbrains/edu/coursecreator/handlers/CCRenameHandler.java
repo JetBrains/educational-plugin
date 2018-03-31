@@ -16,6 +16,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
@@ -64,7 +66,11 @@ public abstract class CCRenameHandler implements RenameHandler {
   protected abstract void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiDirectory directory);
 
 
-  protected static void processRename(@NotNull final StudyItem item, String namePrefix, @NotNull final Project project, @NotNull VirtualFile directory) {
+  protected static void processRename(@NotNull final StudyItem item,
+                                      String namePrefix,
+                                      Course course,
+                                      @NotNull final Project project,
+                                      @NotNull VirtualFile directory) {
     String name = item.getName();
     String text = "Rename " + StringUtil.toTitleCase(namePrefix);
     String newName = Messages.showInputDialog(project, text + " '" + name + "' to", text, null, name, new CCUtils.PathInputValidator(directory.getParent(), name));
@@ -78,6 +84,10 @@ public abstract class CCRenameHandler implements RenameHandler {
           Logger.getInstance(CCRenameHandler.class).error(e);
         }
       });
+      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+      if (configurator != null) {
+        configurator.getCourseBuilder().refreshProject(project);
+      }
     }
   }
 

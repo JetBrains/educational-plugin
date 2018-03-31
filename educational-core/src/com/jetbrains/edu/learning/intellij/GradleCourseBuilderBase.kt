@@ -9,14 +9,12 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.SubtaskUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks
 import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.CourseViewPane
@@ -28,14 +26,11 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   abstract val buildGradleTemplateName: String
   abstract val subtaskTestTemplateName: String
 
-  override fun createTaskContent(project: Project, task: Task,
-                                 parentDirectory: VirtualFile, course: Course): VirtualFile? {
-    val taskFolder = super.createTaskContent(project, task, parentDirectory, course)
+  override fun refreshProject(project: Project) {
     ExternalSystemUtil.refreshProjects(project, GradleConstants.SYSTEM_ID, true, ProgressExecutionMode.MODAL_SYNC)
     ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL) {
       ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
     }
-    return taskFolder
   }
 
   override fun createTestsForNewSubtask(project: Project, task: TaskWithSubtasks) {
