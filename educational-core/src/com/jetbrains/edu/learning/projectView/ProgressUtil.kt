@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.projectView
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks
 
@@ -30,13 +31,14 @@ object ProgressUtil {
    * @return Pair (number of solved tasks, number of tasks)
    */
   @JvmStatic
-  fun countProgressWithoutSubtasks(lessons: List<Lesson>): Pair<Int, Int> {
+  fun countProgressWithoutSubtasks(course: Course): Pair<Int, Int> {
     var taskNum = 0
     var taskSolved = 0
-    for (lesson in lessons) {
+    course.visitLessons({lesson, _ ->
       taskNum += lesson.taskListForProgress.size
       taskSolved += getSolvedTasks(lesson)
-    }
+      true
+    })
     return Pair(taskSolved, taskNum)
   }
 

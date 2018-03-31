@@ -30,7 +30,7 @@ public class CourseNode extends EduNode {
   protected void updateImpl(PresentationData data) {
     Pair<Integer, Integer> progress = ProgressUtil.countProgressAsOneTaskWithSubtasks(myCourse.getLessons());
     if (progress == null) {
-      progress = ProgressUtil.countProgressWithoutSubtasks(myCourse.getLessons());
+      progress = ProgressUtil.countProgressWithoutSubtasks(myCourse);
     }
 
     final Integer tasksSolved = progress.getFirst();
