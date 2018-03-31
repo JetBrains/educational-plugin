@@ -1124,20 +1124,6 @@ public class EduUtils {
     return lesson.getTask(taskDir.getName());
   }
 
-  public static Lesson getLesson(@NotNull VirtualFile lessonDir, @NotNull final Course course) {
-    VirtualFile sectionDir = lessonDir.getParent();
-    if (sectionDir == null) {
-      return null;
-    }
-    final Section section = course.getSection(sectionDir.getName());
-    Lesson lesson = course.getLesson(lessonDir.getName());
-
-    if (section != null) {
-      lesson = section.getLesson(lessonDir.getName());
-    }
-    return lesson;
-  }
-
   static void deleteWindowsFile(@NotNull final VirtualFile taskDir, @NotNull final String name) {
     final VirtualFile fileWindows = taskDir.findChild(name);
     if (fileWindows != null && fileWindows.exists()) {
@@ -1309,30 +1295,26 @@ public class EduUtils {
   }
 
   public static boolean isLessonDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-    return getLesson(project, virtualFile) != null;
-  }
-
-  @Nullable
-  public static Lesson getLesson(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-    if (!virtualFile.isDirectory()) {
-      return null;
-    }
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
+      return false;
+    }
+    return getLesson(virtualFile, course) != null;
+  }
+
+  public static Lesson getLesson(@NotNull VirtualFile lessonDir, @NotNull final Course course) {
+    if (!lessonDir.isDirectory()) {
       return null;
     }
-    Lesson lesson = course.getLesson(virtualFile.getName());
-    if (lesson != null) {
-      return lesson;
+    VirtualFile sectionDir = lessonDir.getParent();
+    if (sectionDir == null) {
+      return null;
     }
-    final VirtualFile sectionDirCandidate = virtualFile.getParent();
-    final Section section = course.getSection(sectionDirCandidate.getName());
+    final Section section = course.getSection(sectionDir.getName());
     if (section != null) {
-      lesson = section.getLesson(virtualFile.getName());
-      if (lesson != null) {
-        return lesson;
-      }
+      return section.getLesson(lessonDir.getName());
     }
-    return null;
+
+    return course.getLesson(lessonDir.getName());
   }
 }
