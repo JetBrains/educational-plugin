@@ -76,7 +76,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   protected StudyItem getParentItem(@NotNull Course course, @NotNull VirtualFile directory) {
     Task task = (Task)getThresholdItem(course, directory);
     if (task == null) {
-      return course.getLesson(directory.getName());
+      return EduUtils.getLesson(directory, course);
     }
     return task.getLesson();
   }
