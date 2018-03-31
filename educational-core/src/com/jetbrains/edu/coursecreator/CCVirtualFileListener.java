@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -94,20 +95,26 @@ public class CCVirtualFileListener implements VirtualFileListener {
     if (EduUtils.isTaskDirectory(myProject, removedFile)) {
       deleteTask(course, removedFile);
     }
-    if (course.getLesson(removedFile.getName()) != null) {
-      deleteLesson(course, removedFile, myProject);
+    if (EduUtils.getLesson(removedFile, course) != null) {
+      deleteLesson(course, removedFile);
     }
   }
 
-  private static void deleteLesson(@NotNull final Course course, @NotNull final VirtualFile removedLessonFile, Project project) {
-    Lesson removedLesson = course.getLesson(removedLessonFile.getName());
+  private static void deleteLesson(@NotNull final Course course, @NotNull final VirtualFile removedLessonFile) {
+    Lesson removedLesson = EduUtils.getLesson(removedLessonFile, course);
     if (removedLesson == null) {
       return;
     }
-    VirtualFile courseDir = project.getBaseDir();
-    //TODO: handle sections
-    CCUtils.updateHigherElements(courseDir.getChildren(), file -> course.getLesson(file.getName()), removedLesson.getIndex(), -1);
-    course.removeLesson(removedLesson);
+    final Section section = removedLesson.getSection();
+    final VirtualFile parentDir = removedLessonFile.getParent();
+    if (section != null) {
+      CCUtils.updateHigherElements(parentDir.getChildren(), file -> section.getLesson(file.getName()), removedLesson.getIndex(), -1);
+      section.removeLesson(removedLesson);
+    }
+    else {
+      CCUtils.updateHigherElements(parentDir.getChildren(), file -> course.getItem(file.getName()), removedLesson.getIndex(), -1);
+      course.removeLesson(removedLesson);
+    }
   }
 
   private static void deleteTask(@NotNull final Course course, @NotNull final VirtualFile removedTask) {
