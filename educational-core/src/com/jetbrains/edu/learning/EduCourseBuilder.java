@@ -68,8 +68,15 @@ public interface EduCourseBuilder<Settings> {
     } catch (IOException e) {
       LOG.error("Failed to create task", e);
     }
-    return parentDirectory.findChild(task.getName());
+    final VirtualFile taskDir = parentDirectory.findChild(task.getName());
+    refreshProject(project);
+    return taskDir;
   }
+
+  /**
+   * Allows to update project modules and the whole project structure
+   */
+  default void refreshProject(@NotNull final Project project) {}
 
   /**
    * Add initial content for new task: task and tests files
