@@ -1309,13 +1309,30 @@ public class EduUtils {
   }
 
   public static boolean isLessonDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    return getLesson(project, virtualFile) != null;
+  }
+
+  @Nullable
+  public static Lesson getLesson(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     if (!virtualFile.isDirectory()) {
-      return false;
+      return null;
     }
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
-      return false;
+      return null;
     }
-    return course.getLesson(virtualFile.getName()) != null;
+    Lesson lesson = course.getLesson(virtualFile.getName());
+    if (lesson != null) {
+      return lesson;
+    }
+    final VirtualFile sectionDirCandidate = virtualFile.getParent();
+    final Section section = course.getSection(sectionDirCandidate.getName());
+    if (section != null) {
+      lesson = section.getLesson(virtualFile.getName());
+      if (lesson != null) {
+        return lesson;
+      }
+    }
+    return null;
   }
 }
