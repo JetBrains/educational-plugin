@@ -91,7 +91,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   protected boolean isAddedAsLast(@NotNull VirtualFile sourceDirectory,
                                   @NotNull Project project,
                                   @NotNull Course course) {
-    return course.getLesson(sourceDirectory.getName()) != null;
+    return EduUtils.getLesson(sourceDirectory, course) != null;
   }
 
   @Override
