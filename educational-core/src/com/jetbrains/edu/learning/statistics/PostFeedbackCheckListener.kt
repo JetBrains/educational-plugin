@@ -15,9 +15,8 @@ class PostFeedbackCheckListener : CheckListener {
 
     val lesson = task.lesson
     val course = lesson.course
-    val lessons = course.lessons
 
-    val progress = ProgressUtil.countProgressWithoutSubtasks(lessons)
+    val progress = ProgressUtil.countProgressWithoutSubtasks(course)
     val solvedTasks = progress.first
     if (solvedTasks == lesson.taskList.size) {
       showNotification(true, course, project)
