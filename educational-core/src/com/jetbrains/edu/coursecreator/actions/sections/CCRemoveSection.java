@@ -64,7 +64,7 @@ public class CCRemoveSection extends DumbAwareAction {
       }
 
       course.addLessons(lessonsFromSection);
-      course.sortItems();
+      course.sortChildren();
     }
 
     ProjectView.getInstance(project).refresh();

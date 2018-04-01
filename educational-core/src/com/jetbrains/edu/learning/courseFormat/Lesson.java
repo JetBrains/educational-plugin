@@ -58,10 +58,12 @@ public class Lesson extends StudyItem {
     }
   }
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(String name) {
     this.name = name;
   }
@@ -159,5 +161,12 @@ public class Lesson extends StudyItem {
   @Transient
   public void setSection(Section section) {
     mySection = section;
+  }
+
+  public LessonContainer getContainer() {
+    if (mySection != null) {
+      return mySection;
+    }
+    return myCourse;
   }
 }

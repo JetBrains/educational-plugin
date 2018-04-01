@@ -16,7 +16,6 @@
 package com.jetbrains.edu.coursecreator;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
@@ -61,13 +60,11 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
     }
 
     private static void tryToRenameTaskFile(PsiFile file, String oldName) {
-      final PsiDirectory taskDir = file.getContainingDirectory();
       final Project project = file.getProject();
       Course course = StudyTaskManager.getInstance(project).getCourse();
       if (course == null) {
         return;
       }
-      //TODO: handle sections
       Task task = EduUtils.getTaskForFile(project, file.getVirtualFile());
       if (task == null) {
         return;
