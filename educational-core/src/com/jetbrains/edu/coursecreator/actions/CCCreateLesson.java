@@ -7,10 +7,7 @@ import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.*;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,13 +21,8 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
 
   @Override
   protected void addItem(@NotNull Course course, @NotNull Lesson item) {
-    final Section section = item.getSection();
-    if (section != null) {
-      section.addLesson(item);
-    }
-    else {
-      course.addLesson(item);
-    }
+    final LessonContainer lessonContainer = item.getContainer();
+    lessonContainer.addLesson(item);
   }
 
   @Override
@@ -93,11 +85,8 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
 
   @Override
   protected void sortSiblings(@NotNull Course course, @Nullable StudyItem parentItem) {
-    if (parentItem instanceof Section) {
-      ((Section)parentItem).sortLessons();
-    }
-    else {
-      course.sortItems();
+    if (parentItem instanceof LessonContainer) {
+      ((LessonContainer)parentItem).sortChildren();
     }
   }
 

@@ -55,6 +55,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
+import static com.jetbrains.edu.learning.stepik.StepikWrappers.LessonContainer;
 
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
