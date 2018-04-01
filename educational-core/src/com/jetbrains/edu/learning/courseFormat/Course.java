@@ -84,15 +84,15 @@ public class Course extends LessonContainer {
    */
   @Override
   public List<Lesson> getLessons() {
-    return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
+    return getLessons(false);
   }
 
   /**
    * returns service lesson as well. Meant to be used in project generation/serialization
    */
   public List<Lesson> getLessons(boolean withAdditional) {
-    return withAdditional ? getLessons() : getLessons().stream().filter(lesson -> !lesson.isAdditional())
-      .collect(Collectors.toList());
+    final List<Lesson> lessons = items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
+    return withAdditional ? lessons : lessons.stream().filter(lesson -> !lesson.isAdditional()).collect(Collectors.toList());
   }
 
   @Override
