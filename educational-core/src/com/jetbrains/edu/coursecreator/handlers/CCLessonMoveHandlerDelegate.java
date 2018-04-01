@@ -5,6 +5,7 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -22,10 +23,11 @@ import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.*;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
 
@@ -67,9 +69,9 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
   @Override
   public void doMove(final Project project,
                      PsiElement[] elements,
-                     @Nullable PsiElement targetContainer,
+                     @Nullable PsiElement targetDirectory,
                      @Nullable MoveCallback callback) {
-    if (!(targetContainer instanceof PsiDirectory)) {
+    if (!(targetDirectory instanceof PsiDirectory)) {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
@@ -77,37 +79,90 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
       return;
     }
     final PsiDirectory sourceDirectory = (PsiDirectory)elements[0];
-    //TODO: handle sections
-    final Lesson sourceLesson = course.getLesson(sourceDirectory.getName());
+    final VirtualFile sourceVFile = sourceDirectory.getVirtualFile();
+    final Lesson sourceLesson = EduUtils.getLesson(sourceVFile, course);
     if (sourceLesson == null) {
       Messages.showInfoMessage("Can't find source lesson to move", "Incorrect Source For Move");
       return;
     }
-    //TODO: handle sections
-    final StudyItem targetLesson = course.getItem(((PsiDirectory)targetContainer).getName());
-    if (targetLesson == null) {
-      Messages.showInfoMessage("Lessons can be moved only to other lessons", "Incorrect Target For Move");
+
+    final VirtualFile targetVFile = ((PsiDirectory)targetDirectory).getVirtualFile();
+    StudyItem targetItem = getTargetItem(course, targetVFile, project);
+    if (targetItem == null) {
+      Messages.showInfoMessage("Lessons can be moved only to other lessons or sections", "Incorrect Target For Move");
       return;
     }
-    final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.LESSON, targetLesson.getName());
-    dialog.show();
-    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-      return;
+    int delta = 0;
+    VirtualFile sourceParentDir = sourceVFile.getParent();
+    VirtualFile targetParentDir;
+    if (targetItem instanceof LessonContainer) {
+      targetParentDir = targetVFile;
     }
-    final VirtualFile[] lessonDirs = project.getBaseDir().getChildren();
-    final Function<VirtualFile, StudyItem> getStudyItem = file -> course.getLesson(file.getName());
+    else {
+      final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.LESSON, targetItem.getName());
+      dialog.show();
+      if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+        return;
+      }
+      targetParentDir = targetVFile.getParent();
+      delta = dialog.getIndexDelta();
+    }
+    final Section targetSection = course.getSection(targetParentDir.getName());
+    final LessonContainer targetContainer = targetSection != null ? targetSection : course;
+
+    final LessonContainer sourceContainer = sourceLesson.getContainer();
+    final Function<VirtualFile, StudyItem> getTargetStudyItem = getStudyItemFunction(targetContainer);
+    final Function<VirtualFile, StudyItem> getSourceStudyItem = getStudyItemFunction(sourceContainer);
 
     int sourceLessonIndex = sourceLesson.getIndex();
     sourceLesson.setIndex(-1);
-    CCUtils.updateHigherElements(lessonDirs, getStudyItem, sourceLessonIndex, -1);
+    CCUtils.updateHigherElements(sourceParentDir.getChildren(), getSourceStudyItem, sourceLessonIndex, -1);
 
-    final int newItemIndex = targetLesson.getIndex() + dialog.getIndexDelta();
-
-    CCUtils.updateHigherElements(lessonDirs, getStudyItem, newItemIndex - 1, 1);
+    final int newItemIndex = targetItem instanceof LessonContainer ? 1 : targetItem.getIndex() + delta;
+    CCUtils.updateHigherElements(targetParentDir.getChildren(), getTargetStudyItem, newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);
-    course.sortItems();
+    sourceLesson.setSection(targetSection);
+
+    sourceContainer.removeLesson(sourceLesson);
+    targetContainer.addLesson(sourceLesson);
+
+    course.sortChildren();
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          if (!targetParentDir.equals(sourceVFile.getParent())) {
+            sourceVFile.move(this, targetParentDir);
+          }
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
+      }
+    });
     ProjectView.getInstance(project).refresh();
+  }
+
+  private static StudyItem getTargetItem(@NotNull Course course, @NotNull VirtualFile targetVFile, @NotNull Project project) {
+    if (targetVFile.equals(project.getBaseDir())) return course;
+    StudyItem targetItem = course.getItem(targetVFile.getName());
+    if (targetItem == null) {
+      targetItem = EduUtils.getLesson(targetVFile, course);
+    }
+    return targetItem;
+  }
+
+  @NotNull
+  private static Function<VirtualFile, StudyItem> getStudyItemFunction(@NotNull final LessonContainer item) {
+    return file -> {
+      if (item instanceof Course) {
+        return ((Course)item).getItem(file.getName());
+      }
+      else {
+        return item.getLesson(file.getName());
+      }
+    };
   }
 
   @Override

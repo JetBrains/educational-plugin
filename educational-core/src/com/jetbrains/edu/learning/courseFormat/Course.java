@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Course {
+public class Course extends LessonContainer {
   @AbstractCollection(elementTypes = {
     Section.class,
     Lesson.class,
@@ -82,6 +82,7 @@ public class Course {
   /**
    * exclude service lesson containing additional files for the course. Returns lessons copy.
    */
+  @Override
   public List<Lesson> getLessons() {
     return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
   }
@@ -94,7 +95,8 @@ public class Course {
       .collect(Collectors.toList());
   }
 
-  public void addLessons(List<Lesson> lessons) {
+  @Override
+  public void addLessons(@NotNull List<Lesson> lessons) {
     items.addAll(lessons);
   }
 
@@ -114,10 +116,12 @@ public class Course {
     items.remove(toRemove);
   }
 
+  @Override
   public void addLesson(@NotNull final Lesson lesson) {
     items.add(lesson);
   }
 
+  @Override
   public void removeLesson(Lesson lesson) {
     items.remove(lesson);
   }
@@ -127,6 +131,7 @@ public class Course {
       ifPresent(lesson -> items.remove(lesson));
   }
 
+  @Override
   @Nullable
   public Lesson getLesson(@NotNull final String name) {
     return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
@@ -186,10 +191,12 @@ public class Course {
     }
   }
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public void setName(String name) {
     this.name = name;
   }
@@ -274,10 +281,11 @@ public class Course {
     return EduNames.STUDY.equals(courseMode);
   }
 
-  public void sortItems() {
+  @Override
+  public void sortChildren() {
     Collections.sort(items, EduUtils.INDEX_COMPARATOR);
     for (Section section : getSections()) {
-      section.sortLessons();
+      section.sortChildren();
     }
   }
 

@@ -33,6 +33,7 @@ public class RemoteCourse extends Course {
     return myType;
   }
 
+  @Override
   public void setLanguage(@NotNull final String language) {
     super.setLanguage(language);
     updateType(language);
@@ -67,6 +68,7 @@ public class RemoteCourse extends Course {
     return tags;
   }
 
+  @Override
   public boolean isUpToDate() {
     if (id == 0) return true;
     if (!isStudy()) return true;
@@ -94,6 +96,7 @@ public class RemoteCourse extends Course {
     return isUpToDate;
   }
 
+  @Override
   public void setUpdated() {
     setUpdateDate(StepikConnector.getCourseUpdateDate(id));
     visitLessons(new LessonVisitor() {
@@ -116,6 +119,7 @@ public class RemoteCourse extends Course {
     return myUpdateDate;
   }
 
+  @Override
   public boolean isAdaptive() {
     return isAdaptive;
   }

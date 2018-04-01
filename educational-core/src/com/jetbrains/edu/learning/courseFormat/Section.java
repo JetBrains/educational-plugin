@@ -4,13 +4,12 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Section extends StudyItem {
+public class Section extends LessonContainer {
   public List<Integer> units;
   private int course;
   @Expose
@@ -52,11 +51,7 @@ public class Section extends StudyItem {
     return position;
   }
 
-  @Nullable
-  public Lesson getLesson(@NotNull final String name) {
-    return lessons.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
-  }
-
+  @Override
   public List<Lesson> getLessons() {
     return lessons;
   }
@@ -65,14 +60,17 @@ public class Section extends StudyItem {
     this.lessons = lessons;
   }
 
+  @Override
   public void addLessons(@NotNull final List<Lesson> lessons) {
     this.lessons.addAll(lessons);
   }
 
+  @Override
   public void addLesson(@NotNull final Lesson lesson) {
     this.lessons.add(lesson);
   }
 
+  @Override
   public void removeLesson(Lesson lesson) {
     lessons.remove(lesson);
   }
@@ -87,7 +85,8 @@ public class Section extends StudyItem {
     this.name = name;
   }
 
-  public void sortLessons() {
+  @Override
+  public void sortChildren() {
     Collections.sort(lessons, EduUtils.INDEX_COMPARATOR);
   }
 }
