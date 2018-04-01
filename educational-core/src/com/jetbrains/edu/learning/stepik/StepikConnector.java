@@ -344,11 +344,11 @@ public class StepikConnector {
 
   @Nullable
   public static RemoteCourse getCourse(@Nullable final Project project, @NotNull final RemoteCourse remoteCourse) {
-    final List<Lesson> lessons = remoteCourse.getLessons(true);
-    if (!lessons.isEmpty()) return remoteCourse;
+    final List<StudyItem> items = remoteCourse.getItems();
+    if (!items.isEmpty()) return remoteCourse;
     if (!remoteCourse.isAdaptive()) {
       try {
-        remoteCourse.addLessons(getLessons(remoteCourse));
+        fillItems(remoteCourse);
         return remoteCourse;
       }
       catch (IOException e) {
@@ -367,6 +367,52 @@ public class StepikConnector {
       return remoteCourse;
     }
     return null;
+  }
+
+  private static void fillItems(RemoteCourse remoteCourse) throws IOException {
+    try {
+      String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
+      List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
+      List<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream())
+        .collect(Collectors.toList());
+
+      if (hasVisibleSections(allSections, remoteCourse.getName())) {
+        int itemIndex = 1;
+        for (Section section : allSections) {
+          final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
+          if (unitIds.length > 0) {
+            final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds);
+            if (lessonsFromUnits.size() == 1 && (
+              lessonsFromUnits.get(0).getName().equals(section.getName())) || section.getName().equals(StepikNames.PYCHARM_ADDITIONAL)) {
+              final Lesson lesson = lessonsFromUnits.get(0);
+              lesson.setIndex(itemIndex);
+              remoteCourse.addLesson(lesson);
+            }
+            else {
+              section.setIndex(itemIndex);
+              for (int i = 0; i < lessonsFromUnits.size(); i++) {
+                Lesson lesson = lessonsFromUnits.get(i);
+                lesson.setIndex(i + 1);
+              }
+              section.addLessons(lessonsFromUnits);
+              remoteCourse.addSection(section);
+            }
+            itemIndex += 1;
+          }
+        }
+      }
+      else {
+        final String[] unitIds = allSections.stream().map(section -> section.units).flatMap(unitList -> unitList.stream())
+          .map(unit -> String.valueOf(unit)).toArray(String[]::new);
+        if (unitIds.length > 0) {
+          final List<Lesson> lessons = getLessons(remoteCourse);
+          remoteCourse.addLessons(lessons);
+        }
+      }
+    }
+    catch (URISyntaxException e) {
+      LOG.warn(e.getMessage());
+    }
   }
 
   public static List<Lesson> getLessons(RemoteCourse remoteCourse) throws IOException {
@@ -399,12 +445,6 @@ public class StepikConnector {
     String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
-    // course sections could be filled already in getSupportedLanguages if we got course by link
-    if (remoteCourse.getSections().isEmpty()) {
-      for (SectionContainer container : containers) {
-        remoteCourse.addSections(container.sections);
-      }
-    }
     return allSections
             .map(section -> section.units)
             .flatMap(unitList -> unitList.stream())
@@ -412,8 +452,26 @@ public class StepikConnector {
             .toArray(String[]::new);
   }
 
+  public static boolean hasVisibleSections(@NotNull final List<Section> sections, String courseName) {
+    if (sections.isEmpty()) {
+      return false;
+    }
+    final String firstSectionTitle = sections.get(0).getName();
+    if (firstSectionTitle != null && firstSectionTitle.equals(courseName)) {
+      if (sections.size() == 1) {
+        return false;
+      }
+      final String secondSectionTitle = sections.get(1).getName();
+      if (sections.size() == 2 && (secondSectionTitle.equals(EduNames.ADDITIONAL_MATERIALS) ||
+                                   secondSectionTitle.equals(StepikNames.PYCHARM_ADDITIONAL))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   @NotNull
-  private static List<Lesson> getLessons(RemoteCourse remoteCourse, String[] unitIds) throws IOException, URISyntaxException {
+  private static List<Lesson> getLessons(String[] unitIds) throws IOException, URISyntaxException {
     List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitIds, UnitContainer.class);
     Stream<Unit> allUnits = unitContainers.stream().flatMap(container -> container.units.stream());
     String[] lessonIds = allUnits.map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
@@ -422,30 +480,7 @@ public class StepikConnector {
     List<Lesson> lessons = lessonContainers.stream().flatMap(lessonContainer -> lessonContainer.lessons.stream()).collect(Collectors.toList());
     List<Unit> units = unitContainers.stream().flatMap(container -> container.units.stream()).collect(Collectors.toList());
 
-    final List<Lesson> lessonsSorted = sortLessonsByUnits(units, lessons);
-    for (int i = 0; i < lessonsSorted.size(); i++) {
-      Lesson lesson = lessonsSorted.get(i);
-      lesson.setIndex(i + 1);
-    }
-
-    final Map<Integer, Integer> unitToLesson = unitContainers.stream().flatMap(container -> container.units.stream()).
-      collect(Collectors.toMap(Unit::getId, unit -> {
-        final Optional<Lesson> lesson = lessonsSorted.stream().filter(l -> l.getId() == unit.lesson).findFirst();
-        return lesson.isPresent() ? lesson.get().getIndex() : null;
-      }));
-
-    for (Section section : remoteCourse.getSections()) {
-      // lessonIndexes could be filled already in getSupportedLanguages if we got course by link
-      //if (section.lessonIndexes.isEmpty()) {
-      //  for (Integer unit : section.units) {
-      //    final Integer index = unitToLesson.get(unit);
-      //    if (index != null) {
-      //      section.lessonIndexes.add(index);
-      //    }
-      //  }
-      //}
-    }
-    return lessonsSorted;
+    return sortLessonsByUnits(units, lessons);
   }
 
   /**
@@ -466,11 +501,12 @@ public class StepikConnector {
     }
     return sorted;
   }
+
   private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds) throws IOException {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
     try {
-      List<Lesson> lessonsFromUnits = getLessons(remoteCourse, unitIds);
+      List<Lesson> lessonsFromUnits = getLessons(unitIds);
 
       final int lessonCount = lessonsFromUnits.size();
       for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
@@ -529,7 +565,7 @@ public class StepikConnector {
   @NotNull
   private static Map<String, String> getFirstCodeTemplates(@NotNull RemoteCourse remoteCourse) throws IOException, URISyntaxException {
     String[] unitsIds = getUnitsIds(remoteCourse);
-    List<Lesson> lessons = getLessons(remoteCourse, unitsIds);
+    List<Lesson> lessons = getLessons(unitsIds);
     for (Lesson lesson : lessons) {
       String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
       List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class);
