@@ -378,8 +378,7 @@ public class EduUtils {
       if (project.getBaseDir().equals(parent)) {
         return false;
       }
-      //TODO: handle sections
-      Lesson lesson = course.getLesson(parent.getName());
+      Lesson lesson = getLesson(parent, course);
       if (lesson != null) {
         Task task = lesson.getTask(virtualFile.getName());
         if (task != null) {
