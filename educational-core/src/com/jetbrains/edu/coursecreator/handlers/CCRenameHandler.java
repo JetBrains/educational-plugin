@@ -67,8 +67,8 @@ public abstract class CCRenameHandler implements RenameHandler {
 
 
   protected static void processRename(@NotNull final StudyItem item,
-                                      String namePrefix,
-                                      Course course,
+                                      @NotNull String namePrefix,
+                                      @NotNull Course course,
                                       @NotNull final Project project,
                                       @NotNull VirtualFile directory) {
     String name = item.getName();
