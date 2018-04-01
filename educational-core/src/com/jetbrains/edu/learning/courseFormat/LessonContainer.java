@@ -55,4 +55,27 @@ public abstract class LessonContainer extends StudyItem {
   public void sortChildren() {
     Collections.sort(items, EduUtils.INDEX_COMPARATOR);
   }
+
+  public void visitLessons(LessonVisitor visitor) {
+    int index = 1;
+    for (StudyItem item : items) {
+      if (item instanceof Lesson) {
+        final boolean visitNext = visitor.visitLesson((Lesson)item, index);
+        if (!visitNext) {
+          return;
+        }
+      }
+      else if (item instanceof Section){
+        index = 1;
+        for (Lesson lesson : ((Section)item).getLessons()) {
+          final boolean visitNext = visitor.visitLesson(lesson, index);
+          if (!visitNext) {
+            return;
+          }
+        }
+        index += 1;
+      }
+      index += 1;
+    }
+  }
 }
