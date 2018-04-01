@@ -166,6 +166,7 @@ public class Lesson extends StudyItem {
     mySection = section;
   }
 
+  @Nullable
   public VirtualFile getLessonDir(@NotNull final Project project) {
     VirtualFile courseDir = EduUtils.getCourseDir(project);
     if (courseDir != null) {

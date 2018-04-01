@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,15 +32,12 @@ public class CCRemoveSection extends DumbAwareAction {
   @Override
   public void actionPerformed(AnActionEvent e) {
     Project project = e.getProject();
-    if (project == null) {
+    final VirtualFile[] selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
+    if (project == null || selectedFiles == null || selectedFiles.length != 1) {
       return;
     }
-    final VirtualFile[] selectedFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
-      return;
-    }
-    if (selectedFiles == null || selectedFiles.length != 1) {
       return;
     }
 
@@ -57,12 +55,8 @@ public class CCRemoveSection extends DumbAwareAction {
         lesson.setIndex(lesson.getIndex() + sectionIndex - 1);
         lesson.setSection(null);
       }
-      for (Lesson lesson : course.getLessons()) {
-        if (lesson.getIndex() > sectionIndex) {
-          lesson.setIndex(lesson.getIndex() + lessonsFromSection.size() - 1);
-        }
-      }
-
+      CCUtils.updateHigherElements(project.getBaseDir().getChildren(), it -> course.getItem(it.getName()),
+                                   sectionIndex, lessonsFromSection.size() - 1);
       course.addLessons(lessonsFromSection);
       course.sortChildren();
     }
@@ -70,7 +64,7 @@ public class CCRemoveSection extends DumbAwareAction {
     ProjectView.getInstance(project).refresh();
   }
 
-  private boolean removeSectionDir(VirtualFile file, VirtualFile courseDir) {
+  private boolean removeSectionDir(@NotNull VirtualFile file, @NotNull VirtualFile courseDir) {
     return ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
       @Override
       public Boolean compute() {
