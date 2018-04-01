@@ -27,13 +27,10 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
 
   @Override
   protected Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item) {
-    return (Function<VirtualFile, StudyItem>)file -> {
+    return file -> {
       if (item instanceof Lesson) {
-        final Section section = ((Lesson)item).getSection();
-        if (section != null) {
-          return section.getLesson(file.getName());
-        }
-        return ((Lesson)item).getCourse().getItem(file.getName());
+        final LessonContainer lessonContainer = ((Lesson)item).getContainer();
+        return lessonContainer.getChild(file.getName());
       }
       return null;
     };
@@ -53,10 +50,10 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
 
   @Override
   protected int getSiblingsSize(@NotNull Course course, @Nullable StudyItem parentItem) {
-    if (parentItem instanceof Section) {
-      return ((Section)parentItem).getLessons().size();
+    if (parentItem instanceof LessonContainer) {
+      return ((LessonContainer)parentItem).getChildren().size();
     }
-    return course.getItems().size();
+    return 0;
   }
 
   @Nullable
@@ -64,9 +61,10 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
   protected StudyItem getParentItem(@NotNull Course course, @NotNull VirtualFile directory) {
     final Lesson lesson = EduUtils.getLesson(directory, course);
     if (lesson == null) {
-      return course.getSection(directory.getName());
+      final Section section = course.getSection(directory.getName());
+      return section != null ? section : course;
     }
-    return lesson.getSection();
+    return lesson.getContainer();
   }
 
   @Nullable

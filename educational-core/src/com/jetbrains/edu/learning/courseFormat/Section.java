@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,18 @@ public class Section extends LessonContainer {
 
   public int getPosition() {
     return position;
+  }
+
+  @Nullable
+  @Override
+  public StudyItem getChild(@NotNull String name) {
+    return getLesson(name);
+  }
+
+  @NotNull
+  @Override
+  public List<? extends StudyItem> getChildren() {
+    return getLessons();
   }
 
   @Override

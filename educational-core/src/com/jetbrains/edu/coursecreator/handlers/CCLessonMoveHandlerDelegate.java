@@ -17,7 +17,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
-import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
@@ -111,15 +110,13 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     final LessonContainer targetContainer = targetSection != null ? targetSection : course;
 
     final LessonContainer sourceContainer = sourceLesson.getContainer();
-    final Function<VirtualFile, StudyItem> getTargetStudyItem = getStudyItemFunction(targetContainer);
-    final Function<VirtualFile, StudyItem> getSourceStudyItem = getStudyItemFunction(sourceContainer);
 
     int sourceLessonIndex = sourceLesson.getIndex();
     sourceLesson.setIndex(-1);
-    CCUtils.updateHigherElements(sourceParentDir.getChildren(), getSourceStudyItem, sourceLessonIndex, -1);
+    CCUtils.updateHigherElements(sourceParentDir.getChildren(), file -> sourceContainer.getChild(file.getName()), sourceLessonIndex, -1);
 
     final int newItemIndex = targetItem instanceof LessonContainer ? 1 : targetItem.getIndex() + delta;
-    CCUtils.updateHigherElements(targetParentDir.getChildren(), getTargetStudyItem, newItemIndex - 1, 1);
+    CCUtils.updateHigherElements(targetParentDir.getChildren(), file -> targetContainer.getChild(file.getName()), newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);
     sourceLesson.setSection(targetSection);
@@ -151,18 +148,6 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
       targetItem = EduUtils.getLesson(targetVFile, course);
     }
     return targetItem;
-  }
-
-  @NotNull
-  private static Function<VirtualFile, StudyItem> getStudyItemFunction(@NotNull final LessonContainer item) {
-    return file -> {
-      if (item instanceof Course) {
-        return ((Course)item).getItem(file.getName());
-      }
-      else {
-        return item.getLesson(file.getName());
-      }
-    };
   }
 
   @Override
