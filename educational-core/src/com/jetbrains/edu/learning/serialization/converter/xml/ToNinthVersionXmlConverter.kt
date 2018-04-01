@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.serialization.converter.xml
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.ITEMS
 import com.jetbrains.edu.learning.serialization.SerializationUtils.LESSONS
@@ -21,7 +22,7 @@ class ToNinthVersionXmlConverter : XmlConverter {
     val taskManagerElement = clone.getChild(MAIN_ELEMENT)
     val courseElement = getCourseElement(taskManagerElement)
     for (lesson in getChildList(courseElement, LESSONS)) {
-      val lessonDir = project.baseDir.findChild(EduNames.LESSON + getAsInt(lesson, INDEX)) ?: throw StudyUnrecognizedFormatException()
+      val lessonDir = EduUtils.getCourseDir(project)?.findChild(EduNames.LESSON + getAsInt(lesson, INDEX)) ?: throw StudyUnrecognizedFormatException()
       for (task in getChildList(lesson, TASK_LIST)) {
         val taskDir = lessonDir.findChild(EduNames.TASK + getAsInt(task, INDEX)) ?: throw StudyUnrecognizedFormatException()
         runWriteAction {
