@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionAnswerPlaceholderAdapter;
 import org.apache.http.HttpEntity;
@@ -38,7 +39,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -118,20 +122,12 @@ public class CCStepikConnector {
         return;
       }
       final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
-      //courseOnRemote.setLessons(course.getLessons(true));
+      courseOnRemote.setItems(course.getItems());
       courseOnRemote.setAuthors(course.getAuthors());
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
       courseOnRemote.setLanguage(course.getLanguageID());
-      //courseOnRemote.setSections(course.getSections());
 
-      int sectionCount = 1;
-      final List<Section> sections = course.getSections();
-      if (sections.isEmpty()) {
-        postAsOneSection(project, courseOnRemote);
-      }
-      else {
-        sectionCount = postSections(project, courseOnRemote);
-      }
+      int sectionCount = postSections(project, courseOnRemote);
 
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
       final int finalSectionCount = sectionCount;
@@ -146,84 +142,43 @@ public class CCStepikConnector {
 
   private static int postSections(@NotNull Project project, @NotNull RemoteCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-
-    final List<Section> sections = course.getSections();
-    final HashMap<Integer, Section> lessonToSection = new HashMap<>();
-    //for (Section section : sections) {
-    //  section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
-    //}
-
-    final ArrayList<Section> sectionsToPost = getSectionsToPost(course, lessonToSection);
-    //for (Section section : sectionsToPost) {
-    //  section.lessonIndexes.forEach(lessonIndex -> lessonToSection.put(lessonIndex, section));
-    //}
-
-    for (int i = 0; i < sectionsToPost.size(); i++) {
-      Section section = sectionsToPost.get(i);
-      section.setPosition(i+1);
-      final int id = postModule(course.getId(), section, project);
-      section.setId(id);
-    }
-
-    int position = 1;
-    for (Lesson lesson : course.getLessons()) {
-      if (indicator != null) {
-        indicator.checkCanceled();
-        indicator.setText2("Publishing lesson " + lesson.getIndex());
-      }
-      final int lessonId = postLesson(project, lesson);
-      final int sectionId = lessonToSection.get(lesson.getIndex()).getId();
-      postUnit(lessonId, position, sectionId, project);
-      if (indicator != null) {
-        indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
-        indicator.checkCanceled();
-      }
-      position += 1;
-    }
-    return sectionsToPost.size();
-  }
-
-  private static void postAsOneSection(@NotNull Project project, @NotNull RemoteCourse course) {
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    final Section section = new Section();
-    section.setName(String.valueOf(course.getName()));
-    section.setPosition(1);
-
-    final int sectionId = postModule(course.getId(), section, project);
-    int position = 1;
-    for (Lesson lesson : course.getLessons()) {
-      if (indicator != null) {
-        indicator.checkCanceled();
-        indicator.setText2("Publishing lesson " + lesson.getIndex());
-      }
-      final int lessonId = postLesson(project, lesson);
-      postUnit(lessonId, position, sectionId, project);
-      if (indicator != null) {
-        indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
-        indicator.checkCanceled();
-      }
-      position += 1;
-    }
-  }
-
-  @NotNull
-  private static ArrayList<Section> getSectionsToPost(@NotNull Course course, HashMap<Integer, Section> lessonToSection) {
-    final ArrayList<Section> sectionsToPost = new ArrayList<>();
-    for (Lesson lesson : course.getLessons()) {
-      if (lessonToSection.containsKey(lesson.getIndex())) {
-        final Section section = lessonToSection.get(lesson.getIndex());
-        if (!sectionsToPost.contains(section)) {
-          sectionsToPost.add(section);
-        }
+    course.sortChildren();
+    final List<StudyItem> items = course.getItems();
+    int i = 0;
+    for (StudyItem item : items) {
+      final Section section = new Section();
+      List<Lesson> lessons;
+      if (item instanceof Section) {
+        ((Section)item).setPosition(i + 1);
+        section.setName(item.getName());
+        lessons = ((Section)item).getLessons();
       }
       else {
-        final Section section = new Section();
-        section.setName(lesson.getName());
-        //section.lessonIndexes.add(lesson.getIndex());
-        sectionsToPost.add(section);
+        section.setName(item.getName());
+        lessons = Collections.singletonList((Lesson)item);
       }
+
+      section.setPosition(i + 1);
+      final int sectionId = postModule(course.getId(), section, project);
+      section.setId(sectionId);
+
+      int position = 1;
+      for (Lesson lesson : lessons) {
+        if (indicator != null) {
+          indicator.checkCanceled();
+          indicator.setText2("Publishing lesson " + lesson.getIndex());
+        }
+        final int lessonId = postLesson(project, lesson);
+        postUnit(lessonId, position, sectionId, project);
+        if (indicator != null) {
+          indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
+          indicator.checkCanceled();
+        }
+        position += 1;
+      }
+      i += 1;
     }
-    return sectionsToPost;
+    return items.size();
   }
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
@@ -491,9 +446,10 @@ public class CCStepikConnector {
         return -1;
       }
 
-      final Lesson postedLesson = new Gson().fromJson(responseString, RemoteCourse.class).
-          getLessons(true).get(0);
-
+      final Lesson postedLesson = getLessonFromString(responseString);
+      if (postedLesson == null) {
+        return -1;
+      }
       updateLessonTasks(project, lesson, postedLesson);
       return lesson.getId();
     }
@@ -585,7 +541,11 @@ public class CCStepikConnector {
         showErrorNotification(project, message, responseString);
         return 0;
       }
-      final Lesson postedLesson = new Gson().fromJson(responseString, RemoteCourse.class).getLessons(true).get(0);
+
+      final Lesson postedLesson = getLessonFromString(responseString);
+      if (postedLesson == null) {
+        return -1;
+      }
       lesson.setId(postedLesson.getId());
       for (Task task : lesson.getTaskList()) {
         final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
@@ -600,6 +560,18 @@ public class CCStepikConnector {
       LOG.error(e.getMessage());
     }
     return -1;
+  }
+
+  @Nullable
+  public static Lesson getLessonFromString(String responseString) {
+    final JsonObject jsonTree = new Gson().fromJson(responseString, JsonObject.class);
+    if (jsonTree.has(SerializationUtils.LESSONS)) {
+      final JsonArray lessons = jsonTree.get(SerializationUtils.LESSONS).getAsJsonArray();
+      if (lessons.size() == 1) {
+        return new Gson().fromJson(lessons.get(0), Lesson.class);
+      }
+    }
+    return null;
   }
 
   public static void deleteTask(@NotNull final Integer task, Project project) {
