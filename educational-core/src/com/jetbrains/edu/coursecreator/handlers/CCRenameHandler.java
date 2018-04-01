@@ -17,10 +17,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -84,7 +84,7 @@ public abstract class CCRenameHandler implements RenameHandler {
           Logger.getInstance(CCRenameHandler.class).error(e);
         }
       });
-      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+      final EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
       if (configurator != null) {
         configurator.getCourseBuilder().refreshProject(project);
       }

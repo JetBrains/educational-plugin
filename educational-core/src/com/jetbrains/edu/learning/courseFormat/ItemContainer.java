@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class LessonContainer extends StudyItem {
+public abstract class ItemContainer extends StudyItem {
   @AbstractCollection(elementTypes = {
     Section.class,
     Lesson.class,
@@ -27,15 +27,16 @@ public abstract class LessonContainer extends StudyItem {
   }
 
   @Nullable
-  public StudyItem getChild(@NotNull final String name) {
+  public StudyItem getItem(@NotNull final String name) {
     return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
 
   @NotNull
-  public List<? extends StudyItem> getChildren() {
+  public List<StudyItem> getItems() {
     return items;
   }
 
+  @NotNull
   public List<Lesson> getLessons() {
     return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
   }
@@ -48,15 +49,15 @@ public abstract class LessonContainer extends StudyItem {
     items.add(lesson);
   }
 
-  public void removeLesson(Lesson lesson) {
+  public void removeLesson(@NotNull Lesson lesson) {
     items.remove(lesson);
   }
 
-  public void sortChildren() {
+  public void sortItems() {
     Collections.sort(items, EduUtils.INDEX_COMPARATOR);
   }
 
-  public void visitLessons(LessonVisitor visitor) {
+  public void visitLessons(@NotNull LessonVisitor visitor) {
     int index = 1;
     for (StudyItem item : items) {
       if (item instanceof Lesson) {
@@ -65,7 +66,7 @@ public abstract class LessonContainer extends StudyItem {
           return;
         }
       }
-      else if (item instanceof Section){
+      else if (item instanceof Section) {
         index = 1;
         for (Lesson lesson : ((Section)item).getLessons()) {
           final boolean visitNext = visitor.visitLesson(lesson, index);

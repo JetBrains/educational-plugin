@@ -142,7 +142,7 @@ public class CCStepikConnector {
 
   private static int postSections(@NotNull Project project, @NotNull RemoteCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    course.sortChildren();
+    course.sortItems();
     final List<StudyItem> items = course.getItems();
     int i = 0;
     for (StudyItem item : items) {
@@ -563,7 +563,7 @@ public class CCStepikConnector {
   }
 
   @Nullable
-  public static Lesson getLessonFromString(String responseString) {
+  public static Lesson getLessonFromString(@NotNull String responseString) {
     final JsonObject jsonTree = new Gson().fromJson(responseString, JsonObject.class);
     if (jsonTree.has(SerializationUtils.LESSONS)) {
       final JsonArray lessons = jsonTree.get(SerializationUtils.LESSONS).getAsJsonArray();

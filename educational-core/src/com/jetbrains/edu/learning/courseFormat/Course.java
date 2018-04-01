@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-public class Course extends LessonContainer {
+public class Course extends ItemContainer {
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
@@ -53,6 +53,7 @@ public class Course extends LessonContainer {
   /**
    * exclude service lesson containing additional files for the course. Returns lessons copy.
    */
+  @NotNull
   @Override
   public List<Lesson> getLessons() {
     return getLessons(false);
@@ -66,10 +67,11 @@ public class Course extends LessonContainer {
     return withAdditional ? lessons : lessons.stream().filter(lesson -> !lesson.isAdditional()).collect(Collectors.toList());
   }
 
-  public void addSection(Section section) {
+  public void addSection(@NotNull Section section) {
     items.add(section);
   }
 
+  @NotNull
   public List<Section> getSections() {
     return items.stream().filter(Section.class::isInstance).map(Section.class::cast).collect(Collectors.toList());
   }
@@ -95,23 +97,13 @@ public class Course extends LessonContainer {
       .findFirst(lesson -> lessonName.equals(lesson.getName())).orElse(null);
   }
 
-  @NotNull
-  @Override
-  public List<? extends StudyItem> getChildren() {
-    return getItems();
-  }
-
-  @Nullable
-  public StudyItem getItem(@NotNull final String name) {
-    return getChild(name);
-  }
-
   @Nullable
   public Section getSection(@NotNull final String name) {
     return (Section)items.stream().filter(Section.class::isInstance).
       filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
 
+  @Nullable
   public Lesson getLesson(int lessonId) {
     return (Lesson)items.stream().filter(Lesson.class::isInstance).
       filter(item -> ((Lesson)item).getId() == lessonId).findFirst().orElse(null);
@@ -233,10 +225,10 @@ public class Course extends LessonContainer {
   }
 
   @Override
-  public void sortChildren() {
-    super.sortChildren();
+  public void sortItems() {
+    super.sortItems();
     for (Section section : getSections()) {
-      section.sortChildren();
+      section.sortItems();
     }
   }
 
@@ -286,15 +278,11 @@ public class Course extends LessonContainer {
     myVisibility = visibility;
   }
 
-  public List<StudyItem> getItems() {
-    return items;
-  }
-
   public void setItems(List<StudyItem> items) {
     this.items = items;
   }
 
-  public void addItem(StudyItem item, int index) {
+  public void addItem(@NotNull StudyItem item, int index) {
     items.add(index, item);
   }
 }

@@ -57,7 +57,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     final Ref<Integer> countTasks = new Ref<>(0);
     course.visitLessons(new LessonVisitor() {
       @Override
-      public boolean visitLesson(Lesson lesson, int index) {
+      public boolean visitLesson(@NotNull Lesson lesson, int index) {
         countTasks.set(countTasks.get() + lesson.getTaskList().size());
         return true;
       }

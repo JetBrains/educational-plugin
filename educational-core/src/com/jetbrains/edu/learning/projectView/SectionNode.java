@@ -56,7 +56,7 @@ public class SectionNode extends EduNode {
   }
 
   @NotNull
-  protected LessonNode createLessonNode(PsiDirectory directory, Lesson lesson) {
+  protected LessonNode createLessonNode(@NotNull PsiDirectory directory, @NotNull Lesson lesson) {
     if (lesson instanceof FrameworkLesson) {
       return new FrameworkLessonNode(myProject, directory, getSettings(), (FrameworkLesson) lesson);
     } else {

@@ -92,8 +92,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
       deleteTaskFile(myProject, removedFile, taskFile);
       return;
     }
-    final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
-
+    final EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
     if (EduUtils.isTaskDirectory(myProject, removedFile)) {
       deleteTask(course, removedFile);
       if (configurator != null) {

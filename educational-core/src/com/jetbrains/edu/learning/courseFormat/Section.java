@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Section extends LessonContainer {
+public class Section extends ItemContainer {
   public List<Integer> units;
   private int course;
   @Expose
