@@ -157,12 +157,13 @@ public class Lesson extends StudyItem {
   }
 
   @Transient
+  @Nullable
   public Section getSection() {
     return mySection;
   }
 
   @Transient
-  public void setSection(Section section) {
+  public void setSection(@Nullable Section section) {
     mySection = section;
   }
 
@@ -184,7 +185,7 @@ public class Lesson extends StudyItem {
   }
 
   @NotNull
-  public LessonContainer getContainer() {
+  public ItemContainer getContainer() {
     if (mySection != null) {
       return mySection;
     }

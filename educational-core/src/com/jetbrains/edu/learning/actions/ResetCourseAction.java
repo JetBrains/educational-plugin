@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class ResetCourseAction extends DumbAwareAction {
     ApplicationManager.getApplication().runWriteAction(() -> {
       course.visitLessons(new LessonVisitor() {
         @Override
-        public boolean visitLesson(Lesson lesson, int index) {
+        public boolean visitLesson(@NotNull Lesson lesson, int index) {
           for (Task task : lesson.getTaskList()) {
             VirtualFile taskDir = task.getTaskDir(project);
             if (taskDir == null) continue;

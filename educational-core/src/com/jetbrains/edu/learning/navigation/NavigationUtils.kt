@@ -56,7 +56,7 @@ object NavigationUtils {
 
   private fun nextLesson(lesson: Lesson): Lesson? {
     val container = lesson.container
-    val siblings = container.children
+    val siblings = container.items
     val nextLessonIndex = lesson.index
     if (nextLessonIndex < siblings.size) {
       return nextLesson(siblings, nextLessonIndex)
@@ -88,7 +88,7 @@ object NavigationUtils {
 
   private fun previousLesson(lesson: Lesson): Lesson? {
     val container = lesson.container
-    val siblings = container.children
+    val siblings = container.items
     val prevLessonIndex = lesson.index - 2
     if (prevLessonIndex >= 0) {
       return previousLesson(siblings, prevLessonIndex)

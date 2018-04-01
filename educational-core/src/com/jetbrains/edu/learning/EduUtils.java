@@ -881,7 +881,7 @@ public class EduUtils {
     Ref<Task> taskRef = new Ref<>();
     course.visitLessons(new LessonVisitor() {
       @Override
-      public boolean visitLesson(Lesson lesson, int index) {
+      public boolean visitLesson(@NotNull Lesson lesson, int index) {
         Task task = lesson.getTask(stepId);
         if (task != null) {
           taskRef.set(task);

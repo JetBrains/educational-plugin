@@ -115,7 +115,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         archiveFolder.refresh(false, true);
         Course courseCopy = course.copy();
         replaceAnswerFilesWithTaskFiles(courseCopy);
-        courseCopy.sortChildren();
+        courseCopy.sortItems();
         createAdditionalFiles(courseCopy);
         try {
           generateJson(archiveFolder, courseCopy);
@@ -136,10 +136,10 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         }
       }
 
-      private void replaceAnswerFilesWithTaskFiles(Course courseCopy) {
+      private void replaceAnswerFilesWithTaskFiles(@NotNull Course courseCopy) {
         courseCopy.visitLessons(new LessonVisitor() {
           @Override
-          public boolean visitLesson(Lesson lesson, int index) {
+          public boolean visitLesson(@NotNull Lesson lesson, int index) {
             final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
             if (lessonDir == null) return true;
             for (Task task : lesson.getTaskList()) {

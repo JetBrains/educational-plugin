@@ -21,16 +21,16 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
 
   @Override
   protected void addItem(@NotNull Course course, @NotNull Lesson item) {
-    final LessonContainer lessonContainer = item.getContainer();
-    lessonContainer.addLesson(item);
+    final ItemContainer itemContainer = item.getContainer();
+    itemContainer.addLesson(item);
   }
 
   @Override
   protected Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item) {
     return file -> {
       if (item instanceof Lesson) {
-        final LessonContainer lessonContainer = ((Lesson)item).getContainer();
-        return lessonContainer.getChild(file.getName());
+        final ItemContainer itemContainer = ((Lesson)item).getContainer();
+        return itemContainer.getItem(file.getName());
       }
       return null;
     };
@@ -50,8 +50,8 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
 
   @Override
   protected int getSiblingsSize(@NotNull Course course, @Nullable StudyItem parentItem) {
-    if (parentItem instanceof LessonContainer) {
-      return ((LessonContainer)parentItem).getChildren().size();
+    if (parentItem instanceof ItemContainer) {
+      return ((ItemContainer)parentItem).getItems().size();
     }
     return 0;
   }
@@ -83,8 +83,8 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
 
   @Override
   protected void sortSiblings(@NotNull Course course, @Nullable StudyItem parentItem) {
-    if (parentItem instanceof LessonContainer) {
-      ((LessonContainer)parentItem).sortChildren();
+    if (parentItem instanceof ItemContainer) {
+      ((ItemContainer)parentItem).sortItems();
     }
   }
 
