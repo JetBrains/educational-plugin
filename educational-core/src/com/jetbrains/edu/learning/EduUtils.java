@@ -564,15 +564,7 @@ public class EduUtils {
     }
     final VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir != null) {
-      final VirtualFile lessonParent = lessonDir.getParent();
-
-      Lesson lesson = course.getLesson(lessonDir.getName());
-      if (!lessonParent.equals(project.getBaseDir())) {
-        final Section section = course.getSection(lessonParent.getName());
-        if (section != null) {
-          lesson = section.getLesson(lessonDir.getName());
-        }
-      }
+      final Lesson lesson = getLesson(lessonDir, course);
       if (lesson == null) {
         return null;
       }
