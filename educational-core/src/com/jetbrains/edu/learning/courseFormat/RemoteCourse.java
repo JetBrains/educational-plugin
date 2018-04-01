@@ -83,7 +83,7 @@ public class RemoteCourse extends Course {
         }
         visitLessons(new LessonVisitor() {
           @Override
-          public boolean visitLesson(Lesson lesson, int index) {
+          public boolean visitLesson(@NotNull Lesson lesson, int index) {
             if (!lesson.isUpToDate()) {
               isUpToDate = false;
             }
@@ -101,7 +101,7 @@ public class RemoteCourse extends Course {
     setUpdateDate(StepikConnector.getCourseUpdateDate(id));
     visitLessons(new LessonVisitor() {
       @Override
-      public boolean visitLesson(Lesson lesson, int index) {
+      public boolean visitLesson(@NotNull Lesson lesson, int index) {
         lesson.setUpdateDate(StepikConnector.getLessonUpdateDate(lesson.getId()));
         for (Task task : lesson.getTaskList()) {
           task.setUpdateDate(StepikConnector.getTaskUpdateDate(task.getStepId()));

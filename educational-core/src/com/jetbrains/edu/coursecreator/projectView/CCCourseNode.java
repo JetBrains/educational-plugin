@@ -53,15 +53,16 @@ public class CCCourseNode extends CourseNode {
     }
     return null;
   }
+
   @NotNull
   @Override
-  protected LessonNode createLessonNode(PsiDirectory directory, Lesson lesson) {
+  protected LessonNode createLessonNode(@NotNull PsiDirectory directory, @NotNull Lesson lesson) {
     return new CCLessonNode(myProject, directory, getSettings(), lesson);
   }
 
   @NotNull
   @Override
-  protected SectionNode createSectionNode(PsiDirectory directory, Section section) {
+  protected SectionNode createSectionNode(@NotNull PsiDirectory directory, @NotNull Section section) {
     return new CCSectionNode(myProject, getSettings(), section, directory);
   }
 

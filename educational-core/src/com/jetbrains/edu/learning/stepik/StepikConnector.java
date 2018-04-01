@@ -369,7 +369,7 @@ public class StepikConnector {
     return null;
   }
 
-  private static void fillItems(RemoteCourse remoteCourse) throws IOException {
+  private static void fillItems(@NotNull RemoteCourse remoteCourse) throws IOException {
     try {
       String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
       List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);

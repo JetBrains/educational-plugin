@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -126,12 +127,12 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
 
   }
 
-  private void moveTask(final PsiDirectory sourceDirectory,
-                        final Task taskToMove,
-                        Task targetTask,
+  private void moveTask(@NotNull final PsiDirectory sourceDirectory,
+                        @NotNull final Task taskToMove,
+                        @Nullable Task targetTask,
                         int indexDelta,
-                        final VirtualFile targetDirectory,
-                        Lesson targetLesson) {
+                        @NotNull final VirtualFile targetDirectory,
+                        @NotNull Lesson targetLesson) {
     final VirtualFile sourceLessonDir = sourceDirectory.getVirtualFile().getParent();
     if (sourceLessonDir == null) {
       return;

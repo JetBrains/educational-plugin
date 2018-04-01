@@ -41,6 +41,7 @@ public class CourseNode extends EduNode {
     data.addText("  " + tasksSolved.toString() + "/" + tasksTotal.toString(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
   }
 
+  @Override
   protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
     Object value = child.getValue();
     if (value instanceof PsiDirectory) {
@@ -58,12 +59,12 @@ public class CourseNode extends EduNode {
   }
 
   @NotNull
-  protected SectionNode createSectionNode(PsiDirectory directory, Section section) {
+  protected SectionNode createSectionNode(@NotNull PsiDirectory directory, @NotNull Section section) {
     return new SectionNode(myProject, getSettings(), section, directory);
   }
 
   @NotNull
-  protected LessonNode createLessonNode(PsiDirectory directory, Lesson lesson) {
+  protected LessonNode createLessonNode(@NotNull PsiDirectory directory, @NotNull Lesson lesson) {
     if (lesson instanceof FrameworkLesson) {
       return new FrameworkLessonNode(myProject, directory, getSettings(), (FrameworkLesson) lesson);
     } else {

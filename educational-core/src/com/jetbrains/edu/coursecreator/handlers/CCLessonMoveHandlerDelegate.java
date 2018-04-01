@@ -91,32 +91,38 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
       Messages.showInfoMessage("Lessons can be moved only to other lessons or sections", "Incorrect Target For Move");
       return;
     }
-    int delta = 0;
     VirtualFile sourceParentDir = sourceVFile.getParent();
-    VirtualFile targetParentDir;
-    if (targetItem instanceof LessonContainer) {
-      targetParentDir = targetVFile;
+    VirtualFile targetParentDir = targetItem instanceof ItemContainer ? targetVFile : targetVFile.getParent();
+
+    if (targetItem instanceof ItemContainer) {
+      if (targetParentDir.findChild(sourceLesson.getName()) != null) {
+        String prefix = targetItem instanceof Section ? "Section" : "Course";
+        Messages.showInfoMessage(prefix + " contains lesson with the same name", "Incorrect Target For Move");
+        return;
+      }
+
     }
-    else {
+    final Section targetSection = course.getSection(targetParentDir.getName());
+    final ItemContainer targetContainer = targetSection != null ? targetSection : course;
+
+    int delta = 0;
+    if (!(targetItem instanceof ItemContainer)) {
       final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.LESSON, targetItem.getName());
       dialog.show();
       if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
         return;
       }
-      targetParentDir = targetVFile.getParent();
       delta = dialog.getIndexDelta();
     }
-    final Section targetSection = course.getSection(targetParentDir.getName());
-    final LessonContainer targetContainer = targetSection != null ? targetSection : course;
 
-    final LessonContainer sourceContainer = sourceLesson.getContainer();
+    final ItemContainer sourceContainer = sourceLesson.getContainer();
 
     int sourceLessonIndex = sourceLesson.getIndex();
     sourceLesson.setIndex(-1);
-    CCUtils.updateHigherElements(sourceParentDir.getChildren(), file -> sourceContainer.getChild(file.getName()), sourceLessonIndex, -1);
+    CCUtils.updateHigherElements(sourceParentDir.getChildren(), file -> sourceContainer.getItem(file.getName()), sourceLessonIndex, -1);
 
-    final int newItemIndex = targetItem instanceof LessonContainer ? 1 : targetItem.getIndex() + delta;
-    CCUtils.updateHigherElements(targetParentDir.getChildren(), file -> targetContainer.getChild(file.getName()), newItemIndex - 1, 1);
+    final int newItemIndex = targetItem instanceof ItemContainer ? 1 : targetItem.getIndex() + delta;
+    CCUtils.updateHigherElements(targetParentDir.getChildren(), file -> targetContainer.getItem(file.getName()), newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);
     sourceLesson.setSection(targetSection);
@@ -124,7 +130,7 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     sourceContainer.removeLesson(sourceLesson);
     targetContainer.addLesson(sourceLesson);
 
-    course.sortChildren();
+    course.sortItems();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
