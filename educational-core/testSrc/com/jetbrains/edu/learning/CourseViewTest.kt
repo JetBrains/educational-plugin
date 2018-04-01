@@ -16,7 +16,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.*
 import com.intellij.ui.tree.AsyncTreeModel
 import com.intellij.util.ui.UIUtil
-import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -24,7 +23,6 @@ import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -32,7 +30,6 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 import junit.framework.TestCase
 import org.junit.Assert
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.swing.JTree
 
@@ -77,36 +74,6 @@ class CourseViewTest : EduTestCase() {
     val pane = projectView.currentProjectViewPane
     waitWhileBusy(pane)
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-  }
-
-  fun testSections() {
-    val section = Section()
-    section.title = "Test section"
-    section.lessonIndexes.add(1)
-    myCourse!!.addSections(Collections.singletonList(section))
-
-    val projectView = ProjectView.getInstance(project)
-    projectView.refresh()
-    projectView.changeView(CourseViewPane.ID)
-    val pane = projectView.currentProjectViewPane
-    val tree = pane.tree
-    val structure = "-Project\n" +
-                          " -CourseNode Edu test course  0/4\n" +
-                          "  -Test section\n" +
-                          "   -LessonNode lesson1\n" +
-                          "    -TaskNode task1\n" +
-                          "     taskFile1.txt\n" +
-                          "    -TaskNode task2\n" +
-                          "     taskFile2.txt\n" +
-                          "    -TaskNode task3\n" +
-                          "     taskFile3.txt\n" +
-                          "    -TaskNode task4\n" +
-                          "     taskFile4.txt\n"
-    waitWhileBusy(pane)
-    TreeUtil.expandAll(tree)
-    waitWhileBusy(pane)
-    PlatformTestUtil.assertTreeEqual(tree, structure)
-    myCourse!!.sections.clear()
   }
 
   fun testExpandAfterNavigation() {
