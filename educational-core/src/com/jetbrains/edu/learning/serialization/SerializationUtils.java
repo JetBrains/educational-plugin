@@ -415,7 +415,7 @@ public class SerializationUtils {
       @Override
       public StudyItem deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
-            .registerTypeAdapter(Task.class, new TaskAdapter()).create();
+            .registerTypeAdapter(Task.class, new TaskAdapter()).registerTypeAdapter(StudyItem.class, new LessonSectionAdapter()).create();
         final StudyItem item = deserializeItem(json, gson);
         final String name = item.getName();
         if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {

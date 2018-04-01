@@ -1,30 +1,58 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import com.google.gson.annotations.Expose;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
+import com.jetbrains.edu.learning.EduUtils;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class LessonContainer extends StudyItem {
+  @AbstractCollection(elementTypes = {
+    Section.class,
+    Lesson.class,
+    FrameworkLesson.class
+  })
+  @Expose protected List<StudyItem> items = new ArrayList<>();
 
   @Nullable
   public Lesson getLesson(@NotNull final String name) {
-    return getLessons().stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
+    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
+      .findFirst(lesson -> name.equals(lesson.getName())).orElse(null);
   }
 
   @Nullable
-  public abstract StudyItem getChild(@NotNull final String name);
+  public StudyItem getChild(@NotNull final String name) {
+    return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
+  }
 
   @NotNull
-  public abstract List<? extends StudyItem> getChildren();
+  public List<? extends StudyItem> getChildren() {
+    return items;
+  }
 
-  public abstract List<Lesson> getLessons();
+  public List<Lesson> getLessons() {
+    return items.stream().filter(Lesson.class::isInstance).map(Lesson.class::cast).collect(Collectors.toList());
+  }
 
-  public abstract void addLessons(@NotNull final List<Lesson> lessons);
+  public void addLessons(@NotNull final List<Lesson> lessons) {
+    items.addAll(lessons);
+  }
 
-  public abstract void addLesson(@NotNull final Lesson lesson);
+  public void addLesson(@NotNull final Lesson lesson) {
+    items.add(lesson);
+  }
 
-  public abstract void removeLesson(Lesson lesson);
+  public void removeLesson(Lesson lesson) {
+    items.remove(lesson);
+  }
 
-  public abstract void sortChildren();
+  public void sortChildren() {
+    Collections.sort(items, EduUtils.INDEX_COMPARATOR);
+  }
 }
