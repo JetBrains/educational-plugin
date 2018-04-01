@@ -5,27 +5,21 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializer;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Course extends LessonContainer {
-  @AbstractCollection(elementTypes = {
-    Section.class,
-    Lesson.class,
-    FrameworkLesson.class
-  })
-  @Expose protected List<StudyItem> items = new ArrayList<>();
-
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
@@ -95,15 +89,6 @@ public class Course extends LessonContainer {
     return withAdditional ? lessons : lessons.stream().filter(lesson -> !lesson.isAdditional()).collect(Collectors.toList());
   }
 
-  @Override
-  public void addLessons(@NotNull List<Lesson> lessons) {
-    items.addAll(lessons);
-  }
-
-  public void addSections(List<Section> sections) {
-    items.addAll(sections);
-  }
-
   public void addSection(Section section) {
     items.add(section);
   }
@@ -116,26 +101,9 @@ public class Course extends LessonContainer {
     items.remove(toRemove);
   }
 
-  @Override
-  public void addLesson(@NotNull final Lesson lesson) {
-    items.add(lesson);
-  }
-
-  @Override
-  public void removeLesson(Lesson lesson) {
-    items.remove(lesson);
-  }
-
   public void removeAdditionalLesson() {
     items.stream().filter(it -> it instanceof Lesson && ((Lesson)it).isAdditional()).findFirst().
       ifPresent(lesson -> items.remove(lesson));
-  }
-
-  @Override
-  @Nullable
-  public Lesson getLesson(@NotNull final String name) {
-    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
-      .findFirst(lesson -> name.equals(lesson.getName())).orElse(null);
   }
 
   @Nullable
@@ -295,7 +263,7 @@ public class Course extends LessonContainer {
 
   @Override
   public void sortChildren() {
-    Collections.sort(items, EduUtils.INDEX_COMPARATOR);
+    super.sortChildren();
     for (Section section : getSections()) {
       section.sortChildren();
     }
