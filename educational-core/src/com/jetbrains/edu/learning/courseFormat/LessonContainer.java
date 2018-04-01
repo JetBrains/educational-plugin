@@ -12,6 +12,12 @@ public abstract class LessonContainer extends StudyItem {
     return getLessons().stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
 
+  @Nullable
+  public abstract StudyItem getChild(@NotNull final String name);
+
+  @NotNull
+  public abstract List<? extends StudyItem> getChildren();
+
   public abstract List<Lesson> getLessons();
 
   public abstract void addLessons(@NotNull final List<Lesson> lessons);

@@ -150,9 +150,21 @@ public class Course extends LessonContainer {
       .findFirst(lesson -> lessonName.equals(lesson.getName())).orElse(null);
   }
 
+  @Override
+  @Nullable
+  public StudyItem getChild(@NotNull final String name) {
+    return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
+  }
+
+  @NotNull
+  @Override
+  public List<? extends StudyItem> getChildren() {
+    return getItems();
+  }
+
   @Nullable
   public StudyItem getItem(@NotNull final String name) {
-    return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
+    return getChild(name);
   }
 
   @Nullable

@@ -183,6 +183,7 @@ public class Lesson extends StudyItem {
     return null;
   }
 
+  @NotNull
   public LessonContainer getContainer() {
     if (mySection != null) {
       return mySection;
