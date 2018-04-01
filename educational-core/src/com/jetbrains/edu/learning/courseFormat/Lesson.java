@@ -2,9 +2,12 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -161,6 +164,22 @@ public class Lesson extends StudyItem {
   @Transient
   public void setSection(Section section) {
     mySection = section;
+  }
+
+  public VirtualFile getLessonDir(@NotNull final Project project) {
+    VirtualFile courseDir = EduUtils.getCourseDir(project);
+    if (courseDir != null) {
+      if (mySection == null) {
+        return courseDir.findChild(getName());
+      }
+      else {
+        VirtualFile sectionDir = courseDir.findChild(mySection.getName());
+        if (sectionDir != null) {
+          return  sectionDir.findChild(getName());
+        }
+      }
+    }
+    return null;
   }
 
   public LessonContainer getContainer() {
