@@ -527,31 +527,22 @@ public class EduUtils {
   }
 
   @Nullable
-  public static VirtualFile getTaskDir(@NotNull Course course, Project project, @NotNull VirtualFile taskFile) {
-    final VirtualFile baseDir = project.getBaseDir();
-    final String relativePath = VfsUtilCore.getRelativePath(taskFile, baseDir);
-    if (relativePath == null) return null;
-    final List<String> path = StringUtil.split(relativePath, "/");
-    if (path.size() < 2) return null;
-    final StudyItem item = course.getItem(path.get(0));
-
-    if (item instanceof Section && path.size() > 2) {
-      final String lessonDirName = path.get(1);
-      final String taskDirName = path.get(2);
-      final Lesson lesson = ((Section)item).getLesson(lessonDirName);
+  public static VirtualFile getTaskDir(@NotNull Course course, @NotNull VirtualFile taskFile) {
+    VirtualFile file = taskFile.getParent();
+    while (file != null) {
+      VirtualFile lessonDirCandidate = file.getParent();
+      if (lessonDirCandidate == null) {
+        return null;
+      }
+      Lesson lesson = getLesson(lessonDirCandidate, course);
       if (lesson != null) {
-        final Task task = lesson.getTask(taskDirName);
-        if (task != null || lesson instanceof FrameworkLesson && EduNames.TASK.equals(taskDirName)) {
-          return VfsUtil.findRelativeFile(baseDir, path.get(0), lessonDirName, taskDirName);
+        if (lesson instanceof FrameworkLesson && EduNames.TASK.equals(file.getName()) ||
+            lesson.getTask(file.getName()) != null) {
+          return file;
         }
       }
-    }
-    else if (item instanceof Lesson) {
-      final String taskDirName = path.get(1);
-      final Task task = ((Lesson)item).getTask(taskDirName);
-      if (task != null || item instanceof FrameworkLesson && EduNames.TASK.equals(taskDirName)) {
-        return VfsUtil.findRelativeFile(baseDir, path.get(0), taskDirName);
-      }
+
+      file = lessonDirCandidate;
     }
     return null;
   }
@@ -571,7 +562,7 @@ public class EduUtils {
     if (course == null) {
       return null;
     }
-    VirtualFile taskDir = getTaskDir(course, project, file);
+    VirtualFile taskDir = getTaskDir(course, file);
     if (taskDir == null) {
       return null;
     }
@@ -770,7 +761,7 @@ public class EduUtils {
       prefixToRemove.add(testDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
     }
 
-    VirtualFile taskDir = getTaskDir(course, project, file);
+    VirtualFile taskDir = getTaskDir(course, file);
     if (taskDir == null) return file.getName();
 
     String fullRelativePath = FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
