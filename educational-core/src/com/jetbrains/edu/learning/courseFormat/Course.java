@@ -50,29 +50,6 @@ public class Course extends LessonContainer {
     }
   }
 
-  public void visitLessons(LessonVisitor visitor) {
-    int index = 1;
-    for (StudyItem item : items) {
-      if (item instanceof Lesson) {
-        final boolean visitNext = visitor.visitLesson((Lesson)item, index);
-        if (!visitNext) {
-          return;
-        }
-      }
-      else if (item instanceof Section){
-        index = 1;
-        for (Lesson lesson : ((Section)item).getLessons()) {
-          final boolean visitNext = visitor.visitLesson(lesson, index);
-          if (!visitNext) {
-            return;
-          }
-        }
-        index += 1;
-      }
-      index += 1;
-    }
-  }
-
   /**
    * exclude service lesson containing additional files for the course. Returns lessons copy.
    */
@@ -116,12 +93,6 @@ public class Course extends LessonContainer {
     }
     return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
       .findFirst(lesson -> lessonName.equals(lesson.getName())).orElse(null);
-  }
-
-  @Override
-  @Nullable
-  public StudyItem getChild(@NotNull final String name) {
-    return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
 
   @NotNull
