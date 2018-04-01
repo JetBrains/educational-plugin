@@ -24,7 +24,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     myFixture.copyDirectoryToProject("toNinth/lesson1", "lesson1")
 
     val element = loadElement(Paths.get(testDataPath).resolve("${getTestName(true)}.xml"))
-    SerializationUtils.Xml.convertToNinthVersion(project, element)
+    val converted = SerializationUtils.Xml.convertToNinthVersion(project, element)
 
     val expectedFileTree = fileTree {
       dir("Introduction") {
@@ -38,7 +38,10 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
         }
       }
     }
-    expectedFileTree.assertEquals(EduUtils.getCourseDir(project)!!);
+    expectedFileTree.assertEquals(EduUtils.getCourseDir(project)!!)
+
+    val expected = Paths.get(testDataPath).resolve("${getTestName(true)}.after.xml")
+    assertTrue(JDOMUtil.areElementsEqual(converted, loadElement(expected)))
   }
 
   private fun doTest(version: Int) {

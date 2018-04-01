@@ -69,7 +69,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   @Throws(IOException::class)
   protected fun createLesson(index: Int, taskCount: Int): Lesson {
     val lesson = Lesson()
-    lesson.name = "lesson" + index
+    lesson.name = "lesson$index"
     (1..taskCount)
         .map { createTask(index, it) }
         .forEach { lesson.addTask(it) }
@@ -79,7 +79,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
   @Throws(IOException::class) private fun createTask(lessonIndex: Int, taskIndex: Int): Task {
     val task = EduTask()
-    task.name = "task" + taskIndex
+    task.name = "task$taskIndex"
     task.index = taskIndex
     createTaskFile(lessonIndex, task, "taskFile$taskIndex.txt")
     return task

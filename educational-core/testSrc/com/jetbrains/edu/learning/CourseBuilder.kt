@@ -45,7 +45,7 @@ class CourseBuilder {
   }
 
   fun lesson(name: String? = null, isFramework: Boolean = false, buildLesson: LessonBuilder.() -> Unit) {
-    val lessonBuilder = LessonBuilder(course, if (isFramework) FrameworkLesson() else Lesson())
+    val lessonBuilder = LessonBuilder(course, null, if (isFramework) FrameworkLesson() else Lesson())
     val lesson = lessonBuilder.lesson
     lesson.index = course.lessons.size + 1
     val nextLessonIndex = course.lessons.size + 1
@@ -53,12 +53,37 @@ class CourseBuilder {
     course.addLesson(lesson)
     lessonBuilder.buildLesson()
   }
+
+  fun section(name: String? = null, buildSection: SectionBuilder.() -> Unit) {
+    val sectionBuilder = SectionBuilder(course, Section())
+    val section = sectionBuilder.section
+    section.index = course.lessons.size + 1
+    val nextSectionIndex = course.items.size + 1
+    sectionBuilder.withName(name ?: EduNames.SECTION + nextSectionIndex)
+    course.addSection(section)
+    sectionBuilder.buildSection()
+  }
+}
+class SectionBuilder(val course: Course, val section: Section = Section()) {
+  fun withName(name: String) {
+    section.name = name
+  }
+
+  fun lesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit) {
+    val lessonBuilder = LessonBuilder(course, section, Lesson())
+    lessonBuilder.lesson.index = section.lessons.size + 1
+    val nextIndex = section.lessons.size + 1
+    lessonBuilder.withName(name?: EduNames.LESSON + nextIndex)
+    lessonBuilder.buildLesson()
+    section.addLesson(lessonBuilder.lesson)
+  }
 }
 
-class LessonBuilder(val course: Course, val lesson: Lesson = Lesson()) {
+class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = Lesson()) {
 
   init {
     lesson.course = course
+    lesson.section = section
   }
 
   fun withName(name: String) {

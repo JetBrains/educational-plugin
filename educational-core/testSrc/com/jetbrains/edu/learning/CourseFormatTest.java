@@ -4,10 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.util.io.FileUtil;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
@@ -212,7 +209,7 @@ public class CourseFormatTest {
 
     Gson gson = new GsonBuilder()
         .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-        .registerTypeAdapter(Lesson.class, new SerializationUtils.Json.LessonSectionAdapter())
+        .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
     return gson.fromJson(courseJson, Course.class);
