@@ -23,6 +23,7 @@ import com.intellij.util.PlatformIcons;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -56,6 +57,8 @@ public class EditInputAction extends DumbAwareAction {
       FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
       final VirtualFile openedFile = fileDocumentManager.getFile(selectedEditor.getDocument());
       final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
+      final Course course = studyTaskManager.getCourse();
+      if (course == null) return;
       assert openedFile != null;
       TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
       assert taskFile != null;
@@ -66,7 +69,7 @@ public class EditInputAction extends DumbAwareAction {
         public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
           if (newSelection.getIcon() != null) {
             int tabCount = tabbedPane.getTabCount();
-            VirtualFile taskDir = EduUtils.getTaskDir(studyTaskManager.getCourse(), project, openedFile);
+            VirtualFile taskDir = EduUtils.getTaskDir(course, openedFile);
             assert taskDir != null;
             VirtualFile testsDir = taskDir.findChild(EduNames.USER_TESTS);
             assert testsDir != null;
