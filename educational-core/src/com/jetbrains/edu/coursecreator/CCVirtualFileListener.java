@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -96,14 +97,14 @@ public class CCVirtualFileListener implements VirtualFileListener {
     if (EduUtils.isTaskDirectory(myProject, removedFile)) {
       deleteTask(course, removedFile);
       if (configurator != null) {
-        configurator.getCourseBuilder().refreshProject(myProject);
+        ApplicationManager.getApplication().invokeLater(() -> configurator.getCourseBuilder().refreshProject(myProject));
       }
     }
     if (EduUtils.getLesson(removedFile, course) != null) {
       deleteLesson(course, removedFile);
-      if (configurator != null) {
-        configurator.getCourseBuilder().refreshProject(myProject);
-      }
+    }
+    if (course.getSection(removedFile.getName()) != null) {
+      deleteSection(course, removedFile);
     }
   }
 
@@ -122,6 +123,16 @@ public class CCVirtualFileListener implements VirtualFileListener {
       CCUtils.updateHigherElements(parentDir.getChildren(), file -> course.getItem(file.getName()), removedLesson.getIndex(), -1);
       course.removeLesson(removedLesson);
     }
+  }
+
+  private static void deleteSection(@NotNull final Course course, @NotNull final VirtualFile removedFile) {
+    Section removedSection = course.getSection(removedFile.getName());
+    if (removedSection == null) {
+      return;
+    }
+    final VirtualFile parentDir = removedFile.getParent();
+    CCUtils.updateHigherElements(parentDir.getChildren(), file -> course.getItem(file.getName()), removedSection.getIndex(), -1);
+    course.removeSection(removedSection);
   }
 
   private static void deleteTask(@NotNull final Course course, @NotNull final VirtualFile removedTask) {
