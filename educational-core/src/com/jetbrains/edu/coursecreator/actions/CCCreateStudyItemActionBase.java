@@ -116,7 +116,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       LOG.info("Failed to get parent directory");
       return null;
     }
-    CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item), item.getIndex() - 1, 1);
+    CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item, course), item.getIndex() - 1, 1);
     addItem(course, item);
     sortSiblings(course, parentItem);
     return createItemDir(project, item, parentDir, course);
@@ -124,7 +124,8 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
 
   protected abstract void addItem(@NotNull final Course course, @NotNull final Item item);
 
-  protected abstract Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item);
+  protected abstract Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item,
+                                                                                  @NotNull Course course);
 
   protected abstract VirtualFile createItemDir(@NotNull final Project project, @NotNull final Item item,
                                                @NotNull final VirtualFile parentDirectory, @NotNull final Course course);

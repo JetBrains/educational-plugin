@@ -26,7 +26,8 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
   }
 
   @Override
-  protected Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item) {
+  protected Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item,
+                                                                         @NotNull Course course) {
     return file -> {
       if (item instanceof Lesson) {
         final ItemContainer itemContainer = ((Lesson)item).getContainer();
