@@ -79,9 +79,9 @@ public class CCAddSection extends DumbAwareAction {
         lesson.setIndex(i + 1);
         lesson.setSection(section);
       }
+      course.removeLesson(lesson);
     }
 
-    course.getItems().removeAll(lessonsToWrap);
     int delta = -lessonsToWrap.size() + 1;
     CCUtils.updateHigherElements(project.getBaseDir().getChildren(), file -> course.getItem(file.getName()), maxIndex, delta);
     course.addItem(section, section.getIndex() - 1);

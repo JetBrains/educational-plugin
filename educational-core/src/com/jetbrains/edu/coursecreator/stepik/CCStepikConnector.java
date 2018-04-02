@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.stepik;
 
+import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.intellij.lang.Language;
 import com.intellij.notification.Notification;
@@ -122,7 +123,7 @@ public class CCStepikConnector {
         return;
       }
       final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
-      courseOnRemote.setItems(course.getItems());
+      courseOnRemote.setItems(Lists.newArrayList(course.getItems()));
       courseOnRemote.setAuthors(course.getAuthors());
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
       courseOnRemote.setLanguage(course.getLanguageID());
