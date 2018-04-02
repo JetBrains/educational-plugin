@@ -8,6 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -45,6 +46,14 @@ public class CCRemoveSection extends DumbAwareAction {
     final Section section = course.getSection(file.getName());
     if (section == null) {
       return;
+    }
+    final VirtualFile[] sectionChildren = VfsUtil.getChildren(file);
+    for (VirtualFile child : sectionChildren) {
+      if (project.getBaseDir().findChild(child.getName()) != null) {
+        Messages.showInfoMessage("Can't unwrap lesson " + child.getName() + ". Course contains directory " +
+                                 "with the same name already.", "Unwrap Section Failed");
+        return;
+      }
     }
     if (removeSectionDir(file, project.getBaseDir())) {
       final List<Lesson> lessonsFromSection = section.getLessons();
