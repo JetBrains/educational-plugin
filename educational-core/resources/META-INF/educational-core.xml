@@ -100,6 +100,8 @@
       <action id="Educational.Educator.CreateLesson"
               class="com.jetbrains.edu.coursecreator.actions.CCCreateLesson"/>
       <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask"/>
+      <action id="Educational.Educator.CreateSection"
+              class="com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection"/>
       <separator/>
       <add-to-group group-id="NewGroup" anchor="first"/>
     </group>

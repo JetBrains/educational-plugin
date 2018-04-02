@@ -34,7 +34,8 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   }
 
   @Override
-  protected Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item) {
+  protected Function<VirtualFile, ? extends StudyItem> getStudyOrderable(@NotNull final StudyItem item,
+                                                                         @NotNull Course course) {
     return (Function<VirtualFile, StudyItem>)file -> {
       if (item instanceof Task) {
         return ((Task)item).getLesson().getTask(file.getName());
