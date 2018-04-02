@@ -376,12 +376,18 @@ public class StepikConnector {
       List<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream())
         .collect(Collectors.toList());
 
+      final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
       if (hasVisibleSections(allSections, remoteCourse.getName())) {
         int itemIndex = 1;
         for (Section section : allSections) {
+          if (progressIndicator != null) {
+            progressIndicator.checkCanceled();
+            progressIndicator.setText("Loading section " + itemIndex + " from " + allSections.size());
+            progressIndicator.setFraction((double)itemIndex / allSections.size());
+          }
           final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
           if (unitIds.length > 0) {
-            final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds);
+            final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
             if (lessonsFromUnits.size() == 1 && (
               lessonsFromUnits.get(0).getName().equals(section.getName())) || section.getName().equals(StepikNames.PYCHARM_ADDITIONAL)) {
               final Lesson lesson = lessonsFromUnits.get(0);
@@ -419,7 +425,7 @@ public class StepikConnector {
     try {
       String[] unitIds = getUnitsIds(remoteCourse);
       if (unitIds.length > 0) {
-        return getLessonsFromUnits(remoteCourse, unitIds);
+        return getLessonsFromUnits(remoteCourse, unitIds, true);
       }
     }
     catch (URISyntaxException e) {
@@ -438,7 +444,7 @@ public class StepikConnector {
     Section firstSection = sectionContainer.sections.get(0);
     String[] unitIds = firstSection.units.stream().map(id -> String.valueOf(id)).toArray(String[]::new);
 
-    return new ArrayList<>(getLessonsFromUnits(remoteCourse, unitIds));
+    return new ArrayList<>(getLessonsFromUnits(remoteCourse, unitIds, true));
   }
 
   private static String[] getUnitsIds(RemoteCourse remoteCourse) throws IOException, URISyntaxException {
@@ -502,7 +508,7 @@ public class StepikConnector {
     return sorted;
   }
 
-  private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds) throws IOException {
+  private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds, boolean updateIndicator) throws IOException {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
     try {
@@ -511,7 +517,7 @@ public class StepikConnector {
       final int lessonCount = lessonsFromUnits.size();
       for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
         Lesson lesson = lessonsFromUnits.get(lessonIndex);
-        if (progressIndicator != null) {
+        if (progressIndicator != null && updateIndicator) {
           final int readableIndex = lessonIndex + 1;
           progressIndicator.checkCanceled();
           progressIndicator.setText("Loading lesson " + readableIndex + " from " + lessonCount);
