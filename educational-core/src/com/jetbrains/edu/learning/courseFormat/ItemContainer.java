@@ -33,7 +33,7 @@ public abstract class ItemContainer extends StudyItem {
 
   @NotNull
   public List<StudyItem> getItems() {
-    return items;
+    return Collections.unmodifiableList(items);
   }
 
   @NotNull
