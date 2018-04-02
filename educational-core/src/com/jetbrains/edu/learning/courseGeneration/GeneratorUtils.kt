@@ -37,20 +37,22 @@ object GeneratorUtils {
     indicator.isIndeterminate = false
     indicator.fraction = 0.0
 
-    //TODO: handle sections in indicator text
     val items = course.items
     for ((i, item) in items.withIndex()) {
       indicator.fraction = (i + 1).toDouble() / items.size
-      if (item is Lesson && !item.isAdditional) {
-        indicator.text = "Generating lesson ${i + 1} from ${items.size}"
-      } else {
-        indicator.text = "Generating additional files"
-      }
       item.index = i + 1
+
       if (item is Lesson) {
+        if (!item.isAdditional) {
+          indicator.text = "Generating lesson ${i + 1} from ${items.size}"
+        }
+        else {
+          indicator.text = "Generating additional files"
+        }
         createLesson(item, baseDir)
       }
       else if (item is Section) {
+        indicator.text = "Generating section ${i + 1} from ${items.size}"
         createSection(item, baseDir)
       }
     }
