@@ -60,10 +60,7 @@ object GeneratorUtils {
   }
 
   private fun createSection(item: Section, baseDir: VirtualFile) {
-    val sectionDirName = item.name
-    val sectionDir = runInWriteActionAndWait(ThrowableComputable {
-      VfsUtil.createDirectoryIfMissing(baseDir, sectionDirName)
-    })
+    val sectionDir = createUniqueDir(baseDir, item)
 
     for ((i, lesson) in item.lessons.withIndex()) {
       lesson.index = i + 1
