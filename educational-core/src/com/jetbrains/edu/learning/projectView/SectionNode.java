@@ -30,7 +30,7 @@ public class SectionNode extends EduNode {
     JBColor color = allSolved ? LIGHT_GREEN : JBColor.BLACK;
     Icon icon = allSolved ? AllIcons.Nodes.Package : AllIcons.Nodes.Folder; //TODO: use proper icons
     final SimpleTextAttributes textAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, color);
-    data.addText(mySection.getName(), textAttributes);
+    data.addText(mySection.getPresentableName(), textAttributes);
     data.setIcon(icon);
   }
 
