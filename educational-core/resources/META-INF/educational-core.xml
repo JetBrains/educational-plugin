@@ -123,7 +123,7 @@
       <action id="Educational.Educator.ShowPreview" class="com.jetbrains.edu.coursecreator.actions.CCShowPreview">
         <add-to-group group-id="EditorTabPopupMenu"/>
       </action>
-      <action id="Educational.Educator.CCAddSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCAddSection"/>
+      <action id="Educational.Educator.CCWrapWithSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection"/>
       <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRemoveSection"
       use-shortcut-of="$Delete"/>
       <separator/>

@@ -9,10 +9,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -35,30 +37,27 @@ public class ResetCourseAction extends DumbAwareAction {
     ((RemoteCourse)course).setLoadSolutions(false);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      course.visitLessons(new LessonVisitor() {
-        @Override
-        public boolean visitLesson(@NotNull Lesson lesson, int index) {
-          for (Task task : lesson.getTaskList()) {
-            VirtualFile taskDir = task.getTaskDir(project);
-            if (taskDir == null) continue;
-            for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-              TaskFile taskFile = entry.getValue();
-              VirtualFile taskFileVF = EduUtils.findTaskFileInDir(taskFile, taskDir);
-              if (taskFileVF != null) {
-                Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
-                if (document != null) {
-                  RefreshTaskFileAction.resetDocument(document, taskFile);
-                  task.setStatus(CheckStatus.Unchecked);
-                  if (task instanceof ChoiceTask) {
-                    ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
-                  }
-                  RefreshTaskFileAction.resetAnswerPlaceholders(taskFile, project);
+      course.visitLessons((lesson, index) -> {
+        for (Task task : lesson.getTaskList()) {
+          VirtualFile taskDir = task.getTaskDir(project);
+          if (taskDir == null) continue;
+          for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
+            TaskFile taskFile = entry.getValue();
+            VirtualFile taskFileVF = EduUtils.findTaskFileInDir(taskFile, taskDir);
+            if (taskFileVF != null) {
+              Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
+              if (document != null) {
+                RefreshTaskFileAction.resetDocument(document, taskFile);
+                task.setStatus(CheckStatus.Unchecked);
+                if (task instanceof ChoiceTask) {
+                  ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
                 }
+                RefreshTaskFileAction.resetAnswerPlaceholders(taskFile, project);
               }
             }
           }
-          return true;
         }
+        return true;
       });
       RefreshTaskFileAction.refresh(project);
     });

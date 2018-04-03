@@ -19,8 +19,6 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialog;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.LessonVisitor;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.statistics.FeedbackSenderKt;
 import org.jetbrains.annotations.NotNull;
@@ -56,12 +54,9 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
       return;
     }
     final Ref<Integer> countTasks = new Ref<>(0);
-    course.visitLessons(new LessonVisitor() {
-      @Override
-      public boolean visitLesson(@NotNull Lesson lesson, int index) {
-        countTasks.set(countTasks.get() + lesson.getTaskList().size());
-        return true;
-      }
+    course.visitLessons((lesson, index) -> {
+      countTasks.set(countTasks.get() + lesson.getTaskList().size());
+      return true;
     });
     if (countTasks.get() == 5) {
       FeedbackSenderKt.showNotification(false, course, project);
