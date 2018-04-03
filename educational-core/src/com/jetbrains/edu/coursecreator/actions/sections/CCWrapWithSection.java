@@ -9,7 +9,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.NonEmptyInputValidator;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -55,7 +54,8 @@ public class CCWrapWithSection extends DumbAwareAction {
 
     final int sectionIndex = course.getSections().size() + 1;
     final String sectionName = Messages.showInputDialog("Enter Section Name", SECTION, null,
-                                                        SECTION.toLowerCase() + sectionIndex, new NonEmptyInputValidator());
+                                                        SECTION.toLowerCase() + sectionIndex,
+                                                        new CCUtils.PathInputValidator(EduUtils.getCourseDir(project)));
     if (sectionName == null) {
       return;
     }
