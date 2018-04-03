@@ -139,10 +139,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
       Logger.getInstance(CourseViewPane::class.java).error("course is null")
       return
     }
-    val lessons = course.lessons
-
-    val (taskSolved, tasksTotal) = ProgressUtil.countProgressAsOneTaskWithSubtasks(lessons) ?:
-                                   ProgressUtil.countProgressWithoutSubtasks(course)
+    val (taskSolved, tasksTotal) = ProgressUtil.countProgress(course)
 
     progressBar.maximum = tasksTotal
     progressBar.value = taskSolved

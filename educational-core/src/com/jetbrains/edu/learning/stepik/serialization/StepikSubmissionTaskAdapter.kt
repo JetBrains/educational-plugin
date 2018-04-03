@@ -4,7 +4,6 @@ import com.google.gson.*
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import java.lang.reflect.Type
 
@@ -17,13 +16,7 @@ class StepikSubmissionTaskAdapter : JsonSerializer<Task>, JsonDeserializer<Task>
       .registerTypeAdapter(AnswerPlaceholderSubtaskInfo::class.java,
                            StepikSubmissionSubtaskInfoAdapter())
       .create()
-    val taskObject = SerializationUtils.Json.serializeWithTaskType(src, gson)
-
-    if (src is TaskWithSubtasks) {
-      taskObject.add("active_subtask_index", JsonPrimitive(src.activeSubtaskIndex))
-    }
-
-    return taskObject
+    return SerializationUtils.Json.serializeWithTaskType(src, gson)
   }
 
   @Throws(JsonParseException::class)

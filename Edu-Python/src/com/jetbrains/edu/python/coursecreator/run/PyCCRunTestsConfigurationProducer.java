@@ -13,10 +13,10 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.python.learning.PyCourseBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.jetbrains.edu.python.learning.PyConfigurator.TESTS_PY;
 
 public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<PyCCRunTestConfiguration> {
   protected PyCCRunTestsConfigurationProducer() {
@@ -57,12 +57,7 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
     if (task == null) {
       return null;
     }
-    String generatedName = task.getLesson().getName() + "/" + task.getName();
-    if (task instanceof TaskWithSubtasks) {
-      int index = ((TaskWithSubtasks)task).getActiveSubtaskIndex() + 1;
-      generatedName += " " + index;
-    }
-    return generatedName;
+    return task.getLesson().getName() + "/" + task.getName();
   }
 
   @Nullable
@@ -84,8 +79,7 @@ public class PyCCRunTestsConfigurationProducer extends RunConfigurationProducer<
     if (taskDir == null) {
       return null;
     }
-    String testsFileName = PyCourseBuilder.getSubtaskTestsFileName(task instanceof TaskWithSubtasks ?
-                                                                       ((TaskWithSubtasks)task).getActiveSubtaskIndex() : 0);
+    String testsFileName = TESTS_PY;
     String taskDirPath = FileUtil.toSystemDependentName(taskDir.getPath());
     String testsPath = taskDir.findChild(EduNames.SRC) != null ?
                        FileUtil.join(taskDirPath, EduNames.SRC, testsFileName) :

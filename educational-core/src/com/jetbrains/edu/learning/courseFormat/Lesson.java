@@ -38,7 +38,6 @@ public class Lesson extends StudyItem {
     ChoiceTask.class,
     TheoryTask.class,
     CodeTask.class,
-    TaskWithSubtasks.class,
     OutputTask.class,
     IdeTask.class
   })

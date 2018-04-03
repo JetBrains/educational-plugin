@@ -7,7 +7,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
@@ -67,20 +66,6 @@ public class CourseFormatTest {
     final List<Task> taskList = lesson.getTaskList();
     assertFalse("No tasks found", taskList.isEmpty());
     assertTrue(taskList.get(0) instanceof EduTask);
-  }
-
-  @Test
-  public void testSubtask() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    final Task task = taskList.get(0);
-    assertTrue(task instanceof TaskWithSubtasks);
-    TaskWithSubtasks taskWithSubtasks = (TaskWithSubtasks) task;
-    assertEquals(1, taskWithSubtasks.getLastSubtaskIndex());
   }
 
   @Test

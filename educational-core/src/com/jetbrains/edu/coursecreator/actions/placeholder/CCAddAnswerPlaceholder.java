@@ -12,13 +12,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.DocumentUtil;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -51,8 +49,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     final SelectionModel model = editor.getSelectionModel();
     final int offset = model.hasSelection() ? model.getSelectionStart() : editor.getCaretModel().getOffset();
     TaskFile taskFile = state.getTaskFile();
-    final Task task = state.getTaskFile().getTask();
-    int subtaskIndex = task instanceof TaskWithSubtasks ? ((TaskWithSubtasks)task).getActiveSubtaskIndex() : 0;
+    int subtaskIndex = 0;
     final AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
     AnswerPlaceholderSubtaskInfo info = new AnswerPlaceholderSubtaskInfo();
     answerPlaceholder.getSubtaskInfos().put(subtaskIndex, info);
