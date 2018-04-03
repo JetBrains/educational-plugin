@@ -29,21 +29,13 @@ public interface TaskCheckerProvider {
     }
 
     @NotNull
-    default TaskChecker<TaskWithSubtasks> getTaskWithSubtasksTaskChecker(@NotNull TaskWithSubtasks task, @NotNull Project project) {
-        return new TaskWithSubtasksChecker(task, project);
-    }
-
-    @NotNull
     default TaskChecker getIdeTaskChecker(@NotNull IdeTask task, @NotNull Project project) {
         return new IdeTaskChecker(task, project);
     }
 
     @NotNull
     default TaskChecker getTaskChecker(@NotNull Task task, @NotNull Project project) {
-        if (task instanceof TaskWithSubtasks) {
-            return getTaskWithSubtasksTaskChecker((TaskWithSubtasks) task, project);
-        }
-        else if (task instanceof EduTask) {
+        if (task instanceof EduTask) {
             return getEduTaskChecker((EduTask) task, project);
         }
         else if (task instanceof OutputTask) {

@@ -32,7 +32,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.editor.EduFileEditorManagerListener;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +51,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   private final OnePixelSplitter mySplitPane;
 
   private Task myCurrentTask = null;
-  private int myCurrentSubtaskIndex = -1;
 
   public TaskDescriptionToolWindow() {
     super(true, true);
@@ -164,15 +162,10 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   }
 
   public void setCurrentTask(@NotNull Project project, @Nullable Task task) {
-    int subtaskIndex = -1;
-    if (task instanceof TaskWithSubtasks) {
-      subtaskIndex = ((TaskWithSubtasks) task).getActiveSubtaskIndex();
-    }
-    if (myCurrentTask != null && myCurrentTask == task && myCurrentSubtaskIndex == subtaskIndex) return;
+    if (myCurrentTask != null && myCurrentTask == task) return;
 
     setTaskText(project, task);
     myCurrentTask = task;
-    myCurrentSubtaskIndex = subtaskIndex;
   }
 
   private void setTaskText(@NotNull Project project, @Nullable Task task) {

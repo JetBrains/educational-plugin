@@ -45,7 +45,6 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -115,8 +114,7 @@ public class CCShowPreview extends DumbAwareAction {
 
     final Task task = taskFile.getTask();
     ApplicationManager.getApplication().runWriteAction(() -> {
-      TaskFile studentTaskFile = EduUtils.createStudentFile(project, virtualFile, task.copy(),
-                                   task instanceof TaskWithSubtasks ? ((TaskWithSubtasks)task).getActiveSubtaskIndex() : 0);
+      TaskFile studentTaskFile = EduUtils.createStudentFile(project, virtualFile, task.copy(), 0);
       if (studentTaskFile != null) {
         showPreviewDialog(project, studentTaskFile);
       }

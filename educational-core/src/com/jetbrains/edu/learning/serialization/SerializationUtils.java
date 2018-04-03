@@ -477,7 +477,6 @@ public class SerializationUtils {
           case "theory": return gson.fromJson(object, TheoryTask.class);
           case "code": return gson.fromJson(object, CodeTask.class);
           case "edu": return gson.fromJson(object, EduTask.class);
-          case "subtasks": return gson.fromJson(object, TaskWithSubtasks.class);
           case "output": return gson.fromJson(object, OutputTask.class);
           case "pycharm": return gson.fromJson(object, EduTask.class);     // deprecated: old courses have pycharm tasks
           default: {

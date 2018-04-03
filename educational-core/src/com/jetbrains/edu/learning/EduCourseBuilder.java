@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
@@ -107,9 +106,6 @@ public interface EduCourseBuilder<Settings> {
   @Nullable
   default String getTestTemplateName() {
     return null;
-  }
-
-  default void createTestsForNewSubtask(@NotNull Project project, @NotNull TaskWithSubtasks task) {
   }
 
   /**

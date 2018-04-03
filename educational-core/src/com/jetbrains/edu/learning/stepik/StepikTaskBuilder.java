@@ -51,7 +51,6 @@ public class StepikTaskBuilder {
 
   private final Map<String, Computable<Task>> pluginTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
     .put("edu", StepikTaskBuilder::eduTask)
-    .put("subtask", this::taskWithSubtask)
     .put("output", StepikTaskBuilder::outputTask)
     .put("ide", StepikTaskBuilder::ideTask)
     .build();
@@ -277,18 +276,7 @@ public class StepikTaskBuilder {
     if (type == null || !pluginTaskTypes.containsKey(type)) {
       return eduTask();
     }
-    if (myStep.options.lastSubtaskIndex != 0) {
-      return taskWithSubtask();
-    }
     return pluginTaskTypes.get(type).compute();
-  }
-
-  @NotNull
-  private Task taskWithSubtask() {
-    final int lastSubtaskIndex = myStep.options.lastSubtaskIndex;
-    TaskWithSubtasks task = new TaskWithSubtasks();
-    task.setLastSubtaskIndex(lastSubtaskIndex);
-    return task;
   }
 
   private static Task eduTask() {

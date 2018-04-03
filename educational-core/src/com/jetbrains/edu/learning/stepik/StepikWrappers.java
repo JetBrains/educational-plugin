@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -63,13 +62,10 @@ public class StepikWrappers {
     @Expose public Map<String, String> codeTemplates;
     @SerializedName("format_version")
     @Expose public int formatVersion = 3;
-    @SerializedName("last_subtask_index")
-    @Expose public int lastSubtaskIndex = 0;
 
     public static StepOptions fromTask(@NotNull final Project project, @NotNull final Task task) {
       final StepOptions source = new StepOptions();
       source.title = task.getName();
-      source.lastSubtaskIndex = task instanceof TaskWithSubtasks ? ((TaskWithSubtasks)task).getLastSubtaskIndex() : 0;
       setTests(task, source, project);
       setTaskTexts(task, source);
       setTaskFiles(project, task, source);
