@@ -7,8 +7,8 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
@@ -58,7 +58,7 @@ public class SyncCourseAction extends DumbAwareAction {
         Task lastRecommendationOnStepik = StepikAdaptiveConnector.getNextRecommendation(project, (RemoteCourse) course);
 
         if (lastRecommendationOnStepik != null && lastRecommendationOnStepik.getStepId() != lastRecommendationInCourse.getStepId()) {
-          lastRecommendationOnStepik.initTask(adaptiveLesson, false);
+          lastRecommendationOnStepik.init(course, adaptiveLesson, false);
           StepikAdaptiveConnector.replaceCurrentTask(project, lastRecommendationOnStepik, lastRecommendationInCourse.getName(), adaptiveLesson);
 
           ApplicationManager.getApplication().invokeLater(() -> {
