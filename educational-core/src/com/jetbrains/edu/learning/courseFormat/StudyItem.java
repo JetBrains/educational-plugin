@@ -13,6 +13,11 @@ public abstract class StudyItem {
   //TODO: move name to this class
   // can't do it now because name in descendants have different serialized names and it will cause additional migration
 
+  /**
+   * Initializes state of StudyItem
+   */
+  public abstract void init(@Nullable final Course course, @Nullable final StudyItem parentItem, boolean isRestarted);
+
   abstract public String getName();
   abstract public void setName(String name);
 

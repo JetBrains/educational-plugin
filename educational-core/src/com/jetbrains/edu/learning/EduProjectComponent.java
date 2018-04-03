@@ -231,7 +231,7 @@ public class EduProjectComponent implements ProjectComponent {
     if (!(currentCourse instanceof RemoteCourse)) return;
     final Course course = StepikConnector.getCourse(myProject, (RemoteCourse)currentCourse);
     if (course == null) return;
-    course.initCourse(false);
+    course.init(null, null, false);
 
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
@@ -252,7 +252,7 @@ public class EduProjectComponent implements ProjectComponent {
       final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
       if (lessonDir == null) {
         lesson.setIndex(lessonIndex);
-        lesson.initLesson(currentCourse, null, false);
+        lesson.init(currentCourse, null, false);
         try {
           GeneratorUtils.createLesson(lesson, baseDir);
         }
@@ -279,7 +279,7 @@ public class EduProjectComponent implements ProjectComponent {
           tasks.add(studentTask);
           continue;
         }
-        task.initTask(studentLesson, false);
+        task.init(currentCourse, studentLesson, false);
         task.setIndex(index);
 
         final VirtualFile taskDir = lessonDir.findChild(task.getName());

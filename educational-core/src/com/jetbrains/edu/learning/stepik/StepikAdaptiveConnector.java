@@ -259,7 +259,7 @@ public class StepikAdaptiveConnector {
       return;
     }
 
-    task.initTask(lesson, false);
+    task.init(course, lesson, false);
     boolean replaceCurrentTask = reactionToPost == TOO_HARD_RECOMMENDATION_REACTION || reactionToPost == TOO_BORING_RECOMMENDATION_REACTION;
     if (replaceCurrentTask) {
       replaceCurrentTask(project, task, oldTaskName, lesson);
@@ -281,7 +281,7 @@ public class StepikAdaptiveConnector {
 
     lesson.addTask(task);
     task.setIndex(lesson.getTaskList().size());
-    lesson.initLesson(course, null, true);
+    lesson.init(course, null, true);
 
     createFilesForNewTask(project, task, course.getLanguageById());
   }

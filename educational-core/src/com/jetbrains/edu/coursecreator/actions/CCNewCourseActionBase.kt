@@ -30,7 +30,7 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
       }
       item.index = index + 1
     }
-    course.initCourse(true)
+    course.init(null, null, true)
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
     ProjectView.getInstance(courseProject).refresh()
   }
