@@ -52,7 +52,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       }
       StudyTaskManager.getInstance(myProject).setCourse(oldCourse);
       CCProjectService.getInstance(myProject).setCourse(null);
-      oldCourse.initCourse(true);
+      oldCourse.init(null, null, true);
       oldCourse.setCourseMode(CCUtils.COURSE_MODE);
       transformFiles(oldCourse, myProject);
     } else {

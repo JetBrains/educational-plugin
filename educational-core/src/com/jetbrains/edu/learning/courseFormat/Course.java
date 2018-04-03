@@ -36,17 +36,9 @@ public class Course extends ItemContainer {
 
   public Course() {}
 
-  /**
-   * Initializes state of course
-   */
-  public void initCourse(boolean isRestarted) {
+  public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     for (StudyItem item : items) {
-      if (item instanceof Lesson) {
-        ((Lesson)item).initLesson(this, null, isRestarted);
-      }
-      else if (item instanceof Section){
-        ((Section)item).initSection(this, isRestarted);
-      }
+      item.init(this, this, isRestarted);
     }
   }
 
@@ -212,7 +204,7 @@ public class Course extends ItemContainer {
   public Course copy() {
     Element element = XmlSerializer.serialize(this);
     Course copy = XmlSerializer.deserialize(element, getClass());
-    copy.initCourse(true);
+    copy.init(null, null, true);
     return copy;
   }
 

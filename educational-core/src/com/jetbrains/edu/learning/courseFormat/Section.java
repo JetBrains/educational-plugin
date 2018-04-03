@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -15,10 +16,10 @@ public class Section extends ItemContainer {
   private int position;
   private int id;
 
-  public void initSection(Course course, boolean isRestarted) {
+  public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     for (StudyItem lesson : items) {
       if (lesson instanceof Lesson) {
-        ((Lesson)lesson).initLesson(course, this, isRestarted);
+        lesson.init(course, this, isRestarted);
       }
     }
   }

@@ -67,13 +67,8 @@ public abstract class Task extends StudyItem {
     this.name = name;
   }
 
-  /**
-   * Initializes state of task file
-   *
-   * @param lesson lesson which task belongs to
-   */
-  public void initTask(final Lesson lesson, boolean isRestarted) {
-    setLesson(lesson);
+  public void init(@Nullable Course course, @Nullable final StudyItem parentItem, boolean isRestarted) {
+    setLesson(parentItem instanceof Lesson ? (Lesson)parentItem : null);
     if (!isRestarted) myStatus = CheckStatus.Unchecked;
     for (TaskFile taskFile : getTaskFiles().values()) {
       taskFile.initTaskFile(this, isRestarted);
@@ -268,7 +263,7 @@ public abstract class Task extends StudyItem {
   public Task copy() {
     Element element = XmlSerializer.serialize(this);
     Task copy = XmlSerializer.deserialize(element, getClass());
-    copy.initTask(null, true);
+    copy.init(null, null, true);
     return copy;
   }
 

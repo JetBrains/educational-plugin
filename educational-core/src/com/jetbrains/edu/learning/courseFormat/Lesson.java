@@ -53,11 +53,11 @@ public class Lesson extends StudyItem {
   public Lesson() {
   }
 
-  public void initLesson(@NotNull final Course course, @Nullable final Section section, boolean isRestarted) {
-    mySection = section;
+  public void init(@Nullable final Course course, @Nullable final StudyItem section, boolean isRestarted) {
+    mySection = section instanceof Section ? (Section)section : null;
     setCourse(course);
     for (Task task : getTaskList()) {
-      task.initTask(this, isRestarted);
+      task.init(course, this, isRestarted);
     }
   }
 

@@ -189,7 +189,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       deserialize(state);
       VERSION = CURRENT_VERSION;
       if (myCourse != null) {
-        myCourse.initCourse(true);
+        myCourse.init(null, null, true);
       }
     }
     catch (StudyUnrecognizedFormatException e) {
