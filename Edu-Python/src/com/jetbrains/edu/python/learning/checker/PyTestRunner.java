@@ -7,13 +7,10 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.sdk.PythonSdkType;
 import org.jetbrains.annotations.NotNull;
@@ -40,12 +37,7 @@ class PyTestRunner {
       LOG.warn("Plugin configurator for Python is null");
       return null;
     }
-    String testsFileName = configurator.getTestFileName();
-    if (myTask instanceof TaskWithSubtasks) {
-      testsFileName = FileUtil.getNameWithoutExtension(testsFileName);
-      int index = ((TaskWithSubtasks)myTask).getActiveSubtaskIndex();
-      testsFileName += EduNames.SUBTASK_MARKER + index + "." + FileUtilRt.getExtension(configurator.getTestFileName());
-    }
+    final String testsFileName = configurator.getTestFileName();
     final File testRunner = new File(myTaskDir.getPath(), testsFileName);
     myCommandLine = new GeneralCommandLine();
     myCommandLine.withWorkDirectory(myTaskDir.getPath());

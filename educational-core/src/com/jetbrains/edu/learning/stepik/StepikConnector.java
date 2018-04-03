@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -769,14 +768,11 @@ public class StepikConnector {
               String text = document.getText();
               int insertedTextLength = 0;
               StringBuilder builder = new StringBuilder(text);
-              if (!(task instanceof TaskWithSubtasks)) {
-
-                for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-                  builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
-                  builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
-                                 CLOSE_PLACEHOLDER_TAG);
-                  insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
-                }
+              for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
+                builder.insert(placeholder.getOffset() + insertedTextLength, OPEN_PLACEHOLDER_TAG);
+                builder.insert(placeholder.getOffset() + insertedTextLength + placeholder.getLength() + OPEN_PLACEHOLDER_TAG.length(),
+                               CLOSE_PLACEHOLDER_TAG);
+                insertedTextLength += OPEN_PLACEHOLDER_TAG.length() + CLOSE_PLACEHOLDER_TAG.length();
               }
               files.add(new SolutionFile(fileName, builder.toString()));
             }

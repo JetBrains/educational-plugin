@@ -28,11 +28,7 @@ public class CourseNode extends EduNode {
 
   @Override
   protected void updateImpl(PresentationData data) {
-    Pair<Integer, Integer> progress = ProgressUtil.countProgressAsOneTaskWithSubtasks(myCourse.getLessons());
-    if (progress == null) {
-      progress = ProgressUtil.countProgressWithoutSubtasks(myCourse);
-    }
-
+    final Pair<Integer, Integer> progress = ProgressUtil.countProgress(myCourse);
     final Integer tasksSolved = progress.getFirst();
     final Integer tasksTotal = progress.getSecond();
     data.clearText();

@@ -31,7 +31,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
@@ -177,23 +176,6 @@ public class StepikSolutionsLoader implements Disposable {
     }
   }
 
-  private void showActiveSubtask() {
-    // subtask index is increased in switch subtask step, so we need to decrement it before
-    int activeSubtaskIndex = ((TaskWithSubtasks)mySelectedTask).getActiveSubtaskIndex();
-    ((TaskWithSubtasks)mySelectedTask).setActiveSubtaskIndex(Math.max(0, activeSubtaskIndex - 1));
-
-    Collection<TaskFile> taskFiles = mySelectedTask.taskFiles.values();
-    for (TaskFile file : taskFiles) {
-      file.setTrackChanges(false);
-    }
-
-    SubtaskUtils.switchStep(myProject, (TaskWithSubtasks)mySelectedTask, activeSubtaskIndex);
-
-    for (TaskFile file : taskFiles) {
-      file.setTrackChanges(true);
-    }
-  }
-
   private void cancelUnfinishedTasks() {
     for (Future future : myFutures.values()) {
       if (!future.isDone()) {
@@ -218,24 +200,14 @@ public class StepikSolutionsLoader implements Disposable {
         toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
       }
       if (toUpdate) {
-        if (task instanceof TaskWithSubtasks && isSolved) {
-          // task isSolved on Stepik if and only if all subtasks were solved
-          ((TaskWithSubtasks)task).setActiveSubtaskIndex(((TaskWithSubtasks)task).getLastSubtaskIndex());
-        }
-        task.setStatus(checkStatus(task, isSolved));
+        task.setStatus(checkStatus(isSolved));
         tasksToUpdate.add(task);
       }
     }
     return tasksToUpdate;
   }
 
-  private static CheckStatus checkStatus(@NotNull Task task, boolean solved) {
-    if (!solved && task instanceof TaskWithSubtasks) {
-      if (((TaskWithSubtasks)task).getActiveSubtaskIndex() > 0) {
-        return CheckStatus.Unchecked;
-      }
-    }
-
+  private static CheckStatus checkStatus(boolean solved) {
     return solved ? CheckStatus.Solved : CheckStatus.Failed;
   }
 
@@ -349,7 +321,7 @@ public class StepikSolutionsLoader implements Disposable {
 
     String serializedTask = reply.edu_task;
     if (serializedTask == null) {
-      task.setStatus(checkStatus(task, isSolved));
+      task.setStatus(checkStatus(isSolved));
       return loadSolutionTheOldWay(task, reply);
     }
 
@@ -363,10 +335,7 @@ public class StepikSolutionsLoader implements Disposable {
       return Collections.emptyMap();
     }
 
-    if (task instanceof TaskWithSubtasks && updatedTask.task instanceof TaskWithSubtasks) {
-      ((TaskWithSubtasks)task).setActiveSubtaskIndex(((TaskWithSubtasks)updatedTask.task).getActiveSubtaskIndex());
-    }
-    task.setStatus(checkStatus(updatedTask.task, isSolved));
+    task.setStatus(checkStatus(isSolved));
 
     Map<String, String> taskFileToText = new HashMap<>();
     for (StepikWrappers.SolutionFile file : reply.solution) {
@@ -435,11 +404,6 @@ public class StepikSolutionsLoader implements Disposable {
       return;
     }
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      // we can switch subtask before we load document change, because otherwise placeholder text is inserted twice.
-      // see com.jetbrains.edu.learning.SubtaskUtils.updatePlaceholderTexts()
-      if (task instanceof TaskWithSubtasks && task.equals(mySelectedTask)) {
-        showActiveSubtask();
-      }
       for (TaskFile taskFile : task.getTaskFiles().values()) {
         VirtualFile vFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
         if (vFile != null) {

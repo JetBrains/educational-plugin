@@ -79,7 +79,6 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
@@ -287,14 +286,8 @@ public class EduUtils {
     if (taskDir == null || configurator == null) {
       return testFiles;
     }
-    if (!(task instanceof TaskWithSubtasks)) {
-      testFiles.addAll(Arrays.stream(taskDir.getChildren())
-              .filter(configurator::isTestFile)
-              .collect(Collectors.toList()));
-      return testFiles;
-    }
     testFiles.addAll(Arrays.stream(taskDir.getChildren())
-            .filter(file -> isTestsFile(project, file))
+            .filter(configurator::isTestFile)
             .collect(Collectors.toList()));
     return testFiles;
   }
@@ -408,21 +401,11 @@ public class EduUtils {
     if (task == null || task.getLesson() == null || task.getLesson().getCourse() == null) {
       return null;
     }
-    String text = task.getTaskDescription(taskDirectory) != null ? task.getTaskDescription(taskDirectory) : getTaskTextByTaskName(task, taskDirectory);
+    String text = task.getTaskDescription(taskDirectory) != null ? task.getTaskDescription(taskDirectory) : getTaskTextByTaskName(taskDirectory);
 
     if (text == null) return null;
 
     return text;
-  }
-
-  @NotNull
-  public static String constructTaskTextFilename(@NotNull Task task, @NotNull String defaultName) {
-    String fileNameWithoutExtension = FileUtil.getNameWithoutExtension(defaultName);
-    if (task instanceof TaskWithSubtasks) {
-      int activeStepIndex = ((TaskWithSubtasks)task).getActiveSubtaskIndex();
-      fileNameWithoutExtension += EduNames.SUBTASK_MARKER + activeStepIndex;
-    }
-    return addExtension(fileNameWithoutExtension, defaultName);
   }
 
   @NotNull
@@ -431,22 +414,21 @@ public class EduUtils {
   }
 
   @Nullable
-  private static String getTaskTextByTaskName(@NotNull Task task, @Nullable VirtualFile taskDirectory) {
+  private static String getTaskTextByTaskName(@Nullable VirtualFile taskDirectory) {
     if (taskDirectory == null) return null;
 
-    String textFromHtmlFile = getTextByTaskFileFormat(task, taskDirectory, EduNames.TASK_HTML);
+    String textFromHtmlFile = getTextByTaskFileFormat(taskDirectory, EduNames.TASK_HTML);
     if (textFromHtmlFile != null) {
       return textFromHtmlFile;
     }
 
-    String taskTextFromMd = getTextByTaskFileFormat(task, taskDirectory, EduNames.TASK_MD);
+    String taskTextFromMd = getTextByTaskFileFormat(taskDirectory, EduNames.TASK_MD);
     return convertToHtml(taskTextFromMd, taskDirectory);
   }
 
   @Nullable
-  private static String getTextByTaskFileFormat(@NotNull Task task, @NotNull VirtualFile taskDirectory, @NotNull String taskTextFileName) {
-    String textFilename = constructTaskTextFilename(task, taskTextFileName);
-    VirtualFile taskTextFile = taskDirectory.findChild(textFilename);
+  private static String getTextByTaskFileFormat(@NotNull VirtualFile taskDirectory, @NotNull String taskTextFileName) {
+    VirtualFile taskTextFile = taskDirectory.findChild(taskTextFileName);
 
     if (taskTextFile != null) {
       return String.valueOf(LoadTextUtil.loadText(taskTextFile));
@@ -677,8 +659,8 @@ public class EduUtils {
       return null;
     }
 
-    return ObjectUtils.chooseNotNull(taskDir.findChild(constructTaskTextFilename(task, EduNames.TASK_HTML)),
-                                     taskDir.findChild(constructTaskTextFilename(task, EduNames.TASK_MD)));
+    return ObjectUtils.chooseNotNull(taskDir.findChild(EduNames.TASK_HTML),
+                                     taskDir.findChild(EduNames.TASK_MD));
   }
 
   @NotNull
@@ -1005,12 +987,6 @@ public class EduUtils {
       EduDocumentListener listener = new EduDocumentListener(taskFile, false);
       studentDocument.addDocumentListener(listener);
       taskFile.setTrackLengths(false);
-      for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-        if (task instanceof TaskWithSubtasks) {
-          int fromSubtask = ((TaskWithSubtasks)task).getActiveSubtaskIndex();
-          placeholder.switchSubtask(studentDocument, fromSubtask, targetSubtaskIndex);
-        }
-      }
       for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
         replaceWithTaskText(studentDocument, placeholder, targetSubtaskIndex);
       }

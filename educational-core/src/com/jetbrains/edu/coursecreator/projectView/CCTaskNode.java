@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.projectView.TaskNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,11 +61,7 @@ public class CCTaskNode extends TaskNode {
       if (!EduUtils.isTestsFile(myProject, virtualFile)) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings());
       }
-      if (!(myTask instanceof TaskWithSubtasks)) {
-        return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings(), getTestNodeName(configurator, psiElement));
-      }
-      String testFileName = getTestNodeName(configurator, psiElement);
-      return isActiveSubtaskTest(virtualFile) ? new CCStudentInvisibleFileNode(myProject, psiFile, getSettings(), testFileName) : null;
+      return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings(), getTestNodeName(configurator, psiElement));
     }
     return null;
   }
@@ -82,20 +77,6 @@ public class CCTaskNode extends TaskNode {
       return name != null ? name : defaultTestName;
     }
     return defaultTestName;
-  }
-
-  private boolean isActiveSubtaskTest(VirtualFile virtualFile) {
-    if (!(myTask instanceof TaskWithSubtasks)) {
-      return true;
-    }
-
-    if (!virtualFile.getName().contains(EduNames.SUBTASK_MARKER)) {
-      return false;
-    }
-    String nameWithoutExtension = virtualFile.getNameWithoutExtension();
-    int stepMarkerStart = nameWithoutExtension.indexOf(EduNames.SUBTASK_MARKER);
-    int stepIndex = Integer.valueOf(nameWithoutExtension.substring(EduNames.SUBTASK_MARKER.length() + stepMarkerStart));
-    return stepIndex == ((TaskWithSubtasks)myTask).getActiveSubtaskIndex();
   }
 
   @Override

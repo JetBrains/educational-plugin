@@ -205,8 +205,6 @@
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
-    <typedHandler implementation="com.jetbrains.edu.learning.handlers.EduTypeHandlerDelegate"
-                  order="first, before completionAutoPopup"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
@@ -227,8 +225,6 @@
     <applicationService serviceInterface="com.jetbrains.edu.coursecreator.settings.CCSettings"
                         serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
     <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>
-    <editorNotificationProvider
-        implementation="com.jetbrains.edu.coursecreator.CCSubtaskEditorNotificationProvider"/>
     <editorTabTitleProvider implementation="com.jetbrains.edu.coursecreator.CCTestsTabTitleProvider"/>
 
     <projectViewPane implementation="com.jetbrains.edu.learning.projectView.CourseViewPane"/>

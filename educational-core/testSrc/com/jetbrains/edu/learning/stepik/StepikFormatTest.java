@@ -42,12 +42,6 @@ public class StepikFormatTest {
   }
 
   @Test
-  public void testWithSubtasks() throws IOException {
-    StepikWrappers.StepOptions stepOptions = doStepOptionsCreationTest();
-    assertEquals(1, stepOptions.lastSubtaskIndex);
-  }
-
-  @Test
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
     Lesson lesson =
@@ -187,18 +181,6 @@ public class StepikFormatTest {
     final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
     final StepikWrappers.StepSource step = stepContainer.steps.get(0);
     assertNotNull(step.update_date);
-  }
-
-  @Test
-  public void testSubtaskIndex() throws IOException {
-    Gson gson = getGson();
-    String jsonText = loadJsonText();
-    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
-    final StepikWrappers.StepSource step = stepContainer.steps.get(0);
-    final StepikWrappers.Step block = step.block;
-    final StepikWrappers.StepOptions options = block.options;
-    final int lastSubtaskIndex = options.lastSubtaskIndex;
-    assertEquals(0, lastSubtaskIndex);
   }
 
   @Test

@@ -65,23 +65,17 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     final TaskFile taskFile = eduState.getTaskFile();
     if (taskFile == null || editor == null) return;
     final Task task = taskFile.getTask();
-    if (task instanceof TaskWithSubtasks) {
-      for (AnswerPlaceholder placeholder : taskFile.getActivePlaceholders()) {
-        SubtaskUtils.refreshPlaceholder(editor, placeholder);
+    if (!resetTaskFile(editor.getDocument(), project, taskFile)) {
+      Messages.showInfoMessage("The initial text of task file is unavailable", "Failed to Refresh Task File");
+      return;
+    }
+    if (task instanceof ChoiceTask) {
+      final TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
+      if (window != null) {
+        window.setBottomComponent(new ChoiceVariantsPanel((ChoiceTask)task));
       }
     }
-    else {
-      if (!resetTaskFile(editor.getDocument(), project, taskFile)) {
-        Messages.showInfoMessage("The initial text of task file is unavailable", "Failed to Refresh Task File");
-        return;
-      }
-      if (task instanceof ChoiceTask) {
-        final TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
-        if (window != null) {
-          window.setBottomComponent(new ChoiceVariantsPanel((ChoiceTask)task));
-        }
-      }
-    }
+
     WolfTheProblemSolver.getInstance(project).clearProblems(eduState.getVirtualFile());
     taskFile.setHighlightErrors(false);
     EduUtils.drawAllAnswerPlaceholders(editor, taskFile);
