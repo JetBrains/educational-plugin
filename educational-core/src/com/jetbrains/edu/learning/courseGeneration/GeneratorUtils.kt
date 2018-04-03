@@ -234,7 +234,7 @@ object GeneratorUtils {
   }
 
   private fun updateJavaCodeTaskFileNames(project: Project, course: Course) {
-    course.visitLessons({ lesson, _ ->
+    course.visitLessons { lesson, _ ->
       for (task in lesson.getTaskList()) {
         if (task is CodeTask) {
           for (taskFile in task.getTaskFiles().values) {
@@ -243,7 +243,7 @@ object GeneratorUtils {
         }
       }
       true
-    })
+    }
   }
 
   /**

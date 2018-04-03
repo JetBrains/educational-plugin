@@ -37,7 +37,7 @@ import java.util.Map;
  * - Go to {@link Lesson#taskList} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
  * - Update {@link SerializationUtils.Json.TaskAdapter#deserialize} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
- * - Update {@link StepikTaskBuilder#eduTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#taskTypes} otherwise
+ * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#taskTypes} otherwise
  */
 public abstract class Task extends StudyItem {
   @Expose private String name;

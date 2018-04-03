@@ -30,14 +30,20 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -140,20 +146,17 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       }
 
       private void replaceAnswerFilesWithTaskFiles(@NotNull Course courseCopy) {
-        courseCopy.visitLessons(new LessonVisitor() {
-          @Override
-          public boolean visitLesson(@NotNull Lesson lesson, int index) {
-            final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
-            if (lessonDir == null) return true;
-            for (Task task : lesson.getTaskList()) {
-              final VirtualFile taskDir = task.getTaskDir(project);
-              if (taskDir == null) continue;
-              convertToStudentTaskFiles(task, taskDir);
-              addTestsToTask(task);
-              addDescriptions(task);
-            }
-            return true;
+        courseCopy.visitLessons((lesson, index) -> {
+          final VirtualFile lessonDir = baseDir.findChild(lesson.getName());
+          if (lessonDir == null) return true;
+          for (Task task : lesson.getTaskList()) {
+            final VirtualFile taskDir = task.getTaskDir(project);
+            if (taskDir == null) continue;
+            convertToStudentTaskFiles(task, taskDir);
+            addTestsToTask(task);
+            addDescriptions(task);
           }
+          return true;
         });
       }
 

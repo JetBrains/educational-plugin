@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import org.jetbrains.annotations.NotNull;
 
+@FunctionalInterface
 public interface LessonVisitor {
 
   /**
