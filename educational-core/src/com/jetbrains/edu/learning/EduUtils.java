@@ -882,16 +882,13 @@ public class EduUtils {
   @Nullable
   private static Task getTask(@NotNull Course course, int stepId) {
     Ref<Task> taskRef = new Ref<>();
-    course.visitLessons(new LessonVisitor() {
-      @Override
-      public boolean visitLesson(@NotNull Lesson lesson, int index) {
-        Task task = lesson.getTask(stepId);
-        if (task != null) {
-          taskRef.set(task);
-          return false;
-        }
-        return true;
+    course.visitLessons((lesson, index) -> {
+      Task task = lesson.getTask(stepId);
+      if (task != null) {
+        taskRef.set(task);
+        return false;
       }
+      return true;
     });
     return null;
   }
@@ -1287,6 +1284,7 @@ public class EduUtils {
     return getLesson(virtualFile, course) != null;
   }
 
+  @Nullable
   public static Lesson getLesson(@NotNull VirtualFile lessonDir, @NotNull final Course course) {
     if (!lessonDir.isDirectory()) {
       return null;

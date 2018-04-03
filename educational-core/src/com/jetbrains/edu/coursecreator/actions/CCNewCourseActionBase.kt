@@ -21,16 +21,14 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
 
   protected fun initializeCourseProject(courseProject: Project, course: Course) {
 
-    var index = 1
-    for (item in course.items) {
+    for ((index, item) in course.items.withIndex()) {
       if (item is Lesson) {
         initializeLesson(courseProject, item)
       }
       else {
         initializeSection(courseProject, item as Section)
       }
-      item.index = index
-      index += 1
+      item.index = index + 1
     }
     course.initCourse(true)
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
@@ -41,10 +39,8 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
     val sectionDir = courseProject.baseDir.findChild(section.name)
     if (sectionDir == null) return
 
-    var index = 1
     for (item in section.lessons) {
       initializeLesson(courseProject, item)
-      index += 1
     }
   }
 

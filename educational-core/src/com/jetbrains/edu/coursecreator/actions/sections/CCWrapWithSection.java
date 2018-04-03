@@ -26,13 +26,13 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CCAddSection extends DumbAwareAction {
-  protected static final Logger LOG = Logger.getInstance(CCAddSection.class);
+public class CCWrapWithSection extends DumbAwareAction {
+  protected static final Logger LOG = Logger.getInstance(CCWrapWithSection.class);
 
   public static final String TITLE = "Wrap With Section";
   @NonNls private static final String SECTION = "Section";
 
-  public CCAddSection() {
+  public CCWrapWithSection() {
     super(TITLE, TITLE, null);
   }
 
