@@ -399,17 +399,16 @@ public class SerializationUtils {
         Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Task.class, new TaskAdapter())
           .excludeFieldsWithoutExposeAnnotation().create();
         JsonElement tree = gson.toJsonTree(item);
+        final JsonObject jsonItem = tree.getAsJsonObject();
+        String itemType = EduNames.LESSON;
         if (item instanceof FrameworkLesson) {
-          final JsonObject lesson = tree.getAsJsonObject();
-          lesson.add(ITEM_TYPE, new JsonPrimitive(FRAMEWORK_TYPE));
-          return lesson;
+          itemType = FRAMEWORK_TYPE;
         }
         else if (item instanceof Section) {
-          final JsonObject section = tree.getAsJsonObject();
-          section.add(ITEM_TYPE, new JsonPrimitive(EduNames.SECTION));
-          return section;
+          itemType = EduNames.SECTION;
         }
-        return tree;
+        jsonItem.add(ITEM_TYPE, new JsonPrimitive(itemType));
+        return jsonItem;
       }
 
       @Override
@@ -431,6 +430,7 @@ public class SerializationUtils {
         } else {
           String lessonType = object.get(ITEM_TYPE).getAsString();
           switch (lessonType) {
+            case EduNames.LESSON: return gson.fromJson(object, Lesson.class);
             case FRAMEWORK_TYPE: return gson.fromJson(object, FrameworkLesson.class);
             case EduNames.SECTION: return gson.fromJson(object, Section.class);
             default: throw new IllegalArgumentException("Unsupported lesson type: " + lessonType);
