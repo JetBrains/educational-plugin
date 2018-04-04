@@ -19,20 +19,15 @@ class StepikStepOptionsAdapter : JsonDeserializer<StepikWrappers.StepOptions> {
     if (versionJson != null) {
       version = versionJson.asInt
     }
-    when (version) {
-      1 -> {
-        stepOptionsJson = convertToSecondVersion(stepOptionsJson)
-        stepOptionsJson = convertToThirdVersion(stepOptionsJson)
-        stepOptionsJson = convertToFourthVersion(stepOptionsJson)
+    loop@while (true) {
+      stepOptionsJson = when (version) {
+        1 -> convertToSecondVersion(stepOptionsJson)
+        2 -> convertToThirdVersion(stepOptionsJson)
+        3 -> convertToFourthVersion(stepOptionsJson)
+        else -> break@loop
       }
-      2 -> {
-        stepOptionsJson = convertToThirdVersion(stepOptionsJson)
-        stepOptionsJson = convertToFourthVersion(stepOptionsJson)
-      }
-      3 -> stepOptionsJson = convertToFourthVersion(stepOptionsJson)
-    }// uncomment for future versions
-    //case 4:
-    //  stepOptionsJson = convertToFourthVersion(stepOptionsJson);
+      version++
+    }
     convertSubtaskInfosToMap(stepOptionsJson)
     val stepOptions = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
       .fromJson(stepOptionsJson, StepikWrappers.StepOptions::class.java)
