@@ -1,11 +1,12 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.courseView
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.ProjectViewTestUtil
 import com.intellij.util.ui.tree.TreeUtil
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.projectView.CourseViewPane

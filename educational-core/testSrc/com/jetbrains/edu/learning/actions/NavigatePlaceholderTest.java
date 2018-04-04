@@ -102,7 +102,7 @@ public class NavigatePlaceholderTest extends EduTestCase {
     Lesson lesson2 = createLesson(2, 3);
     course.addLesson(lesson1);
     course.addLesson(lesson2);
-    course.initCourse(false);
+    course.init(null, null, false);
   }
 
   @Override

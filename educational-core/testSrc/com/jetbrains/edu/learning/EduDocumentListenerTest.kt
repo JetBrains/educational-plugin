@@ -126,7 +126,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson1 = createLesson(1, 2)
     course.addLesson(lesson1)
-    course.initCourse(false)
+    course.init(null, null, false)
   }
 
   override fun getTestDataPath(): String {

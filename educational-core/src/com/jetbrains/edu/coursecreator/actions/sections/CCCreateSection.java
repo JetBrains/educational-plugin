@@ -11,6 +11,7 @@ import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +79,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   protected boolean isAddedAsLast(@NotNull VirtualFile sourceDirectory,
                                   @NotNull Project project,
                                   @NotNull Course course) {
-    return sourceDirectory.equals(project.getBaseDir());
+    return sourceDirectory.equals(EduUtils.getCourseDir(project));
   }
 
   @Override

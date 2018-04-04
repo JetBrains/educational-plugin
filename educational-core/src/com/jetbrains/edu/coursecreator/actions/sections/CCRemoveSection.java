@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -55,7 +56,12 @@ public class CCRemoveSection extends DumbAwareAction {
         return;
       }
     }
-    if (removeSectionDir(file, project.getBaseDir())) {
+    final VirtualFile courseDir = EduUtils.getCourseDir(project);
+    if (courseDir == null) {
+      Messages.showInfoMessage("Can't find course directory.", "Unwrap Section Failed");
+      return;
+    }
+    if (removeSectionDir(file, courseDir)) {
       final List<Lesson> lessonsFromSection = section.getLessons();
       final int sectionIndex = section.getIndex();
       course.removeSection(section);
@@ -64,7 +70,7 @@ public class CCRemoveSection extends DumbAwareAction {
         lesson.setIndex(lesson.getIndex() + sectionIndex - 1);
         lesson.setSection(null);
       }
-      CCUtils.updateHigherElements(project.getBaseDir().getChildren(), it -> course.getItem(it.getName()),
+      CCUtils.updateHigherElements(courseDir.getChildren(), it -> course.getItem(it.getName()),
                                    sectionIndex, lessonsFromSection.size() - 1);
       course.addLessons(lessonsFromSection);
       course.sortItems();

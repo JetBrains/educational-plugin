@@ -100,7 +100,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     lesson.setIndex(1);
     course.addLesson(lesson);
     course.setCourseMode(CCUtils.COURSE_MODE);
-    course.initCourse(false);
+    course.init(null, null, false);
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {

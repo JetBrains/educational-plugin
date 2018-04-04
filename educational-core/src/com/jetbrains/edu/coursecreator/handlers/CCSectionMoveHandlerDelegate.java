@@ -18,10 +18,12 @@ import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CCSectionMoveHandlerDelegate extends MoveHandlerDelegate {
@@ -81,25 +83,30 @@ public class CCSectionMoveHandlerDelegate extends MoveHandlerDelegate {
       return;
     }
 
-    final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.SECTION, targetItem.getName());
-    dialog.show();
-    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-      return;
-    }
+    final int delta = getDelta(project, targetItem);
 
     int sourceSectionIndex = sourceSection.getIndex();
     sourceSection.setIndex(-1);
 
-    final VirtualFile[] itemDirs = project.getBaseDir().getChildren();
+    final VirtualFile[] itemDirs = EduUtils.getCourseDir(project).getChildren();
     CCUtils.updateHigherElements(itemDirs, file -> course.getItem(file.getName()), sourceSectionIndex, -1);
 
-    final int newItemIndex = targetItem.getIndex() + dialog.getIndexDelta();
+    final int newItemIndex = targetItem.getIndex() + delta;
     CCUtils.updateHigherElements(itemDirs, file -> course.getItem(file.getName()), newItemIndex - 1, 1);
 
     sourceSection.setIndex(newItemIndex);
 
     course.sortItems();
     ProjectView.getInstance(project).refresh();
+  }
+
+  protected int getDelta(@NotNull Project project, @NotNull StudyItem targetItem) {
+    final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.SECTION, targetItem.getName());
+    dialog.show();
+    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+      return -1;
+    }
+    return dialog.getIndexDelta();
   }
 
   @Override
