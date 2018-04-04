@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.serialization
 
 import com.google.gson.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
-import com.jetbrains.edu.learning.serialization.SerializationUtils.PLACEHOLDERS
+import com.jetbrains.edu.learning.serialization.converter.json.ToFifthVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToFourthVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToSecondVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToThirdVersionJsonStepOptionsConverter
@@ -24,11 +24,11 @@ class StepikStepOptionsAdapter : JsonDeserializer<StepikWrappers.StepOptions> {
         1 -> convertToSecondVersion(stepOptionsJson)
         2 -> convertToThirdVersion(stepOptionsJson)
         3 -> convertToFourthVersion(stepOptionsJson)
+        4 -> convertToFifthVersion(stepOptionsJson)
         else -> break@loop
       }
       version++
     }
-    convertSubtaskInfosToMap(stepOptionsJson)
     val stepOptions = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
       .fromJson(stepOptionsJson, StepikWrappers.StepOptions::class.java)
     stepOptions.formatVersion = StepikConnector.CURRENT_VERSION
@@ -39,26 +39,15 @@ class StepikStepOptionsAdapter : JsonDeserializer<StepikWrappers.StepOptions> {
     return ToSecondVersionJsonStepOptionsConverter().convert(stepOptionsJson)
   }
 
-  private fun convertToFourthVersion(stepOptionsJson: JsonObject): JsonObject {
-    return ToFourthVersionJsonStepOptionsConverter().convert(stepOptionsJson)
-  }
-
   private fun convertToThirdVersion(stepOptionsJson: JsonObject): JsonObject {
     return ToThirdVersionJsonStepOptionsConverter().convert(stepOptionsJson)
   }
 
-  private fun convertSubtaskInfosToMap(stepOptionsJson: JsonObject): JsonObject {
-    val files = stepOptionsJson.getAsJsonArray(FILES)
-    if (files != null) {
-      for (taskFileElement in files) {
-        val taskFileObject = taskFileElement.asJsonObject
-        val placeholders = taskFileObject.getAsJsonArray(PLACEHOLDERS)
-        for (placeholder in placeholders) {
-          val placeholderObject = placeholder.asJsonObject
-          removeIndexFromSubtaskInfos(placeholderObject)
-        }
-      }
-    }
-    return stepOptionsJson
+  private fun convertToFourthVersion(stepOptionsJson: JsonObject): JsonObject {
+    return ToFourthVersionJsonStepOptionsConverter().convert(stepOptionsJson)
+  }
+
+  private fun convertToFifthVersion(stepOptionsJson: JsonObject): JsonObject {
+    return ToFifthVersionJsonStepOptionsConverter().convert(stepOptionsJson)
   }
 }
