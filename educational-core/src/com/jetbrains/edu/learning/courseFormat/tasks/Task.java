@@ -253,7 +253,7 @@ public abstract class Task extends StudyItem {
 
   public void setStatus(CheckStatus status) {
     for (TaskFile taskFile : taskFiles.values()) {
-      for (AnswerPlaceholder placeholder : taskFile.getActivePlaceholders()) {
+      for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
         placeholder.setStatus(status);
       }
     }

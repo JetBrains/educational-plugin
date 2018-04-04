@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.SaveAndSyncHandler;
+import com.intellij.ide.projectView.ProjectView;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.Disposable;
@@ -23,7 +24,6 @@ import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -33,7 +33,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -166,7 +168,7 @@ public class StepikSolutionsLoader implements Disposable {
       ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
         EduUtils.synchronize();
         if (mySelectedTask != null) {
-          SubtaskUtils.updateUI(myProject, mySelectedTask, mySelectedTask.getTaskDir(myProject), true);
+          updateUI(myProject, mySelectedTask, mySelectedTask.getTaskDir(myProject), true);
         }
       }));
       myBusConnection.disconnect();
@@ -355,7 +357,10 @@ public class StepikSolutionsLoader implements Disposable {
     for (int i = 0; i < answerPlaceholders.size(); i++) {
       AnswerPlaceholder answerPlaceholder = answerPlaceholders.get(i);
       AnswerPlaceholder updatedPlaceholder = updatedPlaceholders.get(i);
-      answerPlaceholder.setSubtaskInfos(updatedPlaceholder.getSubtaskInfos());
+      answerPlaceholder.setHints(updatedPlaceholder.getHints());
+      answerPlaceholder.setPossibleAnswer(updatedPlaceholder.getPossibleAnswer());
+      answerPlaceholder.setPlaceholderText(updatedPlaceholder.getPlaceholderText());
+      answerPlaceholder.setStatus(updatedPlaceholder.getStatus());
       answerPlaceholder.setOffset(updatedPlaceholder.getOffset());
       answerPlaceholder.setLength(updatedPlaceholder.getLength());
       answerPlaceholder.setSelected(updatedPlaceholder.getSelected());
@@ -431,5 +436,22 @@ public class StepikSolutionsLoader implements Disposable {
   @TestOnly
   public void doLoadSolution(Task task, boolean isSolved) {
     loadSolution(myProject, task, isSolved);
+  }
+
+  private static void updateUI(@NotNull Project project, @NotNull Task task, VirtualFile taskDir, boolean navigateToTask) {
+    CheckUtils.drawAllPlaceholders(project, task);
+    ProjectView.getInstance(project).refresh();
+    TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
+    if (toolWindow != null) {
+      String text = EduUtils.getTaskTextFromTask(taskDir, task);
+      if (text == null) {
+        toolWindow.setEmptyText(project);
+        return;
+      }
+      toolWindow.setText(text);
+    }
+    if (navigateToTask) {
+      NavigationUtils.navigateToTask(project, task);
+    }
   }
 }

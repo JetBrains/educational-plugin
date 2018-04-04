@@ -15,7 +15,6 @@ import com.intellij.util.DocumentUtil;
 import com.jetbrains.edu.learning.AnswerPlaceholderPainter;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +28,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
 
   private static boolean arePlaceholdersIntersect(@NotNull final TaskFile taskFile, int start, int end) {
-    List<AnswerPlaceholder> answerPlaceholders = taskFile.getActivePlaceholders();
+    List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
     for (AnswerPlaceholder existingAnswerPlaceholder : answerPlaceholders) {
       int twStart = existingAnswerPlaceholder.getOffset();
       int twEnd = existingAnswerPlaceholder.getPossibleAnswerLength() + twStart;
@@ -49,10 +48,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     final SelectionModel model = editor.getSelectionModel();
     final int offset = model.hasSelection() ? model.getSelectionStart() : editor.getCaretModel().getOffset();
     TaskFile taskFile = state.getTaskFile();
-    int subtaskIndex = 0;
     final AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
-    AnswerPlaceholderSubtaskInfo info = new AnswerPlaceholderSubtaskInfo();
-    answerPlaceholder.getSubtaskInfos().put(subtaskIndex, info);
     int index = taskFile.getAnswerPlaceholders().size();
     answerPlaceholder.setIndex(index);
     answerPlaceholder.setTaskFile(taskFile);
@@ -67,7 +63,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
     String answerPlaceholderText = dlg.getTaskText();
     answerPlaceholder.setPossibleAnswer(model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText);
-    answerPlaceholder.setTaskText(StringUtil.notNullize(answerPlaceholderText));
+    answerPlaceholder.setPlaceholderText(StringUtil.notNullize(answerPlaceholderText));
     answerPlaceholder.setLength(StringUtil.notNullize(answerPlaceholderText).length());
     answerPlaceholder.setHints(dlg.getHints());
 
@@ -147,7 +143,7 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
   }
 
   protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {
-    String answerPlaceholderText = StringUtil.notNullize(answerPlaceholder.getTaskText());
+    String answerPlaceholderText = StringUtil.notNullize(answerPlaceholder.getPlaceholderText());
     return new CCCreateAnswerPlaceholderDialog(project, answerPlaceholderText.isEmpty() ? "type here" : answerPlaceholderText,
                                                answerPlaceholder.getHints());
   }

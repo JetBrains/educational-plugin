@@ -119,7 +119,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
       return false;
     }
     for (TaskFile taskFile : currentTask.getTaskFiles().values()) {
-      List<AnswerPlaceholder> placeholders = taskFile.getActivePlaceholders();
+      List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
       if (!placeholders.isEmpty()) {
         for (AnswerPlaceholder placeholder : placeholders) {
           List<String> hints = placeholder.getHints();

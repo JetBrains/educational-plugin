@@ -26,12 +26,12 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
     if (answerPlaceholder == null) {
       return;
     }
-    CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getTaskText(), answerPlaceholder.getHints());
+    CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), answerPlaceholder.getHints());
     dlg.setTitle("Edit Answer Placeholder");
     if (dlg.showAndGet()) {
       final String answerPlaceholderText = dlg.getTaskText();
-      answerPlaceholder.setTaskText(answerPlaceholderText);
-      answerPlaceholder.setLength(answerPlaceholder.getActiveSubtaskInfo().isNeedInsertText() ? 0 : StringUtil.notNullize(answerPlaceholderText).length());
+      answerPlaceholder.setPlaceholderText(answerPlaceholderText);
+      answerPlaceholder.setLength(StringUtil.notNullize(answerPlaceholderText).length());
       answerPlaceholder.setHints(dlg.getHints());
     }
   }

@@ -615,7 +615,7 @@ public class StepikConnector {
   static boolean setPlaceholdersFromTags(@NotNull TaskFile taskFile, @NotNull SolutionFile solutionFile) {
     int lastIndex = 0;
     StringBuilder builder = new StringBuilder(solutionFile.text);
-    List<AnswerPlaceholder> placeholders = taskFile.getActivePlaceholders();
+    List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
     boolean isPlaceholdersValid = true;
     for (AnswerPlaceholder placeholder : placeholders) {
       int start = builder.indexOf(OPEN_PLACEHOLDER_TAG, lastIndex);

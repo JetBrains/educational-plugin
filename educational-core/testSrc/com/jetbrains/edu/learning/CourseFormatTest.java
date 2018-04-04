@@ -120,7 +120,7 @@ public class CourseFormatTest {
     assertNotNull(taskFile);
     final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
     assertEquals(1, answerPlaceholders.size());
-    assertEquals("write function body", answerPlaceholders.get(0).getTaskText());
+    assertEquals("write function body", answerPlaceholders.get(0).getPlaceholderText());
   }
 
   @Test
