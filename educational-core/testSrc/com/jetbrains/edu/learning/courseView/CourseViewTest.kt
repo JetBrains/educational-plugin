@@ -1,5 +1,5 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.courseView
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
@@ -9,17 +9,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.*
-import com.intellij.util.ui.tree.TreeUtil
+import com.jetbrains.edu.learning.EduState
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import junit.framework.TestCase
 import org.junit.Assert
 import java.io.IOException
-import java.util.*
 
 class CourseViewTest : EduTestCase() {
 
@@ -149,7 +150,7 @@ class CourseViewTest : EduTestCase() {
 
     val lesson1 = createLesson(1, 4)
     myCourse!!.addLesson(lesson1)
-    myCourse!!.initCourse(false)
+    myCourse!!.init(null, null, false)
   }
 
   private fun createPane(): CourseViewPane {

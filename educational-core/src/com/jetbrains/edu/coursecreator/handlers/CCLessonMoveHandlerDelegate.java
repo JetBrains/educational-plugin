@@ -107,12 +107,7 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
 
     int delta = 0;
     if (!(targetItem instanceof ItemContainer)) {
-      final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.LESSON, targetItem.getName());
-      dialog.show();
-      if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-        return;
-      }
-      delta = dialog.getIndexDelta();
+      delta = getDelta(project, targetItem);
     }
 
     final ItemContainer sourceContainer = sourceLesson.getContainer();
@@ -121,7 +116,8 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     sourceLesson.setIndex(-1);
     CCUtils.updateHigherElements(sourceParentDir.getChildren(), file -> sourceContainer.getItem(file.getName()), sourceLessonIndex, -1);
 
-    final int newItemIndex = targetItem instanceof ItemContainer ? 1 : targetItem.getIndex() + delta;
+    final int newItemIndex = targetItem instanceof ItemContainer ? ((ItemContainer)targetItem).getItems().size() + 1
+                                                                 : targetItem.getIndex() + delta;
     CCUtils.updateHigherElements(targetParentDir.getChildren(), file -> targetContainer.getItem(file.getName()), newItemIndex - 1, 1);
 
     sourceLesson.setIndex(newItemIndex);
@@ -147,8 +143,17 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     ProjectView.getInstance(project).refresh();
   }
 
+  protected int getDelta(@NotNull Project project, @NotNull StudyItem targetItem) {
+    final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.LESSON, targetItem.getName());
+    dialog.show();
+    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+      return -1;
+    }
+    return dialog.getIndexDelta();
+  }
+
   private static StudyItem getTargetItem(@NotNull Course course, @NotNull VirtualFile targetVFile, @NotNull Project project) {
-    if (targetVFile.equals(project.getBaseDir())) return course;
+    if (targetVFile.equals(EduUtils.getCourseDir(project))) return course;
     StudyItem targetItem = course.getItem(targetVFile.getName());
     if (targetItem == null) {
       targetItem = EduUtils.getLesson(targetVFile, course);

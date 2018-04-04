@@ -107,7 +107,7 @@ class TaskDescriptionTest : EduTestCase() {
 
     val lesson1 = createLesson(1, 1)
     course.addLesson(lesson1)
-    course.initCourse(false)
+    course.init(null, null, false)
 
   }
 

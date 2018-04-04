@@ -79,7 +79,7 @@ public class CCCreateLesson extends CCCreateStudyItemActionBase<Lesson> {
                                   @NotNull Project project,
                                   @NotNull Course course) {
     final Section section = course.getSection(sourceDirectory.getName());
-    return section != null || sourceDirectory.equals(project.getBaseDir());
+    return section != null || sourceDirectory.equals(EduUtils.getCourseDir(project));
   }
 
   @Override

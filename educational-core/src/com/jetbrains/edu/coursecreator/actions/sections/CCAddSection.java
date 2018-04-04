@@ -83,7 +83,7 @@ public class CCAddSection extends DumbAwareAction {
     }
 
     int delta = -lessonsToWrap.size() + 1;
-    CCUtils.updateHigherElements(project.getBaseDir().getChildren(), file -> course.getItem(file.getName()), maxIndex, delta);
+    CCUtils.updateHigherElements(EduUtils.getCourseDir(project).getChildren(), file -> course.getItem(file.getName()), maxIndex, delta);
     course.addItem(section, section.getIndex() - 1);
     ProjectView.getInstance(project).refresh();
   }
@@ -129,7 +129,7 @@ public class CCAddSection extends DumbAwareAction {
       @Override
       public VirtualFile compute() {
         try {
-          return VfsUtil.createDirectoryIfMissing(project.getBaseDir(), sectionName);
+          return VfsUtil.createDirectoryIfMissing(EduUtils.getCourseDir(project), sectionName);
         }
         catch (IOException e1) {
           LOG.error("Failed to create directory for section " + sectionName);
