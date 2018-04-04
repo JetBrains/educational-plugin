@@ -51,7 +51,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collections;
 
 public class CCShowPreview extends DumbAwareAction {
   public static final String SHOW_PREVIEW = "Preview Task File";
@@ -107,14 +106,14 @@ public class CCShowPreview extends DumbAwareAction {
       return;
     }
 
-    if (taskFile.getActivePlaceholders().isEmpty()) {
+    if (taskFile.getAnswerPlaceholders().isEmpty()) {
       Messages.showInfoMessage("Preview is available for task files with answer placeholders only", "No Preview for This File");
       return;
     }
 
     final Task task = taskFile.getTask();
     ApplicationManager.getApplication().runWriteAction(() -> {
-      TaskFile studentTaskFile = EduUtils.createStudentFile(project, virtualFile, task.copy(), 0);
+      TaskFile studentTaskFile = EduUtils.createStudentFile(project, virtualFile, task.copy());
       if (studentTaskFile != null) {
         showPreviewDialog(project, studentTaskFile);
       }
@@ -133,12 +132,8 @@ public class CCShowPreview extends DumbAwareAction {
     }
     final EditorEx createdEditor = (EditorEx)factory.createEditor(document, project, userFile, true);
     Disposer.register(project, () -> factory.releaseEditor(createdEditor));
-    for (AnswerPlaceholder answerPlaceholder : taskFile.getActivePlaceholders()) {
-      if (answerPlaceholder.getActiveSubtaskInfo().isNeedInsertText()) {
-        answerPlaceholder.setLength(answerPlaceholder.getTaskText().length());
-      }
-      Integer minIndex = Collections.min(answerPlaceholder.getSubtaskInfos().keySet());
-      answerPlaceholder.setUseLength(minIndex >= answerPlaceholder.getActiveSubtaskIndex());
+    for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
+      answerPlaceholder.setUseLength(true);
       AnswerPlaceholderPainter.drawAnswerPlaceholder(createdEditor, answerPlaceholder, JBColor.BLUE);
     }
     JPanel header = new JPanel();

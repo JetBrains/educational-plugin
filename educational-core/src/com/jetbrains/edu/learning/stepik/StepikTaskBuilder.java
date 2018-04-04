@@ -295,14 +295,10 @@ public class StepikTaskBuilder {
     final String fileText = file.text;
     final List<AnswerPlaceholder> placeholders = file.getAnswerPlaceholders();
     for (AnswerPlaceholder placeholder : placeholders) {
-      final AnswerPlaceholderSubtaskInfo info = placeholder.getActiveSubtaskInfo();
-      if (info == null) {
-        continue;
-      }
       final int offset = placeholder.getOffset();
       final int length = placeholder.getLength();
       if (fileText.length() > offset + length) {
-        info.setPlaceholderText(fileText.substring(offset, offset + length));
+        placeholder.setPlaceholderText(fileText.substring(offset, offset + length));
       }
     }
   }

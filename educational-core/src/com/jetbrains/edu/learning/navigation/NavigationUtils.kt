@@ -121,7 +121,7 @@ object NavigationUtils {
   @JvmStatic
   fun navigateToFirstFailedAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
     editor.project ?: return
-    for (answerPlaceholder in taskFile.activePlaceholders) {
+    for (answerPlaceholder in taskFile.answerPlaceholders) {
       if (answerPlaceholder.status != CheckStatus.Failed) continue
       navigateToAnswerPlaceholder(editor, answerPlaceholder)
       break
@@ -139,8 +139,8 @@ object NavigationUtils {
 
   @JvmStatic
   fun navigateToFirstAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
-    if (!taskFile.activePlaceholders.isEmpty()) {
-      val firstAnswerPlaceholder = EduUtils.getFirst(taskFile.activePlaceholders) ?: return
+    if (!taskFile.answerPlaceholders.isEmpty()) {
+      val firstAnswerPlaceholder = EduUtils.getFirst(taskFile.answerPlaceholders) ?: return
       navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
     }
   }
@@ -186,7 +186,7 @@ object NavigationUtils {
     }
     var fileToActivate = getFirstTaskFile(taskDir, project)
     for ((_, taskFile) in taskFiles) {
-      if (taskFile.activePlaceholders.isEmpty()) continue
+      if (taskFile.answerPlaceholders.isEmpty()) continue
       val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
       fileToActivate = virtualFile

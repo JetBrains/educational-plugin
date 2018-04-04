@@ -23,7 +23,7 @@ public class PrevPlaceholderAction extends PlaceholderNavigationAction {
   @Override
   protected AnswerPlaceholder getTargetPlaceholder(@NotNull final TaskFile taskFile, int offset) {
     final AnswerPlaceholder selectedAnswerPlaceholder = taskFile.getAnswerPlaceholder(offset);
-    final List<AnswerPlaceholder> placeholders = taskFile.getActivePlaceholders();
+    final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
     if (selectedAnswerPlaceholder == null) {
       for (int i = placeholders.size() - 1; i >= 0; i--) {
         final AnswerPlaceholder placeholder = placeholders.get(i);

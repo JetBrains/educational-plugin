@@ -88,7 +88,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
       if (taskDir == null) return;
       for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
         final TaskFile taskFile = entry.getValue();
-        if (taskFile.getActivePlaceholders().size() < 2) {
+        if (taskFile.getAnswerPlaceholders().size() < 2) {
           continue;
         }
         final Course course = task.getLesson().getCourse();
@@ -116,7 +116,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
       if (firstFile == null) {
         firstFile = file;
       }
-      if (!taskFile.getActivePlaceholders().isEmpty()) return file;
+      if (!taskFile.getAnswerPlaceholders().isEmpty()) return file;
     }
     return firstFile;
   }

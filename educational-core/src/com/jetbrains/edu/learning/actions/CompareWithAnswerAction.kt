@@ -47,7 +47,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
 
     val studyState = EduState(EduUtils.getSelectedEduEditor(project))
     val taskFile = studyState.taskFile
-    taskFile?.activePlaceholders?.sortedBy { it.offset }?.reversed()?.forEach { placeholder ->
+    taskFile?.answerPlaceholders?.sortedBy { it.offset }?.reversed()?.forEach { placeholder ->
       placeholder.possibleAnswer?.let { answer ->
         fullAnswer.replace(placeholder.offset, placeholder.offset + placeholder.realLength, answer)
       }
@@ -74,7 +74,7 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
         return
       }
       val taskFile = studyState.taskFile
-      if (taskFile == null || taskFile.activePlaceholders.isEmpty()) {
+      if (taskFile == null || taskFile.answerPlaceholders.isEmpty()) {
         presentation.isEnabledAndVisible = false
       }
     }

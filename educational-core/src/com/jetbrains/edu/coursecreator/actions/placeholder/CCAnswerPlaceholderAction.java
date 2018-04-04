@@ -49,7 +49,7 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
   }
 
   protected List<AnswerPlaceholder> getPlaceholders(@NotNull TaskFile taskFile) {
-    return taskFile.getActivePlaceholders();
+    return taskFile.getAnswerPlaceholders();
   }
 
   @Override

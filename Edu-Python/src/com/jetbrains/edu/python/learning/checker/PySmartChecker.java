@@ -97,7 +97,7 @@ class PySmartChecker {
     VirtualFile answerFile = pair.getFirst();
     TaskFile answerTaskFile = pair.getSecond();
     try {
-      for (final AnswerPlaceholder answerPlaceholder : answerTaskFile.getActivePlaceholders()) {
+      for (final AnswerPlaceholder answerPlaceholder : answerTaskFile.getAnswerPlaceholders()) {
         final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
         if (document == null) {
           continue;
@@ -126,7 +126,7 @@ class PySmartChecker {
         }
         EduDocumentListener listener = new EduDocumentListener(answerTaskFile);
         document.addDocumentListener(listener);
-        for (AnswerPlaceholder answerPlaceholder : answerTaskFile.getActivePlaceholders()) {
+        for (AnswerPlaceholder answerPlaceholder : answerTaskFile.getAnswerPlaceholders()) {
           final int start = answerPlaceholder.getOffset();
           final int end = start + answerPlaceholder.getRealLength();
           final String text = answerPlaceholder.getPossibleAnswer();

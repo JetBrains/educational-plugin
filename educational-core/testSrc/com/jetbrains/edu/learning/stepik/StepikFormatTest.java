@@ -4,14 +4,13 @@ import com.google.gson.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionAnswerPlaceholderAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
+import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
+import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionAnswerPlaceholderAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,11 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 import static org.junit.Assert.*;
-
 
 public class StepikFormatTest {
   @Rule
@@ -73,9 +70,9 @@ public class StepikFormatTest {
     AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
     answerPlaceholder.setOffset(1);
     answerPlaceholder.setLength(10);
-    AnswerPlaceholderSubtaskInfo info1 = createSubtaskInfo("type here", "answer1", ContainerUtil.list("hint 1", "hint 2"));
-    AnswerPlaceholderSubtaskInfo info2 = createSubtaskInfo("type here1", "answer2", ContainerUtil.list("hint 11", "hint 22"));
-    answerPlaceholder.setSubtaskInfos(ContainerUtil.newHashMap(ContainerUtil.list(0, 1), ContainerUtil.list(info1, info2)));
+    answerPlaceholder.setPlaceholderText("type here");
+    answerPlaceholder.setPossibleAnswer("answer1");
+    answerPlaceholder.setHints(ContainerUtil.list("hint 1", "hint 2"));
     final String placeholderSerialization = gson.toJson(answerPlaceholder);
     String expected  = loadJsonText();
     JsonObject object = new JsonParser().parse(expected).getAsJsonObject();
@@ -260,8 +257,6 @@ public class StepikFormatTest {
 
     final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
     assertEquals(1, placeholders.size());
-    final AnswerPlaceholderSubtaskInfo info = placeholders.get(0).getActiveSubtaskInfo();
-    assertNotNull(info);
     final int offset = placeholders.get(0).getOffset();
     assertEquals(32, offset);
     final int length = placeholders.get(0).getLength();
@@ -317,15 +312,6 @@ public class StepikFormatTest {
     return FileUtil.join("testData/stepik");
   }
 
-  private static AnswerPlaceholderSubtaskInfo createSubtaskInfo(String placeholderText, String possibleAnswer, List<String> hints) {
-    AnswerPlaceholderSubtaskInfo info = new AnswerPlaceholderSubtaskInfo();
-    info.setPlaceholderText(placeholderText);
-    info.setPossibleAnswer(possibleAnswer);
-    info.setHints(hints);
-    info.setNeedInsertText(true);
-    return info;
-  }
-
   private StepikWrappers.StepOptions doStepOptionsCreationTest() throws IOException {
     String responseString = loadJsonText();
     StepikWrappers.StepSource stepSource =
@@ -335,10 +321,9 @@ public class StepikFormatTest {
     assertEquals("Wrong number of task files", 1, files.size());
     List<AnswerPlaceholder> placeholders = files.get(0).getAnswerPlaceholders();
     assertEquals("Wrong number of placeholders", 1, placeholders.size());
-    Map<Integer, AnswerPlaceholderSubtaskInfo> infos = placeholders.get(0).getSubtaskInfos();
-    assertNotNull(infos);
-    assertEquals(Collections.singletonList("Type your name here."), infos.get(0).getHints());
-    assertEquals("Liana", infos.get(0).getPossibleAnswer());
+    AnswerPlaceholder placeholder = placeholders.get(0);
+    assertEquals(Collections.singletonList("Type your name here."), placeholder.getHints());
+    assertEquals("Liana", placeholder.getPossibleAnswer());
     return options;
   }
 

@@ -698,7 +698,7 @@ public class EduUtils {
     if (eduEditor == null) return;
     final Editor editor = eduEditor.getEditor();
     IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
-    final List<AnswerPlaceholder> placeholders = eduEditor.getTaskFile().getActivePlaceholders();
+    final List<AnswerPlaceholder> placeholders = eduEditor.getTaskFile().getAnswerPlaceholders();
     if (placeholders.isEmpty() || !eduEditor.getTaskFile().isValid(editor.getDocument().getText())) return;
     final AnswerPlaceholder placeholder = placeholders.get(0);
     Pair<Integer, Integer> offsets = getPlaceholderOffsets(placeholder, editor.getDocument());
@@ -843,7 +843,7 @@ public class EduUtils {
       taskDir.refresh(false, true);
       final VirtualFile virtualFile = findTaskFileInDir(taskFile, taskDir);
       if (virtualFile != null) {
-        if (!taskFile.getActivePlaceholders().isEmpty()) {
+        if (!taskFile.getAnswerPlaceholders().isEmpty()) {
           activeVirtualFile = virtualFile;
         }
       }
@@ -940,24 +940,8 @@ public class EduUtils {
     }
   }
 
-  private static void replaceWithTaskText(Document studentDocument, AnswerPlaceholder placeholder, int toSubtaskIndex) {
-    AnswerPlaceholderSubtaskInfo info = placeholder.getSubtaskInfos().get(toSubtaskIndex);
-    if (info == null) {
-      return;
-    }
-    String replacementText;
-    if (Collections.min(placeholder.getSubtaskInfos().keySet()) == toSubtaskIndex) {
-      replacementText = info.getPlaceholderText();
-    }
-    else {
-      Integer max = Collections.max(ContainerUtil.filter(placeholder.getSubtaskInfos().keySet(), i -> i < toSubtaskIndex));
-      replacementText = placeholder.getSubtaskInfos().get(max).getPossibleAnswer();
-    }
-    replaceAnswerPlaceholder(studentDocument, placeholder, placeholder.getVisibleLength(toSubtaskIndex), replacementText);
-  }
-
   @Nullable
-  public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @Nullable Task task, int targetSubtaskIndex) {
+  public static TaskFile createStudentFile(@NotNull Project project, @NotNull VirtualFile answerFile, @Nullable Task task) {
     try {
       if (task == null) {
         task = getTaskForFile(project, answerFile);
@@ -988,7 +972,7 @@ public class EduUtils {
       studentDocument.addDocumentListener(listener);
       taskFile.setTrackLengths(false);
       for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
-        replaceWithTaskText(studentDocument, placeholder, targetSubtaskIndex);
+        replaceAnswerPlaceholder(studentDocument, placeholder, placeholder.getPossibleAnswer().length(), placeholder.getPlaceholderText());
       }
       taskFile.setTrackChanges(true);
       studentDocument.removeDocumentListener(listener);
@@ -1128,7 +1112,7 @@ public class EduUtils {
       try {
         fileWindows = taskDir.createChildData(taskFile, name);
         printWriter = new PrintWriter(new FileOutputStream(fileWindows.getPath()));
-        for (AnswerPlaceholder answerPlaceholder : taskFile.getActivePlaceholders()) {
+        for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
           int length = answerPlaceholder.getRealLength();
           int start = answerPlaceholder.getOffset();
           final String windowDescription = document.getText(new TextRange(start, start + length));

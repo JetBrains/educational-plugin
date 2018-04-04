@@ -96,15 +96,15 @@ class LoadSolutionsTest : StepikTestCase() {
 
   private fun checkPlaceholders(oldTaskFile: TaskFile,
                                 taskFile: TaskFile) {
-    for (pair in oldTaskFile.answerPlaceholders.zip(taskFile.activePlaceholders)) {
+    for (pair in oldTaskFile.answerPlaceholders.zip(taskFile.answerPlaceholders)) {
       val oldPlaceholder = pair.first
       val newPlaceholder = pair.second
       assertEquals(placeholderErrorMessage("offset", oldPlaceholder.offset, newPlaceholder.offset),
                    oldPlaceholder.offset, newPlaceholder.offset)
       assertEquals(placeholderErrorMessage("length", oldPlaceholder.length, newPlaceholder.length),
                    oldPlaceholder.length, newPlaceholder.length)
-      assertEquals(placeholderErrorMessage("text", oldPlaceholder.taskText, newPlaceholder.taskText),
-                   oldPlaceholder.taskText, newPlaceholder.taskText)
+      assertEquals(placeholderErrorMessage("text", oldPlaceholder.placeholderText, newPlaceholder.placeholderText),
+                   oldPlaceholder.placeholderText, newPlaceholder.placeholderText)
       assertEquals(placeholderErrorMessage("real length", oldPlaceholder.realLength, newPlaceholder.realLength),
                    oldPlaceholder.realLength, newPlaceholder.realLength)
     }
