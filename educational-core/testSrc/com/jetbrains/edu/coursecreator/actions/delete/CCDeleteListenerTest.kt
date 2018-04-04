@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.delete
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -11,9 +12,17 @@ import junit.framework.TestCase
 
 class CCDeleteListenerTest : CCActionTestCase() {
 
+  private lateinit var ccVirtualFileListener : VirtualFileListener
+
   override fun setUp() {
     super.setUp()
-    VirtualFileManager.getInstance().addVirtualFileListener(CCVirtualFileListener(project))
+    ccVirtualFileListener = CCVirtualFileListener(project)
+    VirtualFileManager.getInstance().addVirtualFileListener(ccVirtualFileListener)
+  }
+
+  override fun tearDown() {
+    super.tearDown()
+    VirtualFileManager.getInstance().removeVirtualFileListener(ccVirtualFileListener)
   }
 
   fun `test delete section`() {
