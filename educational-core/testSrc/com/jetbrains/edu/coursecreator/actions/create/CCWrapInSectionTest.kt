@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.openapi.ui.Messages
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
 import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
 import junit.framework.TestCase
