@@ -97,6 +97,7 @@ public class SerializationUtils {
     public static final String CHOICE_TASK = "ChoiceTask";
     public static final String CODE_TASK = "CodeTask";
     public static final String TASK_TEXTS = "taskTexts";
+    public static final String HINTS = "hints";
 
     private Xml() {
     }
@@ -212,6 +213,10 @@ public class SerializationUtils {
 
     public static int getAsInt(Element element, String name) throws StudyUnrecognizedFormatException {
       return Integer.valueOf(getChildWithName(element, name).getAttributeValue(VALUE));
+    }
+
+    public static String getAsString(@NotNull Element element, @NotNull String name) throws StudyUnrecognizedFormatException {
+      return getChildWithName(element, name).getAttributeValue(VALUE);
     }
 
     public static void incrementIndex(Element element) throws StudyUnrecognizedFormatException {
