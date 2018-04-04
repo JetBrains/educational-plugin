@@ -11,6 +11,7 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.ui.configuration.actions.ModuleDeleteProvider
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
@@ -28,6 +29,7 @@ class CCStudyItemDeleteProvider : DeleteProvider {
     // so we can skip other projects
     val module = if (EduGradleUtils.isConfiguredWithGradle(project)) dataContext.getData(LangDataKeys.MODULE) else null
     val itemType = when (studyItem) {
+      is Section -> "Section"
       is Lesson -> "Lesson"
       is Task -> "Task"
       else -> return
