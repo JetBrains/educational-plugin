@@ -8,16 +8,15 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 
-class CCEditHintAction(val myPlaceholder: AnswerPlaceholder?) : AnAction("Edit Hint", "Edit Hint", AllIcons.Modules.Edit) {
+class CCEditHintAction(private val myPlaceholder: AnswerPlaceholder?) : AnAction("Edit Hint", "Edit Hint", AllIcons.Modules.Edit) {
 
-  override fun actionPerformed(e: AnActionEvent?) {
-    val dlg = CCCreateAnswerPlaceholderDialog(e!!.project!!, myPlaceholder!!.taskText, myPlaceholder.hints)
+  override fun actionPerformed(e: AnActionEvent) {
+    val dlg = CCCreateAnswerPlaceholderDialog(e.project!!, myPlaceholder!!.placeholderText, myPlaceholder.hints)
     dlg.title = "Edit Answer Placeholder"
     if (dlg.showAndGet()) {
       val answerPlaceholderText = dlg.taskText
-      myPlaceholder.taskText = answerPlaceholderText
-      myPlaceholder.length = if (myPlaceholder.activeSubtaskInfo.isNeedInsertText) 0
-      else StringUtil.notNullize(answerPlaceholderText).length
+      myPlaceholder.placeholderText = answerPlaceholderText
+      myPlaceholder.length = StringUtil.notNullize(answerPlaceholderText).length
       myPlaceholder.hints = dlg.hints
     }
   }

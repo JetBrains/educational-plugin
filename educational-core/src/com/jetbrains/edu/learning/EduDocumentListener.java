@@ -73,7 +73,7 @@ public class EduDocumentListener implements DocumentListener {
           if (answerPlaceholder.getUseLength()) {
             answerPlaceholder.setLength(length);
           } else {
-            if (answerPlaceholder.isActive() && myTaskFile.isTrackLengths()) {
+            if (myTaskFile.isTrackLengths()) {
               answerPlaceholder.setPossibleAnswer(document.getText(TextRange.create(twStart, twStart + length)));
             }
           }

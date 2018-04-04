@@ -51,16 +51,6 @@ public class TaskFile {
     return myAnswerPlaceholders;
   }
 
-  public List<AnswerPlaceholder> getActivePlaceholders() {
-    List<AnswerPlaceholder> result = new ArrayList<>();
-    for (AnswerPlaceholder placeholder : myAnswerPlaceholders) {
-      if (placeholder.getActiveSubtaskInfo() != null) {
-        result.add(placeholder);
-      }
-    }
-    return result;
-  }
-
   public void setAnswerPlaceholders(List<AnswerPlaceholder> answerPlaceholders) {
     this.myAnswerPlaceholders = answerPlaceholders;
   }
@@ -93,7 +83,7 @@ public class TaskFile {
    */
   @Nullable
   public AnswerPlaceholder getAnswerPlaceholder(int offset) {
-    return EduUtils.getAnswerPlaceholder(offset, getActivePlaceholders());
+    return EduUtils.getAnswerPlaceholder(offset, getAnswerPlaceholders());
   }
 
   public boolean isTrackLengths() {
@@ -105,11 +95,11 @@ public class TaskFile {
   }
 
   public static void copy(@NotNull final TaskFile source, @NotNull final TaskFile target) {
-    List<AnswerPlaceholder> sourceAnswerPlaceholders = source.getActivePlaceholders();
+    List<AnswerPlaceholder> sourceAnswerPlaceholders = source.getAnswerPlaceholders();
     List<AnswerPlaceholder> answerPlaceholdersCopy = new ArrayList<>(sourceAnswerPlaceholders.size());
     for (AnswerPlaceholder answerPlaceholder : sourceAnswerPlaceholders) {
       AnswerPlaceholder answerPlaceholderCopy = new AnswerPlaceholder();
-      answerPlaceholderCopy.setTaskText(answerPlaceholder.getTaskText());
+      answerPlaceholderCopy.setPlaceholderText(answerPlaceholder.getPlaceholderText());
       answerPlaceholderCopy.setOffset(answerPlaceholder.getOffset());
       answerPlaceholderCopy.setLength(answerPlaceholder.getLength());
       answerPlaceholderCopy.setPossibleAnswer(answerPlaceholder.getPossibleAnswer());
@@ -167,7 +157,7 @@ public class TaskFile {
 
   public boolean isValid(@NotNull String text) {
     int length = text.length();
-    List<AnswerPlaceholder> placeholders = getActivePlaceholders();
+    List<AnswerPlaceholder> placeholders = getAnswerPlaceholders();
     for (AnswerPlaceholder placeholder : placeholders) {
       if (!placeholder.isValid(length)) return false;
     }

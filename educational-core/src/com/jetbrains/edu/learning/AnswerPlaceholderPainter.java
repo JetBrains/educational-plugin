@@ -3,15 +3,16 @@ package com.jetbrains.edu.learning;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.impl.DocumentImpl;
-import com.intellij.openapi.editor.markup.*;
+import com.intellij.openapi.editor.markup.EffectType;
+import com.intellij.openapi.editor.markup.HighlighterTargetArea;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -39,17 +40,10 @@ public class AnswerPlaceholderPainter {
     if (startOffset == -1) {
       return;
     }
-    final int length =
-      placeholder.isActive() ? placeholder.getRealLength() : placeholder.getVisibleLength(placeholder.getActiveSubtaskIndex());
     Pair<Integer, Integer> offsets = EduUtils.getPlaceholderOffsets(placeholder, editor.getDocument());
     startOffset = offsets.first;
     int endOffset = offsets.second;
-    if (placeholder.isActive()) {
-      drawAnswerPlaceholder(editor, startOffset, endOffset, textAttributes, PLACEHOLDERS_LAYER);
-    }
-    else if (!placeholder.getUseLength() && length != 0) {
-      drawAnswerPlaceholderFromPrevStep(editor, startOffset, endOffset);
-    }
+    drawAnswerPlaceholder(editor, startOffset, endOffset, textAttributes, PLACEHOLDERS_LAYER);
   }
 
   public static void drawAnswerPlaceholder(@NotNull Editor editor,
@@ -66,17 +60,6 @@ public class AnswerPlaceholderPainter {
                                                                                textAttributes, HighlighterTargetArea.EXACT_RANGE);
     highlighter.setGreedyToLeft(true);
     highlighter.setGreedyToRight(true);
-  }
-
-
-  public static void drawAnswerPlaceholderFromPrevStep(@NotNull Editor editor, int start, int end) {
-    EditorColorsScheme scheme = EditorColorsManager.getInstance().getGlobalScheme();
-    Color color = scheme.getColor(EditorColors.TEARLINE_COLOR);
-    SimpleTextAttributes attributes = SimpleTextAttributes.GRAY_ATTRIBUTES;
-    final TextAttributes textAttributes = new TextAttributes(attributes.getFgColor(), color, null,
-                                                             null, attributes.getFontStyle());
-
-    drawAnswerPlaceholder(editor, start, end, textAttributes, HighlighterLayer.LAST);
   }
 
   public static void createGuardedBlock(Editor editor, List<RangeMarker> blocks, int start, int end) {

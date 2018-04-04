@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.SubtaskUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -31,16 +30,17 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (project == null) {
       return;
     }
-    final AnswerPlaceholder answerPlaceholder = getAnswerPlaceholder(e);
-    if (answerPlaceholder == null) {
+    final AnswerPlaceholder placeholder = getAnswerPlaceholder(e);
+    if (placeholder == null) {
       return;
     }
     EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     if (eduEditor != null) {
-      SubtaskUtils.refreshPlaceholder(eduEditor.getEditor(), answerPlaceholder);
+      String replacementText = placeholder.getPlaceholderText();
+      EduUtils.replaceAnswerPlaceholder(eduEditor.getEditor().getDocument(), placeholder, placeholder.getRealLength(), replacementText);
       final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
-      answerPlaceholder.reset();
-      studyTaskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
+      placeholder.reset();
+      studyTaskManager.setStatus(placeholder, CheckStatus.Unchecked);
     }
   }
 

@@ -89,7 +89,7 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
       placeholder.useLength = false
     }
 
-    for (placeholder in taskFile.activePlaceholders) {
+    for (placeholder in taskFile.answerPlaceholders) {
       replaceAnswerPlaceholder(document, placeholder)
     }
 
@@ -108,7 +108,7 @@ abstract class CCNewCourseActionBase(name: String, description: String) : DumbAw
                                        placeholder: AnswerPlaceholder) {
     val offset = placeholder.offset
     val text = document.getText(TextRange.create(offset, offset + placeholder.length))
-    placeholder.taskText = text
+    placeholder.placeholderText = text
     placeholder.init()
     val replacementText = placeholder.possibleAnswer
 

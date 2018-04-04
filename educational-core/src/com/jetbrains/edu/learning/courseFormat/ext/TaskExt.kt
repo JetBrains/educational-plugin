@@ -70,7 +70,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
   for ((_, taskFile) in getTaskFiles()) {
     val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
     val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: continue
-    for (placeholder in taskFile.activePlaceholders) {
+    for (placeholder in taskFile.answerPlaceholders) {
       val startOffset = placeholder.offset
       val endOffset = startOffset + placeholder.realLength
       placeholder.studentAnswer = document.getText(TextRange.create(startOffset, endOffset))

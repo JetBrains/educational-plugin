@@ -2,16 +2,12 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Implementation of windows which user should type in
@@ -27,18 +23,29 @@ public class AnswerPlaceholder {
 
   private int myIndex = -1;
   private MyInitialState myInitialState;
-  private boolean mySelected = false;
   private boolean myUseLength = true;
 
   @Transient private TaskFile myTaskFile;
-
-  @SerializedName("subtask_infos")
-  @Expose private Map<Integer, AnswerPlaceholderSubtaskInfo> mySubtaskInfos = new HashMap<>();
 
   @Expose
   @SerializedName("dependency")
   @Nullable
   private AnswerPlaceholderDependency myPlaceholderDependency = null;
+
+  @SerializedName("hints")
+  @Expose private List<String> myHints = new ArrayList<>();
+
+  @SerializedName("possible_answer")
+  @Expose private String myPossibleAnswer = "";
+
+  @SerializedName("placeholder_text")
+  @Expose private String myPlaceholderText;
+
+  @SerializedName("selected")
+  private boolean mySelected = false;
+
+  @SerializedName("status")
+  private CheckStatus myStatus = CheckStatus.Unchecked;
 
   /*
    * Actual student's answer, used to restore state of task of framework lesson after navigation actions
@@ -56,9 +63,7 @@ public class AnswerPlaceholder {
         myPlaceholderDependency.setAnswerPlaceholder(this);
       }
       setInitialState(new MyInitialState(myOffset, myLength));
-      for (AnswerPlaceholderSubtaskInfo info : getSubtaskInfos().values()) {
-        info.setStatus(file.getTask().getStatus());
-      }
+      myStatus = file.getTask().getStatus();
     }
   }
 
@@ -81,14 +86,12 @@ public class AnswerPlaceholder {
     myLength = length;
   }
 
-  @Transient
   public String getPossibleAnswer() {
-    return getActiveSubtaskInfo().getPossibleAnswer();
+    return myPossibleAnswer;
   }
 
-  @Transient
   public void setPossibleAnswer(String possibleAnswer) {
-    getActiveSubtaskInfo().setPossibleAnswer(possibleAnswer);
+    myPossibleAnswer = possibleAnswer;
   }
 
   public MyInitialState getInitialState() {
@@ -99,14 +102,12 @@ public class AnswerPlaceholder {
     myInitialState = initialState;
   }
 
-  @Transient
-  public String getTaskText() {
-    return getActiveSubtaskInfo().getPlaceholderText();
+  public String getPlaceholderText() {
+    return myPlaceholderText;
   }
 
-  @Transient
-  public void setTaskText(String taskText) {
-    getActiveSubtaskInfo().setPlaceholderText(taskText);
+  public void setPlaceholderText(String placeholderText) {
+    myPlaceholderText = placeholderText;
   }
 
   @Transient
@@ -131,15 +132,12 @@ public class AnswerPlaceholder {
     myLength = myInitialState.getLength();
   }
 
-  @Transient
   public CheckStatus getStatus() {
-    AnswerPlaceholderSubtaskInfo info = getActiveSubtaskInfo();
-    return info != null ? info.getStatus() : CheckStatus.Unchecked;
+    return myStatus;
   }
 
-  @Transient
   public void setStatus(CheckStatus status) {
-    getActiveSubtaskInfo().setStatus(status);
+    myStatus = status;
   }
 
   public boolean getSelected() {
@@ -151,7 +149,7 @@ public class AnswerPlaceholder {
   }
 
   public void init() {
-    setInitialState(new MyInitialState(myOffset, getTaskText().length()));
+    setInitialState(new MyInitialState(myOffset, getPlaceholderText().length()));
   }
 
   public boolean getUseLength() {
@@ -162,7 +160,7 @@ public class AnswerPlaceholder {
    * @return length or possible answer length
    */
   public int getRealLength() {
-    return myUseLength ? getLength() : getVisibleLength(getActiveSubtaskIndex());
+    return myUseLength ? getLength() : getPossibleAnswer().length();
   }
 
   public void setUseLength(boolean useLength) {
@@ -177,34 +175,12 @@ public class AnswerPlaceholder {
     myOffset = offset;
   }
 
-  @Transient
   public List<String> getHints() {
-    return getActiveSubtaskInfo().getHints();
+    return myHints;
   }
 
-  @Transient
   public void setHints(@NotNull final List<String> hints) {
-   getActiveSubtaskInfo().setHints(hints);
-  }
-
-  public void addHint(@NotNull final String text) {
-    getActiveSubtaskInfo().addHint(text);
-  }
-
-  public void removeHint(int i) {
-    getActiveSubtaskInfo().removeHint(i);
-  }
-
-  public Map<Integer, AnswerPlaceholderSubtaskInfo> getSubtaskInfos() {
-    return mySubtaskInfos;
-  }
-
-  public void setSubtaskInfos(Map<Integer, AnswerPlaceholderSubtaskInfo> subtaskInfos) {
-    mySubtaskInfos = subtaskInfos;
-  }
-
-  public boolean isActive() {
-    return getActiveSubtaskInfo() != null;
+    myHints = hints;
   }
 
   @Nullable
@@ -243,31 +219,6 @@ public class AnswerPlaceholder {
     public void setOffset(int offset) {
       this.offset = offset;
     }
-  }
-
-  public AnswerPlaceholderSubtaskInfo getActiveSubtaskInfo() {
-    return mySubtaskInfos.get(getActiveSubtaskIndex());
-  }
-
-  public int getActiveSubtaskIndex() {
-    if (myTaskFile == null || myTaskFile.getTask() == null) {
-      return 0;
-    }
-    final Task task = myTaskFile.getTask();
-    return 0;
-  }
-
-  public int getVisibleLength(int subtaskIndex) {
-    int minIndex = Collections.min(mySubtaskInfos.keySet());
-    AnswerPlaceholderSubtaskInfo minInfo = mySubtaskInfos.get(minIndex);
-    if (minIndex == subtaskIndex) {
-      return getUseLength() ? myLength : minInfo.getPossibleAnswer().length();
-    }
-    if (minIndex > subtaskIndex) {
-      return minInfo.isNeedInsertText() ? 0 : minInfo.getPlaceholderText().length();
-    }
-    int maxIndex = Collections.max(ContainerUtil.filter(mySubtaskInfos.keySet(), i -> i <= subtaskIndex));
-    return getUseLength() ? myLength : mySubtaskInfos.get(maxIndex).getPossibleAnswer().length();
   }
 
   boolean isValid(int textLength) {
