@@ -72,7 +72,7 @@ public class RefreshPlaceholderTest extends EduTestCase {
 
     Lesson lesson1 = createLesson(1, 3);
     course.addLesson(lesson1);
-    course.initCourse(false);
+    course.init(null, null, false);
   }
 
   @Override

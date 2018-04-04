@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -116,15 +117,19 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
       if (targetTask == null) {
         return;
       }
-      final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.TASK, targetTask.getName());
-      dialog.show();
-      if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-        return;
-      }
-      moveTask(sourceDirectory, taskToMove, targetTask, dialog.getIndexDelta(), lessonDir, targetTask.getLesson());
+      final int delta = getDelta(project, targetTask);
+      moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.getLesson());
     }
     ProjectView.getInstance(project).refresh();
+  }
 
+  protected int getDelta(@NotNull Project project, @NotNull StudyItem targetTask) {
+    final CCMoveStudyItemDialog dialog = new CCMoveStudyItemDialog(project, EduNames.TASK, targetTask.getName());
+    dialog.show();
+    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+      return -1;
+    }
+    return dialog.getIndexDelta();
   }
 
   private void moveTask(@NotNull final PsiDirectory sourceDirectory,

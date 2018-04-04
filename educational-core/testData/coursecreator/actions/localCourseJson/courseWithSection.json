@@ -1,0 +1,56 @@
+{
+  "title": "Test Course",
+  "programming_language": "TEXT",
+  "language": "en",
+  "items": [
+    {
+      "title": "section1",
+      "items": [
+        {
+          "id": 0,
+          "title": "lesson1",
+          "task_list": [
+            {
+              "name": "task1",
+              "stepic_id": 0,
+              "task_files": {
+                "tmp.py": {
+                  "name": "tmp.py",
+                  "text": "",
+                  "placeholders": []
+                }
+              },
+              "test_files": {},
+              "task_texts": {},
+              "additional_files": {},
+              "task_type": "edu"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    },
+    {
+      "id": 0,
+      "title": "lesson1",
+      "task_list": [
+        {
+          "name": "task1",
+          "stepic_id": 0,
+          "task_files": {
+            "tmp2.py": {
+              "name": "tmp2.py",
+              "text": "",
+              "placeholders": []
+            }
+          },
+          "test_files": {},
+          "task_texts": {},
+          "additional_files": {},
+          "task_type": "edu"
+        }
+      ],
+      "type": "lesson"
+    }
+  ]
+}

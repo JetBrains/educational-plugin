@@ -9,6 +9,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,7 +44,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) return;
 
-    VirtualFile itemFile = createItem(project, selectedFiles[0], course, true);
+    VirtualFile itemFile = createItem(project, selectedFiles[0], course);
     if (itemFile != null) {
       ProjectView.getInstance(project).select(itemFile, itemFile, true);
     }
@@ -104,9 +105,9 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
 
   @Nullable
   public VirtualFile createItem(@NotNull final Project project, @NotNull final VirtualFile sourceDirectory,
-                                @NotNull final Course course, boolean shouldShowInputDialog) {
+                                @NotNull final Course course) {
     StudyItem parentItem = getParentItem(course, sourceDirectory);
-    final Item item = getItem(sourceDirectory, project, course, parentItem, shouldShowInputDialog);
+    final Item item = getItem(sourceDirectory, project, course, parentItem);
     if (item == null) {
       LOG.info("Failed to create study item");
       return null;
@@ -134,33 +135,40 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
   protected Item getItem(@NotNull final VirtualFile sourceDirectory,
                               @NotNull final Project project,
                               @NotNull final Course course,
-                              @Nullable StudyItem parentItem,
-                              boolean shouldShowInputDialog) {
+                              @Nullable StudyItem parentItem) {
 
     String itemName;
     int itemIndex;
     if (isAddedAsLast(sourceDirectory, project, course)) {
       itemIndex = getSiblingsSize(course, parentItem) + 1;
       String suggestedName = getItemName() + itemIndex;
-      itemName = shouldShowInputDialog ? showInputDialog(sourceDirectory, suggestedName) : suggestedName;
+      itemName = showInputDialog(sourceDirectory, suggestedName);
     } else {
       StudyItem thresholdItem = getThresholdItem(course, sourceDirectory);
       if (thresholdItem == null) {
         return null;
       }
-      final int index = thresholdItem.getIndex();
-      CCCreateStudyItemDialog dialog = new CCCreateStudyItemDialog(project, getItemName(), thresholdItem.getName(), index, sourceDirectory.getParent());
-      dialog.show();
-      if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-        return null;
-      }
-      itemName = dialog.getName();
-      itemIndex = index + dialog.getIndexDelta();
+      final Pair<String, Integer> nameIndex = getItemNameIndex(thresholdItem, project, sourceDirectory);
+      if (nameIndex == null) return null;
+      itemName = nameIndex.first;
+      itemIndex = nameIndex.second;
     }
     if (itemName == null) {
       return null;
     }
     return createAndInitItem(course, parentItem, itemName, itemIndex);
+  }
+
+  protected Pair<String, Integer> getItemNameIndex(@NotNull StudyItem thresholdItem, @NotNull Project project,
+                                                @NotNull VirtualFile sourceDirectory) {
+    final int index = thresholdItem.getIndex();
+    CCCreateStudyItemDialog dialog = new CCCreateStudyItemDialog(project, getItemName(), thresholdItem.getName(),
+                                                                 index, sourceDirectory.getParent());
+    dialog.show();
+    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
+      return null;
+    }
+    return Pair.create(dialog.getName(), index + dialog.getIndexDelta());
   }
 
   private String showInputDialog(@NotNull VirtualFile sourceDirectory, @Nullable String suggestedName) {

@@ -19,6 +19,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -43,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
+
+import static com.jetbrains.edu.learning.EduNames.COURSE_META_FILE;
 
 public class CCCreateCourseArchive extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCCreateCourseArchive.class.getName());
@@ -253,14 +256,12 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     }
   }
 
-  private static void generateJson(VirtualFile parentDir, Course course) throws IOException {
+  public static void generateJson(VirtualFile parentDir, Course course) throws IOException {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
       registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter()).
       registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter()).create();
     final String json = gson.toJson(course);
-    final File courseJson = new File(parentDir.getPath(), EduNames.COURSE_META_FILE);
-    try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(courseJson), "UTF-8")) {
-      outputStreamWriter.write(json);
-    }
+    final VirtualFile courseJsonFile = parentDir.findOrCreateChildData(CCCreateCourseArchive.class, COURSE_META_FILE);
+    VfsUtil.saveText(courseJsonFile, json);
   }
 }

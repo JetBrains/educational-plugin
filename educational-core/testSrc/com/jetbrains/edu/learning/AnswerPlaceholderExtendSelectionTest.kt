@@ -56,7 +56,7 @@ class AnswerPlaceholderExtendSelectionTest : EduTestCase() {
 
     val lesson1 = createLesson(1, 4)
     course.addLesson(lesson1)
-    course.initCourse(false)
+    course.init(null, null, false)
   }
 
   override fun getTestDataPath(): String {
