@@ -5,9 +5,9 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.serialization.SerializationUtils.ITEMS
-import com.jetbrains.edu.learning.serialization.SerializationUtils.LESSONS
+import com.jetbrains.edu.learning.serialization.SerializationUtils.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.POSSIBLE_ANSWER
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException
 import org.jdom.Element
 
@@ -28,6 +28,7 @@ class ToNinthVersionXmlConverter : XmlConverter {
         runWriteAction {
           taskDir.rename(ToNinthVersionXmlConverter::class.java, GeneratorUtils.getUniqueValidName(lessonDir, getName(task)))
         }
+        removeSubtaskInfos(task)
       }
       runWriteAction {
         lessonDir.rename(ToNinthVersionXmlConverter::class.java, GeneratorUtils.getUniqueValidName(project.baseDir, getName(lesson)))
@@ -36,6 +37,21 @@ class ToNinthVersionXmlConverter : XmlConverter {
     val lessons = getChildWithName(courseElement, LESSONS)
     renameElement(lessons, ITEMS)
     return clone
+  }
+
+  @Throws(StudyUnrecognizedFormatException::class)
+  private fun removeSubtaskInfos(task: Element) {
+    for ((_, taskFile) in getChildMap<String, Element>(task, TASK_FILES)) {
+      for (placeholder in getChildList(taskFile, ANSWER_PLACEHOLDERS)) {
+        val subtaskInfos = getChildMap<String, Element>(placeholder, SUBTASK_INFOS)
+        val info = subtaskInfos.values.firstOrNull() ?: throw StudyUnrecognizedFormatException("Can't find any subtask info")
+        addChildWithName(placeholder, PLACEHOLDER_TEXT, getAsString(info, PLACEHOLDER_TEXT))
+        addChildWithName(placeholder, POSSIBLE_ANSWER, getAsString(info, POSSIBLE_ANSWER))
+        addChildWithName(placeholder, STATUS, getAsString(info, PLACEHOLDER_TEXT))
+        placeholder.addContent(getChildWithName(info, HINTS).clone())
+        placeholder.removeContent(getChildWithName(placeholder, SUBTASK_INFOS))
+      }
+    }
   }
 
   private fun getName(element: Element) = getChildWithName(element, NAME).getAttributeValue(VALUE)

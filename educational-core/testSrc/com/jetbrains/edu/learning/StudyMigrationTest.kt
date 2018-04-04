@@ -4,6 +4,8 @@ import com.intellij.openapi.util.JDOMUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.loadElement
 import com.jetbrains.edu.learning.serialization.SerializationUtils
+import junit.framework.ComparisonFailure
+import org.jdom.Element
 import java.nio.file.Paths
 
 class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
@@ -41,7 +43,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     expectedFileTree.assertEquals(EduUtils.getCourseDir(project)!!)
 
     val expected = Paths.get(testDataPath).resolve("${getTestName(true)}.after.xml")
-    assertTrue(JDOMUtil.areElementsEqual(converted, loadElement(expected)))
+    checkEquals(loadElement(expected), converted)
   }
 
   private fun doTest(version: Int) {
@@ -56,7 +58,13 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
       4 -> converted = SerializationUtils.Xml.convertToFifthVersion(project, element)
       7 -> converted = SerializationUtils.Xml.convertToSeventhVersion(project, element)
     }
-    assertTrue(JDOMUtil.areElementsEqual(converted, loadElement(after)))
+    checkEquals(loadElement(after), converted)
+  }
+
+  private fun checkEquals(expected: Element, actual: Element) {
+    if (!JDOMUtil.areElementsEqual(expected, actual)) {
+      throw ComparisonFailure("Elements are not equal", JDOMUtil.writeElement(expected), JDOMUtil.writeElement(actual))
+    }
   }
 
   override fun getTestDataPath() = "testData/migration"
