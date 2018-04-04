@@ -68,4 +68,8 @@ public class SectionNode extends EduNode {
   public int getWeight() {
     return mySection.getIndex();
   }
+
+  public Section getSection() {
+    return mySection;
+  }
 }

@@ -43,6 +43,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.projectView.CCLessonNode
+import com.jetbrains.edu.coursecreator.projectView.CCSectionNode
 import com.jetbrains.edu.coursecreator.projectView.CCTaskNode
 import com.jetbrains.edu.learning.CourseSetListener
 import com.jetbrains.edu.learning.EduUtils
@@ -186,7 +187,12 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
     if (CCUtils.isCourseCreator(myProject)) {
       val userObject = selectedNode?.userObject
-      val studyItem = (userObject as? CCTaskNode)?.task ?: (userObject as? CCLessonNode)?.lesson
+      val studyItem = when (userObject) {
+        is CCTaskNode -> userObject.task
+        is CCLessonNode -> userObject.lesson
+        is CCSectionNode -> userObject.section
+        else -> null
+      }
       if (studyItem != null) {
         when {
           PlatformDataKeys.DELETE_ELEMENT_PROVIDER.`is`(dataId) -> return myStudyItemDeleteProvider
