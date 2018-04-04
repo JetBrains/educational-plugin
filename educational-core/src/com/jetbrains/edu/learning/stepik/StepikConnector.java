@@ -58,7 +58,7 @@ import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
-  public static final int CURRENT_VERSION = 2;
+  public static final int CURRENT_VERSION = 5;
   //this prefix indicates that course can be opened by educational plugin
   private static final String ADAPTIVE_NOTE =
     "\n\nInitially, the adaptive system may behave somewhat randomly, but the more problems you solve, the smarter it becomes!";
