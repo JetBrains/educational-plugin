@@ -61,7 +61,7 @@ public class StepikWrappers {
     @Expose public Integer executionTimeLimit;
     @Expose public Map<String, String> codeTemplates;
     @SerializedName("format_version")
-    @Expose public int formatVersion = 3;
+    @Expose public int formatVersion = StepikConnector.CURRENT_VERSION;
 
     public static StepOptions fromTask(@NotNull final Project project, @NotNull final Task task) {
       final StepOptions source = new StepOptions();

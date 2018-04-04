@@ -25,11 +25,9 @@ import java.util.Map;
 public class SerializationUtils {
   private static final Logger LOG = Logger.getInstance(SerializationUtils.class);
 
-  public static final String PLACEHOLDERS = "placeholders";
   public static final String LINE = "line";
   public static final String START = "start";
   public static final String LENGTH = "length";
-  public static final String POSSIBLE_ANSWER = "possible_answer";
   public static final String HINT = "hint";
   public static final String ADDITIONAL_HINTS = "additional_hints";
   public static final String OFFSET = "offset";
@@ -377,24 +375,11 @@ public class SerializationUtils {
     public static final String LAST_SUBTASK = "last_subtask_index";
     public static final String ITEM_TYPE = "type";
     public static final String FRAMEWORK_TYPE = "framework";
+    public static final String PLACEHOLDERS = "placeholders";
+    public static final String POSSIBLE_ANSWER = "possible_answer";
+    public static final String PLACEHOLDER_TEXT = "placeholder_text";
 
     private Json() {
-    }
-
-    public static void removeIndexFromSubtaskInfos(JsonObject placeholderObject) {
-      JsonArray infos = placeholderObject.getAsJsonArray(SUBTASK_INFOS);
-      Map<Integer, JsonObject> objectsToInsert = new HashMap<>();
-      for (JsonElement info : infos) {
-        JsonObject object = info.getAsJsonObject();
-        int index = object.getAsJsonPrimitive(INDEX).getAsInt();
-        objectsToInsert.put(index, object);
-      }
-      placeholderObject.remove(SUBTASK_INFOS);
-      JsonObject newInfos = new JsonObject();
-      placeholderObject.add(SUBTASK_INFOS, newInfos);
-      for (Map.Entry<Integer, JsonObject> entry : objectsToInsert.entrySet()) {
-        newInfos.add(entry.getKey().toString(), entry.getValue());
-      }
     }
 
     public static class LessonSectionAdapter implements JsonDeserializer<StudyItem>, JsonSerializer<StudyItem> {
