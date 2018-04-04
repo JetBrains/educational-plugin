@@ -53,15 +53,37 @@
                           <value>
                             <TaskFile>
                               <option name="answerPlaceholders">
-                                <list/>
+                                <list>
+                                  <AnswerPlaceholder>
+                                    <option name="index" value="0" />
+                                    <option name="initialState">
+                                      <MyInitialState>
+                                        <option name="length" value="6" />
+                                        <option name="offset" value="22" />
+                                      </MyInitialState>
+                                    </option>
+                                    <option name="length" value="6" />
+                                    <option name="offset" value="22" />
+                                    <option name="selected" value="false" />
+                                    <option name="useLength" value="true" />
+                                    <option name="placeholderText" value="TODO()" />
+                                    <option name="possibleAnswer" value="&quot;OK&quot;" />
+                                    <option name="status" value="TODO()" />
+                                    <option name="hints">
+                                      <list>
+                                        <option value="" />
+                                      </list>
+                                    </option>
+                                  </AnswerPlaceholder>
+                                </list>
                               </option>
                               <option name="highlightErrors" value="false"/>
                               <option name="index" value="0"/>
                               <option name="trackChanges" value="true"/>
                               <option name="trackLengths" value="true"/>
                               <option name="userCreated" value="false"/>
-                              <option name="name" value="Task.java"/>
-                              <option name="text" value="class Task {&#10;  //put your task here&#10;}"/>
+                              <option name="name" value="Task.kt" />
+                              <option name="text" value="fun start(): String = TODO()&#10;" />
                             </TaskFile>
                           </value>
                         </entry>
