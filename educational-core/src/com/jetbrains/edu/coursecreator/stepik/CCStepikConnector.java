@@ -48,6 +48,7 @@ import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
 public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
   private static final String FAILED_TITLE = "Failed to publish ";
+  private static final String JETBRAINS_USER_ID = "17813950";
 
   private CCStepikConnector() {
   }
@@ -83,7 +84,7 @@ public class CCStepikConnector {
       indicator.setText("Uploading course to " + StepikNames.STEPIK_URL);
       indicator.setIndeterminate(false);
     }
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/courses");
+    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.COURSES);
 
     final StepicUser currentUser = StepikAuthorizedClient.getCurrentUser();
     if (currentUser != null) {
@@ -124,6 +125,7 @@ public class CCStepikConnector {
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
       courseOnRemote.setLanguage(course.getLanguageID());
 
+      addJetBrainsUserAsAdmin(client, getAdminsGroupId(responseString));
       int sectionCount = postSections(project, courseOnRemote);
 
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
@@ -135,6 +137,35 @@ public class CCStepikConnector {
     catch (IOException e) {
       LOG.error(e.getMessage());
     }
+  }
+
+  private static void addJetBrainsUserAsAdmin(@NotNull CloseableHttpClient client, @NotNull String groupId) {
+    JsonObject object = new JsonObject();
+    JsonObject member = new JsonObject();
+    member.addProperty("group", groupId);
+    member.addProperty("user", JETBRAINS_USER_ID);
+    object.add("member", member);
+
+    HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.MEMBERS);
+    post.setEntity(new StringEntity(object.toString(), ContentType.APPLICATION_JSON));
+    try {
+      final CloseableHttpResponse response = client.execute(post);
+      final HttpEntity responseEntity = response.getEntity();
+      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
+      final StatusLine line = response.getStatusLine();
+      EntityUtils.consume(responseEntity);
+      if (line.getStatusCode() != HttpStatus.SC_CREATED) {
+        LOG.warn("Failed to add JetBrains as admin " + responseString);
+      }
+    }
+    catch (IOException e) {
+      LOG.warn(e.getMessage());
+    }
+  }
+
+  private static String getAdminsGroupId(String responseString) {
+    JsonObject coursesObject = new JsonParser().parse(responseString).getAsJsonObject();
+    return coursesObject.get("courses").getAsJsonArray().get(0).getAsJsonObject().get("admins_group").getAsString();
   }
 
   private static int postSections(@NotNull Project project, @NotNull RemoteCourse course) {
