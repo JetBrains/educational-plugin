@@ -351,11 +351,15 @@ public class StepikWrappers {
   }
 
   public static class Reply {
+
+    public static final int VERSION = 2;
+
     String score;
     List<SolutionFile> solution;
     String language;
     String code;
     String edu_task;
+    public int version = VERSION;
 
     public Reply(List<SolutionFile> files, String score, String serializedTask) {
       this.score = score;

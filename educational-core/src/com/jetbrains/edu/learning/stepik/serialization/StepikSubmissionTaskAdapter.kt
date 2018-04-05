@@ -1,20 +1,34 @@
 package com.jetbrains.edu.learning.stepik.serialization
 
 import com.google.gson.*
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderSubtaskInfo
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
+import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.lang.reflect.Type
 
-class StepikSubmissionTaskAdapter : JsonSerializer<Task>, JsonDeserializer<Task> {
+class StepikReplyAdapter : JsonDeserializer<StepikWrappers.Reply> {
+
+  @Throws(JsonParseException::class)
+  override fun deserialize(json: JsonElement, type: Type, context: JsonDeserializationContext): StepikWrappers.Reply {
+    val jsonObject = json.asJsonObject
+    val gson = GsonBuilder().setPrettyPrinting().create()
+    return gson.fromJson<StepikWrappers.Reply>(jsonObject).apply {
+      version = jsonObject.getAsJsonPrimitive("version")?.asInt ?: 1
+    }
+  }
+}
+
+class StepikSubmissionTaskAdapter(replyVersion: Int = StepikWrappers.Reply.VERSION) : JsonSerializer<Task>, JsonDeserializer<Task> {
+
+  private val placeholderAdapter = StepikSubmissionAnswerPlaceholderAdapter(replyVersion)
 
   override fun serialize(src: Task, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
     val gson = GsonBuilder()
       .setPrettyPrinting()
       .excludeFieldsWithoutExposeAnnotation()
-      .registerTypeAdapter(AnswerPlaceholderSubtaskInfo::class.java,
-                           StepikSubmissionSubtaskInfoAdapter())
+      .registerTypeAdapter(AnswerPlaceholder::class.java, placeholderAdapter)
       .create()
     return SerializationUtils.Json.serializeWithTaskType(src, gson)
   }
@@ -23,42 +37,58 @@ class StepikSubmissionTaskAdapter : JsonSerializer<Task>, JsonDeserializer<Task>
   override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Task? {
     val gson = GsonBuilder()
       .setPrettyPrinting()
-      .registerTypeAdapter(AnswerPlaceholderSubtaskInfo::class.java,
-                           StepikSubmissionSubtaskInfoAdapter())
+      .registerTypeAdapter(AnswerPlaceholder::class.java, placeholderAdapter)
       .create()
 
     return SerializationUtils.Json.doDeserialize(json, gson)
   }
 }
 
-internal class StepikSubmissionSubtaskInfoAdapter : JsonSerializer<AnswerPlaceholderSubtaskInfo>, JsonDeserializer<AnswerPlaceholderSubtaskInfo> {
+private class StepikSubmissionAnswerPlaceholderAdapter(private val replyVersion: Int) : JsonSerializer<AnswerPlaceholder>, JsonDeserializer<AnswerPlaceholder> {
 
-  override fun serialize(src: AnswerPlaceholderSubtaskInfo, type: Type, jsonSerializationContext: JsonSerializationContext): JsonElement {
+  override fun serialize(src: AnswerPlaceholder, type: Type, jsonSerializationContext: JsonSerializationContext): JsonElement {
     val gson = GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create()
-    val subTaskInfo = gson.toJsonTree(src).asJsonObject
+    val placeholderObject = gson.toJsonTree(src).asJsonObject
 
-    subTaskInfo.add("selected", JsonPrimitive(src.selected))
-    subTaskInfo.add("status", JsonPrimitive(src.status.toString()))
+    placeholderObject.add("selected", JsonPrimitive(src.selected))
+    placeholderObject.add("status", JsonPrimitive(src.status.toString()))
 
-    return subTaskInfo
+    return placeholderObject
   }
 
   @Throws(JsonParseException::class)
   override fun deserialize(jsonElement: JsonElement,
                            type: Type,
-                           jsonDeserializationContext: JsonDeserializationContext): AnswerPlaceholderSubtaskInfo {
+                           jsonDeserializationContext: JsonDeserializationContext): AnswerPlaceholder {
     val gson = GsonBuilder().setPrettyPrinting().create()
-    val jsonObject = jsonElement.asJsonObject
-    val subtaskInfo = gson.fromJson(jsonObject, AnswerPlaceholderSubtaskInfo::class.java)
+    val placeholderObject = jsonElement.asJsonObject.migrate(replyVersion)
+    val placeholder = gson.fromJson<AnswerPlaceholder>(placeholderObject)
 
-    if (jsonObject.has("selected")) {
-      subtaskInfo.selected = jsonObject.get("selected").asBoolean
+    if (placeholderObject.has("selected")) {
+      placeholder.selected = placeholderObject.get("selected").asBoolean
     }
 
-    if (jsonObject.has("status")) {
-      subtaskInfo.status = CheckStatus.valueOf(jsonObject.get("status").asString)
+    if (placeholderObject.has("status")) {
+      placeholder.status = CheckStatus.valueOf(placeholderObject.get("status").asString)
     }
 
-    return subtaskInfo
+    return placeholder
+  }
+
+  private fun JsonObject.migrate(version: Int): JsonObject {
+    var jsonObject = this
+    @Suppress("NAME_SHADOWING")
+    var version = version
+    loop@while (true) {
+      jsonObject = when (version) {
+        1 ->  SerializationUtils.Json.removeSubtaskInfo(jsonObject)
+        else -> break@loop
+      }
+      version++
+    }
+
+    return jsonObject
   }
 }
+
+private inline fun <reified T> Gson.fromJson(element: JsonElement): T = fromJson(element, T::class.java)

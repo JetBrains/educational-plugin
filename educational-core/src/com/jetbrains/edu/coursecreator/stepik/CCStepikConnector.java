@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
-import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionAnswerPlaceholderAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -288,8 +287,7 @@ public class CCStepikConnector {
 
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES
                                                                                     + String.valueOf(task.getStepId()));
-    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new StepikSubmissionAnswerPlaceholderAdapter()).create();
+    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final Language language = lesson.getCourse().getLanguageById();
       final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
@@ -598,8 +596,7 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postTask")) return;
 
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/step-sources");
-    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new StepikSubmissionAnswerPlaceholderAdapter()).create();
+    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final String requestBody = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
       request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
