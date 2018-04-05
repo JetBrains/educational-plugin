@@ -15,17 +15,11 @@
                 {
                   "offset": 15,
                   "length": 19,
-                  "subtask_infos": {
-                    "0": {
-                      "hints": [
-                        "my first hint"
-                      ],
-                      "possible_answer": "pass",
-                      "placeholder_text": "write function body",
-                      "has_frame": true,
-                      "need_insert_text": false
-                    }
-                  }
+                  "hints": [
+                    "my first hint"
+                  ],
+                  "possible_answer": "pass",
+                  "placeholder_text": "write function body"
                 }
               ]
             }

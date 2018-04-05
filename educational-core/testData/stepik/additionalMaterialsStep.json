@@ -18,7 +18,6 @@
         "options": {
           "format_version": 3,
           "files": [],
-          "last_subtask_index": 0,
           "test": [
             {
               "name": "test_helperq.py",
