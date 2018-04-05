@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
-import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,6 +38,24 @@ public class CourseFormatTest {
         filter(lesson -> lesson.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).findFirst().orElse(null);
     assertNotNull(additional);
     assertNull(oldAdditional);
+  }
+
+  @Test
+  public void testCourseWithSection() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<StudyItem> items = course.getItems();
+    assertEquals(2, items.size());
+    assertTrue(items.get(0) instanceof Section);
+    assertTrue(items.get(1) instanceof Lesson);
+    assertEquals(1, ((Section)items.get(0)).getLessons().size());
+  }
+
+  @Test
+  public void testFrameworkLesson() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<StudyItem> items = course.getItems();
+    assertEquals(1, items.size());
+    assertTrue(items.get(0) instanceof FrameworkLesson);
   }
 
   @Test
