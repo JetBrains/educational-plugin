@@ -58,9 +58,9 @@ class SectionsTest : EduTestCase() {
                     "    taskFile1.txt\n" +
                     "   -TaskNode task2\n" +
                     "    taskFile2.txt\n"
-    PlatformTestUtil.waitWhileBusy(tree)
+    waitWhileBusy(pane)
     TreeUtil.expandAll(tree)
-    PlatformTestUtil.waitWhileBusy(tree)
+    waitWhileBusy(pane)
     PlatformTestUtil.assertTreeEqual(tree, structure)
   }
 
