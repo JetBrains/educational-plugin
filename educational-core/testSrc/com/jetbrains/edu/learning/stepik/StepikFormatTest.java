@@ -7,10 +7,8 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionAnswerPlaceholderAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,6 +33,11 @@ public class StepikFormatTest {
 
   @Test
   public void fromSecondVersion() throws IOException {
+    doStepOptionsCreationTest();
+  }
+
+  @Test
+  public void fromThirdVersion() throws IOException {
     doStepOptionsCreationTest();
   }
 
@@ -65,8 +68,7 @@ public class StepikFormatTest {
 
   @Test
   public void testPlaceholderSerialization() throws IOException {
-    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(AnswerPlaceholder.class, new StepikSubmissionAnswerPlaceholderAdapter()).create();
+    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
     AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
     answerPlaceholder.setOffset(1);
     answerPlaceholder.setLength(10);
@@ -76,7 +78,6 @@ public class StepikFormatTest {
     final String placeholderSerialization = gson.toJson(answerPlaceholder);
     String expected  = loadJsonText();
     JsonObject object = new JsonParser().parse(expected).getAsJsonObject();
-    SerializationUtils.Json.removeIndexFromSubtaskInfos(object);
     assertEquals(gson.toJson(gson.fromJson(object, AnswerPlaceholder.class)), placeholderSerialization);
 
   }
