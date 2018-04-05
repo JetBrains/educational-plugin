@@ -41,6 +41,24 @@ public class CourseFormatTest {
   }
 
   @Test
+  public void testCourseWithSection() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<StudyItem> items = course.getItems();
+    assertEquals(2, items.size());
+    assertTrue(items.get(0) instanceof Section);
+    assertTrue(items.get(1) instanceof Lesson);
+    assertEquals(1, ((Section)items.get(0)).getLessons().size());
+  }
+
+  @Test
+  public void testFrameworkLesson() throws IOException {
+    final Course course = getCourseFromJson();
+    final List<StudyItem> items = course.getItems();
+    assertEquals(1, items.size());
+    assertTrue(items.get(0) instanceof FrameworkLesson);
+  }
+
+  @Test
   public void testPycharmToEduTask() throws IOException {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons();
