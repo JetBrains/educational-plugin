@@ -31,4 +31,5 @@ public class StepikNames {
   public static final String OAUTH_SERVICE_NAME = "edu/stepik/oauth";
   public static final String EXTERNAL_REDIRECT_URL = "https://example.com";
   public static final String PYCHARM_ADDITIONAL = "PyCharm additional materials";
+  public static final String MEMBERS = "/members";
 }
