@@ -15,17 +15,11 @@
                 {
                   "offset": 32,
                   "length": 14,
-                  "subtask_infos": {
-                    "0": {
-                      "hints": [
-                        "Type your name here."
-                      ],
-                      "possible_answer": "Liana",
-                      "placeholder_text": "type your name",
-                      "has_frame": true,
-                      "need_insert_text": false
-                    }
-                  }
+                  "hints": [
+                    "Type your name here."
+                  ],
+                  "possible_answer": "Liana",
+                  "placeholder_text": "type your name"
                 }
               ]
             }
@@ -49,17 +43,11 @@
                 {
                   "offset": 138,
                   "length": 20,
-                  "subtask_infos": {
-                    "0": {
-                      "hints": [
-                        "Type your new comment here."
-                      ],
-                      "possible_answer": "new comment",
-                      "placeholder_text": "add new comment here",
-                      "has_frame": true,
-                      "need_insert_text": false
-                    }
-                  }
+                  "hints": [
+                    "Type your new comment here."
+                  ],
+                  "possible_answer": "new comment",
+                  "placeholder_text": "add new comment here"
                 }
               ]
             }
@@ -89,17 +77,11 @@
                 {
                   "offset": 345,
                   "length": 13,
-                  "subtask_infos": {
-                    "0": {
-                      "hints": [
-                        "Type value here."
-                      ],
-                      "possible_answer": "5",
-                      "placeholder_text": "another value",
-                      "has_frame": true,
-                      "need_insert_text": false
-                    }
-                  }
+                  "hints": [
+                    "Type value here."
+                  ],
+                  "possible_answer": "5",
+                  "placeholder_text": "another value"
                 }
               ]
             }

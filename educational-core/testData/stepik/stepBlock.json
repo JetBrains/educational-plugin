@@ -16,7 +16,7 @@
         "video": null,
         "animation": null,
         "options": {
-          "format_version": 3,
+          "format_version": 5,
           "files": [
             {
               "name": "hello_world.py",
@@ -24,24 +24,16 @@
                 {
                   "length": 14,
                   "offset": 32,
-                  "subtask_infos": [
-                    {
-                      "need_insert_text": false,
-                      "placeholder_text": "type your name",
-                      "possible_answer": "Liana",
-                      "has_frame": true,
-                      "hints": [
-                        "Type your name here."
-                      ],
-                      "index": 0
-                    }
+                  "placeholder_text": "type your name",
+                  "possible_answer": "Liana",
+                  "hints": [
+                    "Type your name here."
                   ]
                 }
               ],
               "text": "print(\"Hello, world! My name is type your name\")\n"
             }
           ],
-          "last_subtask_index": 0,
           "test": [
             {
               "name": "tests.py",
