@@ -53,6 +53,7 @@ class CourseViewTest : EduTestCase() {
     val pane = projectView.currentProjectViewPane
     PlatformTestUtil.waitWhileBusy(pane.tree)
     EduUtils.openFirstTask(myCourse!!, project)
+    PlatformTestUtil.waitForAlarm(600)
     PlatformTestUtil.waitWhileBusy(pane.tree)
     val structure = "-Project\n" +
                           " -CourseNode Edu test course  0/4\n" +
