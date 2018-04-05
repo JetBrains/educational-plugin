@@ -48,9 +48,12 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testProjectOpened() {
-    EduUtils.openFirstTask(myCourse!!, project)
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
+    val pane = projectView.currentProjectViewPane
+    PlatformTestUtil.waitWhileBusy(pane.tree)
+    EduUtils.openFirstTask(myCourse!!, project)
+    PlatformTestUtil.waitWhileBusy(pane.tree)
     val structure = "-Project\n" +
                           " -CourseNode Edu test course  0/4\n" +
                           "  -LessonNode lesson1\n" +
@@ -59,8 +62,6 @@ class CourseViewTest : EduTestCase() {
                           "   +TaskNode task2\n" +
                           "   +TaskNode task3\n" +
                           "   +TaskNode task4\n"
-    val pane = projectView.currentProjectViewPane
-    PlatformTestUtil.waitWhileBusy(pane.tree)
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 
