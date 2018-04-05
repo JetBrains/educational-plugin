@@ -14,13 +14,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.*
-import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.intellij.ui.tree.AsyncTreeModel
 import com.intellij.util.ui.UIUtil
-import com.intellij.util.ui.tree.TreeUtil
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -28,7 +24,6 @@ import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -36,7 +31,6 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 import junit.framework.TestCase
 import org.junit.Assert
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.swing.JTree
 
@@ -67,9 +61,12 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testProjectOpened() {
-    EduUtils.openFirstTask(myCourse!!, project)
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
+    val pane = projectView.currentProjectViewPane
+    waitWhileBusy(pane)
+    EduUtils.openFirstTask(myCourse!!, project)
+    waitWhileBusy(pane)
     val structure = "-Project\n" +
                     " -CourseNode Edu test course  0/4\n" +
                     "  -LessonNode lesson1\n" +
@@ -78,7 +75,6 @@ class CourseViewTest : EduTestCase() {
                     "   +TaskNode task2\n" +
                     "   +TaskNode task3\n" +
                     "   +TaskNode task4\n"
-    val pane = projectView.currentProjectViewPane
     waitWhileBusy(pane)
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
