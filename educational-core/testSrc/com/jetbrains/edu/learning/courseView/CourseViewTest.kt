@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit
 import javax.swing.JTree
 
 class CourseViewTest : EduTestCase() {
-  private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
   private var myCourse: Course? = null
 
   @Throws(Exception::class)
@@ -133,33 +132,6 @@ class CourseViewTest : EduTestCase() {
     launchAction(taskFile, refreshTaskFileAction)
   }
 
-  private fun waitWhileBusy(pane: AbstractProjectViewPane) {
-    val startTimeMillis = System.currentTimeMillis()
-    while (isBusy(pane.tree)) {
-      assertMaxWaitTimeSince(startTimeMillis)
-    }
-  }
-
-  private fun getMillisSince(startTimeMillis: Long): Long {
-    return System.currentTimeMillis() - startTimeMillis
-  }
-
-  private fun assertMaxWaitTimeSince(startTimeMillis: Long) {
-    assert(getMillisSince(startTimeMillis) <= MAX_WAIT_TIME) { "the waiting takes too long" }
-  }
-
-  private fun isBusy(tree: JTree): Boolean {
-    UIUtil.dispatchAllInvocationEvents()
-    val model = tree.model
-    if (model is AsyncTreeModel) {
-      if (model.isProcessing) return true
-      UIUtil.dispatchAllInvocationEvents()
-      return model.isProcessing
-    }
-    val builder = AbstractTreeBuilder.getBuilderFor(tree) ?: return false
-    val ui = builder.ui ?: return false
-    return ui.hasPendingWork()
-  }
 
   private fun launchAction(taskFile: VirtualFile, action: AnAction) {
     val e = getActionEvent(taskFile, action)
@@ -233,3 +205,33 @@ class CourseViewTest : EduTestCase() {
     return super.getTestDataPath() + "/projectView"
   }
 }
+
+fun waitWhileBusy(pane: AbstractProjectViewPane) {
+  val startTimeMillis = System.currentTimeMillis()
+  while (isBusy(pane.tree)) {
+    assertMaxWaitTimeSince(startTimeMillis)
+  }
+}
+
+private fun getMillisSince(startTimeMillis: Long): Long {
+  return System.currentTimeMillis() - startTimeMillis
+}
+
+private fun assertMaxWaitTimeSince(startTimeMillis: Long) {
+  assert(getMillisSince(startTimeMillis) <= MAX_WAIT_TIME) { "the waiting takes too long" }
+}
+
+private fun isBusy(tree: JTree): Boolean {
+  UIUtil.dispatchAllInvocationEvents()
+  val model = tree.model
+  if (model is AsyncTreeModel) {
+    if (model.isProcessing) return true
+    UIUtil.dispatchAllInvocationEvents()
+    return model.isProcessing
+  }
+  val builder = AbstractTreeBuilder.getBuilderFor(tree) ?: return false
+  val ui = builder.ui ?: return false
+  return ui.hasPendingWork()
+}
+private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
+
