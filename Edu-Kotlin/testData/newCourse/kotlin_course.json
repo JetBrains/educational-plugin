@@ -15,17 +15,11 @@
                 {
                   "offset": 22,
                   "length": 6,
-                  "subtask_infos": {
-                    "0": {
-                      "hints": [
-                        ""
-                      ],
-                      "possible_answer": "\"OK\"",
-                      "placeholder_text": "TODO()",
-                      "has_frame": true,
-                      "need_insert_text": false
-                    }
-                  }
+                  "hints": [
+                    ""
+                  ],
+                  "possible_answer": "\"OK\"",
+                  "placeholder_text": "TODO()"
                 }
               ]
             }
@@ -54,17 +48,11 @@
                 {
                   "offset": 0,
                   "length": 56,
-                  "subtask_infos": {
-                    "0": {
-                      "hints": [
-                        ""
-                      ],
-                      "possible_answer": "fun toJSON(collection: Collection\u003cInt\u003e): String {\n    val sb \u003d StringBuilder()\n    sb.append(\"[\")\n    val iterator \u003d collection.iterator()\n    while (iterator.hasNext())\n    {\n        val element \u003d iterator.next()\n        sb.append(element)\n        if (iterator.hasNext())\n        {\n            sb.append(\", \")\n        }\n    }\n    sb.append(\"]\")\n    return sb.toString()\n}",
-                      "placeholder_text": "fun toJSON(collection: Collection\u003cInt\u003e): String \u003d TODO()",
-                      "has_frame": true,
-                      "need_insert_text": false
-                    }
-                  }
+                  "hints": [
+                    ""
+                  ],
+                  "possible_answer": "fun toJSON(collection: Collection\u003cInt\u003e): String {\n    val sb \u003d StringBuilder()\n    sb.append(\"[\")\n    val iterator \u003d collection.iterator()\n    while (iterator.hasNext())\n    {\n        val element \u003d iterator.next()\n        sb.append(element)\n        if (iterator.hasNext())\n        {\n            sb.append(\", \")\n        }\n    }\n    sb.append(\"]\")\n    return sb.toString()\n}",
+                  "placeholder_text": "fun toJSON(collection: Collection\u003cInt\u003e): String \u003d TODO()"
                 }
               ]
             }
@@ -94,17 +82,11 @@
                 {
                   "offset": 97,
                   "length": 10,
-                  "subtask_infos": {
-                    "0": {
-                      "hints": [
-                        ""
-                      ],
-                      "possible_answer": "override fun compareTo(other: MyDate) \u003d when {\n        year !\u003d other.year -\u003e year - other.year\n        month !\u003d other.month -\u003e month - other.month\n        else -\u003e dayOfMonth - other.dayOfMonth\n    }",
-                      "placeholder_text": "/* TODO */",
-                      "has_frame": true,
-                      "need_insert_text": false
-                    }
-                  }
+                  "hints": [
+                    ""
+                  ],
+                  "possible_answer": "override fun compareTo(other: MyDate) \u003d when {\n        year !\u003d other.year -\u003e year - other.year\n        month !\u003d other.month -\u003e month - other.month\n        else -\u003e dayOfMonth - other.dayOfMonth\n    }",
+                  "placeholder_text": "/* TODO */"
                 }
               ]
             }
