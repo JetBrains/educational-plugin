@@ -16,10 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.*
 import com.intellij.ui.tree.AsyncTreeModel
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -69,6 +66,7 @@ class CourseViewTest : EduTestCase() {
     val pane = projectView.currentProjectViewPane
     waitWhileBusy(pane)
     EduUtils.openFirstTask(myCourse!!, project)
+    PlatformTestUtil.waitForAlarm(600)
     waitWhileBusy(pane)
     val structure = "-Project\n" +
                           " -CourseNode Edu test course  0/4\n" +
