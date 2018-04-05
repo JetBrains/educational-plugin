@@ -328,7 +328,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     StepikWrappers.TaskWrapper updatedTask = new GsonBuilder()
-      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter())
+      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.version))
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .create()
       .fromJson(serializedTask, StepikWrappers.TaskWrapper.class);
