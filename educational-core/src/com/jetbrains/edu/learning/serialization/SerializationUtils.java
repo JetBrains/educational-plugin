@@ -21,6 +21,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SerializationUtils {
   private static final Logger LOG = Logger.getInstance(SerializationUtils.class);
@@ -450,6 +451,53 @@ public class SerializationUtils {
       final JsonObject task = tree.getAsJsonObject();
       task.add(TASK_TYPE, new JsonPrimitive(src.getTaskType()));
       return task;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
+    public static JsonObject removeSubtaskInfo(@NotNull JsonObject placeholderObject) {
+      JsonElement subtaskInfos = placeholderObject.get(SUBTASK_INFOS);
+      JsonObject info;
+      if (subtaskInfos.isJsonArray()) {
+        JsonArray array = subtaskInfos.getAsJsonArray();
+        switch (array.size()) {
+          case 0:
+            LOG.warn("Can't find subtask info object");
+            return placeholderObject;
+          case 1: 
+            info = array.get(0).getAsJsonObject();
+            break;
+          default:
+            LOG.warn(String.format("Placeholder contains %d subtask info objects. Expected: 1", array.size()));
+            info = array.get(0).getAsJsonObject();
+        }
+      } else {
+        Set<Map.Entry<String, JsonElement>> entries = subtaskInfos.getAsJsonObject().entrySet();
+        switch (entries.size()) {
+          case 0:
+            LOG.warn("Can't find subtask info object");
+            return placeholderObject;
+          case 1:
+            info = entries.stream().findFirst().get().getValue().getAsJsonObject();
+            break;
+          default:
+            LOG.warn(String.format("Placeholder contains %d subtask info objects. Expected: 1", entries.size()));
+            info = entries.stream().findFirst().get().getValue().getAsJsonObject();
+        }
+      }
+
+      placeholderObject.addProperty(POSSIBLE_ANSWER, info.getAsJsonPrimitive(POSSIBLE_ANSWER).getAsString());
+      placeholderObject.add(HINTS, info.getAsJsonArray(HINTS));
+      JsonPrimitive placeholderText = info.getAsJsonPrimitive(PLACEHOLDER_TEXT);
+      if (placeholderText != null) {
+        placeholderObject.addProperty(PLACEHOLDER_TEXT, placeholderText.getAsString());
+      }
+      JsonPrimitive status = info.getAsJsonPrimitive(STATUS);
+      if (status != null) {
+        placeholderObject.addProperty(STATUS, status.getAsString());
+      }
+      placeholderObject.remove(SUBTASK_INFOS);
+      return placeholderObject;
     }
 
     @Nullable
