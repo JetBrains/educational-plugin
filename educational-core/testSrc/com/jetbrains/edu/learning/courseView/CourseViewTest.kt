@@ -14,12 +14,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.*
+import com.intellij.ui.tree.AsyncTreeModel
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.intellij.ui.tree.AsyncTreeModel
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -64,19 +64,20 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testProjectOpened() {
-    EduUtils.openFirstTask(myCourse!!, project)
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
-    val structure = "-Project\n" +
-                    " -CourseNode Edu test course  0/4\n" +
-                    "  -LessonNode lesson1\n" +
-                    "   -TaskNode task1\n" +
-                    "    taskFile1.txt\n" +
-                    "   +TaskNode task2\n" +
-                    "   +TaskNode task3\n" +
-                    "   +TaskNode task4\n"
     val pane = projectView.currentProjectViewPane
     waitWhileBusy(pane)
+    EduUtils.openFirstTask(myCourse!!, project)
+    waitWhileBusy(pane)
+    val structure = "-Project\n" +
+                          " -CourseNode Edu test course  0/4\n" +
+                          "  -LessonNode lesson1\n" +
+                          "   -TaskNode task1\n" +
+                          "    taskFile1.txt\n" +
+                          "   +TaskNode task2\n" +
+                          "   +TaskNode task3\n" +
+                          "   +TaskNode task4\n"
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
   }
 
