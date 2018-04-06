@@ -284,7 +284,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private void loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     try {
-      Map<String, String> solutionText = loadSolution(task, isSolved);
+      Map<String, String> solutionText = loadSolutionTexts(task, isSolved);
       if (solutionText.isEmpty()) return;
       updateFiles(project, task, solutionText);
     }
@@ -293,7 +293,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
   }
 
-  private static Map<String, String> loadSolution(@NotNull Task task, boolean isSolved) throws IOException {
+  private static Map<String, String> loadSolutionTexts(@NotNull Task task, boolean isSolved) throws IOException {
     if (task instanceof EduTask) {
       return getEduTaskSolution(task, isSolved);
     }
@@ -318,6 +318,13 @@ public class StepikSolutionsLoader implements Disposable {
     StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
     if (reply == null || reply.solution.isEmpty()) {
       task.setStatus(CheckStatus.Unchecked);
+      return Collections.emptyMap();
+    }
+
+    if (reply.version > StepikWrappers.Reply.VERSION) {
+      // TODO: show notification with suggestion to update plugin
+      LOG.warn(String.format("The plugin supports versions of submission reply not greater than %d. The current version is `%d`",
+                             StepikWrappers.Reply.VERSION, reply.version));
       return Collections.emptyMap();
     }
 
