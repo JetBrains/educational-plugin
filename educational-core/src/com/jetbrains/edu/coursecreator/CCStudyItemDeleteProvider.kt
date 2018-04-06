@@ -27,7 +27,7 @@ class CCStudyItemDeleteProvider : DeleteProvider {
     val studyItem = dataContext.getData(CourseViewPane.STUDY_ITEM) ?: return
     // currently, only gradle projects have module for lessons and tasks
     // so we can skip other projects
-    val module = if (EduGradleUtils.isConfiguredWithGradle(project)) dataContext.getData(LangDataKeys.MODULE) else null
+    val module = if (EduGradleUtils.isConfiguredWithGradle(project)) dataContext.getData(LangDataKeys.MODULE_CONTEXT) else null
     val itemType = when (studyItem) {
       is Section -> "Section"
       is Lesson -> "Lesson"
