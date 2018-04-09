@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.ui.EditorNotifications
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 
 class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency on another answer placeholder") {
@@ -52,8 +53,7 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
     val state = getState(e) ?: return
     val answerPlaceholder = state.answerPlaceholder ?: return
     val task = answerPlaceholder.taskFile.task
-    val lesson = task.lesson
-    if (task.index == 1 && lesson.index == 1) {
+    if (task.isFirstInCourse()) {
       return
     }
     e.presentation.text = getActionName(answerPlaceholder)
@@ -62,4 +62,12 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
 
   private fun getActionName(answerPlaceholder: AnswerPlaceholder) =
     "${if (answerPlaceholder.placeholderDependency == null) "Add" else "Edit"} Dependency"
+}
+
+private fun Task.isFirstInCourse(): Boolean {
+  if (index > 1) {
+    return false;
+  }
+  val section = lesson.section ?: return lesson.index == 1
+  return section.index == 1 && lesson.index == 1
 }
