@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 class DependencyResolveTest : EduTestCase() {
   fun `test resolve dependency`() {
     courseWithFiles {
-      lesson {
-        eduTask {
+      lesson("Introduction") {
+        eduTask("Hello, world!") {
           taskFile("Task.kt", """
           |def f():
           |  <p>print(1)</p>
@@ -22,7 +22,7 @@ class DependencyResolveTest : EduTestCase() {
           |def <p>foo</p>():
           |  <p>type here</p>
           """.trimMargin("|")) {
-            placeholder(1, dependency = "lesson1#task1#Task.kt#1")
+            placeholder(1, dependency = "Introduction#Hello, world!#Task.kt#1")
           }
         }
       }
@@ -116,6 +116,35 @@ class DependencyResolveTest : EduTestCase() {
     val placeholderDependency = findPlaceholder(1, 0, "Task.kt", 1).placeholderDependency
 
     val targetPlaceholder = placeholderDependency!!.resolve(course)!!
+    checkPlaceholder(11, 8, targetPlaceholder)
+  }
+
+  fun `test resolve with section`() {
+    courseWithFiles {
+      section("First section") {
+        lesson("Introduction") {
+          eduTask("Hello, world!") {
+            taskFile("Task.kt", """
+            |def f():
+            |  <p>print(1)</p>
+            """.trimMargin("|"))
+          }
+        }
+      }
+      lesson {
+        eduTask {
+          taskFile("Task.kt", """
+          |def <p>foo</p>():
+          |  <p>type here</p>
+          """.trimMargin("|")) {
+            placeholder(1, dependency = "First section#Introduction#Hello, world!#Task.kt#1")
+          }
+        }
+      }
+    }
+
+    val placeholderDependency = findPlaceholder(0, 0, "Task.kt", 1).placeholderDependency
+    val targetPlaceholder = placeholderDependency!!.resolve(getCourse())!!
     checkPlaceholder(11, 8, targetPlaceholder)
   }
 
