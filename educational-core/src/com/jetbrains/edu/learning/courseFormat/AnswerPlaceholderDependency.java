@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -16,19 +16,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AnswerPlaceholderDependency {
-  private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("lesson(\\d+)#task(\\d+)#([^#]+)#(\\d+)");
+  private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(([^#]+)#)?([^#]+)#([^#]+)#([^#]+)#(\\d+)");
+
+  @Expose
+  @SerializedName("section")
+  @Nullable
+  private String mySectionName;
 
   @Expose
   @SerializedName("lesson")
-  private int myLessonIndex;
+  private String myLessonName;
 
   @Expose
   @SerializedName("task")
-  private int myTaskIndex;
+  private String myTaskName;
 
   @Expose
   @SerializedName("file")
-  private String myFile;
+  private String myFileName;
 
   @Expose
   @SerializedName("placeholder")
@@ -39,26 +44,31 @@ public class AnswerPlaceholderDependency {
   public AnswerPlaceholderDependency() {
   }
 
-  public AnswerPlaceholderDependency(@NotNull AnswerPlaceholder answerPlaceholder, int lessonIndex, int taskIndex, String fileName, int placeholderIndex) {
-    myLessonIndex = lessonIndex;
-    myTaskIndex = taskIndex;
-    myFile = fileName;
+  public AnswerPlaceholderDependency(@NotNull AnswerPlaceholder answerPlaceholder,
+                                     @Nullable String sectionName,
+                                     @NotNull String lessonName,
+                                     @NotNull String taskName,
+                                     @NotNull String fileName,
+                                     int placeholderIndex) {
+    mySectionName = sectionName;
+    myLessonName = lessonName;
+    myTaskName = taskName;
+    myFileName = fileName;
     myPlaceholderIndex = placeholderIndex;
     myAnswerPlaceholder = answerPlaceholder;
   }
 
   @Nullable
   public AnswerPlaceholder resolve(@NotNull Course course) {
-    // TODO: handle sections
-    if (!EduUtils.indexIsValid(myLessonIndex, course.getLessons())) {
+    Lesson lesson = course.getLesson(mySectionName, myLessonName);
+    if (lesson == null) {
       return null;
     }
-    Lesson lesson = course.getLessons().get(myLessonIndex);
-    if (!EduUtils.indexIsValid(myTaskIndex, lesson.getTaskList())) {
+    Task task = lesson.getTask(myTaskName);
+    if (task == null) {
       return null;
     }
-    Task task = lesson.getTaskList().get(myTaskIndex);
-    TaskFile taskFile = task.getTaskFile(myFile);
+    TaskFile taskFile = task.getTaskFile(myFileName);
     if (taskFile == null) {
       return null;
     }
@@ -94,20 +104,21 @@ public class AnswerPlaceholderDependency {
       throw new InvalidDependencyException(text);
     }
     try {
-      int lessonIndex = Integer.parseInt(matcher.group(1)) - 1;
-      int taskIndex = Integer.parseInt(matcher.group(2)) - 1;
-      if (refersToNextTask(task, lessonIndex, taskIndex)) {
-        throw new InvalidDependencyException(text, "dependencies should refer to previous tasks, not next ones");
-      }
-      String file = FileUtil.toSystemIndependentName(matcher.group(3));
-      int placeholderIndex = Integer.parseInt(matcher.group(4)) - 1;
-      AnswerPlaceholderDependency dependency = new AnswerPlaceholderDependency(answerPlaceholder, lessonIndex, taskIndex, file, placeholderIndex);
+      String sectionName = matcher.group(2);
+      String lessonName = matcher.group(3);
+      String taskName = matcher.group(4);
+      String file = FileUtil.toSystemIndependentName(matcher.group(5));
+      int placeholderIndex = Integer.parseInt(matcher.group(6)) - 1;
+      AnswerPlaceholderDependency dependency = new AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, file, placeholderIndex);
       AnswerPlaceholder targetPlaceholder = dependency.resolve(course);
       if (targetPlaceholder == null) {
         throw new InvalidDependencyException(text, "non existing answer placeholder");
       }
       if (targetPlaceholder.getTaskFile().getTask() == task) {
         throw new InvalidDependencyException(text, "dependencies should refer to tasks other than source one");
+      }
+      if (refersToNextTask(task, targetPlaceholder.getTaskFile().getTask())) {
+        throw new InvalidDependencyException(text, "dependencies should refer to previous tasks, not next ones");
       }
       return dependency;
     }
@@ -116,37 +127,55 @@ public class AnswerPlaceholderDependency {
     }
   }
 
-  private static boolean refersToNextTask(Task task, int lessonIndex, int taskIndex) {
-    int visibleLessonIndex = lessonIndex + 1;
-    if (visibleLessonIndex != task.getLesson().getIndex()) {
-      return visibleLessonIndex > task.getLesson().getIndex();
+  private static boolean refersToNextTask(@NotNull Task sourceTask, @NotNull Task targetTask) {
+    Lesson sourceLesson = sourceTask.getLesson();
+    Lesson targetLesson = targetTask.getLesson();
+    if (sourceLesson == targetLesson) {
+      return targetTask.getIndex() > sourceTask.getIndex();
     }
-    int visibleTaskIndex = taskIndex + 1;
-    return visibleTaskIndex > task.getIndex();
+    if (sourceLesson.getSection() == targetLesson.getSection()) {
+      return targetLesson.getIndex() > sourceLesson.getIndex();
+    }
+    return getIndexInCourse(targetLesson) > getIndexInCourse(sourceLesson);
+
   }
 
-  public int getLessonIndex() {
-    return myLessonIndex;
+  private static int getIndexInCourse(@NotNull Lesson lesson) {
+    Section section = lesson.getSection();
+    return section != null ? section.getIndex() : lesson.getIndex();
   }
 
-  public void setLessonIndex(int lessonIndex) {
-    myLessonIndex = lessonIndex;
+  @Nullable
+  public String getSectionName() {
+    return mySectionName;
   }
 
-  public int getTaskIndex() {
-    return myTaskIndex;
+  public void setSectionName(@Nullable String sectionName) {
+    mySectionName = sectionName;
   }
 
-  public void setTaskIndex(int taskIndex) {
-    myTaskIndex = taskIndex;
+  public String getLessonName() {
+    return myLessonName;
   }
 
-  public String getFile() {
-    return myFile;
+  public void setLessonName(String lessonName) {
+    myLessonName = lessonName;
   }
 
-  public void setFile(String file) {
-    myFile = file;
+  public String getTaskName() {
+    return myTaskName;
+  }
+
+  public void setTaskName(String taskName) {
+    myTaskName = taskName;
+  }
+
+  public String getFileName() {
+    return myFileName;
+  }
+
+  public void setFileName(String fileName) {
+    myFileName = fileName;
   }
 
   public int getPlaceholderIndex() {
@@ -159,7 +188,8 @@ public class AnswerPlaceholderDependency {
 
   @Override
   public String toString() {
-    return EduNames.LESSON + (myLessonIndex + 1) + "#" + EduNames.TASK + (myTaskIndex + 1) + "#" + myFile + "#" + (myPlaceholderIndex + 1);
+    String section = mySectionName != null ? mySectionName + "#" : "";
+    return section + StringUtil.join(ContainerUtil.newArrayList(myLessonName, myTaskName, myFileName, myPlaceholderIndex + 1), "#");
   }
 
   public static class InvalidDependencyException extends IllegalStateException {
