@@ -6,8 +6,9 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
-import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.SELECTED
+import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
+import com.jetbrains.edu.learning.serialization.converter.json.ToFifthVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.lang.reflect.Type
 
@@ -84,7 +85,7 @@ private class StepikSubmissionAnswerPlaceholderAdapter(private val replyVersion:
     var version = version
     while (version < JSON_FORMAT_VERSION) {
       when (version) {
-        1 -> jsonObject = SerializationUtils.Json.removeSubtaskInfo(jsonObject)
+        1 -> jsonObject = ToFifthVersionJsonStepOptionsConverter.removeSubtaskInfo(jsonObject)
       }
       version++
     }
