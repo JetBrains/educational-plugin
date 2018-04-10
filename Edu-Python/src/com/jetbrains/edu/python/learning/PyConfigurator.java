@@ -5,7 +5,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.python.learning.pycharm.PyTaskCheckerProvider;
@@ -16,7 +15,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-  public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
+public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
 
   private static final String COURSE_NAME = "Introduction to Python.zip";
 
@@ -39,18 +38,14 @@ import java.util.List;
     return TESTS_PY;
   }
 
-    @Override
+  @Override
   public boolean excludeFromArchive(@NotNull String path) {
     return path.contains("__pycache__") || path.endsWith(".pyc");
   }
 
   @Override
   public boolean isTestFile(VirtualFile file) {
-    String name = file.getName();
-    if (TESTS_PY.equals(name)) {
-      return true;
-    }
-    return name.contains(FileUtil.getNameWithoutExtension(TESTS_PY)) && name.contains(EduNames.SUBTASK_MARKER);
+    return TESTS_PY.equals(file.getName());
   }
 
   @Override
@@ -64,9 +59,9 @@ import java.util.List;
     return !(PlatformUtils.isPyCharm() || PlatformUtils.isCLion());
   }
 
-    @NotNull
-    @Override
-    public TaskCheckerProvider getTaskCheckerProvider() {
-      return new PyTaskCheckerProvider();
-    }
+  @NotNull
+  @Override
+  public TaskCheckerProvider getTaskCheckerProvider() {
+    return new PyTaskCheckerProvider();
   }
+}
