@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -61,7 +62,7 @@ public class StepikWrappers {
     @Expose public Integer executionTimeLimit;
     @Expose public Map<String, String> codeTemplates;
     @SerializedName("format_version")
-    @Expose public int formatVersion = StepikConnector.CURRENT_VERSION;
+    @Expose public int formatVersion = EduVersions.JSON_FORMAT_VERSION;
 
     public static StepOptions fromTask(@NotNull final Project project, @NotNull final Task task) {
       final StepOptions source = new StepOptions();
@@ -352,14 +353,12 @@ public class StepikWrappers {
 
   public static class Reply {
 
-    public static final int VERSION = 2;
-
     String score;
     List<SolutionFile> solution;
     String language;
     String code;
     String edu_task;
-    public int version = VERSION;
+    public int version = EduVersions.JSON_FORMAT_VERSION;
 
     public Reply(List<SolutionFile> files, String score, String serializedTask) {
       this.score = score;

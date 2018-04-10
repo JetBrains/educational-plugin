@@ -58,7 +58,6 @@ import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
-  public static final int CURRENT_VERSION = 5;
   //this prefix indicates that course can be opened by educational plugin
   private static final String ADAPTIVE_NOTE =
     "\n\nInitially, the adaptive system may behave somewhat randomly, but the more problems you solve, the smarter it becomes!";
@@ -332,7 +331,7 @@ public class StepikConnector {
     }
     try {
       Integer version = Integer.valueOf(versionString);
-      return version <= CURRENT_VERSION;
+      return version <= EduVersions.JSON_FORMAT_VERSION;
     }
     catch (NumberFormatException e) {
       LOG.info("Wrong version format", e);

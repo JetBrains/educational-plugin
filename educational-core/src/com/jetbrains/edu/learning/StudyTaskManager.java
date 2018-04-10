@@ -43,9 +43,9 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.RE
 public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware {
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
-  public static final int CURRENT_VERSION = 9;
+
   private Course myCourse;
-  public int VERSION = CURRENT_VERSION;
+  public int VERSION = EduVersions.XML_FORMAT_VERSION;
 
   public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();
 
@@ -180,7 +180,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
           // state = SerializationUtils.Xml.convertToTenthVersion(myProject, state);
       }
       deserialize(state);
-      VERSION = CURRENT_VERSION;
+      VERSION = EduVersions.XML_FORMAT_VERSION;
       if (myCourse != null) {
         myCourse.init(null, null, true);
       }

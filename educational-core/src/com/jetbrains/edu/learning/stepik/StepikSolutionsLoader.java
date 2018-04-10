@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -321,10 +322,10 @@ public class StepikSolutionsLoader implements Disposable {
       return Collections.emptyMap();
     }
 
-    if (reply.version > StepikWrappers.Reply.VERSION) {
+    if (reply.version > EduVersions.JSON_FORMAT_VERSION) {
       // TODO: show notification with suggestion to update plugin
       LOG.warn(String.format("The plugin supports versions of submission reply not greater than %d. The current version is `%d`",
-                             StepikWrappers.Reply.VERSION, reply.version));
+                             EduVersions.JSON_FORMAT_VERSION, reply.version));
       return Collections.emptyMap();
     }
 
