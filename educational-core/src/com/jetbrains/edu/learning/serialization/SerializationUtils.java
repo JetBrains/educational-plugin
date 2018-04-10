@@ -379,6 +379,7 @@ public class SerializationUtils {
     public static final String PLACEHOLDERS = "placeholders";
     public static final String POSSIBLE_ANSWER = "possible_answer";
     public static final String PLACEHOLDER_TEXT = "placeholder_text";
+    public static final String SELECTED = "selected";
 
     private Json() {
     }
