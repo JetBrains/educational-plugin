@@ -1,12 +1,12 @@
 package com.jetbrains.edu.learning.stepik.serialization
 
 import com.google.gson.*
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FORMAT_VERSION
 import com.jetbrains.edu.learning.serialization.converter.json.ToFifthVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToFourthVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToSecondVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToThirdVersionJsonStepOptionsConverter
-import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.lang.reflect.Type
 
@@ -19,19 +19,18 @@ class StepikStepOptionsAdapter : JsonDeserializer<StepikWrappers.StepOptions> {
     if (versionJson != null) {
       version = versionJson.asInt
     }
-    loop@while (true) {
-      stepOptionsJson = when (version) {
-        1 -> convertToSecondVersion(stepOptionsJson)
-        2 -> convertToThirdVersion(stepOptionsJson)
-        3 -> convertToFourthVersion(stepOptionsJson)
-        4 -> convertToFifthVersion(stepOptionsJson)
-        else -> break@loop
+    while (version < JSON_FORMAT_VERSION) {
+       when (version) {
+        1 -> stepOptionsJson = convertToSecondVersion(stepOptionsJson)
+        2 -> stepOptionsJson = convertToThirdVersion(stepOptionsJson)
+        3 -> stepOptionsJson = convertToFourthVersion(stepOptionsJson)
+        4 -> stepOptionsJson = convertToFifthVersion(stepOptionsJson)
       }
       version++
     }
     val stepOptions = GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
       .fromJson(stepOptionsJson, StepikWrappers.StepOptions::class.java)
-    stepOptions.formatVersion = StepikConnector.CURRENT_VERSION
+    stepOptions.formatVersion = JSON_FORMAT_VERSION
     return stepOptions
   }
 

@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
+import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -18,7 +19,7 @@ import java.util.List;
 public class RemoteCourse extends Course {
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
-                        String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, StepikConnector.CURRENT_VERSION, getLanguageID());
+                        String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
   @SerializedName("is_idea_compatible") private boolean isCompatible = true;
   @SerializedName("sections") List<Integer> sectionIds;
   List<Integer> instructors = new ArrayList<>();
@@ -139,7 +140,7 @@ public class RemoteCourse extends Course {
     final int separator = myType.indexOf(" ");
     final String version;
     if (separator == -1) {
-      version = String.valueOf(StepikConnector.CURRENT_VERSION);
+      version = String.valueOf(EduVersions.JSON_FORMAT_VERSION);
     }
     else {
       version = myType.substring(StepikNames.PYCHARM_PREFIX.length(), separator);

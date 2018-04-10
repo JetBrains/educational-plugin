@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import org.jetbrains.annotations.NonNls;
@@ -242,7 +243,7 @@ public class StepikTaskBuilder {
     Task task = createPluginTask();
     task.setStepId(myStepId);
     task.setUpdateDate(myStepSource.update_date);
-    task.setName(myStep.options != null ? myStep.options.title : (PYCHARM_PREFIX + StepikConnector.CURRENT_VERSION));
+    task.setName(myStep.options != null ? myStep.options.title : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 
     for (StepikWrappers.FileWrapper wrapper : myStep.options.test) {
       task.addTestsTexts(wrapper.name, wrapper.text);

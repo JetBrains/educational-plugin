@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.serialization
 
 import com.google.gson.*
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -20,7 +21,7 @@ class StepikReplyAdapter : JsonDeserializer<StepikWrappers.Reply> {
   }
 }
 
-class StepikSubmissionTaskAdapter(replyVersion: Int = StepikWrappers.Reply.VERSION) : JsonSerializer<Task>, JsonDeserializer<Task> {
+class StepikSubmissionTaskAdapter(replyVersion: Int = JSON_FORMAT_VERSION) : JsonSerializer<Task>, JsonDeserializer<Task> {
 
   private val placeholderAdapter = StepikSubmissionAnswerPlaceholderAdapter(replyVersion)
 
@@ -79,10 +80,9 @@ private class StepikSubmissionAnswerPlaceholderAdapter(private val replyVersion:
     var jsonObject = this
     @Suppress("NAME_SHADOWING")
     var version = version
-    loop@while (true) {
-      jsonObject = when (version) {
-        1 ->  SerializationUtils.Json.removeSubtaskInfo(jsonObject)
-        else -> break@loop
+    while (version < JSON_FORMAT_VERSION) {
+      when (version) {
+        1 -> jsonObject = SerializationUtils.Json.removeSubtaskInfo(jsonObject)
       }
       version++
     }
