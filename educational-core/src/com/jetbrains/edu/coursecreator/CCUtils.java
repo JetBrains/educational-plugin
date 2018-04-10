@@ -12,14 +12,12 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.InputValidatorEx;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ThrowableConsumer;
-import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -36,36 +34,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 
 public class CCUtils {
   public static final String ANSWER_EXTENSION_DOTTED = ".answer.";
   private static final Logger LOG = Logger.getInstance(CCUtils.class);
   public static final String GENERATED_FILES_FOLDER = ".coursecreator";
   public static final String COURSE_MODE = "Course Creator";
-
-  public static int getSubtaskIndex(@NotNull Project project, @NotNull VirtualFile file) {
-    String fileName = file.getName();
-    String name = FileUtil.getNameWithoutExtension(fileName);
-    boolean canBeSubtaskFile = EduUtils.isTestsFile(project, file) || EduUtils.isTaskDescriptionFile(fileName);
-    if (!canBeSubtaskFile) {
-      return -1;
-    }
-    if (!name.contains(EduNames.SUBTASK_MARKER)) {
-      return 0;
-    }
-    int markerIndex = name.indexOf(EduNames.SUBTASK_MARKER);
-    String index = name.substring(markerIndex + EduNames.SUBTASK_MARKER.length());
-    if (index.isEmpty()) {
-      return -1;
-    }
-    try {
-      return Integer.valueOf(index);
-    }
-    catch (NumberFormatException e) {
-      return -1;
-    }
-  }
 
   /**
    * This method decreases index and updates directory names of
@@ -169,51 +143,6 @@ public class CCUtils {
     Presentation presentation = e.getPresentation();
     Project project = e.getProject();
     presentation.setEnabledAndVisible(project != null && isCourseCreator(project));
-  }
-
-  /**
-   * @param fromIndex -1 if task converted to TaskWithSubtasks, -2 if task converted from TaskWithSubtasks
-   */
-  public static void renameFiles(VirtualFile taskDir, Project project, int fromIndex) {
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      Map<VirtualFile, String> newNames = new HashMap<>();
-      VfsUtilCore.visitChildrenRecursively(taskDir, new VirtualFileVisitor<Object>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
-        @Override
-        public boolean visitFile(@NotNull VirtualFile virtualFile) {
-            int subtaskIndex = getSubtaskIndex(project, virtualFile);
-            if (subtaskIndex == -1) return true;
-            if (subtaskIndex > fromIndex) {
-              String index;
-              if (fromIndex == -1) { // add new subtask
-                index = "0";
-              }
-              else { // remove subtask
-                index = fromIndex == -2 ? "" : Integer.toString(subtaskIndex - 1);
-              }
-              String fileName = virtualFile.getName();
-              String nameWithoutExtension = FileUtil.getNameWithoutExtension(fileName);
-              String extension = FileUtilRt.getExtension(fileName);
-              int subtaskMarkerIndex = nameWithoutExtension.indexOf(EduNames.SUBTASK_MARKER);
-              String newName = subtaskMarkerIndex == -1
-                               ? nameWithoutExtension
-                               : nameWithoutExtension.substring(0, subtaskMarkerIndex);
-              newName += index.isEmpty() ? "" : EduNames.SUBTASK_MARKER;
-              newName += index + "." + extension;
-              newNames.put(virtualFile, newName);
-            }
-            return true;
-        }
-      });
-
-      for (Map.Entry<VirtualFile, String> entry : newNames.entrySet()) {
-        try {
-          entry.getKey().rename(project, entry.getValue());
-        }
-        catch (IOException e) {
-          LOG.info(e);
-        }
-      }
-    });
   }
 
   @Nullable

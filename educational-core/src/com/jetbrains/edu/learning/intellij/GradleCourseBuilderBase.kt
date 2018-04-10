@@ -14,7 +14,6 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   abstract val buildGradleTemplateName: String
-  abstract val subtaskTestTemplateName: String
 
   override fun refreshProject(project: Project) {
     ExternalSystemUtil.refreshProjects(project, GradleConstants.SYSTEM_ID, true, ProgressExecutionMode.MODAL_SYNC)
