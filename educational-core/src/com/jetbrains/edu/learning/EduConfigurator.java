@@ -44,7 +44,7 @@ public interface EduConfigurator<Settings> {
   boolean excludeFromArchive(@NotNull String name);
 
   /**
-   * @return true for all the test files including tests for subtasks
+   * @return true for all the test files
    */
   default boolean isTestFile(VirtualFile file) {
     return false;

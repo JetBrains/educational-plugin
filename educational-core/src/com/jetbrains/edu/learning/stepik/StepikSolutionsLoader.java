@@ -169,7 +169,7 @@ public class StepikSolutionsLoader implements Disposable {
       ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
         EduUtils.synchronize();
         if (mySelectedTask != null) {
-          updateUI(myProject, mySelectedTask, mySelectedTask.getTaskDir(myProject), true);
+          updateUI(myProject, mySelectedTask);
         }
       }));
       myBusConnection.disconnect();
@@ -446,10 +446,11 @@ public class StepikSolutionsLoader implements Disposable {
     loadSolution(myProject, task, isSolved);
   }
 
-  private static void updateUI(@NotNull Project project, @NotNull Task task, VirtualFile taskDir, boolean navigateToTask) {
+  private static void updateUI(@NotNull Project project, @NotNull Task task) {
     CheckUtils.drawAllPlaceholders(project, task);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
+    VirtualFile taskDir = task.getTaskDir(project);
     if (toolWindow != null) {
       String text = EduUtils.getTaskTextFromTask(taskDir, task);
       if (text == null) {
@@ -458,8 +459,6 @@ public class StepikSolutionsLoader implements Disposable {
       }
       toolWindow.setText(text);
     }
-    if (navigateToTask) {
-      NavigationUtils.navigateToTask(project, task);
-    }
+    NavigationUtils.navigateToTask(project, task);
   }
 }
