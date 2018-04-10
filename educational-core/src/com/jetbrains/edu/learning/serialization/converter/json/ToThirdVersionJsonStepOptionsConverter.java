@@ -6,6 +6,7 @@ import com.google.gson.JsonPrimitive;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*;
@@ -39,7 +40,7 @@ public class ToThirdVersionJsonStepOptionsConverter implements JsonStepOptionsCo
     final String file = fileWrapper.get(NAME).getAsString();
     final String extension = FileUtilRt.getExtension(file);
     final String name = FileUtil.getNameWithoutExtension(file);
-    if (!name.contains(EduNames.SUBTASK_MARKER)) {
+    if (!name.contains(SerializationUtils.SUBTASK_MARKER)) {
       fileWrapper.remove(NAME);
       fileWrapper.add(NAME, new JsonPrimitive(name + "_subtask0." + extension));
     }

@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,7 @@ public class ToSixthVersionXmlConverter implements XmlConverter {
             String text = VfsUtilCore.loadText(file);
             String key = FileUtil.getNameWithoutExtension(file.getName());
             if (key.equals(EduNames.TASK) && taskDescriptionFiles.size() > 1) {
-              taskTextsMap.put(EduNames.TASK + EduNames.SUBTASK_MARKER + 0, text);
+              taskTextsMap.put(EduNames.TASK + SerializationUtils.SUBTASK_MARKER + 0, text);
             }
             else {
               taskTextsMap.put(key, text);
