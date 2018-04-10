@@ -5,7 +5,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
 import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
@@ -20,8 +19,7 @@ open class KtConfigurator : GradleConfiguratorBase() {
 
   override fun isTestFile(file: VirtualFile): Boolean {
     val name = file.name
-    return TESTS_KT == name || LEGACY_TESTS_KT == name ||
-           name.contains(FileUtil.getNameWithoutExtension(TESTS_KT)) && name.contains(EduNames.SUBTASK_MARKER)
+    return TESTS_KT == name || LEGACY_TESTS_KT == name
   }
 
   override fun getBundledCoursePaths(): List<String> {
@@ -40,7 +38,6 @@ open class KtConfigurator : GradleConfiguratorBase() {
 
     const val LEGACY_TESTS_KT = "tests.kt"
     const val TESTS_KT = "Tests.kt"
-    const val SUBTASK_TESTS_KT = "Subtask_Tests.kt"
     const val TASK_KT = "Task.kt"
     const val MOCK_KT = "Mock.kt"
   }

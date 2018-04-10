@@ -41,6 +41,7 @@ public class SerializationUtils {
   public static final String AUTHOR = "author";
   public static final String AUTHORS = "authors";
   public static final String MY_INITIAL_START = "myInitialStart";
+  public static final String SUBTASK_MARKER = "_subtask";
 
   private SerializationUtils() {
   }

@@ -68,7 +68,6 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
 import com.intellij.util.*;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
@@ -608,14 +607,7 @@ public class EduUtils {
   }
 
   public static boolean isTaskDescriptionFile(@NotNull final String fileName) {
-    if (EduNames.TASK_HTML.equals(fileName) || EduNames.TASK_MD.equals(fileName)) {
-      return true;
-    }
-    String extension = FileUtilRt.getExtension(fileName);
-    if (!extension.equals(FileUtilRt.getExtension(EduNames.TASK_HTML)) && !extension.equals(FileUtilRt.getExtension(EduNames.TASK_MD))) {
-      return false;
-    }
-    return fileName.contains(EduNames.TASK) && fileName.contains(EduNames.SUBTASK_MARKER);
+    return EduNames.TASK_HTML.equals(fileName) || EduNames.TASK_MD.equals(fileName);
   }
 
   public static void replaceActionIDsWithShortcuts(StringBuffer text) {
@@ -656,8 +648,7 @@ public class EduUtils {
       return null;
     }
 
-    return ObjectUtils.chooseNotNull(taskDir.findChild(EduNames.TASK_HTML),
-                                     taskDir.findChild(EduNames.TASK_MD));
+    return ObjectUtils.chooseNotNull(taskDir.findChild(EduNames.TASK_HTML), taskDir.findChild(EduNames.TASK_MD));
   }
 
   @NotNull
