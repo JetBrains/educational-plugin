@@ -110,12 +110,6 @@
 
     <action class="com.jetbrains.edu.coursecreator.actions.CCCreateCoursePreview" id="Educational.Educator.CreateCoursePreview"/>
 
-    <group id="Educational.Educator.AddSubtask">
-      <action class="com.jetbrains.edu.coursecreator.actions.CCNewSubtaskAction" id="Educational.Educator.NewStep"/>
-      <separator/>
-      <add-to-group group-id="EditorPopupMenu" relative-to-action="Educational.Educator.AnswerPlaceholder" anchor="after"/>
-    </group>
-
     <group id="Educational.Educator.ProjectView" popup="true" text="Course Creator"
            class="com.jetbrains.edu.coursecreator.actions.CCProjectViewActionGroup">
       <action id="Educational.Educator.AddTaskFile" class="com.jetbrains.edu.coursecreator.actions.CCAddAsTaskFile"/>
@@ -126,9 +120,6 @@
       <action id="Educational.Educator.CCWrapWithSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection"/>
       <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRemoveSection"
       use-shortcut-of="$Delete"/>
-      <separator/>
-      <action id="Educational.Educator.SwitchSubtask" class="com.jetbrains.edu.coursecreator.actions.CCSwitchSubtask"/>
-      <reference id="Educational.Educator.NewStep"/>
       <separator/>
       <reference id="Educational.Educator.CreateCoursePreview"/>
       <reference id="Educational.Educator.ChangeCourseInfo"/>
@@ -157,14 +148,6 @@
 
     <group id="Educational.Educator.AnswerPlaceholder" popup="true" text="Answer Placeholder"
            class="com.jetbrains.edu.coursecreator.CCAnswerPlaceholderActionGroup">
-      <action id="Educational.Educator..HideFromPrevSubtasks"
-              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCHidePlaceholderFromPrevSubtasks"/>
-      <action id="Educational.Educator..MakeVisibleFromPrevSubtasks"
-              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCMakeVisibleForPrevSubtasks"/>
-      <action id="Educational.Educator..ActivatePlaceholder"
-              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCActivatePlaceholder"/>
-      <action id="Educational.Educator..DeactivatePlaceholder"
-              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeactivatePlaceholder"/>
       <action id="Educational.Educator.EditAnswerPlaceholder"
               class="com.jetbrains.edu.coursecreator.actions.placeholder.CCEditAnswerPlaceholder"/>
       <action id="Educational.Educator.AddDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddDependency"/>
