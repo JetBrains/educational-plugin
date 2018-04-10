@@ -6,6 +6,8 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
+import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.SELECTED
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.lang.reflect.Type
 
@@ -51,8 +53,8 @@ private class StepikSubmissionAnswerPlaceholderAdapter(private val replyVersion:
     val gson = GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create()
     val placeholderObject = gson.toJsonTree(src).asJsonObject
 
-    placeholderObject.add("selected", JsonPrimitive(src.selected))
-    placeholderObject.add("status", JsonPrimitive(src.status.toString()))
+    placeholderObject.add(SELECTED, JsonPrimitive(src.selected))
+    placeholderObject.add(STATUS, JsonPrimitive(src.status.toString()))
 
     return placeholderObject
   }
@@ -65,12 +67,12 @@ private class StepikSubmissionAnswerPlaceholderAdapter(private val replyVersion:
     val placeholderObject = jsonElement.asJsonObject.migrate(replyVersion)
     val placeholder = gson.fromJson<AnswerPlaceholder>(placeholderObject)
 
-    if (placeholderObject.has("selected")) {
-      placeholder.selected = placeholderObject.get("selected").asBoolean
+    if (placeholderObject.has(SELECTED)) {
+      placeholder.selected = placeholderObject.get(SELECTED).asBoolean
     }
 
-    if (placeholderObject.has("status")) {
-      placeholder.status = CheckStatus.valueOf(placeholderObject.get("status").asString)
+    if (placeholderObject.has(STATUS)) {
+      placeholder.status = CheckStatus.valueOf(placeholderObject.get(STATUS).asString)
     }
 
     return placeholder
