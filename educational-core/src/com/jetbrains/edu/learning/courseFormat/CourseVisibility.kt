@@ -8,9 +8,11 @@ import com.intellij.util.ui.JBUI
 import javax.swing.Icon
 
 sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibility> {
-  abstract fun getDecoratedLogo(icon: Icon?): Icon?
-  abstract val tooltipText : String?
+
+  open val tooltipText : String? = null
   open val textAttributes: SimpleTextAttributes = SimpleTextAttributes.REGULAR_ATTRIBUTES
+
+  open fun getDecoratedLogo(icon: Icon?): Icon? = icon
 
   object PrivateVisibility : CourseVisibility(0) {
     override val tooltipText = "Course is private"
@@ -23,11 +25,7 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
     }
   }
 
-  object LocalVisibility : CourseVisibility(3) {
-    override val tooltipText = null
-
-    override fun getDecoratedLogo(icon: Icon?) = icon
-  }
+  object LocalVisibility : CourseVisibility(3)
 
   object PublicVisibility : CourseVisibility(4) {
     override val tooltipText = "Course has not been approved by JetBrains yet"
@@ -36,18 +34,14 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
     override fun getDecoratedLogo(icon: Icon?) = icon?.let { IconLoader.getTransparentIcon(it) }
   }
 
-  class FeaturedVisibility(internal val inGroup: Int) : CourseVisibility(1) {
-    override val tooltipText: String? = null
+  class FeaturedVisibility(internal val inGroup: Int) : CourseVisibility(1)
 
-    override fun getDecoratedLogo(icon: Icon?) = icon
+  class InProgressVisibility(internal val inGroup: Int) : CourseVisibility(2)
+
+  object IncompatibleVersionVisibility : CourseVisibility(5) {
+    override val tooltipText: String? = "Course version is incompatible with plugin version"
+    override val textAttributes: SimpleTextAttributes = SimpleTextAttributes.ERROR_ATTRIBUTES
   }
-
-  class InProgressVisibility(internal val inGroup: Int) : CourseVisibility(2) {
-    override val tooltipText: String? = null
-
-    override fun getDecoratedLogo(icon: Icon?) = icon
-  }
-
 
   override fun compareTo(other: CourseVisibility): Int {
     if (weight != other.weight) {
