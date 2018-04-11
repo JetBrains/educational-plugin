@@ -180,14 +180,20 @@ public class CoursesPanel extends JPanel {
     }
   }
 
-  private void updateCourseInfoPanel(Course selectedCourse) {
+  private void updateCourseInfoPanel(@NotNull Course selectedCourse) {
     myCoursePanel.bindCourse(selectedCourse);
-    if (!isLoggedIn()) {
+    if (selectedCourse.getVisibility().equals(CourseVisibility.IncompatibleVersionVisibility.INSTANCE)) {
+      myErrorLabel.setVisible(true);
+      myErrorLabel.setText(UIUtil.toHtml("<u><b>Update</b></u> plugin to start this course"));
+      myErrorLabel.setForeground(MessageType.ERROR.getTitleForeground());
+    } else if (!isLoggedIn()) {
       myErrorLabel.setVisible(true);
       final boolean loginRequired = isLoginRequired(selectedCourse);
       myErrorLabel.setText(
         UIUtil.toHtml("<u><b>Log in</b></u> to Stepik " + (loginRequired ? "to start this course" : "to see more courses")));
       myErrorLabel.setForeground((loginRequired ? MessageType.ERROR : MessageType.WARNING).getTitleForeground());
+    } else {
+      myErrorLabel.setVisible(false);
     }
   }
 
@@ -325,6 +331,10 @@ public class CoursesPanel extends JPanel {
 
   private static boolean canStartCourse(Course selectedCourse) {
     if (selectedCourse == null) {
+      return false;
+    }
+
+    if (selectedCourse.getVisibility().equals(CourseVisibility.IncompatibleVersionVisibility.INSTANCE)) {
       return false;
     }
 
