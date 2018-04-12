@@ -21,6 +21,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
@@ -32,6 +33,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduLanguageDecorator;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -39,8 +41,9 @@ import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,6 +72,8 @@ public class CoursesPanel extends JPanel {
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
   private MessageBusConnection myBusConnection;
+
+  private ErrorState myErrorState = ErrorState.NONE;
 
   public CoursesPanel(@NotNull List<Course> courses) {
     myCourses = courses;
@@ -105,22 +110,29 @@ public class CoursesPanel extends JPanel {
     myErrorLabel.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseClicked(MouseEvent e) {
-        if (!isLoggedIn() && myErrorLabel.isVisible()) {
-          addLoginListener(CoursesPanel.this::updateCoursesList);
-          StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
+        //noinspection EnumSwitchStatementWhichMissesCases
+        switch (myErrorState) {
+          case NOT_LOGGED_IN:
+          case LOGIN_REQUIRED:
+            addLoginListener(CoursesPanel.this::updateCoursesList);
+            StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
+            break;
+          case INCOMPATIBLE_VERSION:
+            PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
+            break;
         }
       }
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        if (!isLoggedIn() && myErrorLabel.isVisible()) {
+        if (myErrorState != ErrorState.NONE) {
           e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
       }
 
       @Override
       public void mouseExited(MouseEvent e) {
-        if (!isLoggedIn() && myErrorLabel.isVisible()) {
+        if (myErrorState != ErrorState.NONE) {
           e.getComponent().setCursor(Cursor.getDefaultCursor());
         }
       }
@@ -175,26 +187,30 @@ public class CoursesPanel extends JPanel {
   private void processSelectionChanged() {
     Course selectedCourse = myCoursesList.getSelectedValue();
     notifyListeners(canStartCourse(selectedCourse));
-    if (selectedCourse != null) {
-      updateCourseInfoPanel(selectedCourse);
-    }
+    updateCourseInfoPanel(selectedCourse);
   }
 
-  private void updateCourseInfoPanel(@NotNull Course selectedCourse) {
-    myCoursePanel.bindCourse(selectedCourse);
-    if (selectedCourse.getVisibility().equals(CourseVisibility.IncompatibleVersionVisibility.INSTANCE)) {
-      myErrorLabel.setVisible(true);
-      myErrorLabel.setText(UIUtil.toHtml("<u><b>Update</b></u> plugin to start this course"));
-      myErrorLabel.setForeground(MessageType.ERROR.getTitleForeground());
+  private void updateCourseInfoPanel(@Nullable Course selectedCourse) {
+    if (selectedCourse == null) {
+      myErrorState = ErrorState.NONE;
+    } else if (selectedCourse.getVisibility() == CourseVisibility.IncompatibleVersionVisibility.INSTANCE) {
+      myErrorState = ErrorState.INCOMPATIBLE_VERSION;
     } else if (!isLoggedIn()) {
-      myErrorLabel.setVisible(true);
-      final boolean loginRequired = isLoginRequired(selectedCourse);
-      myErrorLabel.setText(
-        UIUtil.toHtml("<u><b>Log in</b></u> to Stepik " + (loginRequired ? "to start this course" : "to see more courses")));
-      myErrorLabel.setForeground((loginRequired ? MessageType.ERROR : MessageType.WARNING).getTitleForeground());
+      if (isLoginRequired(selectedCourse)) {
+        myErrorState = ErrorState.LOGIN_REQUIRED;
+      } else {
+        myErrorState = ErrorState.NOT_LOGGED_IN;
+      }
     } else {
-      myErrorLabel.setVisible(false);
+      myErrorState = ErrorState.NONE;
     }
+
+    if (selectedCourse != null) {
+      myCoursePanel.bindCourse(selectedCourse);
+    }
+    myErrorLabel.setVisible(myErrorState != ErrorState.NONE);
+    myErrorLabel.setText(myErrorState.myMessage);
+    myErrorLabel.setForeground(myErrorState.myForegroundColor);
   }
 
   private static boolean isLoginRequired(Course selectedCourse) {
@@ -329,12 +345,12 @@ public class CoursesPanel extends JPanel {
     }
   }
 
-  private static boolean canStartCourse(Course selectedCourse) {
+  private static boolean canStartCourse(@Nullable Course selectedCourse) {
     if (selectedCourse == null) {
       return false;
     }
 
-    if (selectedCourse.getVisibility().equals(CourseVisibility.IncompatibleVersionVisibility.INSTANCE)) {
+    if (selectedCourse.getVisibility() == CourseVisibility.IncompatibleVersionVisibility.INSTANCE) {
       return false;
     }
 
@@ -476,6 +492,21 @@ public class CoursesPanel extends JPanel {
 
     private void showFailedToAddCourseNotification() {
       Messages.showErrorDialog("Cannot add course from Stepik, please check if link is correct", "Failed to Add Stepik Course");
+    }
+  }
+
+  private enum ErrorState {
+    NONE("", JBColor.BLACK),
+    NOT_LOGGED_IN("<u><b>Log in</b></u> to Stepik to see more courses", MessageType.WARNING.getTitleForeground()),
+    LOGIN_REQUIRED("<u><b>Log in</b></u> to Stepik to start this course", MessageType.ERROR.getTitleForeground()),
+    INCOMPATIBLE_VERSION("<u><b>Update</b></u> plugin to start this course", MessageType.ERROR.getTitleForeground());
+
+    public final String myMessage;
+    public final Color myForegroundColor;
+
+    ErrorState(@NotNull String rawMessage, @NotNull Color foregroundColor) {
+      myMessage = UIUtil.toHtml(rawMessage);
+      myForegroundColor = foregroundColor;
     }
   }
 }
