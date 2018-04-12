@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.update.UpdateNotification;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -54,8 +55,12 @@ import static com.jetbrains.edu.learning.stepik.StepikConnector.*;
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
 
+  private static final String NOTIFICATION_TITLE = "Outdated EduTools Plugin";
+  private static final String NOTIFICATION_CONTENT = "<html>Your version of EduTools plugin is outdated to apply all solutions.\n" +
+                                                     "<a href=\"\">Update plugin</a> to avoid compatibility problems.\n";
+
   private static final Logger LOG = Logger.getInstance(StepikSolutionsLoader.class);
-  private final HashMap<Integer, Future> myFutures = new HashMap<>();
+  private final HashMap<Integer, Future<Boolean>> myFutures = new HashMap<>();
   private final Project myProject;
   private MessageBusConnection myBusConnection;
   private Task mySelectedTask;
@@ -139,14 +144,15 @@ public class StepikSolutionsLoader implements Disposable {
       final Task task = tasksToUpdate.get(i);
       final int progressIndex = i + 1;
       if (progressIndicator == null || !progressIndicator.isCanceled()) {
-        Future<?> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        Future<Boolean> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
           boolean isSolved = task.getStatus() == CheckStatus.Solved;
           if (progressIndicator != null) {
             progressIndicator.setFraction((double)progressIndex / tasksToUpdate.size());
             progressIndicator.setText(String.format("Loading solution %d from %d", progressIndex, tasksToUpdate.size()));
           }
-          loadSolution(myProject, task, isSolved);
+          boolean isIncompatibleSolutions = loadSolution(myProject, task, isSolved);
           countDownLatch.countDown();
+          return isIncompatibleSolutions;
         });
         myFutures.put(task.getStepId(), future);
       }
@@ -166,7 +172,11 @@ public class StepikSolutionsLoader implements Disposable {
 
     try {
       countDownLatch.await();
+      final boolean needToShowNotification = needToShowUpdateNotification();
       ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+        if (needToShowNotification) {
+          new UpdateNotification(NOTIFICATION_TITLE, NOTIFICATION_CONTENT).notify(myProject);
+        }
         EduUtils.synchronize();
         if (mySelectedTask != null) {
           updateUI(myProject, mySelectedTask);
@@ -175,8 +185,20 @@ public class StepikSolutionsLoader implements Disposable {
       myBusConnection.disconnect();
     }
     catch (InterruptedException e) {
-      LOG.warn(e.getCause());
+      LOG.warn(e);
     }
+  }
+
+  private boolean needToShowUpdateNotification() {
+    return myFutures.values().stream().anyMatch(future -> {
+      try {
+        return future.get();
+      }
+      catch (InterruptedException | ExecutionException e) {
+        LOG.warn(e);
+        return false;
+      }
+    });
   }
 
   private void cancelUnfinishedTasks() {
@@ -283,23 +305,29 @@ public class StepikSolutionsLoader implements Disposable {
     return false;
   }
 
-  private void loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
+  /**
+   * @return true if solutions for given task are incompatible with current plugin version, false otherwise
+   */
+  private boolean loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     try {
-      Map<String, String> solutionText = loadSolutionTexts(task, isSolved);
-      if (solutionText.isEmpty()) return;
-      updateFiles(project, task, solutionText);
+      TaskSolutions taskSolutions = loadSolutionTexts(task, isSolved);
+      if (!taskSolutions.hasIncompatibleSolutions && !taskSolutions.solutions.isEmpty()) {
+        updateFiles(project, task, taskSolutions.solutions);
+      }
+      return taskSolutions.hasIncompatibleSolutions;
     }
     catch (IOException e) {
-      LOG.warn(e.getMessage());
+      LOG.warn("Failed to load task solutions", e);
+      return false;
     }
   }
 
-  private static Map<String, String> loadSolutionTexts(@NotNull Task task, boolean isSolved) throws IOException {
+  private static TaskSolutions loadSolutionTexts(@NotNull Task task, boolean isSolved) throws IOException {
     if (task instanceof EduTask) {
       return getEduTaskSolution(task, isSolved);
     }
     else {
-      return getStepikTaskSolution(task, isSolved);
+      return new TaskSolutions(getStepikTaskSolution(task, isSolved));
     }
   }
 
@@ -315,24 +343,24 @@ public class StepikSolutionsLoader implements Disposable {
     return solutions;
   }
 
-  private static Map<String, String> getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
+  private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
     StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
     if (reply == null || reply.solution.isEmpty()) {
       task.setStatus(CheckStatus.Unchecked);
-      return Collections.emptyMap();
+      return TaskSolutions.EMPTY;
     }
 
     if (reply.version > EduVersions.JSON_FORMAT_VERSION) {
       // TODO: show notification with suggestion to update plugin
       LOG.warn(String.format("The plugin supports versions of submission reply not greater than %d. The current version is `%d`",
                              EduVersions.JSON_FORMAT_VERSION, reply.version));
-      return Collections.emptyMap();
+      return TaskSolutions.INCOMPATIBLE;
     }
 
     String serializedTask = reply.edu_task;
     if (serializedTask == null) {
       task.setStatus(checkStatus(isSolved));
-      return loadSolutionTheOldWay(task, reply);
+      return new TaskSolutions(loadSolutionTheOldWay(task, reply));
     }
 
     StepikWrappers.TaskWrapper updatedTask = new GsonBuilder()
@@ -342,7 +370,7 @@ public class StepikSolutionsLoader implements Disposable {
       .fromJson(serializedTask, StepikWrappers.TaskWrapper.class);
 
     if (updatedTask == null || updatedTask.task == null) {
-      return Collections.emptyMap();
+      return TaskSolutions.EMPTY;
     }
 
     task.setStatus(checkStatus(isSolved));
@@ -356,7 +384,7 @@ public class StepikSolutionsLoader implements Disposable {
         taskFileToText.put(file.name, removeAllTags(file.text));
       }
     }
-    return taskFileToText;
+    return new TaskSolutions(taskFileToText);
   }
 
   private static void setPlaceholders(@NotNull TaskFile taskFile, @NotNull TaskFile updatedTaskFile) {
@@ -460,5 +488,23 @@ public class StepikSolutionsLoader implements Disposable {
       toolWindow.setText(text);
     }
     NavigationUtils.navigateToTask(project, task);
+  }
+
+  private static class TaskSolutions {
+
+    public static final TaskSolutions EMPTY = new TaskSolutions(Collections.emptyMap());
+    public static final TaskSolutions INCOMPATIBLE = new TaskSolutions(Collections.emptyMap(), true);
+
+    public final Map<String, String> solutions;
+    public final boolean hasIncompatibleSolutions;
+
+    public TaskSolutions(@NotNull Map<String, String> solutions, boolean hasIncompatibleSolutions) {
+      this.solutions = solutions;
+      this.hasIncompatibleSolutions = hasIncompatibleSolutions;
+    }
+
+    public TaskSolutions(@NotNull Map<String, String> solutions) {
+      this(solutions, false);
+    }
   }
 }
