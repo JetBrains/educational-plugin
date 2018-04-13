@@ -8,7 +8,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.ui.JBColor;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TaskWithSubtasks;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -35,16 +34,9 @@ public class TaskNode extends EduNode {
 
   @Override
   protected void updateImpl(PresentationData data) {
-    CheckStatus status = myTask.getStatus();
     String subtaskInfo = myTask instanceof TaskWithSubtasks ? getSubtaskInfo((TaskWithSubtasks)myTask) : null;
     Icon icon = myTask.getIcon();
-    if (status == CheckStatus.Unchecked) {
-      updatePresentation(data, myTask.getPresentableName(), JBColor.BLACK, icon, subtaskInfo);
-      return;
-    }
-    boolean isSolved = status == CheckStatus.Solved;
-    JBColor color = isSolved ? LIGHT_GREEN : JBColor.RED;
-    updatePresentation(data, myTask.getPresentableName(), color, icon, subtaskInfo);
+    updatePresentation(data, myTask.getPresentableName(), JBColor.BLACK, icon, subtaskInfo);
   }
 
   private static String getSubtaskInfo(TaskWithSubtasks task) {
