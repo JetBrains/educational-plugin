@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.projectView;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
@@ -10,6 +9,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
+import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public class SectionNode extends EduNode {
   public void update(PresentationData data) {
     boolean allSolved = isSolved();
     JBColor color = allSolved ? LIGHT_GREEN : JBColor.BLACK;
-    Icon icon = allSolved ? AllIcons.Nodes.Package : AllIcons.Nodes.Folder; //TODO: use proper icons
+    Icon icon = allSolved ? EducationalCoreIcons.SectionSolved : EducationalCoreIcons.Section;
     final SimpleTextAttributes textAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, color);
     data.addText(mySection.getPresentableName(), textAttributes);
     data.setIcon(icon);

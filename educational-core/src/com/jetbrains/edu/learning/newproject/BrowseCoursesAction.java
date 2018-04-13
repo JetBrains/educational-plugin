@@ -15,7 +15,7 @@ import java.util.List;
 
 public class BrowseCoursesAction extends DumbAwareAction {
   public BrowseCoursesAction() {
-    super("Browse Courses", "Browse list of available courses", EducationalCoreIcons.Course);
+    super("Browse Courses", "Browse list of available courses", EducationalCoreIcons.CourseAction);
   }
 
   @Override

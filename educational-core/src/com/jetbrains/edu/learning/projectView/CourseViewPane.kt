@@ -168,7 +168,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   override fun createTreeUpdater(treeBuilder: AbstractTreeBuilder): AbstractTreeUpdater = AbstractTreeUpdater(treeBuilder)
 
   override fun getTitle(): String = ID
-  override fun getIcon(): Icon = EducationalCoreIcons.Course
+  override fun getIcon(): Icon = EducationalCoreIcons.CourseTree
   override fun getId(): String = ID
   override fun getWeight(): Int = 10
 

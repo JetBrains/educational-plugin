@@ -37,7 +37,7 @@ public class CourseNode extends EduNode {
     final Integer tasksTotal = progress.getSecond();
     data.clearText();
     data.addText(myCourse.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-    data.setIcon(EducationalCoreIcons.Course);
+    data.setIcon(EducationalCoreIcons.CourseTree);
     data.addText("  " + tasksSolved.toString() + "/" + tasksTotal.toString(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
   }
 
