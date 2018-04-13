@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions.sections;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
@@ -12,8 +11,11 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,9 +24,8 @@ import java.io.IOException;
 public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   public static final String TITLE = "Create New " + StringUtil.toTitleCase(EduNames.SECTION);
 
-  // TODO: proper icon
   public CCCreateSection() {
-    super(StringUtil.toTitleCase(EduNames.SECTION), TITLE, AllIcons.Nodes.Folder);
+    super(StringUtil.toTitleCase(EduNames.SECTION), TITLE, EducationalCoreIcons.Section);
   }
 
   @Override

@@ -68,6 +68,6 @@ public class CCCourseNode extends CourseNode {
 
   @Override
   protected void updateImpl(PresentationData data) {
-    updatePresentation(data, myCourse.getName(), JBColor.black, EducationalCoreIcons.Course, "Course Creation");
+    updatePresentation(data, myCourse.getName(), JBColor.black, EducationalCoreIcons.CourseTree, "Course Creation");
   }
 }
