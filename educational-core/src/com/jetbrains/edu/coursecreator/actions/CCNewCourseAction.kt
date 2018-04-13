@@ -7,7 +7,7 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.COURSE_CREAT
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import icons.EducationalCoreIcons
 
-class CCNewCourseAction : AnAction("Create New Course", "Create new educational course", EducationalCoreIcons.CreateNewCourse) {
+class CCNewCourseAction : AnAction("Create New Course", "Create new educational course", EducationalCoreIcons.CourseAction) {
 
   override fun actionPerformed(e: AnActionEvent) {
     CCNewCourseDialog("Create Course", "Create").show()

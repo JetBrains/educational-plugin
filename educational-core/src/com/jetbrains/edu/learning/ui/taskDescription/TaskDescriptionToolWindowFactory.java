@@ -8,8 +8,8 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public class TaskDescriptionToolWindowFactory implements ToolWindowFactory, Dumb
 
   @Override
   public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-    toolWindow.setIcon(EducationalCoreIcons.TaskDescription);
+    toolWindow.setIcon(EducationalCoreIcons.CourseToolWindow);
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course != null) {
       final TaskDescriptionToolWindow taskDescriptionToolWindow;
