@@ -27,9 +27,8 @@ public class SectionNode extends EduNode {
   @Override
   public void update(PresentationData data) {
     boolean allSolved = isSolved();
-    JBColor color = allSolved ? LIGHT_GREEN : JBColor.BLACK;
     Icon icon = allSolved ? EducationalCoreIcons.SectionSolved : EducationalCoreIcons.Section;
-    final SimpleTextAttributes textAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, color);
+    final SimpleTextAttributes textAttributes = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBColor.BLACK);
     data.addText(mySection.getPresentableName(), textAttributes);
     data.setIcon(icon);
   }
