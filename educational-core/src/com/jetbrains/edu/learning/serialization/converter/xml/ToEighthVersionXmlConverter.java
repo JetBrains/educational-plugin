@@ -43,7 +43,7 @@ public class ToEighthVersionXmlConverter implements XmlConverter {
           throw new StudyUnrecognizedFormatException();
         }
 
-        String extension = FileUtilRt.getExtension(EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat()));
+        String extension = FileUtilRt.getExtension(EduUtils.getTaskDescriptionFileName());
 
         for (Map.Entry<String, String> taskDescriptionData : taskTexts.entrySet()) {
           String descriptionFileName = taskDescriptionData.getKey() + "." + extension;

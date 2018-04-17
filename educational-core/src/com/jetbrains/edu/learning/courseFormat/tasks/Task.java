@@ -3,12 +3,10 @@ package com.jetbrains.edu.learning.courseFormat.tasks;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -18,7 +16,6 @@ import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import icons.EducationalCoreIcons;
-import one.util.streamex.EntryStream;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,8 +49,9 @@ public abstract class Task extends StudyItem {
 
   @SerializedName("test_files")
   @Expose protected Map<String, String> testsText = new HashMap<>();
-  @SerializedName("task_texts")
-  @Expose protected Map<String, String> taskTexts = new HashMap<>();
+
+  @SerializedName("description")
+  @Expose private String description;
 
   @SerializedName("additional_files")
   @Expose protected Map<String, String> additionalFiles = new HashMap<>();
@@ -79,12 +77,6 @@ public abstract class Task extends StudyItem {
     return taskFiles;
   }
 
-  @SuppressWarnings("unused")
-  //used for deserialization
-  public void setTaskTexts(Map<String, String> taskTexts) {
-    this.taskTexts = taskTexts;
-  }
-
   @Override
   public String getName() {
     return name;
@@ -95,6 +87,14 @@ public abstract class Task extends StudyItem {
     this.name = name;
   }
 
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
   public Map<String, String> getTestsText() {
     return testsText;
   }
@@ -103,10 +103,6 @@ public abstract class Task extends StudyItem {
   //used for deserialization
   public void setTestsText(Map<String, String> testsText) {
     this.testsText = testsText;
-  }
-
-  public Map<String, String> getTaskTexts() {
-    return taskTexts;
   }
 
   public Map<String, String> getAdditionalFiles() {
@@ -121,10 +117,6 @@ public abstract class Task extends StudyItem {
 
   public void addTestsTexts(String name, String text) {
     testsText.put(name, text);
-  }
-
-  public void addTaskText(String name, String text) {
-    taskTexts.put(name, text);
   }
 
   public void addAdditionalFile(String name, String text) {
@@ -179,14 +171,7 @@ public abstract class Task extends StudyItem {
    * @param wrap if true, text will be wrapped with ancillary information (e.g. to display latex)
    */
   public String getTaskDescription(boolean wrap, @Nullable VirtualFile taskDir) {
-    String fileName = getTaskDescriptionName();
-    //TODO: replace this with simple get after implementing migration for taskTexts
-    Map.Entry<String, String> entry =
-      EntryStream.of(taskTexts).findFirst(e -> FileUtil.getNameWithoutExtension(e.getKey()).equals(fileName)).orElse(null);
-    if (entry == null) {
-      return null;
-    }
-    String taskText = entry.getValue();
+    String taskText = description;
     if (!wrap) {
       return taskText;
     }
@@ -209,10 +194,6 @@ public abstract class Task extends StudyItem {
     return getTaskDescription(true, taskDir);
   }
 
-  protected String getTaskDescriptionName() {
-    return FileUtil.getNameWithoutExtension(EduNames.TASK_HTML);
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -223,7 +204,7 @@ public abstract class Task extends StudyItem {
     if (getIndex() != task.getIndex()) return false;
     if (name != null ? !name.equals(task.name) : task.name != null) return false;
     if (taskFiles != null ? !taskFiles.equals(task.taskFiles) : task.taskFiles != null) return false;
-    if (taskTexts != null ? !taskTexts.equals(task.taskTexts) : task.taskTexts != null) return false;
+    if (description != null ? !description.equals(task.description) : task.description != null) return false;
     if (testsText != null ? !testsText.equals(task.testsText) : task.testsText != null) return false;
 
     return true;
@@ -234,7 +215,7 @@ public abstract class Task extends StudyItem {
     int result = name != null ? name.hashCode() : 0;
     result = 31 * result + getIndex();
     result = 31 * result + (taskFiles != null ? taskFiles.hashCode() : 0);
-    result = 31 * result + (taskTexts != null ? taskTexts.hashCode() : 0);
+    result = 31 * result + (description != null ? description.hashCode() : 0);
     result = 31 * result + (testsText != null ? testsText.hashCode() : 0);
     return result;
   }
@@ -281,18 +262,6 @@ public abstract class Task extends StudyItem {
     if (date == null) return true;
     if (myUpdateDate == null) return false;
     return !date.after(myUpdateDate);
-  }
-
-  public void copyTaskParameters(Task task) {
-    setName(task.getName());
-    setIndex(task.getIndex());
-    setStatus(task.getStatus());
-    setStepId(task.getStepId());
-    taskFiles = task.getTaskFiles();
-    testsText = task.getTestsText();
-    taskTexts = task.getTaskTexts();
-    setLesson(task.getLesson());
-    setUpdateDate(task.getUpdateDate());
   }
 
   // used in json serialization/deserialization

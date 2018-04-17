@@ -24,7 +24,7 @@ class StepikReplyAdapter : JsonDeserializer<StepikWrappers.Reply> {
   }
 }
 
-class StepikSubmissionTaskAdapter(replyVersion: Int = JSON_FORMAT_VERSION) : JsonSerializer<Task>, JsonDeserializer<Task> {
+class StepikSubmissionTaskAdapter(private val replyVersion: Int = JSON_FORMAT_VERSION) : JsonSerializer<Task>, JsonDeserializer<Task> {
 
   private val placeholderAdapter = StepikSubmissionAnswerPlaceholderAdapter(replyVersion)
 
@@ -44,7 +44,28 @@ class StepikSubmissionTaskAdapter(replyVersion: Int = JSON_FORMAT_VERSION) : Jso
       .registerTypeAdapter(AnswerPlaceholder::class.java, placeholderAdapter)
       .create()
 
-    return SerializationUtils.Json.doDeserialize(json, gson)
+    val jsonObject = json.asJsonObject.migrate(replyVersion)
+    return SerializationUtils.Json.doDeserialize(jsonObject, gson)
+  }
+
+  private fun JsonObject.migrate(version: Int): JsonObject {
+    @Suppress("NAME_SHADOWING")
+    var version = version
+    while (version < JSON_FORMAT_VERSION) {
+      when (version) {
+        1 -> {
+          val taskTexts = getAsJsonObject(SerializationUtils.Json.TASK_TEXTS)
+          if (taskTexts != null && taskTexts.size() > 0) {
+            val description = taskTexts.entrySet().firstOrNull()?.value?.asString
+            addProperty(SerializationUtils.DESCRIPTION, description)
+          }
+          remove(SerializationUtils.Json.TASK_TEXTS)
+        }
+      }
+      version++
+    }
+
+    return this
   }
 }
 

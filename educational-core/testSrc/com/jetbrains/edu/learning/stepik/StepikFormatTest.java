@@ -208,7 +208,7 @@ public class StepikFormatTest {
   }
 
   @Test
-  public void testOptionsText() throws IOException {
+  public void testOptionsDescription() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
     final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
@@ -216,8 +216,6 @@ public class StepikFormatTest {
     final StepikWrappers.Step block = step.block;
     final StepikWrappers.StepOptions options = block.options;
 
-    final List<StepikWrappers.FileWrapper> texts = options.text;
-    assertEquals(1, texts.size());
     assertEquals("\n" +
         "Traditionally the first program you write in any programming language is <code>\"Hello World!\"</code>.\n" +
         "<br><br>\n" +
@@ -226,7 +224,7 @@ public class StepikFormatTest {
         "Hint: To run a script сhoose 'Run &lt;name&gt;' on the context menu. <br>\n" +
         "For more information visit <a href=\"https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html\">our help</a>.\n" +
         "\n" +
-        "<br>\n", texts.get(0).text);
+        "<br>\n", options.description);
   }
 
   @Test
@@ -325,6 +323,7 @@ public class StepikFormatTest {
     AnswerPlaceholder placeholder = placeholders.get(0);
     assertEquals(Collections.singletonList("Type your name here."), placeholder.getHints());
     assertEquals("Liana", placeholder.getPossibleAnswer());
+    assertEquals("Description", options.description);
     return options;
   }
 

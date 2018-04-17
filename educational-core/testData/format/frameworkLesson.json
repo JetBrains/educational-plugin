@@ -9,6 +9,7 @@
       "task_list": [
         {
           "name": "task1",
+          "description": "First task description",
           "stepic_id": 0,
           "task_files": {
             "tmp.py": {
@@ -18,7 +19,6 @@
             }
           },
           "test_files": {},
-          "task_texts": {},
           "additional_files": {},
           "task_type": "edu"
         }
