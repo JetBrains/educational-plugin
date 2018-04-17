@@ -141,22 +141,23 @@
       <add-to-group group-id="FileMenu" relative-to-action="FileMainSettingsGroup" anchor="before"/>
     </group>
 
-    <action id="Educational.Educator.AddAnswerPlaceholder"
-            class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholder">
+    <group id="Educational.Educator.AnswerPlaceholder">
+      <action id="Educational.Educator.AddAnswerPlaceholder"
+              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholder"/>
+      <group id="Educational.Educator.ModifyAnswerPlaceholder" popup="true" text="Answer Placeholder"
+             class="com.jetbrains.edu.coursecreator.CCAnswerPlaceholderActionGroup">
+        <action id="Educational.Educator.EditAnswerPlaceholder"
+                class="com.jetbrains.edu.coursecreator.actions.placeholder.CCEditAnswerPlaceholder"/>
+        <action id="Educational.Educator.AddDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddDependency"/>
+        <action id="Educational.Educator.RemoveDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCRemoveDependency"/>
+        <action id="Educational.Educator.DeleteAnswerPlaceholder"
+                class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAnswerPlaceholder"/>
+        <action id="Educational.Educator.DeleteAllPlaceholders"
+                class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAllAnswerPlaceholdersAction"/>
+        <separator/>
+      </group>
+      <separator/>
       <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-    </action>
-
-    <group id="Educational.Educator.AnswerPlaceholder" popup="true" text="Answer Placeholder"
-           class="com.jetbrains.edu.coursecreator.CCAnswerPlaceholderActionGroup">
-      <action id="Educational.Educator.EditAnswerPlaceholder"
-              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCEditAnswerPlaceholder"/>
-      <action id="Educational.Educator.AddDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCAddDependency"/>
-      <action id="Educational.Educator.RemoveDependency" class="com.jetbrains.edu.coursecreator.actions.placeholder.CCRemoveDependency"/>
-      <action id="Educational.Educator.DeleteAnswerPlaceholder"
-              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAnswerPlaceholder"/>
-      <action id="Educational.Educator.DeleteAllPlaceholders"
-              class="com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAllAnswerPlaceholdersAction"/>
-      <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="Educational.Educator.AddAnswerPlaceholder"/>
     </group>
 
     <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
