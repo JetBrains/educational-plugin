@@ -75,8 +75,10 @@ import com.intellij.util.io.ZipUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -640,23 +642,9 @@ public class EduUtils {
     return taskDir.findFileByRelativePath(taskFile.getPathInTask());
   }
 
-  @Nullable
-  public static VirtualFile findTaskDescriptionVirtualFile(@NotNull Project project, @NotNull VirtualFile taskDir) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return null;
-    }
-    Task task = getTask(taskDir, course);
-    if (task == null) {
-      return null;
-    }
-
-    return ObjectUtils.chooseNotNull(taskDir.findChild(EduNames.TASK_HTML), taskDir.findChild(EduNames.TASK_MD));
-  }
-
   @NotNull
-  public static String getTaskDescriptionFileName(final boolean useHtml) {
-    return useHtml ? EduNames.TASK_HTML : EduNames.TASK_MD;
+  public static String getTaskDescriptionFileName() {
+    return CCSettings.getInstance().useHtmlAsDefaultTaskFormat() ? EduNames.TASK_HTML : EduNames.TASK_MD;
   }
 
   @Nullable

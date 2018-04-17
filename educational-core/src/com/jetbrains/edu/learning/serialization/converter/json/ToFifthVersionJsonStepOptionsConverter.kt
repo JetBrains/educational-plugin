@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.serialization.converter.json
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.intellij.openapi.diagnostic.Logger
+import com.jetbrains.edu.learning.serialization.SerializationUtils.DESCRIPTION
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
 
@@ -14,6 +15,7 @@ class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
         removeSubtaskInfo(placeholder.asJsonObject)
       }
     }
+    migrateDescription(stepOptionsJson)
     return stepOptionsJson
   }
 
@@ -48,6 +50,15 @@ class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
       }
       placeholderObject.remove(SUBTASK_INFOS)
       return placeholderObject
+    }
+
+    private fun migrateDescription(stepOptions: JsonObject) {
+      val taskTexts = stepOptions.getAsJsonArray(TEXTS)
+      if (taskTexts != null && taskTexts.size() > 0) {
+        val description = taskTexts.get(0).asJsonObject.getAsJsonPrimitive(FILE_WRAPPER_TEXT).asString
+        stepOptions.addProperty(DESCRIPTION, description)
+      }
+      stepOptions.remove(TEXTS)
     }
 
     private val JsonElement.size: Int get() = when {

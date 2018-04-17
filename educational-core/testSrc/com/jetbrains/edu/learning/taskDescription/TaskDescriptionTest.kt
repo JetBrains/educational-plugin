@@ -87,8 +87,7 @@ class TaskDescriptionTest : EduTestCase() {
   private fun doTestShortcut(taskText: String, taskTextWithShortcuts: String, keymapName: String = "Default for XWin") {
     configureByTaskFile(1, 1, "taskFile1.txt")
     val task = EduUtils.getCurrentTask(project)!!
-    task.taskTexts.clear()
-    task.addTaskText(EduNames.TASK, taskText)
+    task.description = taskText
     val oldActiveKeymap = KeymapManager.getInstance().activeKeymap
     val keymapManager = KeymapManager.getInstance() as KeymapManagerImpl
     keymapManager.activeKeymap = keymapManager.getKeymap(keymapName)

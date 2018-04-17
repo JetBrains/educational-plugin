@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
@@ -183,11 +184,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
     List<VirtualFile> result = new ArrayList<>();
     for (Lesson lesson : course.getLessons()) {
       for (Task task : lesson.getTaskList()) {
-        VirtualFile taskDir = task.getTaskDir(project);
-        if (taskDir == null) {
-          continue;
-        }
-        VirtualFile file = EduUtils.findTaskDescriptionVirtualFile(project, taskDir);
+        VirtualFile file = TaskExt.getDescriptionFile(task, project);
         if (file != null) {
           result.add(file);
         }
