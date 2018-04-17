@@ -86,16 +86,20 @@ public interface EduConfigurator<Settings> {
 
   @NotNull
   default DefaultActionGroup getTaskDescriptionActionGroup() {
+    ActionManager actionManager = ActionManager.getInstance();
     final DefaultActionGroup group = new DefaultActionGroup();
+
+    group.add(actionManager.getAction(CheckAction.ACTION_ID));
+    group.addSeparator();
+
     String[] ids = new String[]{
-      CheckAction.ACTION_ID,
       PreviousTaskAction.ACTION_ID,
       NextTaskAction.ACTION_ID,
       RefreshTaskFileAction.ACTION_ID,
       ShowHintAction.ACTION_ID,
       CompareWithAnswerAction.ACTION_ID
     };
-    ActionManager actionManager = ActionManager.getInstance();
+
     Arrays.stream(ids)
       .map(actionManager::getAction)
       .filter(Objects::nonNull)
