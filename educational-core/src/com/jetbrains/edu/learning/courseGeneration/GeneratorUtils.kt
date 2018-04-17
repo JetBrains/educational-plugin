@@ -107,7 +107,7 @@ object GeneratorUtils {
     createTestFiles(taskDir, task)
     val course = task.course
     if (course != null && CCUtils.COURSE_MODE == course.courseMode) {
-      createDescriptionFiles(taskDir, task)
+      createDescriptionFile(taskDir, task)
     }
   }
 
@@ -126,20 +126,17 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createDescriptionFiles(taskDir: VirtualFile, task: Task) {
-    val taskTexts = task.taskTexts
-    val renamedTaskTexts = taskTexts.mapKeys { entry ->
-      entry.key + "." + FileUtilRt.getExtension(EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat()))
-    }
-    createFiles(taskDir, renamedTaskTexts)
-    val project = task.project ?: return
-    for (fileName in renamedTaskTexts.keys) {
-      val file = taskDir.findChild(fileName) ?: continue
+  fun createDescriptionFile(taskDir: VirtualFile, task: Task): VirtualFile? {
+    val descriptionFileName = EduUtils.getTaskDescriptionFileName()
+    val childFile = createChildFile(taskDir, descriptionFileName, task.description)
+    if (childFile != null) {
+      val project = task.project ?: return null
       runReadAction {
-        val document = FileDocumentManager.getInstance().getDocument(file) ?: return@runReadAction
+        val document = FileDocumentManager.getInstance().getDocument(childFile) ?: return@runReadAction
         document.addDocumentListener(SynchronizeTaskDescription(project), project)
       }
     }
+    return childFile
   }
 
   @Throws(IOException::class)
@@ -169,8 +166,8 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createChildFile(parentDir: VirtualFile, path: String, text: String) {
-    runInWriteActionAndWait(ThrowableRunnable {
+  fun createChildFile(parentDir: VirtualFile, path: String, text: String): VirtualFile? {
+    return runInWriteActionAndWait(ThrowableComputable {
       var newDirectories: String? = null
       var fileName = path
       var dir: VirtualFile? = parentDir
@@ -183,15 +180,15 @@ object GeneratorUtils {
         dir = VfsUtil.createDirectoryIfMissing(parentDir, newDirectories)
       }
       if (dir != null) {
-        var virtualTaskFile = dir.findChild(fileName)
-        if (virtualTaskFile == null) {
-          virtualTaskFile = dir.createChildData(parentDir, fileName)
-        }
+        val virtualTaskFile = dir.findOrCreateChildData(parentDir, fileName)
         if (EduUtils.isImage(path)) {
           virtualTaskFile.setBinaryContent(Base64.decodeBase64(text))
         } else {
           VfsUtil.saveText(virtualTaskFile, text)
         }
+        virtualTaskFile
+      } else {
+        null
       }
     })
   }

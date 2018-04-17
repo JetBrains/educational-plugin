@@ -37,6 +37,12 @@
               "name": "hello_world.py"
             }
           ],
+          "text": [
+            {
+              "name": "task",
+              "text": "Description"
+            }
+          ],
           "title": "Our first program"
         },
         "subtitle_files": []

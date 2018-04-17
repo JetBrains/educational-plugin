@@ -9,9 +9,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
+import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-
 
 class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit) {
   companion object {
@@ -26,16 +26,14 @@ class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit)
   }
 
   private fun findOrCreateDescriptionFile(project: Project, task: Task): VirtualFile {
+    val descriptionFile = task.getDescriptionFile(project)
+    if (descriptionFile != null) return descriptionFile
+
     val taskDir = task.getTaskDir(project) ?: error("Task dir for task ${task.name} not found")
-    val descriptionFile = EduUtils.findTaskDescriptionVirtualFile(project, taskDir)
-    if (descriptionFile != null) {
-      return descriptionFile
-    }
-    if (task.taskTexts.isEmpty()) {
+    if (task.description == null) {
       task.addDefaultTaskDescription()
     }
-    GeneratorUtils.createDescriptionFiles(taskDir, task)
-    return EduUtils.findTaskDescriptionVirtualFile(project, taskDir) ?: error("Failed to create description file in $taskDir")
+    return GeneratorUtils.createDescriptionFile(taskDir, task) ?: error("Failed to create description file in $taskDir")
   }
 
   override fun update(e: AnActionEvent?) {
