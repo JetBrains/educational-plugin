@@ -1,0 +1,147 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "id": 294196,
+      "lesson": 77857,
+      "position": 1,
+      "status": "ready",
+      "block": {
+        "name": "text",
+        "text": "<h1>\n    Getting started with the course\n</h1>\n<p>\n    This is an introductory course to Java. The course covers the basic concepts used to get going with the language.\n    Each lesson may include theory, quizzes, and programming practice assignments. Read all the theory, check your\n    understanding answering the quiz questions and practice with programming assignments.\n</p>\n<p>\n    <strong>\n        Note:\n    </strong>\n    If you like learning the theory lessons on Stepik but prefer to do the coding exercises on IntelliJ IDEA - you don't\n    need to worry about losing your course progress. All your progress is synchronized between the platforms. Follow\n    <strong>\n        IDE tips &amp; tricks\n    </strong>\n    section helping you to be more productive while learning with IntelliJ IDEA.\n</p>\n\n    <h2>IDE tips &amp; tricks</h2>\n    <p>When you open your course, you will see the main tool windows used to get around: Project View, Editor, Task\n        Description.</p>\n    <h3>Project View</h3>\n    <p><img src=\"https://i.imgur.com/6wgX9Qh.png\" width=\"400\"></p>\n    <p>Project View shows the course syllabus: list of lessons with lesson steps, or tasks. To navigate to a task, click\n        on\n        its name.</p>\n    <p><strong>Note: </strong>You can hide the Project View window by clicking on the Project tool button or with the\n        \u23181 shortcut. This will give you more space for\n        code\n        and\n        the task description. Click the Project tool button (or\n        invoke \u23181) once again to show the hidden Project\n        View.</p>\n    <h3>Task Description</h3>\n    <p><img src=\"https://i.imgur.com/vD2jxwu.png\" width=\"400\"></p>\n    <p>The Task Description window gives you all the information you need to complete a task:</p>\n    <ul>\n        <li>Learning and reading materials for theory tasks</li>\n        <li>Question and variants of the answers to the quizzes</li>\n        <li>Problem descriptions for programming assignments</li>\n    </ul>\n    <p>Use Task Description icons for the following actions:</p>\n    <ul>\n        <li><img src=\"https://i.imgur.com/c4WahYK.png\" height=\"20\">\n            \u00a0\u2013 to check if a task assignment is done\n            right for the quizzes and programming tasks (\u2325\u2318\u23ce)\n        </li>\n        <li><img src=\"https://i.imgur.com/DIOwj3t.png\" height=\"20\">\n            \u00a0\u2013 to run code from the editor for the\n            theory tasks (\u2325\u2318\u23ce)\n        </li>\n        <li><img src=\"https://i.imgur.com/vcEfyQC.png\" height=\"20\">\n            \u00a0\u2013 to go to the previous/next task (\u2318,/\u2318.)\n        </li>\n        <li><img src=\"https://i.imgur.com/H3vlDyy.png\" height=\"20\">\n            \u00a0\u2013 to drop all the task changes and\n            start it anew (\u21e7\u2318X)\n        </li>\n    </ul>\n    <p>Task Description needs to be visible, to hide it completely is not advised. But still, you can make it a bit less\n        distracting by moving it out of the way.</p>\n    <p>If you work with two monitors, one of the best options is to switch the Task Description panel to the floating\n        mode\n        and move it to the second monitor or just place it near the main IDE window. You can do so with the help of\n        special\n        tool window settings icon <img src=\"https://i.imgur.com/aSQFZGc.png\" height=\"20\">:</p>\n    <p><img src=\"https://i.imgur.com/A5QGkp1.png\" width=\"400\"></p>\n    <p>Or if you prefer you can move the panel to the left, or to the bottom:</p>\n    <p><img src=\"https://i.imgur.com/DoSsjMa.png\" width=\"400\"></p>\n    <h3>\n        Editor\n    </h3>\n    <p><img src=\"https://i.imgur.com/670dxIT.png\" width=\"400\"></p>\n    <p>\n        The Editor is your playground and where you will mainly be programming. You can experiment here for the theory\n        tasks\n        and quizzes without being checked. For programming assignments in the Editor you will find the code you need to\n        fix,\n        or you will write your own code from scratch. This code will be checked.\n    </p>\n    <p>\n        You can always run your code with the icon on the left gutter <img src=\"https://i.imgur.com/DIOwj3t.png\" height=\"20\">.\n    </p>\n    <p>\n        <strong>\n            Note:\n        </strong>\n        If you want to easily go back to the Editor and focus on your code, the Hide All Windows command (\u21e7\u2318F12)\n        is the best option. Just invoke it once again to get all the windows back.\n    </p>\n    <h3>\n        Use keyboard shortcuts\n    </h3>\n    <p>\n        We encourage you to use the keyboard shortcuts, as they can significantly speed up your coding and even\n        <a href=\"http://rsiinfo.org/rsi-computers/keyboard-shortcuts/\">\n            reduce the risks of Repetitive Strain Injury</a>. IntelliJ IDEA is a keyboard-centric IDE. You can choose\n        one of\n        the pre-configured shortcut schemes, or a keymap,\n        in Preferences | Keymap:\n    </p>\n    <p><img src=\"https://i.imgur.com/k0BaxOb.png\" width=\"400\"></p>\n    <p>\n        You can always take a closer look at the list of actions and corresponding shortcuts available with the help of\n        search:\n    </p>\n    <p><img src=\"https://i.imgur.com/QQKLPVU.png\" width=\"400\"></p>\n    <p>\n        Or, you can search an action by shortcut:\n    </p>\n    <p><img src=\"https://i.imgur.com/nKJFT5J.png\" width=\"400\"></p>\n    <p>\n        <br>\n        You can also\n        <a href=\"https://www.jetbrains.com/help/idea/configuring-keyboard-shortcuts.html\">\n            set up your own keymap</a> if you need a customizable list of shortcuts.\n    </p>\n    <p><strong>Note:</strong> Please note, that we use the default Mac OS scheme (Mac OS X 10.5+) in this course. If you use the default\n        keymap of your OS and want a nice looking cheat sheet to print out, go to Help | Keymap Reference to get it.</p>\n    <h3>\n        Go to the dark side\n    </h3>\n    <p>\n        IntelliJ IDEA initially uses the default light color scheme, but you can always switch to the dark Darcula\n        scheme.\n        Please go to Preferences | Appearance &amp; Behaviour | Appearance and choose Darcula as Theme under UI Options\n        section:\n    </p>\n    <p><img src=\"https://i.imgur.com/D7jBPCA.png\" width=\"400\"></p>\n    <p>\n        <strong>\n            Note:\n        </strong>\n        You can use \u2303` shortcut to quickly switch between color\n        schemes and keymaps.\n    </p>\n    <h3>\n        Find any action with ease\n    </h3>\n    <p>\n        It is very hard to remember all the shortcuts and all the actions and productivity boosters IntelliJ IDEA has.\n        But\n        don\u2019t worry about that. All you need to remember is the one action that rules them all, Help | Find Action\n        command (\u21e7\u2318A). Just start typing the action you need, and get\n        the list:\n    </p>\n    <p><img src=\"https://i.imgur.com/o7CIDOJ.png\" width=\"400\"></p>\n",
+        "video": null,
+        "animation": null,
+        "options": {},
+        "subtitle_files": []
+      },
+      "actions": {},
+      "progress": "77-294196",
+      "subscriptions": [
+        "31-77-294196",
+        "30-77-294196"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 693,
+      "passed_by": 693,
+      "correct_ratio": null,
+      "worth": null,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-03-17T07:53:00Z",
+      "update_date": "2018-03-27T20:23:07Z",
+      "discussions_count": 1,
+      "discussion_proxy": "77-294196-1",
+      "discussion_threads": [
+        "77-294196-1"
+      ]
+    },
+    {
+      "id": 294199,
+      "lesson": 77857,
+      "position": 3,
+      "status": "ready",
+      "block": {
+        "name": "choice",
+        "text": "<h1>Quiz</h1>\n<p>What are the main features of Java?</p>",
+        "video": null,
+        "animation": null,
+        "options": {},
+        "subtitle_files": []
+      },
+      "actions": {
+        "submit": "#"
+      },
+      "progress": "77-294199",
+      "subscriptions": [
+        "31-77-294199",
+        "30-77-294199"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 270,
+      "passed_by": 255,
+      "correct_ratio": 0.43302180685358255,
+      "worth": null,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-03-17T07:56:10Z",
+      "update_date": "2018-03-28T15:54:30Z",
+      "discussions_count": 1,
+      "discussion_proxy": "77-294199-1",
+      "discussion_threads": [
+        "77-294199-1"
+      ]
+    },
+    {
+      "id": 294219,
+      "lesson": 77869,
+      "position": 2,
+      "status": "ready",
+      "block": {
+        "name": "code",
+        "text": "<h1>Practice</h1>\n<p>A programmer wrote some code with a lot of comments but he forgot to add the required symbol for comments. As a\n    result the code did not compile. You need to comment some lines in their code to make it compile.</p>\n<p><strong>Note</strong>: Please, do not remove any of the comments which are already written!</p>\n<h2>IDE tips &amp; tricks</h2>\n<p>Use Cmd + / shortcut to comment the line of your cursor is on. You don\u2019t need to move your cursor to the beginning of\n    the line.</p>\n<p>Use Alt + Left Arrow/Right Arrow to navigate through code elements in a line of code.</p>\n<p>Run your code with Ctrl + Shift + R before checking the task to make sure everything is compiled.</p>",
+        "video": null,
+        "animation": null,
+        "options": {
+          "execution_time_limit": 5,
+          "execution_memory_limit": 256,
+          "limits": {
+            "java8": {
+              "time": 8,
+              "memory": 256
+            }
+          },
+          "code_templates": {
+            "java8": "The restriction: the class should have the name Main\npublic class Main {\n\n    The start point of your program\n    public static void main(String[] args) {\n        System.out.println(\"It's compiled!\"); It prints \"It's compiled!\"\n    }\n}"
+          },
+          "code_templates_options": {},
+          "samples": []
+        },
+        "subtitle_files": []
+      },
+      "actions": {
+        "submit": "#"
+      },
+      "progress": "77-294219",
+      "subscriptions": [
+        "31-77-294219",
+        "30-77-294219"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 99,
+      "passed_by": 146,
+      "correct_ratio": 0.47093023255813954,
+      "worth": null,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-03-17T08:10:50Z",
+      "update_date": "2018-03-27T21:31:04Z",
+      "discussions_count": 0,
+      "discussion_proxy": "77-294219-1",
+      "discussion_threads": [
+        "77-294219-1"
+      ]
+    }
+  ]
+}
