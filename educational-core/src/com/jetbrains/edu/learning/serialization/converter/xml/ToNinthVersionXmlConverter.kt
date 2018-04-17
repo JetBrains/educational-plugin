@@ -29,6 +29,7 @@ class ToNinthVersionXmlConverter : XmlConverter {
           taskDir.rename(ToNinthVersionXmlConverter::class.java, GeneratorUtils.getUniqueValidName(lessonDir, getName(task)))
         }
         removeSubtaskInfos(task)
+        migrateDescription(task)
       }
       runWriteAction {
         lessonDir.rename(ToNinthVersionXmlConverter::class.java, GeneratorUtils.getUniqueValidName(project.baseDir, getName(lesson)))
@@ -52,6 +53,13 @@ class ToNinthVersionXmlConverter : XmlConverter {
         placeholder.removeContent(getChildWithName(placeholder, SUBTASK_INFOS))
       }
     }
+  }
+
+  private fun migrateDescription(task: Element) {
+    val description = getChildMap<String, String>(task, TASK_TEXTS).values.firstOrNull()
+                      ?: throw StudyUnrecognizedFormatException("`$TASK_TEXTS` map is empty")
+    addChildWithName(task, DESCRIPTION, description)
+    task.removeContent(getChildWithName(task, TASK_TEXTS))
   }
 
   private fun getName(element: Element) = getChildWithName(element, NAME).getAttributeValue(VALUE)

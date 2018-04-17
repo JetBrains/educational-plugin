@@ -120,7 +120,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   }
 
   fun withTaskDescription(text: String) {
-    task.addTaskText(EduNames.TASK, text)
+    task.description = text
   }
 
   fun taskFile(name: String, text: String = "", buildTaskFile: (TaskFileBuilder.() -> Unit)? = null) {

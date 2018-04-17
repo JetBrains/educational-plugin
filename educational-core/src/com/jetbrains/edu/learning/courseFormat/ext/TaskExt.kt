@@ -7,7 +7,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
@@ -79,7 +78,12 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
 }
 
 fun Task.addDefaultTaskDescription() {
-  val fileName = EduUtils.getTaskDescriptionFileName(CCSettings.getInstance().useHtmlAsDefaultTaskFormat())
+  val fileName = EduUtils.getTaskDescriptionFileName()
   val template = FileTemplateManager.getDefaultInstance().getInternalTemplate(fileName) ?: return
-  addTaskText(EduNames.TASK, template.text)
+  description = template.text
+}
+
+fun Task.getDescriptionFile(project: Project): VirtualFile? {
+  val taskDir = getTaskDir(project) ?: return null
+  return taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
 }
