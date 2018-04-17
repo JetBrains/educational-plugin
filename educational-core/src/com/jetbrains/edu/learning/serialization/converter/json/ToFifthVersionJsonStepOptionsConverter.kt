@@ -10,9 +10,12 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
 class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
 
   override fun convert(stepOptionsJson: JsonObject): JsonObject {
-    for (file in stepOptionsJson.getAsJsonArray(FILES)) {
-      for (placeholder in file.asJsonObject.getAsJsonArray(PLACEHOLDERS)) {
-        removeSubtaskInfo(placeholder.asJsonObject)
+    val taskFiles = stepOptionsJson.getAsJsonArray(FILES)
+    if (taskFiles != null) {
+      for (file in taskFiles) {
+        for (placeholder in file.asJsonObject.getAsJsonArray(PLACEHOLDERS)) {
+          removeSubtaskInfo(placeholder.asJsonObject)
+        }
       }
     }
     migrateDescription(stepOptionsJson)

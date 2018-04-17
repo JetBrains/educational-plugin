@@ -292,13 +292,19 @@ public class StepikFormatTest {
     assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).text);
   }
 
+  @Test
+  public void testNonEduTasks() throws IOException {
+    Gson gson = getGson();
+    String jsonText = loadJsonText();
+    final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
+    assertNotNull(stepContainer);
+    assertNotNull(stepContainer.steps);
+    assertEquals(3, stepContainer.steps.size());
+  }
+
   @NotNull
   private static Gson getGson() {
-    return new GsonBuilder()
-          .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter())
-          .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
-          .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+    return StepikClient.createGson();
   }
 
   @NotNull
