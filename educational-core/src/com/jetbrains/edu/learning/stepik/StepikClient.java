@@ -85,14 +85,17 @@ public class StepikClient {
   }
 
   static <T> T deserializeStepikResponse(Class<T> container, String responseString) {
-    Gson gson =
-      new GsonBuilder()
-          .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter())
-          .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
-          .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter())
-          .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+    Gson gson = createGson();
     return gson.fromJson(responseString, container);
+  }
+
+  public static Gson createGson() {
+    return new GsonBuilder()
+        .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter())
+        .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
+        .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter())
+        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   }
 
   private static void initializeClient() {
