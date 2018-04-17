@@ -53,8 +53,8 @@ public class StepikWrappers {
     @Expose public String taskType;
     @Expose public List<FileWrapper> test;
     @Expose public String title;
+    @Expose public String description;
     @Expose public List<TaskFile> files;
-    @Expose public List<FileWrapper> text;
     @Expose public List<List<String>> samples;
     @SerializedName("additional_files")
     @Expose public List<FileWrapper> additionalFiles;
@@ -67,19 +67,12 @@ public class StepikWrappers {
     public static StepOptions fromTask(@NotNull final Project project, @NotNull final Task task) {
       final StepOptions source = new StepOptions();
       source.title = task.getName();
+      source.description = task.getDescription();
       setTests(task, source, project);
-      setTaskTexts(task, source);
       setTaskFiles(project, task, source);
       setAdditionalFiles(task, source);
       source.taskType = task.getTaskType();
       return source;
-    }
-
-    private static void setTaskTexts(@NotNull Task task, @NotNull StepOptions stepOptions) {
-      stepOptions.text = new ArrayList<>();
-      for (Map.Entry<String, String> entry : task.getTaskTexts().entrySet()) {
-        stepOptions.text.add(new FileWrapper(entry.getKey(), entry.getValue()));
-      }
     }
 
     private static void setTaskFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {

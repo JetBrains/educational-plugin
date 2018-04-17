@@ -36,11 +36,6 @@
                     <option name="name" value="First task"/>
                     <option name="status" value="Unchecked"/>
                     <option name="stepId" value="0"/>
-                    <option name="taskTexts">
-                      <map>
-                        <entry key="task" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
-                      </map>
-                    </option>
                     <option name="testsText">
                       <map>
                         <entry key="Test.java" value="class Test {&#10;    // put your test here&#10;}"/>
@@ -89,6 +84,7 @@
                         </entry>
                       </map>
                     </option>
+                    <option name="description" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
                   </EduTask>
                   <EduTask>
                     <option name="additionalFiles">
@@ -98,11 +94,6 @@
                     <option name="name" value="First task"/>
                     <option name="status" value="Unchecked"/>
                     <option name="stepId" value="0"/>
-                    <option name="taskTexts">
-                      <map>
-                        <entry key="task" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
-                      </map>
-                    </option>
                     <option name="testsText">
                       <map>
                         <entry key="Test.java" value="class Test {&#10;    // put your test here&#10;}"/>
@@ -129,6 +120,7 @@
                         </entry>
                       </map>
                     </option>
+                    <option name="description" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
                   </EduTask>
                 </list>
               </option>

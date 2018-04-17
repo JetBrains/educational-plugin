@@ -44,7 +44,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
 
   fun `test default task description created`() {
     removeTaskDescriptionFile()
-    findTask(0, 0).taskTexts.clear()
+    findTask(0, 0).description = null
     doOpenTaskDescription()
 
     val defaultTaskDescriptionText = FileTemplateManager.getDefaultInstance().getInternalTemplate(EduNames.TASK_HTML).text
@@ -58,7 +58,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     myFixture.openFileInEditor(findTaskDescriptionFile())
     myFixture.type("Do not ")
 
-    assertEquals("Do not solve task", findTask(0, 0).taskTexts[EduNames.TASK])
+    assertEquals("Do not solve task", findTask(0, 0).description)
   }
 
   private fun getCurrentlyOpenedText() = FileEditorManager.getInstance(project).selectedTextEditor?.document?.text ?: error(

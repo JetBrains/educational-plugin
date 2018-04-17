@@ -41,6 +41,12 @@
               "name": "hello_world.py"
             }
           ],
+          "text": [
+            {
+              "name": "task",
+              "text": "Description"
+            }
+          ],
           "title": "Our first program",
           "format_version": 2,
           "last_subtask_index": 0

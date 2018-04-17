@@ -41,12 +41,7 @@
             }
           ],
           "title": "Our first program",
-          "text": [
-            {
-              "name": "task",
-              "text": "\nTraditionally the first program you write in any programming language is <code>\"Hello World!\"</code>.\n<br><br>\nIntroduce yourself to the World.\n<br><br>\nHint: To run a script \u0441hoose 'Run &lt;name&gt;' on the context menu. <br>\nFor more information visit <a href=\"https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html\">our help</a>.\n\n<br>\n"
-            }
-          ]
+          "description": "\nTraditionally the first program you write in any programming language is <code>\"Hello World!\"</code>.\n<br><br>\nIntroduce yourself to the World.\n<br><br>\nHint: To run a script \u0441hoose 'Run &lt;name&gt;' on the context menu. <br>\nFor more information visit <a href=\"https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html\">our help</a>.\n\n<br>\n"
         },
         "subtitle_files": []
       },
