@@ -1,14 +1,12 @@
 package com.jetbrains.edu.coursecreator.settings;
 
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-
-import static com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction.COURSE_CREATOR_ENABLED;
 
 public class CCOptions implements OptionsProvider {
   private JRadioButton myHtmlRadioButton;
@@ -18,7 +16,7 @@ public class CCOptions implements OptionsProvider {
   @Nullable
   @Override
   public JComponent createComponent() {
-    if (!PropertiesComponent.getInstance().getBoolean(COURSE_CREATOR_ENABLED)) return null;
+    if (!CCPluginToggleAction.isCourseCreatorFeaturesEnabled()) return null;
     if (CCSettings.getInstance().useHtmlAsDefaultTaskFormat()) {
       myHtmlRadioButton.setSelected(true);
       IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(
