@@ -2,10 +2,14 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.KeyedLazyInstance;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
@@ -15,8 +19,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RemoteCourse extends Course {
+
+  private static final Logger LOG = Logger.getInstance(Course.class);
+
+  private static List<String> ourSupportedLanguages;
+
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
@@ -146,11 +156,12 @@ public class RemoteCourse extends Course {
       version = myType.substring(StepikNames.PYCHARM_PREFIX.length(), separator);
     }
 
-    myType = String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, version, language);
+    setType(String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, version, language));
   }
 
   public void setType(String type) {
     myType = type;
+    myCompatibility = courseCompatibility(this);
   }
 
   public boolean isPublic() {
@@ -175,5 +186,56 @@ public class RemoteCourse extends Course {
 
   public void setCompatible(boolean compatible) {
     isCompatible = compatible;
+  }
+
+  @NotNull
+  private static List<String> getSupportedLanguages() {
+    if (ourSupportedLanguages == null) {
+      final List<String> supportedLanguages = EduConfiguratorManager.allExtensions()
+        .stream()
+        .map(KeyedLazyInstance::getKey)
+        .collect(Collectors.toList());
+      ourSupportedLanguages = supportedLanguages;
+      return supportedLanguages;
+    } else {
+      return ourSupportedLanguages;
+    }
+  }
+
+  @NotNull
+  private static CourseCompatibility courseCompatibility(@NotNull RemoteCourse courseInfo) {
+    final List<String> supportedLanguages = getSupportedLanguages();
+
+    if (courseInfo.isAdaptive()) {
+      if (supportedLanguages.contains(courseInfo.getLanguageID())) {
+        return CourseCompatibility.COMPATIBLE;
+      } else {
+        return CourseCompatibility.UNSUPPORTED;
+      }
+    }
+
+    String courseType = courseInfo.getType();
+    final List<String> typeLanguage = StringUtil.split(courseType, " ");
+    String prefix = typeLanguage.get(0);
+    if (!supportedLanguages.contains(courseInfo.getLanguageID())) return CourseCompatibility.UNSUPPORTED;
+    if (typeLanguage.size() < 2 || !prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {
+      return CourseCompatibility.UNSUPPORTED;
+    }
+    String versionString = prefix.substring(StepikNames.PYCHARM_PREFIX.length());
+    if (versionString.isEmpty()) {
+      return CourseCompatibility.COMPATIBLE;
+    }
+    try {
+      Integer version = Integer.valueOf(versionString);
+      if (version <= EduVersions.JSON_FORMAT_VERSION) {
+        return CourseCompatibility.COMPATIBLE;
+      } else {
+        return CourseCompatibility.INCOMPATIBLE_VERSION;
+      }
+    }
+    catch (NumberFormatException e) {
+      LOG.info("Wrong version format", e);
+      return CourseCompatibility.UNSUPPORTED;
+    }
   }
 }

@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.Language;
-import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
@@ -19,7 +18,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.apache.http.*;
@@ -54,7 +55,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
-import static com.jetbrains.edu.learning.stepik.StepikWrappers.LessonContainer;
 
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
@@ -118,14 +118,9 @@ public class StepikConnector {
       try {
         final RemoteCourse info = getCourseFromStepik(user, courseId, false);
         if (info == null) continue;
-        CourseCompatibility compatibility = courseCompatibility(info);
+        CourseCompatibility compatibility = info.getCompatibility();
         if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
-        CourseVisibility visibility;
-        if (compatibility == CourseCompatibility.INCOMPATIBLE_VERSION) {
-          visibility = CourseVisibility.IncompatibleVersionVisibility.INSTANCE;
-        } else {
-          visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId()));
-        }
+        CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId()));
         info.setVisibility(visibility);
         setCourseAuthors(info);
 
@@ -245,7 +240,7 @@ public class StepikConnector {
     for (RemoteCourse info : courses) {
       if (!info.isAdaptive() && StringUtil.isEmptyOrSpaces(info.getType())) continue;
 
-      CourseCompatibility compatibility = courseCompatibility(info);
+      CourseCompatibility compatibility = info.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
 
       setCourseAuthors(info);
@@ -256,7 +251,7 @@ public class StepikConnector {
       if (info.isPublic() && !featuredCourses.contains(info.getId())) {
         info.setDescription(info.getDescription() + NOT_VERIFIED_NOTE);
       }
-      info.setVisibility(getVisibility(info, featuredCourses, compatibility == CourseCompatibility.COMPATIBLE));
+      info.setVisibility(getVisibility(info, featuredCourses));
       result.add(info);
     }
   }
@@ -271,8 +266,7 @@ public class StepikConnector {
     info.setAuthors(authors);
   }
 
-  private static CourseVisibility getVisibility(@NotNull RemoteCourse course, @NotNull List<Integer> featuredCourses, boolean isVersionCompatible) {
-    if (!isVersionCompatible) return CourseVisibility.IncompatibleVersionVisibility.INSTANCE;
+  private static CourseVisibility getVisibility(@NotNull RemoteCourse course, @NotNull List<Integer> featuredCourses) {
     if (!course.isPublic()) {
       return CourseVisibility.PrivateVisibility.INSTANCE;
     }
@@ -314,47 +308,6 @@ public class StepikConnector {
       LOG.warn(e.getMessage());
     }
     return -1;
-  }
-
-  static CourseCompatibility courseCompatibility(@NotNull RemoteCourse courseInfo) {
-    final ArrayList<String> supportedLanguages = new ArrayList<>();
-    final List<LanguageExtensionPoint<EduConfigurator<?>>> extensions = EduConfiguratorManager.allExtensions();
-    for (LanguageExtensionPoint extension : extensions) {
-      String languageId = extension.getKey();
-      supportedLanguages.add(languageId);
-    }
-
-    if (courseInfo.isAdaptive()) {
-      if (supportedLanguages.contains(courseInfo.getLanguageID())) {
-        return CourseCompatibility.COMPATIBLE;
-      } else {
-        return CourseCompatibility.UNSUPPORTED;
-      }
-    }
-
-    String courseType = courseInfo.getType();
-    final List<String> typeLanguage = StringUtil.split(courseType, " ");
-    String prefix = typeLanguage.get(0);
-    if (!supportedLanguages.contains(courseInfo.getLanguageID())) return CourseCompatibility.UNSUPPORTED;
-    if (typeLanguage.size() < 2 || !prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {
-      return CourseCompatibility.UNSUPPORTED;
-    }
-    String versionString = prefix.substring(StepikNames.PYCHARM_PREFIX.length());
-    if (versionString.isEmpty()) {
-      return CourseCompatibility.COMPATIBLE;
-    }
-    try {
-      Integer version = Integer.valueOf(versionString);
-      if (version <= EduVersions.JSON_FORMAT_VERSION) {
-        return CourseCompatibility.COMPATIBLE;
-      } else {
-        return CourseCompatibility.INCOMPATIBLE_VERSION;
-      }
-    }
-    catch (NumberFormatException e) {
-      LOG.info("Wrong version format", e);
-      return CourseCompatibility.UNSUPPORTED;
-    }
   }
 
   @Nullable
@@ -999,12 +952,6 @@ public class StepikConnector {
   @NotNull
   public static List<Integer> getInProgressCourses() {
     return getCoursesIds(IN_PROGRESS_COURSES_LINK);
-  }
-
-  public enum CourseCompatibility {
-    COMPATIBLE,
-    INCOMPATIBLE_VERSION,
-    UNSUPPORTED
   }
 
   private static class CustomServerAuthorizer {
