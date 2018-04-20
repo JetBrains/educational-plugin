@@ -33,6 +33,7 @@ public class Course extends ItemContainer {
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
+  protected CourseCompatibility myCompatibility = CourseCompatibility.COMPATIBLE;
 
   public Course() {}
 
@@ -268,6 +269,11 @@ public class Course extends ItemContainer {
   @Transient
   public void setVisibility(CourseVisibility visibility) {
     myVisibility = visibility;
+  }
+
+  @Transient
+  public CourseCompatibility getCompatibility() {
+    return myCompatibility;
   }
 
   public void setItems(List<StudyItem> items) {
