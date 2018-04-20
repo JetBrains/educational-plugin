@@ -37,9 +37,10 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility;
+import com.jetbrains.edu.learning.courseFormat.CourseCompatibility;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
@@ -176,10 +177,9 @@ public class CoursesPanel extends JPanel {
         protected void customizeCellRenderer(@NotNull JList<? extends Course> jList, Course course, int i, boolean b, boolean b1) {
           Icon logo = getLogo(course);
           setBorder(JBUI.Borders.empty(5, 0));
-          CourseVisibility visibility = course.getVisibility();
-          append(course.getName(), visibility.getTextAttributes());
-          setIcon(visibility.getDecoratedLogo(logo));
-          setToolTipText(visibility.getTooltipText());
+          append(course.getName(), course.getVisibility().getTextAttributes());
+          setIcon(CourseExt.getDecoratedLogo(course, logo));
+          setToolTipText(CourseExt.getTooltipText(course));
         }
       };
   }
@@ -193,7 +193,7 @@ public class CoursesPanel extends JPanel {
   private void updateCourseInfoPanel(@Nullable Course selectedCourse) {
     if (selectedCourse == null) {
       myErrorState = ErrorState.NONE;
-    } else if (selectedCourse.getVisibility() == CourseVisibility.IncompatibleVersionVisibility.INSTANCE) {
+    } else if (selectedCourse.getCompatibility() != CourseCompatibility.COMPATIBLE) {
       myErrorState = ErrorState.INCOMPATIBLE_VERSION;
     } else if (!isLoggedIn()) {
       if (isLoginRequired(selectedCourse)) {
@@ -350,7 +350,7 @@ public class CoursesPanel extends JPanel {
       return false;
     }
 
-    if (selectedCourse.getVisibility() == CourseVisibility.IncompatibleVersionVisibility.INSTANCE) {
+    if (selectedCourse.getCompatibility() != CourseCompatibility.COMPATIBLE) {
       return false;
     }
 

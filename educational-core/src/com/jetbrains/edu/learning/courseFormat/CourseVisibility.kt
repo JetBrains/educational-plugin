@@ -38,11 +38,6 @@ sealed class CourseVisibility(private val weight: Int) : Comparable<CourseVisibi
 
   class InProgressVisibility(internal val inGroup: Int) : CourseVisibility(2)
 
-  object IncompatibleVersionVisibility : CourseVisibility(5) {
-    override val tooltipText: String? = "Course version is incompatible with plugin version"
-    override val textAttributes: SimpleTextAttributes = SimpleTextAttributes.ERROR_ATTRIBUTES
-  }
-
   override fun compareTo(other: CourseVisibility): Int {
     if (weight != other.weight) {
       return Integer.compare(weight, other.weight)
