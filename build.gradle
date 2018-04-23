@@ -2,7 +2,7 @@ buildscript {
     ext.pythonPluginVersion = pythonPluginVersion
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
     ext.studioSandbox = project.buildDir.absolutePath + File.separator + "studio-sandbox"
-    ext.kotlinVersion = "1.2.21"
+    ext.kotlinVersion = "1.2.40"
     repositories {
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -14,7 +14,7 @@ buildscript {
 }
 
 plugins {
-    id "org.jetbrains.intellij" version "0.2.17" apply false
+    id "org.jetbrains.intellij" version "0.3.1" apply false
     id "java"
     id "idea"
     id "de.undercouch.download" version "3.2.0"
@@ -126,7 +126,7 @@ allprojects {
     }
 
     dependencies {
-        compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
+        compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
         compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
         compile 'org.jsoup:jsoup:1.11.2'
         compile("org.jetbrains:markdown:${markdownParserVersion}") {
