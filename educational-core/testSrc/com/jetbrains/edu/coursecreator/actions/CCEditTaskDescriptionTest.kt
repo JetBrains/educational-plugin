@@ -25,7 +25,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
 
   fun `test is invisible for student`() {
     getCourse().courseMode = EduNames.STUDY
-    TestCase.assertFalse("action should be invisible to student", doOpenTaskDescription ().isEnabledAndVisible)
+    TestCase.assertFalse("action should be invisible to student", doOpenTaskDescription().isEnabledAndVisible)
   }
 
   fun `test task description file opened`() {
@@ -44,7 +44,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
 
   fun `test default task description created`() {
     removeTaskDescriptionFile()
-    findTask(0, 0).description = null
+    findTask(0, 0).descriptionText = null
     doOpenTaskDescription()
 
     val defaultTaskDescriptionText = FileTemplateManager.getDefaultInstance().getInternalTemplate(EduNames.TASK_HTML).text
@@ -58,7 +58,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     myFixture.openFileInEditor(findTaskDescriptionFile())
     myFixture.type("Do not ")
 
-    assertEquals("Do not solve task", findTask(0, 0).description)
+    assertEquals("Do not solve task", findTask(0, 0).descriptionText)
   }
 
   private fun getCurrentlyOpenedText() = FileEditorManager.getInstance(project).selectedTextEditor?.document?.text ?: error(

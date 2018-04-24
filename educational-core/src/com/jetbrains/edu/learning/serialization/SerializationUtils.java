@@ -42,7 +42,6 @@ public class SerializationUtils {
   public static final String AUTHORS = "authors";
   public static final String MY_INITIAL_START = "myInitialStart";
   public static final String SUBTASK_MARKER = "_subtask";
-  public static final String DESCRIPTION = "description";
 
   private SerializationUtils() {
   }
@@ -98,6 +97,8 @@ public class SerializationUtils {
     public static final String CODE_TASK = "CodeTask";
     public static final String TASK_TEXTS = "taskTexts";
     public static final String HINTS = "hints";
+    public static final String DESCRIPTION_TEXT = "descriptionText";
+    public static final String DESCRIPTION_FORMAT = "descriptionFormat";
 
     private Xml() {
     }
@@ -383,6 +384,8 @@ public class SerializationUtils {
     public static final String PLACEHOLDER_TEXT = "placeholder_text";
     public static final String SELECTED = "selected";
     public static final String FILE_WRAPPER_TEXT = "text";
+    public static final String DESCRIPTION_TEXT = "description_text";
+    public static final String DESCRIPTION_FORMAT = "description_format";
 
     private Json() {
     }

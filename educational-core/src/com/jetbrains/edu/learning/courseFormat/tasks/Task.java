@@ -50,8 +50,11 @@ public abstract class Task extends StudyItem {
   @SerializedName("test_files")
   @Expose protected Map<String, String> testsText = new HashMap<>();
 
-  @SerializedName("description")
-  @Expose private String description;
+  @SerializedName("description_text")
+  @Expose private String descriptionText;
+
+  @SerializedName("description_format")
+  @Expose private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
 
   @SerializedName("additional_files")
   @Expose protected Map<String, String> additionalFiles = new HashMap<>();
@@ -87,12 +90,20 @@ public abstract class Task extends StudyItem {
     this.name = name;
   }
 
-  public String getDescription() {
-    return description;
+  public String getDescriptionText() {
+    return descriptionText;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public void setDescriptionText(String descriptionText) {
+    this.descriptionText = descriptionText;
+  }
+
+  public DescriptionFormat getDescriptionFormat() {
+    return descriptionFormat;
+  }
+
+  public void setDescriptionFormat(DescriptionFormat descriptionFormat) {
+    this.descriptionFormat = descriptionFormat;
   }
 
   public Map<String, String> getTestsText() {
@@ -171,14 +182,17 @@ public abstract class Task extends StudyItem {
    * @param wrap if true, text will be wrapped with ancillary information (e.g. to display latex)
    */
   public String getTaskDescription(boolean wrap, @Nullable VirtualFile taskDir) {
-    String taskText = description;
+    String taskText = descriptionText;
     if (!wrap) {
       return taskText;
     }
     if (taskDir != null) {
       StringBuffer text = new StringBuffer(taskText);
       EduUtils.replaceActionIDsWithShortcuts(text);
-      taskText = EduUtils.convertToHtml(text.toString(), taskDir);
+      taskText = text.toString();
+      if (descriptionFormat == DescriptionFormat.MD) {
+        taskText = EduUtils.convertToHtml(taskText, taskDir);
+      }
     }
     if (getLesson().getCourse() instanceof RemoteCourse && taskText != null) {
       taskText = StepikUtils.wrapStepikTasks(this, taskText, getLesson().getCourse().isAdaptive());
@@ -204,7 +218,8 @@ public abstract class Task extends StudyItem {
     if (getIndex() != task.getIndex()) return false;
     if (name != null ? !name.equals(task.name) : task.name != null) return false;
     if (taskFiles != null ? !taskFiles.equals(task.taskFiles) : task.taskFiles != null) return false;
-    if (description != null ? !description.equals(task.description) : task.description != null) return false;
+    if (descriptionText != null ? !descriptionText.equals(task.descriptionText) : task.descriptionText != null) return false;
+    if (descriptionFormat != null ? !descriptionFormat.equals(task.descriptionFormat) : task.descriptionFormat != null) return false;
     if (testsText != null ? !testsText.equals(task.testsText) : task.testsText != null) return false;
 
     return true;
@@ -215,7 +230,8 @@ public abstract class Task extends StudyItem {
     int result = name != null ? name.hashCode() : 0;
     result = 31 * result + getIndex();
     result = 31 * result + (taskFiles != null ? taskFiles.hashCode() : 0);
-    result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (descriptionText != null ? descriptionText.hashCode() : 0);
+    result = 31 * result + (descriptionFormat != null ? descriptionFormat.hashCode() : 0);
     result = 31 * result + (testsText != null ? testsText.hashCode() : 0);
     return result;
   }
