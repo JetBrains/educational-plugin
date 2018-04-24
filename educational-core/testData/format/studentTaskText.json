@@ -6,7 +6,8 @@
       "task_list": [
         {
           "name": "task1",
-          "description": "First task description",
+          "description_text": "First task description",
+          "description_format": "html",
           "stepic_id": 0,
           "task_files": {
             "my_task.py": {

@@ -84,7 +84,8 @@
                         </entry>
                       </map>
                     </option>
-                    <option name="description" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
+                    <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
+                    <option name="descriptionFormat" value="HTML" />
                   </EduTask>
                   <EduTask>
                     <option name="additionalFiles">
@@ -120,7 +121,8 @@
                         </entry>
                       </map>
                     </option>
-                    <option name="description" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
+                    <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
+                    <option name="descriptionFormat" value="HTML" />
                   </EduTask>
                 </list>
               </option>
