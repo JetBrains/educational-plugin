@@ -399,29 +399,23 @@ public class EduUtils {
     if (task == null || task.getLesson() == null || task.getLesson().getCourse() == null) {
       return null;
     }
-    String text = task.getTaskDescription(taskDirectory) != null ? task.getTaskDescription(taskDirectory) : getTaskTextByTaskName(taskDirectory);
+    String text = task.getTaskDescription(taskDirectory) != null ? task.getTaskDescription(taskDirectory) : getTaskTextByTaskName(task, taskDirectory);
 
     if (text == null) return null;
 
     return text;
   }
 
-  @NotNull
-  private static String addExtension(@NotNull String fileNameWithoutExtension, @NotNull String defaultName) {
-    return fileNameWithoutExtension + "." + FileUtilRt.getExtension(defaultName);
-  }
-
   @Nullable
-  private static String getTaskTextByTaskName(@Nullable VirtualFile taskDirectory) {
+  private static String getTaskTextByTaskName(@NotNull Task task, @Nullable VirtualFile taskDirectory) {
     if (taskDirectory == null) return null;
 
-    String textFromHtmlFile = getTextByTaskFileFormat(taskDirectory, EduNames.TASK_HTML);
-    if (textFromHtmlFile != null) {
-      return textFromHtmlFile;
+    DescriptionFormat format = task.getDescriptionFormat();
+    String taskDescription = getTextByTaskFileFormat(taskDirectory, format.getDescriptionFileName());
+    if (format == DescriptionFormat.MD) {
+      return convertToHtml(taskDescription, taskDirectory);
     }
-
-    String taskTextFromMd = getTextByTaskFileFormat(taskDirectory, EduNames.TASK_MD);
-    return convertToHtml(taskTextFromMd, taskDirectory);
+    return taskDescription;
   }
 
   @Nullable
@@ -640,8 +634,8 @@ public class EduUtils {
   }
 
   @NotNull
-  public static String getTaskDescriptionFileName() {
-    return CCSettings.getInstance().useHtmlAsDefaultTaskFormat() ? EduNames.TASK_HTML : EduNames.TASK_MD;
+  public static DescriptionFormat getDefaultTaskDescriptionFormat() {
+    return CCSettings.getInstance().useHtmlAsDefaultTaskFormat() ? DescriptionFormat.HTML : DescriptionFormat.MD;
   }
 
   @Nullable

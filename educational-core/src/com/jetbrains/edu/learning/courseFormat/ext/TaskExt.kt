@@ -78,12 +78,14 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
 }
 
 fun Task.addDefaultTaskDescription() {
-  val fileName = EduUtils.getTaskDescriptionFileName()
+  val format = EduUtils.getDefaultTaskDescriptionFormat()
+  val fileName = format.descriptionFileName
   val template = FileTemplateManager.getDefaultInstance().getInternalTemplate(fileName) ?: return
-  description = template.text
+  descriptionText = template.text
+  descriptionFormat = format
 }
 
 fun Task.getDescriptionFile(project: Project): VirtualFile? {
   val taskDir = getTaskDir(project) ?: return null
-  return taskDir.findChild(EduNames.TASK_HTML) ?: taskDir.findChild(EduNames.TASK_MD)
+  return taskDir.findChild(descriptionFormat.descriptionFileName)
 }

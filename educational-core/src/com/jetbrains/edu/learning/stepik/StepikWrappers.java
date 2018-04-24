@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +54,10 @@ public class StepikWrappers {
     @Expose public String taskType;
     @Expose public List<FileWrapper> test;
     @Expose public String title;
-    @Expose public String description;
+    @SerializedName(SerializationUtils.Json.DESCRIPTION_TEXT)
+    @Expose public String descriptionText;
+    @SerializedName(SerializationUtils.Json.DESCRIPTION_FORMAT)
+    @Expose public DescriptionFormat descriptionFormat;
     @Expose public List<TaskFile> files;
     @Expose public List<List<String>> samples;
     @SerializedName("additional_files")
@@ -67,7 +71,8 @@ public class StepikWrappers {
     public static StepOptions fromTask(@NotNull final Project project, @NotNull final Task task) {
       final StepOptions source = new StepOptions();
       source.title = task.getName();
-      source.description = task.getDescription();
+      source.descriptionText = task.getDescriptionText();
+      source.descriptionFormat = task.getDescriptionFormat();
       setTests(task, source, project);
       setTaskFiles(project, task, source);
       setAdditionalFiles(task, source);
