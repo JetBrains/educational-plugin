@@ -30,7 +30,7 @@ class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit)
     if (descriptionFile != null) return descriptionFile
 
     val taskDir = task.getTaskDir(project) ?: error("Task dir for task ${task.name} not found")
-    if (task.description == null) {
+    if (task.descriptionText == null) {
       task.addDefaultTaskDescription()
     }
     return GeneratorUtils.createDescriptionFile(taskDir, task) ?: error("Failed to create description file in $taskDir")

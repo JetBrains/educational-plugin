@@ -6,7 +6,8 @@
       "task_list": [
         {
           "name": "task1",
-          "description": "Write task description here using markdown or html",
+          "description_text": "Write task description here using markdown or html",
+          "description_format": "html",
           "stepic_id": 0,
           "task_files": {
             "task.py": {

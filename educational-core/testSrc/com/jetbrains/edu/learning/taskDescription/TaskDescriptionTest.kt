@@ -6,7 +6,6 @@ import com.intellij.openapi.keymap.KeymapManager
 import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.impl.KeymapManagerImpl
 import com.intellij.openapi.util.io.FileUtil
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -87,7 +86,7 @@ class TaskDescriptionTest : EduTestCase() {
   private fun doTestShortcut(taskText: String, taskTextWithShortcuts: String, keymapName: String = "Default for XWin") {
     configureByTaskFile(1, 1, "taskFile1.txt")
     val task = EduUtils.getCurrentTask(project)!!
-    task.description = taskText
+    task.descriptionText = taskText
     val oldActiveKeymap = KeymapManager.getInstance().activeKeymap
     val keymapManager = KeymapManager.getInstance() as KeymapManagerImpl
     keymapManager.activeKeymap = keymapManager.getKeymap(keymapName)

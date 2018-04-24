@@ -96,19 +96,29 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     lesson.name = name
   }
 
-  fun task(task: Task, name: String? = null, taskDescription: String? = null, buildTask: TaskBuilder.() -> Unit) {
+  fun task(task: Task, name: String? = null, taskDescription: String? = null, taskDescriptionFormat: DescriptionFormat? = null, buildTask: TaskBuilder.() -> Unit) {
     val taskBuilder = TaskBuilder(lesson, task)
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
     taskBuilder.withName(name?: EduNames.TASK + nextTaskIndex)
-    taskBuilder.withTaskDescription(taskDescription?: "solve task")
+    taskBuilder.withTaskDescription(taskDescription ?: "solve task", taskDescriptionFormat)
     taskBuilder.buildTask()
     lesson.addTask(taskBuilder.task)
   }
 
-  fun eduTask(name: String? = null, taskDescription: String? = null, buildTask: TaskBuilder.() -> Unit) = task(EduTask(), name, taskDescription, buildTask)
+  fun eduTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    buildTask: TaskBuilder.() -> Unit
+  ) = task(EduTask(), name, taskDescription, taskDescriptionFormat, buildTask)
 
-  fun theoryTask(name: String? = null, taskDescription: String? = null, buildTask: TaskBuilder.() -> Unit) = task(TheoryTask(), name, taskDescription, buildTask)
+  fun theoryTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    buildTask: TaskBuilder.() -> Unit
+  ) = task(TheoryTask(), name, taskDescription, taskDescriptionFormat, buildTask)
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {
@@ -119,8 +129,9 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     task.name = name
   }
 
-  fun withTaskDescription(text: String) {
-    task.description = text
+  fun withTaskDescription(text: String, format: DescriptionFormat? = null) {
+    task.descriptionText = text
+    task.descriptionFormat = format ?: DescriptionFormat.HTML
   }
 
   fun taskFile(name: String, text: String = "", buildTaskFile: (TaskFileBuilder.() -> Unit)? = null) {

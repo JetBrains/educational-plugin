@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.course
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
@@ -26,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils
 import org.apache.commons.codec.binary.Base64
+import org.jetbrains.rpc.LOG
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.atomic.AtomicReference
@@ -126,8 +128,15 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createDescriptionFile(taskDir: VirtualFile, task: Task): VirtualFile? {
-    val descriptionFileName = EduUtils.getTaskDescriptionFileName()
-    val childFile = createChildFile(taskDir, descriptionFileName, task.description)
+    val descriptionFileName = when (task.descriptionFormat) {
+      HTML -> EduNames.TASK_HTML
+      MD -> EduNames.TASK_MD
+      else -> {
+        LOG.warn("Description format for task `${task.name}` is null. Use html format")
+        EduNames.TASK_HTML
+      }
+    }
+    val childFile = createChildFile(taskDir, descriptionFileName, task.descriptionText)
     if (childFile != null) {
       val project = task.project ?: return null
       runReadAction {

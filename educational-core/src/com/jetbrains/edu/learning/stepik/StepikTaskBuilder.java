@@ -130,7 +130,7 @@ public class StepikTaskBuilder {
         .append("<br>")
         .append("<b>Time limit</b>: ").append(myStep.options.executionTimeLimit).append("s").append("<br><br>");
     }
-    task.setDescription(taskDescription.toString());
+    task.setDescriptionText(taskDescription.toString());
 
     if (myStep.options.test != null) {
       for (StepikWrappers.FileWrapper wrapper : myStep.options.test) {
@@ -166,7 +166,7 @@ public class StepikTaskBuilder {
     ChoiceTask task = new ChoiceTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
-    task.setDescription(myStep.text);
+    task.setDescriptionText(myStep.text);
 
     final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = StepikAdaptiveConnector.getAttemptForStep(myStepId, myUserId);
     if (attempt != null) {
@@ -198,7 +198,7 @@ public class StepikTaskBuilder {
     TheoryTask task = new TheoryTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
-    task.setDescription(myStep.text);
+    task.setDescriptionText(myStep.text);
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
     String taskFileName = getTaskFileName(myLanguage);
 
@@ -219,7 +219,7 @@ public class StepikTaskBuilder {
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
     final String stepText = "This is " + myName.toLowerCase() + " task.";
-    task.setDescription(stepText);
+    task.setDescriptionText(stepText);
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
     String taskFileName = getTaskFileName(myLanguage);
 
@@ -253,10 +253,10 @@ public class StepikTaskBuilder {
         task.addAdditionalFile(wrapper.name, wrapper.text);
       }
     }
-    if (myStep.options.description != null) {
-      task.setDescription(myStep.options.description);
+    if (myStep.options.descriptionText != null) {
+      task.setDescriptionText(myStep.options.descriptionText);
     } else {
-      task.setDescription(myStep.text);
+      task.setDescriptionText(myStep.text);
     }
 
     task.taskFiles = new HashMap<>();      // TODO: it looks like we don't need taskFiles as map anymore

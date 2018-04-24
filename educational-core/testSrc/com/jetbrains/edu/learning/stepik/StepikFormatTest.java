@@ -7,8 +7,6 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -224,7 +222,7 @@ public class StepikFormatTest {
         "Hint: To run a script сhoose 'Run &lt;name&gt;' on the context menu. <br>\n" +
         "For more information visit <a href=\"https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html\">our help</a>.\n" +
         "\n" +
-        "<br>\n", options.description);
+        "<br>\n", options.descriptionText);
   }
 
   @Test
@@ -329,7 +327,7 @@ public class StepikFormatTest {
     AnswerPlaceholder placeholder = placeholders.get(0);
     assertEquals(Collections.singletonList("Type your name here."), placeholder.getHints());
     assertEquals("Liana", placeholder.getPossibleAnswer());
-    assertEquals("Description", options.description);
+    assertEquals("Description", options.descriptionText);
     return options;
   }
 

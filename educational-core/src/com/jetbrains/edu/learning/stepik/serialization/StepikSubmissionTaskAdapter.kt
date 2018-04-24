@@ -4,9 +4,9 @@ import com.google.gson.*
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.serialization.SerializationUtils
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.SELECTED
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
 import com.jetbrains.edu.learning.serialization.converter.json.ToFifthVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.stepik.StepikWrappers
@@ -34,7 +34,7 @@ class StepikSubmissionTaskAdapter(private val replyVersion: Int = JSON_FORMAT_VE
       .excludeFieldsWithoutExposeAnnotation()
       .registerTypeAdapter(AnswerPlaceholder::class.java, placeholderAdapter)
       .create()
-    return SerializationUtils.Json.serializeWithTaskType(src, gson)
+    return serializeWithTaskType(src, gson)
   }
 
   @Throws(JsonParseException::class)
@@ -45,7 +45,7 @@ class StepikSubmissionTaskAdapter(private val replyVersion: Int = JSON_FORMAT_VE
       .create()
 
     val jsonObject = json.asJsonObject.migrate(replyVersion)
-    return SerializationUtils.Json.doDeserialize(jsonObject, gson)
+    return doDeserialize(jsonObject, gson)
   }
 
   private fun JsonObject.migrate(version: Int): JsonObject {
@@ -54,12 +54,13 @@ class StepikSubmissionTaskAdapter(private val replyVersion: Int = JSON_FORMAT_VE
     while (version < JSON_FORMAT_VERSION) {
       when (version) {
         1 -> {
-          val taskTexts = getAsJsonObject(SerializationUtils.Json.TASK_TEXTS)
+          val taskTexts = getAsJsonObject(TASK_TEXTS)
           if (taskTexts != null && taskTexts.size() > 0) {
             val description = taskTexts.entrySet().firstOrNull()?.value?.asString
-            addProperty(SerializationUtils.DESCRIPTION, description)
+            addProperty(DESCRIPTION_TEXT, description)
           }
-          remove(SerializationUtils.Json.TASK_TEXTS)
+          addProperty(DESCRIPTION_FORMAT, DescriptionFormat.HTML.toString().toLowerCase())
+          remove(TASK_TEXTS)
         }
       }
       version++
