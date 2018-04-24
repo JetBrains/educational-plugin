@@ -29,14 +29,12 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedOutputStream;
@@ -109,7 +107,6 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   public static boolean createCourseArchive(final Project project, Module module, String zipName, String locationDir, boolean showMessage) {
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) return false;
-    final VirtualFile baseDir = project.getBaseDir();
     VirtualFile archiveFolder = CCUtils.generateFolder(project, module, zipName);
     if (archiveFolder == null) {
       return false;
@@ -176,9 +173,16 @@ public class CCCreateCourseArchive extends DumbAwareAction {
 
       private void addDescriptions(@NotNull final Task task) {
         VirtualFile descriptionFile = TaskExt.getDescriptionFile(task, project);
+
         if (descriptionFile != null) {
           try {
-            task.setDescription(VfsUtilCore.loadText(descriptionFile));
+            task.setDescriptionText(VfsUtilCore.loadText(descriptionFile));
+            String extension = descriptionFile.getExtension();
+            DescriptionFormat descriptionFormat =
+              ArraysKt.firstOrNull(DescriptionFormat.values(), format -> format.getFileExtension().equals(extension));
+            if (descriptionFormat != null) {
+              task.setDescriptionFormat(descriptionFormat);
+            }
           } catch (IOException e) {
             LOG.warn("Failed to load text " + descriptionFile.getName());
           }

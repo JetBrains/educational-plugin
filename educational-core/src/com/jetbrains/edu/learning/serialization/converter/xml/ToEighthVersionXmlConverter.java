@@ -3,11 +3,9 @@ package com.jetbrains.edu.learning.serialization.converter.xml;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
@@ -43,7 +41,7 @@ public class ToEighthVersionXmlConverter implements XmlConverter {
           throw new StudyUnrecognizedFormatException();
         }
 
-        String extension = FileUtilRt.getExtension(EduUtils.getTaskDescriptionFileName());
+        String extension = EduUtils.getDefaultTaskDescriptionFormat().getFileExtension();
 
         for (Map.Entry<String, String> taskDescriptionData : taskTexts.entrySet()) {
           String descriptionFileName = taskDescriptionData.getKey() + "." + extension;

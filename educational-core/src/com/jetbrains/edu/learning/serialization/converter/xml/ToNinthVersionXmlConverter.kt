@@ -4,10 +4,13 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.POSSIBLE_ANSWER
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.DESCRIPTION_TEXT
+import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.DESCRIPTION_FORMAT
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException
 import org.jdom.Element
 
@@ -58,7 +61,8 @@ class ToNinthVersionXmlConverter : XmlConverter {
   private fun migrateDescription(task: Element) {
     val description = getChildMap<String, String>(task, TASK_TEXTS).values.firstOrNull()
                       ?: throw StudyUnrecognizedFormatException("`$TASK_TEXTS` map is empty")
-    addChildWithName(task, DESCRIPTION, description)
+    addChildWithName(task, DESCRIPTION_TEXT, description)
+    addChildWithName(task, DESCRIPTION_FORMAT, DescriptionFormat.HTML)
     task.removeContent(getChildWithName(task, TASK_TEXTS))
   }
 

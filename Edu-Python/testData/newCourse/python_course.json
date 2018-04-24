@@ -27,7 +27,8 @@
           "test_files": {
             "tests.py": "from test_helper import run_common_tests, failed, passed, get_answer_placeholders\n\n\ndef test_ASCII():\n    windows \u003d get_answer_placeholders()\n    for window in windows:\n        all_ascii \u003d all(ord(c) \u003c 128 for c in window)\n        if not all_ascii:\n            failed(\"Please use only English characters this time.\")\n            return\n    passed()\n\ndef test_initial():\n    window \u003d get_answer_placeholders()[0]\n    if window \u003d\u003d \"type your name\":\n        failed(\"You should modify the file\")\n    else:\n        passed()\n\ndef test_is_alpha():\n    window \u003d get_answer_placeholders()[0]\n    is_multiline \u003d window.find(\"\\n\")\n    if is_multiline !\u003d -1:\n        window \u003d window[:is_multiline-1]\n    splitted \u003d window.split()\n    for s in splitted:\n        if not s.isalpha():\n            failed(\"Please use only English characters this time.\")\n            return\n\n    passed()\n\n\nif __name__ \u003d\u003d \u0027__main__\u0027:\n    test_ASCII()\n    run_common_tests(\"You should enter your name\")\n    test_is_alpha()\n    test_initial()\n\n\n"
           },
-          "description": "\nTraditionally the first program you write in any programming language is \u003ccode\u003e\"Hello World!\"\u003c/code\u003e.\n\u003cbr\u003e\u003cbr\u003e\nIntroduce yourself to the World.\n\u003cbr\u003e\n",
+          "description_text": "\nTraditionally the first program you write in any programming language is \u003ccode\u003e\"Hello World!\"\u003c/code\u003e.\n\u003cbr\u003e\u003cbr\u003e\nIntroduce yourself to the World.\n\u003cbr\u003e\n",
+          "description_format": "html",
           "task_type": "edu"
         },
         {
@@ -53,7 +54,8 @@
           "test_files": {
             "tests.py": "from test_helper import run_common_tests\n\nif __name__ \u003d\u003d \u0027__main__\u0027:\n    run_common_tests(\"You should type new comment\")\n"
           },
-          "description": "\nComments in Python start with the hash character (\u003ccode\u003e#\u003c/code\u003e) and include the whole line.\nYou can use Ctrl + / to comment or uncomment the whole line in PyCharm.\n\u003cbr\u003e\u003cbr\u003e\nAdd a new comment to the file.\u003cbr\u003e\n",
+          "description_text": "\nComments in Python start with the hash character (\u003ccode\u003e#\u003c/code\u003e) and include the whole line.\nYou can use Ctrl + / to comment or uncomment the whole line in PyCharm.\n\u003cbr\u003e\u003cbr\u003e\nAdd a new comment to the file.\u003cbr\u003e\n",
+          "description_format": "html",
           "task_type": "edu"
         }
       ]
@@ -85,7 +87,8 @@
           "test_files": {
             "tests.py": "from test_helper import run_common_tests, failed, passed, import_task_file, get_answer_placeholders\n\n\ndef test_task_window():\n    window \u003d get_answer_placeholders()[0]\n    if \"another value\" \u003d\u003d window:\n      failed(\"You should redefine the variable \u0027greetings\u0027\")\n    else:\n      passed()\n\ndef test_value():\n    file \u003d import_task_file()\n\n    if file.greetings \u003d\u003d \"greetings\":\n        failed(\"You should assign a different value to the variable\")\n    else:\n        passed()\n\nif __name__ \u003d\u003d \u0027__main__\u0027:\n    test_task_window()\n    run_common_tests(\"You should redefine the variable \u0027greetings\u0027\")\n    test_value()\n"
           },
-          "description": "\nVariables are used to store values so we can refer to them later. A variable is like a label, and you use the \u0027\u003ccode\u003e\u003d\u003c/code\u003e\u0027 symbol,\nknown as the assignment operator, to assign a value to a variable. An assignment can be chained, e.g. \u003ccode\u003ea \u003d b \u003d 2\u003c/code\u003e\n\u003cbr\u003e\u003cbr\u003e\nChange the value stored in the variable \u003ccode\u003egreetings\u003c/code\u003e.\n\u003cbr\u003e\n",
+          "description_text": "\nVariables are used to store values so we can refer to them later. A variable is like a label, and you use the \u0027\u003ccode\u003e\u003d\u003c/code\u003e\u0027 symbol,\nknown as the assignment operator, to assign a value to a variable. An assignment can be chained, e.g. \u003ccode\u003ea \u003d b \u003d 2\u003c/code\u003e\n\u003cbr\u003e\u003cbr\u003e\nChange the value stored in the variable \u003ccode\u003egreetings\u003c/code\u003e.\n\u003cbr\u003e\n",
+          "description_format": "html",
           "task_type": "edu"
         }
         ]

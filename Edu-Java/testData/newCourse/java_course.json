@@ -17,7 +17,8 @@
           "test_files": {
             "Test.java": "class Test {\n    // put your test here\n}"
           },
-          "description": "Write task description here using markdown or html",
+          "description_text": "Write task description here using markdown or html",
+          "description_format": "html",
           "task_type": "edu"
         },
         {
@@ -33,7 +34,8 @@
           "test_files": {
             "Test.java": "class Test {\n    // put your test here\n}"
           },
-          "description": "Write task description here using markdown or html",
+          "description_text": "Write task description here using markdown or html",
+          "description_format": "html",
           "task_type": "edu"
         }
       ]
@@ -55,7 +57,8 @@
           "test_files": {
             "Test.java": "class Test {\n    // put your test here\n}"
           },
-          "description": "Write task description here using markdown or html",
+          "description_text": "Write task description here using markdown or html",
+          "description_format": "html",
           "task_type": "edu"
         }
       ]

@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.serialization.converter.json
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.serialization.SerializationUtils.DESCRIPTION
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
 
@@ -59,8 +59,9 @@ class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
       val taskTexts = stepOptions.getAsJsonArray(TEXTS)
       if (taskTexts != null && taskTexts.size() > 0) {
         val description = taskTexts.get(0).asJsonObject.getAsJsonPrimitive(FILE_WRAPPER_TEXT).asString
-        stepOptions.addProperty(DESCRIPTION, description)
+        stepOptions.addProperty(DESCRIPTION_TEXT, description)
       }
+      stepOptions.addProperty(DESCRIPTION_FORMAT, DescriptionFormat.HTML.toString().toLowerCase())
       stepOptions.remove(TEXTS)
     }
 
