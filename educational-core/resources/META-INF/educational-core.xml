@@ -207,6 +207,7 @@
     <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCTaskRenameHandler" order="first"/>
     <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonRenameHandler" order="first"/>
     <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCSectionRenameHandler" order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCDescriptionFileRenameHandler" order="first"/>
     <applicationService serviceInterface="com.jetbrains.edu.coursecreator.settings.CCSettings"
                         serviceImplementation="com.jetbrains.edu.coursecreator.settings.CCSettings"/>
     <highlightErrorFilter implementation="com.jetbrains.edu.coursecreator.CCHighlightErrorFilter"/>

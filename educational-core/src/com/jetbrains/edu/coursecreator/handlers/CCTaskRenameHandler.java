@@ -4,6 +4,7 @@ import com.intellij.ide.TitledHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiFileSystemItem;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -14,12 +15,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandler {
   @Override
-  protected boolean isAvailable(@NotNull Project project, @NotNull VirtualFile dir) {
-    return EduUtils.isTaskDirectory(project, dir);
+  protected boolean isAvailable(@NotNull Project project, @NotNull VirtualFile file) {
+    return EduUtils.isTaskDirectory(project, file);
   }
 
   @Override
-  protected void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiDirectory directory) {
+  protected void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiFileSystemItem item) {
+    if (!(item instanceof PsiDirectory)) return;
+    PsiDirectory directory = (PsiDirectory)item;
     String sourceDir = CourseExt.getSourceDir(course);
     if (directory.getName().equals(sourceDir)) {
       directory = directory.getParent();
