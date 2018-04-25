@@ -67,6 +67,31 @@
 	  </option>
 	</AnswerPlaceholder>
 	```
+	
+	Replace `taskTexts` map by `descriptionText` field because without subtasks
+	`taskTexts` map always contains only one entry.
+	Add `descriptionFormat` field which describes description text format. Can be `HTML` and `MD` for html and markdown syntax accordingly.
+	
+	Before:
+	```xml
+    <EduTask>
+      <!-- other fields -->
+      <option name="taskTexts">
+        <map>
+          <entry key="task" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
+        </map>
+      </option>
+    </EduTask>
+    ```
+    
+    After:
+    ```xml
+    <EduTask>
+      <!-- other fields -->
+      <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
+      <option name="descriptionFormat" value="HTML" />
+    </EduTask>
+    ```
 
 ### JSON format version
 
@@ -134,4 +159,30 @@
 	  "selected": false,
 	  "status": "Solved"
 	}
+    ```
+    
+    Replace `text` (`task_texts` for local courses) map in `option` (`task` for local courses) object by `description_text` field 
+    because without subtasks `text` map always contains only one entry.
+    Add `description_format` field which describes description text format. Can be `html` and `md` for html and markdown syntax accordingly.
+
+    Before:
+    ```json
+    {
+      ...
+      "text": [
+        {
+           "name": "task",
+           "text": "Write task description here using markdown or html"
+        }
+      ]
+    }
+    ```
+    
+    After:
+    ```json
+    {
+      ...
+      "description_text": "Write task description here using markdown or html",
+      "description_format": "html"
+    }
     ```
