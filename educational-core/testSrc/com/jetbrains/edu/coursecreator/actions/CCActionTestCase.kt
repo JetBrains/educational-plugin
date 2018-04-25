@@ -19,7 +19,8 @@ abstract class CCActionTestCase : EduTestCase() {
   }
 
   fun dataContext(file: VirtualFile): DataContext {
-    val psiFile = PsiManager.getInstance(project).findDirectory(file)
+    val psiManager = PsiManager.getInstance(project)
+    val psiFile = psiManager.findDirectory(file) ?: psiManager.findFile(file)
     return MapDataContext().apply {
       put(CommonDataKeys.PROJECT, project)
       put(CommonDataKeys.VIRTUAL_FILE, file)
