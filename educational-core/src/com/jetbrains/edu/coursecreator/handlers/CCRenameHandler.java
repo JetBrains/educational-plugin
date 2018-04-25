@@ -11,9 +11,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.refactoring.rename.RenameHandler;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduConfigurator;
@@ -29,17 +29,17 @@ public abstract class CCRenameHandler implements RenameHandler {
   @Override
   public boolean isAvailableOnDataContext(DataContext dataContext) {
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if (!(element instanceof PsiDirectory)) {
+    if (!(element instanceof PsiFileSystemItem)) {
       return false;
     }
     if (!CCUtils.isCourseCreator(element.getProject())) {
       return false;
     }
-    VirtualFile directory = ((PsiDirectory)element).getVirtualFile();
-    return isAvailable(element.getProject(), directory);
+    VirtualFile file = ((PsiFileSystemItem)element).getVirtualFile();
+    return isAvailable(element.getProject(), file);
   }
 
-  protected abstract boolean isAvailable(@NotNull Project project, @NotNull VirtualFile directory);
+  protected abstract boolean isAvailable(@NotNull Project project, @NotNull VirtualFile file);
 
   @Override
   public boolean isRenaming(DataContext dataContext) {
@@ -50,12 +50,12 @@ public abstract class CCRenameHandler implements RenameHandler {
   public void invoke(@NotNull Project project, Editor editor, PsiFile file, DataContext dataContext) {
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
     assert element != null;
-    PsiDirectory directory = (PsiDirectory)element;
+    PsiFileSystemItem psiFileSystemItem = (PsiFileSystemItem)element;
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {
       return;
     }
-    rename(project, course, directory);
+    rename(project, course, psiFileSystemItem);
     ProjectView.getInstance(project).refresh();
     FileEditorManagerEx managerEx = FileEditorManagerEx.getInstanceEx(project);
     for (VirtualFile virtualFile : managerEx.getOpenFiles()) {
@@ -63,7 +63,7 @@ public abstract class CCRenameHandler implements RenameHandler {
     }
   }
 
-  protected abstract void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiDirectory directory);
+  protected abstract void rename(@NotNull Project project, @NotNull Course course, @NotNull PsiFileSystemItem item);
 
 
   protected static void processRename(@NotNull final StudyItem item,
