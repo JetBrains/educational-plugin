@@ -99,10 +99,7 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   private fun createTaskContent(task: Task, taskDir: VirtualFile) {
-    var i = 0
     for ((_, taskFileContent) in task.getTaskFiles()) {
-      taskFileContent.index = i
-      i++
       createTaskFile(taskDir, taskFileContent)
     }
     createTestFiles(taskDir, task)
