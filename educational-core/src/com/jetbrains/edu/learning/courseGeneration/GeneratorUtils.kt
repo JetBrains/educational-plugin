@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseGeneration
 
+import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -7,13 +8,11 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.ThrowableComputable
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
-import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -282,4 +281,18 @@ object GeneratorUtils {
       VfsUtil.createDirectoryIfMissing(parentDir, uniqueDirName)
     })
   }
+
+  @JvmStatic
+  fun createDefaultFile(course: Course, baseName: String, baseText: String): DefaultFileProperties {
+    val language = course.languageById
+    val extensionSuffix = language?.associatedFileType?.defaultExtension?.let { ".$it" } ?: ""
+    val lineCommentPrefix = if (language != null) {
+       LanguageCommenters.INSTANCE.forLanguage(language)?.lineCommentPrefix ?: ""
+    } else {
+      ""
+    }
+    return DefaultFileProperties("$baseName$extensionSuffix", "$lineCommentPrefix$baseText")
+  }
+
+  data class DefaultFileProperties(val name: String, val text: String)
 }
