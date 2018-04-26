@@ -26,10 +26,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.checker.CheckUtils;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -48,6 +45,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector.EDU_TOOLS_COMMENT;
 import static com.jetbrains.edu.learning.stepik.StepikConnector.*;
@@ -211,8 +209,9 @@ public class StepikSolutionsLoader implements Disposable {
 
   public List<Task> tasksToUpdate(@NotNull Course course) {
     List<Task> tasksToUpdate = new ArrayList<>();
-    //TODO: handle sections
-    Task[] allTasks = course.getLessons().stream().flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
+    Stream<Lesson> lessonsFromSection = course.getSections().stream().flatMap(section -> section.getLessons().stream());
+    Stream<Lesson> allLessons = Stream.concat(lessonsFromSection, course.getLessons().stream());
+    Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
     String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
     Boolean[] taskStatuses = taskStatuses(progresses);
