@@ -55,7 +55,10 @@ public class Lesson extends StudyItem {
   public void init(@Nullable final Course course, @Nullable final StudyItem section, boolean isRestarted) {
     mySection = section instanceof Section ? (Section)section : null;
     setCourse(course);
-    for (Task task : getTaskList()) {
+    List<Task> tasks = getTaskList();
+    for (int i = 0; i < tasks.size(); i++) {
+      Task task = tasks.get(i);
+      task.setIndex(i + 1);
       task.init(course, this, isRestarted);
     }
   }
