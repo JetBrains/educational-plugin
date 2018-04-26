@@ -38,7 +38,9 @@ public class Course extends ItemContainer {
   public Course() {}
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
-    for (StudyItem item : items) {
+    for (int i = 0; i < items.size(); i++) {
+      StudyItem item = items.get(i);
+      item.setIndex(i + 1);
       item.init(this, this, isRestarted);
     }
   }
