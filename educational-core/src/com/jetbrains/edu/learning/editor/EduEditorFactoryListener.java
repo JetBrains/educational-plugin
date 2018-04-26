@@ -38,7 +38,13 @@ import java.util.List;
 public class EduEditorFactoryListener implements EditorFactoryListener {
   private TaskFile myTaskFile;
 
-  private class WindowSelectionListener extends EditorMouseAdapter {
+  private static class WindowSelectionListener extends EditorMouseAdapter {
+    private final TaskFile myTaskFile;
+
+    public WindowSelectionListener(TaskFile file) {
+      myTaskFile = file;
+    }
+
     @Override
     public void mouseClicked(EditorMouseEvent e) {
       final Editor editor = e.getEditor();
@@ -91,7 +97,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, myTaskFile);
           EduUtils.drawAllAnswerPlaceholders(editor, myTaskFile);
           if (isStudyProject) {
-            editor.addEditorMouseListener(new WindowSelectionListener());
+            editor.addEditorMouseListener(new WindowSelectionListener(myTaskFile));
           }
         }
         EduLaunchesReporter.INSTANCE.sendStats(isStudyProject, CCPluginToggleAction.isCourseCreatorFeaturesEnabled());
