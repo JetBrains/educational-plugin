@@ -45,7 +45,6 @@ object GeneratorUtils {
     val items = course.items
     for ((i, item) in items.withIndex()) {
       indicator.fraction = (i + 1).toDouble() / items.size
-      item.index = i + 1
 
       if (item is Lesson) {
         if (!item.isAdditional) {
@@ -67,8 +66,7 @@ object GeneratorUtils {
   private fun createSection(item: Section, baseDir: VirtualFile) {
     val sectionDir = createUniqueDir(baseDir, item)
 
-    for ((i, lesson) in item.lessons.withIndex()) {
-      lesson.index = i + 1
+    for (lesson in item.lessons) {
       createLesson(lesson, sectionDir)
     }
   }
@@ -82,7 +80,6 @@ object GeneratorUtils {
       val lessonDir = createUniqueDir(courseDir, lesson)
       val taskList = lesson.getTaskList()
       for ((i, task) in taskList.withIndex()) {
-        task.index = i + 1
         if (lesson !is FrameworkLesson || i == 0) {
           createTask(task, lessonDir)
         }
