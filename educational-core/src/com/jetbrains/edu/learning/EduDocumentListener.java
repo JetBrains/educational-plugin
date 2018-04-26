@@ -52,26 +52,29 @@ public class EduDocumentListener implements DocumentListener {
     CharSequence oldFragment = e.getOldFragment();
 
     for (AnswerPlaceholder placeholder : myTaskFile.getAnswerPlaceholders()) {
-      int start = placeholder.getOffset();
-      if (start - 1 == offset && fragment.toString().isEmpty() && oldFragment.toString().startsWith("\n")) {
-        start -= 1;
+      int placeholderStart = placeholder.getOffset();
+      if (placeholderStart - 1 == offset && fragment.toString().isEmpty() && oldFragment.toString().startsWith("\n")) {
+        placeholderStart -= 1;
       }
 
-      if (start > offset) {
-        start += change;
+      if (placeholderStart > offset) {
+        placeholderStart += change;
       }
-      int end = placeholder.getEndOffset();
-      if (end >= offset) {
-        end += change;
+      int placeholderEnd = placeholder.getEndOffset();
+      if (e.getOldLength() == 1 && e.getNewLength() == 0) {
+        offset += 1;
       }
-      if (start == offset && oldFragment.toString().isEmpty() && fragment.toString().startsWith("\n")) {
-        start += 1;
+      if (placeholderEnd >= offset) {
+        placeholderEnd += change;
+      }
+      if (placeholderStart == offset && oldFragment.toString().isEmpty() && fragment.toString().startsWith("\n")) {
+        placeholderStart += 1;
       }
 
-      int length = end - start;
+      int length = placeholderEnd - placeholderStart;
       assert length >= 0;
-      assert start >= 0;
-      updatePlaceholder(placeholder, document, start, length);
+      assert placeholderStart >= 0;
+      updatePlaceholder(placeholder, document, placeholderStart, length);
     }
   }
 

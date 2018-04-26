@@ -44,6 +44,4 @@ object NewPlaceholderPainter {
       }
     }
   }
-
-
 }
