@@ -24,7 +24,6 @@ import java.util.List;
 public class TaskFile {
   @Expose public String name;
   @Expose public String text;
-  private int myIndex = -1;
   private boolean myUserCreated = false;
   private boolean myTrackChanges = true;
   private boolean myTrackLengths = true;
@@ -57,14 +56,6 @@ public class TaskFile {
 
   public void addAnswerPlaceholder(AnswerPlaceholder answerPlaceholder) {
     myAnswerPlaceholders.add(answerPlaceholder);
-  }
-
-  public int getIndex() {
-    return myIndex;
-  }
-
-  public void setIndex(int index) {
-    myIndex = index;
   }
 
   @Transient
