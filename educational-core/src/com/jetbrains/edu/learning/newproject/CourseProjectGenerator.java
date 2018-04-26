@@ -161,7 +161,7 @@ public abstract class CourseProjectGenerator<S> {
   public void createCourseStructure(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull S settings) {
     GeneratorUtils.initializeCourse(project, myCourse);
 
-    if (CCUtils.isCourseCreator(project) && myCourse.getLessons(true).isEmpty()) {
+    if (CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty()) {
       final Lesson lesson = new CCCreateLesson().createAndInitItem(myCourse, null, EduNames.LESSON + 1, 1);
       myCourse.addLesson(lesson);
       final Task task = new CCCreateTask().createAndInitItem(myCourse, lesson, EduNames.TASK + 1, 1);
