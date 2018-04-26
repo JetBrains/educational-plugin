@@ -190,4 +190,15 @@ public class Lesson extends StudyItem {
     }
     return myCourse;
   }
+
+  public void visitTasks(@NotNull TaskVisitor visitor) {
+    int index = 1;
+    for (Task task : taskList) {
+      boolean visitNext = visitor.visitTask(task, index);
+      if (!visitNext) {
+        return;
+      }
+      index++;
+    }
+  }
 }

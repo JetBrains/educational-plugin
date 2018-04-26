@@ -53,6 +53,7 @@ object CourseInfoSynchronizer {
   private const val COURSE_CONFIG = "course-info.yaml"
   private const val LESSON_CONFIG = "lesson-info.yaml"
   private const val TASK_CONFIG = "task-info.yaml"
+  private const val SECTION_CONFIG = "section-info.yaml"
 
   private val MAPPER: ObjectMapper by lazy {
     val yamlFactory = YAMLFactory()
@@ -334,10 +335,18 @@ object CourseInfoSynchronizer {
 
   private fun getAllConfigFiles(project: Project): List<VirtualFile> {
     val configFiles = mutableListOf<VirtualFile?>()
-    configFiles.add(project.baseDir.findChild(CourseInfoSynchronizer.COURSE_CONFIG))
-    for (lessonDir in project.baseDir.children) {
-      configFiles.add(lessonDir.findChild(CourseInfoSynchronizer.LESSON_CONFIG))
-      lessonDir.children.mapTo(configFiles) { it.findChild(CourseInfoSynchronizer.TASK_CONFIG) }
+    val course = StudyTaskManager.getInstance(project).course ?: error("Accessing to config files in non-edu project")
+    course.visitLessons { lesson, _ ->
+      val lessonDir = lesson.getLessonDir(project)
+      if (lesson.section != null) {
+        configFiles.add(lessonDir?.parent?.findChild(CourseInfoSynchronizer.SECTION_CONFIG))
+      }
+      configFiles.add(lessonDir?.findChild(CourseInfoSynchronizer.LESSON_CONFIG))
+      lesson.visitTasks { task, _ ->
+        configFiles.add(task.getTaskDir(project)?.findChild(CourseInfoSynchronizer.TASK_CONFIG))
+        true
+      }
+      true
     }
     return configFiles.filterNotNull()
   }
