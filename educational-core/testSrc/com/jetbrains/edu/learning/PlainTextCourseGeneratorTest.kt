@@ -244,7 +244,92 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
     }
   }
 
+  fun `test placeholder content`() {
+    courseWithFiles {
+      lesson {
+        eduTask {
+          taskFile("Fizz.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+        eduTask {
+          taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Bar\"")
+          }
+        }
+      }
+      lesson {
+        eduTask {
+          taskFile("FizzBuzz.kt", """fun fooBar(): String = <p>""</p> + <p>""</p>""") {
+            placeholder(0, "\"Foo\"")
+            placeholder(1, "\"Bar\"")
+          }
+        }
+      }
+    }
+
+    checkFileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("Fizz.kt", code = "fun foo(): String = TODO()")
+        }
+        dir("task2") {
+          file("Buzz.kt", code = "fun bar(): String = TODO()")
+        }
+      }
+      dir("lesson2") {
+        dir("task1") {
+          file("FizzBuzz.kt", code = "fun fooBar(): String = \"\" + \"\"")
+        }
+      }
+    }
+  }
+
+  fun `test placeholder content in CC mode`() {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("Fizz.kt", "fun foo(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Foo\"")
+          }
+        }
+        eduTask {
+          taskFile("Buzz.kt", "fun bar(): String = <p>TODO()</p>") {
+            placeholder(0, "\"Bar\"")
+          }
+        }
+      }
+      lesson {
+        eduTask {
+          taskFile("FizzBuzz.kt", """fun fooBar(): String = <p>""</p> + <p>""</p>""") {
+            placeholder(0, "\"Foo\"")
+            placeholder(1, "\"Bar\"")
+          }
+        }
+      }
+    }
+
+    checkFileTree {
+      dir("lesson1") {
+        dir("task1") {
+          file("Fizz.kt", code = "fun foo(): String = \"Foo\"")
+          file("task.html")
+        }
+        dir("task2") {
+          file("Buzz.kt", code = "fun bar(): String = \"Bar\"")
+          file("task.html")
+        }
+      }
+      dir("lesson2") {
+        dir("task1") {
+          file("FizzBuzz.kt", code = "fun fooBar(): String = \"Foo\" + \"Bar\"")
+          file("task.html")
+        }
+      }
+    }
+  }
+
   private fun checkFileTree(block: FileTreeBuilder.() -> Unit) {
-    fileTree(block).assertEquals(LightPlatformTestCase.getSourceRoot())
+    fileTree(block).assertEquals(LightPlatformTestCase.getSourceRoot(), myFixture)
   }
 }

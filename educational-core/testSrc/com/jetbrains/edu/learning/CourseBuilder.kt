@@ -156,11 +156,12 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     var pos = 0
     while (openingMatcher.find(pos)) {
       val answerPlaceholder = AnswerPlaceholder()
-      answerPlaceholder.offset = openingMatcher.start()
       if (!closingMatcher.find(openingMatcher.end())) {
         error("No matching closing tag found")
       }
+      answerPlaceholder.offset = openingMatcher.start()
       answerPlaceholder.length = closingMatcher.start() - openingMatcher.end()
+      answerPlaceholder.placeholderText = text.substring(openingMatcher.end(), closingMatcher.start())
       placeholders.add(answerPlaceholder)
       text.delete(closingMatcher.start(), closingMatcher.end())
       text.delete(openingMatcher.start(), openingMatcher.end())
@@ -191,9 +192,9 @@ class TaskFileBuilder(val task: Task) {
     }
   }
 
-  fun placeholder(index: Int, taskText: String = "type here", dependency: String = "") {
+  fun placeholder(index: Int, possibleAnswer: String = "", dependency: String = "") {
     val answerPlaceholder = taskFile.answerPlaceholders[index]
-    answerPlaceholder.placeholderText = taskText
+    answerPlaceholder.possibleAnswer = possibleAnswer
     val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency)
     if (createdDependency != null) {
       answerPlaceholder.placeholderDependency = createdDependency
