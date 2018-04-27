@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.ui
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -9,8 +8,7 @@ import javax.swing.JComponent
 class CCNewCourseDialog(
   title: String,
   okButtonText: String,
-  course: Course? = null,
-  private val myCallback: ((Project, Course) -> Unit)? = null
+  course: Course? = null
 ) : DialogWrapper(true) {
 
   private val myPanel: CCNewCoursePanel = CCNewCoursePanel(course)
@@ -35,13 +33,10 @@ class CCNewCourseDialog(
     val location = myPanel.locationString
     val language = course.languageById
     if (language != null) {
-      val courseProject = EduConfiguratorManager.forLanguage(language)
+      EduConfiguratorManager.forLanguage(language)
         ?.courseBuilder
         ?.getCourseProjectGenerator(course)
         ?.doCreateCourseProject(location, projectSettings)
-      if (courseProject != null) {
-        myCallback?.invoke(courseProject, course)
-      }
     }
   }
 }
