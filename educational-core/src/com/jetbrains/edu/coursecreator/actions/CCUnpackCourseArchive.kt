@@ -4,11 +4,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduUtils
 
-class CCUnpackCourseArchive : CCNewCourseActionBase("Unpack Course From Archive", "Unpack Course From Archive") {
+class CCUnpackCourseArchive : DumbAwareAction("Unpack Course From Archive", "Unpack Course From Archive", null) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)
     val descriptor = FileChooserDescriptor(true, true, true, true,
@@ -20,7 +21,6 @@ class CCUnpackCourseArchive : CCNewCourseActionBase("Unpack Course From Archive"
       return
     }
 
-    val dialog = CCNewCourseDialog("Unpack Course", "Unpack", course, this::initializeCourseProject)
-    dialog.show()
+    CCNewCourseDialog("Unpack Course", "Unpack", course).show()
   }
 }
