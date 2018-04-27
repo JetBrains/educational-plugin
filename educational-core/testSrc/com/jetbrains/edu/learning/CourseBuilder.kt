@@ -134,6 +134,14 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     task.descriptionFormat = format ?: DescriptionFormat.HTML
   }
 
+  /**
+   * Creates task file with given [name] and [text].
+   *
+   * You can also create placeholders for this task file using `<p>` tag.
+   *
+   * For example, for `fun foo() = <p>TODO()</p>` text
+   * it creates task file with `fun foo() = TODO()` text and placeholder with `TODO()` as placeholder text.
+   */
   fun taskFile(name: String, text: String = "", buildTaskFile: (TaskFileBuilder.() -> Unit)? = null) {
     val taskFileBuilder = TaskFileBuilder(task)
     taskFileBuilder.withName(name)
