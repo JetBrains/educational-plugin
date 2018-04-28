@@ -174,7 +174,7 @@ public abstract class CourseProjectGenerator<S> {
         ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
         GeneratorUtils.createCourse(myCourse, baseDir, indicator);
         if (CCUtils.isCourseCreator(project)) {
-          GeneratorUtils.initializeCCPlaceholders(project,myCourse);
+          CCUtils.initializeCCPlaceholders(project,myCourse);
         }
         createAdditionalFiles(project, baseDir);
         EduUsagesCollector.projectTypeCreated(courseTypeId(myCourse));
