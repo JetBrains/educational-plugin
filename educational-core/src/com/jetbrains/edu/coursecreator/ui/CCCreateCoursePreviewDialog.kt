@@ -41,6 +41,10 @@ class CCCreateCoursePreviewDialog(
 
   override fun doOKAction() {
     val folder = CCUtils.getGeneratedFilesFolder(myProject, myModule)
+    if (folder == null) {
+      showErrorMessage()
+      return
+    }
     val courseName = myCourse.name
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path
@@ -48,7 +52,7 @@ class CCCreateCoursePreviewDialog(
     val isSuccessful = CCCreateCourseArchive.createCourseArchive(myProject, myModule, archiveName, locationDir, false)
 
     if (isSuccessful) {
-      val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), archiveName + ".zip")
+      val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
       val course = EduUtils.getLocalCourse(archivePath)
       if (course != null) {
         val lastProjectCreationLocation = RecentProjectsManager.getInstance().lastProjectCreationLocation
@@ -76,6 +80,6 @@ class CCCreateCoursePreviewDialog(
     private const val WIDTH: Int = 370
     private const val HEIGHT: Int = 330
 
-    private val PREVIEW_FOLDER_PREFIX: String = "course_preview"
+    private const val PREVIEW_FOLDER_PREFIX: String = "course_preview"
   }
 }
