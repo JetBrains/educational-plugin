@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator
 
-import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runUndoTransparentWriteAction
@@ -227,25 +226,24 @@ object CCUtils {
       }
     }
     VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
-    ProjectView.getInstance(project).refresh()
   }
 
-  private fun initializeSectionPlaceholders(courseProject: Project, section: Section) {
-    EduUtils.getCourseDir(courseProject)?.findChild(section.name) ?: return
+  private fun initializeSectionPlaceholders(project: Project, section: Section) {
+    EduUtils.getCourseDir(project)?.findChild(section.name) ?: return
     for (item in section.lessons) {
-      initializeLessonPlaceholders(courseProject, item)
+      initializeLessonPlaceholders(project, item)
     }
   }
 
-  private fun initializeLessonPlaceholders(courseProject: Project, item: Lesson) {
+  private fun initializeLessonPlaceholders(project: Project, lesson: Lesson) {
+    val lessonDir = lesson.getLessonDir(project) ?: return
     val application = ApplicationManager.getApplication()
-    val lessonDir = EduUtils.getCourseDir(courseProject)?.findChild(item.name) ?: return
 
-    for (task in item.getTaskList()) {
+    for (task in lesson.getTaskList()) {
       val taskDir = lessonDir.findChild(task.name)
       if (taskDir == null) continue
       for (entry in task.getTaskFiles().entries) {
-        application.invokeAndWait { application.runWriteAction { initializeTaskFilePlaceholders(courseProject, taskDir, entry.value) } }
+        application.invokeAndWait { application.runWriteAction { initializeTaskFilePlaceholders(project, taskDir, entry.value) } }
       }
     }
   }
