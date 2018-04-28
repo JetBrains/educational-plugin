@@ -61,7 +61,12 @@ public class EduDocumentListener implements DocumentListener {
         placeholderStart += change;
       }
       int placeholderEnd = placeholder.getEndOffset();
-      if (placeholderEnd >= offset) {
+      if (placeholderEnd == offset) {
+        if (e.getOldLength() != 1 && e.getNewLength() != 0) {
+          placeholderEnd += change;
+        }
+      }
+      else if (placeholderEnd > offset ) {
         placeholderEnd += change;
       }
       if (placeholderStart == offset && oldFragment.toString().isEmpty() && fragment.toString().startsWith("\n")) {
