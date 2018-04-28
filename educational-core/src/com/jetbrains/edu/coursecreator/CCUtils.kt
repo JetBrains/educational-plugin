@@ -1,30 +1,31 @@
 package com.jetbrains.edu.coursecreator
 
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.InputValidatorEx
 import com.intellij.openapi.util.Ref
+import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
 import com.intellij.util.ThrowableConsumer
-import com.jetbrains.edu.learning.EduConfiguratorManager
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -213,6 +214,82 @@ object CCUtils {
       action.consume(path)
     } catch (e: IOException) {
       LOG.error(e)
+    }
+  }
+
+  @JvmStatic
+  fun initializeCCPlaceholders(project: Project, course: Course) {
+    for (item in course.items) {
+      when (item) {
+        is Section -> initializeSectionPlaceholders(project, item)
+        is Lesson -> initializeLessonPlaceholders(project, item)
+        else -> LOG.warn("Unknown study item type: `${item.javaClass.canonicalName}`")
+      }
+    }
+    VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
+    ProjectView.getInstance(project).refresh()
+  }
+
+  private fun initializeSectionPlaceholders(courseProject: Project, section: Section) {
+    EduUtils.getCourseDir(courseProject)?.findChild(section.name) ?: return
+    for (item in section.lessons) {
+      initializeLessonPlaceholders(courseProject, item)
+    }
+  }
+
+  private fun initializeLessonPlaceholders(courseProject: Project, item: Lesson) {
+    val application = ApplicationManager.getApplication()
+    val lessonDir = EduUtils.getCourseDir(courseProject)?.findChild(item.name) ?: return
+
+    for (task in item.getTaskList()) {
+      val taskDir = lessonDir.findChild(task.name)
+      if (taskDir == null) continue
+      for (entry in task.getTaskFiles().entries) {
+        application.invokeAndWait { application.runWriteAction { initializeTaskFilePlaceholders(courseProject, taskDir, entry.value) } }
+      }
+    }
+  }
+
+  private fun initializeTaskFilePlaceholders(project: Project, userFileDir: VirtualFile, taskFile: TaskFile) {
+    val file = EduUtils.findTaskFileInDir(taskFile, userFileDir)
+    if (file == null) {
+      LOG.warn("Failed to find file $file")
+      return
+    }
+    val document = FileDocumentManager.getInstance().getDocument(file) ?: return
+    val listener = EduDocumentTransformListener(project, taskFile)
+    document.addDocumentListener(listener)
+    taskFile.sortAnswerPlaceholders()
+    taskFile.isTrackLengths = false
+
+    for (placeholder in taskFile.answerPlaceholders) {
+      placeholder.useLength = false
+    }
+
+    try {
+      for (placeholder in taskFile.answerPlaceholders) {
+        replaceAnswerPlaceholder(document, placeholder)
+      }
+
+      CommandProcessor.getInstance().executeCommand(project, {
+        runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) }
+      }, "Create answer document", "Create answer document")
+    } finally {
+      document.removeDocumentListener(listener)
+      taskFile.isTrackLengths = true
+    }
+  }
+
+  private fun replaceAnswerPlaceholder(document: Document, placeholder: AnswerPlaceholder) {
+    val offset = placeholder.offset
+    val text = document.getText(TextRange.create(offset, offset + placeholder.length))
+    placeholder.placeholderText = text
+    placeholder.init()
+    val replacementText = placeholder.possibleAnswer
+
+    runUndoTransparentWriteAction {
+      document.replaceString(offset, offset + placeholder.length, replacementText)
+      FileDocumentManager.getInstance().saveDocumentAsIs(document)
     }
   }
 
