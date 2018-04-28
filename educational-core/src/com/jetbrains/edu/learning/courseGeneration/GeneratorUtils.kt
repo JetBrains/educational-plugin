@@ -1,27 +1,22 @@
 package com.jetbrains.edu.learning.courseGeneration
 
-import com.intellij.ide.projectView.ProjectView
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.application.runUndoTransparentWriteAction
-import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.course
@@ -290,82 +285,6 @@ object GeneratorUtils {
     return runInWriteActionAndWait(ThrowableComputable {
       VfsUtil.createDirectoryIfMissing(parentDir, uniqueDirName)
     })
-  }
-
-  @JvmStatic
-  fun initializeCCPlaceholders(project: Project, course: Course) {
-    for (item in course.items) {
-      when (item) {
-        is Section -> initializeSectionPlaceholders(project, item)
-        is Lesson -> initializeLessonPlaceholders(project, item)
-        else -> LOG.warn("Unknown study item type: `${item.javaClass.canonicalName}`")
-      }
-    }
-    VirtualFileManager.getInstance().refreshWithoutFileWatcher(true)
-    ProjectView.getInstance(project).refresh()
-  }
-
-  private fun initializeSectionPlaceholders(courseProject: Project, section: Section) {
-    EduUtils.getCourseDir(courseProject)?.findChild(section.name) ?: return
-    for (item in section.lessons) {
-      initializeLessonPlaceholders(courseProject, item)
-    }
-  }
-
-  private fun initializeLessonPlaceholders(courseProject: Project, item: Lesson) {
-    val application = ApplicationManager.getApplication()
-    val lessonDir = EduUtils.getCourseDir(courseProject)?.findChild(item.name) ?: return
-
-    for (task in item.getTaskList()) {
-      val taskDir = lessonDir.findChild(task.name)
-      if (taskDir == null) continue
-      for (entry in task.getTaskFiles().entries) {
-        application.invokeAndWait { application.runWriteAction { initializeTaskFilePlaceholders(courseProject, taskDir, entry.value) } }
-      }
-    }
-  }
-
-  private fun initializeTaskFilePlaceholders(project: Project, userFileDir: VirtualFile, taskFile: TaskFile) {
-    val file = EduUtils.findTaskFileInDir(taskFile, userFileDir)
-    if (file == null) {
-      LOG.warn("Failed to find file $file")
-      return
-    }
-    val document = FileDocumentManager.getInstance().getDocument(file) ?: return
-    val listener = EduDocumentTransformListener(project, taskFile)
-    document.addDocumentListener(listener)
-    taskFile.sortAnswerPlaceholders()
-    taskFile.isTrackLengths = false
-
-    for (placeholder in taskFile.answerPlaceholders) {
-      placeholder.useLength = false
-    }
-
-    try {
-      for (placeholder in taskFile.answerPlaceholders) {
-        replaceAnswerPlaceholder(document, placeholder)
-      }
-
-      CommandProcessor.getInstance().executeCommand(project, {
-        runWriteAction { FileDocumentManager.getInstance().saveDocumentAsIs(document) }
-      }, "Create answer document", "Create answer document")
-    } finally {
-      document.removeDocumentListener(listener)
-      taskFile.isTrackLengths = true
-    }
-  }
-
-  private fun replaceAnswerPlaceholder(document: Document, placeholder: AnswerPlaceholder) {
-    val offset = placeholder.offset
-    val text = document.getText(TextRange.create(offset, offset + placeholder.length))
-    placeholder.placeholderText = text
-    placeholder.init()
-    val replacementText = placeholder.possibleAnswer
-
-    runUndoTransparentWriteAction {
-      document.replaceString(offset, offset + placeholder.length, replacementText)
-      FileDocumentManager.getInstance().saveDocumentAsIs(document)
-    }
   }
 
   @JvmStatic
