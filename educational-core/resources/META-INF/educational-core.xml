@@ -216,10 +216,11 @@
     <projectViewPane implementation="com.jetbrains.edu.learning.projectView.CourseViewPane"/>
     <editorActionHandler action="EditorBackSpace" implementationClass="com.jetbrains.edu.learning.EduTypedHandler"
                          order="first"/>
-    <editorActionHandler action="EditorDelete" implementationClass="com.jetbrains.edu.learning.EduTypedHandler"/>
-    <editorActionHandler action="EditorCut" implementationClass="com.jetbrains.edu.learning.EduTypedHandler"
+    <editorActionHandler action="EditorDelete" implementationClass="com.jetbrains.edu.learning.EduTypedHandler"
                          order="first"/>
 
+    <editorActionHandler action="EditorCut" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"
+                         order="first"/>
     <editorActionHandler action="EditorCutLineEnd" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
     <editorActionHandler action="EditorCutLineBackward" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
     <editorActionHandler action="EditorDeleteToLineEnd" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
