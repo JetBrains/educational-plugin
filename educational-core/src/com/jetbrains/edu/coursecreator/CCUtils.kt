@@ -260,13 +260,10 @@ object CCUtils {
     taskFile.sortAnswerPlaceholders()
     taskFile.isTrackLengths = false
 
-    for (placeholder in taskFile.answerPlaceholders) {
-      placeholder.useLength = false
-    }
-
     try {
       for (placeholder in taskFile.answerPlaceholders) {
         replaceAnswerPlaceholder(document, placeholder)
+        placeholder.useLength = false
       }
 
       CommandProcessor.getInstance().executeCommand(project, {
