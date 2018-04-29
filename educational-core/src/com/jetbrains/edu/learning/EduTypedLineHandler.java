@@ -22,7 +22,7 @@ public class EduTypedLineHandler extends EditorWriteActionHandler {
   protected final EditorActionHandler myOriginalHandler;
 
   public EduTypedLineHandler(EditorActionHandler originalHandler) {
-    super(true);
+    super(false);
     myOriginalHandler = originalHandler;
   }
 
@@ -33,10 +33,7 @@ public class EduTypedLineHandler extends EditorWriteActionHandler {
 
   @Override
   public void executeWriteAction(Editor editor, @Nullable Caret caret, DataContext dataContext) {
-    if (caret == null) {
-      myOriginalHandler.execute(editor, null, dataContext);
-      return;
-    }
+    final Caret currentCaret = editor.getCaretModel().getPrimaryCaret();
     final TaskFile taskFile = getTaskFile(editor);
     if (taskFile == null) {
       myOriginalHandler.execute(editor, caret, dataContext);
@@ -44,7 +41,7 @@ public class EduTypedLineHandler extends EditorWriteActionHandler {
     }
 
     final Document document = editor.getDocument();
-    final int lineNumber = document.getLineNumber(caret.getOffset());
+    final int lineNumber = document.getLineNumber(currentCaret.getOffset());
     int lineEndOffset = document.getLineEndOffset(lineNumber);
     int lineStartOffset = document.getLineStartOffset(lineNumber);
     final AnswerPlaceholder placeholder = getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.getAnswerPlaceholders());
