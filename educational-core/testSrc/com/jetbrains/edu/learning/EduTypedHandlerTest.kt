@@ -75,6 +75,52 @@ class EduTypedHandlerTest : EduTestCase() {
                                    "  print()", myFixture.editor.document.text)
   }
 
+  fun `test cut line end`() {
+    configureByTaskFile(1, 2, "Task.kt")
+    myFixture.editor.caretModel.moveToOffset(10)
+    myFixture.editor.selectionModel.removeSelection()
+    myFixture.performEditorAction("EditorCutLineEnd")
+    TestCase.assertEquals("def f():\n" +
+                                   "  print()", myFixture.editor.document.text)
+  }
+
+  fun `test cut line backward`() {
+    configureByTaskFile(1, 2, "Task.kt")
+    myFixture.editor.caretModel.moveToOffset(15)
+    myFixture.editor.selectionModel.removeSelection()
+    myFixture.performEditorAction("EditorCutLineBackward")
+    TestCase.assertEquals("def f():\n" +
+                          "  print()", myFixture.editor.document.text)
+  }
+
+
+  fun `test delete line end`() {
+    configureByTaskFile(1, 2, "Task.kt")
+    myFixture.editor.caretModel.moveToOffset(10)
+    myFixture.editor.selectionModel.removeSelection()
+    myFixture.performEditorAction("EditorDeleteToLineEnd")
+    TestCase.assertEquals("def f():\n" +
+                          "  print()", myFixture.editor.document.text)
+  }
+
+  fun `test delete line start`() {
+    configureByTaskFile(1, 2, "Task.kt")
+    myFixture.editor.caretModel.moveToOffset(15)
+    myFixture.editor.selectionModel.removeSelection()
+    myFixture.performEditorAction("EditorDeleteToLineStart")
+    TestCase.assertEquals("def f():\n" +
+                          "  print()", myFixture.editor.document.text)
+  }
+
+  fun `test delete line`() {
+    configureByTaskFile(1, 2, "Task.kt")
+    myFixture.editor.caretModel.moveToOffset(15)
+    myFixture.editor.selectionModel.removeSelection()
+    myFixture.performEditorAction("EditorDeleteLine")
+    TestCase.assertEquals("def f():\n" +
+                          "  print()", myFixture.editor.document.text)
+  }
+
   override fun createCourse() {
     courseWithFiles {
       lesson {
