@@ -6,9 +6,11 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.components.ApplicationComponent
+import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 import java.util.*
 
 
@@ -31,6 +33,10 @@ class InitializationComponent : ApplicationComponent {
     }
 
     override fun initComponent() {
+        //Register placeholder size listener
+        EditorFactory.getInstance().addEditorFactoryListener(EduEditorFactoryListener(), ApplicationManager.getApplication())
+
+        // Remove conflicting plugins
         if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED) || ApplicationManager.getApplication().isUnitTestMode) {
             return
         }

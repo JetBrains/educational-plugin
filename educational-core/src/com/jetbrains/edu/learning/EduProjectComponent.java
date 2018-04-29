@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -37,7 +36,6 @@ import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.editor.EduEditorFactoryListener;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
@@ -340,7 +338,6 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void initComponent() {
-    EditorFactory.getInstance().addEditorFactoryListener(new EduEditorFactoryListener(), myProject);
     ActionManager.getInstance().addAnActionListener(new AnActionListener() {
       @Override
       public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
