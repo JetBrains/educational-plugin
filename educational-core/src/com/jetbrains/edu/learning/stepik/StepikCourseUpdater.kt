@@ -163,7 +163,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
         if (isSolved(currentTask!!)) {
           updatedTasks.add(currentTask)
           currentTask.index = taskIndex
-          currentTask.description = taskFromServer.description
+          currentTask.descriptionText = taskFromServer.descriptionText
           continue
         }
         removeExistingDir(currentTask, lessonDir)
