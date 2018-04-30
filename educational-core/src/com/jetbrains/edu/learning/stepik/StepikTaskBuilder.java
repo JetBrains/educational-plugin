@@ -168,7 +168,7 @@ public class StepikTaskBuilder {
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
     task.setUpdateDate(myStepSource.update_date);
-    task.setDescription(myStep.text);
+    task.setDescriptionText(myStep.text);
 
     final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = StepikAdaptiveConnector.getAttemptForStep(myStepId, myUserId);
     if (attempt != null) {
