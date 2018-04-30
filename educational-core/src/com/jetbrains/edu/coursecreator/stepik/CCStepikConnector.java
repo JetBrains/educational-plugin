@@ -133,6 +133,7 @@ public class CCStepikConnector {
       final int finalSectionCount = sectionCount;
       ApplicationManager.getApplication().runReadAction(() -> postAdditionalFiles(course, project, courseOnRemote.getId(), finalSectionCount + 1));
       StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
+      courseOnRemote.setUpdated();
       showNotification(project, "Course published");
     }
     catch (IOException e) {
