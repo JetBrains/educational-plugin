@@ -193,7 +193,11 @@ public class StepikConnector {
   public static Lesson getLessonFromServer(final int lessonId) {
     final String url = StepikNames.LESSONS + "/" + lessonId;
     try {
-      List<Lesson> lessons = StepikClient.getFromStepik(url, LessonContainer.class).lessons;
+      LessonContainer container = StepikAuthorizedClient.getFromStepik(url, LessonContainer.class);
+      if (container == null) {
+        container = StepikClient.getFromStepik(url, LessonContainer.class);
+      }
+      List<Lesson> lessons = container.lessons;
       if (!lessons.isEmpty()) {
         return lessons.get(0);
       }
@@ -208,7 +212,11 @@ public class StepikConnector {
   public static Date getTaskUpdateDate(final int taskId) {
     final String url = StepikNames.STEPS + String.valueOf(taskId);
     try {
-      List<StepSource> steps = StepikClient.getFromStepik(url, StepContainer.class).steps;
+      StepContainer container = StepikAuthorizedClient.getFromStepik(url, StepContainer.class);
+      if (container == null) {
+        container = StepikClient.getFromStepik(url, StepContainer.class);
+      }
+      List<StepSource> steps = container.steps;
       if (!steps.isEmpty()) {
         return steps.get(0).update_date;
       }
