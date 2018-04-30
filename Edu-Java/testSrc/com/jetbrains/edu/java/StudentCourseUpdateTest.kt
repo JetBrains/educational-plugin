@@ -567,9 +567,9 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
         TestCase.assertTrue("Task text mismatch.\n" +
                             "Lesson \"${lesson.name}\". \n" +
                             "Task \"${task.name}\". \n" +
-                            "Expected:\n \"${newTask.description}\"\n" +
-                            "Actual:\n \"${task.description}\"",
-                            newTask.description == task.description)
+                            "Expected:\n \"${newTask.descriptionText}\"\n" +
+                            "Actual:\n \"${task.descriptionText}\"",
+                            newTask.descriptionText == task.descriptionText)
 
         TestCase.assertTrue("Lesson index mismatch.\n Expected: Lesson \"${newLesson.name}\", index: ${newLesson.index}.\n" +
                             " Actual: Lesson \"${lesson.name}\", index: ${lesson.index}", lesson.index == newLesson.index)
