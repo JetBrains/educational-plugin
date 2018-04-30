@@ -9,6 +9,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
@@ -164,7 +165,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
         if (isSolved(currentTask!!)) {
           updatedTasks.add(currentTask)
           currentTask.index = taskIndex
-          currentTask.description = taskFromServer.description
+          currentTask.descriptionText = taskFromServer.descriptionText
           continue
         }
         if (updateFilesNeeded(currentTask)) {
@@ -197,6 +198,9 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   private fun createTaskDirectories(lessonDir: VirtualFile,
                                     task: Task) {
     GeneratorUtils.createTask(task, lessonDir)
+    if (!task.lesson.course.isStudy) {
+      CCUtils.initializeTaskPlaceholders(task, project)
+    }
   }
 
   private fun getTaskDir(taskName: String, lessonDir: VirtualFile?): VirtualFile? {
