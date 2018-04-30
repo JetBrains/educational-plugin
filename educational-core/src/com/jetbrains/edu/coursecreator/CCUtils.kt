@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator
 
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
@@ -13,7 +13,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.InputValidatorEx
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -236,15 +235,15 @@ object CCUtils {
   }
 
   private fun initializeLessonPlaceholders(project: Project, lesson: Lesson) {
-    val lessonDir = lesson.getLessonDir(project) ?: return
-    val application = ApplicationManager.getApplication()
-
     for (task in lesson.getTaskList()) {
-      val taskDir = lessonDir.findChild(task.name)
-      if (taskDir == null) continue
-      for (entry in task.getTaskFiles().entries) {
-        application.invokeAndWait { application.runWriteAction { initializeTaskFilePlaceholders(project, taskDir, entry.value) } }
-      }
+      initializeTaskPlaceholders(task, project)
+    }
+  }
+
+  fun initializeTaskPlaceholders(task: Task, project: Project) {
+    val taskDir = task.getTaskDir(project) ?: return
+    for (entry in task.getTaskFiles().entries) {
+      invokeAndWaitIfNeed { runWriteAction { initializeTaskFilePlaceholders(project, taskDir, entry.value) } }
     }
   }
 
