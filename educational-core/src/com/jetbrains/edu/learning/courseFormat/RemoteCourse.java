@@ -78,8 +78,6 @@ public class RemoteCourse extends Course {
   @Override
   public boolean isUpToDate() {
     if (id == 0) return true;
-    if (!isStudy()) return true;
-
 
     RemoteCourse courseFromServer = StepikConnector.getCourseFromStepik(EduSettings.getInstance().getUser(), id, isCompatible);
     if (courseFromServer == null) return true;
