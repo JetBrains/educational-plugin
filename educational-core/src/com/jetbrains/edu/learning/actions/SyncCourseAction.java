@@ -7,6 +7,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -15,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
+import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +39,17 @@ public class SyncCourseAction extends DumbAwareAction {
   public static void doUpdate(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
+    if (course instanceof RemoteCourse && CCUtils.isCourseCreator(project)) {
+      if (course.isUpToDate()) {
+        return;
+      }
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
+        course.setUpdated();
+      }, "Updating Course", true, project);
+      return;
+    }
     if (course.isAdaptive()) {
       updateAdaptiveCourse(project, course);
     }
