@@ -85,13 +85,13 @@ public class StepikWrappers {
         final VirtualFile taskDir = task.getTaskDir(project);
         assert taskDir != null;
         for (final Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-          ApplicationManager.getApplication().runWriteAction(() -> {
+          ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
             VirtualFile answerFile = EduUtils.findTaskFileInDir(entry.getValue(), taskDir);
             if (answerFile == null) return;
             TaskFile studentTaskFile = EduUtils.createStudentFile(project, answerFile, null);
             if (studentTaskFile == null) return;
             source.files.add(studentTaskFile);
-          });
+          }));
         }
       } else {
         for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
@@ -169,7 +169,7 @@ public class StepikWrappers {
     }
   }
 
-  static class LessonContainer {
+  public static class LessonContainer {
     List<Lesson> lessons;
   }
 
@@ -244,9 +244,8 @@ public class StepikWrappers {
     }
   }
 
-  static class UnitContainer {
-
-    List<Unit> units;
+  public static class UnitContainer {
+    public List<Unit> units;
   }
 
   public static class UnitWrapper {
@@ -278,12 +277,8 @@ public class StepikWrappers {
     public static class Attempt {
       int step;
       public Dataset dataset;
-      String dataset_url;
       String status;
-      String time;
-      String time_left;
       String user;
-      String user_id;
       int id;
 
       public Attempt(int step) {
