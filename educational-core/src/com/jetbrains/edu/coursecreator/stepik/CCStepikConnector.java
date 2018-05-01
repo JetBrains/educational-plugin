@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.intellij.lang.Language;
 import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -15,13 +16,13 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
-import com.twelvemonkeys.lang.StringUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -36,6 +37,7 @@ import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -50,6 +52,7 @@ public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
   private static final String FAILED_TITLE = "Failed to publish ";
   private static final String JETBRAINS_USER_ID = "17813950";
+  private static final String PUSH_COURSE_GROUP_ID = "Push.course";
 
   private CCStepikConnector() {
   }
@@ -319,14 +322,14 @@ public class CCStepikConnector {
     if (taskDir == null) return;
 
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES
-                                                                                    + String.valueOf(task.getStepId()));
+                                        + String.valueOf(task.getStepId()));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
     ApplicationManager.getApplication().invokeLater(() -> {
       final Language language = lesson.getCourse().getLanguageById();
       final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
       if (configurator == null) return;
       List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren()).filter(configurator::isTestFile)
-                                                 .collect(Collectors.toList());
+        .collect(Collectors.toList());
       for (VirtualFile file : testFiles) {
         try {
           task.addTestsTexts(file.getName(), VfsUtilCore.loadText(file));
@@ -366,8 +369,12 @@ public class CCStepikConnector {
     });
   }
 
-  public static void updateCourse(@NotNull final Project project, @NotNull final RemoteCourse course) {
-    if (!checkIfAuthorized(project, "update course")) return;
+  /***
+   *
+   * @return true if successfully updated, false otherwise
+   */
+  public static boolean updateCourse(@NotNull final Project project, @NotNull final RemoteCourse course) {
+    if (!checkIfAuthorized(project, "update course")) return false;
 
     // Course info can be changed from Stepik site directly
     // so we get actual info here
@@ -387,17 +394,22 @@ public class CCStepikConnector {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) {
         LOG.warn("Http client is null");
-        return;
+        return false;
       }
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
       final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
       final StatusLine line = response.getStatusLine();
       EntityUtils.consume(responseEntity);
+      if (line.getStatusCode() == HttpStatus.SC_FORBIDDEN) {
+        showNoRightsToUpdateNotification(project, course);
+        return false;
+      }
       if (line.getStatusCode() != HttpStatus.SC_OK) {
         final String message = FAILED_TITLE + "course ";
-        LOG.error(message + responseString);
+        LOG.warn(message + responseString);
         showErrorNotification(project, FAILED_TITLE, responseString);
+        return false;
       }
       final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
       updateLessons(course, project);
@@ -406,8 +418,11 @@ public class CCStepikConnector {
       if (!updateAdditionalMaterials(project, course, sectionIds)) {
         postAdditionalFiles(course, project, course.getId(), sectionIds.size());
       }
-    } catch (IOException e) {
+      return true;
+    }
+    catch (IOException e) {
       LOG.error(e.getMessage());
+      return false;
     }
   }
 
@@ -447,7 +462,7 @@ public class CCStepikConnector {
           postUnit(lessonId, lesson.getIndex(), sectionId, project);
         }
       }
-      indicator.setFraction((double)lesson.getIndex()/course.getLessons().size());
+      indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
     }
   }
 
@@ -522,7 +537,23 @@ public class CCStepikConnector {
     final JsonElement detail = details.get("detail");
     final String detailString = detail != null ? detail.getAsString() : responseString;
     final Notification notification =
-      new Notification("Push.course", message, detailString, NotificationType.ERROR);
+      new Notification(PUSH_COURSE_GROUP_ID, message, detailString, NotificationType.ERROR);
+    notification.notify(project);
+  }
+
+  private static void showNoRightsToUpdateNotification(@NotNull final Project project, @NotNull final RemoteCourse course) {
+    String message = "You don't have permission to update the course <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
+    Notification notification = new Notification(PUSH_COURSE_GROUP_ID, FAILED_TITLE, message, NotificationType.ERROR,
+                                                 new NotificationListener.Adapter() {
+                                                   @Override
+                                                   protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+                                                     Course nonRemoteCourse =
+                                                       XmlSerializer.deserialize(XmlSerializer.serialize(course), Course.class);
+                                                     nonRemoteCourse.init(null, null, true);
+                                                     StudyTaskManager.getInstance(project).setCourse(nonRemoteCourse);
+                                                     postCourseWithProgress(project, nonRemoteCourse);
+                                                   }
+                                                 });
     notification.notify(project);
   }
 
