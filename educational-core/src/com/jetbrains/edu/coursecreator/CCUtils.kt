@@ -13,12 +13,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.ui.InputValidatorEx
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.VirtualFileVisitor
+import com.intellij.openapi.vfs.*
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
 import com.intellij.util.ThrowableConsumer
@@ -30,6 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
+import java.util.*
 
 object CCUtils {
   private val LOG = Logger.getInstance(CCUtils::class.java)
@@ -316,5 +315,68 @@ object CCUtils {
     override fun canClose(inputString: String): Boolean = checkInput(inputString)
 
     override fun getErrorText(inputString: String): String? = myErrorText
+  }
+
+  @JvmStatic
+  fun wrapIntoSection(project: Project, course: Course, lessonsToWrap: List<Lesson>, sectionName: String): Boolean {
+    Collections.sort(lessonsToWrap, EduUtils.INDEX_COMPARATOR)
+    val minIndex = lessonsToWrap[0].index
+    val maxIndex = lessonsToWrap[lessonsToWrap.size - 1].index
+
+    val sectionDir = createSectionDir(project, sectionName) ?: return true
+
+    val section = createSection(lessonsToWrap, sectionName, minIndex)
+
+    for (i in lessonsToWrap.indices) {
+      val lesson = lessonsToWrap[i]
+      val lessonDir = lesson.getLessonDir(project)
+      if (lessonDir != null) {
+        moveLesson(lessonDir, sectionDir)
+        lesson.index = i + 1
+        lesson.section = section
+      }
+      course.removeLesson(lesson)
+    }
+
+    val delta = -lessonsToWrap.size + 1
+
+    updateHigherElements(EduUtils.getCourseDir(project).children, Function { file ->  course.getItem(file.name) }, maxIndex, delta)
+    course.addItem(section, section.index - 1)
+    return false
+  }
+
+  private fun createSection(lessonsToWrap: List<Lesson>, sectionName: String, index: Int): Section {
+    val section = Section()
+    section.index = index
+    section.name = sectionName
+    section.addLessons(lessonsToWrap)
+    return section
+  }
+
+  private fun moveLesson(lessonDir: VirtualFile, sectionDir: VirtualFile) {
+    ApplicationManager.getApplication().runWriteAction(object : Runnable {
+      override fun run() {
+        try {
+          lessonDir.move(this, sectionDir)
+        }
+        catch (e1: IOException) {
+          LOG.error("Failed to move lesson " + lessonDir.name + " to the new section " + sectionDir.name)
+        }
+
+      }
+    })
+  }
+
+  private fun createSectionDir(project: Project, sectionName: String): VirtualFile? {
+    return ApplicationManager.getApplication().runWriteAction(Computable<VirtualFile> {
+      try {
+        return@Computable VfsUtil.createDirectoryIfMissing(EduUtils.getCourseDir(project), sectionName)
+      }
+      catch (e1: IOException) {
+        LOG.error("Failed to create directory for section $sectionName")
+      }
+
+      null
+    })
   }
 }
