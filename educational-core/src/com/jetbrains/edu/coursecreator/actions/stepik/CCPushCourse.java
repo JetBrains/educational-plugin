@@ -52,8 +52,9 @@ public class CCPushCourse extends DumbAwareAction {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           indicator.setIndeterminate(false);
-          CCStepikConnector.updateCourse(project, (RemoteCourse) course);
-          CCStepikConnector.showNotification(project, "Course updated");
+          if (CCStepikConnector.updateCourse(project, (RemoteCourse) course)) {
+            CCStepikConnector.showNotification(project, "Course updated");
+          }
         }
       });
     }
