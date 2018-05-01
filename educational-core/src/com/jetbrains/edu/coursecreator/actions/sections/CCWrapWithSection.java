@@ -4,25 +4,19 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class CCWrapWithSection extends DumbAwareAction {
@@ -60,41 +54,8 @@ public class CCWrapWithSection extends DumbAwareAction {
       return;
     }
 
-    lessonsToWrap.sort(EduUtils.INDEX_COMPARATOR);
-    final int minIndex = lessonsToWrap.get(0).getIndex();
-    final int maxIndex = lessonsToWrap.get(lessonsToWrap.size() - 1).getIndex();
-
-    final VirtualFile sectionDir = createSectionDir(project, sectionName);
-    if (sectionDir == null) {
-      return;
-    }
-
-    final Section section = createSection(lessonsToWrap, sectionName, minIndex);
-
-    for (int i = 0; i < lessonsToWrap.size(); i++) {
-      Lesson lesson = lessonsToWrap.get(i);
-      final VirtualFile lessonDir = lesson.getLessonDir(project);
-      if (lessonDir != null) {
-        moveLesson(lessonDir, sectionDir);
-        lesson.setIndex(i + 1);
-        lesson.setSection(section);
-      }
-      course.removeLesson(lesson);
-    }
-
-    int delta = -lessonsToWrap.size() + 1;
-    CCUtils.updateHigherElements(EduUtils.getCourseDir(project).getChildren(), file -> course.getItem(file.getName()), maxIndex, delta);
-    course.addItem(section, section.getIndex() - 1);
+    if (CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName)) return;
     ProjectView.getInstance(project).refresh();
-  }
-
-  @NotNull
-  private static Section createSection(@NotNull ArrayList<Lesson> lessonsToWrap, @NotNull String sectionName, int index) {
-    final Section section = new Section();
-    section.setIndex(index);
-    section.setName(sectionName);
-    section.addLessons(lessonsToWrap);
-    return section;
   }
 
   @NotNull
@@ -107,36 +68,6 @@ public class CCWrapWithSection extends DumbAwareAction {
       }
     }
     return lessonsToWrap;
-  }
-
-  private void moveLesson(@NotNull final VirtualFile lessonDir, @NotNull final VirtualFile sectionDir) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          lessonDir.move(this, sectionDir);
-        }
-        catch (IOException e1) {
-          LOG.error("Failed to move lesson " + lessonDir.getName() + "to the new section " + sectionDir.getName());
-        }
-      }
-    });
-  }
-
-  @Nullable
-  private static VirtualFile createSectionDir(@NotNull Project project, @NotNull String sectionName) {
-    return ApplicationManager.getApplication().runWriteAction(new Computable<VirtualFile>() {
-      @Override
-      public VirtualFile compute() {
-        try {
-          return VfsUtil.createDirectoryIfMissing(EduUtils.getCourseDir(project), sectionName);
-        }
-        catch (IOException e1) {
-          LOG.error("Failed to create directory for section " + sectionName);
-        }
-        return null;
-      }
-    });
   }
 
   @Override
