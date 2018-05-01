@@ -189,13 +189,10 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     }
 
     private CheckResult checkRemoteCourse() {
-      if (EduUtils.isStudentProject(myProject)) {
-        CheckResult remoteCheckResult = myChecker.checkOnRemote();
-        if (remoteCheckResult != CheckResult.USE_LOCAL_CHECK) {
-          return remoteCheckResult;
-        }
+      CheckResult remoteCheckResult = myChecker.checkOnRemote();
+      if (remoteCheckResult != CheckResult.USE_LOCAL_CHECK) {
+        return remoteCheckResult;
       }
-
       return myChecker.check();
     }
 
