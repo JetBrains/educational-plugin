@@ -18,7 +18,8 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.*
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -257,11 +258,12 @@ object GeneratorUtils {
    */
   @JvmStatic
   fun getUniqueValidName(parentDir: VirtualFile, name: String): String {
+    val validName = if (name.contains("/")) name.replace("/", " ") else name
     var index = 0
-    var candidateName = name
+    var candidateName = validName
     while (parentDir.findChild(candidateName) != null) {
       index++
-      candidateName = "$name ($index)"
+      candidateName = "$validName ($index)"
     }
     return candidateName
   }
