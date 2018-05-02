@@ -438,7 +438,7 @@ public class StepikConnector {
     return null;
   }
 
-  private static void fillItems(@NotNull RemoteCourse remoteCourse) throws IOException {
+  public static void fillItems(@NotNull RemoteCourse remoteCourse) throws IOException {
     try {
       String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
       List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
@@ -580,7 +580,7 @@ public class StepikConnector {
     return sorted;
   }
 
-  private static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds, boolean updateIndicator) throws IOException {
+  public static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds, boolean updateIndicator) throws IOException {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
     try {
