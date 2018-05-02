@@ -40,7 +40,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
         }
       }
     }
-    expectedFileTree.assertEquals(EduUtils.getCourseDir(project)!!)
+    expectedFileTree.assertEquals(EduUtils.getCourseDir(project))
 
     val expected = Paths.get(testDataPath).resolve("${getTestName(true)}.after.xml")
     checkEquals(loadElement(expected), converted)
