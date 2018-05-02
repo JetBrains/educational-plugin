@@ -107,7 +107,6 @@ public class StepikOptions implements OptionsProvider {
       myHoverHyperlinkLabel.setText("Log in to Stepik");
 
       myListener = createAuthorizeListener();
-      myHoverHyperlinkLabel.addHyperlinkListener(myListener);
     }
     else {
       String firstName = user.getFirstName();
@@ -122,8 +121,8 @@ public class StepikOptions implements OptionsProvider {
 
       myHoverHyperlinkLabel.setText("Log out");
       myListener = createLogoutListener();
-      myHoverHyperlinkLabel.addHyperlinkListener(myListener);
     }
+    myHoverHyperlinkLabel.addHyperlinkListener(myListener);
   }
 
   public void createUIComponents() {
