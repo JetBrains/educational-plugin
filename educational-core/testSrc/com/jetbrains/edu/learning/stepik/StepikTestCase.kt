@@ -1,19 +1,11 @@
 package com.jetbrains.edu.learning.stepik
 
-import com.intellij.lang.LanguageExtensionPoint
-import com.intellij.lang.annotation.Annotator
-import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.PlatformTestUtil
-import com.jetbrains.edu.coursecreator.CCTestCase
-import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider
+import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.http.Consts
 import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -28,7 +20,7 @@ import java.util.*
 import java.util.regex.Pattern
 
 
-abstract class StepikTestCase : CCTestCase() {
+abstract class StepikTestCase : EduTestCase() {
   companion object {
     private const val CLIENT_ID = "wHohrJv83oYoFYmgWYwEDW5ZNS1ntVRueWjMyQpm"
     private const val CSRF = "csrfmiddlewaretoken"
@@ -40,12 +32,6 @@ abstract class StepikTestCase : CCTestCase() {
 
   override fun setUp() {
     super.setUp()
-    //it's not allowed to open a course without a language
-    registerPlainTextConfigurator()
-
-    val course = StudyTaskManager.getInstance(project).course!!
-    course.name = "Stepik Integration Test Course"
-    course.language = PlainTextLanguage.INSTANCE.id
 
     login()
 
@@ -68,14 +54,6 @@ abstract class StepikTestCase : CCTestCase() {
     user = StepikAuthorizedClient.login(tokenInfo)
     EduSettings.getInstance().user = user
     println("Logged in as ${user.firstName} ${user.lastName}")
-  }
-
-  private fun registerPlainTextConfigurator() {
-    val extension = LanguageExtensionPoint<Annotator>()
-    extension.language = PlainTextLanguage.INSTANCE.id
-    extension.implementationClass = PlainTextConfigurator::class.java.name
-    PlatformTestUtil.registerExtension(
-      ExtensionPointName.create(EduConfigurator.EP_NAME), extension, myFixture.testRootDisposable)
   }
 
   /**
@@ -123,19 +101,6 @@ abstract class StepikTestCase : CCTestCase() {
     val courses = EduUtils.getCoursesUnderProgress()
     assertTrue(courses!!.size >= 1)
     return courses.find { c -> (c is RemoteCourse) && (c.id == course.id) && (c.name == course.name) }
-  }
-
-  class PlainTextConfigurator : EduConfigurator<Unit> {
-    override fun getCourseBuilder() = object : EduCourseBuilder<Unit> {
-      override fun createTaskContent(project: Project, task: Task, parentDirectory: VirtualFile, course: Course): VirtualFile? = null
-      override fun getLanguageSettings(): EduCourseBuilder.LanguageSettings<Unit> = EduCourseBuilder.LanguageSettings { Unit }
-    }
-
-    override fun getTestFileName() = "test.txt"
-
-    override fun excludeFromArchive(name: String) = false
-
-    override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project -> TaskChecker(task, project) }
   }
 
   private fun getTokens(): StepikWrappers.TokenInfo? {
