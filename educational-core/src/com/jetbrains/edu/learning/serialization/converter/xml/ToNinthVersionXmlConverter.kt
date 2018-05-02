@@ -8,9 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.serialization.SerializationUtils.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.POSSIBLE_ANSWER
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.DESCRIPTION_TEXT
-import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.DESCRIPTION_FORMAT
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException
 import org.jdom.Element
 
@@ -25,7 +22,7 @@ class ToNinthVersionXmlConverter : XmlConverter {
     val taskManagerElement = clone.getChild(MAIN_ELEMENT)
     val courseElement = getCourseElement(taskManagerElement)
     for (lesson in getChildList(courseElement, LESSONS)) {
-      val lessonDir = EduUtils.getCourseDir(project)?.findChild(EduNames.LESSON + getAsInt(lesson, INDEX)) ?: throw StudyUnrecognizedFormatException()
+      val lessonDir = EduUtils.getCourseDir(project).findChild(EduNames.LESSON + getAsInt(lesson, INDEX)) ?: throw StudyUnrecognizedFormatException()
       for (task in getChildList(lesson, TASK_LIST)) {
         val taskDir = lessonDir.findChild(EduNames.TASK + getAsInt(task, INDEX)) ?: throw StudyUnrecognizedFormatException()
         runWriteAction {
