@@ -82,7 +82,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
       return;
     }
     final VirtualFile courseDir = EduUtils.getCourseDir(myProject);
-    if (courseDir != null && !FileUtil.isAncestor(courseDir.getPath(), removedFile.getPath(), true)) {
+    if (!FileUtil.isAncestor(courseDir.getPath(), removedFile.getPath(), true)) {
       return;
     }
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
