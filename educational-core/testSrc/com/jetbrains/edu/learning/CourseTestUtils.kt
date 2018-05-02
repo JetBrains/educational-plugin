@@ -35,7 +35,6 @@ fun createRemoteCourseFromJson(pathToJson: String, courseType: CourseType): Remo
     .create()
   return gson.fromJson(courseJson, RemoteCourse::class.java).apply {
     courseMode = courseType.toString()
-    sectionIds = sections.map { it.id }
   }
 }
 
