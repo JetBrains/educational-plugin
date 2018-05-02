@@ -10,7 +10,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.python.PythonLanguage;
 import com.jetbrains.python.sdk.PythonSdkType;
 import org.jetbrains.annotations.NotNull;
@@ -21,12 +20,10 @@ import java.util.Map;
 class PyTestRunner {
   private static final Logger LOG = Logger.getInstance(PyTestRunner.class);
   private static final String PYTHONPATH = "PYTHONPATH";
-  @NotNull private final Task myTask;
   @NotNull private final VirtualFile myTaskDir;
   private GeneralCommandLine myCommandLine;
 
-  PyTestRunner(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
-    myTask = task;
+  PyTestRunner(@NotNull final VirtualFile taskDir) {
     myTaskDir = taskDir;
   }
 
