@@ -25,7 +25,6 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.checker.CheckUtils;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -479,7 +478,7 @@ public class StepikSolutionsLoader implements Disposable {
     if (toolWindow != null) {
       String text = EduUtils.getTaskTextFromTask(taskDir, task);
       if (text == null) {
-        toolWindow.setEmptyText(project);
+        toolWindow.setEmptyText();
         return;
       }
       toolWindow.setText(text);

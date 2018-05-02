@@ -4,6 +4,7 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @State(name = "CCSettings", storages = @Storage("other.xml"))
@@ -20,7 +21,7 @@ public class CCSettings implements PersistentStateComponent<CCSettings.State> {
   }
 
   @Override
-  public void loadState(State state) {
+  public void loadState(@NotNull State state) {
     myState = state;
   }
   

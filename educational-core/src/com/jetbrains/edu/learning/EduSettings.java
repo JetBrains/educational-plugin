@@ -9,6 +9,7 @@ import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
@@ -37,7 +38,7 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
   }
 
   @Override
-  public void loadState(EduSettings state) {
+  public void loadState(@NotNull EduSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 
