@@ -228,7 +228,7 @@ object CCUtils {
   }
 
   private fun initializeSectionPlaceholders(project: Project, section: Section) {
-    EduUtils.getCourseDir(project)?.findChild(section.name) ?: return
+    EduUtils.getCourseDir(project).findChild(section.name) ?: return
     for (item in section.lessons) {
       initializeLessonPlaceholders(project, item)
     }
