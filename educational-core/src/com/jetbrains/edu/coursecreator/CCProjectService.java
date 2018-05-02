@@ -71,7 +71,7 @@ public class CCProjectService implements PersistentStateComponent<Element> {
   }
 
   @Override
-  public void loadState(Element state) {
+  public void loadState(@NotNull Element state) {
     try {
       Element courseElement = getChildWithName(state, COURSE).getChild(COURSE_TITLED);
       for (Element lesson : getChildList(courseElement, LESSONS, true)) {

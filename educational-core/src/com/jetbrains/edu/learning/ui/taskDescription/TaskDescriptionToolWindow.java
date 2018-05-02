@@ -21,7 +21,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBCardLayout;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.util.ui.JBUI;
@@ -149,10 +148,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     
   }
 
-  public enum StudyToolWindowMode {
-    TEXT, EDITING
-  }
-
   public void updateTask(@NotNull Project project, @Nullable Task task) {
     if (myCurrentTask != task) {
       setCurrentTask(project, task);
@@ -180,7 +175,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     }
   }
 
-  public void setEmptyText(@NotNull Project project) {
+  public void setEmptyText() {
     setText(EMPTY_TASK_TEXT);
   }
 
