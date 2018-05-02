@@ -72,7 +72,7 @@ fun getProcessOutput(process: Process, commandLine: String, taskName: String): G
 
   if (!output.stdout.contains(taskName)) {
     TaskChecker.LOG.warn("#educational: executing $taskName fails: \n" + output.stdout)
-    return GradleOutput(false, FAILED_TO_CHECK_MESSAGE + ". See idea.log for more details.")
+    return GradleOutput(false, "$FAILED_TO_CHECK_MESSAGE. See idea.log for more details.")
   }
 
   var currentMessage: StringBuilder? = null

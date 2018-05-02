@@ -138,7 +138,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   @Override
-  public void loadState(Element state) {
+  public void loadState(@NotNull Element state) {
     try {
       int version = SerializationUtils.Xml.getVersion(state);
       if (version == -1) {
