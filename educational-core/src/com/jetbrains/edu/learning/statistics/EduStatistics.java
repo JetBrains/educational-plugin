@@ -7,6 +7,7 @@ import com.intellij.openapi.components.Storage;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import gnu.trove.TObjectIntHashMap;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @State(
@@ -29,7 +30,7 @@ public class EduStatistics implements PersistentStateComponent<Element> {
   }
 
   @Override
-  public void loadState(Element state) {
+  public void loadState(@NotNull Element state) {
     for (Element element : state.getChildren()) {
       String key = element.getAttributeValue(SerializationUtils.Xml.NAME);
       Integer value = Integer.valueOf(element.getAttributeValue(SerializationUtils.Xml.VALUE));

@@ -364,7 +364,7 @@ public class CoursesPanel extends JPanel {
     void validationStatusChanged(boolean canStartCourse);
   }
 
-  public static Set<String> getFilterParts(String filter) {
+  public static Set<String> getFilterParts(@NonNls String filter) {
     return new HashSet<>(Arrays.asList(filter.toLowerCase().split(" ")));
   }
 

@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 
