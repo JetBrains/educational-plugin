@@ -57,10 +57,6 @@ public class CCRemoveSection extends DumbAwareAction {
       }
     }
     final VirtualFile courseDir = EduUtils.getCourseDir(project);
-    if (courseDir == null) {
-      Messages.showInfoMessage("Can't find course directory.", "Unwrap Section Failed");
-      return;
-    }
     if (removeSectionDir(file, courseDir)) {
       final List<Lesson> lessonsFromSection = section.getLessons();
       final int sectionIndex = section.getIndex();
