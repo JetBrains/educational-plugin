@@ -89,6 +89,9 @@ public class CheckUtils {
     if (fileToNavigate != null) {
       FileEditorManager.getInstance(project).openFile(fileToNavigate, true);
     }
+    if (editor == null) {
+      return;
+    }
     final Editor editorToNavigate = editor;
     ApplicationManager.getApplication().invokeLater(
       () -> IdeFocusManager.getInstance(project).requestFocus(editorToNavigate.getContentComponent(), true));
