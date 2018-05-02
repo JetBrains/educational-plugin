@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.stepik;
 
 import com.google.common.collect.Lists;
 import com.google.gson.*;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.Language;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -14,12 +15,17 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -122,7 +128,9 @@ public class CCStepikConnector {
       if (line.getStatusCode() != HttpStatus.SC_CREATED) {
         final String message = FAILED_TITLE + "course ";
         LOG.error(message + responseString);
-        showErrorNotification(project, FAILED_TITLE, responseString);
+        final String detailString = getErrorDetail(responseString);
+
+        showErrorNotification(project, FAILED_TITLE, detailString);
         return;
       }
       final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
@@ -132,47 +140,23 @@ public class CCStepikConnector {
       courseOnRemote.setLanguage(course.getLanguageID());
 
       addJetBrainsUserAsAdmin(client, getAdminsGroupId(responseString));
-      int sectionCount = 1;
-      if (course.getSections().isEmpty()) {
-        postAsOneSection(project, courseOnRemote);
+      int sectionCount;
+      if (CourseExt.getHasSections(course)) {
+        sectionCount = postSections(project, courseOnRemote);
       }
       else {
-        sectionCount = postSections(project, courseOnRemote);
+        sectionCount = 1;
+        postTopLevelLessons(project, courseOnRemote);
       }
 
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
-      final int finalSectionCount = sectionCount;
-      ApplicationManager.getApplication().runReadAction(() -> postAdditionalFiles(course, project, courseOnRemote.getId(), finalSectionCount + 1));
+      postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
       StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
       courseOnRemote.setUpdated();
-      showNotification(project, "Course published");
+      showNotification(project, "Course is published", seeOnStepikAction("/course/" + courseOnRemote.getId()));
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
-    }
-  }
-
-  private static void postAsOneSection(@NotNull Project project, @NotNull RemoteCourse course) {
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    final Section section = new Section();
-    section.setName(String.valueOf(course.getName()));
-    section.setPosition(1);
-
-    final int sectionId = postModule(course.getId(), section, project);
-    course.getSectionIds().add(sectionId);
-    int position = 1;
-    for (Lesson lesson : course.getLessons()) {
-      if (indicator != null) {
-        indicator.checkCanceled();
-        indicator.setText2("Publishing lesson " + lesson.getIndex());
-      }
-      final int lessonId = postLesson(project, lesson);
-      postUnit(lessonId, position, sectionId, project);
-      if (indicator != null) {
-        indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
-        indicator.checkCanceled();
-      }
-      position += 1;
     }
   }
 
@@ -205,49 +189,118 @@ public class CCStepikConnector {
     return coursesObject.get("courses").getAsJsonArray().get(0).getAsJsonObject().get("admins_group").getAsString();
   }
 
+  public static void wrapUnpushedLessonsIntoSections(Project project, Course course) {
+    ApplicationManager.getApplication().invokeAndWait(() -> {
+      List<Lesson> lessons = course.getLessons();
+      for (Lesson lesson : lessons) {
+        if (lesson.getId() > 0) {
+          continue;
+        }
+        CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), "Section. " + StringUtil.capitalize(lesson.getName()));
+      }
+    });
+  }
+
   private static int postSections(@NotNull Project project, @NotNull RemoteCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     course.sortItems();
     final List<StudyItem> items = course.getItems();
-    int i = 0;
+    int i = 1;
     for (StudyItem item : items) {
-      final Section section = new Section();
-      List<Lesson> lessons;
-      if (item instanceof Section) {
-        ((Section)item).setPosition(i + 1);
-        section.setName(item.getName());
-        lessons = ((Section)item).getLessons();
-      }
-      else {
-        section.setName(EduNames.LESSON + item.getIndex());
-        lessons = Collections.singletonList((Lesson)item);
-      }
+      Section section = new Section();
+      ((Section)item).setPosition(i++);
+      section.setName(item.getName());
+      List<Lesson> lessons = ((Section)item).getLessons();
 
-      section.setPosition(i + 1);
-      final int sectionId = postModule(course.getId(), section, project);
-      section.setId(sectionId);
-      if (item instanceof Section) {
-        ((Section)item).setId(sectionId);
-      }
-      course.getSectionIds().add(sectionId);
+      final int sectionId = postModule(project, section, course.getId());
+      ((Section)item).setId(sectionId);
 
-      int position = 1;
-      for (Lesson lesson : lessons) {
-        if (indicator != null) {
-          indicator.checkCanceled();
-          indicator.setText2("Publishing lesson " + lesson.getIndex());
-        }
-        final int lessonId = postLesson(project, lesson);
-        postUnit(lessonId, position, sectionId, project);
-        if (indicator != null) {
-          indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
-          indicator.checkCanceled();
-        }
-        position += 1;
-      }
-      i += 1;
+      postLessons(project, indicator, course, sectionId, lessons);
     }
     return items.size();
+  }
+
+  private static void postTopLevelLessons(@NotNull Project project, @NotNull RemoteCourse course) {
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    Section section = new Section();
+    section.setName(course.getName());
+    section.setPosition(1);
+    final int sectionId = postModule(project, section, course.getId());
+    course.setSectionIds(Collections.singletonList(sectionId));
+    postLessons(project, indicator, course, sectionId, course.getLessons());
+  }
+
+  public static int postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
+    RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+    assert course != null;
+
+    int position = 1;
+    for (Section s : course.getSections()) {
+      if (s.getName().equals(section.getName())) {
+        break;
+      }
+      position++;
+    }
+    position += (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
+    section.setPosition(position);
+    final int sectionId = postModule(project, copySection(section), course.getId());
+    section.setId(sectionId);
+    postLessons(project, indicator, course, sectionId, section.getLessons());
+
+    return sectionId;
+  }
+
+  public static boolean updateSection(@NotNull Project project, @NotNull Section section) {
+    RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+    assert course != null;
+    int position = section.getIndex() + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
+    section.setPosition(position);
+    section.setCourse(course.getId());
+    boolean updated = updateSectionInfo(project, copySection(section));
+    if (updated) {
+      for (Lesson lesson : section.getLessons()) {
+        if (lesson.getId() > 0) {
+          updateLesson(project, lesson, false);
+        }
+        else {
+          postLesson(project, lesson);
+          lesson.unitId = postUnit(lesson.getId(), lesson.getIndex(), section.getId(), project);
+        }
+      }
+    }
+
+    return updated;
+  }
+
+  private static Section copySection(@NotNull Section section) {
+    Section sectionToPost = new Section();
+    sectionToPost.setName(section.getName());
+    sectionToPost.setPosition(section.getPosition());
+    sectionToPost.setId(section.getId());
+    sectionToPost.setCourse(section.getCourse());
+
+    return sectionToPost;
+  }
+
+  private static void postLessons(@NotNull Project project,
+                                  @Nullable ProgressIndicator indicator,
+                                  RemoteCourse course,
+                                  int sectionId,
+                                  List<Lesson> lessons) {
+    int position = 1;
+    for (Lesson lesson : lessons) {
+      if (indicator != null) {
+        indicator.checkCanceled();
+        indicator.setText2("Publishing lesson " + lesson.getIndex());
+      }
+      final int lessonId = postLesson(project, lesson);
+      lesson.unitId = postUnit(lessonId, position, sectionId, project);
+      if (indicator != null) {
+        indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
+        indicator.checkCanceled();
+      }
+      position += 1;
+    }
   }
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
@@ -269,26 +322,28 @@ public class CCStepikConnector {
       final Section section = new Section();
       section.setName(StepikNames.PYCHARM_ADDITIONAL);
       section.setPosition(position);
-      final int sectionId = postModule(id, section, project);
+      final int sectionId = postModule(project, section, id);
       final int lessonId = postLesson(project, lesson);
-      postUnit(lessonId, 1, sectionId, project);
+      postUnit(lessonId, position, sectionId, project);
     }
   }
 
-  public static void updateAdditionalFiles(Course course, @NotNull final Project project, int stepikId) {
-    final Lesson lesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
-    if (lesson != null) {
-      lesson.setId(stepikId);
+  public static void updateAdditionalFiles(Course course, @NotNull final Project project, Lesson lesson) {
+    final Lesson postedLesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
+    if (postedLesson != null) {
+      postedLesson.setId(lesson.getId());
+      postedLesson.setSection(lesson.getSection());
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
         indicator.setText2("Publishing additional files");
       }
-      updateLesson(project, lesson);
+
+      updateLesson(project, postedLesson, false);
     }
   }
 
-  public static void postUnit(int lessonId, int position, int sectionId, Project project) {
-    if (!checkIfAuthorized(project, "postTask")) return;
+  public static int postUnit(int lessonId, int position, int sectionId, Project project) {
+    if (!checkIfAuthorized(project, "postUnit")) return lessonId;
 
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.UNITS);
     final StepikWrappers.UnitWrapper unitWrapper = new StepikWrappers.UnitWrapper();
@@ -303,7 +358,7 @@ public class CCStepikConnector {
 
     try {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return;
+      if (client == null) return lessonId;
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
       final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
@@ -311,7 +366,51 @@ public class CCStepikConnector {
       EntityUtils.consume(responseEntity);
       if (line.getStatusCode() != HttpStatus.SC_CREATED) {
         LOG.error(FAILED_TITLE + responseString);
-        showErrorNotification(project, FAILED_TITLE, responseString);
+        final String detailString = getErrorDetail(responseString);
+
+        showErrorNotification(project, FAILED_TITLE, detailString);
+      }
+      else {
+        StepikWrappers.UnitContainer unitContainer = new Gson().fromJson(responseString, StepikWrappers.UnitContainer.class);
+        if (!unitContainer.units.isEmpty()) {
+          return unitContainer.units.get(0).getId();
+        }
+      }
+    }
+    catch (IOException e) {
+      LOG.error(e.getMessage());
+    }
+    return -1;
+  }
+
+  public static void updateUnit(int unitId, int lessonId, int position, int sectionId, Project project) {
+    if (!checkIfAuthorized(project, "updateUnit")) return;
+
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.UNITS + "/" + unitId);
+    final StepikWrappers.UnitWrapper unitWrapper = new StepikWrappers.UnitWrapper();
+    final StepikWrappers.Unit unit = new StepikWrappers.Unit();
+    unit.setLesson(lessonId);
+    unit.setPosition(position);
+    unit.setSection(sectionId);
+    unit.setId(unitId);
+    unitWrapper.setUnit(unit);
+
+    String requestBody = new Gson().toJson(unitWrapper);
+    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
+
+    try {
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
+      if (client == null) return;
+      final CloseableHttpResponse response = client.execute(request);
+      final HttpEntity responseEntity = response.getEntity();
+      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
+      final StatusLine line = response.getStatusLine();
+      EntityUtils.consume(responseEntity);
+      if (line.getStatusCode() != HttpStatus.SC_OK) {
+        LOG.error("Failed to update Unit" + responseString);
+        final String detailString = getErrorDetail(responseString);
+
+        showErrorNotification(project, FAILED_TITLE, detailString);
       }
     }
     catch (IOException e) {
@@ -319,7 +418,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static int postModule(int courseId, Section section, Project project) {
+  private static int postModule(@NotNull Project project, @NotNull Section section, int courseId) {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS);
     section.setCourse(courseId);
     final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
@@ -337,7 +436,9 @@ public class CCStepikConnector {
       EntityUtils.consume(responseEntity);
       if (line.getStatusCode() != HttpStatus.SC_CREATED) {
         LOG.error(FAILED_TITLE + responseString);
-        showErrorNotification(project, FAILED_TITLE, responseString);
+        final String detailString = getErrorDetail(responseString);
+
+        showErrorNotification(project, FAILED_TITLE, detailString);
         return -1;
       }
       final Section postedSection = new Gson().fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
@@ -349,23 +450,52 @@ public class CCStepikConnector {
     return -1;
   }
 
-  public static void updateTask(@NotNull final Project project, @NotNull final Task task) {
-    if (!checkIfAuthorized(project, "update task")) return;
+  private static boolean updateSectionInfo(@NotNull Project project, @NotNull Section section) {
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS + "/" + section.getId());
+    final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
+    sectionContainer.setSection(section);
+    String requestBody = new Gson().toJson(sectionContainer);
+    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
+
+    try {
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
+      if (client == null) return false;
+      final CloseableHttpResponse response = client.execute(request);
+      final HttpEntity responseEntity = response.getEntity();
+      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
+      final StatusLine line = response.getStatusLine();
+      EntityUtils.consume(responseEntity);
+      if (line.getStatusCode() != HttpStatus.SC_OK) {
+        LOG.error(FAILED_TITLE + responseString);
+        showErrorNotification(project, FAILED_TITLE, getErrorDetail(responseString));
+        return false;
+      }
+    }
+    catch (IOException e) {
+      LOG.error(e.getMessage());
+      return false;
+    }
+
+    return true;
+  }
+
+  public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
+    if (!checkIfAuthorized(project, "update task")) return false;
     final Lesson lesson = task.getLesson();
     final int lessonId = lesson.getId();
 
     VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) return;
+    if (taskDir == null) return false;
 
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES
                                         + String.valueOf(task.getStepId()));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-    ApplicationManager.getApplication().invokeLater(() -> {
+
       final Language language = lesson.getCourse().getLanguageById();
       final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
-      if (configurator == null) return;
+      if (configurator == null) return false;
       List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren()).filter(configurator::isTestFile)
-        .collect(Collectors.toList());
+                                                 .collect(Collectors.toList());
       for (VirtualFile file : testFiles) {
         try {
           task.addTestsTexts(file.getName(), VfsUtilCore.loadText(file));
@@ -374,52 +504,47 @@ public class CCStepikConnector {
           LOG.warn("Failed to load text " + file.getName());
         }
       }
-      final String requestBody = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
-      request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
+    final String[] requestBody = new String[1];
+      ApplicationManager.getApplication().invokeAndWait(() -> requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId)));
+      request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
 
-      try {
-        final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-        if (client == null) return;
-        final CloseableHttpResponse response = client.execute(request);
-        final HttpEntity responseEntity = response.getEntity();
-        final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-        EntityUtils.consume(responseEntity);
-        final StatusLine line = response.getStatusLine();
-        switch (line.getStatusCode()) {
-          case HttpStatus.SC_OK:
-            showNotification(project, "Task updated");
-            break;
-          case HttpStatus.SC_NOT_FOUND:
-            // TODO: support case when lesson was removed from Stepik too
-            postTask(project, task, task.getLesson().getId());
-            break;
-          default:
-            final String message = "Failed to update task ";
-            LOG.error(message + responseString);
-            showErrorNotification(project, message, responseString);
-        }
+    try {
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
+      if (client == null) return false;
+      final CloseableHttpResponse response = client.execute(request);
+      final HttpEntity responseEntity = response.getEntity();
+      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
+      EntityUtils.consume(responseEntity);
+      final StatusLine line = response.getStatusLine();
+      switch (line.getStatusCode()) {
+        case HttpStatus.SC_OK:
+          return true;
+        case HttpStatus.SC_NOT_FOUND:
+          // TODO: support case when lesson was removed from Stepik too
+          return postTask(project, task, task.getLesson().getId());
+        default:
+          final String message = "Failed to update task ";
+          LOG.error(message + responseString);
+          return false;
       }
-      catch (IOException e) {
-        LOG.error(e.getMessage());
-      }
-    });
+    }
+    catch (IOException e) {
+      LOG.error(e.getMessage());
+    }
+    return false;
   }
 
-  /***
-   *
-   * @return true if successfully updated, false otherwise
-   */
-  public static boolean updateCourse(@NotNull final Project project, @NotNull final RemoteCourse course) {
-    if (!checkIfAuthorized(project, "update course")) return false;
+  public static void updateCourseInfo(@NotNull final Project project, @NotNull final RemoteCourse course) {
+    if (!checkIfAuthorized(project, "update course")) return;
 
-    // Course info can be changed from Stepik site directly
+    // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
     RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
     if (courseInfo != null) {
-      course.setName(courseInfo.getName());
-      course.setDescription(courseInfo.getDescription());
       course.setPublic(courseInfo.isPublic());
-    } else {
+      course.setCompatible(courseInfo.isCompatible());
+    }
+    else {
       LOG.warn("Failed to get current course info");
     }
 
@@ -430,7 +555,7 @@ public class CCStepikConnector {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) {
         LOG.warn("Http client is null");
-        return false;
+        return;
       }
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
@@ -439,72 +564,71 @@ public class CCStepikConnector {
       EntityUtils.consume(responseEntity);
       if (line.getStatusCode() == HttpStatus.SC_FORBIDDEN) {
         showNoRightsToUpdateNotification(project, course);
-        return false;
       }
       if (line.getStatusCode() != HttpStatus.SC_OK) {
         final String message = FAILED_TITLE + "course ";
         LOG.warn(message + responseString);
-        showErrorNotification(project, FAILED_TITLE, responseString);
-        return false;
+        final String detailString = getErrorDetail(responseString);
+
+        showErrorNotification(project, FAILED_TITLE, detailString);
       }
-      final RemoteCourse postedCourse = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
-      updateLessons(course, project);
-      ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
-      final List<Integer> sectionIds = postedCourse.getSectionIds();
-      if (!updateAdditionalMaterials(project, course, sectionIds)) {
-        postAdditionalFiles(course, project, course.getId(), sectionIds.size());
-      }
+
       course.setUpdated();
-      return true;
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
-      return false;
     }
   }
 
-  private static boolean updateAdditionalMaterials(@NotNull Project project, @NotNull final RemoteCourse course,
-                                                   @NotNull final List<Integer> sectionsIds) throws IOException {
+  public static void updateAdditionalMaterials(@NotNull Project project, int courseId) throws IOException {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
-    for (Integer sectionId : sectionsIds) {
+    RemoteCourse courseInfo = getCourseInfo(String.valueOf(courseId));
+    assert courseInfo != null;
+
+    List<Integer> sectionIds = courseInfo.getSectionIds();
+    for (Integer sectionId : sectionIds) {
       final Section section = StepikConnector.getSection(sectionId);
       if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
-        final List<Lesson> lessons = StepikConnector.getLessons(course, sectionId);
+        section.setPosition(sectionIds.size());
+        section.setId(sectionId);
+        updateSectionInfo(project, copySection(section));
+        final List<Lesson> lessons = StepikConnector.getLessons(courseInfo, sectionId);
         lessons.stream()
-                .filter(Lesson::isAdditional)
-                .findFirst()
-                .ifPresent(lesson -> {
-                        updateAdditionalFiles(course, project, lesson.getId());
-                        additionalMaterialsUpdated.set(true);
-                });
+          .filter(Lesson::isAdditional)
+          .findFirst()
+          .ifPresent(lesson -> {
+            lesson.setSection(section);
+            updateAdditionalFiles(courseInfo, project, lesson);
+            additionalMaterialsUpdated.set(true);
+          });
       }
     }
+    additionalMaterialsUpdated.get();
+  }
+
+  public static boolean updateAdditionalSection(@NotNull Project project) {
+    AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
+
+    RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+    assert course != null;
+
+    RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
+    assert courseInfo != null;
+
+    List<Integer> sectionIds = courseInfo.getSectionIds();
+    for (Integer sectionId : sectionIds) {
+      final Section section = StepikConnector.getSection(sectionId);
+      if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
+        section.setPosition(sectionIds.size());
+        updateSectionInfo(project, copySection(section));
+      }
+    }
+
     return additionalMaterialsUpdated.get();
   }
 
-  private static void updateLessons(Course course, Project project) {
-    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    for (Lesson lesson : course.getLessons()) {
-      indicator.checkCanceled();
-      indicator.setText2("Publishing lesson " + lesson.getIndex());
-
-      if (lesson.getId() > 0) {
-        updateLesson(project, lesson);
-      }
-      else {
-        final int lessonId = postLesson(project, lesson);
-        if (lessonId != -1) {
-          final List<Integer> sectionIds = ((RemoteCourse)course).getSectionIds();
-          final Integer sectionId = sectionIds.get(sectionIds.size() - 1);
-          postUnit(lessonId, lesson.getIndex(), sectionId, project);
-        }
-      }
-      indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
-    }
-  }
-
-  public static int updateLesson(@NotNull final Project project, @NotNull final Lesson lesson) {
-    if(!checkIfAuthorized(project, "update lesson")) return -1;
+  public static Lesson updateLessonInfo(@NotNull final Project project, @NotNull final Lesson lesson, boolean showNotification) {
+    if (!checkIfAuthorized(project, "update lesson")) return null;
 
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + String.valueOf(lesson.getId()));
 
@@ -513,7 +637,7 @@ public class CCStepikConnector {
 
     try {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return -1;
+      if (client == null) return null;
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
       final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
@@ -523,24 +647,56 @@ public class CCStepikConnector {
       if (line.getStatusCode() != HttpStatus.SC_OK) {
         final String message = "Failed to update lesson ";
         LOG.error(message + responseString);
-        showErrorNotification(project, message, responseString);
-        return -1;
+        if (showNotification) {
+          final String detailString = getErrorDetail(responseString);
+
+          showErrorNotification(project, message, detailString);
+        }
       }
 
       final Lesson postedLesson = getLessonFromString(responseString);
       if (postedLesson == null) {
-        return -1;
+        return null;
       }
-      updateLessonTasks(project, lesson, postedLesson);
-      return lesson.getId();
+
+      int sectionId;
+      if (lesson.getSection() == null) {
+        RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+        assert course != null;
+        sectionId = course.getSectionIds().get(0);
+      }
+      else {
+        sectionId = lesson.getSection().getId();
+      }
+
+      if (!lesson.isAdditional()) {
+        updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
+      }
+
+      return new Gson().fromJson(responseString, StepikWrappers.LessonContainer.class).lessons.get(0);
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
     }
+    return null;
+  }
+
+  public static int updateLesson(@NotNull final Project project,
+                                 @NotNull final Lesson lesson,
+                                 boolean showNotification) {
+    Lesson postedLesson = updateLessonInfo(project, lesson, showNotification);
+
+    if (postedLesson != null) {
+      updateLessonTasks(project, lesson, postedLesson);
+      return postedLesson.getId();
+    }
+
     return -1;
   }
 
-  private static void updateLessonTasks(@NotNull Project project, @NotNull Lesson localLesson, @NotNull Lesson remoteLesson) {
+  private static void updateLessonTasks(@NotNull Project project,
+                                        @NotNull Lesson localLesson,
+                                        @NotNull Lesson remoteLesson) {
     final Set<Integer> localTasksIds = localLesson.getTaskList()
       .stream()
       .map(task -> task.getStepId())
@@ -557,24 +713,19 @@ public class CCStepikConnector {
     }
 
     for (Task task : localLesson.getTaskList()) {
-      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-      if (indicator != null) {
-        indicator.checkCanceled();
-      }
+      checkCancelled();
       if (task.getStepId() > 0) {
         updateTask(project, task);
-      } else {
+      }
+      else {
         postTask(project, task, localLesson.getId());
       }
     }
   }
 
-  private static void showErrorNotification(@NotNull Project project, String message, String responseString) {
-    final JsonObject details = new JsonParser().parse(responseString).getAsJsonObject();
-    final JsonElement detail = details.get("detail");
-    final String detailString = detail != null ? detail.getAsString() : responseString;
+  public static void showErrorNotification(@NotNull Project project, String title, String message) {
     final Notification notification =
-      new Notification(PUSH_COURSE_GROUP_ID, message, detailString, NotificationType.ERROR);
+      new Notification(PUSH_COURSE_GROUP_ID, title, message, NotificationType.ERROR);
     notification.notify(project);
   }
 
@@ -594,10 +745,24 @@ public class CCStepikConnector {
     notification.notify(project);
   }
 
-  public static void showNotification(@NotNull Project project, String message) {
+  public static void showNotification(@NotNull Project project,
+                                      @NotNull String title,
+                                      @Nullable AnAction action) {
     final Notification notification =
-      new Notification("Push.course", message, message, NotificationType.INFORMATION);
+      new Notification("Push.course", title, "", NotificationType.INFORMATION);
+    if (action != null) {
+      notification.addAction(action);
+    }
     notification.notify(project);
+  }
+
+  public static AnAction seeOnStepikAction(@NotNull String url) {
+    return new AnAction("See on Stepik") {
+      @Override
+      public void actionPerformed(AnActionEvent e) {
+        BrowserUtil.browse(StepikNames.STEPIK_URL + url);
+      }
+    };
   }
 
   private static void showStepikNotification(@NotNull Project project,
@@ -618,6 +783,8 @@ public class CCStepikConnector {
 
   public static int postLesson(@NotNull final Project project, @NotNull final Lesson lesson) {
     if (!checkIfAuthorized(project, "postLesson")) return -1;
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    assert course != null;
 
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/lessons");
 
@@ -635,7 +802,11 @@ public class CCStepikConnector {
       if (line.getStatusCode() != HttpStatus.SC_CREATED) {
         final String message = FAILED_TITLE + "lesson ";
         LOG.error(message + responseString);
-        showErrorNotification(project, message, responseString);
+        final JsonObject details = new JsonParser().parse(responseString).getAsJsonObject();
+        final JsonElement detail = details.get("detail");
+        final String detailString = detail != null ? detail.getAsString() : responseString;
+
+        showErrorNotification(project, message, detailString);
         return 0;
       }
 
@@ -659,6 +830,19 @@ public class CCStepikConnector {
     return -1;
   }
 
+  private static void checkCancelled() {
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    if (indicator != null) {
+      indicator.checkCanceled();
+    }
+  }
+
+  private static String getErrorDetail(String responseString) {
+    final JsonObject details = new JsonParser().parse(responseString).getAsJsonObject();
+    final JsonElement detail = details.get("detail");
+    return detail != null ? detail.getAsString() : responseString;
+  }
+
   @Nullable
   public static Lesson getLessonFromString(@NotNull String responseString) {
     final JsonObject jsonTree = new Gson().fromJson(responseString, JsonObject.class);
@@ -671,60 +855,74 @@ public class CCStepikConnector {
     return null;
   }
 
-  public static void deleteTask(@NotNull final Integer task, Project project) {
-    final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES + task);
-    ApplicationManager.getApplication().invokeLater(() -> {
-      try {
-        final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-        if (client == null) return;
-        final CloseableHttpResponse response = client.execute(request);
-        final HttpEntity responseEntity = response.getEntity();
-        final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-        EntityUtils.consume(responseEntity);
-        final StatusLine line = response.getStatusLine();
-        if (line.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-          LOG.error("Failed to delete task " + responseString);
-          showErrorNotification(project, "Failed to delete task ", responseString);
-        }
-      }
-      catch (IOException e) {
-        LOG.error(e.getMessage());
-      }
-    });
+  public static void deleteSection(@NotNull Project project, final int sectionId) {
+    final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS + "/" + sectionId);
+    deleteFromStepik(project, request);
   }
 
-  public static void postTask(final Project project, @NotNull final Task task, final int lessonId) {
-    if (!checkIfAuthorized(project, "postTask")) return;
-    if (task instanceof ChoiceTask || task instanceof CodeTask) return;
+  public static void deleteTask(@NotNull final Integer task, Project project) {
+    final HttpDelete request = new HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES + task);
+    deleteFromStepik(project, request);
+  }
+
+  private static void deleteFromStepik(@NotNull Project project, @NotNull HttpDelete request) {
+    try {
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
+      if (client == null) return;
+      final CloseableHttpResponse response = client.execute(request);
+      final HttpEntity responseEntity = response.getEntity();
+      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
+      EntityUtils.consume(responseEntity);
+      final StatusLine line = response.getStatusLine();
+      if (line.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
+        LOG.error("Failed to delete item " + responseString);
+        final String detailString = getErrorDetail(responseString);
+
+        showErrorNotification(project, "Failed to delete item ", detailString);
+      }
+    }
+    catch (IOException e) {
+      LOG.error(e.getMessage());
+    }
+  }
+
+  public static boolean postTask(final Project project, @NotNull final Task task, final int lessonId) {
+    if (!checkIfAuthorized(project, "postTask")) return false;
+    if (task instanceof ChoiceTask || task instanceof CodeTask) return false;
 
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/step-sources");
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-    ApplicationManager.getApplication().invokeLater(() -> {
-      final String requestBody = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
-      request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
+    final String[] requestBody = new String[1];
+    ApplicationManager.getApplication().invokeAndWait(() -> requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId)));
 
-      try {
-        final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-        if (client == null) return;
-        final CloseableHttpResponse response = client.execute(request);
-        final StatusLine line = response.getStatusLine();
-        final HttpEntity responseEntity = response.getEntity();
-        final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-        EntityUtils.consume(responseEntity);
-        if (line.getStatusCode() != HttpStatus.SC_CREATED) {
-          final String message = FAILED_TITLE + "task ";
-          LOG.error(message + responseString);
-          showErrorNotification(project, message, responseString);
-          return;
-        }
+    request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
 
-        final JsonObject postedTask = new Gson().fromJson(responseString, JsonObject.class);
-        final JsonObject stepSource = postedTask.getAsJsonArray("step-sources").get(0).getAsJsonObject();
-        task.setStepId(stepSource.getAsJsonPrimitive("id").getAsInt());
+    try {
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
+      if (client == null) return false;
+      final CloseableHttpResponse response = client.execute(request);
+      final StatusLine line = response.getStatusLine();
+      final HttpEntity responseEntity = response.getEntity();
+      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
+      EntityUtils.consume(responseEntity);
+      if (line.getStatusCode() != HttpStatus.SC_CREATED) {
+        final String message = FAILED_TITLE + "task ";
+        LOG.error(message + responseString);
+        final String detailString = getErrorDetail(responseString);
+
+        showErrorNotification(project, message, detailString);
+        return false;
       }
-      catch (IOException e) {
-        LOG.error(e.getMessage());
-      }
-    });
+
+      final JsonObject postedTask = new Gson().fromJson(responseString, JsonObject.class);
+      final JsonObject stepSource = postedTask.getAsJsonArray("step-sources").get(0).getAsJsonObject();
+      task.setStepId(stepSource.getAsJsonPrimitive("id").getAsInt());
+      return true;
+    }
+    catch (IOException e) {
+      LOG.error(e.getMessage());
+    }
+
+    return false;
   }
 }

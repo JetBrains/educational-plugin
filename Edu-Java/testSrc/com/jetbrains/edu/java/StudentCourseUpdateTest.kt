@@ -2,9 +2,11 @@ package com.jetbrains.edu.java
 
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
 import junit.framework.TestCase
+import java.util.*
 
 class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
   override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = JCourseBuilder()
@@ -517,8 +519,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
   private fun doTest(expectedFileTree: FileTree, testPath: String) {
     val course = createRemoteCourseFromJson("$testPath/course.json", CourseType.STUDENT)
+    setTopLevelSection(course)
     createCourseStructure(courseBuilder, course, defaultSettings)
     val courseFromServer = createRemoteCourseFromJson("$testPath/updated_course.json", CourseType.STUDENT)
+    setTopLevelSection(courseFromServer)
 
     StepikCourseUpdater(course, project).doUpdate(courseFromServer)
     TestCase.assertEquals("Lessons number mismatch. Expected: ${courseFromServer.lessons.size}. Actual: ${course.lessons.size}",
@@ -540,6 +544,13 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
 
     expectedFileTree.assertEquals(rootDir)
+  }
+
+  private fun setTopLevelSection(course: RemoteCourse) {
+    if (!course.lessons.isEmpty()) {
+      // it's a hack.Originally we need to put here and id of remote section for top-level lesson
+      course.sectionIds = Collections.singletonList(1)
+    }
   }
 
   private fun checkLessons(lessons: List<Lesson>,
