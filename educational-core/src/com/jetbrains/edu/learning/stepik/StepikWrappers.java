@@ -102,8 +102,11 @@ public class StepikWrappers {
 
     private static void setTests(@NotNull Task task, @NotNull StepOptions source, @NotNull Project project) {
       FileDocumentManager.getInstance().saveAllDocuments();
-
       source.test = new ArrayList<>();
+      if (task.getLesson().isAdditional()) {
+        return;
+      }
+
       List<VirtualFile> testFiles = EduUtils.getTestFiles(task, project);
       for (VirtualFile testFile : testFiles) {
         addFileWrapper(testFile, source.test);
@@ -170,7 +173,7 @@ public class StepikWrappers {
   }
 
   public static class LessonContainer {
-    List<Lesson> lessons;
+    public List<Lesson> lessons;
   }
 
   public static class StepSource {
@@ -241,6 +244,10 @@ public class StepikWrappers {
 
     public int getId() {
       return id;
+    }
+
+    public void setId(int id) {
+      this.id = id;
     }
   }
 
