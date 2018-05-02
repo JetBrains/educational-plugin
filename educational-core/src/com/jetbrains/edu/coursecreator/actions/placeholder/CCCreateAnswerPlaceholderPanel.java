@@ -204,12 +204,11 @@ public class CCCreateAnswerPlaceholderPanel {
       if (myHints.isEmpty()) {
         myHints.add(HINT_PLACEHOLDER);
         myHintTextArea.transferFocus();
-        showHint();
       }
       else {
         myShownHintNumber += myShownHintNumber < myHints.size() ? 0 : -1;
-        showHint();
       }
+      showHint();
     }
 
     @Override
