@@ -50,7 +50,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
         CheckUtils.flushWindows(task, taskDir);
         latch.countDown();
       }));
-    final PyTestRunner testRunner = new PyTestRunner(task, taskDir);
+    final PyTestRunner testRunner = new PyTestRunner(taskDir);
     try {
       final VirtualFile fileToCheck = getTaskVirtualFile(task, taskDir);
       if (fileToCheck != null) {
@@ -94,7 +94,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
         if (course != null && course.isStudy()) {
           CommandProcessor.getInstance().runUndoTransparentAction(
             () -> ApplicationManager.getApplication().runWriteAction(
-              () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(task, taskDir), taskFile, project)));
+              () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(taskDir), taskFile, project)));
         }
       }
       CheckUtils.navigateToFailedPlaceholder(new EduState(EduUtils.getSelectedEduEditor(project)), task, taskDir, project);
