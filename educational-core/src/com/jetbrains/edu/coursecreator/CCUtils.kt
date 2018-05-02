@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runUndoTransparentWriteAction
 import com.intellij.openapi.application.runWriteAction
@@ -17,6 +18,7 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.*
+import com.intellij.psi.PsiDirectory
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
 import com.intellij.util.ThrowableConsumer
@@ -378,5 +380,18 @@ object CCUtils {
 
       null
     })
+  }
+
+  @JvmStatic
+  fun lessonFromDir(course: Course, lessonDir: PsiDirectory, project: Project): Lesson? {
+    val parentDir = lessonDir.parent
+    if (parentDir != null && parentDir.name == EduUtils.getCourseDir(project).name) {
+      return course.getLesson(lessonDir.name)
+    }
+    else {
+      val sectionDir = lessonDir.parent ?: return null
+      val section = course.getSection(sectionDir.name) ?: return null
+      return section.getLesson(lessonDir.name)
+    }
   }
 }
