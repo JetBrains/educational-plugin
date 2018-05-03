@@ -54,7 +54,7 @@ public class CCWrapWithSection extends DumbAwareAction {
       return;
     }
 
-    if (CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName)) return;
+    if (!CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName)) return;
     ProjectView.getInstance(project).refresh();
   }
 
