@@ -274,7 +274,7 @@ object CCUtils {
     }
   }
 
-  private fun replaceAnswerPlaceholder(document: Document, placeholder: AnswerPlaceholder) {
+  fun replaceAnswerPlaceholder(document: Document, placeholder: AnswerPlaceholder) {
     val offset = placeholder.offset
     val text = document.getText(TextRange.create(offset, offset + placeholder.length))
     placeholder.placeholderText = text
