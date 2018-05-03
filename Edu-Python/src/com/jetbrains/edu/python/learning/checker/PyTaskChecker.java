@@ -115,7 +115,12 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
       if (firstFile == null) {
         firstFile = file;
       }
-      if (!taskFile.getAnswerPlaceholders().isEmpty()) return file;
+
+      // TODO: Come up with a smarter way how to find correct task file
+      boolean hasNewPlaceholder = taskFile.getAnswerPlaceholders()
+        .stream()
+        .anyMatch(p -> p.getPlaceholderDependency() == null);
+      if (hasNewPlaceholder) return file;
     }
     return firstFile;
   }
