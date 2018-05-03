@@ -38,7 +38,10 @@ public class StepikAuthorizedClient {
       return ourClient;
     }
 
-    assert user != null: "User must not be null";
+    if (user == null) {
+       return null;
+    }
+
     if (!isUpToDate && !updateTokens(user)) {
       return null;
     }
