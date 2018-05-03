@@ -142,14 +142,17 @@ public class StepikSolutionsLoader implements Disposable {
       final int progressIndex = i + 1;
       if (progressIndicator == null || !progressIndicator.isCanceled()) {
         Future<Boolean> future = ApplicationManager.getApplication().executeOnPooledThread(() -> {
-          boolean isSolved = task.getStatus() == CheckStatus.Solved;
-          if (progressIndicator != null) {
-            progressIndicator.setFraction((double)progressIndex / tasksToUpdate.size());
-            progressIndicator.setText(String.format("Loading solution %d from %d", progressIndex, tasksToUpdate.size()));
+          try {
+            boolean isSolved = task.getStatus() == CheckStatus.Solved;
+            if (progressIndicator != null) {
+              progressIndicator.setFraction((double)progressIndex / tasksToUpdate.size());
+              progressIndicator.setText(String.format("Loading solution %d from %d", progressIndex, tasksToUpdate.size()));
+            }
+            return loadSolution(myProject, task, isSolved);
           }
-          boolean isIncompatibleSolutions = loadSolution(myProject, task, isSolved);
-          countDownLatch.countDown();
-          return isIncompatibleSolutions;
+          finally {
+            countDownLatch.countDown();
+          }
         });
         myFutures.put(task.getStepId(), future);
       }
