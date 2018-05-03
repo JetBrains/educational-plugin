@@ -54,12 +54,30 @@ class EduTypedHandlerTest : EduTestCase() {
     myFixture.editor.selectionModel.removeSelection()
     myFixture.performEditorAction("EditorDelete")
     TestCase.assertEquals("def f():\n" +
-                                   "  print()", myFixture.editor.document.text)
+                                   "  rint()", myFixture.editor.document.text)
+  }
+
+  fun `test delete symbol in empty placeholder`() {
+    configureByTaskFile(1, 3, "Task.kt")
+    myFixture.editor.caretModel.moveToOffset(11)
+    myFixture.editor.selectionModel.removeSelection()
+    myFixture.performEditorAction("EditorDelete")
+    TestCase.assertEquals("def f():\n" +
+                          "  print()", myFixture.editor.document.text)
   }
 
   fun `test backspace symbol`() {
     configureByTaskFile(1, 2, "Task.kt")
     myFixture.editor.caretModel.moveToOffset(12)
+    myFixture.editor.selectionModel.removeSelection()
+    myFixture.performEditorAction("EditorBackSpace")
+    TestCase.assertEquals("def f():\n" +
+                                   "  rint()", myFixture.editor.document.text)
+  }
+
+  fun `test backspace in empty placeholder`() {
+    configureByTaskFile(1, 3, "Task.kt")
+    myFixture.editor.caretModel.moveToOffset(11)
     myFixture.editor.selectionModel.removeSelection()
     myFixture.performEditorAction("EditorBackSpace")
     TestCase.assertEquals("def f():\n" +
@@ -134,6 +152,12 @@ class EduTypedHandlerTest : EduTestCase() {
           taskFile("Task.kt", """
           |def f():
           |  <p>p</p>rint()
+        """.trimMargin("|"))
+        }
+        eduTask {
+          taskFile("Task.kt", """
+          |def f():
+          |  <p></p>print()
         """.trimMargin("|"))
         }
       }
