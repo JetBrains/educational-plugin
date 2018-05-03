@@ -4,6 +4,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import java.awt.Point
+import java.awt.Rectangle
 import java.awt.Shape
 import java.awt.geom.GeneralPath
 
@@ -12,6 +13,9 @@ sealed class PlaceholderShape {
   val points = ArrayList<Point>()
 
   fun getShape(): Shape {
+    if (points.size == 2) {
+      return Rectangle(points[0].x, points[0].y, 1, points[1].y - points[0].y)
+    }
     val generalPath = GeneralPath()
     generalPath.moveTo(points[0].x.toDouble(), points[0].y.toDouble())
     for (i in 1 until points.size) {
@@ -19,6 +23,14 @@ sealed class PlaceholderShape {
     }
     generalPath.closePath()
     return generalPath
+  }
+
+  // Empty placeholder
+  class Line(editor: Editor, point1: Point, point2: Point) : PlaceholderShape() {
+    init {
+      points.addAll(listOf(visiblePoint(editor, point1),
+                           visiblePoint(editor, point2.bottom(editor))))
+    }
   }
 
   // 4 points clock-wise from left top point
@@ -52,7 +64,7 @@ sealed class PlaceholderShape {
                            visiblePoint(editor, point4),
                            visiblePoint(editor, point5.bottom(editor)),
                            visiblePoint(editor, point6.bottom(editor))
-                           ))
+      ))
     }
   }
 
@@ -82,7 +94,7 @@ sealed class PlaceholderShape {
   // ----------------
   // ------------4---3
   // 6-----------5
-  class Complex(editor: Editor, point1: Point, point3: Point, point5: Point, point7: Point): PlaceholderShape() {
+  class Complex(editor: Editor, point1: Point, point3: Point, point5: Point, point7: Point) : PlaceholderShape() {
     init {
       val point2 = Point(point3.x, point1.y)
       val point4 = Point(point5.x, point3.y)
@@ -127,8 +139,12 @@ fun getPlaceholderShape(editor: Editor, startOffset: Int, endOffset: Int): Place
   val leftTop = editor.offsetToXY(startOffset)
   val rightBottom = editor.offsetToXY(endOffset)
 
+  if (startOffset == endOffset) {
+    return PlaceholderShape.Line(editor, leftTop, rightBottom)
+  }
   val boundaries = (startLine..endLine).map {
-    LineBoundary(it, 0, document.getLineEndOffset(it) - document.getLineStartOffset(it)) }
+    LineBoundary(it, 0, document.getLineEndOffset(it) - document.getLineStartOffset(it))
+  }
 
   var isLeftRectangular = leftTop.y == rightBottom.y
   var isRightRectangular = leftTop.y == rightBottom.y
@@ -137,8 +153,8 @@ fun getPlaceholderShape(editor: Editor, startOffset: Int, endOffset: Int): Place
   var rightMaxBoundary = LineBoundary(startLine, startOffset - lineStart, endOffset - lineStart)
 
   if (startLine != endLine) {
-    leftMinBoundary = boundaries.subList(1, boundaries.size).minBy{ it.getVisualBoundaries(editor).first } ?: leftMinBoundary
-    rightMaxBoundary = boundaries.subList(0, boundaries.size - 1).maxBy{ it.getVisualBoundaries(editor).second } ?: rightMaxBoundary
+    leftMinBoundary = boundaries.subList(1, boundaries.size).minBy { it.getVisualBoundaries(editor).first } ?: leftMinBoundary
+    rightMaxBoundary = boundaries.subList(0, boundaries.size - 1).maxBy { it.getVisualBoundaries(editor).second } ?: rightMaxBoundary
 
     isLeftRectangular = leftMinBoundary.left >= editor.offsetToLogicalPosition(startOffset).column
     isRightRectangular = rightMaxBoundary.right <= editor.offsetToLogicalPosition(endOffset).column ||
