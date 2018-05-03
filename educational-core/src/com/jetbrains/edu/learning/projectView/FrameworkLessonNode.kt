@@ -21,7 +21,7 @@ class FrameworkLessonNode(
 
   override fun updateImpl(data: PresentationData) {
     super.updateImpl(data)
-    data.addText("  ${lesson.currentTaskIndex + 1}/${lesson.taskList.size}", SimpleTextAttributes.GRAYED_ATTRIBUTES)
+    data.addText("  (task ${lesson.currentTaskIndex + 1} of ${lesson.taskList.size})", SimpleTextAttributes.GRAYED_ATTRIBUTES)
   }
 
   override fun getChildrenImpl(): Collection<AbstractTreeNode<*>> {
