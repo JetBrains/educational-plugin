@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourse
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseFromStepik
@@ -161,7 +162,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
       val taskIndex = taskFromServer!!.index
       if (tasksById.containsKey(taskId)) {
         val currentTask = tasksById[taskId]
-        if (isSolved(currentTask!!) && course.isStudy) {
+        if ((isSolved(currentTask!!) && !isTheory(currentTask)) && course.isStudy) {
           updatedTasks.add(currentTask)
           currentTask.index = taskIndex
           currentTask.descriptionText = taskFromServer.descriptionText
@@ -177,6 +178,8 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
       updatedTasks.add(taskFromServer)
     }
   }
+
+  private fun isTheory(currentTask: Task) = currentTask.taskType == TheoryTask().taskType
 
   private fun upToDateTasks(currentLesson: Lesson,
                             taskIdsToUpdate: List<Int>) =
