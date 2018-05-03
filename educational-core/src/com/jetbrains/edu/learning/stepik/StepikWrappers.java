@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -38,13 +37,9 @@ public class StepikWrappers {
 
     public static Step fromTask(Project project, @NotNull final Task task) {
       final Step step = new Step();
-      if (task instanceof TheoryTask) {
-        step.name = "text";
-        step.text = task.getTaskDescription(false, null);
-      }
-      else {
-        step.source = StepOptions.fromTask(project, task);
-      }
+      step.text = task.getDescriptionText();
+      step.source = StepOptions.fromTask(project, task);
+
       return step;
     }
   }
