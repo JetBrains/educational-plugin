@@ -3,7 +3,9 @@ package com.jetbrains.edu.learning.placeholderDependencies
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
@@ -127,6 +129,34 @@ class PlaceholderDependencyTest : EduTestCase() {
 
     checkPlaceholderContent("print(1)", findPlaceholder(1, 0, "Task.kt", 0))
     checkPlaceholderContent("print(1)", findPlaceholder(1, 0, "Task1.kt", 0))
+  }
+
+  fun `test refresh task file with dependency`() {
+    courseWithFiles {
+      lesson {
+        eduTask { taskFile("task.txt", "<p>placeholder</p>") }
+      }
+      lesson {
+        eduTask {
+          taskFile("task.txt", "this is a <p>type here</p> and one more <p>type here</p>") {
+            placeholder(0, dependency = "lesson1#task1#task.txt#1")
+            placeholder(0, possibleAnswer = "placeholder")
+          }
+        }
+      }
+    }
+
+    getCourse().lessons[0].taskList[0].status = CheckStatus.Solved
+    val secondPlaceholder = findPlaceholder(1, 0, "task.txt", 1)
+    CCUtils.replaceAnswerPlaceholder(secondPlaceholder.taskFile.getDocument(project)!!, secondPlaceholder)
+
+    val virtualFile = findVirtualFile(1, 0, "task.txt")
+    myFixture.openFileInEditor(virtualFile)
+
+    RefreshTaskFileAction.refresh(project)
+
+    checkPlaceholderContent("placeholder", findPlaceholder(1, 0, "task.txt", 0))
+    checkPlaceholderContent("type here", findPlaceholder(1, 0, "task.txt", 1))
   }
 
   private fun checkEditorNotification(virtualFile: VirtualFile, taskNames: List<String>) {
