@@ -54,6 +54,7 @@ public class StepikTaskBuilder {
     .put("edu", StepikTaskBuilder::eduTask)
     .put("output", StepikTaskBuilder::outputTask)
     .put("ide", StepikTaskBuilder::ideTask)
+    .put("theory", () -> theoryTask())
     .build();
 
   private static final Map<String, String> DEFAULT_NAMES = ImmutableMap.<String, String>builder()
