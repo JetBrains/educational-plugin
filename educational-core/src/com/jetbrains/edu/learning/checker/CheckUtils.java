@@ -19,6 +19,7 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindow;
@@ -97,8 +98,9 @@ public class CheckUtils {
 
 
   public static void showTestResultPopUp(@NotNull final String text, Color color, @NotNull final Project project) {
+    String escapedText = StringUtil.escapeXml(text);
     BalloonBuilder balloonBuilder =
-      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, null, color, null);
+      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(escapedText, null, color, null);
     final Balloon balloon = balloonBuilder.createBalloon();
     EduUtils.showCheckPopUp(project, balloon);
   }
