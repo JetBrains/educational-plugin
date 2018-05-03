@@ -325,7 +325,7 @@ object CCUtils {
     val minIndex = lessonsToWrap[0].index
     val maxIndex = lessonsToWrap[lessonsToWrap.size - 1].index
 
-    val sectionDir = createSectionDir(project, sectionName) ?: return true
+    val sectionDir = createSectionDir(project, sectionName) ?: return false
 
     val section = createSection(lessonsToWrap, sectionName, minIndex)
 
@@ -344,7 +344,7 @@ object CCUtils {
 
     updateHigherElements(EduUtils.getCourseDir(project).children, Function { file ->  course.getItem(file.name) }, maxIndex, delta)
     course.addItem(section, section.index - 1)
-    return false
+    return true
   }
 
   private fun createSection(lessonsToWrap: List<Lesson>, sectionName: String, index: Int): Section {
