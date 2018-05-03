@@ -17,8 +17,12 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
+import java.util.regex.Pattern
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
+
+private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("(.*)expected:<(.*)> but was:<(.*)>", Pattern.MULTILINE or Pattern.DOTALL)
+private val COMPARISON_RANGE_PATTERN: Regex = "\\[(.*)]".toRegex(setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
 
 fun getGradleProjectName(task: Task) =
   if (task.lesson.section != null)
@@ -71,15 +75,30 @@ fun getProcessOutput(process: Process, commandLine: String, taskName: String): G
     return GradleOutput(false, FAILED_TO_CHECK_MESSAGE + ". See idea.log for more details.")
   }
 
-  val sb = StringBuilder()
-  output.stdoutLines.forEach {
-    if (it.startsWith(STUDY_PREFIX)) sb.appendln(it.removePrefix(STUDY_PREFIX))
+  var currentMessage: StringBuilder? = null
+  val allMessages = StringBuilder()
+  for (line in output.stdoutLines) {
+    when {
+      line.startsWith(STUDY_PREFIX) -> {
+        if (currentMessage != null) {
+          allMessages.appendln(currentMessage)
+        }
+        currentMessage = StringBuilder(line.removePrefix(STUDY_PREFIX)).append("\n")
+      }
+      line.isNullOrBlank() -> {
+        if (currentMessage != null) {
+          allMessages.appendln(currentMessage)
+        }
+        currentMessage = null
+      }
+      else -> currentMessage?.appendln(line)
+    }
   }
 
-  return GradleOutput(true, sb.toString())
+  return GradleOutput(true, allMessages.toString())
 }
 
-fun String.postProcessOutput() = this.replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
+fun String.postProcessOutput() = replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
 
 fun parseTestsOutput(process: Process, commandLine: String, taskName: String): GradleOutput {
   val output = getProcessOutput(process, commandLine, taskName)
@@ -87,7 +106,7 @@ fun parseTestsOutput(process: Process, commandLine: String, taskName: String): G
 
   val lines = output.message.split("\n")
   var congratulations = TestsOutputParser.CONGRATULATIONS
-  for (line in lines) {
+  for ((i, line) in lines.withIndex()) {
     if (line.contains(TestsOutputParser.TEST_OK)) {
       continue
     }
@@ -97,12 +116,33 @@ fun parseTestsOutput(process: Process, commandLine: String, taskName: String): G
     }
 
     if (line.contains(TestsOutputParser.TEST_FAILED)) {
-      return GradleOutput(false, line.substringAfter(TestsOutputParser.TEST_FAILED))
+      val message = buildString {
+        append(line.substringAfter(TestsOutputParser.TEST_FAILED))
+        var index = i + 1
+        while (index < lines.size && TestsOutputParser.TEST_FAILED !in lines[index] && !lines[index].isBlank()) {
+          append("\n")
+          append(lines[index])
+          index++
+        }
+      }
+      return GradleOutput(false, message.prettify())
 
     }
   }
 
   return GradleOutput(true, congratulations)
+}
+
+private fun String.prettify(): String {
+  val matcher = TEST_FAILED_PATTERN.matcher(this)
+  return if (matcher.find()) {
+    val errorMessage = matcher.group(1)
+    val expectedText = matcher.group(2).replace(COMPARISON_RANGE_PATTERN, "$1")
+    val actualText = matcher.group(3).replace(COMPARISON_RANGE_PATTERN, "$1")
+    "$errorMessage\nExpected: $expectedText\nActual: $actualText"
+  } else {
+    this
+  }
 }
 
 /**
