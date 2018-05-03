@@ -92,7 +92,9 @@ private class TaskFileAdded(
   }
 
   private fun restoreAnswers(project: Project) {
-    for (placeholder in taskFile.answerPlaceholders) {
+    // Sort placeholders to avoid offset recalculation after each replacement
+    val sortedPlaceholders = taskFile.answerPlaceholders.sortedByDescending { it.initialState.offset }
+    for (placeholder in sortedPlaceholders) {
       val studentAnswer = placeholder.studentAnswer
       if (studentAnswer != null) {
         val startOffset = placeholder.initialState.offset
