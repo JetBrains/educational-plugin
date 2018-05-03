@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
+import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,6 +59,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
       }
       refreshFile(eduState, project);
       eduEditor.validateTaskFile();
+      PlaceholderDependencyManager.currentTaskChanged(project, eduState.getTask());
     });
   }
 
