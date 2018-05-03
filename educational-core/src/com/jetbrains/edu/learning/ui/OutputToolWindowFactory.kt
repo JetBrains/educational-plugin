@@ -7,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Condition
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
@@ -44,5 +45,11 @@ class OutputToolWindowFactory : ToolWindowFactory {
         toolWindow.setAvailable(false, {})
       }
     }
+  }
+}
+
+class OutputToolWindowCondition : Condition<Any> {
+  override fun value(t: Any?): Boolean {
+    return false;
   }
 }

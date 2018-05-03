@@ -175,7 +175,7 @@
                 conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
     <toolWindow id="Educational.Output" anchor="bottom"
                 factoryClass="com.jetbrains.edu.learning.ui.OutputToolWindowFactory"
-                conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
+                conditionClass="com.jetbrains.edu.learning.ui.OutputToolWindowCondition"/>
     <fileEditorProvider implementation="com.jetbrains.edu.learning.editor.EduFileEditorProvider"/>
     <!-- should be last, otherwise project tree will be changed with GradleTreeStructureProvider -->
     <highlightErrorFilter implementation="com.jetbrains.edu.learning.editor.EduHighlightErrorFilter"/>
