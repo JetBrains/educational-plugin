@@ -1,12 +1,14 @@
 package com.jetbrains.edu.learning.actions
 
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.fileTree
 
 class FrameworkLessonNavigationTest : EduTestCase() {
 
@@ -124,6 +126,19 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       }
     }
     fileTree.assertEquals(rootDir, myFixture)
+  }
+
+  fun `test opened files`() {
+    val course = createFrameworkCourse()
+    val task = course.getLesson("lesson1")?.getTask("task1") ?: error("")
+    task.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    myFixture.type("\"Fizz\"")
+    task.status = CheckStatus.Solved
+    myFixture.testAction(NextTaskAction())
+
+    val openFiles = FileEditorManager.getInstance(project).openFiles
+    assertEquals(1, openFiles.size)
+    assertEquals("buzz.kt", openFiles[0].name)
   }
 
   private fun createFrameworkCourse(): Course = courseWithFiles {

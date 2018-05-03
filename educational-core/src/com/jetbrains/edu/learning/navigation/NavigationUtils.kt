@@ -187,6 +187,11 @@ object NavigationUtils {
     var fileToActivate = getFirstTaskFile(taskDir, project)
     for ((_, taskFile) in taskFiles) {
       if (taskFile.answerPlaceholders.isEmpty()) continue
+      // We want to open task file only if it has `new` placeholder(s).
+      // Currently, we consider that `new` placeholder is a placeholder without dependency.
+      // It should work for Django course but doesn't work in all cases.
+      // TODO: implement a smarter algorithm to distinguish what task files we want to open
+      if (taskFile.answerPlaceholders.all { it.placeholderDependency != null }) continue
       val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
       fileToActivate = virtualFile
