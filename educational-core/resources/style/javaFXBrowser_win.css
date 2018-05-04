@@ -1,0 +1,40 @@
+body {
+    margin-left: 16px;
+    margin-right: 0;
+    font-family: "Segoe UI", sans-serif;
+    color: #1F1F1F;
+    font-size: 13px; /*resetting in BrowserWindow depending on editor font size*/
+    font-weight: normal;
+    line-height: 20px;
+}
+
+pre code {
+    font-family: "Courier New", monospace;
+    font-size: 12px; /*resetting in BrowserWindow depending on editor font size*/
+    line-height: 16px;
+    font-weight: normal;
+}
+
+code {
+    font-family: "Courier New", monospace;
+}
+
+.header {
+    font-size: 1.15em;
+    font-weight: Bold;
+    line-height: 21pt !important;
+}
+
+.example {
+    background-color: #c4c4c4;
+}
+
+a {
+    text-decoration: none;
+    position: relative;
+    color: #2470B3;
+}
+
+a:hover {
+    text-decoration: underline;
+}
