@@ -12,7 +12,8 @@ public class ToSeventhVersionXmlConverter implements XmlConverter {
   @NotNull
   @Override
   public Element convert(@NotNull Project project, @NotNull Element element) throws StudyUnrecognizedFormatException {
-    Element taskManagerElement = element.getChild(MAIN_ELEMENT);
+    final Element clone = element.clone();
+    Element taskManagerElement = clone.getChild(MAIN_ELEMENT);
     Element courseElement = getCourseElement(taskManagerElement);
     for (Element lesson : getChildList(courseElement, LESSONS)) {
       for (Element task : getChildList(lesson, TASK_LIST)) {
@@ -21,6 +22,6 @@ public class ToSeventhVersionXmlConverter implements XmlConverter {
         }
       }
     }
-    return element;
+    return clone;
   }
 }
