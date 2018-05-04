@@ -89,6 +89,10 @@ public class StepikWrappers {
             source.files.add(studentTaskFile);
           });
         }
+      } else {
+        for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
+          source.files.add(entry.getValue());
+        }
       }
     }
 
