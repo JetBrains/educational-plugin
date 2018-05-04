@@ -9,11 +9,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.colors.FontPreferences;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduLanguageDecorator;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -59,6 +59,27 @@ public class BrowserWindow extends JFrame {
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
   private static final String EVENT_TYPE_CLICK = "click";
   private static final Pattern IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?");
+
+  private static final double BODY_FONT_SIZE_MAC = 13.0;
+  private static final double BODY_FONT_SIZE = 14.0;
+  private static final double FONT_SCALE_MAC = BODY_FONT_SIZE_MAC / FontPreferences.DEFAULT_FONT_SIZE;
+  private static final double FONT_SCALE = BODY_FONT_SIZE / FontPreferences.DEFAULT_FONT_SIZE;
+
+  private static final double CODE_FONT_SIZE_MAC = 13.0;
+  private static final double CODE_FONT_SIZE = 14.0;
+  private static final double CODE_FONT_SCALE_MAC = CODE_FONT_SIZE_MAC / FontPreferences.DEFAULT_FONT_SIZE;
+  private static final double CODE_FONT_SCALE = CODE_FONT_SIZE / FontPreferences.DEFAULT_FONT_SIZE;
+
+  private static final double LINE_HEIGHT_MAC = 20.0;
+  private static final double LINE_HEIGHT = 24.0;
+  private static final double LINE_HEIGHT_SCALE_MAC = LINE_HEIGHT_MAC / BODY_FONT_SIZE_MAC;
+  private static final double LINE_HEIGHT_SCALE = LINE_HEIGHT/ BODY_FONT_SIZE;
+
+  private static final double CODE_LINE_HEIGHT_MAC = 16.0;
+  private static final double CODE_LINE_HEIGHT = 20.0;
+  private static final double CODE_LINE_HEIGHT_SCALE_MAC = CODE_LINE_HEIGHT_MAC / CODE_FONT_SIZE_MAC;
+  private static final double CODE_LINE_HEIGHT_SCALE = CODE_LINE_HEIGHT / CODE_FONT_SIZE;
+
   public static final String SRC_ATTRIBUTE = "src";
   private JFXPanel myPanel;
   private WebView myWebComponent;
@@ -94,7 +115,7 @@ public class BrowserWindow extends JFrame {
   private void updateIntellijAndGTKLaf() {
     Platform.runLater(() -> {
       final URL scrollBarStyleUrl = getClass().getResource("/style/javaFXBrowserScrollBar.css");
-      final URL engineStyleUrl = getClass().getResource("/style/javaFXBrowser.css");
+      final URL engineStyleUrl = getClass().getResource(getBrowserStylesheet(false));
       myPane.getStylesheets().add(scrollBarStyleUrl.toExternalForm());
       myEngine.setUserStyleSheetLocation(engineStyleUrl.toExternalForm());
       myPanel.getScene().getStylesheets().add(engineStyleUrl.toExternalForm());
@@ -104,7 +125,7 @@ public class BrowserWindow extends JFrame {
 
   private void updateLafDarcula() {
     Platform.runLater(() -> {
-      final URL engineStyleUrl = getClass().getResource("/style/javaFXBrowserDarcula.css");
+      final URL engineStyleUrl = getClass().getResource(getBrowserStylesheet(true));
       final URL scrollBarStyleUrl = getClass().getResource("/style/javaFXBrowserDarculaScrollBar.css");
       myEngine.setUserStyleSheetLocation(engineStyleUrl.toExternalForm());
       myPane.getStylesheets().add(scrollBarStyleUrl.toExternalForm());
@@ -112,6 +133,19 @@ public class BrowserWindow extends JFrame {
       myPanel.getScene().getStylesheets().add(engineStyleUrl.toExternalForm());
       myEngine.reload();
     });
+  }
+
+  @NotNull
+  private static String getBrowserStylesheet(boolean isDarcula) {
+    if (SystemInfo.isMac) {
+      return isDarcula ? "style/javaFXBrowserDarcula_mac.css" : "/style/javaFXBrowser_mac.css";
+    }
+
+    if (SystemInfo.isWindows) {
+      return isDarcula ? "style/javaFXBrowserDarcula_win.css" : "/style/javaFXBrowser_win.css";
+    }
+
+    return isDarcula ? "style/javaFXBrowserDarcula_linux.css" : "/style/javaFXBrowser_linux.css";
   }
 
   private void initComponents() {
@@ -233,14 +267,16 @@ public class BrowserWindow extends JFrame {
     }
 
     final EditorColorsScheme editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
-    int fontSize = editorColorsScheme.getEditorFontSize();
-    final Pair<String, Integer> systemFontData = UIUtil.getSystemFontData();
-    if (systemFontData != null) {
-      final String fontName = systemFontData.first;
-      template = template.replace("${font_name}", fontName);
-    }
+    int bodyFontSize = (int)(editorColorsScheme.getEditorFontSize() * (SystemInfo.isMac ? FONT_SCALE_MAC : FONT_SCALE));
+    int codeFontSize = (int)(editorColorsScheme.getEditorFontSize() * (SystemInfo.isMac ? CODE_FONT_SCALE_MAC : CODE_FONT_SCALE));
 
-    template = template.replace("${font_size}", String.valueOf(fontSize- 2));
+    int bodyLineHeight = (int)(editorColorsScheme.getEditorFontSize() * (SystemInfo.isMac ? LINE_HEIGHT_SCALE_MAC : LINE_HEIGHT_SCALE));
+    int codeLineHeight = (int)(editorColorsScheme.getEditorFontSize() * (SystemInfo.isMac ? CODE_LINE_HEIGHT_SCALE_MAC : CODE_LINE_HEIGHT_SCALE));
+
+    template = template.replace("${body_font_size}", String.valueOf(bodyFontSize));
+    template = template.replace("${code_font_size}", String.valueOf(codeFontSize));
+    template = template.replace("${body_line_height}", String.valueOf(bodyLineHeight));
+    template = template.replace("${code_line_height}", String.valueOf(codeLineHeight));
     template = template.replace("${codemirror}", classLoader.getResource("/code-mirror/codemirror.js").toExternalForm());
     template = template.replace("${language_script}", languageScriptUrl);
     template = template.replace("${default_mode}", defaultHighlightingMode);
