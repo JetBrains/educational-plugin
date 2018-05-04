@@ -1,0 +1,46 @@
+body {
+    margin-left: 16px;
+    margin-right: 0;
+    font-family: "Ubuntu", sans-serif;
+    color: #262626;
+    font-size: 14px; /*resetting in BrowserWindow depending on editor font size*/
+    font-weight: normal;
+    line-height: 24px;
+}
+
+pre code {
+    font-family: "Source Code Pro", monospace;
+    font-size: 13px; /*resetting in BrowserWindow depending on editor font size*/
+    line-height: 20px; /*does this work?*/
+    font-weight: normal;
+}
+
+code {
+    font-family: "Source Code Pro", monospace;
+}
+
+.header {
+    font-size: 1.15em;
+    font-weight: Bold;
+    line-height: 21pt !important;
+}
+
+.example {
+    background-color: #c4c4c4;
+}
+
+/*a {*/
+    /*text-decoration: none;*/
+    /*position: relative;*/
+    /*color: #2470B3;*/
+/*}*/
+
+a {
+    text-decoration: none;
+    position: relative;
+    color: #2470B3;
+}
+
+a:hover {
+    text-decoration: underline;
+}

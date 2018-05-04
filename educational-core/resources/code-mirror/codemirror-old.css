@@ -63,11 +63,11 @@
 }
 
 .cm-s-default span.cm-comment {
-    color: #a50;
+color: #808080; font-style: italic
 }
 
 .cm-s-default span.cm-string-2 {
-    color: #f50;
+color: #808080; font-style: italic
 }
 
 .cm-s-default span.cm-meta {
@@ -95,7 +95,7 @@
 }
 
 .cm-s-default span.cm-attribute {
-    color: #00c;
+    color: #2470B3;
 }
 
 .cm-s-default span.cm-header {
@@ -111,7 +111,7 @@
 }
 
 .cm-s-default span.cm-link {
-    color: #00c;
+    color: #2470B3;
 }
 
 span.cm-header, span.cm-strong {
