@@ -262,6 +262,9 @@ public class StepikTaskBuilder {
     } else {
       task.setDescriptionText(myStep.text);
     }
+    if (myStep.options.descriptionFormat != null) {
+      task.setDescriptionFormat(myStep.options.descriptionFormat);
+    }
 
     task.taskFiles = new HashMap<>();      // TODO: it looks like we don't need taskFiles as map anymore
     if (myStep.options.files != null) {
