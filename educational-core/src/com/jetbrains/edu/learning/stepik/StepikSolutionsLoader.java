@@ -192,9 +192,9 @@ public class StepikSolutionsLoader implements Disposable {
   private boolean needToShowUpdateNotification() {
     return myFutures.values().stream().anyMatch(future -> {
       try {
-        return future.get();
-      }
-      catch (InterruptedException | ExecutionException e) {
+        Boolean result = future.get();
+        return result == Boolean.TRUE;
+      } catch (InterruptedException | ExecutionException e) {
         LOG.warn(e);
         return false;
       }
@@ -346,7 +346,11 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
     StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
-    if (reply == null || reply.solution.isEmpty()) {
+    if (reply == null || reply.solution == null || reply.solution.isEmpty()) {
+      // https://youtrack.jetbrains.com/issue/EDU-1449
+      if (reply != null && reply.solution == null) {
+        LOG.warn(String.format("`solution` field of reply object is null for task `%s`", task.getName()));
+      }
       task.setStatus(CheckStatus.Unchecked);
       return TaskSolutions.EMPTY;
     }
