@@ -185,25 +185,27 @@ object CCUtils {
     addToTask(baseDir, file, ThrowableConsumer { path ->
       val utilTaskFile = TaskFile()
       utilTaskFile.name = path
-      utilTaskFile.text = VfsUtilCore.loadText(file)
+      utilTaskFile.text = file.loadText()
       utilTaskFile.task = task
       task.addTaskFile(utilTaskFile)
     })
   }
 
   private fun addTestFile(task: Task, baseDir: VirtualFile, file: VirtualFile) {
-    addToTask(baseDir, file, ThrowableConsumer { path -> task.addTestsTexts(path, VfsUtilCore.loadText(file)) })
+    addToTask(baseDir, file, ThrowableConsumer { path -> task.addTestsTexts(path, file.loadText()) })
   }
 
   private fun addAdditionalFile(task: Task, baseDir: VirtualFile, file: VirtualFile) {
-    addToTask(baseDir, file, ThrowableConsumer { path ->
-      val text: String = if (EduUtils.isImage(file.name)) {
-        Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(file))
-      } else {
-        VfsUtilCore.loadText(file)
-      }
-      task.addAdditionalFile(path, text)
-    })
+    addToTask(baseDir, file, ThrowableConsumer { path -> task.addAdditionalFile(path, file.loadText()) })
+  }
+
+  @Throws(IOException::class)
+  private fun VirtualFile.loadText(): String {
+    return if (EduUtils.isImage(name)) {
+      Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(this))
+    } else {
+      VfsUtilCore.loadText(this)
+    }
   }
 
   private fun addToTask(baseDir: VirtualFile, file: VirtualFile, action: ThrowableConsumer<String, IOException>) {
