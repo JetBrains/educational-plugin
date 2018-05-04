@@ -44,9 +44,15 @@
     html, body {
       height:100%;
       overflow:hidden;
-      font-size: ${font_size}pt !important;
-      font-family: ${font_name} !important;
+      font-size: ${body_font_size}px !important;
+      line-height: ${body_line_height}px !important;
     }
+
+    pre code {
+      font-size: ${code_font_size}px !important;
+      line-height: ${code_line_height}px !important;
+    }
+
     .wrapper {
       overflow-y:scroll;
       height: 96%;
@@ -78,7 +84,6 @@ ${code}
   });
 
   CodeMirror.colorize(nodeList, "${default_mode}")
-  CodeMirror.colorize();
 </script>
 </body>
 </html>
