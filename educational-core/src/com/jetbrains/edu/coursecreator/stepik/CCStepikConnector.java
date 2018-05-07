@@ -132,7 +132,13 @@ public class CCStepikConnector {
       courseOnRemote.setLanguage(course.getLanguageID());
 
       addJetBrainsUserAsAdmin(client, getAdminsGroupId(responseString));
-      int sectionCount = postSections(project, courseOnRemote);
+      int sectionCount = 1;
+      if (course.getSections().isEmpty()) {
+        postAsOneSection(project, courseOnRemote);
+      }
+      else {
+        sectionCount = postSections(project, courseOnRemote);
+      }
 
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
       final int finalSectionCount = sectionCount;
@@ -143,6 +149,30 @@ public class CCStepikConnector {
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
+    }
+  }
+
+  private static void postAsOneSection(@NotNull Project project, @NotNull RemoteCourse course) {
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    final Section section = new Section();
+    section.setName(String.valueOf(course.getName()));
+    section.setPosition(1);
+
+    final int sectionId = postModule(course.getId(), section, project);
+    course.getSectionIds().add(sectionId);
+    int position = 1;
+    for (Lesson lesson : course.getLessons()) {
+      if (indicator != null) {
+        indicator.checkCanceled();
+        indicator.setText2("Publishing lesson " + lesson.getIndex());
+      }
+      final int lessonId = postLesson(project, lesson);
+      postUnit(lessonId, position, sectionId, project);
+      if (indicator != null) {
+        indicator.setFraction((double)lesson.getIndex() / course.getLessons().size());
+        indicator.checkCanceled();
+      }
+      position += 1;
     }
   }
 
@@ -196,6 +226,7 @@ public class CCStepikConnector {
       section.setPosition(i + 1);
       final int sectionId = postModule(course.getId(), section, project);
       section.setId(sectionId);
+      course.getSectionIds().add(sectionId);
 
       int position = 1;
       for (Lesson lesson : lessons) {
