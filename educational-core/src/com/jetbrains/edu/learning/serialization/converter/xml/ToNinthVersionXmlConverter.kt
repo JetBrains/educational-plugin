@@ -32,7 +32,12 @@ class ToNinthVersionXmlConverter : XmlConverter {
         migrateDescription(task)
       }
       runWriteAction {
-        lessonDir.rename(ToNinthVersionXmlConverter::class.java, GeneratorUtils.getUniqueValidName(project.baseDir, getName(lesson)))
+        val uniqueValidName = GeneratorUtils.getUniqueValidName(project.baseDir, getName(lesson))
+        val nameElement = getChildWithName(lesson, NAME)
+        if (nameElement != null) {
+          changeValue(nameElement, uniqueValidName)
+        }
+        lessonDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
       }
     }
     val lessons = getChildWithName(courseElement, LESSONS)
