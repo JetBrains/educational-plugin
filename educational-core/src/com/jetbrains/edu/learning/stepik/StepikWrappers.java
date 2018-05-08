@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -100,18 +101,12 @@ public class StepikWrappers {
     }
 
     private static void setTests(@NotNull Task task, @NotNull StepOptions source, @NotNull Project project) {
-      final Map<String, String> testsText = task.getTestsText();
+      FileDocumentManager.getInstance().saveAllDocuments();
+
       source.test = new ArrayList<>();
-      if (testsText.isEmpty()) {
-        List<VirtualFile> testFiles = EduUtils.getTestFiles(task, project);
-        for (VirtualFile testFile : testFiles) {
-          addFileWrapper(testFile, source.test);
-        }
-      }
-      else {
-        for (Map.Entry<String, String> entry : testsText.entrySet()) {
-          source.test.add(new FileWrapper(entry.getKey(), entry.getValue()));
-        }
+      List<VirtualFile> testFiles = EduUtils.getTestFiles(task, project);
+      for (VirtualFile testFile : testFiles) {
+        addFileWrapper(testFile, source.test);
       }
     }
   }
