@@ -29,7 +29,7 @@ class ToNinthVersionXmlConverter : XmlConverter {
           val taskName = getName(task)
           val uniqueValidName = GeneratorUtils.getUniqueValidName(lessonDir, taskName)
           val nameElement = getChildWithName(task, NAME)
-          if (nameElement != null) {
+          if (nameElement != null && uniqueValidName != taskName) {
             changeValue(nameElement, uniqueValidName)
             addChildWithName(task, CUSTOM_NAME, taskName)
           }
@@ -42,7 +42,7 @@ class ToNinthVersionXmlConverter : XmlConverter {
         val lessonName = getName(lesson)
         val uniqueValidName = GeneratorUtils.getUniqueValidName(project.baseDir, lessonName)
         val nameElement = getChildWithName(lesson, NAME)
-        if (nameElement != null) {
+        if (nameElement != null && uniqueValidName != lessonName) {
           changeValue(nameElement, uniqueValidName)
           addChildWithName(lesson, CUSTOM_NAME, lessonName)
         }

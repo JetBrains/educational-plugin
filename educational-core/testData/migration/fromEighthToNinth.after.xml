@@ -5,43 +5,43 @@
         <option name="authors">
           <list>
             <StepicUser>
-              <option name="accessToken" value=""/>
-              <option name="firstName" value="user"/>
-              <option name="guest" value="false"/>
-              <option name="id" value="-1"/>
-              <option name="lastName" value=""/>
-              <option name="refreshToken" value=""/>
+              <option name="accessToken" value="" />
+              <option name="firstName" value="user" />
+              <option name="guest" value="false" />
+              <option name="id" value="-1" />
+              <option name="lastName" value="" />
+              <option name="refreshToken" value="" />
             </StepicUser>
           </list>
         </option>
-        <option name="courseMode" value="Course Creator"/>
-        <option name="courseType" value="PyCharm"/>
-        <option name="description" value="Test Course format 8"/>
-        <option name="language" value="JAVA"/>
-        <option name="languageCode" value="en"/>
+        <option name="courseMode" value="Course Creator" />
+        <option name="courseType" value="PyCharm" />
+        <option name="description" value="Test Course format 8" />
+        <option name="language" value="JAVA" />
+        <option name="languageCode" value="en" />
         <option name="items">
           <list>
             <Lesson>
-              <option name="id" value="0"/>
-              <option name="index" value="1"/>
-              <option name="name" value="Introduction"/>
-              <option name="updateDate"/>
+              <option name="id" value="0" />
+              <option name="index" value="1" />
+              <option name="name" value="Introduction" />
+              <option name="updateDate" />
               <option name="taskList">
                 <list>
                   <EduTask>
                     <option name="additionalFiles">
-                      <map/>
+                      <map />
                     </option>
-                    <option name="index" value="1"/>
-                    <option name="name" value="First task"/>
-                    <option name="status" value="Unchecked"/>
-                    <option name="stepId" value="0"/>
+                    <option name="index" value="1" />
+                    <option name="name" value="First task" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="0" />
                     <option name="testsText">
                       <map>
-                        <entry key="Test.java" value="class Test {&#10;    // put your test here&#10;}"/>
+                        <entry key="Test.java" value="class Test {&#10;    // put your test here&#10;}" />
                       </map>
                     </option>
-                    <option name="updateDate"/>
+                    <option name="updateDate" />
                     <option name="taskFiles">
                       <map>
                         <entry key="Task.java">
@@ -72,11 +72,11 @@
                                   </AnswerPlaceholder>
                                 </list>
                               </option>
-                              <option name="highlightErrors" value="false"/>
-                              <option name="index" value="0"/>
-                              <option name="trackChanges" value="true"/>
-                              <option name="trackLengths" value="true"/>
-                              <option name="userCreated" value="false"/>
+                              <option name="highlightErrors" value="false" />
+                              <option name="index" value="0" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
                               <option name="name" value="Task.kt" />
                               <option name="text" value="fun start(): String = TODO()&#10;" />
                             </TaskFile>
@@ -84,44 +84,45 @@
                         </entry>
                       </map>
                     </option>
-                    <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
+                    <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;" />
                     <option name="descriptionFormat" value="HTML" />
                   </EduTask>
                   <EduTask>
                     <option name="additionalFiles">
-                      <map/>
+                      <map />
                     </option>
-                    <option name="index" value="2"/>
-                    <option name="name" value="First task"/>
-                    <option name="status" value="Unchecked"/>
-                    <option name="stepId" value="0"/>
+                    <option name="index" value="2" />
+                    <option name="name" value="First task (1)" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="0" />
                     <option name="testsText">
                       <map>
-                        <entry key="Test.java" value="class Test {&#10;    // put your test here&#10;}"/>
+                        <entry key="Test.java" value="class Test {&#10;    // put your test here&#10;}" />
                       </map>
                     </option>
-                    <option name="updateDate"/>
+                    <option name="updateDate" />
                     <option name="taskFiles">
                       <map>
                         <entry key="Task.java">
                           <value>
                             <TaskFile>
                               <option name="answerPlaceholders">
-                                <list/>
+                                <list />
                               </option>
-                              <option name="highlightErrors" value="false"/>
-                              <option name="index" value="0"/>
-                              <option name="trackChanges" value="true"/>
-                              <option name="trackLengths" value="true"/>
-                              <option name="userCreated" value="false"/>
-                              <option name="name" value="Task.java"/>
-                              <option name="text" value="class Task {&#10;  //put your task here&#10;}"/>
+                              <option name="highlightErrors" value="false" />
+                              <option name="index" value="0" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="name" value="Task.java" />
+                              <option name="text" value="class Task {&#10;  //put your task here&#10;}" />
                             </TaskFile>
                           </value>
                         </entry>
                       </map>
                     </option>
-                    <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;"/>
+                    <option name="customPresentableName" value="First task" />
+                    <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;" />
                     <option name="descriptionFormat" value="HTML" />
                   </EduTask>
                 </list>
@@ -129,14 +130,14 @@
             </Lesson>
           </list>
         </option>
-        <option name="name" value="Java Course1"/>
+        <option name="name" value="Java Course1" />
       </Course>
     </option>
-    <option name="toolWindowMode" value="TEXT"/>
-    <option name="turnEditingMode" value="false"/>
-    <option name="VERSION" value="8"/>
+    <option name="toolWindowMode" value="TEXT" />
+    <option name="turnEditingMode" value="false" />
+    <option name="VERSION" value="8" />
     <option name="myUserTests">
-      <map/>
+      <map />
     </option>
   </StudyTaskManager>
 </component>
