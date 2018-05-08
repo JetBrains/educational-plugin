@@ -990,9 +990,6 @@ public class EduUtils {
 
   @Nullable
   public static Task getTask(@NotNull VirtualFile taskDir, @NotNull final Course course) {
-    final String taskDirName = taskDir.getName();
-    if (!taskDirName.contains(EduNames.TASK)) return null;
-
     String sourceDir = CourseExt.getSourceDir(course);
     if (taskDir.getName().equals(sourceDir)) {
       taskDir = taskDir.getParent();
