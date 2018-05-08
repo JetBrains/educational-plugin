@@ -3,12 +3,27 @@ package com.jetbrains.edu.learning.courseFormat
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.xmlb.annotations.Transient
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.*
 
-class FrameworkLesson : Lesson() {
+class FrameworkLesson() : Lesson() {
+
+  constructor(lesson: Lesson): this() {
+    id = lesson.id
+    steps = lesson.steps
+    tags = lesson.tags
+    is_public = lesson.is_public
+    updateDate = lesson.updateDate
+    name = lesson.name
+    taskList = lesson.taskList
+    course = lesson.course
+    section = lesson.section
+    index = lesson.index
+    customPresentableName = lesson.customPresentableName
+  }
 
   var currentTaskIndex: Int = 0
 
