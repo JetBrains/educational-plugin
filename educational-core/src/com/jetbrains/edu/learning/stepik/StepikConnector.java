@@ -548,6 +548,10 @@ public class StepikConnector {
         List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class);
         List<StepSource> allStepSources = stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
 
+        if (!allStepSources.isEmpty() && allStepSources.get(0).block.options.lessonType != null) {
+          // TODO: find a better way to get framework lessons from stepik
+          lesson = new FrameworkLesson(lesson);
+        }
         for (int i = 0; i < allStepSources.size(); i++) {
           StepSource step = allStepSources.get(i);
           Integer stepId = Integer.valueOf(stepIds[i]);

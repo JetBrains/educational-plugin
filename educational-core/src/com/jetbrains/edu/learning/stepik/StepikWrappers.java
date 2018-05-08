@@ -47,6 +47,8 @@ public class StepikWrappers {
   public static class StepOptions {
     @SerializedName("task_type")
     @Expose public String taskType;
+    @SerializedName("lesson_type")
+    @Expose public String lessonType;
     @Expose public List<FileWrapper> test;
     @Expose public String title;
     @SerializedName(SerializationUtils.Json.DESCRIPTION_TEXT)
@@ -72,6 +74,7 @@ public class StepikWrappers {
       setTaskFiles(project, task, source);
       setAdditionalFiles(task, source);
       source.taskType = task.getTaskType();
+      source.lessonType = task.getLesson() instanceof FrameworkLesson ? "framework" : null;
       return source;
     }
 
