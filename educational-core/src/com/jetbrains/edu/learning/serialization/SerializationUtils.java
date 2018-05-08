@@ -54,6 +54,7 @@ public class SerializationUtils {
     public static final String KEY = "key";
     public static final String VALUE = "value";
     public static final String NAME = "name";
+    public static final String CUSTOM_NAME = "customPresentableName";
     public static final String LIST = "list";
     public static final String OPTION = "option";
     public static final String INDEX = "index";

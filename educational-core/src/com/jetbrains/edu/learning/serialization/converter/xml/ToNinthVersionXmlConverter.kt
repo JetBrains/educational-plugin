@@ -26,16 +26,25 @@ class ToNinthVersionXmlConverter : XmlConverter {
       for (task in getChildList(lesson, TASK_LIST)) {
         val taskDir = lessonDir.findChild(EduNames.TASK + getAsInt(task, INDEX)) ?: throw StudyUnrecognizedFormatException()
         runWriteAction {
-          taskDir.rename(ToNinthVersionXmlConverter::class.java, GeneratorUtils.getUniqueValidName(lessonDir, getName(task)))
+          val taskName = getName(task)
+          val uniqueValidName = GeneratorUtils.getUniqueValidName(lessonDir, taskName)
+          val nameElement = getChildWithName(task, NAME)
+          if (nameElement != null) {
+            changeValue(nameElement, uniqueValidName)
+            addChildWithName(task, CUSTOM_NAME, taskName)
+          }
+          taskDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
         }
         removeSubtaskInfos(task)
         migrateDescription(task)
       }
       runWriteAction {
-        val uniqueValidName = GeneratorUtils.getUniqueValidName(project.baseDir, getName(lesson))
+        val lessonName = getName(lesson)
+        val uniqueValidName = GeneratorUtils.getUniqueValidName(project.baseDir, lessonName)
         val nameElement = getChildWithName(lesson, NAME)
         if (nameElement != null) {
           changeValue(nameElement, uniqueValidName)
+          addChildWithName(lesson, CUSTOM_NAME, lessonName)
         }
         lessonDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
       }
