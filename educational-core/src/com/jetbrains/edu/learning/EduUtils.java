@@ -77,6 +77,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -278,17 +279,27 @@ public class EduUtils {
     final Course course = task.getLesson().getCourse();
     final Language language = course.getLanguageById();
 
-    List<VirtualFile> testFiles = new ArrayList<>();
-    VirtualFile taskDir = task.getTaskDir(project);
     final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
-
-    if (taskDir == null || configurator == null) {
-      return testFiles;
+    if (configurator == null) {
+      LOG.warn(String.format("Can't find configurator for `%s` language", language.getDisplayName()));
+      return Collections.emptyList();
     }
-    testFiles.addAll(Arrays.stream(taskDir.getChildren())
-            .filter(configurator::isTestFile)
-            .collect(Collectors.toList()));
-    return testFiles;
+
+    final VirtualFile taskDir = task.getTaskDir(project);
+    if (taskDir == null) {
+      LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
+      return Collections.emptyList();
+    }
+
+    final VirtualFile testDir = TaskExt.findTestDir(task, taskDir);
+    if (testDir == null) {
+      LOG.warn(String.format("Can't find test dir for `%s` task", task.getName()));
+      return Collections.emptyList();
+    }
+
+    return Arrays.stream(testDir.getChildren())
+      .filter(configurator::isTestFile)
+      .collect(Collectors.toList());
   }
 
   @Nullable
