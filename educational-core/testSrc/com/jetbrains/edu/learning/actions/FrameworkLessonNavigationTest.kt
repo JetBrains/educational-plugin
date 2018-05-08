@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.navigation.NavigationUtils
 
 class FrameworkLessonNavigationTest : EduTestCase() {
 
@@ -130,7 +131,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
 
   fun `test opened files`() {
     val course = createFrameworkCourse()
-    val task = course.getLesson("lesson1")?.getTask("task1") ?: error("")
+    val task = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
     task.openTaskFileInEditor(rootDir, "fizz.kt", 0)
     myFixture.type("\"Fizz\"")
     task.status = CheckStatus.Solved
@@ -139,6 +140,43 @@ class FrameworkLessonNavigationTest : EduTestCase() {
     val openFiles = FileEditorManager.getInstance(project).openFiles
     assertEquals(1, openFiles.size)
     assertEquals("buzz.kt", openFiles[0].name)
+  }
+
+  fun `test navigation to unsolved task`() {
+    val course = createFrameworkCourse()
+
+    // go to the third task without solving prev tasks
+    val task1 = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
+    task1.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    myFixture.testAction(NextTaskAction())
+
+    val task2 = course.getLesson("lesson1")?.getTask("task2") ?: error("Can't find `task2` in `lesson1`")
+    task2.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    myFixture.testAction(NextTaskAction())
+
+    fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("fizzBuzz.kt", """
+            fn fizzBuzz() = TODO() + TODO()
+          """)
+        }
+      }
+    }.assertEquals(rootDir, myFixture)
+
+    // Emulate user actions with unsolved dependencies notification
+    // and navigate to the first unsolved task
+    NavigationUtils.navigateToTask(project, task1, course.lessons[0].getTask("task3"))
+
+    fileTree {
+      dir("lesson1") {
+        dir("task") {
+          file("fizz.kt", """
+            fn fizz() = TODO()
+          """)
+        }
+      }
+    }.assertEquals(rootDir, myFixture)
   }
 
   private fun createFrameworkCourse(): Course = courseWithFiles {
