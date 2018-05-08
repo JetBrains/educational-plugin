@@ -13,7 +13,7 @@ import junit.framework.TestCase
 class CCMoveTaskTest : EduTestCase() {
 
   fun `test move to another lesson`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {  }
         eduTask {  }
@@ -22,7 +22,6 @@ class CCMoveTaskTest : EduTestCase() {
         eduTask("task2") { }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson2")
@@ -42,8 +41,40 @@ class CCMoveTaskTest : EduTestCase() {
     TestCase.assertEquals(2, lesson2.getTask("task1").index)
   }
 
+  fun `test move task with custom name to another lesson`() {
+    val customTaskName = "Custom Task Name"
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask(customTaskName) {  }
+        eduTask {  }
+      }
+      lesson {
+        eduTask { }
+      }
+    }
+    val sourceVFile = LightPlatformTestCase.getSourceRoot().findFileByRelativePath("lesson1/$customTaskName")
+                      ?: error("Can't find `lesson1/$customTaskName` folder")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = LightPlatformTestCase.getSourceRoot().findFileByRelativePath("lesson2")
+                      ?: error("Can't find `lesson2` folder")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
+
+    val handler = CCTaskMoveHandlerDelegate()
+    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
+    handler.doMove(project, arrayOf(sourceDir), targetDir, {})
+    val lesson1 = course.getLesson("lesson1")
+    val lesson2 = course.getLesson("lesson2")
+    TestCase.assertEquals(1, lesson1!!.taskList.size)
+    TestCase.assertEquals(2, lesson2!!.taskList.size)
+
+    TestCase.assertEquals(1, lesson1.getTask("task2").index)
+
+    TestCase.assertEquals(1, lesson2.getTask("task1").index)
+    TestCase.assertEquals(2, lesson2.getTask(customTaskName).index)
+  }
+
   fun `test move after task`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {  }
         eduTask {  }
@@ -51,7 +82,6 @@ class CCMoveTaskTest : EduTestCase() {
         eduTask {  }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task3")
@@ -70,7 +100,7 @@ class CCMoveTaskTest : EduTestCase() {
   }
 
   fun `test move before task`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {  }
         eduTask {  }
@@ -78,7 +108,6 @@ class CCMoveTaskTest : EduTestCase() {
         eduTask {  }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task3")
@@ -97,7 +126,7 @@ class CCMoveTaskTest : EduTestCase() {
   }
 
   fun `test move before task in another lesson`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {  }
         eduTask {  }
@@ -107,7 +136,6 @@ class CCMoveTaskTest : EduTestCase() {
         eduTask("task4") { }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson2", "task3")
@@ -129,7 +157,7 @@ class CCMoveTaskTest : EduTestCase() {
   }
 
   fun `test move after task in another lesson`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {  }
         eduTask {  }
@@ -139,7 +167,6 @@ class CCMoveTaskTest : EduTestCase() {
         eduTask("task4") { }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson2", "task3")
