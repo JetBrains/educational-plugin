@@ -209,10 +209,15 @@ object NavigationUtils {
   private fun prepareFilesForTargetTask(project: Project, frameworkLesson: FrameworkLesson, currentTask: Task, targetTask: Task) {
     val dir = currentTask.getTaskDir(project) ?: return
 
-    when {
-      currentTask.index + 1 == targetTask.index -> frameworkLesson.prepareNextTask(project, dir)
-      currentTask.index - 1 == targetTask.index -> frameworkLesson.preparePrevTask(project, dir)
-      else -> TODO()
+    @Suppress("NAME_SHADOWING")
+    var currentTask = currentTask
+    while (currentTask.index != targetTask.index) {
+      if (currentTask.index < targetTask.index) {
+        frameworkLesson.prepareNextTask(project, dir)
+      } else {
+        frameworkLesson.preparePrevTask(project, dir)
+      }
+      currentTask = frameworkLesson.currentTask()
     }
   }
 
