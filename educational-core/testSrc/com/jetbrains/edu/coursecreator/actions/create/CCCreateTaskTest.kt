@@ -16,14 +16,13 @@ import junit.framework.TestCase
 class CCCreateTaskTest : CCActionTestCase() {
 
   fun `test create task in lesson`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     Messages.setTestInputDialog { "task2" }
     val lessonName = "lesson1"
     val lessonFile = LightPlatformTestCase.getSourceRoot().findChild(lessonName)
@@ -33,7 +32,7 @@ class CCCreateTaskTest : CCActionTestCase() {
   }
 
   fun `test create task in lesson in section`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section {
         lesson {
           eduTask {
@@ -42,7 +41,6 @@ class CCCreateTaskTest : CCActionTestCase() {
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     Messages.setTestInputDialog { "task2" }
     val lessonName = "lesson1"
     val sectionName = "section1"
@@ -54,11 +52,10 @@ class CCCreateTaskTest : CCActionTestCase() {
   }
 
   fun `test create task in empty lesson`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val lessonName = "lesson1"
     val lessonFile = LightPlatformTestCase.getSourceRoot().findChild(lessonName)
     Messages.setTestInputDialog { "task1" }
@@ -67,7 +64,7 @@ class CCCreateTaskTest : CCActionTestCase() {
   }
 
   fun `test create task after task`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -77,7 +74,6 @@ class CCCreateTaskTest : CCActionTestCase() {
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val lessonName = "lesson1"
     val lessonFile = LightPlatformTestCase.getSourceRoot().findChild(lessonName)
     val taskFile = lessonFile!!.findChild("task1")
@@ -91,7 +87,7 @@ class CCCreateTaskTest : CCActionTestCase() {
   }
 
   fun `test create task before task`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -101,7 +97,6 @@ class CCCreateTaskTest : CCActionTestCase() {
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val lessonName = "lesson1"
     val lessonFile = LightPlatformTestCase.getSourceRoot().findChild(lessonName)
     val taskFile = lessonFile!!.findChild("task2")
@@ -114,8 +109,31 @@ class CCCreateTaskTest : CCActionTestCase() {
     TestCase.assertEquals(3, lesson.getTask("task2")!!.index)
   }
 
+  fun `test create task before task with custom name`() {
+    val customTaskName = "Custom Task Name"
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+        }
+        eduTask(customTaskName) {
+          taskFile("taskFile1.txt")
+        }
+      }
+    }
+    val taskFile = LightPlatformTestCase.getSourceRoot().findFileByRelativePath("lesson1/$customTaskName")
+                   ?: error("Can't find `lesson1/$customTaskName`")
+
+    testAction(dataContext(taskFile), CCCreateTaskTest("task01", 2))
+    val lesson = course.lessons[0]
+    TestCase.assertEquals(3, lesson.taskList.size)
+    TestCase.assertEquals(1, lesson.getTask("task1").index)
+    TestCase.assertEquals(2, lesson.getTask("task01")!!.index)
+    TestCase.assertEquals(3, lesson.getTask(customTaskName)!!.index)
+  }
+
   fun `test create task after task in section`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section {
         lesson {
           eduTask {
@@ -127,7 +145,6 @@ class CCCreateTaskTest : CCActionTestCase() {
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sectionName = "section1"
     val sectionFile = LightPlatformTestCase.getSourceRoot().findChild(sectionName)
     val lessonFile = sectionFile!!.findChild("lesson1")
@@ -142,7 +159,7 @@ class CCCreateTaskTest : CCActionTestCase() {
   }
 
   fun `test create task not available on course`() {
-    val course = courseWithFiles {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -150,7 +167,6 @@ class CCCreateTaskTest : CCActionTestCase() {
       }
     }
     val sourceVFile = LightPlatformTestCase.getSourceRoot()
-    course.courseMode = CCUtils.COURSE_MODE
     val action = CCCreateTask()
     val event = TestActionEvent(dataContext(sourceVFile!!), action)
     action.beforeActionPerformedUpdate(event)
@@ -158,7 +174,7 @@ class CCCreateTaskTest : CCActionTestCase() {
   }
 
   fun `test create task not available on section`() {
-    val course = courseWithFiles {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section {
         lesson {
           eduTask {
@@ -168,7 +184,6 @@ class CCCreateTaskTest : CCActionTestCase() {
       }
     }
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1")
-    course.courseMode = CCUtils.COURSE_MODE
     val action = CCCreateTask()
     val event = TestActionEvent(dataContext(sourceVFile!!), action)
     action.beforeActionPerformedUpdate(event)
