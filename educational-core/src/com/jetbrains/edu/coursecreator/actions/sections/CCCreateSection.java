@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.sections;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
@@ -22,10 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 
 public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
-  public static final String TITLE = "Create New " + StringUtil.toTitleCase(EduNames.SECTION);
 
   public CCCreateSection() {
-    super(StringUtil.toTitleCase(EduNames.SECTION), TITLE, EducationalCoreIcons.Section);
+    super(EduNames.SECTION, EducationalCoreIcons.Section);
   }
 
   @Override
@@ -89,12 +87,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   }
 
   @Override
-  protected String getItemName() {
-    return EduNames.SECTION;
-  }
-
-  @Override
-  public Section createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
+  public Section createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, @NotNull String name, int index) {
     final Section section = new Section();
     section.setName(name);
     section.setIndex(index);
