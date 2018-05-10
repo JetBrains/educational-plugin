@@ -29,8 +29,11 @@ import javax.swing.*;
 public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCCreateStudyItemActionBase.class);
 
-  public CCCreateStudyItemActionBase(String text, String description, Icon icon) {
-    super(text, description, icon);
+  private final String myItemName;
+
+  public CCCreateStudyItemActionBase(@NotNull String itemName, Icon icon) {
+    super(StringUtil.toTitleCase(itemName), "Create New " + StringUtil.toTitleCase(itemName), icon);
+    myItemName = itemName;
   }
 
   @Override
@@ -173,6 +176,11 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
   protected abstract int getSiblingsSize(@NotNull final Course course, @Nullable final StudyItem parentItem);
 
   @NotNull
+  protected String getItemName() {
+    return myItemName;
+  }
+
+  @NotNull
   protected String getTitle() {
     return "Create New " + StringUtil.toTitleCase(getItemName());
   }
@@ -189,10 +197,10 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
 
   protected abstract void sortSiblings(@NotNull final Course course, @Nullable final StudyItem parentItem);
 
-  protected abstract String getItemName();
+
 
   public abstract Item createAndInitItem(@NotNull final Course course,
                                          @Nullable final StudyItem parentItem,
-                                         String name,
+                                         @NotNull String name,
                                          int index);
 }

@@ -20,10 +20,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 
 public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
-  public static final String TITLE = "Create New " + EduNames.TASK_TITLED;
 
   public CCCreateTask() {
-    super(EduNames.TASK_TITLED, TITLE, EducationalCoreIcons.Task);
+    super(EduNames.TASK, EducationalCoreIcons.Task);
   }
 
   @Override
@@ -92,12 +91,7 @@ public class CCCreateTask extends CCCreateStudyItemActionBase<Task> {
   }
 
   @Override
-  protected String getItemName() {
-    return EduNames.TASK;
-  }
-
-  @Override
-  public Task createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, String name, int index) {
+  public Task createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, @NotNull String name, int index) {
     final Task task = new EduTask(name);
     task.setIndex(index);
     if (parentItem == null) {
