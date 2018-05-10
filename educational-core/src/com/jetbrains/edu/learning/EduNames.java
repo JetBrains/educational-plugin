@@ -15,7 +15,6 @@
  */
 package com.jetbrains.edu.learning;
 
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NonNls;
 
 @NonNls
@@ -27,10 +26,9 @@ public class EduNames {
   public static final String TASK_MD = "task.md";
   public static final String HINTS = "hints";
   public static final String LESSON = "lesson";
+  public static final String FRAMEWORK_LESSON = "framework lesson";
   public static final String SECTION = "section";
-  public static final String LESSON_TITLED = StringUtil.toTitleCase(LESSON);
   public static final String TASK = "task";
-  public static final String TASK_TITLED = StringUtil.toTitleCase(TASK);
   public static final String COURSE = "course";
   public static final String TEST_TAB_NAME = "test";
   public static final String USER_TEST_INPUT = "input";
