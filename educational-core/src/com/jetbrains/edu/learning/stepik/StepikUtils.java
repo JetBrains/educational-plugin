@@ -51,7 +51,7 @@ public class StepikUtils {
   @NotNull
   private static String getFooterWithLink(Task task, boolean adaptive) {
     final String link = adaptive ? getAdaptiveLink(task) : getLink(task, task.getIndex());
-    return "<div class=\"footer\">" + "<a href=" + link + ">Open on Stepik</a>" + "</div>";
+    return "<div class=\"footer\">" + "<a href=" + link + ">Leave a comment</a>" + "</div>";
   }
 
   @Nullable
