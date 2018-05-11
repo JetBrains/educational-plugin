@@ -7,7 +7,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 fun fileTree(block: FileTreeBuilder.() -> Unit): FileTree = FileTree(FileTreeBuilderImpl().apply(block).intoDirectory())
 
 interface FileTreeBuilder {
-  fun dir(name: String, block: FileTreeBuilder.() -> Unit)
+  fun dir(name: String, block: FileTreeBuilder.() -> Unit = {})
   fun file(name: String, code: String? = null)
 }
 
