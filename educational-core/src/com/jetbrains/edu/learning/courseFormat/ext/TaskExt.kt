@@ -30,7 +30,7 @@ val Task.testTextMap: Map<String, String> get() {
 
 val Task.isFrameworkTask: Boolean get() = lesson is FrameworkLesson
 
-val Task.dirName: String get() = if (isFrameworkTask) EduNames.TASK else name
+val Task.dirName: String get() = if (isFrameworkTask && course?.isStudy == true) EduNames.TASK else name
 
 fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
   val sourceDir = sourceDir ?: return null
