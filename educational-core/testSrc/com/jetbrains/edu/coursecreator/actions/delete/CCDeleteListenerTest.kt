@@ -26,12 +26,11 @@ class CCDeleteListenerTest : CCActionTestCase() {
   }
 
   fun `test delete section`() {
-    val course = courseWithFiles {
-      lesson {}
-      section {}
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      section()
+      lesson()
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sectionVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
     runWriteAction {
       sectionVFile!!.delete(this)
@@ -44,12 +43,11 @@ class CCDeleteListenerTest : CCActionTestCase() {
   }
 
   fun `test delete lesson`() {
-    val course = courseWithFiles {
-      lesson {}
-      section {}
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      section()
+      lesson()
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val lesson1 = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
     runWriteAction {
       lesson1!!.delete(this)
@@ -63,15 +61,14 @@ class CCDeleteListenerTest : CCActionTestCase() {
 
 
   fun `test delete lesson from section`() {
-    val course = courseWithFiles {
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
       section {
-        lesson {}
-        lesson {}
+        lesson()
+        lesson()
       }
-      lesson {}
+      lesson()
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val lesson1 = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section2", "lesson1")
     runWriteAction {
       lesson1!!.delete(this)
@@ -89,14 +86,13 @@ class CCDeleteListenerTest : CCActionTestCase() {
   }
 
   fun `test delete task`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("tmp.txt")
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val task1 = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
     runWriteAction {
       task1!!.delete(this)
@@ -107,14 +103,13 @@ class CCDeleteListenerTest : CCActionTestCase() {
   }
 
   fun `test delete task file`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("tmp.txt")
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val taskFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1", "tmp.txt")
     runWriteAction {
       taskFile!!.delete(this)

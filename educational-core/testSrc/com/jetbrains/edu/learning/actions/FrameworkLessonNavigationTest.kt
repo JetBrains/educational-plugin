@@ -88,7 +88,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
 
   fun `test correctly process placeholder offsets`() {
     val course = courseWithFiles {
-      lesson(isFramework = true) {
+      frameworkLesson {
         eduTask {
           taskFile("fizz.kt", """
           fn fizzz() = <p>TODO()</p>
@@ -180,7 +180,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
   }
 
   private fun createFrameworkCourse(): Course = courseWithFiles {
-    lesson(isFramework = true) {
+    frameworkLesson {
       eduTask {
         taskFile("fizz.kt", """
           fn fizz() = <p>TODO()</p>
