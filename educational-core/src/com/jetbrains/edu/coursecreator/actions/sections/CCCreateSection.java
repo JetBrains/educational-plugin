@@ -87,7 +87,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   }
 
   @Override
-  public Section createAndInitItem(@NotNull Course course, @Nullable StudyItem parentItem, @NotNull String name, int index) {
+  public Section createAndInitItem(@NotNull Project project, @NotNull Course course, @Nullable StudyItem parentItem, @NotNull String name, int index) {
     final Section section = new Section();
     section.setName(name);
     section.setIndex(index);
