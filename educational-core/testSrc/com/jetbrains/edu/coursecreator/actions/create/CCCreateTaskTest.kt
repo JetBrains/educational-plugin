@@ -53,8 +53,7 @@ class CCCreateTaskTest : CCActionTestCase() {
 
   fun `test create task in empty lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      lesson {
-      }
+      lesson()
     }
     val lessonName = "lesson1"
     val lessonFile = LightPlatformTestCase.getSourceRoot().findChild(lessonName)
