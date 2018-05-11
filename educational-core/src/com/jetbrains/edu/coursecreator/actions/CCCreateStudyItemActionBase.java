@@ -131,9 +131,9 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
 
   @Nullable
   protected Item getItem(@NotNull final VirtualFile sourceDirectory,
-                              @NotNull final Project project,
-                              @NotNull final Course course,
-                              @Nullable StudyItem parentItem) {
+                         @NotNull final Project project,
+                         @NotNull final Course course,
+                         @Nullable StudyItem parentItem) {
 
     String itemName;
     int itemIndex;
@@ -154,7 +154,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     if (itemName == null) {
       return null;
     }
-    return createAndInitItem(course, parentItem, itemName, itemIndex);
+    return createAndInitItem(project, course, parentItem, itemName, itemIndex);
   }
 
   protected Pair<String, Integer> getItemNameIndex(@NotNull StudyItem thresholdItem, @NotNull Project project,
@@ -199,7 +199,8 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
 
 
 
-  public abstract Item createAndInitItem(@NotNull final Course course,
+  public abstract Item createAndInitItem(@NotNull Project project,
+                                         @NotNull final Course course,
                                          @Nullable final StudyItem parentItem,
                                          @NotNull String name,
                                          int index);
