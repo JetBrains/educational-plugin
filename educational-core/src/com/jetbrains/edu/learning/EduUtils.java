@@ -553,7 +553,7 @@ public class EduUtils {
         return null;
       }
 
-      if (lesson instanceof FrameworkLesson) {
+      if (lesson instanceof FrameworkLesson && course.isStudy()) {
         return ((FrameworkLesson)lesson).currentTask();
       } else {
         return lesson.getTask(taskDir.getName());
