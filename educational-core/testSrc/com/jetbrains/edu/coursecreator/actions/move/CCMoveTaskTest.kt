@@ -15,11 +15,11 @@ class CCMoveTaskTest : EduTestCase() {
   fun `test move to another lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask {  }
-        eduTask {  }
+        eduTask()
+        eduTask()
       }
       lesson {
-        eduTask("task2") { }
+        eduTask("task2")
       }
     }
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
@@ -45,11 +45,11 @@ class CCMoveTaskTest : EduTestCase() {
     val customTaskName = "Custom Task Name"
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask(customTaskName) {  }
-        eduTask {  }
+        eduTask(customTaskName)
+        eduTask()
       }
       lesson {
-        eduTask { }
+        eduTask()
       }
     }
     val sourceVFile = LightPlatformTestCase.getSourceRoot().findFileByRelativePath("lesson1/$customTaskName")
@@ -76,10 +76,10 @@ class CCMoveTaskTest : EduTestCase() {
   fun `test move after task`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask {  }
-        eduTask {  }
-        eduTask {  }
-        eduTask {  }
+        eduTask()
+        eduTask()
+        eduTask()
+        eduTask()
       }
     }
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task2")
@@ -102,10 +102,10 @@ class CCMoveTaskTest : EduTestCase() {
   fun `test move before task`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask {  }
-        eduTask {  }
-        eduTask {  }
-        eduTask {  }
+        eduTask()
+        eduTask()
+        eduTask()
+        eduTask()
       }
     }
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
@@ -128,12 +128,12 @@ class CCMoveTaskTest : EduTestCase() {
   fun `test move before task in another lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask {  }
-        eduTask {  }
+        eduTask()
+        eduTask()
       }
       lesson {
-        eduTask("task3") { }
-        eduTask("task4") { }
+        eduTask("task3")
+        eduTask("task4")
       }
     }
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
@@ -159,12 +159,12 @@ class CCMoveTaskTest : EduTestCase() {
   fun `test move after task in another lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
-        eduTask {  }
-        eduTask {  }
+        eduTask()
+        eduTask()
       }
       lesson {
-        eduTask("task3") { }
-        eduTask("task4") { }
+        eduTask("task3")
+        eduTask("task4")
       }
     }
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")

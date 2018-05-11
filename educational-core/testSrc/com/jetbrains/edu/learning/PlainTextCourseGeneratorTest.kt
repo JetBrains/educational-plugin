@@ -41,7 +41,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
 
   fun `test course with framework lesson structure creation`() {
     courseWithFiles {
-      lesson(isFramework = true) {
+      frameworkLesson {
         eduTask {
           taskFile("Fizz.kt")
         }

@@ -39,8 +39,32 @@ fun Course.createCourseFiles(project: Project, baseDir: VirtualFile, settings: A
     ?.createCourseStructure(project, baseDir, settings)
 }
 
-class CourseBuilder {
-  val course: Course = Course()
+abstract class LessonOwnerBuilder(val course: Course) {
+
+  protected abstract val nextLessonIndex: Int
+  protected abstract fun addLesson(lesson: Lesson)
+
+  fun frameworkLesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit = {}) {
+    lesson(name, true, buildLesson)
+  }
+
+  fun lesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit = {}) {
+    lesson(name, false, buildLesson)
+  }
+
+  protected fun lesson(name: String? = null, isFramework: Boolean = false, buildLesson: LessonBuilder.() -> Unit) {
+    val lessonBuilder = LessonBuilder(course, null, if (isFramework) FrameworkLesson() else Lesson())
+    val lesson = lessonBuilder.lesson
+    lesson.index = nextLessonIndex
+    lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
+    addLesson(lesson)
+    lessonBuilder.buildLesson()
+  }
+}
+
+class CourseBuilder : LessonOwnerBuilder(Course()) {
+
+  override val nextLessonIndex: Int get() = course.lessons.size + 1
 
   fun withName(name: String) {
     course.name = name
@@ -50,17 +74,11 @@ class CourseBuilder {
     course.courseMode = courseMode
   }
 
-  fun lesson(name: String? = null, isFramework: Boolean = false, buildLesson: LessonBuilder.() -> Unit) {
-    val lessonBuilder = LessonBuilder(course, null, if (isFramework) FrameworkLesson() else Lesson())
-    val lesson = lessonBuilder.lesson
-    lesson.index = course.lessons.size + 1
-    val nextLessonIndex = course.lessons.size + 1
-    lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
+  override fun addLesson(lesson: Lesson) {
     course.addLesson(lesson)
-    lessonBuilder.buildLesson()
   }
 
-  fun section(name: String? = null, buildSection: SectionBuilder.() -> Unit) {
+  fun section(name: String? = null, buildSection: SectionBuilder.() -> Unit = {}) {
     val sectionBuilder = SectionBuilder(course, Section())
     val section = sectionBuilder.section
     section.index = course.lessons.size + 1
@@ -70,18 +88,17 @@ class CourseBuilder {
     sectionBuilder.buildSection()
   }
 }
-class SectionBuilder(val course: Course, val section: Section = Section()) {
-  fun withName(name: String) {
-    section.name = name
+
+class SectionBuilder(course: Course, val section: Section = Section()) : LessonOwnerBuilder(course) {
+
+  override val nextLessonIndex: Int get() = section.lessons.size + 1
+
+  override fun addLesson(lesson: Lesson) {
+    section.addLesson(lesson)
   }
 
-  fun lesson(name: String? = null, buildLesson: LessonBuilder.() -> Unit) {
-    val lessonBuilder = LessonBuilder(course, section, Lesson())
-    lessonBuilder.lesson.index = section.lessons.size + 1
-    val nextIndex = section.lessons.size + 1
-    lessonBuilder.withName(name?: EduNames.LESSON + nextIndex)
-    lessonBuilder.buildLesson()
-    section.addLesson(lessonBuilder.lesson)
+  fun withName(name: String) {
+    section.name = name
   }
 }
 
@@ -96,7 +113,13 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     lesson.name = name
   }
 
-  fun task(task: Task, name: String? = null, taskDescription: String? = null, taskDescriptionFormat: DescriptionFormat? = null, buildTask: TaskBuilder.() -> Unit) {
+  fun task(
+    task: Task,
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    buildTask: TaskBuilder.() -> Unit = {})
+  {
     val taskBuilder = TaskBuilder(lesson, task)
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
@@ -110,14 +133,14 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     name: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
-    buildTask: TaskBuilder.() -> Unit
+    buildTask: TaskBuilder.() -> Unit = {}
   ) = task(EduTask(), name, taskDescription, taskDescriptionFormat, buildTask)
 
   fun theoryTask(
     name: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
-    buildTask: TaskBuilder.() -> Unit
+    buildTask: TaskBuilder.() -> Unit = {}
   ) = task(TheoryTask(), name, taskDescription, taskDescriptionFormat, buildTask)
 }
 
@@ -142,16 +165,14 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
    * For example, for `fun foo() = <p>TODO()</p>` text
    * it creates task file with `fun foo() = TODO()` text and placeholder with `TODO()` as placeholder text.
    */
-  fun taskFile(name: String, text: String = "", buildTaskFile: (TaskFileBuilder.() -> Unit)? = null) {
+  fun taskFile(name: String, text: String = "", buildTaskFile: TaskFileBuilder.() -> Unit = {}) {
     val taskFileBuilder = TaskFileBuilder(task)
     taskFileBuilder.withName(name)
     val textBuilder = StringBuilder(text.trimIndent())
     val placeholders = extractPlaceholdersFromText(textBuilder)
     taskFileBuilder.withText(textBuilder.toString())
     taskFileBuilder.withPlaceholders(placeholders)
-    if (buildTaskFile != null) {
-      taskFileBuilder.buildTaskFile()
-    }
+    taskFileBuilder.buildTaskFile()
     val taskFile = taskFileBuilder.taskFile
     taskFile.task = task
     task.addTaskFile(taskFile)
