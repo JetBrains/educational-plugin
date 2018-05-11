@@ -269,7 +269,7 @@ object GeneratorUtils {
   }
 
   private fun createUniqueDir(parentDir: VirtualFile, item: StudyItem): VirtualFile {
-    val (baseDirName, needUpdateItem) = if (item is Task && item.isFrameworkTask) {
+    val (baseDirName, needUpdateItem) = if (item is Task && item.isFrameworkTask && item.course?.isStudy == true)  {
       item.dirName to false
     } else {
       item.name to true
