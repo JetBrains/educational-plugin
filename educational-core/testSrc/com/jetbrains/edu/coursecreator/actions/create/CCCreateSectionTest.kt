@@ -16,14 +16,13 @@ import junit.framework.TestCase
 class CCCreateSectionTest : CCActionTestCase() {
 
   fun `test create section in course`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     Messages.setTestInputDialog { "section1" }
     testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateSection())
     TestCase.assertEquals(2, course.items.size)
@@ -33,7 +32,7 @@ class CCCreateSectionTest : CCActionTestCase() {
   }
 
   fun `test create section after lesson`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -52,7 +51,6 @@ class CCCreateSectionTest : CCActionTestCase() {
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val lessonName = "lesson1"
     val lessonFile = LightPlatformTestCase.getSourceRoot().findChild(lessonName)
     testAction(dataContext(lessonFile!!), CCCreateSectionTest("section2", 2))
@@ -64,7 +62,7 @@ class CCCreateSectionTest : CCActionTestCase() {
   }
 
   fun `test create section before lesson`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -83,7 +81,6 @@ class CCCreateSectionTest : CCActionTestCase() {
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val lessonName = "lesson2"
     val lessonFile = LightPlatformTestCase.getSourceRoot().findChild(lessonName)
     testAction(dataContext(lessonFile!!), CCCreateSectionTest("section2", 2))
@@ -95,7 +92,7 @@ class CCCreateSectionTest : CCActionTestCase() {
   }
 
   fun `test create section before section`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -114,7 +111,6 @@ class CCCreateSectionTest : CCActionTestCase() {
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sectionName = "section2"
     val sectionFile = LightPlatformTestCase.getSourceRoot().findChild(sectionName)
     testAction(dataContext(sectionFile!!), CCCreateSectionTest("section1", 2))
@@ -126,7 +122,7 @@ class CCCreateSectionTest : CCActionTestCase() {
   }
 
   fun `test create section not available inside lesson`() {
-    val course = courseWithFiles {
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -134,7 +130,6 @@ class CCCreateSectionTest : CCActionTestCase() {
       }
     }
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
-    course.courseMode = CCUtils.COURSE_MODE
     val action = CCCreateSection()
     val event = TestActionEvent(dataContext(sourceVFile!!), action)
     action.beforeActionPerformedUpdate(event)
@@ -142,7 +137,7 @@ class CCCreateSectionTest : CCActionTestCase() {
   }
 
   fun `test create section after section`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {
         eduTask {
           taskFile("taskFile1.txt")
@@ -161,7 +156,6 @@ class CCCreateSectionTest : CCActionTestCase() {
         }
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sectionName = "section2"
     val sectionFile = LightPlatformTestCase.getSourceRoot().findChild(sectionName)
     testAction(dataContext(sectionFile!!), CCCreateSectionTest("section1", 3))

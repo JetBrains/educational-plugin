@@ -13,13 +13,12 @@ import junit.framework.TestCase
 class CCMoveLessonTest : EduTestCase() {
 
   fun `test move lesson to section`() {
-    val course = courseWithFiles {
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
       section {
-        lesson ("lesson2", {})
+        lesson("lesson2")
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
@@ -36,14 +35,13 @@ class CCMoveLessonTest : EduTestCase() {
   }
 
   fun `test move lesson before lesson in course`() {
-    val course = courseWithFiles {
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
       section {
-        lesson {}
+        lesson()
       }
-      lesson {}
+      lesson()
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
@@ -59,14 +57,13 @@ class CCMoveLessonTest : EduTestCase() {
   }
 
   fun `test move lesson after lesson in course`() {
-    val course = courseWithFiles {
-      lesson {}
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      lesson()
       section {
-        lesson {}
+        lesson()
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
@@ -82,14 +79,13 @@ class CCMoveLessonTest : EduTestCase() {
   }
 
   fun `test move lesson from section to course`() {
-    val course = courseWithFiles {
-      lesson {}
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      lesson()
       section {
-        lesson ("lesson3", {})
+        lesson("lesson3")
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section3", "lesson3")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = LightPlatformTestCase.getSourceRoot()
@@ -106,14 +102,13 @@ class CCMoveLessonTest : EduTestCase() {
   }
 
   fun `test move lesson in section`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section {
-        lesson {}
-        lesson {}
-        lesson {}
+        lesson()
+        lesson()
+        lesson()
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1", "lesson3")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1", "lesson1")
@@ -130,19 +125,18 @@ class CCMoveLessonTest : EduTestCase() {
   }
 
   fun `test move lesson from section to section`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
       section {
-        lesson {}
-        lesson {}
-        lesson {}
+        lesson()
+        lesson()
+        lesson()
       }
       section {
-        lesson ("lesson4", {})
-        lesson ("lesson5", {})
-        lesson ("lesson6", {})
+        lesson("lesson4")
+        lesson("lesson5")
+        lesson("lesson6")
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1", "lesson2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section2")
@@ -161,20 +155,18 @@ class CCMoveLessonTest : EduTestCase() {
     TestCase.assertEquals(4, section2!!.items.size)
   }
 
-
   fun `test move lesson from section to lesson in another section`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
       section {
-        lesson {}
-        lesson {}
-        lesson {}
+        lesson()
+        lesson()
+        lesson()
       }
       section {
-        lesson ("lesson4", {})
-        lesson ("lesson5", {})
+        lesson("lesson4")
+        lesson("lesson5")
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1", "lesson2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section2", "lesson5")

@@ -12,13 +12,12 @@ import junit.framework.TestCase
 class CCMoveSectionTest : EduTestCase() {
 
   fun `test move section before lesson`() {
-    val course = courseWithFiles {
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
+      lesson()
       section {
-        lesson ("lesson2", {})
+        lesson("lesson2")
       }
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
@@ -33,14 +32,13 @@ class CCMoveSectionTest : EduTestCase() {
   }
 
   fun `test move section after lesson`() {
-    val course = courseWithFiles {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
       section {
-        lesson ("lesson2", {})
+        lesson("lesson2")
       }
-      lesson {}
-      lesson {}
+      lesson()
+      lesson()
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("section1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
@@ -56,12 +54,11 @@ class CCMoveSectionTest : EduTestCase() {
   }
 
   fun `test move section before section`() {
-    val course = courseWithFiles {
-      lesson {}
-      section {}
-      section {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
+      lesson()
+      section()
+      section()
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("section3")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
@@ -77,13 +74,12 @@ class CCMoveSectionTest : EduTestCase() {
   }
 
   fun `test move section after section`() {
-    val course = courseWithFiles {
-      lesson {}
-      section {}
-      section {}
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
+      lesson()
+      section()
+      section()
+      lesson()
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
     val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("section3")
