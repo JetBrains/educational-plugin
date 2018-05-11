@@ -10,16 +10,14 @@ import junit.framework.TestCase
 class CCUnWrapSectionTest : CCActionTestCase() {
 
   fun `test unwrap lessons`() {
-    val course = courseWithFiles {
-      lesson {
-      }
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
       section {
-        lesson("lesson2", {})
-        lesson("lesson3", {})
+        lesson("lesson2")
+        lesson("lesson3")
       }
-      lesson("lesson4", false, {})
+      lesson("lesson4")
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val section2 = LightPlatformTestCase.getSourceRoot().findChild("section2")
     testAction(dataContext(arrayOf(section2!!)), CCRemoveSection())
     TestCase.assertEquals(4, course.items.size)
@@ -32,37 +30,34 @@ class CCUnWrapSectionTest : CCActionTestCase() {
   }
 
   fun `test unwrap lessons tree structure`() {
-    val course = courseWithFiles {
-      lesson {
-      }
+    courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
       section {
-        lesson("lesson2", {})
-        lesson("lesson3", {})
+        lesson("lesson2")
+        lesson("lesson3")
       }
-      lesson("lesson4", false, {})
+      lesson("lesson4")
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val section2 = LightPlatformTestCase.getSourceRoot().findChild("section2")
     testAction(dataContext(arrayOf(section2!!)), CCRemoveSection())
     val expectedFileTree = fileTree {
-      dir("lesson1") {}
-      dir("lesson2") {}
-      dir("lesson3") {}
-      dir("lesson4") {}
+      dir("lesson1")
+      dir("lesson2")
+      dir("lesson3")
+      dir("lesson4")
     }
     expectedFileTree.assertEquals(LightPlatformTestCase.getSourceRoot())
   }
 
   fun `test course has the same named lesson`() {
-    val course = courseWithFiles {
-      lesson {}
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
       section {
-        lesson("lesson1", {})
-        lesson("lesson2", {})
+        lesson("lesson1")
+        lesson("lesson2")
       }
-      lesson {}
+      lesson()
     }
-    course.courseMode = CCUtils.COURSE_MODE
     val section2 = LightPlatformTestCase.getSourceRoot().findChild("section2")
     try {
       testAction(dataContext(arrayOf(section2!!)), CCRemoveSection())

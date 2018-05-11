@@ -10,15 +10,11 @@ import junit.framework.TestCase
 class CCWrapInSectionTest : CCActionTestCase() {
 
   fun `test wrap consecutive lessons`() {
-    val course = courseWithFiles {
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      lesson()
+      lesson()
+      lesson()
     }
     Messages.setTestInputDialog { "section1" }
     course.courseMode = CCUtils.COURSE_MODE
@@ -33,20 +29,14 @@ class CCWrapInSectionTest : CCActionTestCase() {
   }
 
   fun `test wrap random lessons`() {
-    val course = courseWithFiles {
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      lesson()
+      lesson()
+      lesson()
+      lesson()
     }
     Messages.setTestInputDialog { "section1" }
-    course.courseMode = CCUtils.COURSE_MODE
     val lesson2 = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
     val lesson4 = LightPlatformTestCase.getSourceRoot().findChild("lesson4")
     testAction(dataContext(arrayOf(lesson2!!, lesson4!!)), CCWrapWithSection())
@@ -62,20 +52,14 @@ class CCWrapInSectionTest : CCActionTestCase() {
   }
 
   fun `test wrap one lesson`() {
-    val course = courseWithFiles {
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      lesson()
+      lesson()
+      lesson()
+      lesson()
     }
     Messages.setTestInputDialog { "section1" }
-    course.courseMode = CCUtils.COURSE_MODE
     val lesson2 = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
     testAction(dataContext(arrayOf(lesson2!!)), CCWrapWithSection())
     TestCase.assertEquals(5, course.items.size)
@@ -90,16 +74,12 @@ class CCWrapInSectionTest : CCActionTestCase() {
   }
 
   fun `test all lessons`() {
-    val course = courseWithFiles {
-      lesson {
-      }
-      lesson {
-      }
-      lesson {
-      }
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      lesson()
+      lesson()
     }
     Messages.setTestInputDialog { "section1" }
-    course.courseMode = CCUtils.COURSE_MODE
     val lesson1 = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
     val lesson2 = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
     val lesson3 = LightPlatformTestCase.getSourceRoot().findChild("lesson3")
