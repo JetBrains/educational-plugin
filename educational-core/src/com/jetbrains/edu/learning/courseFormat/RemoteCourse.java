@@ -88,10 +88,18 @@ public class RemoteCourse extends Course {
       return false;
     }
 
-    int itemsWithoutAdditional = courseFromServer.sectionIds.size() - 1;
-    int itemsSize = getLessons(false).size() + getSections().size();
-    if (itemsSize < itemsWithoutAdditional) {
+    int topLevelItemsWithoutAdditional = courseFromServer.sectionIds.size() - 1;
+    int topLevelItemsSize = (getLessons(false).isEmpty() ? 0 : 1) + getSections().size();
+    if (topLevelItemsSize < topLevelItemsWithoutAdditional) {
       return false;
+    }
+
+    if (!getLessons().isEmpty() && courseFromServer.sectionIds.size() > 0) {
+      Section section = StepikConnector.getSection(courseFromServer.sectionIds.get(0));
+      boolean hasNewTopLevelLessons = getLessons().size() < section.units.size();
+      if (hasNewTopLevelLessons) {
+        return false;
+      }
     }
 
     for (StudyItem item : items) {
