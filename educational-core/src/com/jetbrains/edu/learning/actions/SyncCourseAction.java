@@ -39,7 +39,7 @@ public class SyncCourseAction extends DumbAwareAction {
   public static void doUpdate(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    if (course instanceof RemoteCourse && CCUtils.isCourseCreator(project)) {
+    if (course instanceof RemoteCourse) {
       if (course.isUpToDate()) {
         return;
       }
@@ -48,8 +48,12 @@ public class SyncCourseAction extends DumbAwareAction {
         new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
         course.setUpdated();
       }, "Updating Course", true, project);
+    }
+
+    if (CCUtils.isCourseCreator(project)) {
       return;
     }
+
     if (course.isAdaptive()) {
       updateAdaptiveCourse(project, course);
     }
