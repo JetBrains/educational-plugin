@@ -59,7 +59,7 @@ public interface EduCourseBuilder<Settings> {
                                         @NotNull final Task task,
                                         @NotNull final VirtualFile parentDirectory,
                                         @NotNull final Course course) {
-    if (!course.isStudy() && task.taskFiles.isEmpty()) {
+    if (!course.isStudy()) {
       initNewTask(task);
     }
     try {
@@ -78,28 +78,33 @@ public interface EduCourseBuilder<Settings> {
   default void refreshProject(@NotNull final Project project) {}
 
   /**
-   * Add initial content for new task: task and tests files
+   * Add initial content for a new task: task and tests files if the corresponding files don't exist.
+   * Supposed to use in course creator mode
    *
    * @param task initializing task
    */
   default void initNewTask(@NotNull final Task task) {
-    TaskFile taskFile = new TaskFile();
-    taskFile.setTask(task);
-    String taskTemplateName = getTaskTemplateName();
-    if (taskTemplateName != null) {
-      taskFile.name = taskTemplateName;
-      taskFile.text = EduUtils.getTextFromInternalTemplate(taskTemplateName);
-    } else {
-      GeneratorUtils.DefaultFileProperties taskFileProperties =
-        GeneratorUtils.createDefaultFile(task.getLesson().getCourse(), "Task", "type task text here");
-      taskFile.name = taskFileProperties.getName();
-      taskFile.text = taskFileProperties.getText();
+    if (task.taskFiles.isEmpty()) {
+      TaskFile taskFile = new TaskFile();
+      taskFile.setTask(task);
+      String taskTemplateName = getTaskTemplateName();
+      if (taskTemplateName != null) {
+        taskFile.name = taskTemplateName;
+        taskFile.text = EduUtils.getTextFromInternalTemplate(taskTemplateName);
+      } else {
+        GeneratorUtils.DefaultFileProperties taskFileProperties =
+          GeneratorUtils.createDefaultFile(task.getLesson().getCourse(), "Task", "type task text here");
+        taskFile.name = taskFileProperties.getName();
+        taskFile.text = taskFileProperties.getText();
+      }
+      task.addTaskFile(taskFile);
     }
-    task.addTaskFile(taskFile);
 
-    String testTemplateName = getTestTemplateName();
-    if (testTemplateName != null) {
-      task.getTestsText().put(testTemplateName, EduUtils.getTextFromInternalTemplate(testTemplateName));
+    if (task.getTestsText().isEmpty()) {
+      String testTemplateName = getTestTemplateName();
+      if (testTemplateName != null) {
+        task.getTestsText().put(testTemplateName, EduUtils.getTextFromInternalTemplate(testTemplateName));
+      }
     }
   }
 
