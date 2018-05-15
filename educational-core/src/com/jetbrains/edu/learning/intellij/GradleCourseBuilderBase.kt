@@ -7,6 +7,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
 import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -14,6 +15,8 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   abstract val buildGradleTemplateName: String
+
+  open val buildGradleVariables: Map<String, String> = mapOf("GRADLE_VERSION" to EduGradleUtils.gradleVersion())
 
   override fun refreshProject(project: Project) {
     ExternalSystemUtil.refreshProjects(project, GradleConstants.SYSTEM_ID, true, ProgressExecutionMode.MODAL_SYNC)

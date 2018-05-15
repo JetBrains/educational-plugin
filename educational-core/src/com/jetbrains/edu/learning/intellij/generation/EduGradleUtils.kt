@@ -28,12 +28,21 @@ object EduGradleUtils {
 
     @JvmStatic
     @Throws(IOException::class)
-    fun createProjectGradleFiles(projectPath: String, projectName: String, buildGradleTemplateName: String) {
+    fun createProjectGradleFiles(
+      projectPath: String,
+      projectName: String,
+      buildGradleTemplateName: String,
+      buildGradleVariables: Map<String, String>
+    ) {
         val projectDir = VfsUtil.findFileByIoFile(File(FileUtil.toSystemDependentName(projectPath)), true) ?: return
 
         if (projectDir.findChild(GradleConstants.DEFAULT_SCRIPT_NAME) == null) {
             val buildTemplate = FileTemplateManager.getDefaultInstance().getInternalTemplate(buildGradleTemplateName)
-            createChildFile(projectDir, GradleConstants.DEFAULT_SCRIPT_NAME, buildTemplate.text.replace("\$GRADLE_VERSION\$", gradleVersion()))
+            var gradleScriptText = buildTemplate.text
+            for ((key, value) in buildGradleVariables) {
+                gradleScriptText = gradleScriptText.replace("\$$key\$", value)
+            }
+            createChildFile(projectDir, GradleConstants.DEFAULT_SCRIPT_NAME, gradleScriptText)
         }
 
         val settingsTemplate = FileTemplateManager.getDefaultInstance().getInternalTemplate(GradleConstants.SETTINGS_FILE_NAME)
@@ -75,8 +84,8 @@ object EduGradleUtils {
                                             .build())
     }
 
-    private fun gradleVersion(): String = maxOf(GradleVersion.current(), GradleVersion.version(DEFAULT_GRADLE_VERSION)).version
-
+    @JvmStatic
+    fun gradleVersion(): String = maxOf(GradleVersion.current(), GradleVersion.version(DEFAULT_GRADLE_VERSION)).version
 
     private val INVALID_SYMBOLS = "[ /\\\\:<>\"?*|]".toRegex()
 

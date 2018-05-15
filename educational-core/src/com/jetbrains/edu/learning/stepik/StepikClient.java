@@ -3,14 +3,13 @@ package com.jetbrains.edu.learning.stepik;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.net.ssl.CertificateManager;
 import com.intellij.util.net.ssl.ConfirmingTrustManager;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
@@ -134,9 +133,8 @@ public class StepikClient {
 
   @NotNull
   private static String getUserAgent() {
-    final PluginId pluginId = PluginId.getId(StepikNames.PLUGIN_ID);
-    final IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
-    String version = plugin == null ? "unknown" : plugin.getVersion();
+    String pluginVersion = EduVersions.pluginVersion(EduNames.PLUGIN_ID);
+    String version = pluginVersion == null ? "unknown" : pluginVersion;
 
     return String.format("%s/version(%s)/%s/%s", StepikNames.PLUGIN_NAME, version, System.getProperty("os.name"),
                          PlatformUtils.getPlatformPrefix());
