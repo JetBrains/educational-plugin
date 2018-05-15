@@ -32,4 +32,7 @@ public class StepikNames {
   public static final String EXTERNAL_REDIRECT_URL = "https://example.com";
   public static final String PYCHARM_ADDITIONAL = "PyCharm additional materials";
   public static final String MEMBERS = "/members";
+
+  public static final String PLUGIN_NAME = "EduTools";
+  public static final String PLUGIN_ID = "com.jetbrains.edu";
 }
