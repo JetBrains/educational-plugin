@@ -34,5 +34,4 @@ public class StepikNames {
   public static final String MEMBERS = "/members";
 
   public static final String PLUGIN_NAME = "EduTools";
-  public static final String PLUGIN_ID = "com.jetbrains.edu";
 }
