@@ -3,7 +3,11 @@ package com.jetbrains.edu.learning.stepik;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
+import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.PluginId;
+import com.intellij.util.PlatformUtils;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.net.ssl.CertificateManager;
 import com.intellij.util.net.ssl.ConfirmingTrustManager;
@@ -108,7 +112,7 @@ public class StepikClient {
   @NotNull
   static HttpClientBuilder getBuilder() {
     final HttpClientBuilder builder = HttpClients.custom().setSSLContext(CertificateManager.getInstance().getSslContext()).
-      setMaxConnPerRoute(100000).setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE);
+      setMaxConnPerRoute(100000).setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE).setUserAgent(getUserAgent());
 
     final HttpConfigurable proxyConfigurable = HttpConfigurable.getInstance();
     final List<Proxy> proxies = proxyConfigurable.getOnlyBySettingsSelector().select(URI.create(StepikNames.STEPIK_URL));
@@ -126,6 +130,16 @@ public class StepikClient {
       LOG.error(e.getMessage());
     }
     return builder;
+  }
+
+  @NotNull
+  private static String getUserAgent() {
+    final PluginId pluginId = PluginId.getId(StepikNames.PLUGIN_ID);
+    final IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
+    String version = plugin == null ? "unknown" : plugin.getVersion();
+
+    return String.format("%s/version(%s)/%s/%s", StepikNames.PLUGIN_NAME, version, System.getProperty("os.name"),
+                         PlatformUtils.getPlatformPrefix());
   }
 
   static boolean isTokenUpToDate(@NotNull String token) {
