@@ -78,8 +78,13 @@ object GeneratorUtils {
     } else {
       val lessonDir = createUniqueDir(courseDir, lesson)
       val taskList = lesson.getTaskList()
+      val isStudy = lesson.course.isStudy
       for ((i, task) in taskList.withIndex()) {
-        if (lesson !is FrameworkLesson || i == 0) {
+        // We don't want to create task only when:
+        // 1. Course is in student mode. In CC mode we always want to create full course structure
+        // 2. Lesson is framework lesson. For general lessons we create all tasks because their contents are independent (almost)
+        // 3. It's not first task of framework lesson. We create only first task of framework lesson as an entry point of lesson content
+        if (!isStudy || lesson !is FrameworkLesson || i == 0) {
           createTask(task, lessonDir)
         }
       }
