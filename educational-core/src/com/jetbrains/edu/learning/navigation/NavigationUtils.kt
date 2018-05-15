@@ -167,7 +167,8 @@ object NavigationUtils {
 
     val lesson = task.lesson
 
-    if (lesson is FrameworkLesson && fromTask != null && fromTask.lesson == lesson) {
+    // We should save student answers and apply diffs only in student mode
+    if (lesson is FrameworkLesson && lesson.course.isStudy && fromTask != null && fromTask.lesson == lesson) {
       fromTask.saveStudentAnswersIfNeeded(project)
       prepareFilesForTargetTask(project, lesson, fromTask, task)
     }
