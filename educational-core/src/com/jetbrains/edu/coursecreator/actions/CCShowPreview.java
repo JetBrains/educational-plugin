@@ -112,7 +112,7 @@ public class CCShowPreview extends DumbAwareAction {
 
     final Task task = taskFile.getTask();
     ApplicationManager.getApplication().runWriteAction(() -> {
-      TaskFile studentTaskFile = EduUtils.createStudentFile(project, virtualFile, task.copy());
+      TaskFile studentTaskFile = EduUtils.createStudentFile(project, virtualFile, task);
       if (studentTaskFile != null) {
         showPreviewDialog(project, studentTaskFile);
       }
