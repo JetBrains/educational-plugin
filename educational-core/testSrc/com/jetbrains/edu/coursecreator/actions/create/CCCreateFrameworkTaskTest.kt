@@ -28,6 +28,7 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
       dir(lessonName) {
         dir(taskName) {
           file("Task.txt")
+          file("Tests.txt")
           file("task.html")
         }
       }
@@ -63,6 +64,7 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
         }
         dir(newTaskName) {
           file("Task.kt", "fun foo(): String = \"Foo\"")
+          file("Tests.txt")
           file("task.html")
         }
       }
