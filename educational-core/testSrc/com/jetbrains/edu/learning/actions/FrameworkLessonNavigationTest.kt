@@ -1,9 +1,13 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
@@ -18,7 +22,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
   fun `test next`() {
     val course = createFrameworkCourse()
     val task = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
-    task.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    task.openTaskFileInEditor("fizz.kt", 0)
     myFixture.type("\"Fizz\"")
     task.status = CheckStatus.Solved
     myFixture.testAction(NextTaskAction())
@@ -41,13 +45,13 @@ class FrameworkLessonNavigationTest : EduTestCase() {
   fun `test next next`() {
     val course = createFrameworkCourse()
     val task = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
-    task.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    task.openTaskFileInEditor("fizz.kt", 0)
     myFixture.type("\"Fizz\"")
     task.status = CheckStatus.Solved
     myFixture.testAction(NextTaskAction())
 
     val task2 = course.getLesson("lesson1")?.getTask("task2") ?: error("Can't find `task2` in `lesson1`")
-    task2.openTaskFileInEditor(rootDir, "buzz.kt", 0)
+    task2.openTaskFileInEditor("buzz.kt", 0)
     myFixture.type("\"Buzz\"")
     task2.status = CheckStatus.Solved
     myFixture.testAction(NextTaskAction())
@@ -67,7 +71,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
   fun `test next prev`() {
     val course = createFrameworkCourse()
     val task = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
-    task.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    task.openTaskFileInEditor("fizz.kt", 0)
     myFixture.type("\"Fizz\"")
     task.status = CheckStatus.Solved
     myFixture.testAction(NextTaskAction())
@@ -107,9 +111,9 @@ class FrameworkLessonNavigationTest : EduTestCase() {
       }
     }
     val task = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
-    task.openTaskFileInEditor(rootDir, "fizz.kt", placeholderIndex = 0)
+    task.openTaskFileInEditor("fizz.kt", placeholderIndex = 0)
     myFixture.type("\"Fizzz\"")
-    task.openTaskFileInEditor(rootDir, "fizz.kt", placeholderIndex = 1)
+    task.openTaskFileInEditor("fizz.kt", placeholderIndex = 1)
     myFixture.type("\"Buzz\"")
     task.status = CheckStatus.Solved
     myFixture.testAction(NextTaskAction())
@@ -132,7 +136,7 @@ class FrameworkLessonNavigationTest : EduTestCase() {
   fun `test opened files`() {
     val course = createFrameworkCourse()
     val task = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
-    task.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    task.openTaskFileInEditor("fizz.kt", 0)
     myFixture.type("\"Fizz\"")
     task.status = CheckStatus.Solved
     myFixture.testAction(NextTaskAction())
@@ -147,11 +151,11 @@ class FrameworkLessonNavigationTest : EduTestCase() {
 
     // go to the third task without solving prev tasks
     val task1 = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
-    task1.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    task1.openTaskFileInEditor("fizz.kt", 0)
     myFixture.testAction(NextTaskAction())
 
     val task2 = course.getLesson("lesson1")?.getTask("task2") ?: error("Can't find `task2` in `lesson1`")
-    task2.openTaskFileInEditor(rootDir, "fizz.kt", 0)
+    task2.openTaskFileInEditor("fizz.kt", 0)
     myFixture.testAction(NextTaskAction())
 
     fileTree {
@@ -179,7 +183,27 @@ class FrameworkLessonNavigationTest : EduTestCase() {
     }.assertEquals(rootDir, myFixture)
   }
 
-  private fun createFrameworkCourse(): Course = courseWithFiles {
+  fun `test navigation in CC mode`() {
+    val course = createFrameworkCourse(CCUtils.COURSE_MODE)
+    val task1 = course.getLesson("lesson1")?.getTask("task1") ?: error("Can't find `task1` in `lesson1`")
+    val task2 = course.getLesson("lesson1")?.getTask("task2") ?: error("Can't find `task2` in `lesson1`")
+    val task3 = course.getLesson("lesson1")?.getTask("task3") ?: error("Can't find `task3` in `lesson1`")
+
+    doTest(PreviousTaskAction(), task1) { task2.openTaskFileInEditor("buzz.kt") }
+    doTest(NextTaskAction(), task3) { task2.openTaskFileInEditor("buzz.kt") }
+  }
+
+  private inline fun doTest(action: TaskNavigationAction, expectedTask: Task, init: () -> Unit) {
+    init()
+    myFixture.testAction(action)
+    val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile ?: error("Can't find current file")
+    val task = EduUtils.getTaskForFile(myFixture.project, currentFile) ?: error("Can't find task for $currentFile")
+    check(expectedTask == task) {
+      "Expected ${expectedTask.name}, found ${task.name}"
+    }
+  }
+
+  private fun createFrameworkCourse(courseMode: String = EduNames.STUDY): Course = courseWithFiles(courseMode = courseMode) {
     frameworkLesson {
       eduTask {
         taskFile("fizz.kt", """
@@ -207,10 +231,10 @@ class FrameworkLessonNavigationTest : EduTestCase() {
     }
   }
 
-  private fun Task.openTaskFileInEditor(baseDir: VirtualFile, taskFilePath: String, placeholderIndex: Int? = null) {
+  private fun Task.openTaskFileInEditor(taskFilePath: String, placeholderIndex: Int? = null) {
     val taskFile = getTaskFile(taskFilePath) ?: error("Can't find task file `$taskFilePath` in `$name`")
     val path = "lesson${lesson.index}/$dirName/$taskFilePath"
-    val file = baseDir.findFileByRelativePath(path) ?: error("Can't find `$path` file")
+    val file = rootDir.findFileByRelativePath(path) ?: error("Can't find `$path` file")
     myFixture.openFileInEditor(file)
     if (placeholderIndex != null) {
       val placeholder = taskFile.answerPlaceholders[placeholderIndex]
