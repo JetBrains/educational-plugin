@@ -63,12 +63,17 @@ public class CCProjectComponent extends AbstractProjectComponent {
       if (configurator == null) return;
       EduCourseBuilder<?> courseBuilder = configurator.getCourseBuilder();
       if (courseBuilder instanceof GradleCourseBuilderBase && !EduGradleUtils.isConfiguredWithGradle(myProject)) {
-        convertToGradleProject(studyCourse, ((GradleCourseBuilderBase) courseBuilder).getBuildGradleTemplateName());
+        GradleCourseBuilderBase gradleCourseBuilder = (GradleCourseBuilderBase)courseBuilder;
+        convertToGradleProject(studyCourse,
+                               gradleCourseBuilder.getBuildGradleTemplateName(),
+                               gradleCourseBuilder.getBuildGradleVariables());
       }
     }
   }
 
-  private void convertToGradleProject(@NotNull Course course, @NotNull String buildGradleTemplateName) {
+  private void convertToGradleProject(@NotNull Course course,
+                                      @NotNull String buildGradleTemplateName,
+                                      @NotNull Map<String, String> buildGradleVariables) {
     String basePath = myProject.getBasePath();
     if (basePath == null) {
       return;
@@ -86,7 +91,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       modifiableModuleModel.commit();
 
       try {
-        EduGradleUtils.createProjectGradleFiles(basePath, myProject.getName(), buildGradleTemplateName);
+        EduGradleUtils.createProjectGradleFiles(basePath, myProject.getName(), buildGradleTemplateName, buildGradleVariables);
 
         StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> transformCourseStructure(course, myProject));
 
