@@ -81,4 +81,48 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
     val targetPlaceholder = placeholder.placeholderDependency?.resolve(course) ?: error("Can't resolve placeholder dependency")
     assertEquals(prevTaskFile.answerPlaceholders[0], targetPlaceholder)
   }
+
+  fun `test new task in the middle of lesson`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson {
+        eduTask {
+          taskFile("Task.kt", """
+            fun foo(): String = <p>TODO()</p>
+            fun bar(): String = <p>TODO()</p>
+          """) {
+            placeholder(0, "\"Foo\"")
+            placeholder(1, "\"Bar\"")
+          }
+        }
+        eduTask {
+          taskFile("Foo.kt", """
+            fun foo(): String = <p>TODO()</p>
+          """) {
+            placeholder(0, "\"Foo\"", "lesson1#task1#Task.kt#1")
+          }
+          taskFile("Bar.kt", """
+            fun bar(): String = <p>TODO()</p>
+          """) {
+            placeholder(0, "\"Bar\"", "lesson1#task1#Task.kt#2")
+          }
+        }
+      }
+    }
+    val task1 = course.lessons[0].getTask("task1") ?: error("Can't find `task1`")
+    val task2 = course.lessons[0].getTask("task2") ?: error("Can't find `task2`")
+
+    val firstTaskFile = findFile("lesson1/task1")
+    testAction(dataContext(firstTaskFile), CCTestCreateTask("task1.5", 2))
+
+    val insertedTask = course.lessons[0].getTask("task1.5") ?: error("Can't find `task1.5`")
+    val taskFile = insertedTask.getTaskFile("Task.kt") ?: error("Can't find `Task.kt` in `task1.5`")
+
+    // Check that all placeholders of new task refer to prev task
+    assertEquals(task1.getTaskFile("Task.kt")!!.answerPlaceholders[0], taskFile.answerPlaceholders[0].placeholderDependency?.resolve(course))
+    assertEquals(task1.getTaskFile("Task.kt")!!.answerPlaceholders[1], taskFile.answerPlaceholders[1].placeholderDependency?.resolve(course))
+
+    // Check that all placeholders of next task refer to new task
+    assertEquals(taskFile.answerPlaceholders[0], task2.getTaskFile("Foo.kt")?.answerPlaceholders?.get(0)?.placeholderDependency?.resolve(course))
+    assertEquals(taskFile.answerPlaceholders[1], task2.getTaskFile("Bar.kt")?.answerPlaceholders?.get(0)?.placeholderDependency?.resolve(course))
+  }
 }
