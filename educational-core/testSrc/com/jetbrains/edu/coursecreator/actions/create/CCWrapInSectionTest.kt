@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
 import com.intellij.openapi.ui.Messages
-import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
@@ -18,9 +17,9 @@ class CCWrapInSectionTest : CCActionTestCase() {
     }
     Messages.setTestInputDialog { "section1" }
     course.courseMode = CCUtils.COURSE_MODE
-    val lesson2 = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
-    val lesson3 = LightPlatformTestCase.getSourceRoot().findChild("lesson3")
-    testAction(dataContext(arrayOf(lesson2!!, lesson3!!)), CCWrapWithSection())
+    val lesson2 = findFile("lesson2")
+    val lesson3 = findFile("lesson3")
+    testAction(dataContext(arrayOf(lesson2, lesson3)), CCWrapWithSection())
     TestCase.assertEquals(3, course.items.size)
     val section = course.getSection("section1")
     TestCase.assertNotNull(section)
@@ -37,9 +36,9 @@ class CCWrapInSectionTest : CCActionTestCase() {
       lesson()
     }
     Messages.setTestInputDialog { "section1" }
-    val lesson2 = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
-    val lesson4 = LightPlatformTestCase.getSourceRoot().findChild("lesson4")
-    testAction(dataContext(arrayOf(lesson2!!, lesson4!!)), CCWrapWithSection())
+    val lesson2 = findFile("lesson2")
+    val lesson4 = findFile("lesson4")
+    testAction(dataContext(arrayOf(lesson2, lesson4)), CCWrapWithSection())
     TestCase.assertEquals(4, course.items.size)
     val section = course.getSection("section1")
     TestCase.assertNotNull(section)
@@ -60,8 +59,8 @@ class CCWrapInSectionTest : CCActionTestCase() {
       lesson()
     }
     Messages.setTestInputDialog { "section1" }
-    val lesson2 = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
-    testAction(dataContext(arrayOf(lesson2!!)), CCWrapWithSection())
+    val lesson2 = findFile("lesson2")
+    testAction(dataContext(arrayOf(lesson2)), CCWrapWithSection())
     TestCase.assertEquals(5, course.items.size)
     val section = course.getSection("section1")
     TestCase.assertNotNull(section)
@@ -80,10 +79,10 @@ class CCWrapInSectionTest : CCActionTestCase() {
       lesson()
     }
     Messages.setTestInputDialog { "section1" }
-    val lesson1 = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
-    val lesson2 = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
-    val lesson3 = LightPlatformTestCase.getSourceRoot().findChild("lesson3")
-    testAction(dataContext(arrayOf(lesson1!!, lesson2!!, lesson3!!)), CCWrapWithSection())
+    val lesson1 = findFile("lesson1")
+    val lesson2 = findFile("lesson2")
+    val lesson3 = findFile("lesson3")
+    testAction(dataContext(arrayOf(lesson1, lesson2, lesson3)), CCWrapWithSection())
     TestCase.assertEquals(1, course.items.size)
     val section = course.getSection("section1")
     TestCase.assertNotNull(section)
