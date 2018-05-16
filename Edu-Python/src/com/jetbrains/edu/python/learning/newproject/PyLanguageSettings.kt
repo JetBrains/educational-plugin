@@ -28,7 +28,7 @@ internal open class PyLanguageSettings : EduCourseBuilder.LanguageSettings<PyNew
 
   protected val mySettings: PyNewProjectSettings = PyNewProjectSettings()
 
-  override fun getLanguageSettingsComponent(course: Course): LabeledComponent<JComponent> {
+  override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
     // by default we create new virtual env in project, we need to add this non-existing sdk to sdk list
     val fakeSdk = createFakeSdk(course)
 
@@ -37,7 +37,7 @@ internal open class PyLanguageSettings : EduCourseBuilder.LanguageSettings<PyNew
       combo.putClientProperty("JButton.buttonType", null)
     }
     combo.setButtonIcon(PythonIcons.Python.InterpreterGear)
-    return LabeledComponent.create(combo, "Interpreter", BorderLayout.WEST)
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(combo, "Interpreter", BorderLayout.WEST))
   }
 
   override fun getSettings(): PyNewProjectSettings = mySettings

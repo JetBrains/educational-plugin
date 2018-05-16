@@ -1,0 +1,14 @@
+<idea-plugin>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JUnit</depends>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.ScalaConfigurator"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="educational">
+    <languageDecorator language="Scala" implementationClass="com.jetbrains.edu.scala.ScalaLanguageDecorator"/>
+  </extensions>
+
+</idea-plugin>
+
