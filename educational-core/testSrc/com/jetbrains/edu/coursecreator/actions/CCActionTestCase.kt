@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.learning.EduTestCase
@@ -37,4 +38,6 @@ abstract class CCActionTestCase : EduTestCase() {
     }
   }
 
+  fun findFile(path: String): VirtualFile =
+    LightPlatformTestCase.getSourceRoot().findFileByRelativePath(path) ?: error("Can't find `$path`")
 }
