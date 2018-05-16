@@ -87,6 +87,7 @@
     <depends>com.intellij.modules.androidstudio</depends>
 
     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+    <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
     <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="Edu-Kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
