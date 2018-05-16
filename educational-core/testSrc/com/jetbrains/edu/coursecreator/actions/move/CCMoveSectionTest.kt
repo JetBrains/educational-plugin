@@ -2,26 +2,25 @@ package com.jetbrains.edu.coursecreator.actions.move
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.handlers.CCSectionMoveHandlerDelegate
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import junit.framework.TestCase
 
-class CCMoveSectionTest : EduTestCase() {
+class CCMoveSectionTest : CCActionTestCase() {
 
   fun `test move section before lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson()
       section {
         lesson("lesson2")
       }
     }
-    val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("section2")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("lesson1")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCSectionMoveHandlerTest(0)
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
@@ -32,17 +31,17 @@ class CCMoveSectionTest : EduTestCase() {
   }
 
   fun `test move section after lesson`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section {
         lesson("lesson2")
       }
       lesson()
       lesson()
     }
-    val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("section1")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("section1")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("lesson1")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCSectionMoveHandlerTest(1)
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
@@ -54,15 +53,15 @@ class CCMoveSectionTest : EduTestCase() {
   }
 
   fun `test move section before section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson()
       section()
       section()
     }
-    val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("section3")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("section3")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("section2")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCSectionMoveHandlerTest(0)
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
@@ -74,16 +73,16 @@ class CCMoveSectionTest : EduTestCase() {
   }
 
   fun `test move section after section`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE){
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson()
       section()
       section()
       lesson()
     }
-    val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("section3")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("section2")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("section3")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCSectionMoveHandlerTest(1)
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))

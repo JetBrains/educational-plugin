@@ -1,10 +1,8 @@
 package com.jetbrains.edu.coursecreator.actions.delete
 
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.CCVirtualFileListener
 import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
@@ -31,9 +29,9 @@ class CCDeleteListenerTest : CCActionTestCase() {
       section()
       lesson()
     }
-    val sectionVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
+    val sectionVFile = findFile("section2")
     runWriteAction {
-      sectionVFile!!.delete(this)
+      sectionVFile.delete(this)
     }
 
     TestCase.assertEquals(2, course.items.size)
@@ -48,9 +46,9 @@ class CCDeleteListenerTest : CCActionTestCase() {
       section()
       lesson()
     }
-    val lesson1 = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
+    val lesson1 = findFile("lesson1")
     runWriteAction {
-      lesson1!!.delete(this)
+      lesson1.delete(this)
     }
 
     TestCase.assertEquals(2, course.items.size)
@@ -69,9 +67,9 @@ class CCDeleteListenerTest : CCActionTestCase() {
       }
       lesson()
     }
-    val lesson1 = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section2", "lesson1")
+    val lesson1 = findFile("section2/lesson1")
     runWriteAction {
-      lesson1!!.delete(this)
+      lesson1.delete(this)
     }
 
     val section = course.getSection("section2")!!
@@ -93,9 +91,9 @@ class CCDeleteListenerTest : CCActionTestCase() {
         }
       }
     }
-    val task1 = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1")
+    val task1 = findFile("lesson1/task1")
     runWriteAction {
-      task1!!.delete(this)
+      task1.delete(this)
     }
 
     val lesson = course.getLesson("lesson1")
@@ -110,12 +108,12 @@ class CCDeleteListenerTest : CCActionTestCase() {
         }
       }
     }
-    val taskFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1", "tmp.txt")
+    val taskFile = findFile("lesson1/task1/tmp.txt")
     runWriteAction {
-      taskFile!!.delete(this)
+      taskFile.delete(this)
     }
 
     val lesson = course.getLesson("lesson1")
-    TestCase.assertTrue(lesson!!.getTask("task1").taskFiles.isEmpty())
+    TestCase.assertTrue(lesson!!.getTask("task1")!!.taskFiles.isEmpty())
   }
 }

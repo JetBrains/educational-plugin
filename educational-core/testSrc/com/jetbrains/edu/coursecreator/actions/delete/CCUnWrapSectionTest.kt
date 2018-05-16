@@ -18,8 +18,8 @@ class CCUnWrapSectionTest : CCActionTestCase() {
       }
       lesson("lesson4")
     }
-    val section2 = LightPlatformTestCase.getSourceRoot().findChild("section2")
-    testAction(dataContext(arrayOf(section2!!)), CCRemoveSection())
+    val section2 = findFile("section2")
+    testAction(dataContext(arrayOf(section2)), CCRemoveSection())
     TestCase.assertEquals(4, course.items.size)
     val section = course.getSection("section2")
     TestCase.assertNull(section)
@@ -38,8 +38,8 @@ class CCUnWrapSectionTest : CCActionTestCase() {
       }
       lesson("lesson4")
     }
-    val section2 = LightPlatformTestCase.getSourceRoot().findChild("section2")
-    testAction(dataContext(arrayOf(section2!!)), CCRemoveSection())
+    val section2 = findFile("section2")
+    testAction(dataContext(arrayOf(section2)), CCRemoveSection())
     val expectedFileTree = fileTree {
       dir("lesson1")
       dir("lesson2")
@@ -58,9 +58,9 @@ class CCUnWrapSectionTest : CCActionTestCase() {
       }
       lesson()
     }
-    val section2 = LightPlatformTestCase.getSourceRoot().findChild("section2")
+    val section2 = findFile("section2")
     try {
-      testAction(dataContext(arrayOf(section2!!)), CCRemoveSection())
+      testAction(dataContext(arrayOf(section2)), CCRemoveSection())
       TestCase.fail("Expected failed to move lesson out message")
     }
     catch (e: Throwable) {}

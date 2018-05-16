@@ -20,7 +20,7 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
     }
 
     Messages.setTestInputDialog { taskName }
-    val lessonFile = root.findChild(lessonName) ?: error("Can't find `$lessonName`")
+    val lessonFile = findFile(lessonName)
 
     testAction(dataContext(lessonFile), CCCreateTask())
 
@@ -52,7 +52,7 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
 
     val newTaskName = "task2"
     Messages.setTestInputDialog { newTaskName }
-    val lessonFile = root.findChild(lessonName) ?: error("Can't find `$lessonName`")
+    val lessonFile = findFile(lessonName)
 
     testAction(dataContext(lessonFile), CCCreateTask())
 

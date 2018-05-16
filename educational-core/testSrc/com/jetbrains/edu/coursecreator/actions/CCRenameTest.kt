@@ -121,7 +121,7 @@ class CCRenameTest : CCActionTestCase() {
     TestCase.assertEquals(1, course.items.size)
     val lesson = course.getLesson("lesson1")
     TestCase.assertNotNull(lesson)
-    val task = lesson!!.getTask("task1")
+    val task = lesson!!.getTask("task1")!!
     TestCase.assertNull(task.getTaskFile("taskFile1.txt"))
     TestCase.assertNotNull(task.getTaskFile("taskFile2.txt"))
   }
