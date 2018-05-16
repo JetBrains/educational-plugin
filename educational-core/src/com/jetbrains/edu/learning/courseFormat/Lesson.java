@@ -95,6 +95,7 @@ public class Lesson extends StudyItem {
     taskList.add(task);
   }
 
+  @Nullable
   public Task getTask(@NotNull final String name) {
     return StreamEx.of(taskList).findFirst(task -> name.equals(task.getName())).orElse(null);
   }
