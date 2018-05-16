@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
-internal class JdkLanguageSettings : EduCourseBuilder.LanguageSettings<JdkProjectSettings> {
+open class JdkLanguageSettings : EduCourseBuilder.LanguageSettings<JdkProjectSettings> {
 
   private val myModel: ProjectSdksModel = createSdkModel()
   private var myJdkSettings: JdkProjectSettings = JdkProjectSettings(myModel, null)
@@ -25,7 +25,7 @@ internal class JdkLanguageSettings : EduCourseBuilder.LanguageSettings<JdkProjec
     return ProjectStructureConfigurable.getInstance(project).projectJdksModel.apply { reset(project) }
   }
 
-  override fun getLanguageSettingsComponent(course: Course): LabeledComponent<JComponent> {
+  override fun getLanguageSettingsComponents(course: Course): List<LabeledComponent<JComponent>> {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
     val jdkComboBox = JdkComboBox(myModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, true)
@@ -36,7 +36,7 @@ internal class JdkLanguageSettings : EduCourseBuilder.LanguageSettings<JdkProjec
     jdkComboBox.addItemListener {
       myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem)
     }
-    return LabeledComponent.create(comboboxWithBrowseButton, "Jdk", BorderLayout.WEST)
+    return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(comboboxWithBrowseButton, "Jdk", BorderLayout.WEST))
   }
 
   override fun getSettings(): JdkProjectSettings = myJdkSettings

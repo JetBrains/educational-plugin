@@ -1,0 +1,92 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+class MyListener implements TestListener {
+
+    @Override
+    void beforeSuite(TestDescriptor suite) {
+
+    }
+
+    @Override
+    void afterSuite(TestDescriptor suite, TestResult result) {
+    }
+
+    @Override
+    void beforeTest(TestDescriptor testDescriptor) {
+
+    }
+
+    public void afterTest(TestDescriptor test, TestResult result) {
+        if (result.resultType == TestResult.ResultType.FAILURE) {
+            println("#educational_plugin FAILED + " + (result.exception.message ?: "Wrong answer"));
+        }
+    }
+}
+
+def printOutput(def output) {
+    return tasks.create("printOutput") {
+        for (line in output.toString().split(System.getProperty("line.separator"))) {
+            println "#educational_plugin" + line
+        }
+    }
+}
+
+subprojects {
+    apply plugin: 'application'
+    apply plugin: 'java'
+    apply plugin: 'scala'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+        compile 'org.scala-lang:scala-library:2.12.6'
+        testCompile 'org.scalatest:scalatest_2.11:3.0.0'
+    }
+
+    sourceSets {
+        main {
+            java.srcDir 'src'
+            scala.srcDir 'src'
+        }
+        test {
+            java.srcDir 'test'
+            scala.srcDir 'test'
+        }
+    }
+
+    mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
+
+    test.outputs.upToDateWhen { false }
+
+    gradle.addListener(new MyListener())
+
+    def runOutput = new ByteArrayOutputStream()
+    tasks.run.setStandardOutput(runOutput)
+    tasks.run.doLast { printOutput(runOutput) }
+}
+
+project(':util') {
+    dependencies {
+        compile group: 'junit', name: 'junit', version: '4.12'
+    }
+}
+
+configure(subprojects.findAll {it.name != 'util'}) {
+  dependencies {
+    compile project(':util').sourceSets.main.output
+    testCompile project(':util').sourceSets.test.output
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '$GRADLE_VERSION$'
+}

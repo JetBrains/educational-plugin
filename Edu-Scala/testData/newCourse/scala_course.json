@@ -1,0 +1,69 @@
+{
+  "summary": "test",
+  "title": "Scala Course11",
+  "programming_language": "Scala",
+  "language": "en",
+  "items": [
+    {
+      "id": 0,
+      "title": "lesson1",
+      "task_list": [
+        {
+          "name": "my task 1",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.scala": {
+              "name": "Task.scala",
+              "text": "class Task {\n  // here task 1\n}",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "Test.scala": "import org.junit.runner.RunWith\nimport org.scalatest.junit.JUnitRunner\nimport org.scalatest.FunSuite\n\n@RunWith(classOf[JUnitRunner])\nclass Test extends FunSuite {\n\n}"
+          },
+          "description_text": "\u003chtml\u003e\nWrite your task text here.\n\u003cbr\u003e\n\u003c/html\u003e",
+          "description_format": "html",
+          "additional_files": {},
+          "task_type": "edu"
+        },
+        {
+          "name": "my task 2",
+          "stepic_id": 0,
+          "task_files": {
+            "Task.scala": {
+              "name": "Task.scala",
+              "text": "class Task {\n  //put your task here\n}",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "Test.scala": "import org.junit.runner.RunWith\nimport org.scalatest.junit.JUnitRunner\nimport org.scalatest.FunSuite\n\n@RunWith(classOf[JUnitRunner])\nclass Test extends FunSuite {\n\n}"
+          },
+          "description_text": "\u003chtml\u003e\nWrite your task text here.\n\u003cbr\u003e\n\u003c/html\u003e",
+          "description_format": "html",
+          "additional_files": {},
+          "task_type": "edu"
+        }
+      ],
+      "type": "lesson"
+    },
+    {
+      "id": 0,
+      "title": "Edu additional materials",
+      "task_list": [
+        {
+          "name": "Edu additional materials",
+          "stepic_id": 0,
+          "task_files": {},
+          "test_files": {},
+          "description_format": "html",
+          "additional_files": {
+            "build.gradle": "buildscript {\n    repositories {\n        mavenCentral()\n    }\n}\n\nclass MyListener implements TestListener {\n\n    @Override\n    void beforeSuite(TestDescriptor suite) {\n\n    }\n\n    @Override\n    void afterSuite(TestDescriptor suite, TestResult result) {\n    }\n\n    @Override\n    void beforeTest(TestDescriptor testDescriptor) {\n\n    }\n\n    public void afterTest(TestDescriptor test, TestResult result) {\n        if (result.resultType \u003d\u003d TestResult.ResultType.FAILURE) {\n            println(\"#educational_plugin FAILED + \" + (result.exception.message ?: \"Wrong answer\"));\n        }\n    }\n}\n\ndef printOutput(def output) {\n    return tasks.create(\"printOutput\") {\n        for (line in output.toString().split(System.getProperty(\"line.separator\"))) {\n            println \"#educational_plugin\" + line\n        }\n    }\n}\n\nsubprojects {\n    apply plugin: \u0027application\u0027\n    apply plugin: \u0027java\u0027\n    apply plugin: \u0027scala\u0027\n\n    sourceCompatibility \u003d 1.8\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        testCompile group: \u0027junit\u0027, name: \u0027junit\u0027, version: \u00274.12\u0027\n        compile \u0027org.scala-lang:scala-library:2.12.6\u0027\n        testCompile \u0027org.scalatest:scalatest_2.11:3.0.0\u0027\n    }\n\n    sourceSets {\n        main {\n            java.srcDir \u0027src\u0027\n            scala.srcDir \u0027src\u0027\n        }\n        test {\n            java.srcDir \u0027test\u0027\n            scala.srcDir \u0027test\u0027\n        }\n    }\n\n    mainClassName \u003d project.hasProperty(\"mainClass\") ? project.getProperty(\"mainClass\") : \"\"\n\n    test.outputs.upToDateWhen { false }\n\n    gradle.addListener(new MyListener())\n\n    def runOutput \u003d new ByteArrayOutputStream()\n    tasks.run.setStandardOutput(runOutput)\n    tasks.run.doLast { printOutput(runOutput) }\n}\n\nproject(\u0027:util\u0027) {\n    dependencies {\n        compile group: \u0027junit\u0027, name: \u0027junit\u0027, version: \u00274.12\u0027\n    }\n}\n\nconfigure(subprojects.findAll {it.name !\u003d \u0027util\u0027}) {\n  dependencies {\n    compile project(\u0027:util\u0027).sourceSets.main.output\n    testCompile project(\u0027:util\u0027).sourceSets.test.output\n  }\n}\n\ntask wrapper(type: Wrapper) {\n  gradleVersion \u003d \u00274.5\u0027\n}\n"
+          },
+          "task_type": "edu"
+        }
+      ],
+      "type": "lesson"
+    }
+  ]
+}
