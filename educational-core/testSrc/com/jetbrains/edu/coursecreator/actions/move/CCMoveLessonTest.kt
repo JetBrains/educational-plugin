@@ -1,16 +1,15 @@
 package com.jetbrains.edu.coursecreator.actions.move
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import junit.framework.TestCase
 
-class CCMoveLessonTest : EduTestCase() {
+class CCMoveLessonTest : CCActionTestCase() {
 
   fun `test move lesson to section`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
@@ -19,10 +18,10 @@ class CCMoveLessonTest : EduTestCase() {
         lesson("lesson2")
       }
     }
-    val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("section2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("lesson1")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("section2")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCLessonMoveHandlerDelegate()
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
@@ -42,10 +41,10 @@ class CCMoveLessonTest : EduTestCase() {
       }
       lesson()
     }
-    val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("lesson1")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("lesson2")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCLessonMoveHandlerTest(0)
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
@@ -64,10 +63,10 @@ class CCMoveLessonTest : EduTestCase() {
         lesson()
       }
     }
-    val sourceVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson1")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = LightPlatformTestCase.getSourceRoot().findChild("lesson2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("lesson1")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("lesson2")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCLessonMoveHandlerTest(1)
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
@@ -86,8 +85,8 @@ class CCMoveLessonTest : EduTestCase() {
         lesson("lesson3")
       }
     }
-    val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section3", "lesson3")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
+    val sourceVFile = findFile("section3/lesson3")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
     val targetVFile = LightPlatformTestCase.getSourceRoot()
     val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
 
@@ -109,10 +108,10 @@ class CCMoveLessonTest : EduTestCase() {
         lesson()
       }
     }
-    val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1", "lesson3")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1", "lesson1")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("section1/lesson3")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("section1/lesson1")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCLessonMoveHandlerTest(1)
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
@@ -137,10 +136,10 @@ class CCMoveLessonTest : EduTestCase() {
         lesson("lesson6")
       }
     }
-    val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1", "lesson2")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section2")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("section1/lesson2")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("section2")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCLessonMoveHandlerDelegate()
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
@@ -167,10 +166,10 @@ class CCMoveLessonTest : EduTestCase() {
         lesson("lesson5")
       }
     }
-    val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section1", "lesson2")
-    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile!!)
-    val targetVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "section2", "lesson5")
-    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile!!)
+    val sourceVFile = findFile("section1/lesson2")
+    val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
+    val targetVFile = findFile("section2/lesson5")
+    val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCLessonMoveHandlerTest(0)
     TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))

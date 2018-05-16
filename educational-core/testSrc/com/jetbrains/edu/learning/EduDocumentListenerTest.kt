@@ -18,7 +18,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
     val task = lesson!!.getTask("task$taskIndex")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(1, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -35,7 +35,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
     val task = lesson!!.getTask("task$taskIndex")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(1, answerPlaceholders.size)
     assertEquals(16, answerPlaceholders[0].offset)
@@ -52,7 +52,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
     val task = lesson!!.getTask("task$taskIndex")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -71,7 +71,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
     val task = lesson!!.getTask("task$taskIndex")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -90,7 +90,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
     val task = lesson!!.getTask("task$taskIndex")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -109,7 +109,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.type("test")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
     val task = lesson!!.getTask("task$taskIndex")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -128,7 +128,7 @@ class EduDocumentListenerTest : EduTestCase() {
     myFixture.type("\n")
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson$lessonIndex")
     val task = lesson!!.getTask("task$taskIndex")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(1, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -144,7 +144,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(6, answerPlaceholders[0].offset)
@@ -162,7 +162,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -180,7 +180,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -198,7 +198,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(11, answerPlaceholders[0].offset)
@@ -216,7 +216,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -234,7 +234,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
@@ -252,7 +252,7 @@ class EduDocumentListenerTest : EduTestCase() {
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
-    val taskFile = task.getTaskFile(taskFileName)
+    val taskFile = task!!.getTaskFile(taskFileName)
     val answerPlaceholders = taskFile!!.answerPlaceholders
     assertEquals(2, answerPlaceholders.size)
     assertEquals(12, answerPlaceholders[0].offset)
