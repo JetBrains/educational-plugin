@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The main interface provides courses creation for some language.
@@ -138,14 +140,14 @@ public interface EduCourseBuilder<Settings> {
   interface LanguageSettings<Settings> {
 
     /**
-     * Returns UI component that allows user to select course project settings such as project JDK or interpreter.
+     * Returns list of UI components that allows user to select course project settings such as project JDK or interpreter.
      *
      * @param course course of creating project
-     * @return UI component with project settings. Can be null
+     * @return list of UI components with project settings
      */
-    @Nullable
-    default LabeledComponent<JComponent> getLanguageSettingsComponent(@NotNull Course course) {
-      return null;
+    @NotNull
+    default List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course) {
+      return Collections.emptyList();
     }
 
     /**

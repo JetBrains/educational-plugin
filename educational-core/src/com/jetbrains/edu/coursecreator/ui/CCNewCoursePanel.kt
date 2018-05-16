@@ -14,8 +14,7 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
-import com.intellij.ui.layout.CCFlags
-import com.intellij.ui.layout.panel
+import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduConfiguratorManager
@@ -178,7 +177,8 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     myCourse.language = language.id
     myLanguageSettings = configurator.courseBuilder.languageSettings
 
-    val settings = listOfNotNull(myLocationField, myLanguageSettings.getLanguageSettingsComponent(myCourse))
+    val settings = arrayListOf<LabeledComponent<*>>(myLocationField)
+    settings.addAll(myLanguageSettings.getLanguageSettingsComponents(myCourse))
     myAdvancedSettings.setSettingsComponents(settings)
   }
 
