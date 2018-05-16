@@ -1,2 +1,2 @@
 rootProject.name = 'educational-plugin'
-include 'Edu-Java', 'Edu-Kotlin', 'Edu-Python', 'educational-core'
+include 'Edu-Java', 'Edu-Scala', 'Edu-Kotlin', 'Edu-Python', 'educational-core'

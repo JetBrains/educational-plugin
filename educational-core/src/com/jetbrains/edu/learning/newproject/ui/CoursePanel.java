@@ -184,10 +184,8 @@ public class CoursePanel extends JPanel {
     if (myLocationField != null) {
       settingsComponents.add(myLocationField);
     }
-    LabeledComponent<JComponent> component = myLanguageSettings.getLanguageSettingsComponent(course);
-    if (component != null) {
-      settingsComponents.add(component);
-    }
+    List<LabeledComponent<JComponent>> components = myLanguageSettings.getLanguageSettingsComponents(course);
+    settingsComponents.addAll(components);
 
     if (settingsComponents.isEmpty()) {
       myAdvancedSettings.setVisible(false);

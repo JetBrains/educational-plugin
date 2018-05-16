@@ -1,5 +1,6 @@
 buildscript {
     ext.pythonPluginVersion = pythonPluginVersion
+    ext.scalaPluginVersion = scalaPluginVersion
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
     ext.studioSandbox = project.buildDir.absolutePath + File.separator + "studio-sandbox"
     ext.kotlinVersion = "1.2.40"
@@ -153,7 +154,7 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion"
+    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion"
 }
 
 task configurePyCharm {
@@ -231,7 +232,7 @@ configure(project(':educational-core')) {
     }
 }
 
-configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin')]) {
+configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala')]) {
     dependencies {
         compile project(':educational-core')
         testCompile project(':educational-core').sourceSets.test.output
@@ -260,11 +261,15 @@ configure(project(':Edu-Python')) {
     intellij.plugins "PythonCore:$pythonPluginVersion"
 }
 
+configure(project(':Edu-Scala')) {
+    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
+}
+
 runIde.systemProperty("-Didea.is.internal", "true")
 runIde.systemProperty("-ea", "")
 
 dependencies {
-    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java')
+    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala')
 }
 
 idea {
