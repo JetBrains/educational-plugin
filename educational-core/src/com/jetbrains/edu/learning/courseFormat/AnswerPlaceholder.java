@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -243,6 +244,29 @@ public class AnswerPlaceholder {
 
   public int getEndOffset() {
     return myOffset + getRealLength();
+  }
+
+  @Override
+  public String toString() {
+    Task task = myTaskFile.getTask();
+    Lesson lesson = task.getLesson();
+    Section section = lesson.getSection();
+    StringBuilder builder = new StringBuilder();
+    if (section != null) {
+      builder.append(section.getName());
+      builder.append("#");
+    }
+    return builder.append(lesson.getName())
+      .append("#")
+      .append(task.getName())
+      .append("#")
+      .append(myTaskFile.name)
+      .append("[")
+      .append(myOffset)
+      .append(", ")
+      .append(myOffset + myLength)
+      .append("]")
+      .toString();
   }
 
   @NotNull
