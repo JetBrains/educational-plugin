@@ -64,6 +64,18 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
       val prevTaskDir = prevTask.getTaskDir(project) ?: return newTask
       FileDocumentManager.getInstance().saveAllDocuments()
       newTask.taskFiles = prevTask.taskFiles.mapValues { (_, taskFile) -> taskFile.copyForNewTask(prevTaskDir, newTask) }
+
+      // If we insert new task between `task1` and `task2`
+      // we should change target of all placeholder dependencies of `task2` from task file of `task1`
+      // to the corresponding task file in new task
+      parentItem.getTaskList().getOrNull(index - 1)
+        ?.placeholderDependencies
+        ?.forEach { dependency ->
+          if (dependency.resolve(course)?.taskFile?.task == prevTask) {
+            val placeholder = dependency.answerPlaceholder
+            placeholder.placeholderDependency = dependency.copy(taskName = newTask.name)
+          }
+        }
     }
     return newTask
   }
@@ -103,6 +115,16 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
     newPlaceholder.placeholderDependency = AnswerPlaceholderDependency(newPlaceholder, sectionName, lesson.name, task.name, taskFile.name, index)
     return newPlaceholder
   }
+
+  private fun AnswerPlaceholderDependency.copy(
+    answerPlaceholder: AnswerPlaceholder = this.answerPlaceholder,
+    sectionName: String? = this.sectionName,
+    lessonName: String = this.lessonName,
+    taskName: String = this.taskName,
+    fileName: String = this.fileName,
+    placeholderIndex: Int = this.placeholderIndex
+  ): AnswerPlaceholderDependency =
+    AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex)
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CCCreateTask::class.java)
