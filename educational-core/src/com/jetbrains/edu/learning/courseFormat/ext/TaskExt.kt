@@ -9,10 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 val Task.course: Course? get() = lesson?.course
@@ -50,6 +47,19 @@ fun Task.getUnsolvedTaskDependencies(): List<Task> {
     .mapNotNull { it.resolve(course ?: return@mapNotNull null)?.taskFile?.task }
     .filter { it.status != CheckStatus.Solved }
     .distinct()
+}
+
+fun Task.getDependentTasks(): Set<Task> {
+  val course = course ?: return emptySet()
+  return course.items.flatMap { item ->
+    when (item) {
+      is Lesson -> item.getTaskList()
+      is Section -> item.lessons.flatMap { it.taskList }
+      else -> emptyList()
+    }
+  }.filterTo(HashSet()) { task ->
+    task.placeholderDependencies.any { it.resolve(course)?.taskFile?.task == this }
+  }
 }
 
 fun Task.hasChangedFiles(project: Project): Boolean {
