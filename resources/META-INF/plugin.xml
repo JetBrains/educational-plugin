@@ -2,87 +2,11 @@
     <id>com.jetbrains.edu</id>
     <name>EduTools</name>
     <!--update description in description.html file instead-->
-    <description><![CDATA[
-    <p>
-        With the EduTools plugin, you can learn and teach programming languages such as Kotlin, Java, and Python in the
-        form of coding tasks and custom verification tests right inside of JetBrains IntelliJ Platform based IDEs.
-    </p>
-    <strong>How It Works</strong>
-    <p>Install EduTools plugin: Go to Preferences -> Plugins (or Configure -> Plugins from the Welcome Screen),
-    press Install JetBrains Plugin… and search for the EduTools plugin.
-    </p>
-    <p>
-      Choose the learning or teaching mode: When it’s installed for the first time, the EduTools plugin asks you to
-      select whether you're a Learner or an Educator.
-    </p>
-    <p>
-      <strong>As an Educator</strong>:
-    <ul>
-      <li>
-        Create your own interactive course with custom tasks, checks, tests, hints, and lots more.
-      </li>
-      <li>
-        Share your course publicly or privately with your students or co-workers
-        on <a class="_external" target="_blank" href="https://stepik.org/">Stepik</a>, a learning management, and MOOC
-        platform. Or you can save your course as an archive file.
-      </li>
-      <li>
-        Let learners independently complete their assignments with the assistance of your integrated tests.
-      </li>
-    </ul>
-    <a class="_external" target="_blank" href="https://kotlinlang.org/docs/tutorials/edu-tools-educator.html">
-    Read this tutorial for more details.</a>
-    </p>
-    <p>
-      <strong>As a Learner</strong>:
-    <ul>
-      <li>
-        Join a public interactive programming course from the list, or choose a course
-        from <a class="_external" target="_blank" href="https://stepik.org/">Stepik</a>, a learning management,
-        and MOOC platform.
-      </li>
-      <li>
-        Start learning by filling in placeholders in the exercise code according to the task description.
-      </li>
-      <li>
-        Verify tasks, get instant feedback and quick results using an intelligent development tool.
-      </li>
-    </ul>
-    <a class="_external" target="_blank" href="https://kotlinlang.org/docs/tutorials/edu-tools-learner.html">Read this
-      tutorial for more details.</a>
-    </p>
-    <p>
-    <i>You may also be interested
-       in <a class="_external" target="_blank" href="https://www.jetbrains.com/pycharm-edu/">PyCharm Edu</a>—a special
-       educational edition of PyCharm IDE. All the features
-       available in PyCharm Edu are also available in the EduTools plugin.
-    </i>
-    </p>
-    ]]></description>
+    <description/>
     <vendor>JetBrains</vendor>
 
     <!--update changes in changes.html file instead-->
-    <change-notes><![CDATA[
-    <b>1.1</b>
-    <ul>
-    <li>Import Stepik Course action from Browse Courses</li>
-    <li>"Compare with Answer" action on Task Description panel</li>
-    <li>Courses verified by JetBrains are highlighted</li>
-    <li>Courses filtering by natural language</li>
-    <li>Tags in course descriptions can be clicked to filter courses</li>
-    <li>Subtasks are enabled for Kotlin courses</li>
-    </ul>
-    <br>
-    <b>1.0.2</b>
-    <ul>
-    <li>Kotlin Koans are now available in Android Studio 3.0</li>
-    <li>It's now possible to create courses for Kotlin in Android Studio 3.0</li>
-    <li>Course creation has been made easier in IntelliJ IDEA with new "Create New Course"
-        dialog and <i>File->Course Creator->Create Course Preview</i> action</li>
-    <li>Your solutions and progress are now saved if you have been authorized on Stepik</li>
-    </ul>
-      ]]>
-    </change-notes>
+    <change-notes/>
     <depends>com.intellij.modules.lang</depends>
 
     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
