@@ -1206,11 +1206,17 @@ public class EduUtils {
     if (sectionDir == null) {
       return null;
     }
-    final Section section = course.getSection(sectionDir.getName());
+    final Section section = getSection(sectionDir, course);
     if (section != null) {
       return section.getLesson(lessonDir.getName());
     }
 
     return course.getLesson(lessonDir.getName());
+  }
+
+  @Nullable
+  public static Section getSection(@NotNull VirtualFile sectionDir, @NotNull final Course course) {
+    if (!sectionDir.isDirectory()) return null;
+    return course.getSection(sectionDir.getName());
   }
 }
