@@ -106,7 +106,7 @@ public class CCShowPreview extends DumbAwareAction {
     }
 
     if (taskFile.getAnswerPlaceholders().isEmpty()) {
-      Messages.showInfoMessage("Preview is available for task files with answer placeholders only", "No Preview for This File");
+      Messages.showInfoMessage(NO_PREVIEW_MESSAGE, "No Preview for This File");
       return;
     }
 
