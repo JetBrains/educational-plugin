@@ -40,6 +40,25 @@ class CCDeleteListenerTest : CCActionTestCase() {
     TestCase.assertEquals(2, course.getLesson("lesson2")!!.index)
   }
 
+  fun `test delete not empty section`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson()
+      section {
+        lesson()
+      }
+      lesson()
+    }
+    val sectionVFile = findFile("section2")
+    runWriteAction {
+      sectionVFile.delete(this)
+    }
+
+    TestCase.assertEquals(2, course.items.size)
+    TestCase.assertNull(course.getSection("section2"))
+    TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
+    TestCase.assertEquals(2, course.getLesson("lesson2")!!.index)
+  }
+
   fun `test delete lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson()
