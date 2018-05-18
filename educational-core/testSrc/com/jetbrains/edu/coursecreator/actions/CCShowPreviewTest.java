@@ -12,8 +12,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.MapDataContext;
 import com.jetbrains.edu.coursecreator.CCTestCase;
+import com.jetbrains.edu.learning.EduTestDialog;
 import com.jetbrains.edu.coursecreator.CCTestsUtil;
+import com.jetbrains.edu.learning.EduTestDialogKt;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -23,12 +26,11 @@ public class CCShowPreviewTest extends CCTestCase {
   public void testPreviewUnavailable() {
     VirtualFile file = configureByTaskFile("noplaceholders.txt");
     CCShowPreview action = new CCShowPreview();
-    try {
+
+    EduTestDialogKt.withTestDialog(new EduTestDialog(), () -> {
       testAction(createDataContext(file), action);
-      assertTrue("No message shown", false);
-    } catch (RuntimeException ex) {
-      assertEquals(CCShowPreview.NO_PREVIEW_MESSAGE, ex.getMessage());
-    }
+      return Unit.INSTANCE;
+    }).checkWasShown(CCShowPreview.NO_PREVIEW_MESSAGE);
   }
 
   public void testOnePlaceholder() {
