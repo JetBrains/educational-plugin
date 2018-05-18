@@ -128,7 +128,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
 
   private static void deleteSection(@NotNull final Course course, @NotNull final VirtualFile removedFile) {
     Section removedSection = course.getSection(removedFile.getName());
-    if (removedSection == null || !removedSection.getItems().isEmpty()) {
+    if (removedSection == null) {
       return;
     }
     final VirtualFile parentDir = removedFile.getParent();
