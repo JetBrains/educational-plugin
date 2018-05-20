@@ -22,6 +22,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
@@ -56,6 +58,10 @@ import java.net.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,6 +81,8 @@ public class StepikConnector {
   private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
   private static final String IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/in_progress_courses.txt";
   public static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
+  private static final int THREAD_NUMBER = Runtime.getRuntime().availableProcessors();
+  private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER);
 
   private StepikConnector() {
   }
@@ -98,22 +106,47 @@ public class StepikConnector {
 
   @NotNull
   public static List<Course> getCourses(@Nullable StepicUser user) {
-    List<Course> result = new ArrayList<>();
+    LOG.info("Loading courses started...");
+    long startTime = System.currentTimeMillis();
+    final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Integer> featuredCourses = getFeaturedCourses();
-    try {
-      int pageNumber = 1;
-      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-      while (addCoursesFromStepik(user, result, pageNumber, featuredCourses)) {
-        if (indicator != null && indicator.isCanceled()) {
-          break;
+
+    List<Callable<List<Course>>> tasks = ContainerUtil.newArrayList();
+    for (int i = 0; i < THREAD_NUMBER; i++) {
+      final int currentThread = i;
+      tasks.add(() -> {
+        List<Course> courses = ContainerUtil.newArrayList();
+        try {
+          int pageNumber = currentThread + 1;
+          while (addCoursesFromStepik(user, courses, pageNumber, featuredCourses)) {
+            if (indicator != null && indicator.isCanceled()) {
+              return null;
+            }
+            pageNumber += THREAD_NUMBER;
+          }
+          return courses;
         }
-        pageNumber += 1;
+        catch (IOException e) {
+          return courses;
+        }
+      });
+    }
+    List<Course> result = ContainerUtil.newArrayList();
+    try {
+      for (Future<List<Course>> future : ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
+        if (!future.isCancelled()) {
+          List<Course> courses = future.get();
+          if (courses != null) {
+            result.addAll(courses);
+          }
+        }
       }
     }
-    catch (IOException e) {
+    catch (Throwable e) {
       LOG.warn("Cannot load course list " + e.getMessage());
     }
     addInProgressCourses(user, result);
+    LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms");
     return result;
   }
 
