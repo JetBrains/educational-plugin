@@ -38,7 +38,7 @@ public class StepikTaskBuilder {
     .put("choice", this::choiceTask)
     .put("text", this::theoryTask)
     .put("pycharm", this::pycharmTask)
-    .put("video", this::unsupportedTask)
+    .put("video", this::videoTask)
     .put("number", this::unsupportedTask)
     .put("sorting", this::unsupportedTask)
     .put("matching", this::unsupportedTask)
@@ -224,6 +224,11 @@ public class StepikTaskBuilder {
     task.setIndex(myStepSource.position);
     final String stepText = "This is " + myName.toLowerCase() + " task.";
     task.setDescriptionText(stepText);
+    createMockFileWithDefaultText(task);
+    return task;
+  }
+
+  private void createMockFileWithDefaultText(@NotNull Task task) {
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
     String taskFileName = getTaskFileName(myLanguage);
 
@@ -235,6 +240,16 @@ public class StepikTaskBuilder {
       }
       createMockTaskFile(task, editorText, taskFileName);
     }
+  }
+
+  @NotNull
+  private Task videoTask() {
+    VideoTask task = new VideoTask(myName);
+    task.setStepId(myStepId);
+    task.setIndex(myStepSource.position);
+    final String stepText = "This is " + myName.toLowerCase() + " task.";
+    task.setDescriptionText(stepText);
+    createMockFileWithDefaultText(task);
     return task;
   }
 

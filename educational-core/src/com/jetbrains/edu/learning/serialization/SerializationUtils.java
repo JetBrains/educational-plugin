@@ -477,6 +477,7 @@ public class SerializationUtils {
           case "code": return gson.fromJson(object, CodeTask.class);
           case "edu": return gson.fromJson(object, EduTask.class);
           case "output": return gson.fromJson(object, OutputTask.class);
+          case "video": return gson.fromJson(object, VideoTask.class);
           case "pycharm": return gson.fromJson(object, EduTask.class);     // deprecated: old courses have pycharm tasks
           default: {
             LOG.warn("Unsupported task type " + taskType);

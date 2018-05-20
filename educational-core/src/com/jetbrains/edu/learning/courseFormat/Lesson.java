@@ -39,7 +39,8 @@ public class Lesson extends StudyItem {
     TheoryTask.class,
     CodeTask.class,
     OutputTask.class,
-    IdeTask.class
+    IdeTask.class,
+    VideoTask.class
   })
   public List<Task> taskList = new ArrayList<>();
 
