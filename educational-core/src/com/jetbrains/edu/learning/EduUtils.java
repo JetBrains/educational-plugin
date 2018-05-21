@@ -74,6 +74,7 @@ import com.intellij.util.io.ZipUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -1218,5 +1219,63 @@ public class EduUtils {
   public static Section getSection(@NotNull VirtualFile sectionDir, @NotNull final Course course) {
     if (!sectionDir.isDirectory()) return null;
     return course.getSection(sectionDir.getName());
+  }
+
+  public static boolean canBeAddedAsTaskFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+    if (virtualFile.isDirectory()) {
+      return false;
+    }
+    if (virtualFile.getPath().contains(CCUtils.GENERATED_FILES_FOLDER)) {
+      return false;
+    }
+    if (project.getBasePath() !=null && !FileUtil.isAncestor(project.getBasePath(), virtualFile.getPath(), true)) {
+      return false;
+    }
+    Course course = StudyTaskManager.getInstance(project).getCourse();
+    if (course == null) {
+      return false;
+    }
+    TaskFile taskFile = getTaskFile(project, virtualFile);
+    if (taskFile != null) {
+      return false;
+    }
+
+    String taskRelativePath = pathRelativeToTask(project, virtualFile);
+
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+    if (configurator != null && configurator.excludeFromArchive(virtualFile.getPath())) {
+      return false;
+    }
+
+    if (isTestsFile(project, virtualFile)
+        || isTaskDescriptionFile(virtualFile.getName())
+        || taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
+        || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)
+        || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
+      return false;
+    }
+    Task task = getTaskForFile(project, virtualFile);
+    if (task == null) {
+      return false;
+    }
+
+    if (!isInsideTaskFileDirectory(course, virtualFile)) {
+      return false;
+    }
+    return true;
+  }
+
+  private static boolean isInsideTaskFileDirectory(@NotNull Course course, @NotNull VirtualFile createdFile) {
+    String sourceDir = CourseExt.getSourceDir(course);
+    if (sourceDir == null || sourceDir.isEmpty()) {
+      return true;
+    }
+
+    VirtualFile taskDir = getTaskDir(course, createdFile);
+    if (taskDir == null) {
+      return false;
+    }
+    String relativePath = FileUtil.getRelativePath(taskDir.getPath(), createdFile.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
+    return relativePath != null && relativePath.startsWith(sourceDir);
   }
 }
