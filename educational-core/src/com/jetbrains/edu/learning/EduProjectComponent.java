@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -38,7 +37,6 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
-import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -51,7 +49,6 @@ import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 public class EduProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(EduProjectComponent.class.getName());
   private final Project myProject;
-  private FileCreatedByUserListener myListener;
   private final Map<Keymap, List<Pair<String, String>>> myDeletedShortcuts = new HashMap<>();
   private MessageBusConnection myBusConnection;
 
@@ -230,53 +227,39 @@ public class EduProjectComponent implements ProjectComponent {
         }
       }
     }
-    myListener = null;
   }
 
   @Override
   public void initComponent() {
-    ActionManager.getInstance().addAnActionListener(new AnActionListener() {
-      @Override
-      public void beforeActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-        String actionId = ActionManager.getInstance().getId(action);
-        Set<String> ids = newFilesActionsIds();
-        if (ids.contains(actionId)) {
-          myListener = new FileCreatedByUserListener();
-          VirtualFileManager.getInstance().addVirtualFileListener(myListener);
+    if (isStudentProject(myProject)) {
+      VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
+        @Override
+        public void fileCreated(@NotNull VirtualFileEvent event) {
+          if (myProject.isDisposed()) return;
+          final VirtualFile createdFile = event.getFile();
+          if (canBeAddedAsTaskFile(myProject, createdFile)) {
+            final Task task = getTaskForFile(myProject, createdFile);
+            assert task != null;
+            String path = pathRelativeToTask(myProject, createdFile);
+            task.addTaskFile(path);
+            TaskFile taskFile = task.getTaskFile(path);
+            assert taskFile != null;
+            taskFile.setUserCreated(true);
+          }
         }
-      }
 
-      @Override
-      public void afterActionPerformed(AnAction action, DataContext dataContext, AnActionEvent event) {
-        String actionId = ActionManager.getInstance().getId(action);
-        Set<String> ids = newFilesActionsIds();
-        if (ids.contains(actionId) && myListener != null) {
-          VirtualFileManager.getInstance().removeVirtualFileListener(myListener);
+        @Override
+        public void fileDeleted(@NotNull VirtualFileEvent event) {
+          if (myProject.isDisposed()) return;
+          VirtualFile removedFile = event.getFile();
+          final TaskFile taskFile = getTaskFile(myProject, removedFile);
+          if (taskFile == null) {
+            return;
+          }
+          Task task = taskFile.getTask();
+          task.getTaskFiles().remove(pathRelativeToTask(myProject, removedFile));
         }
-      }
-
-      @Override
-      public void beforeEditorTyping(char c, DataContext dataContext) {
-
-      }
-    });
-  }
-
-  @NotNull
-  private static Set<String> newFilesActionsIds() {
-    Set<String> actionsIds = new HashSet<>(actionsIds("NewGroup"));
-    actionsIds.addAll(actionsIds("NewGroup1"));
-    return actionsIds;
-  }
-
-  @NotNull
-  private static List<String> actionsIds(@NotNull String actionGroupId) {
-    ActionManager actionManager = ActionManager.getInstance();
-    AnAction action = actionManager.getAction(actionGroupId);
-    if (action instanceof ActionGroup) {
-      return ArraysKt.map(((ActionGroup)action).getChildren(null), actionManager::getId);
-    } else {
-      return Collections.emptyList();
+      });
     }
   }
 
@@ -296,22 +279,5 @@ public class EduProjectComponent implements ProjectComponent {
   public static EduProjectComponent getInstance(@NotNull final Project project) {
     final Module module = ModuleManager.getInstance(project).getModules()[0];
     return module.getComponent(EduProjectComponent.class);
-  }
-
-  private class FileCreatedByUserListener implements VirtualFileListener {
-    @Override
-    public void fileCreated(@NotNull VirtualFileEvent event) {
-      if (myProject.isDisposed()) return;
-      if (!isStudentProject(myProject)) return;
-      final VirtualFile createdFile = event.getFile();
-      final Task task = getTaskForFile(myProject, createdFile);
-      if (task == null) return;
-      final TaskFile taskFile = new TaskFile();
-      taskFile.initTaskFile(task, false);
-      taskFile.setUserCreated(true);
-      final String name = pathRelativeToTask(myProject, createdFile);
-      taskFile.name = name;
-      task.getTaskFiles().put(name, taskFile);
-    }
   }
 }
