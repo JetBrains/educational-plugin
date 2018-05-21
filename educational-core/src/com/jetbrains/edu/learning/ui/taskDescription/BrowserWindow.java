@@ -353,19 +353,22 @@ public class BrowserWindow extends JFrame {
               NavigationUtils.navigateToTask(myProject, sectionName, lessonName, taskName);
             }
             else {
-              EduUsagesCollector.externalLinkClicked();
-              myEngine.setJavaScriptEnabled(true);
-              myEngine.getLoadWorker().cancel();
-              String href = getLink(target);
-              if (href == null) return;
-              if (isRelativeLink(href)) {
-                href = STEPIK_URL + href;
+              if (hrefAttribute.startsWith(TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL)) {
+                TaskDescriptionToolWindow.navigateToPsiElement(myProject, hrefAttribute);
+              } else {
+                EduUsagesCollector.externalLinkClicked();
+                myEngine.setJavaScriptEnabled(true);
+                myEngine.getLoadWorker().cancel();
+                String href = getLink(target);
+                if (href == null) return;
+                if (isRelativeLink(href)) {
+                  href = STEPIK_URL + href;
+                }
+                BrowserUtil.browse(href);
+                if (href.startsWith(STEPIK_URL)) {
+                  EduUsagesCollector.stepikLinkClicked();
+                }
               }
-              BrowserUtil.browse(href);
-              if (href.startsWith(STEPIK_URL)) {
-                EduUsagesCollector.stepikLinkClicked();
-              }
-
             }
           }
         }
