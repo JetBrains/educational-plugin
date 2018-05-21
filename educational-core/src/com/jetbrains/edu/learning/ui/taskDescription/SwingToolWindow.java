@@ -26,6 +26,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
@@ -71,7 +72,16 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
       myTaskTextPane.setBackground(EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground());
     }
     myTaskTextPane.setBorder(JBUI.Borders.empty(20, 20, 0, 10));
-    myTaskTextPane.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE);
+    myTaskTextPane.addHyperlinkListener(e -> {
+      String url = e.getDescription();
+      if (url.startsWith(TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL)) {
+        if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+          TaskDescriptionToolWindow.navigateToPsiElement(project, url);
+        }
+      } else {
+        BrowserHyperlinkListener.INSTANCE.hyperlinkUpdate(e);
+      }
+    });
     return scrollPane;
   }
 
