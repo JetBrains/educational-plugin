@@ -139,11 +139,12 @@ public abstract class Task extends StudyItem {
     return name != null ? taskFiles.get(name) : null;
   }
 
-  public void addTaskFile(@NotNull final String name) {
+  public TaskFile addTaskFile(@NotNull final String name) {
     TaskFile taskFile = new TaskFile();
     taskFile.setTask(this);
     taskFile.name = name;
     taskFiles.put(name, taskFile);
+    return taskFile;
   }
 
   public void addTaskFile(@NotNull final TaskFile taskFile) {
