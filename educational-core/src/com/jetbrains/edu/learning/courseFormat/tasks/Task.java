@@ -287,7 +287,7 @@ public abstract class Task extends StudyItem {
     if (taskDir == null) return false;
     for (TaskFile taskFile : getTaskFiles().values()) {
       VirtualFile file = EduUtils.findTaskFileInDir(taskFile, taskDir);
-      if (file == null) return false;
+      if (file == null) continue;
       try {
         String text = VfsUtilCore.loadText(file);
         if (!taskFile.isValid(text)) return false;
