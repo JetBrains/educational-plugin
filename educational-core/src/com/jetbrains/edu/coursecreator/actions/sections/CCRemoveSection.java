@@ -65,6 +65,8 @@ public class CCRemoveSection extends DumbAwareAction {
         lesson.setIndex(lesson.getIndex() + sectionIndex - 1);
         lesson.setSection(null);
       }
+      CCUtils.updateHigherElements(courseDir.getChildren(), it -> course.getItem(it.getName()),
+                                   sectionIndex-1, lessonsFromSection.size());
       course.addLessons(lessonsFromSection);
       course.sortItems();
     }
