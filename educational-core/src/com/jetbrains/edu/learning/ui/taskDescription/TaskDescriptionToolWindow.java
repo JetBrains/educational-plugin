@@ -15,12 +15,19 @@
  */
 package com.jetbrains.edu.learning.ui.taskDescription;
 
+import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
+import com.intellij.ide.actions.QualifiedNameProvider;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
+import com.intellij.psi.NavigatablePsiElement;
+import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBCardLayout;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.util.ui.JBUI;
@@ -40,10 +47,13 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel implements DataProvider, Disposable {
+
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
   private static final String TASK_INFO_ID = "taskInfo";
-  public static final String EMPTY_TASK_TEXT = "Please, open any task to see task description";
   private static final String HELP_ID = "task.description";
+
+  public static final String EMPTY_TASK_TEXT = "Please, open any task to see task description";
+  public static final String PSI_ELEMENT_PROTOCOL = DocumentationManagerProtocol.PSI_ELEMENT_PROTOCOL;
 
   private final JBCardLayout myCardLayout;
   private final JPanel myContentPanel;
@@ -186,5 +196,23 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
       return HELP_ID;
     }
     return super.getData(dataId);
+  }
+
+  public static void navigateToPsiElement(@NotNull Project project, @NotNull String url) {
+    String qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "");
+
+    for (QualifiedNameProvider provider : Extensions.getExtensions(QualifiedNameProvider.EP_NAME)) {
+      PsiElement element = provider.qualifiedNameToElement(qualifiedName, project);
+      if (element instanceof NavigatablePsiElement) {
+        NavigatablePsiElement navigatableElement = (NavigatablePsiElement)element;
+        Application application = ApplicationManager.getApplication();
+        application.invokeLater(() -> application.runReadAction(() -> {
+          if (navigatableElement.canNavigate()) {
+            navigatableElement.navigate(true);
+          }
+        }));
+        break;
+      }
+    }
   }
 }
