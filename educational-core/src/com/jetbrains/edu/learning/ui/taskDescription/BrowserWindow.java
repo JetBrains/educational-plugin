@@ -114,7 +114,7 @@ public class BrowserWindow extends JFrame {
 
   private void updateIntellijAndGTKLaf() {
     Platform.runLater(() -> {
-      final URL scrollBarStyleUrl = getClass().getResource("/style/javaFXBrowserScrollBar.css");
+      final URL scrollBarStyleUrl = getClass().getResource(SystemInfo.isWindows ? "/style/javaFXBrowserScrollBar_win.css" : "/style/javaFXBrowserScrollBar.css");
       final URL engineStyleUrl = getClass().getResource(getBrowserStylesheet(false));
       myPane.getStylesheets().add(scrollBarStyleUrl.toExternalForm());
       myEngine.setUserStyleSheetLocation(engineStyleUrl.toExternalForm());
@@ -126,7 +126,7 @@ public class BrowserWindow extends JFrame {
   private void updateLafDarcula() {
     Platform.runLater(() -> {
       final URL engineStyleUrl = getClass().getResource(getBrowserStylesheet(true));
-      final URL scrollBarStyleUrl = getClass().getResource("/style/javaFXBrowserDarculaScrollBar.css");
+      final URL scrollBarStyleUrl = getClass().getResource(SystemInfo.isWindows ? "/style/javaFXBrowserDarculaScrollBar_win.css" : "/style/javaFXBrowserDarculaScrollBar.css");
       myEngine.setUserStyleSheetLocation(engineStyleUrl.toExternalForm());
       myPane.getStylesheets().add(scrollBarStyleUrl.toExternalForm());
       myPane.setStyle("-fx-background-color: #3c3f41");
