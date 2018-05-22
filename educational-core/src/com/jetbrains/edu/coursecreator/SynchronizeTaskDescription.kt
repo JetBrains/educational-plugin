@@ -10,6 +10,9 @@ class SynchronizeTaskDescription(val project: Project): DocumentListener {
   override fun documentChanged(event: DocumentEvent?) {
     val eventDocument = event?.document ?: return
     val editedFile = FileDocumentManager.getInstance().getFile(eventDocument) ?: return
+    if (!EduUtils.isTaskDescriptionFile(editedFile.name)) {
+      return
+    }
     val task = EduUtils.getTaskForFile(project, editedFile) ?: return
     task.descriptionText = eventDocument.text
     EduUtils.updateToolWindows(project)

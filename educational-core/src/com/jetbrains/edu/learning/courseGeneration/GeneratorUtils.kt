@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.SynchronizeTaskDescription
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -134,15 +133,7 @@ object GeneratorUtils {
         EduNames.TASK_HTML
       }
     }
-    val childFile = createChildFile(taskDir, descriptionFileName, task.descriptionText)
-    if (childFile != null) {
-      val project = task.project ?: return null
-      runReadAction {
-        val document = FileDocumentManager.getInstance().getDocument(childFile) ?: return@runReadAction
-        document.addDocumentListener(SynchronizeTaskDescription(project), project)
-      }
-    }
-    return childFile
+    return createChildFile(taskDir, descriptionFileName, task.descriptionText)
   }
 
   @Throws(IOException::class)
