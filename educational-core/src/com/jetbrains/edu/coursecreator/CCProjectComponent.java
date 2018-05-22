@@ -4,8 +4,7 @@ import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -22,7 +21,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
@@ -185,31 +183,12 @@ public class CCProjectComponent extends AbstractProjectComponent {
     return result;
   }
 
-  private static List<VirtualFile> getAllTaskDescriptionFiles(@NotNull Course course, @NotNull Project project) {
-    List<VirtualFile> result = new ArrayList<>();
-    for (Lesson lesson : course.getLessons()) {
-      for (Task task : lesson.getTaskList()) {
-        VirtualFile file = TaskExt.getDescriptionFile(task, project);
-        if (file != null) {
-          result.add(file);
-        }
-      }
-    }
-    return result;
-  }
-
   private void startTaskDescriptionFilesSynchronization() {
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
     if (course == null) {
       return;
     }
-    for (VirtualFile file : getAllTaskDescriptionFiles(course, myProject)) {
-      Document document = FileDocumentManager.getInstance().getDocument(file);
-      if (document == null) {
-        continue;
-      }
-      document.addDocumentListener(new SynchronizeTaskDescription(myProject), myProject);
-    }
+    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new SynchronizeTaskDescription(myProject), myProject);
   }
 
   @NotNull
