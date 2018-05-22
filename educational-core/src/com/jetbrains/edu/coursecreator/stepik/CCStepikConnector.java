@@ -451,6 +451,7 @@ public class CCStepikConnector {
       if (!updateAdditionalMaterials(project, course, sectionIds)) {
         postAdditionalFiles(course, project, course.getId(), sectionIds.size());
       }
+      course.setUpdated();
       return true;
     }
     catch (IOException e) {
