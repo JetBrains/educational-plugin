@@ -198,13 +198,25 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
   public void projectOpened() {
     migrateIfNeeded();
-    StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
-      if (CCUtils.isCourseCreator(myProject)) {
-        registerListener();
-        EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE);
-        startTaskDescriptionFilesSynchronization();
-      }
-    });
+
+    if (StudyTaskManager.getInstance(myProject).getCourse() != null) {
+      initCCProject();
+    } else {
+      myProject.getMessageBus().connect().subscribe(StudyTaskManager.COURSE_SET, new CourseSetListener() {
+        @Override
+        public void courseSet(@NotNull Course course) {
+          initCCProject();
+        }
+      });
+    }
+  }
+
+  private void initCCProject() {
+    if (CCUtils.isCourseCreator(myProject)) {
+      registerListener();
+      EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE);
+      startTaskDescriptionFilesSynchronization();
+    }
   }
 
   public void registerListener() {
