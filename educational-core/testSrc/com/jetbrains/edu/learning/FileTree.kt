@@ -1,14 +1,20 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import org.intellij.lang.annotations.Language
 
 fun fileTree(block: FileTreeBuilder.() -> Unit): FileTree = FileTree(FileTreeBuilderImpl().apply(block).intoDirectory())
 
 interface FileTreeBuilder {
   fun dir(name: String, block: FileTreeBuilder.() -> Unit = {})
   fun file(name: String, code: String? = null)
+  fun java(name: String, @Language("JAVA") code: String) = file(name, code)
+  fun kotlin(name: String, @Language("kotlin") code: String) = file(name, code)
+  fun python(name: String, @Language("Python") code: String) = file(name, code)
+  fun scala(name: String, @Language("Scala") code: String) = file(name, code)
 }
 
 class FileTree(private val rootDirectory: Entry.Directory) {
@@ -46,6 +52,27 @@ class FileTree(private val rootDirectory: Entry.Directory) {
 
     fullyRefreshDirectory(baseDir)
     go(rootDirectory, baseDir)
+  }
+
+  fun create(root: VirtualFile) {
+    fun go(dir: Entry.Directory, root: VirtualFile) {
+      for ((name, entry) in dir.children) {
+        when (entry) {
+          is Entry.File -> {
+            val vFile = root.findOrCreateChildData(root, name)
+            VfsUtil.saveText(vFile, entry.text ?: "")
+          }
+          is Entry.Directory -> {
+            go(entry, root.createChildDirectory(root, name))
+          }
+        }
+      }
+    }
+
+    runWriteAction {
+      go(rootDirectory, root)
+      fullyRefreshDirectory(root)
+    }
   }
 
   companion object {
