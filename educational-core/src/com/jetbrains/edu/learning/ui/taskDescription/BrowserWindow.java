@@ -138,14 +138,14 @@ public class BrowserWindow extends JFrame {
   @NotNull
   private static String getBrowserStylesheet(boolean isDarcula) {
     if (SystemInfo.isMac) {
-      return isDarcula ? "style/javaFXBrowserDarcula_mac.css" : "/style/javaFXBrowser_mac.css";
+      return isDarcula ? "/style/javaFXBrowserDarcula_mac.css" : "/style/javaFXBrowser_mac.css";
     }
 
     if (SystemInfo.isWindows) {
-      return isDarcula ? "style/javaFXBrowserDarcula_win.css" : "/style/javaFXBrowser_win.css";
+      return isDarcula ? "/style/javaFXBrowserDarcula_win.css" : "/style/javaFXBrowser_win.css";
     }
 
-    return isDarcula ? "style/javaFXBrowserDarcula_linux.css" : "/style/javaFXBrowser_linux.css";
+    return isDarcula ? "/style/javaFXBrowserDarcula_linux.css" : "/style/javaFXBrowser_linux.css";
   }
 
   private void initComponents() {
