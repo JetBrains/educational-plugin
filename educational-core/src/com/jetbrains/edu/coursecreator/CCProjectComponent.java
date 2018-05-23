@@ -213,7 +213,9 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
   private void initCCProject() {
     if (CCUtils.isCourseCreator(myProject)) {
-      registerListener();
+      if (!ApplicationManager.getApplication().isUnitTestMode()) {
+        registerListener();
+      }
       EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE);
       startTaskDescriptionFilesSynchronization();
     }
