@@ -19,19 +19,21 @@ import javax.swing.JPanel
 import javax.swing.SwingConstants
 
 /**
- * Implementation of StudyEditor which has panel with special buttons and task text
- * also @see [EduFileEditorProvider]
+ * Implementation of [EduEditor] which has panel with special buttons and task text
+ *
+ * @see [EduFileEditorProvider]
  */
-class EduSingleFileEditor(project: Project, file: VirtualFile) : PsiAwareTextEditorImpl(project, file, TextEditorProvider.getInstance()) {
+class EduSingleFileEditor(project: Project, file: VirtualFile) : PsiAwareTextEditorImpl(project, file, TextEditorProvider.getInstance()),
+                                                                 EduEditor {
 
-  val taskFile: TaskFile? = EduUtils.getTaskFile(project, file)
+  override val taskFile: TaskFile = EduUtils.getTaskFile(project, file) ?: error("Can't find task file for `$file`")
 
   init {
     validateTaskFile()
   }
 
-  fun validateTaskFile() {
-    if (taskFile?.isValid(editor.document.text) == true) {
+  override fun validateTaskFile() {
+    if (!taskFile.isValid(editor.document.text)) {
       val panel = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0))
       panel.add(JLabel(BROKEN_SOLUTION_ERROR_TEXT_START))
       val actionLink = ActionLink(ACTION_TEXT, RevertTaskAction())
@@ -45,12 +47,18 @@ class EduSingleFileEditor(project: Project, file: VirtualFile) : PsiAwareTextEdi
     }
   }
 
-  fun showLoadingPanel() {
+  override fun startLoading() {
     (editor as EditorEx).isViewer = true
     @Suppress("INACCESSIBLE_TYPE")
     val component = component as JBLoadingPanel
     component.setLoadingText("Loading solution")
     component.startLoading()
+  }
+
+  override fun stopLoading() {
+    @Suppress("INACCESSIBLE_TYPE")
+    (component as JBLoadingPanel).stopLoading()
+    (editor as EditorEx).isViewer = false
   }
 
   override fun selectNotify() {

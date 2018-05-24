@@ -10,7 +10,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -19,7 +18,6 @@ import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
@@ -28,7 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
-import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -74,8 +72,8 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private void init() {
-    EduSingleFileEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
-    if (selectedEduEditor != null && selectedEduEditor.getTaskFile() != null) {
+    EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
+    if (selectedEduEditor != null) {
       mySelectedTask = selectedEduEditor.getTaskFile().getTask();
     }
     addFileOpenListener();
@@ -138,9 +136,9 @@ public class StepikSolutionsLoader implements Disposable {
 
     ApplicationManager.getApplication().invokeLater(() -> {
       if (mySelectedTask != null && tasksToUpdate.contains(mySelectedTask)) {
-        EduSingleFileEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
+        EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
         if (selectedEduEditor != null) {
-          selectedEduEditor.showLoadingPanel();
+          selectedEduEditor.startLoading();
           enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getStepId()));
         }
       }
@@ -218,13 +216,13 @@ public class StepikSolutionsLoader implements Disposable {
     myBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        EduSingleFileEditor eduEditor = EduUtils.getSelectedEduEditor(myProject);
+        EduEditor eduEditor = EduUtils.getSelectedEduEditor(myProject);
         TaskFile taskFile = EduUtils.getTaskFile(myProject, file);
         if (eduEditor != null && taskFile != null) {
           mySelectedTask = taskFile.getTask();
           Task task = taskFile.getTask();
           if (myFutures.containsKey(task.getStepId())) {
-            eduEditor.showLoadingPanel();
+            eduEditor.startLoading();
             Future future = myFutures.get(task.getStepId());
             if (!future.isDone() || !future.isCancelled()) {
               enableEditorWhenFutureDone(future);
@@ -240,11 +238,9 @@ public class StepikSolutionsLoader implements Disposable {
       try {
         future.get();
         ApplicationManager.getApplication().invokeLater(() -> {
-          EduSingleFileEditor selectedEditor = EduUtils.getSelectedEduEditor(myProject);
+          EduEditor selectedEditor = EduUtils.getSelectedEduEditor(myProject);
           if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().getName())) {
-            JBLoadingPanel component = selectedEditor.getComponent();
-            component.stopLoading();
-            ((EditorImpl)selectedEditor.getEditor()).setViewer(false);
+            selectedEditor.stopLoading();
             selectedEditor.validateTaskFile();
           }
         });

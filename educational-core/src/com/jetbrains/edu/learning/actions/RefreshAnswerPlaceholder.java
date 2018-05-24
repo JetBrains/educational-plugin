@@ -7,13 +7,13 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduState;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import org.jetbrains.annotations.Nullable;
 
 public class RefreshAnswerPlaceholder extends DumbAwareAction {
@@ -34,7 +34,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (placeholder == null) {
       return;
     }
-    EduSingleFileEditor eduEditor = EduUtils.getSelectedEduEditor(project);
+    EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     if (eduEditor != null) {
       String replacementText = placeholder.getPlaceholderText();
       EduUtils.replaceAnswerPlaceholder(eduEditor.getEditor().getDocument(), placeholder, placeholder.getRealLength(), replacementText);
@@ -73,7 +73,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (project == null) {
       return null;
     }
-    EduSingleFileEditor eduEditor = EduUtils.getSelectedEduEditor(project);
+    EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     final EduState eduState = new EduState(eduEditor);
     if (eduEditor == null || !eduState.isValid()) {
       return null;
