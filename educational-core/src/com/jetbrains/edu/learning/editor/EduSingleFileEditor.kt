@@ -1,69 +1,66 @@
-package com.jetbrains.edu.learning.editor;
+package com.jetbrains.edu.learning.editor
 
-import com.intellij.openapi.editor.impl.EditorImpl;
-import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
-import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.components.JBLoadingPanel;
-import com.intellij.ui.components.labels.ActionLink;
-import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.actions.RevertTaskAction;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
+import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl
+import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.components.JBLoadingPanel
+import com.intellij.ui.components.labels.ActionLink
+import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.actions.RevertTaskAction
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
+import java.awt.FlowLayout
+import javax.swing.BorderFactory
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.SwingConstants
 
 /**
  * Implementation of StudyEditor which has panel with special buttons and task text
- * also @see {@link EduFileEditorProvider}
+ * also @see [EduFileEditorProvider]
  */
-public class EduSingleFileEditor extends PsiAwareTextEditorImpl {
-  public static final String BROKEN_SOLUTION_ERROR_TEXT_START = "Solution can't be loaded.";
-  public static final String BROKEN_SOLUTION_ERROR_TEXT_END = " to solve it again";
-  public static final String ACTION_TEXT = "Reset task";
-  private final TaskFile myTaskFile;
+class EduSingleFileEditor(project: Project, file: VirtualFile) : PsiAwareTextEditorImpl(project, file, TextEditorProvider.getInstance()) {
 
-  public EduSingleFileEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
-    super(project, file, TextEditorProvider.getInstance());
-    myTaskFile = EduUtils.getTaskFile(project, file);
+  val taskFile: TaskFile? = EduUtils.getTaskFile(project, file)
 
-    validateTaskFile();
+  init {
+    validateTaskFile()
   }
 
-  public void validateTaskFile() {
-    if (!myTaskFile.isValid(getEditor().getDocument().getText())) {
-      JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-      panel.add(new JLabel(BROKEN_SOLUTION_ERROR_TEXT_START));
-      ActionLink actionLink = new ActionLink(ACTION_TEXT, new RevertTaskAction());
-      actionLink.setVerticalAlignment(SwingConstants.CENTER);
-      panel.add(actionLink);
-      panel.add(new JLabel(BROKEN_SOLUTION_ERROR_TEXT_END));
-      panel.setBorder(BorderFactory.createEmptyBorder(JBUI.scale(5), JBUI.scale(5), JBUI.scale(5), 0));
-      getEditor().setHeaderComponent(panel);
-    }
-    else {
-      getEditor().setHeaderComponent(null);
+  fun validateTaskFile() {
+    if (taskFile?.isValid(editor.document.text) == true) {
+      val panel = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0))
+      panel.add(JLabel(BROKEN_SOLUTION_ERROR_TEXT_START))
+      val actionLink = ActionLink(ACTION_TEXT, RevertTaskAction())
+      actionLink.verticalAlignment = SwingConstants.CENTER
+      panel.add(actionLink)
+      panel.add(JLabel(BROKEN_SOLUTION_ERROR_TEXT_END))
+      panel.border = BorderFactory.createEmptyBorder(JBUI.scale(5), JBUI.scale(5), JBUI.scale(5), 0)
+      editor.headerComponent = panel
+    } else {
+      editor.headerComponent = null
     }
   }
 
-  public TaskFile getTaskFile() {
-    return myTaskFile;
+  fun showLoadingPanel() {
+    (editor as EditorEx).isViewer = true
+    @Suppress("INACCESSIBLE_TYPE")
+    val component = component as JBLoadingPanel
+    component.setLoadingText("Loading solution")
+    component.startLoading()
   }
 
-  public void showLoadingPanel() {
-    JBLoadingPanel component = getComponent();
-    ((EditorImpl)getEditor()).setViewer(true);
-    component.setLoadingText("Loading solution");
-    component.startLoading();
+  override fun selectNotify() {
+    super.selectNotify()
+    PlaceholderDependencyManager.updateDependentPlaceholders(myProject, taskFile!!.task)
   }
 
-  @Override
-  public void selectNotify() {
-    super.selectNotify();
-    PlaceholderDependencyManager.updateDependentPlaceholders(myProject, myTaskFile.getTask());
+  companion object {
+    const val BROKEN_SOLUTION_ERROR_TEXT_START = "Solution can't be loaded."
+    const val BROKEN_SOLUTION_ERROR_TEXT_END = " to solve it again"
+    const val ACTION_TEXT = "Reset task"
   }
 }
