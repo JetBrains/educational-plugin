@@ -5,17 +5,17 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import org.jetbrains.annotations.Nullable;
 
 public class EduState {
-  private final EduEditor myEduEditor;
+  private final EduSingleFileEditor myEduEditor;
   private final Editor myEditor;
   private final TaskFile myTaskFile;
   private final VirtualFile myVirtualFile;
   private final Task myTask;
 
-  public EduState(@Nullable final EduEditor eduEditor) {
+  public EduState(@Nullable final EduSingleFileEditor eduEditor) {
     myEduEditor = eduEditor;
     myEditor = eduEditor != null ? eduEditor.getEditor() : null;
     myTaskFile = eduEditor != null ? eduEditor.getTaskFile() : null;

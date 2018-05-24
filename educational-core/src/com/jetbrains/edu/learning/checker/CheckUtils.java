@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.OutputToolWindowFactory;
 import kotlin.collections.CollectionsKt;
@@ -69,8 +69,8 @@ public class CheckUtils {
             continue;
           }
           FileEditor fileEditor = FileEditorManager.getInstance(project).getSelectedEditor(virtualFile);
-          if (fileEditor instanceof EduEditor) {
-            EduEditor eduEditor = (EduEditor)fileEditor;
+          if (fileEditor instanceof EduSingleFileEditor) {
+            EduSingleFileEditor eduEditor = (EduSingleFileEditor)fileEditor;
             editor = eduEditor.getEditor();
           }
           fileToNavigate = virtualFile;

@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import com.jetbrains.edu.learning.ui.TestContentPanel;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +108,7 @@ public class EditInputAction extends DumbAwareAction {
           .setMovable(true)
           .setRequestFocus(true)
           .createPopup();
-      EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(project);
+      EduSingleFileEditor selectedEduEditor = EduUtils.getSelectedEduEditor(project);
       assert selectedEduEditor != null;
       hint.showInCenterOf(selectedEduEditor.getComponent());
       hint.addListener(new HintClosedListener(currentTask, studyTaskManager));
@@ -232,7 +232,7 @@ public class EditInputAction extends DumbAwareAction {
 
     final Project project = e.getProject();
     if (project != null) {
-      EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
+      EduSingleFileEditor eduEditor = EduUtils.getSelectedEduEditor(project);
       if (eduEditor != null) {
         final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(eduEditor.getTaskFile().getTask());
         if (!userTests.isEmpty()) {

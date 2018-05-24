@@ -17,13 +17,17 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class EduEditor extends PsiAwareTextEditorImpl {
+/**
+ * Implementation of StudyEditor which has panel with special buttons and task text
+ * also @see {@link EduFileEditorProvider}
+ */
+public class EduSingleFileEditor extends PsiAwareTextEditorImpl {
   public static final String BROKEN_SOLUTION_ERROR_TEXT_START = "Solution can't be loaded.";
   public static final String BROKEN_SOLUTION_ERROR_TEXT_END = " to solve it again";
   public static final String ACTION_TEXT = "Reset task";
   private final TaskFile myTaskFile;
 
-  public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
+  public EduSingleFileEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
     super(project, file, TextEditorProvider.getInstance());
     myTaskFile = EduUtils.getTaskFile(project, file);
 
