@@ -201,18 +201,18 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   public static void navigateToPsiElement(@NotNull Project project, @NotNull String url) {
     String qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "");
 
-    for (QualifiedNameProvider provider : Extensions.getExtensions(QualifiedNameProvider.EP_NAME)) {
-      PsiElement element = provider.qualifiedNameToElement(qualifiedName, project);
-      if (element instanceof NavigatablePsiElement) {
-        NavigatablePsiElement navigatableElement = (NavigatablePsiElement)element;
-        Application application = ApplicationManager.getApplication();
-        application.invokeLater(() -> application.runReadAction(() -> {
+    Application application = ApplicationManager.getApplication();
+    application.invokeLater(() -> application.runReadAction(() -> {
+      for (QualifiedNameProvider provider : Extensions.getExtensions(QualifiedNameProvider.EP_NAME)) {
+        PsiElement element = provider.qualifiedNameToElement(qualifiedName, project);
+        if (element instanceof NavigatablePsiElement) {
+          NavigatablePsiElement navigatableElement = (NavigatablePsiElement)element;
           if (navigatableElement.canNavigate()) {
             navigatableElement.navigate(true);
           }
-        }));
-        break;
+          break;
+        }
       }
-    }
+    }));
   }
 }
