@@ -53,18 +53,6 @@ class LoadSolutionsTest : StepikTestCase() {
     assert(taskToUpdate.taskFiles.size == 1)
   }
 
-  @Test
-  fun testLoadSolution() {
-    doCheck()
-
-
-  }
-
-  @Test
-  fun testLoadSolutionWithPlaceholders() {
-    doCheck(this::checkPlaceholders)
-  }
-
   private fun doCheck(check: (TaskFile, TaskFile) -> Unit = {_, _ -> }) {
     val course = StudyTaskManager.getInstance(project).course!! as RemoteCourse
     val oldTask = firstTask(course)
