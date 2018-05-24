@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.coursera.CourseraNames;
-import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
@@ -110,7 +110,7 @@ public class CheckAction extends DumbAwareAction {
       return;
     }
 
-    final EduEditor studyEditor = EduUtils.getSelectedEduEditor(project);
+    final EduSingleFileEditor studyEditor = EduUtils.getSelectedEduEditor(project);
     if (studyEditor != null) {
       final Task task = studyEditor.getTaskFile().getTask();
       if (task instanceof TheoryTask) {

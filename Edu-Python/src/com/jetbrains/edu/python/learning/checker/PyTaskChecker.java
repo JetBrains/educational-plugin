@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +46,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
 
     if (!task.isValid(project)) {
       return new CheckResult(CheckStatus.Unchecked,
-              EduEditor.BROKEN_SOLUTION_ERROR_TEXT_START + EduEditor.ACTION_TEXT + EduEditor.BROKEN_SOLUTION_ERROR_TEXT_END);
+                             EduSingleFileEditor.BROKEN_SOLUTION_ERROR_TEXT_START + EduSingleFileEditor.ACTION_TEXT + EduSingleFileEditor.BROKEN_SOLUTION_ERROR_TEXT_END);
     }
     CountDownLatch latch = new CountDownLatch(1);
     ApplicationManager.getApplication()

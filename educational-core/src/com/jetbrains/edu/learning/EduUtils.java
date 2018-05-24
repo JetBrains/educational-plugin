@@ -63,7 +63,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
@@ -169,7 +169,7 @@ public class EduUtils {
     presentation.setEnabled(false);
     final Project project = e.getProject();
     if (project != null) {
-      final EduEditor eduEditor = getSelectedEduEditor(project);
+      final EduSingleFileEditor eduEditor = getSelectedEduEditor(project);
       if (eduEditor != null) {
         presentation.setEnabledAndVisible(true);
       }
@@ -204,7 +204,7 @@ public class EduUtils {
     BalloonBuilder balloonBuilder =
       JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, messageType, null);
     final Balloon balloon = balloonBuilder.createBalloon();
-    final EduEditor eduEditor = getSelectedEduEditor(project);
+    final EduSingleFileEditor eduEditor = getSelectedEduEditor(project);
     Editor editor = eduEditor != null ? eduEditor.getEditor() : FileEditorManager.getInstance(project).getSelectedTextEditor();
     assert editor != null;
     balloon.show(computeLocation(editor), Balloon.Position.above);
@@ -274,12 +274,12 @@ public class EduUtils {
   }
 
   @Nullable
-  public static EduEditor getSelectedEduEditor(@NotNull final Project project) {
+  public static EduSingleFileEditor getSelectedEduEditor(@NotNull final Project project) {
     try {
       final FileEditor fileEditor = FileEditorManagerEx.getInstanceEx(project).getSplitters().getCurrentWindow().
         getSelectedEditor().getSelectedEditorWithProvider().getFirst();
-      if (fileEditor instanceof EduEditor) {
-        return (EduEditor)fileEditor;
+      if (fileEditor instanceof EduSingleFileEditor) {
+        return (EduSingleFileEditor)fileEditor;
       }
     }
     catch (Exception e) {
@@ -290,7 +290,7 @@ public class EduUtils {
 
   @Nullable
   public static Editor getSelectedEditor(@NotNull final Project project) {
-    final EduEditor eduEditor = getSelectedEduEditor(project);
+    final EduSingleFileEditor eduEditor = getSelectedEduEditor(project);
     if (eduEditor != null) {
       return eduEditor.getEditor();
     }
@@ -583,7 +583,7 @@ public class EduUtils {
     return taskFile == null ? null : FileDocumentManager.getInstance().getDocument(taskFile);
   }
 
-  public static void selectFirstAnswerPlaceholder(@Nullable final EduEditor eduEditor, @NotNull final Project project) {
+  public static void selectFirstAnswerPlaceholder(@Nullable final EduSingleFileEditor eduEditor, @NotNull final Project project) {
     if (eduEditor == null) return;
     final Editor editor = eduEditor.getEditor();
     IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
@@ -662,8 +662,8 @@ public class EduUtils {
         return;
       }
       final FileEditor studyEditor = editors[0];
-      if (studyEditor instanceof EduEditor) {
-        selectFirstAnswerPlaceholder((EduEditor)studyEditor, project);
+      if (studyEditor instanceof EduSingleFileEditor) {
+        selectFirstAnswerPlaceholder((EduSingleFileEditor)studyEditor, project);
       }
       FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
     }

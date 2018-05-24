@@ -19,7 +19,7 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
     return taskFile != null && !taskFile.isUserCreated && TextEditorProvider.isTextFile(file)
   }
 
-  override fun createEditor(project: Project, file: VirtualFile): FileEditor = EduEditor(project, file)
+  override fun createEditor(project: Project, file: VirtualFile): FileEditor = EduSingleFileEditor(project, file)
 
   override fun disposeEditor(editor: FileEditor) {
     defaultTextEditorProvider.disposeEditor(editor)

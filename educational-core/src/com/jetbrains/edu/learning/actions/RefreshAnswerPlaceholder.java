@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import org.jetbrains.annotations.Nullable;
 
 public class RefreshAnswerPlaceholder extends DumbAwareAction {
@@ -34,7 +34,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (placeholder == null) {
       return;
     }
-    EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
+    EduSingleFileEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     if (eduEditor != null) {
       String replacementText = placeholder.getPlaceholderText();
       EduUtils.replaceAnswerPlaceholder(eduEditor.getEditor().getDocument(), placeholder, placeholder.getRealLength(), replacementText);
@@ -73,7 +73,7 @@ public class RefreshAnswerPlaceholder extends DumbAwareAction {
     if (project == null) {
       return null;
     }
-    EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
+    EduSingleFileEditor eduEditor = EduUtils.getSelectedEduEditor(project);
     final EduState eduState = new EduState(eduEditor);
     if (eduEditor == null || !eduState.isValid()) {
       return null;

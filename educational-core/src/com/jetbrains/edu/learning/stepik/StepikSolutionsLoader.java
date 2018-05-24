@@ -28,7 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
-import com.jetbrains.edu.learning.editor.EduEditor;
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -74,7 +74,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private void init() {
-    EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
+    EduSingleFileEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
     if (selectedEduEditor != null && selectedEduEditor.getTaskFile() != null) {
       mySelectedTask = selectedEduEditor.getTaskFile().getTask();
     }
@@ -138,7 +138,7 @@ public class StepikSolutionsLoader implements Disposable {
 
     ApplicationManager.getApplication().invokeLater(() -> {
       if (mySelectedTask != null && tasksToUpdate.contains(mySelectedTask)) {
-        EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
+        EduSingleFileEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
         if (selectedEduEditor != null) {
           selectedEduEditor.showLoadingPanel();
           enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getStepId()));
@@ -218,7 +218,7 @@ public class StepikSolutionsLoader implements Disposable {
     myBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
-        EduEditor eduEditor = EduUtils.getSelectedEduEditor(myProject);
+        EduSingleFileEditor eduEditor = EduUtils.getSelectedEduEditor(myProject);
         TaskFile taskFile = EduUtils.getTaskFile(myProject, file);
         if (eduEditor != null && taskFile != null) {
           mySelectedTask = taskFile.getTask();
@@ -240,7 +240,7 @@ public class StepikSolutionsLoader implements Disposable {
       try {
         future.get();
         ApplicationManager.getApplication().invokeLater(() -> {
-          EduEditor selectedEditor = EduUtils.getSelectedEduEditor(myProject);
+          EduSingleFileEditor selectedEditor = EduUtils.getSelectedEduEditor(myProject);
           if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().getName())) {
             JBLoadingPanel component = selectedEditor.getComponent();
             component.stopLoading();
