@@ -1,14 +1,15 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import org.intellij.lang.annotations.Language
 import java.util.regex.Pattern
 
 private val OPENING_TAG: Pattern = Pattern.compile("<p>")
@@ -16,7 +17,7 @@ private val CLOSING_TAG: Pattern = Pattern.compile("</p>")
 
 fun course(
   name: String = "Test Course",
-  language: Language = PlainTextLanguage.INSTANCE,
+  language: com.intellij.lang.Language = PlainTextLanguage.INSTANCE,
   courseMode: String = EduNames.STUDY,
   buildCourse: CourseBuilder.() -> Unit
 ): Course {
@@ -118,8 +119,8 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     name: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
-    buildTask: TaskBuilder.() -> Unit = {})
-  {
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) {
     val taskBuilder = TaskBuilder(lesson, task)
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
@@ -142,6 +143,13 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     taskDescriptionFormat: DescriptionFormat? = null,
     buildTask: TaskBuilder.() -> Unit = {}
   ) = task(TheoryTask(), name, taskDescription, taskDescriptionFormat, buildTask)
+
+  fun outputTask(
+    name: String? = null,
+    taskDescription: String? = null,
+    taskDescriptionFormat: DescriptionFormat? = null,
+    buildTask: TaskBuilder.() -> Unit = {}
+  ) = task(OutputTask(), name, taskDescription, taskDescriptionFormat, buildTask)
 }
 
 class TaskBuilder(val lesson: Lesson, val task: Task) {
@@ -177,6 +185,39 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     taskFile.task = task
     task.addTaskFile(taskFile)
   }
+
+  fun kotlinTaskFile(
+    name: String,
+    @Language("kotlin") text: String = "",
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, buildTaskFile)
+
+  fun javaTaskFile(
+    name: String,
+    @Language("JAVA") text: String = "",
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, buildTaskFile)
+
+  fun pythonTaskFile(
+    name: String,
+    @Language("Python") text: String = "",
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, buildTaskFile)
+
+  fun scalaTaskFile(
+    name: String,
+    @Language("Scala") text: String = "",
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, buildTaskFile)
+
+  fun testFile(name: String, text: String = "") {
+    task.addTestsTexts(name, text)
+  }
+
+  fun kotlinTestFile(name: String, @Language("kotlin") text: String = "") = testFile(name, text)
+  fun javaTestFile(name: String, @Language("JAVA") text: String = "") = testFile(name, text)
+  fun pythonTestFile(name: String, @Language("Python") text: String = "") = testFile(name, text)
+  fun scalaTestFile(name: String, @Language("Scala") text: String = "") = testFile(name, text)
 
   private fun extractPlaceholdersFromText(text: StringBuilder): List<AnswerPlaceholder> {
     val openingMatcher = OPENING_TAG.matcher(text)
