@@ -41,7 +41,7 @@ class KtCheckersTest : KtCheckersTestBase() {
         kotlinTaskFile("Task.kt", """
           fun main(args: Array<String>) {
               println("OK")
-            }
+          }
         """)
         testFile("output.txt", "OK")
       }
