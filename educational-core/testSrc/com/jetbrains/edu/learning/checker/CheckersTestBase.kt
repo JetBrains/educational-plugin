@@ -31,7 +31,6 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl
 import com.intellij.testFramework.*
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
-import com.intellij.util.io.ZipUtil
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
@@ -40,17 +39,14 @@ import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.junit.Assert
 import org.junit.ComparisonFailure
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.FileOutputStream
-import java.util.zip.ZipOutputStream
 
 abstract class CheckersTestBase : UsefulTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
     private lateinit var myOldManager: FileEditorManager
     private lateinit var myOldDockContainers: Set<DockContainer>
 
-    private lateinit var course: Course
+    private lateinit var myCourse: Course
     protected lateinit var myProject: Project
     private lateinit var myApplication: IdeaTestApplication
 
@@ -58,14 +54,11 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
     private val MY_TEST_JDK_NAME = "Test JDK"
 
-    open protected val dataPath: String = ""
-    protected val testDataPath: String get() = "testData/$dataPath"
-
     fun doTest() {
         UIUtil.dispatchAllInvocationEvents()
 
         val exceptions = arrayListOf<AssertionError>()
-        for (lesson in course.lessons) {
+        for (lesson in myCourse.lessons) {
             for (task in lesson.getTaskList()) {
                 try {
                     val taskDir = task.getTaskDir(myProject) ?: error("Cannot find task directory for task ${task.name}")
@@ -89,7 +82,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
         }
     }
 
-    private class MultipleCauseException(val causes: ArrayList<AssertionError>) : Exception() {
+    private class MultipleCauseException(val causes: List<AssertionError>) : Exception() {
         override fun printStackTrace() {
             for (cause in causes) {
                 cause.printStackTrace()
@@ -101,6 +94,8 @@ abstract class CheckersTestBase : UsefulTestCase() {
     }
 
     protected abstract fun getGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>
+
+    protected abstract fun createCourse(): Course
 
     private fun projectName() = getTestName(true)
 
@@ -119,10 +114,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
     }
 
     private fun createEduProject() {
-        val zipPath = packCourseToZip()
-
-        course = EduUtils.getLocalCourse(zipPath)
-                ?: error("Cannot create course from $testDataPath/${projectName()} project")
+        myCourse = createCourse()
 
         val jdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME)
                 ?: error("Gradle JDK should be configured in setUp()")
@@ -135,19 +127,9 @@ abstract class CheckersTestBase : UsefulTestCase() {
             override fun getSdkName() = jdk.name
         })
 
-        getGenerator(course).doCreateCourseProject(myTestDir.absolutePath, settings)
+        getGenerator(myCourse).doCreateCourseProject(myTestDir.absolutePath, settings)
         myProject = ProjectManager.getInstance().openProjects.firstOrNull { it.name == UsefulTestCase.TEMP_DIR_MARKER + projectName() }
                     ?: error("Cannot find project with name ${projectName()}")
-    }
-
-    private fun packCourseToZip(): String {
-        val testName = projectName()
-        val courseFile = File("$testDataPath/$testName/course.json")
-        val zipFile = File(myTestDir, testName + ".zip")
-        ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
-            ZipUtil.addFileOrDirRecursively(zos, null, File(courseFile.path), courseFile.name, null, null)
-        }
-        return zipFile.absolutePath
     }
 
     override fun setUp() {
