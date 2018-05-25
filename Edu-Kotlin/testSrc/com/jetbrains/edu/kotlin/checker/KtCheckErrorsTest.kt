@@ -17,7 +17,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
   override fun createCourse(): Course = course(language = KotlinLanguage.INSTANCE) {
     lesson {
       eduTask("kotlinCompilationError") {
-        kotlinTaskFile("Task.kt", "fun foo() = aaa")
+        kotlinTaskFile("Task.kt", "fun foo(): Int = aaa")
         kotlinTestFile("Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
@@ -53,7 +53,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
       }
       eduTask("testFail") {
         kotlinTaskFile("Task.kt", """
-          fun foo() = 43
+          fun foo(): Int = 43
         """)
         kotlinTestFile("Tests.kt", """
           import org.junit.Assert
@@ -67,6 +67,71 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
           }
         """)
       }
+      eduTask("comparisonTestFail") {
+        kotlinTaskFile("Task.kt", """
+          fun foo(): Int = 43
+        """)
+        kotlinTestFile("Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+
+          class Test {
+              @Test
+              fun testSolution() {
+                  Assert.assertEquals(42, foo())
+              }
+          }
+        """)
+      }
+      eduTask("comparisonTestWithMessageFail") {
+        kotlinTaskFile("Task.kt", """
+          fun foo(): Int = 43
+        """)
+        kotlinTestFile("Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+
+          class Test {
+              @Test
+              fun testSolution() {
+                  Assert.assertEquals("foo() should return 42", 42, foo())
+              }
+          }
+        """)
+      }
+      eduTask("comparisonMultilineTestFail") {
+        kotlinTaskFile("Task.kt", """
+          fun foo(): String = "Hello\nWorld!"
+        """)
+        kotlinTestFile("Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+
+          class Test {
+              @Test
+              fun testSolution() {
+                  Assert.assertEquals("Wrong Answer", "Hello,\nWorld!", foo())
+              }
+          }
+        """)
+      }
+      outputTask("outputTaskFail") {
+        kotlinTaskFile("Task.kt", """
+          fun main(args: Array<String>) {
+              println("OK")
+          }
+        """)
+        testFile("output.txt", "OK!")
+      }
+      outputTask("multilineOutputTaskFail") {
+        kotlinTaskFile("Task.kt", """
+          fun main(args: Array<String>) {
+              println("Hello")
+              println("World")
+          }
+        """)
+        testFile("output.txt", "Hello,\nWorld!")
+      }
     }
   }
 
@@ -76,8 +141,38 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
       when (task.name) {
         "kotlinCompilationError", "javaCompilationError" -> CheckUtils.COMPILATION_FAILED_MESSAGE
         "testFail" -> "foo() should return 42"
+        "comparisonTestFail" -> """
+                                Expected: 42
+                                Actual: 43
+                                """
+        "comparisonTestWithMessageFail" ->  """
+                                            foo() should return 42
+                                            Expected: 42
+                                            Actual: 43
+                                            """
+        "comparisonMultilineTestFail" ->  """
+                                          Wrong Answer
+                                          Expected: Hello,
+                                          World!
+                                          Actual: Hello
+                                          World!
+                                          """
+        "outputTaskFail" -> """
+                            Expected output:
+                            OK!
+                            Actual output:
+                            OK
+                            """
+        "multilineOutputTaskFail" ->  """
+                                      Expected output:
+                                      Hello,
+                                      World!
+                                      Actual output:
+                                      Hello
+                                      World
+                                      """
         else -> null
-      }
+      }?.trimIndent()
     }
     doTest()
   }
