@@ -46,8 +46,10 @@ fun generateGradleCommandLine(project: Project, command: String, vararg addition
   return cmd
 }
 
-class GradleOutput(val isSuccess: Boolean, _message: String) {
-  val message = _message.postProcessOutput()
+class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
+  val messages = _messages.map { it.postProcessOutput() }
+
+  val firstMessage: String get() = messages.firstOrNull { it.isNotBlank() } ?: "<no output>"
 }
 
 fun getProcessOutput(process: Process, commandLine: String, taskName: String): GradleOutput {
@@ -62,75 +64,68 @@ fun getProcessOutput(process: Process, commandLine: String, taskName: String): G
 
   val stderr = output.stderr
   if (!stderr.isEmpty() && output.stdout.isEmpty()) {
-    return GradleOutput(false, stderr)
+    return GradleOutput(false, listOf(stderr))
   }
 
   //gradle prints compilation failures to error stream
   if (hasCompilationErrors(output)) {
-    return GradleOutput(false, COMPILATION_FAILED_MESSAGE)
+    return GradleOutput(false, listOf(COMPILATION_FAILED_MESSAGE))
   }
 
   if (!output.stdout.contains(taskName)) {
     TaskChecker.LOG.warn("#educational: executing $taskName fails: \n" + output.stdout)
-    return GradleOutput(false, "$FAILED_TO_CHECK_MESSAGE. See idea.log for more details.")
+    return GradleOutput(false, listOf("$FAILED_TO_CHECK_MESSAGE. See idea.log for more details."))
   }
 
   var currentMessage: StringBuilder? = null
-  val allMessages = StringBuilder()
-  for (line in output.stdoutLines) {
-    when {
-      line.startsWith(STUDY_PREFIX) -> {
-        if (currentMessage != null) {
-          allMessages.appendln(currentMessage)
-        }
-        currentMessage = StringBuilder(line.removePrefix(STUDY_PREFIX)).append("\n")
-      }
-      line.isNullOrBlank() -> {
-        if (currentMessage != null) {
-          allMessages.appendln(currentMessage)
-        }
-        currentMessage = null
-      }
-      else -> currentMessage?.appendln(line)
+  val allMessages = mutableListOf<String>()
+
+  fun addCurrentMessageIfNeeded() {
+    if (currentMessage != null) {
+      allMessages += currentMessage.toString()
     }
   }
 
-  return GradleOutput(true, allMessages.toString())
+  for (line in output.stdoutLines) {
+    if (line.startsWith(STUDY_PREFIX)) {
+      val messageLine = line.removePrefix(STUDY_PREFIX)
+      if (currentMessage != null) {
+        currentMessage.appendln(messageLine)
+      } else {
+        currentMessage = StringBuilder(messageLine).append("\n")
+      }
+    } else {
+      addCurrentMessageIfNeeded()
+      currentMessage = null
+    }
+  }
+
+  addCurrentMessageIfNeeded()
+
+  return GradleOutput(true, allMessages)
 }
 
 fun String.postProcessOutput() = replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
 
-fun parseTestsOutput(process: Process, commandLine: String, taskName: String): GradleOutput {
+fun parseTestsOutput(process: Process, commandLine: String, taskName: String): CheckResult {
   val output = getProcessOutput(process, commandLine, taskName)
-  if (!output.isSuccess) return output
+  if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage)
 
-  val lines = output.message.split("\n")
   var congratulations = TestsOutputParser.CONGRATULATIONS
-  for ((i, line) in lines.withIndex()) {
-    if (line.contains(TestsOutputParser.TEST_OK)) {
-      continue
-    }
 
-    if (line.contains(TestsOutputParser.CONGRATS_MESSAGE)) {
-      congratulations = line.substringAfter(TestsOutputParser.CONGRATS_MESSAGE)
-    }
-
-    if (line.contains(TestsOutputParser.TEST_FAILED)) {
-      val message = buildString {
-        append(line.substringAfter(TestsOutputParser.TEST_FAILED))
-        var index = i + 1
-        while (index < lines.size && TestsOutputParser.TEST_FAILED !in lines[index] && !lines[index].isBlank()) {
-          append("\n")
-          append(lines[index])
-          index++
-        }
+  loop@for (message in output.messages) {
+    when {
+      TestsOutputParser.TEST_OK in message -> continue@loop
+      TestsOutputParser.CONGRATS_MESSAGE in message -> {
+        congratulations = message.substringAfter(TestsOutputParser.CONGRATS_MESSAGE)
       }
-      return GradleOutput(false, message.prettify())
-
+      TestsOutputParser.TEST_FAILED in message -> {
+        return CheckResult(CheckStatus.Failed, message.substringAfter(TestsOutputParser.TEST_FAILED).prettify())
+      }
     }
   }
 
-  return GradleOutput(true, congratulations)
+  return CheckResult(CheckStatus.Solved, congratulations)
 }
 
 private fun String.prettify(): String {
@@ -162,11 +157,10 @@ fun runGradleRunTask(project: Project, task: Task,
 
   val gradleOutput = getProcessOutput(cmd.createProcess(), cmd.commandLineString, taskName)
   if (!gradleOutput.isSuccess) {
-    return Err(CheckResult(CheckStatus.Failed, gradleOutput.message))
+    return Err(CheckResult(CheckStatus.Failed, gradleOutput.firstMessage))
   }
 
-  val output = gradleOutput.message.takeIf { it.isNotBlank() } ?: "<no output>"
-  return Ok(output)
+  return Ok(gradleOutput.firstMessage)
 }
 
 private fun findMainClass(project: Project, task: Task, mainClassForFile: (Project, VirtualFile) -> String?): String? =
