@@ -7,7 +7,6 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.TaskChecker
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
@@ -19,8 +18,7 @@ class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTas
     ) ?: return FAILED_TO_CHECK
 
     return try {
-      val output = parseTestsOutput(cmd.createProcess(), cmd.commandLineString, taskName)
-      CheckResult(if (output.isSuccess) CheckStatus.Solved else CheckStatus.Failed, output.message)
+      return parseTestsOutput(cmd.createProcess(), cmd.commandLineString, taskName)
     } catch (e: ExecutionException) {
       Logger.getInstance(GradleEduTaskChecker::class.java).info(CheckUtils.FAILED_TO_CHECK_MESSAGE, e)
       FAILED_TO_CHECK
