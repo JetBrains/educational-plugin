@@ -64,7 +64,8 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
       createNewLessons(newLessons, project.baseDir)
     }
     val lessonsUpdated = updateLessons(courseFromServer.lessons.filter { course.getLesson(it.id) != null }, course)
-    course.items = courseFromServer.items
+    course.clearItems()
+    course.addItems(courseFromServer.items)
     setCourseInfo(courseFromServer)
 
     return Pair(lessonsUpdated, newLessons.size)
