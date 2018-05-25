@@ -4,29 +4,6 @@ buildscript {
     }
 }
 
-class MyListener implements TestListener {
-
-    @Override
-    void beforeSuite(TestDescriptor suite) {
-
-    }
-
-    @Override
-    void afterSuite(TestDescriptor suite, TestResult result) {
-    }
-
-    @Override
-    void beforeTest(TestDescriptor testDescriptor) {
-
-    }
-
-    public void afterTest(TestDescriptor test, TestResult result) {
-        if (result.resultType == TestResult.ResultType.FAILURE) {
-            println("#educational_plugin FAILED + " + (result.exception.message ?: "Wrong answer"));
-        }
-    }
-}
-
 def printOutput(def output) {
     return tasks.create("printOutput") {
         for (line in output.toString().split(System.getProperty("line.separator"))) {
@@ -60,9 +37,21 @@ subprojects {
 
     mainClassName = project.hasProperty("mainClass") ? project.getProperty("mainClass") : ""
 
-    test.outputs.upToDateWhen { false }
-
-    gradle.addListener(new MyListener())
+    test {
+        outputs.upToDateWhen { false }
+        afterTest { TestDescriptor test, TestResult result ->
+            if (result.resultType == TestResult.ResultType.FAILURE) {
+                def message = result.exception?.message ?: "Wrong answer"
+                def lines = message.split(System.getProperty("line.separator"))
+                println "#educational_plugin FAILED + " + lines[0]
+                lines[1..-1].forEach { line ->
+                    println "#educational_plugin" + line
+                }
+                // we need this to separate output of different tests
+                println
+            }
+        }
+    }
 
     def runOutput = new ByteArrayOutputStream()
     tasks.run.setStandardOutput(runOutput)
