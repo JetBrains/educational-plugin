@@ -53,13 +53,17 @@ class EduSplitEditor(
     }
   }
 
-  override fun getState(level: FileEditorStateLevel): FileEditorState =
-    EduSplitEditorState(mainEditor.getState(level), secondaryEditor.getState(level))
+  override fun getState(level: FileEditorStateLevel): EduEditorState {
+    val mainEditorState = mainEditor.getState(level)
+    return EduEditorState(mainEditorState.mainEditorState, secondaryEditor.getState(level))
+  }
 
-  override fun setState(state: FileEditorState) {
-    if (state is EduSplitEditorState) {
-      state.mainEditorState?.also(mainEditor::setState)
-      state.secondaryEditorState?.also(secondaryEditor::setState)
+  override fun setState(state: FileEditorState, exactState: Boolean) {
+    if (state is EduEditorState) {
+      mainEditor.setState(state, exactState)
+      state.secondaryEditorState?.also {
+        secondaryEditor.setState(it, exactState)
+      }
     }
   }
 
@@ -97,18 +101,6 @@ class EduSplitEditor(
     val editor: T,
     val taskFile: TaskFile
   )
-
-  class EduSplitEditorState(
-    val mainEditorState: FileEditorState?,
-    val secondaryEditorState: FileEditorState?
-  ) : FileEditorState {
-
-    override fun canBeMergedWith(otherState: FileEditorState?, level: FileEditorStateLevel): Boolean {
-      return otherState is EduSplitEditorState &&
-             mainEditorState?.canBeMergedWith(otherState.mainEditorState, level) != false &&
-             secondaryEditorState?.canBeMergedWith(otherState.secondaryEditorState, level) != false
-    }
-  }
 
   private class EditorComponent(editorData: EditorData<out FileEditor>): JPanel(BorderLayout()) {
 

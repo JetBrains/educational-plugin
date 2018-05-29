@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.editor
 
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.fileEditor.FileEditorState
+import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import com.intellij.openapi.project.Project
@@ -30,6 +32,16 @@ class EduSingleFileEditor(project: Project, file: VirtualFile) : PsiAwareTextEdi
 
   init {
     validateTaskFile()
+  }
+
+  override fun getState(level: FileEditorStateLevel): EduEditorState {
+    val state = super.getState(level)
+    return EduEditorState(state, null)
+  }
+
+  override fun setState(state: FileEditorState, exactState: Boolean) {
+    val realState = (state as? EduEditorState)?.mainEditorState ?: state
+    super<PsiAwareTextEditorImpl>.setState(realState, exactState)
   }
 
   override fun validateTaskFile() {
