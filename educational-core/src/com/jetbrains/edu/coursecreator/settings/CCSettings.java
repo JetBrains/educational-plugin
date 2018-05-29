@@ -13,6 +13,7 @@ public class CCSettings implements PersistentStateComponent<CCSettings.State> {
 
   public static class State {
     public boolean isHtmlDefault = true;
+    public boolean showSplitEditor = false;
   }
   @Nullable
   @Override
@@ -31,6 +32,14 @@ public class CCSettings implements PersistentStateComponent<CCSettings.State> {
   
   public void setUseHtmlAsDefaultTaskFormat(final boolean useHtml) {
     myState.isHtmlDefault = useHtml;
+  }
+
+  public boolean showSplitEditor() {
+    return myState.showSplitEditor;
+  }
+
+  public void setShowSplitEditor(boolean value) {
+    myState.showSplitEditor = value;
   }
 
   public static CCSettings getInstance() {
