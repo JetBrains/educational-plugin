@@ -2,7 +2,9 @@ package com.jetbrains.edu.coursecreator.actions.placeholder;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -12,6 +14,7 @@ import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.editor.EduEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,10 +40,11 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
     if (virtualFile == null) {
       return null;
     }
-    final Editor editor = CommonDataKeys.EDITOR.getData(e.getDataContext());
-    if (editor == null) {
+    FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(e.getDataContext());
+    if (!(fileEditor instanceof EduEditor)) {
       return null;
     }
+    final Editor editor = ((EduEditor)fileEditor).getEditor();
     TaskFile taskFile = EduUtils.getTaskFile(project, virtualFile);
     if (taskFile == null || !taskFile.isVisible()) {
       return null;
