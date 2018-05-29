@@ -52,35 +52,12 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
     defaultTextEditorProvider.disposeEditor(editor)
   }
 
-  override fun readState(sourceElement: Element, project: Project, file: VirtualFile): FileEditorState {
-    val splitEditorState = sourceElement.getChild(SPLIT_EDITOR_STATE)
-    return if (splitEditorState != null) {
-      val mainEditorState = splitEditorState.getChild(MAIN_EDITOR_STATE)?.let {
-        defaultTextEditorProvider.readState(it, project, file)
-      }
-      val secondaryEditorState = splitEditorState.getChild(SECONDARY_EDITOR_STATE)?.let {
-        defaultTextEditorProvider.readState(it, project, file)
-      }
-      EduSplitEditor.EduSplitEditorState(mainEditorState, secondaryEditorState)
-    } else {
-      defaultTextEditorProvider.readState(sourceElement, project, file)
-    }
-  }
+  override fun readState(sourceElement: Element, project: Project, file: VirtualFile): FileEditorState =
+    EduEditorState.read(sourceElement, project, file) ?: defaultTextEditorProvider.readState(sourceElement, project, file)
 
   override fun writeState(state: FileEditorState, project: Project, targetElement: Element) {
-    if (state is EduSplitEditor.EduSplitEditorState) {
-      val splitEditorState = Element(SPLIT_EDITOR_STATE)
-      if (state.mainEditorState != null) {
-        val mainEditorState = Element(MAIN_EDITOR_STATE)
-        defaultTextEditorProvider.writeState(state.mainEditorState, project, mainEditorState)
-        splitEditorState.addContent(mainEditorState)
-      }
-      if (state.secondaryEditorState != null) {
-        val secondaryEditorState = Element(SECONDARY_EDITOR_STATE)
-        defaultTextEditorProvider.writeState(state.secondaryEditorState, project, secondaryEditorState)
-        splitEditorState.addContent(secondaryEditorState)
-      }
-      targetElement.addContent(splitEditorState)
+    if (state is EduEditorState) {
+      state.write(project, targetElement)
     } else {
       defaultTextEditorProvider.writeState(state, project, targetElement)
     }
@@ -91,9 +68,5 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
 
   companion object {
     private const val EDITOR_TYPE_ID = "StudyEditor"
-
-    private const val SPLIT_EDITOR_STATE = "EduSplitEditorState"
-    private const val MAIN_EDITOR_STATE = "MainEditorState"
-    private const val SECONDARY_EDITOR_STATE = "SecondaryEditorState"
   }
 }
