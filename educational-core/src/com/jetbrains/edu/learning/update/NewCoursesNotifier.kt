@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.learning.update
 
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.ide.util.PropertiesComponent
@@ -20,10 +20,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel
+import com.jetbrains.edu.learning.stepik.StepikConnector
 import java.util.*
 import javax.swing.JComponent
 
-class StepikUpdater(application: Application) {
+class NewCoursesNotifier(application: Application) {
 
   private val myCheckRunnable = Runnable { updateCourseList().doWhenDone { queueNextCheck(CHECK_INTERVAL) } }
   private val myCheckForUpdatesAlarm = Alarm(Alarm.ThreadToUse.SWING_THREAD)
