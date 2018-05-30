@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.KeyedLazyInstance;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -88,19 +89,9 @@ public class RemoteCourse extends Course {
       return false;
     }
 
-    int topLevelItemsWithoutAdditional = courseFromServer.sectionIds.size() - 1;
-    int topLevelItemsSize = (getLessons(false).isEmpty() ? 0 : 1) + getSections().size();
-    if (topLevelItemsSize < topLevelItemsWithoutAdditional) {
-      return false;
-    }
+    if (!checkSectionsNumber(courseFromServer)) return false;
 
-    if (!getLessons().isEmpty() && courseFromServer.sectionIds.size() > 0) {
-      Section section = StepikConnector.getSection(courseFromServer.sectionIds.get(0));
-      boolean hasNewTopLevelLessons = getLessons().size() < section.units.size();
-      if (hasNewTopLevelLessons) {
-        return false;
-      }
-    }
+    if (!checkTopLevelLessons(courseFromServer)) return false;
 
     for (StudyItem item : items) {
       if (item instanceof Section) {
@@ -113,6 +104,34 @@ public class RemoteCourse extends Course {
           return false;
         }
       }
+    }
+
+    return true;
+  }
+
+  private boolean checkTopLevelLessons(RemoteCourse courseFromServer) {
+    if (!getLessons().isEmpty() && courseFromServer.sectionIds.size() > 0) {
+      Section section = StepikConnector.getSection(courseFromServer.sectionIds.get(0));
+      boolean hasNewTopLevelLessons = getLessons().size() < section.units.size();
+      if (hasNewTopLevelLessons) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  // As we don't store additional sections locally, we ned to remove it for our courses. But Stepik
+  // course doesn't have additional materials sections, so fo them we shouldn't do anything
+  private boolean checkSectionsNumber(RemoteCourse courseFromServer) {
+    Section lastSection = StepikConnector.getSection(courseFromServer.sectionIds.get(courseFromServer.sectionIds.size() - 1));
+    boolean hasAdditional = EduNames.ADDITIONAL_MATERIALS.equals(lastSection.getName()) || StepikNames.PYCHARM_ADDITIONAL.equals(lastSection.getName());
+    int remoteSectionsWithoutAdditional = courseFromServer.sectionIds.size() - (hasAdditional ? 1 : 0);
+
+    int localSectionsSize = (getLessons(false).isEmpty() ? 0 : 1) + getSections().size();
+
+    if (localSectionsSize < remoteSectionsWithoutAdditional) {
+      return false;
     }
 
     return true;
