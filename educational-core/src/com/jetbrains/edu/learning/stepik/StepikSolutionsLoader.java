@@ -118,7 +118,7 @@ public class StepikSolutionsLoader implements Disposable {
     });
   }
 
-  public void loadSolutions(@Nullable ProgressIndicator progressIndicator, @NotNull Course course) {
+  private void loadSolutions(@Nullable ProgressIndicator progressIndicator, @NotNull Course course) {
     List<Task> tasksToUpdate = EduUtils.execCancelable(() -> tasksToUpdate(course));
     if (tasksToUpdate != null) {
       updateTasks(tasksToUpdate, progressIndicator);
