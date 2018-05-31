@@ -24,7 +24,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -37,13 +36,17 @@ import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduCourseBuilder;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
@@ -63,6 +66,7 @@ public abstract class CourseProjectGenerator<S> {
 
   @NotNull protected final EduCourseBuilder<S> myCourseBuilder;
   @NotNull protected Course myCourse;
+  private boolean isEnrolled;
 
   public CourseProjectGenerator(@NotNull EduCourseBuilder<S> builder, @NotNull final Course course) {
     myCourseBuilder = builder;
@@ -74,16 +78,17 @@ public abstract class CourseProjectGenerator<S> {
     final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
     if (remoteCourse.getId() > 0) {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+        final StepicUser user = EduSettings.getInstance().getUser();
+        isEnrolled = StepikConnector.isEnrolledToCourse(remoteCourse.getId(), user);
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        StepikConnector.enrollToCourse(remoteCourse.getId(), EduSettings.getInstance().getUser());
+        StepikConnector.enrollToCourse(remoteCourse.getId(), user);
         RemoteCourse loadedCourse = StepikConnector.getCourse(null, remoteCourse);
         if (loadedCourse != null) {
           myCourse = loadedCourse;
           return true;
-        } else {
-          return false;
         }
-      }, "Loading Course", true, ProjectManager.getInstance().getDefaultProject());
+        return false;
+      }, "Loading Course", true, null);
     }
     return true;
   }
@@ -190,10 +195,12 @@ public abstract class CourseProjectGenerator<S> {
 
   protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
     if (course.isStudy() && course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
-      StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
-      stepikSolutionsLoader.loadSolutionsInBackground();
-      EduUsagesCollector.progressOnGenerateCourse();
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
+      if (isEnrolled) {
+        StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
+        stepikSolutionsLoader.loadSolutionsInBackground();
+        EduUsagesCollector.progressOnGenerateCourse();
+      }
     }
   }
 

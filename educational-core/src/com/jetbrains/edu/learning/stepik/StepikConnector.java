@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -97,6 +98,21 @@ public class StepikConnector {
       CloseableHttpResponse response = client.execute(post);
       StatusLine line = response.getStatusLine();
       return line.getStatusCode() == HttpStatus.SC_CREATED;
+    }
+    catch (IOException e) {
+      LOG.warn(e.getMessage());
+    }
+    return false;
+  }
+
+  public static boolean isEnrolledToCourse(final int courseId, @Nullable final StepicUser user) {
+    if (user == null) return false;
+    HttpGet request = new HttpGet(StepikNames.STEPIK_API_URL + StepikNames.ENROLLMENTS + "/" + courseId);
+    try {
+      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient(user);
+      CloseableHttpResponse response = client.execute(request);
+      StatusLine line = response.getStatusLine();
+      return line.getStatusCode() == HttpStatus.SC_OK;
     }
     catch (IOException e) {
       LOG.warn(e.getMessage());
