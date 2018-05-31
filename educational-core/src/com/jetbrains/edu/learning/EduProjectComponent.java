@@ -149,10 +149,8 @@ public class EduProjectComponent implements ProjectComponent {
       PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
       return;
     }
-    StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(myProject);
     try {
-      List<Task> tasksToUpdate = stepikSolutionsLoader.tasksToUpdateUnderProgress();
-      stepikSolutionsLoader.loadSolutionsInBackground(tasksToUpdate);
+      StepikSolutionsLoader.getInstance(myProject).loadSolutionsInBackground();
     }
     catch (Exception e) {
       LOG.warn(e.getMessage());
