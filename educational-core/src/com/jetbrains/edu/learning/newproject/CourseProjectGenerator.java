@@ -165,6 +165,7 @@ public abstract class CourseProjectGenerator<S> {
       final Lesson lesson = new CCCreateLesson().createAndInitItem(project, myCourse, null, EduNames.LESSON + 1, 1);
       myCourse.addLesson(lesson);
       final Task task = new CCCreateTask().createAndInitItem(project, myCourse, lesson, EduNames.TASK + 1, 1);
+      assert task != null;
       lesson.addTask(task);
       myCourseBuilder.initNewTask(task);
     }
@@ -178,19 +179,19 @@ public abstract class CourseProjectGenerator<S> {
         }
         createAdditionalFiles(project, baseDir);
         EduUsagesCollector.projectTypeCreated(courseTypeId(myCourse));
-        loadSolutions(project, myCourse, indicator);
+
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
       }, "Generating Course Structure", false, project);
+      loadSolutions(project, myCourse);
     } catch (IOException e) {
       LOG.error("Failed to generate course", e);
     }
   }
 
-  protected void loadSolutions(@NotNull Project project, @NotNull Course course, @NotNull ProgressIndicator indicator) {
+  protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
     if (course.isStudy() && course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
-      indicator.setText("Loading existing solutions");
       StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
-      stepikSolutionsLoader.loadSolutions(indicator, course);
+      stepikSolutionsLoader.loadSolutionsInBackground();
       EduUsagesCollector.progressOnGenerateCourse();
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
     }
