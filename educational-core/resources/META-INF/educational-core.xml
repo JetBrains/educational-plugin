@@ -40,6 +40,9 @@
     <extensionPoint qualifiedName="educational.languageDecorator" beanClass="com.intellij.lang.LanguageExtensionPoint">
       <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduLanguageDecorator"/>
     </extensionPoint>
+
+    <extensionPoint qualifiedName="Educational.coursesProvider"
+                    interface="com.jetbrains.edu.learning.EduCoursesProvider"/>
   </extensionPoints>
 
   <actions>
@@ -237,6 +240,7 @@
     <checkListener implementation="com.jetbrains.edu.learning.stepik.NextRecommendationCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
+    <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
   </extensions>
