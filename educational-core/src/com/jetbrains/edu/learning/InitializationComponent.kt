@@ -11,35 +11,24 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
+import com.jetbrains.edu.learning.update.NewCoursesNotifier
 import java.util.*
 
-
 class InitializationComponent : ApplicationComponent {
-    companion object {
-        @JvmField
-        val IDS = arrayOf(
-                "com.jetbrains.edu.intellij",
-                "com.jetbrains.edu.interactivelearning",
-                "com.jetbrains.python.edu.interactivelearning.python",
-                "com.jetbrains.edu.coursecreator",
-                "com.jetbrains.edu.coursecreator.python",
-                "com.jetbrains.edu.kotlin",
-                "com.jetbrains.edu.coursecreator.intellij",
-                "com.jetbrains.edu.java",
-                "com.jetbrains.python.edu.core",
-                "com.jetbrains.edu.core"
-        )
-        const val CONFLICTING_PLUGINS_DISABLED = "Educational.conflictingPluginsDisabled"
-    }
+
+    private val myNewCoursesNotifier = NewCoursesNotifier()
 
     override fun initComponent() {
         //Register placeholder size listener
         EditorFactory.getInstance().addEditorFactoryListener(EduEditorFactoryListener(), ApplicationManager.getApplication())
 
-        // Remove conflicting plugins
-        if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED) || ApplicationManager.getApplication().isUnitTestMode) {
+        if (isUnitTestMode) return
+        if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED)) {
+            myNewCoursesNotifier.scheduleNotification()
             return
         }
+
+        // Remove conflicting plugins
         var disabledPlugins = disablePlugins()
         if (disabledPlugins.isNotEmpty()) {
             disabledPlugins = disabledPlugins.map { name -> "'$name'" }
@@ -57,10 +46,9 @@ class InitializationComponent : ApplicationComponent {
             ApplicationManager.getApplication().restart()
         } else {
             PropertiesComponent.getInstance().setValue(CONFLICTING_PLUGINS_DISABLED, "true")
+            myNewCoursesNotifier.scheduleNotification()
         }
-
     }
-
 
     private fun disablePlugins(): List<String> {
         val disabledPlugins = ArrayList<String>()
@@ -73,5 +61,22 @@ class InitializationComponent : ApplicationComponent {
             }
         }
         return disabledPlugins
+    }
+
+    companion object {
+        @JvmField
+        val IDS = arrayOf(
+          "com.jetbrains.edu.intellij",
+          "com.jetbrains.edu.interactivelearning",
+          "com.jetbrains.python.edu.interactivelearning.python",
+          "com.jetbrains.edu.coursecreator",
+          "com.jetbrains.edu.coursecreator.python",
+          "com.jetbrains.edu.kotlin",
+          "com.jetbrains.edu.coursecreator.intellij",
+          "com.jetbrains.edu.java",
+          "com.jetbrains.python.edu.core",
+          "com.jetbrains.edu.core"
+        )
+        const val CONFLICTING_PLUGINS_DISABLED = "Educational.conflictingPluginsDisabled"
     }
 }
