@@ -48,7 +48,7 @@ class NewCoursesNotifierTest : EduTestCase() {
         }
       }) {
         newCoursesNotifier.setNewCheckInterval(DateFormatUtil.SECOND)
-        newCoursesNotifier.scheduleCourseListUpdate()
+        newCoursesNotifier.scheduleNotificationInternal()
         actionCallback
       }
 
