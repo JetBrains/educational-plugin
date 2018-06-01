@@ -6,7 +6,7 @@ buildscript {
 
 def printOutput(def output) {
     return tasks.create("printOutput") {
-        for (line in output.toString().split(System.getProperty("line.separator"))) {
+        for (line in output.toString().readLines()) {
             println "#educational_plugin" + line
         }
     }
@@ -47,7 +47,7 @@ subprojects {
         afterTest { TestDescriptor test, TestResult result ->
             if (result.resultType == TestResult.ResultType.FAILURE) {
                 def message = result.exception?.message ?: "Wrong answer"
-                def lines = message.split(System.getProperty("line.separator"))
+                def lines = message.readLines()
                 println "#educational_plugin FAILED + " + lines[0]
                 lines[1..-1].forEach { line ->
                     println "#educational_plugin" + line
