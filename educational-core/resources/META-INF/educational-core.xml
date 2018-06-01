@@ -13,9 +13,6 @@
 
   <application-components>
     <component>
-      <implementation-class>com.jetbrains.edu.learning.update.NewCoursesNotifier</implementation-class>
-    </component>
-    <component>
       <implementation-class>com.jetbrains.edu.learning.InitializationComponent</implementation-class>
     </component>
     <component>
