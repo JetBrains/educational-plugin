@@ -61,6 +61,7 @@ public class EduNames {
   public static final String JAVA = "JAVA";
   public static final String KOTLIN = "kotlin";
   public static final String PYTHON = "Python";
+  public static final String STEPIK_IDS_JSON = "stepik_ids.json";
 
   private EduNames() {
   }

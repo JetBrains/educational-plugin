@@ -131,6 +131,8 @@
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
     </group>
 
+    <action id="Educational.Educator.ExportStepikIds" class="com.jetbrains.edu.coursecreator.actions.stepik.ExportStepikIds"/>
+
     <group id="Educational.Educator.File" popup="true" text="Course Creator"
            class="com.jetbrains.edu.coursecreator.actions.CCFileActionGroup">
       <reference id="Educational.Educator.CreateCoursePreview"/>

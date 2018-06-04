@@ -139,6 +139,11 @@ public class Course extends ItemContainer {
     this.name = name;
   }
 
+  @Override
+  public int getId() {
+    return 0;
+  }
+
   public String getDescription() {
     return description;
   }
