@@ -226,6 +226,9 @@ public class CCStepikConnector {
       section.setPosition(i + 1);
       final int sectionId = postModule(course.getId(), section, project);
       section.setId(sectionId);
+      if (item instanceof Section) {
+        ((Section)item).setId(sectionId);
+      }
       course.getSectionIds().add(sectionId);
 
       int position = 1;
