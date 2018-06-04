@@ -153,6 +153,7 @@ object CCUtils {
         val name = file.name
         if (name == EduNames.COURSE_META_FILE || name == EduNames.HINTS || name.startsWith(".")) return false
         if (name == archiveName) return false
+        if (name == EduNames.STEPIK_IDS_JSON) return false
         if (GENERATED_FILES_FOLDER == name || Project.DIRECTORY_STORE_FOLDER == name) return false
         if (file.isDirectory) return true
         if (EduUtils.isTaskDescriptionFile(name) || EduUtils.isTestsFile(project, file)) return true
