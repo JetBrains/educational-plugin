@@ -56,4 +56,9 @@ public abstract class StudyItem {
   public void setStepikChangeStatus(StepikChangeStatus stepikChangeStatus) {
     this.myStepikChangeStatus = stepikChangeStatus;
   }
+
+  /**
+   * @return Stepik id
+   */
+  public abstract int getId();
 }
