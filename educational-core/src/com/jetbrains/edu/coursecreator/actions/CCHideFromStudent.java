@@ -83,7 +83,7 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
         if (fileEditor instanceof TextEditor) {
           Editor editor = ((TextEditor)fileEditor).getEditor();
           for (AnswerPlaceholder placeholder : placeholders) {
-            NewPlaceholderPainter.INSTANCE.removePainter(editor, placeholder);
+            NewPlaceholderPainter.removePainter(editor, placeholder);
           }
         }
       }

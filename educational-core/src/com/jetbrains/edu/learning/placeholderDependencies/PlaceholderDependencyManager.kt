@@ -15,10 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 
-
 object PlaceholderDependencyManager {
   @JvmStatic
-  fun currentTaskChanged(project: Project, task: Task) {
+  fun updateDependentPlaceholders(project: Project, task: Task) {
     if (CCUtils.isCourseCreator(project)) {
       return
     }
@@ -65,6 +64,7 @@ object PlaceholderDependencyManager {
     }
     try {
       document.replaceString(startOffset, endOffset, replacementText)
+      placeholderToReplace.isInitializedFromDependency = true
     }
     finally {
       if (eduDocumentListener != null) {

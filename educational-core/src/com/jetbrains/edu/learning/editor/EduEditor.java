@@ -64,6 +64,6 @@ public class EduEditor extends PsiAwareTextEditorImpl {
   @Override
   public void selectNotify() {
     super.selectNotify();
-    PlaceholderDependencyManager.currentTaskChanged(myProject, myTaskFile.getTask());
+    PlaceholderDependencyManager.updateDependentPlaceholders(myProject, myTaskFile.getTask());
   }
 }
