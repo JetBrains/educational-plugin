@@ -24,4 +24,9 @@ class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTas
       FAILED_TO_CHECK
     }
   }
+
+  override fun onTaskFailed(message: String) {
+    super.onTaskFailed("Wrong solution")
+    CheckUtils.showTestResultsToolWindow(project, message)
+  }
 }
