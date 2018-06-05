@@ -313,7 +313,7 @@ public class EduUtils {
     if (project == null) return;
     if (!taskFile.isValid(editor.getDocument().getText())) return;
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-      NewPlaceholderPainter.INSTANCE.paintPlaceholder(editor, answerPlaceholder);
+      NewPlaceholderPainter.paintPlaceholder(editor, answerPlaceholder);
     }
 
     final Document document = editor.getDocument();
@@ -675,9 +675,10 @@ public class EduUtils {
     if (eduEditor == null) return;
     final Editor editor = eduEditor.getEditor();
     IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
+    if (!eduEditor.getTaskFile().isValid(editor.getDocument().getText())) return;
     final List<AnswerPlaceholder> placeholders = eduEditor.getTaskFile().getAnswerPlaceholders();
-    if (placeholders.isEmpty() || !eduEditor.getTaskFile().isValid(editor.getDocument().getText())) return;
-    final AnswerPlaceholder placeholder = placeholders.get(0);
+    final AnswerPlaceholder placeholder = placeholders.stream().filter(p -> p.isVisible()).findFirst().orElse(null);
+    if (placeholder == null) return;
     Pair<Integer, Integer> offsets = getPlaceholderOffsets(placeholder);
     editor.getSelectionModel().setSelection(offsets.first, offsets.second);
     editor.getCaretModel().moveToOffset(offsets.first);

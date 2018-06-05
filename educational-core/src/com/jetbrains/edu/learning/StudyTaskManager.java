@@ -68,10 +68,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     return myCourse;
   }
 
-  public void setStatus(AnswerPlaceholder placeholder, CheckStatus status) {
-    placeholder.setStatus(status);
-  }
-
   public void addUserTest(@NotNull final Task task, UserTest userTest) {
     List<UserTest> userTests = myUserTests.get(task);
     if (userTests == null) {
