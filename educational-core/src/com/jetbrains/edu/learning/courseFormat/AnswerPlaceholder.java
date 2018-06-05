@@ -36,6 +36,8 @@ public class AnswerPlaceholder {
   @Nullable
   private AnswerPlaceholderDependency myPlaceholderDependency = null;
 
+  private boolean myIsInitializedFromDependency = false;
+
   @SerializedName("hints")
   @Expose private List<String> myHints = new ArrayList<>();
 
@@ -134,6 +136,8 @@ public class AnswerPlaceholder {
   public void reset() {
     myOffset = myInitialState.getOffset();
     myLength = myInitialState.getLength();
+    myStatus = CheckStatus.Unchecked;
+    myIsInitializedFromDependency = false;
   }
 
   public CheckStatus getStatus() {
@@ -196,6 +200,10 @@ public class AnswerPlaceholder {
     myStudentAnswer = studentAnswer;
   }
 
+  public boolean isVisible() {
+    return myPlaceholderDependency == null || !myPlaceholderDependency.isInvisible() || !isInitializedFromDependency();
+  }
+
   public static class MyInitialState {
     private int length = -1;
     private int offset = -1;
@@ -240,6 +248,14 @@ public class AnswerPlaceholder {
     if (placeholderDependency != null) {
       myPlaceholderDependency.setAnswerPlaceholder(this);
     }
+  }
+
+  public boolean isInitializedFromDependency() {
+    return myIsInitializedFromDependency;
+  }
+
+  public void setInitializedFromDependency(boolean initializedFromDependency) {
+    myIsInitializedFromDependency = initializedFromDependency;
   }
 
   public int getEndOffset() {

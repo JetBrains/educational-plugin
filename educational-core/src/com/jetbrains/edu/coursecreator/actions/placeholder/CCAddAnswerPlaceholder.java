@@ -92,14 +92,14 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
       final List<AnswerPlaceholder> answerPlaceholders = myTaskFile.getAnswerPlaceholders();
       if (answerPlaceholders.contains(myPlaceholder)) {
         answerPlaceholders.remove(myPlaceholder);
-        NewPlaceholderPainter.INSTANCE.removePainter(myEditor, myPlaceholder);
+        NewPlaceholderPainter.removePainter(myEditor, myPlaceholder);
       }
     }
 
     @Override
     public void redo() throws UnexpectedUndoException {
       myTaskFile.addAnswerPlaceholder(myPlaceholder);
-      NewPlaceholderPainter.INSTANCE.paintPlaceholder(myEditor, myPlaceholder);
+      NewPlaceholderPainter.paintPlaceholder(myEditor, myPlaceholder);
     }
   }
 
