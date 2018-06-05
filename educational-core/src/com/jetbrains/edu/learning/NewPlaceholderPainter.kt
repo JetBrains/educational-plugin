@@ -13,14 +13,22 @@ import java.awt.Shape
 
 
 object NewPlaceholderPainter {
+
+  @JvmStatic
   val placeholderPainters = HashMap<AnswerPlaceholder, AbstractPainter>()
 
+  @JvmStatic
   fun paintPlaceholder(editor: Editor, placeholder: AnswerPlaceholder) {
+    val project = editor.project ?: return
+    if (project.isDisposed) return
+    val isStudentProject = EduUtils.isStudentProject(project)
+
     val painter: AbstractPainter = object : AbstractPainter() {
 
       override fun needsRepaint() = !editor.isDisposed
 
       override fun executePaint(component: Component?, g: Graphics2D) {
+        if (isStudentProject && !placeholder.isVisible) return
         g.color = placeholder.color
         g.stroke = BasicStroke(JBUI.scale(2f))
         val shape = getPlaceholderShape(editor, placeholder.offset, placeholder.endOffset).getShape()
@@ -36,6 +44,7 @@ object NewPlaceholderPainter {
     return editor.contentComponent.visibleRect.contains(shape.bounds)
   }
 
+  @JvmStatic
   fun removePainter(editor: Editor, placeholder: AnswerPlaceholder) {
     if (placeholderPainters.containsKey(placeholder)) {
       val painter = placeholderPainters.remove(placeholder)

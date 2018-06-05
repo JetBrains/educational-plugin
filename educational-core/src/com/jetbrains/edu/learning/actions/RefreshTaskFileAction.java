@@ -59,7 +59,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
       }
       refreshFile(eduState, project);
       eduEditor.validateTaskFile();
-      PlaceholderDependencyManager.currentTaskChanged(project, eduState.getTask());
+
     });
   }
 
@@ -84,6 +84,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     ApplicationManager.getApplication().invokeLater(
       () -> IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true));
 
+    PlaceholderDependencyManager.updateDependentPlaceholders(project, eduState.getTask());
     NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
     showBalloon(project, MessageType.INFO);
   }
@@ -97,7 +98,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     if (task instanceof ChoiceTask) {
       ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
     }
-    resetAnswerPlaceholders(taskFile, project);
+    resetAnswerPlaceholders(taskFile);
     ProjectView.getInstance(project).refresh();
     EduUtils.updateToolWindows(project);
     return true;
@@ -113,14 +114,11 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     Disposer.register(project, balloon);
   }
 
-  static void resetAnswerPlaceholders(TaskFile selectedTaskFile, Project project) {
-    final StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
+  static void resetAnswerPlaceholders(@NotNull TaskFile selectedTaskFile) {
     for (AnswerPlaceholder answerPlaceholder : selectedTaskFile.getAnswerPlaceholders()) {
       answerPlaceholder.reset();
-      studyTaskManager.setStatus(answerPlaceholder, CheckStatus.Unchecked);
     }
   }
-
 
   static void resetDocument(@NotNull final Document document,
                             @NotNull final TaskFile taskFile) {

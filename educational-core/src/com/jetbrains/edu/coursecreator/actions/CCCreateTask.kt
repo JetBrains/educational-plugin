@@ -113,7 +113,7 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
     val task = taskFile.task
     val lesson = task.lesson
     val sectionName = (lesson.container as? Section)?.name
-    newPlaceholder.placeholderDependency = AnswerPlaceholderDependency(newPlaceholder, sectionName, lesson.name, task.name, taskFile.name, index)
+    newPlaceholder.placeholderDependency = AnswerPlaceholderDependency(newPlaceholder, sectionName, lesson.name, task.name, taskFile.name, index, true)
     return newPlaceholder
   }
 
@@ -123,9 +123,10 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
     lessonName: String = this.lessonName,
     taskName: String = this.taskName,
     fileName: String = this.fileName,
-    placeholderIndex: Int = this.placeholderIndex
+    placeholderIndex: Int = this.placeholderIndex,
+    isInvisible: Boolean = this.isInvisible
   ): AnswerPlaceholderDependency =
-    AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex)
+    AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex, isInvisible)
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CCCreateTask::class.java)
