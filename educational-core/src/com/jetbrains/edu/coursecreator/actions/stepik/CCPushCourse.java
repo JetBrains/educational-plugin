@@ -113,7 +113,9 @@ public class CCPushCourse extends DumbAwareAction {
       deleteSection(project, ((RemoteCourse)course).getSectionIds().get(0));
     }
 
+    int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
     for (Section section : course.getSections()) {
+      section.setPosition(position++);
       if (section.getId() > 0) {
         updateSection(project, section);
       }
