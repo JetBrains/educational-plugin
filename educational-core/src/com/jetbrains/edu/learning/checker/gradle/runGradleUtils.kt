@@ -21,8 +21,7 @@ import java.util.regex.Pattern
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 
-private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected:<(.*)> but was:<(.*)>", Pattern.MULTILINE or Pattern.DOTALL)
-private val COMPARISON_RANGE_PATTERN: Regex = "\\[(.*)]".toRegex(setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
+private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected: ?(.*) but was: ?(.*)", Pattern.MULTILINE or Pattern.DOTALL)
 
 fun getGradleProjectName(task: Task) =
   if (task.lesson.section != null)
@@ -132,12 +131,12 @@ private fun String.prettify(): String {
   val matcher = TEST_FAILED_PATTERN.matcher(this)
   return if (matcher.find()) {
     val errorMessage = matcher.group(2)
-    val expectedText = matcher.group(3).replace(COMPARISON_RANGE_PATTERN, "$1")
-    val actualText = matcher.group(4).replace(COMPARISON_RANGE_PATTERN, "$1")
+    val expectedText = matcher.group(3)
+    val actualText = matcher.group(4)
     if (errorMessage != null) {
-      "$errorMessage\nExpected: $expectedText\nActual: $actualText"
+      "$errorMessage\nExpected:\n$expectedText\nActual:\n$actualText"
     } else {
-      "Expected: $expectedText\nActual: $actualText"
+      "Expected:\n$expectedText\nActual:\n$actualText"
     }
   } else {
     this

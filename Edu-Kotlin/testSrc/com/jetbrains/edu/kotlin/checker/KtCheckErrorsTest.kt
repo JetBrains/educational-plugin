@@ -115,6 +115,27 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
           }
         """)
       }
+      eduTask("objectComparisonTestFail") {
+        kotlinTaskFile("Task.kt", """
+          data class Foo(val x: Int, val y: Int) {
+              override fun toString(): String = "(${'$'}x, ${'$'}y)"
+          }
+
+          data class Bar(val x: Int, val y: Int) {
+              override fun toString(): String = "(${'$'}x, ${'$'}y)"
+          }
+        """)
+        kotlinTestFile("Tests.kt", """
+          import org.junit.Assert
+          import org.junit.Test
+
+          class Test {
+              @Test fun testSolution() {
+                  Assert.assertEquals(Foo(0, 0), Bar(0, 0))
+              }
+          }
+        """)
+      }
       outputTask("outputTaskFail") {
         kotlinTaskFile("Task.kt", """
           fun main(args: Array<String>) {
@@ -142,34 +163,46 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         "kotlinCompilationError", "javaCompilationError" -> CheckUtils.COMPILATION_FAILED_MESSAGE
         "testFail" -> "foo() should return 42"
         "comparisonTestFail" -> """
-                                Expected: 42
-                                Actual: 43
+                                Expected:
+                                <42>
+                                Actual:
+                                <43>
                                 """
         "comparisonTestWithMessageFail" ->  """
                                             foo() should return 42
-                                            Expected: 42
-                                            Actual: 43
+                                            Expected:
+                                            <42>
+                                            Actual:
+                                            <43>
                                             """
         "comparisonMultilineTestFail" ->  """
                                           Wrong Answer
-                                          Expected: Hello,
-                                          World!
-                                          Actual: Hello
-                                          World!
+                                          Expected:
+                                          <Hello[,]
+                                          World!>
+                                          Actual:
+                                          <Hello[]
+                                          World!>
                                           """
+        "objectComparisonTestFail" -> """
+                                      Expected:
+                                      Foo<(0, 0)>
+                                      Actual:
+                                      Bar<(0, 0)>
+                                      """
         "outputTaskFail" -> """
                             Expected output:
-                            OK!
+                            <OK!>
                             Actual output:
-                            OK
+                            <OK>
                             """
         "multilineOutputTaskFail" ->  """
                                       Expected output:
-                                      Hello,
-                                      World!
+                                      <Hello,
+                                      World!>
                                       Actual output:
-                                      Hello
-                                      World
+                                      <Hello
+                                      World>
                                       """
         else -> null
       }?.trimIndent()
