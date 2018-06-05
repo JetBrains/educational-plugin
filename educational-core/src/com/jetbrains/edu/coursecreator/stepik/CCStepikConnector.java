@@ -208,7 +208,7 @@ public class CCStepikConnector {
     int i = 1;
     for (StudyItem item : items) {
       Section section = new Section();
-      ((Section)item).setPosition(i++);
+      section.setPosition(i++);
       section.setName(item.getName());
       List<Lesson> lessons = ((Section)item).getLessons();
 
@@ -233,16 +233,6 @@ public class CCStepikConnector {
   public static int postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
     RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-
-    int position = 1;
-    for (Section s : course.getSections()) {
-      if (s.getName().equals(section.getName())) {
-        break;
-      }
-      position++;
-    }
-    position += (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
-    section.setPosition(position);
     final int sectionId = postModule(project, copySection(section), course.getId());
     section.setId(sectionId);
     postLessons(project, indicator, course, sectionId, section.getLessons());
@@ -253,10 +243,8 @@ public class CCStepikConnector {
   public static boolean updateSection(@NotNull Project project, @NotNull Section section) {
     RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    int position = section.getIndex() + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
-    section.setPosition(position);
     section.setCourse(course.getId());
-    boolean updated = updateSectionInfo(project, copySection(section));
+    boolean updated = updateSectionInfo(project, section);
     if (updated) {
       for (Lesson lesson : section.getLessons()) {
         if (lesson.getId() > 0) {
@@ -450,10 +438,11 @@ public class CCStepikConnector {
     return -1;
   }
 
-  private static boolean updateSectionInfo(@NotNull Project project, @NotNull Section section) {
+  public static boolean updateSectionInfo(@NotNull Project project, @NotNull Section section) {
+    Section sectionCopy = copySection(section);
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS + "/" + section.getId());
     final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
-    sectionContainer.setSection(section);
+    sectionContainer.setSection(sectionCopy);
     String requestBody = new Gson().toJson(sectionContainer);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
@@ -591,7 +580,7 @@ public class CCStepikConnector {
       if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
         section.setPosition(sectionIds.size());
         section.setId(sectionId);
-        updateSectionInfo(project, copySection(section));
+        updateSectionInfo(project, section);
         final List<Lesson> lessons = StepikConnector.getLessons(courseInfo, sectionId);
         lessons.stream()
           .filter(Lesson::isAdditional)
@@ -620,7 +609,7 @@ public class CCStepikConnector {
       final Section section = StepikConnector.getSection(sectionId);
       if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
         section.setPosition(sectionIds.size());
-        updateSectionInfo(project, copySection(section));
+        updateSectionInfo(project, section);
       }
     }
 
