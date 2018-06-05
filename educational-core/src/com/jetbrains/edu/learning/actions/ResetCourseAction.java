@@ -52,7 +52,7 @@ public class ResetCourseAction extends DumbAwareAction {
                 if (task instanceof ChoiceTask) {
                   ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
                 }
-                RefreshTaskFileAction.resetAnswerPlaceholders(taskFile, project);
+                RefreshTaskFileAction.resetAnswerPlaceholders(taskFile);
               }
             }
           }
