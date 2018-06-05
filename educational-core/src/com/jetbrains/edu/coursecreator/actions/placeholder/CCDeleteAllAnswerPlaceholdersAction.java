@@ -112,7 +112,7 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
     public void redo() {
       List<AnswerPlaceholder> placeholders = myTaskFile.getAnswerPlaceholders();
       for (AnswerPlaceholder placeholder : placeholders) {
-        NewPlaceholderPainter.INSTANCE.removePainter(myEditor, placeholder);
+        NewPlaceholderPainter.removePainter(myEditor, placeholder);
       }
       placeholders.clear();
       updateView(myEditor, myTaskFile);

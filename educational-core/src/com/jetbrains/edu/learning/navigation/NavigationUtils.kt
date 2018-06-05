@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
@@ -14,9 +13,10 @@ import com.intellij.util.ui.tree.TreeUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.saveStudentAnswersIfNeeded
-import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 import java.util.*
 import javax.swing.tree.TreePath
@@ -122,7 +122,7 @@ object NavigationUtils {
   fun navigateToFirstFailedAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
     editor.project ?: return
     for (answerPlaceholder in taskFile.answerPlaceholders) {
-      if (answerPlaceholder.status != CheckStatus.Failed) continue
+      if (answerPlaceholder.status != CheckStatus.Failed || !answerPlaceholder.isVisible) continue
       navigateToAnswerPlaceholder(editor, answerPlaceholder)
       break
     }
@@ -139,10 +139,9 @@ object NavigationUtils {
 
   @JvmStatic
   fun navigateToFirstAnswerPlaceholder(editor: Editor, taskFile: TaskFile) {
-    if (!taskFile.answerPlaceholders.isEmpty()) {
-      val firstAnswerPlaceholder = EduUtils.getFirst(taskFile.answerPlaceholders) ?: return
-      navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
-    }
+    val visiblePlaceholders = taskFile.answerPlaceholders.filter { it.isVisible }
+    val firstAnswerPlaceholder = EduUtils.getFirst(visiblePlaceholders) ?: return
+    navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
   private fun getFirstTaskFile(taskDir: VirtualFile, project: Project): VirtualFile? {
@@ -173,26 +172,24 @@ object NavigationUtils {
       prepareFilesForTargetTask(project, lesson, fromTask, task)
     }
 
-    var taskDir = task.getTaskDir(project) ?: return
-    val sourceDir = task.sourceDir
-    if (StringUtil.isNotEmpty(sourceDir)) {
-      val srcDir = taskDir.findChild(sourceDir!!)
-      if (srcDir != null) {
-        taskDir = srcDir
-      }
-    }
+    val taskDir = task.getTaskDir(project) ?: return
+
     if (taskFiles.isEmpty()) {
-      ProjectView.getInstance(project).select(taskDir, taskDir, false)
+      val selectingDir = task.findSourceDir(taskDir) ?: taskDir
+      ProjectView.getInstance(project).select(selectingDir, selectingDir, false)
       return
     }
+
+    // We need update dependencies before file opening to find out which placeholders are visible
+    PlaceholderDependencyManager.updateDependentPlaceholders(project, task)
+
     var fileToActivate = getFirstTaskFile(taskDir, project)
     for ((_, taskFile) in taskFiles) {
       if (taskFile.answerPlaceholders.isEmpty()) continue
       // We want to open task file only if it has `new` placeholder(s).
-      // Currently, we consider that `new` placeholder is a placeholder without dependency.
-      // It should work for Django course but doesn't work in all cases.
-      // TODO: implement a smarter algorithm to distinguish what task files we want to open
-      if (taskFile.answerPlaceholders.all { it.placeholderDependency != null }) continue
+      // Currently, we consider that `new` placeholder is a visible placeholder,
+      // i.e. placeholder without dependency or with visible dependency.
+      if (taskFile.answerPlaceholders.all { !it.isVisible }) continue
       val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
       fileToActivate = virtualFile

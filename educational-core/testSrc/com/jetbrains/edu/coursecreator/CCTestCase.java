@@ -48,7 +48,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
 
   @Nullable
   public static AbstractPainter getPainter(AnswerPlaceholder placeholder) {
-    final HashMap<AnswerPlaceholder, AbstractPainter> painters = NewPlaceholderPainter.INSTANCE.getPlaceholderPainters();
+    final HashMap<AnswerPlaceholder, AbstractPainter> painters = NewPlaceholderPainter.getPlaceholderPainters();
     final AbstractPainter painter = painters.get(placeholder);
     if (painter == null) {
       for (Map.Entry<AnswerPlaceholder, AbstractPainter> entry : painters.entrySet()) {
@@ -63,7 +63,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   }
 
   protected static void checkPainters(TaskFile taskFile) {
-    final HashMap<AnswerPlaceholder, AbstractPainter> painters = NewPlaceholderPainter.INSTANCE.getPlaceholderPainters();
+    final HashMap<AnswerPlaceholder, AbstractPainter> painters = NewPlaceholderPainter.getPlaceholderPainters();
 
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
       final AbstractPainter painter = painters.get(answerPlaceholder);

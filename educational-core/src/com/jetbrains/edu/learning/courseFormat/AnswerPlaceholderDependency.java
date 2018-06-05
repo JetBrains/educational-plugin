@@ -39,6 +39,10 @@ public class AnswerPlaceholderDependency {
   @SerializedName("placeholder")
   private int myPlaceholderIndex;
 
+  @Expose
+  @SerializedName("is_invisible")
+  private boolean myIsInvisible;
+
   private AnswerPlaceholder myAnswerPlaceholder = null;
 
   public AnswerPlaceholderDependency() {
@@ -50,12 +54,23 @@ public class AnswerPlaceholderDependency {
                                      @NotNull String taskName,
                                      @NotNull String fileName,
                                      int placeholderIndex) {
+    this(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex, false);
+  }
+
+  public AnswerPlaceholderDependency(@NotNull AnswerPlaceholder answerPlaceholder,
+                                     @Nullable String sectionName,
+                                     @NotNull String lessonName,
+                                     @NotNull String taskName,
+                                     @NotNull String fileName,
+                                     int placeholderIndex,
+                                     boolean isInvisible) {
     mySectionName = sectionName;
     myLessonName = lessonName;
     myTaskName = taskName;
     myFileName = fileName;
     myPlaceholderIndex = placeholderIndex;
     myAnswerPlaceholder = answerPlaceholder;
+    myIsInvisible = isInvisible;
   }
 
   @Nullable
@@ -184,6 +199,14 @@ public class AnswerPlaceholderDependency {
 
   public void setPlaceholderIndex(int placeholderIndex) {
     myPlaceholderIndex = placeholderIndex;
+  }
+
+  public boolean isInvisible() {
+    return myIsInvisible;
+  }
+
+  public void setInvisible(boolean invisible) {
+    myIsInvisible = invisible;
   }
 
   @Override
