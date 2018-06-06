@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class NewCoursesNotifier : Disposable {
 
-  private val myCheckRunnable = Runnable { updateCourseList().doWhenDone { queueNextCheck(ourCheckInterval) } }
-  private val myCheckForUpdatesAlarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
+  private val checkRunnable = Runnable { updateCourseList().doWhenDone { queueNextCheck(checkInterval) } }
+  private val checkForNotifyAlarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
 
   fun scheduleNotification() {
     ApplicationManager.getApplication().messageBus.connect().subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListener {
@@ -31,16 +31,16 @@ class NewCoursesNotifier : Disposable {
 
   @VisibleForTesting
   fun scheduleNotificationInternal() {
-    val timeToNextCheck = EduSettings.getInstance().lastTimeChecked + ourCheckInterval - System.currentTimeMillis()
+    val timeToNextCheck = EduSettings.getInstance().lastTimeChecked + checkInterval - System.currentTimeMillis()
     return if (timeToNextCheck <= 0) {
-      myCheckRunnable.run()
+      checkRunnable.run()
     } else {
       queueNextCheck(timeToNextCheck)
     }
   }
 
   private fun queueNextCheck(interval: Long) {
-    myCheckForUpdatesAlarm.addRequest(myCheckRunnable, interval)
+    checkForNotifyAlarm.addRequest(checkRunnable, interval)
   }
 
   private fun updateCourseList(): ActionCallback {
@@ -67,8 +67,8 @@ class NewCoursesNotifier : Disposable {
 
   @TestOnly
   fun setNewCheckInterval(newInterval: Long): Long {
-    val oldValue = ourCheckInterval
-    ourCheckInterval = newInterval
+    val oldValue = checkInterval
+    checkInterval = newInterval
     return oldValue
   }
 
@@ -76,7 +76,7 @@ class NewCoursesNotifier : Disposable {
   fun invocationNumber(): Int = INVOCATION_COUNTER.get()
 
   companion object {
-    private var ourCheckInterval = DateFormatUtil.DAY
+    private var checkInterval = DateFormatUtil.DAY
 
     private val INVOCATION_COUNTER: AtomicInteger = AtomicInteger()
   }

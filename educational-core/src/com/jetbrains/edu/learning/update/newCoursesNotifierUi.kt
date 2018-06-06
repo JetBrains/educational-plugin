@@ -58,11 +58,11 @@ object NotificationNewCourseNotifierUi : NewCoursesNotifierUi {
   }
 
   private class SingleCourseDialog(
-    private val myCourse: Course,
-    private val myConfigurator: EduConfigurator<*>
+    private val course: Course,
+    private val configurator: EduConfigurator<*>
   ) : DialogWrapper(true) {
 
-    private val myPanel: CoursePanel = CoursePanel(/*isIndependent = */ true, /*isLocationFieldNeeded = */ true).apply {
+    private val panel: CoursePanel = CoursePanel(/*isIndependent = */ true, /*isLocationFieldNeeded = */ true).apply {
       preferredSize = JBUI.size(WIDTH, HEIGHT)
       minimumSize = JBUI.size(WIDTH, HEIGHT)
     }
@@ -70,17 +70,17 @@ object NotificationNewCourseNotifierUi : NewCoursesNotifierUi {
     init {
       title = "Create Course"
       setOKButtonText("Create")
-      myPanel.bindCourse(myCourse)
+      panel.bindCourse(course)
       init()
     }
 
-    override fun createCenterPanel(): JComponent = myPanel
+    override fun createCenterPanel(): JComponent = panel
 
     override fun doOKAction() {
-      val settings = myPanel.projectSettings
-      val location = myPanel.locationString ?: error("Location should be not null")
-      myConfigurator.courseBuilder
-        .getCourseProjectGenerator(myCourse)
+      val settings = panel.projectSettings
+      val location = panel.locationString ?: error("Location should be not null")
+      configurator.courseBuilder
+        .getCourseProjectGenerator(course)
         ?.doCreateCourseProject(location, settings)
       close(OK_EXIT_CODE)
     }
