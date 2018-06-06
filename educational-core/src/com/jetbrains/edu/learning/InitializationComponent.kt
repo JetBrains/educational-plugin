@@ -16,7 +16,7 @@ import java.util.*
 
 class InitializationComponent : ApplicationComponent {
 
-    private val myNewCoursesNotifier = NewCoursesNotifier()
+    private val newCoursesNotifier = NewCoursesNotifier()
 
     override fun initComponent() {
         //Register placeholder size listener
@@ -24,7 +24,7 @@ class InitializationComponent : ApplicationComponent {
 
         if (isUnitTestMode) return
         if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED)) {
-            myNewCoursesNotifier.scheduleNotification()
+            newCoursesNotifier.scheduleNotification()
             return
         }
 
@@ -46,7 +46,7 @@ class InitializationComponent : ApplicationComponent {
             ApplicationManager.getApplication().restart()
         } else {
             PropertiesComponent.getInstance().setValue(CONFLICTING_PLUGINS_DISABLED, "true")
-            myNewCoursesNotifier.scheduleNotification()
+            newCoursesNotifier.scheduleNotification()
         }
     }
 
