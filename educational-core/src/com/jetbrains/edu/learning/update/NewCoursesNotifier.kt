@@ -4,7 +4,6 @@ import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.AppLifecycleListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.ActionCallback
 import com.intellij.openapi.util.Ref
 import com.intellij.util.Alarm
@@ -48,7 +47,7 @@ class NewCoursesNotifier : Disposable {
     val callback = ActionCallback()
 
     ApplicationManager.getApplication().executeOnPooledThread {
-      val courses = Extensions.getExtensions(EduCoursesProvider.EP_NAME).flatMap(EduCoursesProvider::loadCourses)
+      val courses = EduCoursesProvider.loadAllCourses()
 
       val updated = courses.filterIsInstance<RemoteCourse>()
         .filter { it.updateDate.after(Date(EduSettings.getInstance().lastTimeChecked)) }
