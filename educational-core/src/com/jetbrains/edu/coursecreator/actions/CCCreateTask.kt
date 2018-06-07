@@ -64,6 +64,7 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
       val prevTaskDir = prevTask.getTaskDir(project) ?: return newTask
       FileDocumentManager.getInstance().saveAllDocuments()
       newTask.taskFiles = prevTask.taskFiles.mapValues { (_, taskFile) -> taskFile.copyForNewTask(prevTaskDir, newTask) }
+      newTask.additionalFiles = HashMap(prevTask.additionalFiles)
 
       // If we insert new task between `task1` and `task2`
       // we should change target of all placeholder dependencies of `task2` from task file of `task1`
