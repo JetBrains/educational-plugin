@@ -6,6 +6,8 @@ import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
+import com.jetbrains.edu.learning.EduTestInputDialog
+import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 
 class CCCreateLessonTest : CCActionTestCase() {
@@ -33,10 +35,11 @@ class CCCreateLessonTest : CCActionTestCase() {
         }
       }
     }
-    Messages.setTestInputDialog { "lesson2" }
     val sectionName = "section1"
     val sectionFile = findFile(sectionName)
-    testAction(dataContext(sectionFile), CCCreateLesson())
+    withTestDialog(EduTestInputDialog("lesson2")) {
+      testAction(dataContext(sectionFile), CCCreateLesson())
+    }
     TestCase.assertEquals(2, course.getSection(sectionName)!!.lessons.size)
   }
 
