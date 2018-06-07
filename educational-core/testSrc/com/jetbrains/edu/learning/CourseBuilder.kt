@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -211,6 +213,12 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     @Language("Scala") text: String = "",
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, buildTaskFile)
+
+  fun taskFileFromResources(name: String, path: String, buildTaskFile: TaskFileBuilder.() -> Unit = {}) {
+    val file = LocalFileSystem.getInstance().findFileByPath(path) ?: error("Can't find `$path`")
+    val text = CCUtils.loadText(file)
+    taskFile(name, text, buildTaskFile)
+  }
 
   fun testFile(name: String, text: String = "") {
     task.addTestsTexts(name, text)
