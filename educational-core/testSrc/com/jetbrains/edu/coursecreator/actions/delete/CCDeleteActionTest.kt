@@ -95,7 +95,7 @@ class CCDeleteActionTest : CCActionTestCase() {
     }
 
     val lessonFile = findFile("lesson1")
-    withTestDialog(TestDialog.OK) {
+    withTestDialog(EduTestDialog()) {
       testAction(dataContext(lessonFile), DeleteAction())
     }
 
