@@ -12,11 +12,13 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
+import com.jetbrains.edu.coursecreator.CCVirtualFileListener
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -141,5 +143,19 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     val taskDir = task.getTaskDir(project)!!
     val taskFile = task.getTaskFile(taskFilePath)!!
     return EduUtils.findTaskFileInDir(taskFile, taskDir)!!
+  }
+
+  // TODO: set up more items which are enabled in real course project
+  // TODO: come up with better name when we set up not only virtual file listeners
+  protected inline fun withVirtualFileListener(course: Course, action: () -> Unit) {
+    val virtualFileManager = VirtualFileManager.getInstance()
+
+    val listener = if (course.isStudy) UserCreatedFileListener(project) else CCVirtualFileListener(project)
+    virtualFileManager.addVirtualFileListener(listener)
+    try {
+      action()
+    } finally {
+      virtualFileManager.removeVirtualFileListener(listener)
+    }
   }
 }
