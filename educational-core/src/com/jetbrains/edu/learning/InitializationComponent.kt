@@ -16,7 +16,7 @@ import java.util.*
 
 class InitializationComponent : ApplicationComponent {
 
-    private val newCoursesNotifier = NewCoursesNotifier()
+    private val newCoursesNotifier = NewCoursesNotifier(ApplicationManager.getApplication())
 
     override fun initComponent() {
         //Register placeholder size listener
