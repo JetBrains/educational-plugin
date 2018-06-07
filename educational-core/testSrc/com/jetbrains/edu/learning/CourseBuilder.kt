@@ -221,6 +221,10 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   fun pythonTestFile(name: String, @Language("Python") text: String = "") = testFile(name, text)
   fun scalaTestFile(name: String, @Language("Scala") text: String = "") = testFile(name, text)
 
+  fun additionalFile(name: String, text: String = "") {
+    task.addAdditionalFile(name, text)
+  }
+
   private fun extractPlaceholdersFromText(text: StringBuilder): List<AnswerPlaceholder> {
     val openingMatcher = OPENING_TAG.matcher(text)
     val closingMatcher = CLOSING_TAG.matcher(text)
