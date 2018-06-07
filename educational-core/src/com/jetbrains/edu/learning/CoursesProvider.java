@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.OpenApiExtKt.checkIsBackgroundThread;
 
-public interface EduCoursesProvider {
+public interface CoursesProvider {
 
-  ExtensionPointName<EduCoursesProvider> EP_NAME = ExtensionPointName.create("Educational.coursesProvider");
+  ExtensionPointName<CoursesProvider> EP_NAME = ExtensionPointName.create("Educational.coursesProvider");
 
   /**
    * Loads courses from some source (plugin resources, Stepik, somewhere else).
