@@ -1,11 +1,12 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
-import com.intellij.openapi.ui.Messages
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
+import com.jetbrains.edu.learning.EduTestInputDialog
+import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 
 class CCCreateTaskTest : CCActionTestCase() {
@@ -18,10 +19,11 @@ class CCCreateTaskTest : CCActionTestCase() {
         }
       }
     }
-    Messages.setTestInputDialog { "task2" }
     val lessonFile = findFile("lesson1")
 
-    testAction(dataContext(lessonFile), CCCreateTask())
+    withTestDialog(EduTestInputDialog("task2")) {
+      testAction(dataContext(lessonFile), CCCreateTask())
+    }
     TestCase.assertEquals(2, course.lessons[0].taskList.size)
   }
 
@@ -35,10 +37,11 @@ class CCCreateTaskTest : CCActionTestCase() {
         }
       }
     }
-    Messages.setTestInputDialog { "task2" }
     val lessonFile = findFile("section1/lesson1")
 
-    testAction(dataContext(lessonFile), CCCreateTask())
+    withTestDialog(EduTestInputDialog("task2")) {
+      testAction(dataContext(lessonFile), CCCreateTask())
+    }
     TestCase.assertEquals(2, course.sections[0].lessons[0].taskList.size)
   }
 
@@ -47,8 +50,10 @@ class CCCreateTaskTest : CCActionTestCase() {
       lesson()
     }
     val lessonFile = findFile("lesson1")
-    Messages.setTestInputDialog { "task1" }
-    testAction(dataContext(lessonFile), CCCreateTask())
+
+    withTestDialog(EduTestInputDialog("task1")) {
+      testAction(dataContext(lessonFile), CCCreateTask())
+    }
     TestCase.assertEquals(1, course.lessons[0].taskList.size)
   }
 

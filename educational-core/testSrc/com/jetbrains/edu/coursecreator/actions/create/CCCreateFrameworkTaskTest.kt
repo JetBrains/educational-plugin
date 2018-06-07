@@ -1,12 +1,13 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
+import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.fileTree
+import com.jetbrains.edu.learning.withTestDialog
 
 class CCCreateFrameworkTaskTest : CCActionTestCase() {
 
@@ -19,10 +20,11 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
       frameworkLesson(lessonName)
     }
 
-    Messages.setTestInputDialog { taskName }
     val lessonFile = findFile(lessonName)
 
-    testAction(dataContext(lessonFile), CCCreateTask())
+    withTestDialog(EduTestInputDialog(taskName)) {
+      testAction(dataContext(lessonFile), CCCreateTask())
+    }
 
     fileTree {
       dir(lessonName) {
@@ -51,10 +53,11 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
     }
 
     val newTaskName = "task2"
-    Messages.setTestInputDialog { newTaskName }
     val lessonFile = findFile(lessonName)
 
-    testAction(dataContext(lessonFile), CCCreateTask())
+    withTestDialog(EduTestInputDialog(newTaskName)) {
+      testAction(dataContext(lessonFile), CCCreateTask())
+    }
 
     fileTree {
       dir(lessonName) {
