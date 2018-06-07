@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.KeyboardShortcut;
+import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -17,7 +19,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.WindowManager;
@@ -29,8 +32,6 @@ import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
@@ -41,7 +42,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
@@ -230,31 +233,7 @@ public class EduProjectComponent implements ProjectComponent {
   @Override
   public void initComponent() {
     if (isStudentProject(myProject)) {
-      VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileListener() {
-        @Override
-        public void fileCreated(@NotNull VirtualFileEvent event) {
-          if (myProject.isDisposed()) return;
-          final VirtualFile createdFile = event.getFile();
-          if (canBeAddedAsTaskFile(myProject, createdFile)) {
-            final Task task = getTaskForFile(myProject, createdFile);
-            assert task != null;
-            String path = pathRelativeToTask(myProject, createdFile);
-            task.addTaskFile(path).setUserCreated(true);
-          }
-        }
-
-        @Override
-        public void fileDeleted(@NotNull VirtualFileEvent event) {
-          if (myProject.isDisposed()) return;
-          VirtualFile removedFile = event.getFile();
-          final TaskFile taskFile = getTaskFile(myProject, removedFile);
-          if (taskFile == null) {
-            return;
-          }
-          Task task = taskFile.getTask();
-          task.getTaskFiles().remove(pathRelativeToTask(myProject, removedFile));
-        }
-      });
+      VirtualFileManager.getInstance().addVirtualFileListener(new UserCreatedFileListener(myProject));
     }
   }
 
