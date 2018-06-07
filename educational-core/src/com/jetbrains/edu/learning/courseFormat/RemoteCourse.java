@@ -124,8 +124,15 @@ public class RemoteCourse extends Course {
   // As we don't store additional sections locally, we ned to remove it for our courses. But Stepik
   // course doesn't have additional materials sections, so fo them we shouldn't do anything
   private boolean checkSectionsNumber(RemoteCourse courseFromServer) {
-    Section lastSection = StepikConnector.getSection(courseFromServer.sectionIds.get(courseFromServer.sectionIds.size() - 1));
-    boolean hasAdditional = EduNames.ADDITIONAL_MATERIALS.equals(lastSection.getName()) || StepikNames.PYCHARM_ADDITIONAL.equals(lastSection.getName());
+    boolean hasAdditional;
+    if (courseFromServer.sectionIds.isEmpty()) {
+      hasAdditional = false;
+    }
+    else {
+      Section lastSection = StepikConnector.getSection(courseFromServer.sectionIds.get(courseFromServer.sectionIds.size() - 1));
+      hasAdditional =
+        EduNames.ADDITIONAL_MATERIALS.equals(lastSection.getName()) || StepikNames.PYCHARM_ADDITIONAL.equals(lastSection.getName());
+    }
     int remoteSectionsWithoutAdditional = courseFromServer.sectionIds.size() - (hasAdditional ? 1 : 0);
 
     int localSectionsSize = (getLessons(false).isEmpty() ? 0 : 1) + getSections().size();
