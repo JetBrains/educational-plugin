@@ -187,26 +187,27 @@ object CCUtils {
     addToTask(baseDir, file, ThrowableConsumer { path ->
       val utilTaskFile = TaskFile()
       utilTaskFile.name = path
-      utilTaskFile.text = file.loadText()
+      utilTaskFile.text = loadText(file)
       utilTaskFile.task = task
       task.addTaskFile(utilTaskFile)
     })
   }
 
   private fun addTestFile(task: Task, baseDir: VirtualFile, file: VirtualFile) {
-    addToTask(baseDir, file, ThrowableConsumer { path -> task.addTestsTexts(path, file.loadText()) })
+    addToTask(baseDir, file, ThrowableConsumer { path -> task.addTestsTexts(path, loadText(file)) })
   }
 
   private fun addAdditionalFile(task: Task, baseDir: VirtualFile, file: VirtualFile) {
-    addToTask(baseDir, file, ThrowableConsumer { path -> task.addAdditionalFile(path, file.loadText()) })
+    addToTask(baseDir, file, ThrowableConsumer { path -> task.addAdditionalFile(path, loadText(file)) })
   }
 
+  @JvmStatic
   @Throws(IOException::class)
-  private fun VirtualFile.loadText(): String {
-    return if (EduUtils.isImage(name)) {
-      Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(this))
+  fun loadText(file: VirtualFile): String {
+    return if (EduUtils.isImage(file.name)) {
+      Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(file))
     } else {
-      VfsUtilCore.loadText(this)
+      VfsUtilCore.loadText(file)
     }
   }
 
