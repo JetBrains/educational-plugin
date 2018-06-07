@@ -8,7 +8,7 @@ import com.intellij.openapi.util.ActionCallback
 import com.intellij.openapi.util.Ref
 import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
-import com.jetbrains.edu.learning.EduCoursesProvider
+import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -47,7 +47,7 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
     val callback = ActionCallback()
 
     ApplicationManager.getApplication().executeOnPooledThread {
-      val courses = EduCoursesProvider.loadAllCourses()
+      val courses = CoursesProvider.loadAllCourses()
 
       val updated = courses.filterIsInstance<RemoteCourse>()
         .filter { it.updateDate.after(Date(EduSettings.getInstance().lastTimeChecked)) }
