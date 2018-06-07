@@ -16,10 +16,10 @@ import org.jetbrains.annotations.TestOnly
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
-class NewCoursesNotifier : Disposable {
+class NewCoursesNotifier(parentDisposable: Disposable) {
 
   private val checkRunnable = Runnable { updateCourseList().doWhenDone { queueNextCheck(checkInterval) } }
-  private val checkForNotifyAlarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
+  private val checkForNotifyAlarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, parentDisposable)
 
   fun scheduleNotification() {
     ApplicationManager.getApplication().messageBus.connect().subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListener {
@@ -31,11 +31,11 @@ class NewCoursesNotifier : Disposable {
 
   @VisibleForTesting
   fun scheduleNotificationInternal() {
-    val timeToNextCheck = EduSettings.getInstance().lastTimeChecked + checkInterval - System.currentTimeMillis()
-    return if (timeToNextCheck <= 0) {
+    val timeBeforeNextCheck = EduSettings.getInstance().lastTimeChecked + checkInterval - System.currentTimeMillis()
+    return if (timeBeforeNextCheck <= 0) {
       checkRunnable.run()
     } else {
-      queueNextCheck(timeToNextCheck)
+      queueNextCheck(timeBeforeNextCheck)
     }
   }
 
@@ -62,8 +62,6 @@ class NewCoursesNotifier : Disposable {
     }
     return callback
   }
-
-  override fun dispose() {}
 
   @TestOnly
   fun setNewCheckInterval(newInterval: Long): Long {
