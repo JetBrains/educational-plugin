@@ -458,11 +458,13 @@ public class StepikConnector {
           if (unitIds.length > 0) {
             final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
             final String sectionName = section.getName();
-            if (lessonsFromUnits.size() == 1 &&
-                (sectionName.equals(EduNames.LESSON + itemIndex)) || sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
+            if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
               final Lesson lesson = lessonsFromUnits.get(0);
               lesson.setIndex(itemIndex);
               remoteCourse.addLesson(lesson);
+            }
+            else if (section.getName().equals(remoteCourse.getName())) {
+              remoteCourse.addLessons(lessonsFromUnits);
             }
             else {
               section.setIndex(itemIndex);
