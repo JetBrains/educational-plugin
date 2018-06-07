@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.update
 
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.ActionCallback
-import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.EduCoursesProvider
@@ -15,13 +14,13 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class NewCoursesNotifierTest : EduTestCase() {
 
-  fun `test launched`() {
+  fun `test notification is shown`() {
     val course = createCourse(0)
 
     doTest(1, listOf(course)) { if (it == 0) listOf(course) else emptyList() }
   }
 
-  fun `test scheduling`() {
+  fun `test notifications is scheduled`() {
     val firstCourse = createCourse(0)
     val secondCourse = createCourse(1)
     val oldCourse = createCourse(2, false)
@@ -36,8 +35,8 @@ class NewCoursesNotifierTest : EduTestCase() {
   }
 
   private fun doTest(expectedCheckNumber: Int, expectedCourses: List<RemoteCourse>, courseProducer: (Int) -> List<RemoteCourse>) {
-    val newCoursesNotifier = NewCoursesNotifier()
-    PlatformTestUtil.registerExtension(EduCoursesProvider.EP_NAME, TestCoursesProvider(courseProducer), newCoursesNotifier)
+    val newCoursesNotifier = NewCoursesNotifier(testRootDisposable)
+    PlatformTestUtil.registerExtension(EduCoursesProvider.EP_NAME, TestCoursesProvider(courseProducer), testRootDisposable)
 
     val actionCallback = ActionCallback()
     try {
@@ -59,7 +58,6 @@ class NewCoursesNotifierTest : EduTestCase() {
       assertEquals(expectedCourses, newCourses)
     } finally {
       actionCallback.setDone()
-      Disposer.dispose(newCoursesNotifier)
     }
   }
 
