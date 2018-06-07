@@ -1,17 +1,22 @@
 package com.jetbrains.edu.coursecreator.actions.create
 
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.withTestDialog
+import org.junit.Assert.assertArrayEquals
 
 class CCCreateFrameworkTaskTest : CCActionTestCase() {
 
   private val root: VirtualFile get() = LightPlatformTestCase.getSourceRoot()
+
+  override fun getTestDataPath(): String = super.getTestDataPath() + "/actions/frameworkLessons"
 
   fun `test first task in framework lesson`() {
     val lessonName = "FrameworkLesson"
@@ -170,5 +175,50 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
         }
       }
     }.assertEquals(root)
+  }
+
+  fun `test copy images`() {
+    val lessonName = "lesson1"
+    val imageName = "image.png"
+
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson(lessonName) {
+        eduTask {
+          taskFile("Task.kt")
+          taskFileFromResources(imageName, "$testDataPath/$imageName")
+        }
+      }
+    }
+    val newTaskName = "task2"
+    val lessonFile = findFile(lessonName)
+
+    withVirtualFileListener(course) {
+      withTestDialog(EduTestInputDialog(newTaskName)) {
+        testAction(dataContext(lessonFile), CCCreateTask())
+      }
+    }
+
+    fileTree {
+      dir(lessonName) {
+        dir("task1") {
+          file("Task.kt")
+          file(imageName)
+          file("task.html")
+        }
+        dir(newTaskName) {
+          file("Task.kt")
+          file("Tests.txt")
+          file(imageName)
+          file("task.html")
+        }
+      }
+    }.assertEquals(root)
+
+    val originalImage = findFile("$lessonName/task1/$imageName")
+    val imageCopy = findFile("$lessonName/$newTaskName/$imageName")
+
+    assertArrayEquals("Contents of `$originalImage` and `$imageCopy` differ",
+                      VfsUtil.loadBytes(originalImage),
+                      VfsUtil.loadBytes(imageCopy))
   }
 }
