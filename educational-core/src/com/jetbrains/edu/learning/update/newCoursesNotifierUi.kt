@@ -68,7 +68,7 @@ object NotificationNewCourseNotifierUi : NewCoursesNotifierUi {
     private val configurator: EduConfigurator<*>
   ) : DialogWrapper(true) {
 
-    private val panel: CoursePanel = CoursePanel(/*isIndependent = */ true, /*isLocationFieldNeeded = */ true).apply {
+    private val panel: CoursePanel = CoursePanel(true, true).apply {
       preferredSize = JBUI.size(WIDTH, HEIGHT)
       minimumSize = JBUI.size(WIDTH, HEIGHT)
     }
