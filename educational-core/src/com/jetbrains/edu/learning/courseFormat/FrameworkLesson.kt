@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseFormat
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.xmlb.annotations.Transient
-import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -29,31 +29,40 @@ class FrameworkLesson() : Lesson() {
 
   /**
    * Contains diffs between neighbor tasks.
-   * [myDiffs]`[i]` is diff list between [taskList]`[i]` and [taskList]`[i - 1]`.
-   * [myDiffs]`[0]` is supposed to be empty.
+   * [diffs]`[i]` is diff list between [taskList]`[i]` and [taskList]`[i - 1]`.
+   * [diffs]`[0]` is supposed to be empty.
    */
   @Transient
-  private var myDiffs: List<List<TaskDiff>>? = null
+  private var diffs: List<List<TaskDiff>> = emptyList()
 
   fun currentTask(): Task = taskList[currentTaskIndex]
 
   override fun init(course: Course?, section: StudyItem?, isRestarted: Boolean) {
     super.init(course, section, isRestarted)
-    myDiffs = List(taskList.size) { index ->
-      if (index == 0) return@List emptyList<TaskDiff>()
-      val task = taskList[index]
-      val prevTask = taskList[index - 1]
-      calculateDiffs(prevTask, task)
+    // We don't need calculate diffs in CC mode because we don't use them
+    if (course?.isStudy == true) {
+      diffs = List(taskList.size) { index ->
+        if (index == 0) return@List emptyList<TaskDiff>()
+        val task = taskList[index]
+        val prevTask = taskList[index - 1]
+        calculateDiffs(prevTask, task)
+      }
     }
   }
 
   fun prepareNextTask(project: Project, taskDir: VirtualFile) {
+    check(EduUtils.isStudentProject(project)) {
+      "`prepareNextTask` should be called only if course in study mode"
+    }
     currentTaskIndex++
-    myDiffs?.get(currentTaskIndex)?.forEach { diff -> diff.apply(project, taskDir) }
+    diffs[currentTaskIndex].forEach { diff -> diff.apply(project, taskDir) }
   }
 
   fun preparePrevTask(project: Project, taskDir: VirtualFile) {
-    myDiffs?.get(currentTaskIndex)?.forEach { diff -> diff.revert(project, taskDir) }
+    check(EduUtils.isStudentProject(project)) {
+      "`preparePrevTask` should be called only if course in study mode"
+    }
+    diffs[currentTaskIndex].forEach { diff -> diff.revert(project, taskDir) }
     currentTaskIndex--
   }
 
