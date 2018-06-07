@@ -2,9 +2,7 @@ package com.jetbrains.edu.learning.courseGeneration
 
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -102,7 +100,8 @@ object GeneratorUtils {
     for ((_, taskFileContent) in task.getTaskFiles()) {
       createTaskFile(taskDir, taskFileContent)
     }
-    createTestFiles(taskDir, task)
+    createFiles(taskDir, task.testTextMap)
+    createFiles(taskDir, task.additionalFiles)
     val course = task.course
     if (course != null && CCUtils.COURSE_MODE == course.courseMode) {
       createDescriptionFile(taskDir, task)
@@ -113,13 +112,6 @@ object GeneratorUtils {
   @JvmStatic
   fun createTaskFile(taskDir: VirtualFile, taskFile: TaskFile) {
     createChildFile(taskDir, taskFile.pathInTask, taskFile.text)
-  }
-
-  @Throws(IOException::class)
-  @JvmStatic
-  fun createTestFiles(taskDir: VirtualFile, task: Task) {
-    val tests = task.testTextMap
-    createFiles(taskDir, tests)
   }
 
   @Throws(IOException::class)
@@ -156,9 +148,7 @@ object GeneratorUtils {
     task.getTaskFiles().mapValuesTo(filesToCreate) { entry -> entry.value.text }
     filesToCreate.putAll(task.additionalFiles)
 
-    for ((key, value) in filesToCreate) {
-      createChildFile(courseDir, key, value)
-    }
+    createFiles(courseDir, filesToCreate)
   }
 
   @Throws(IOException::class)
