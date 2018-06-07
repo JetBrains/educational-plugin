@@ -4,7 +4,7 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.ActionCallback
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.text.DateFormatUtil
-import com.jetbrains.edu.learning.EduCoursesProvider
+import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -36,7 +36,7 @@ class NewCoursesNotifierTest : EduTestCase() {
 
   private fun doTest(expectedCheckNumber: Int, expectedCourses: List<RemoteCourse>, courseProducer: (Int) -> List<RemoteCourse>) {
     val newCoursesNotifier = NewCoursesNotifier(testRootDisposable)
-    PlatformTestUtil.registerExtension(EduCoursesProvider.EP_NAME, TestCoursesProvider(courseProducer), testRootDisposable)
+    PlatformTestUtil.registerExtension(CoursesProvider.EP_NAME, TestCoursesProvider(courseProducer), testRootDisposable)
 
     val actionCallback = ActionCallback()
     try {
@@ -68,7 +68,7 @@ class NewCoursesNotifierTest : EduTestCase() {
     updateDate = Date(System.currentTimeMillis() + if (isNew) DateFormatUtil.DAY else -DateFormatUtil.DAY)
   }
 
-  private class TestCoursesProvider(private val producer: (Int) -> List<RemoteCourse>) : EduCoursesProvider {
+  private class TestCoursesProvider(private val producer: (Int) -> List<RemoteCourse>) : CoursesProvider {
 
     private val counter = AtomicInteger()
 
