@@ -3,9 +3,9 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -86,7 +86,7 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
     newTaskFile.task = newTask
     newTaskFile.name = name
     newTaskFile.text = try {
-      EduUtils.findTaskFileInDir(this, taskDir)?.let { VfsUtil.loadText(it) } ?: ""
+      EduUtils.findTaskFileInDir(this, taskDir)?.let(CCUtils::loadText) ?: ""
     } catch (e: IOException) {
       LOG.error("Can't load text for `$name` task file", e)
       ""
