@@ -2,15 +2,11 @@ package com.jetbrains.edu.learning
 
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
+import com.intellij.openapi.ui.TestInputDialog
 
-open class EduTestDialog : TestDialog {
+sealed class EduTestDialogBase<T> {
 
   var shownMessage: String? = null
-
-  override fun show(message: String): Int {
-    shownMessage = message
-    return Messages.OK
-  }
 
   /**
    * Checks if dialog was shown.
@@ -27,14 +23,47 @@ open class EduTestDialog : TestDialog {
       }
     }
   }
+
+  protected abstract val defaultReturnValue: T
 }
 
-inline fun <T: TestDialog> withTestDialog(dialog: T, action: () -> Unit): T {
-  val oldDialog = Messages.setTestDialog(dialog)
-  try {
-    action()
-  } finally {
-    Messages.setTestDialog(oldDialog)
+open class EduTestDialog(override val defaultReturnValue: Int = Messages.OK) : EduTestDialogBase<Int>(), TestDialog {
+
+  override fun show(message: String): Int {
+    shownMessage = message
+    return defaultReturnValue
   }
+}
+
+open class EduTestInputDialog(override val defaultReturnValue: String) : EduTestDialogBase<String>(), TestInputDialog {
+
+  override fun show(message: String): String {
+    shownMessage = message
+    return defaultReturnValue
+  }
+}
+
+inline fun <T: EduTestDialogBase<*>> withTestDialog(dialog: T, action: () -> Unit): T {
+
+  when (dialog) {
+    is EduTestDialog -> {
+      val oldDialog = Messages.setTestDialog(dialog)
+      try {
+        action()
+      } finally {
+        Messages.setTestDialog(oldDialog)
+      }
+    }
+    is EduTestInputDialog -> {
+      val oldDialog = Messages.setTestInputDialog(dialog)
+      try {
+        action()
+      } finally {
+        Messages.setTestInputDialog(oldDialog)
+      }
+    }
+    else -> error("Unexpected dialog type: `${dialog.javaClass.canonicalName}`")
+  }
+
   return dialog
 }
