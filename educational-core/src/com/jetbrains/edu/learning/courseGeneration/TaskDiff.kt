@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.courseGeneration
 
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runUndoTransparentWriteAction
-import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -21,28 +22,43 @@ interface TaskDiff {
 
 fun addFile(path: String, text: String): TaskDiff = FileAdded(path, text)
 fun removeFile(path: String, text: String): TaskDiff = FileRemoved(path, text)
-fun changeFile(path: String, prevText: String, nextText: String): TaskDiff =
-  ItemChanged(removeFile(path, prevText), addFile(path, nextText))
+fun changeFile(path: String, prevText: String, nextText: String): TaskDiff = FileChanged(path, prevText, nextText)
 
 fun addTaskFile(path: String, taskFile: TaskFile): TaskDiff = TaskFileAdded(path, taskFile)
 fun removeTaskFile(path: String, taskFile: TaskFile): TaskDiff = TaskFileRemoved(path, taskFile)
-fun changeTaskFile(path: String, prevTaskFile: TaskFile, nextTaskFile: TaskFile): TaskDiff =
-  ItemChanged(removeTaskFile(path, prevTaskFile), addTaskFile(path, nextTaskFile))
+fun changeTaskFile(path: String, prevTaskFile: TaskFile, nextTaskFile: TaskFile): TaskDiff = TaskFileChanged(path, prevTaskFile, nextTaskFile)
 
-private open class ReversedTaskDiff(private val diff: TaskDiff) : TaskDiff {
-  override fun apply(project: Project, baseDir: VirtualFile) = diff.revert(project, baseDir)
-  override fun revert(project: Project, baseDir: VirtualFile) = diff.apply(project, baseDir)
-}
-
-private class ItemChanged(private val remove: TaskDiff, private val add: TaskDiff) : TaskDiff {
+private abstract class TaskFileDiff(
+  private val baseDiff: TaskDiff,
+  private val prevTaskFile: TaskFile?,
+  private val nextTaskFile: TaskFile?
+): TaskDiff {
   override fun apply(project: Project, baseDir: VirtualFile) {
-    remove.apply(project, baseDir)
-    add.apply(project, baseDir)
+    baseDiff.apply(project, baseDir)
+    restoreAnswers(project, nextTaskFile)
   }
 
   override fun revert(project: Project, baseDir: VirtualFile) {
-    add.revert(project, baseDir)
-    remove.revert(project, baseDir)
+    baseDiff.revert(project, baseDir)
+    restoreAnswers(project, prevTaskFile)
+  }
+
+  companion object {
+    private fun restoreAnswers(project: Project, taskFile: TaskFile?) {
+      if (taskFile == null) return
+      // Sort placeholders to avoid offset recalculation after each replacement
+      val sortedPlaceholders = taskFile.answerPlaceholders.sortedByDescending { it.initialState.offset }
+      for (placeholder in sortedPlaceholders) {
+        val studentAnswer = placeholder.studentAnswer
+        if (studentAnswer != null) {
+          val startOffset = placeholder.initialState.offset
+          val endOffset = startOffset + placeholder.initialState.length
+          runUndoTransparentWriteAction {
+            taskFile.getDocument(project)?.replaceString(startOffset, endOffset, studentAnswer)
+          }
+        }
+      }
+    }
   }
 }
 
@@ -59,7 +75,7 @@ private class FileAdded(
   }
 
   override fun revert(project: Project, baseDir: VirtualFile) {
-    runWriteAction {
+    runUndoTransparentWriteAction {
       try {
         baseDir.findFileByRelativePath(path)?.delete(FileAdded::class.java)
       } catch (e: IOException) {
@@ -73,38 +89,52 @@ private class FileAdded(
   }
 }
 
-private class FileRemoved(path: String, text: String) : ReversedTaskDiff(FileAdded(path, text))
+private class FileRemoved(path: String, text: String) : TaskDiff {
 
-private class TaskFileAdded(
-  path: String,
-  private val taskFile: TaskFile
+  private val add: FileAdded = FileAdded(path, text)
+
+  override fun apply(project: Project, baseDir: VirtualFile) = add.revert(project, baseDir)
+  override fun revert(project: Project, baseDir: VirtualFile) = add.apply(project, baseDir)
+}
+
+private class FileChanged(
+  private val path: String,
+  private val prevText: String,
+  private val nextText: String
 ) : TaskDiff {
-
-  private val add: FileAdded = FileAdded(path, taskFile.text)
-
   override fun apply(project: Project, baseDir: VirtualFile) {
-    add.apply(project, baseDir)
-    restoreAnswers(project)
+    setText(baseDir, path, nextText)
   }
 
   override fun revert(project: Project, baseDir: VirtualFile) {
-    add.revert(project, baseDir)
+    setText(baseDir, path, prevText)
   }
 
-  private fun restoreAnswers(project: Project) {
-    // Sort placeholders to avoid offset recalculation after each replacement
-    val sortedPlaceholders = taskFile.answerPlaceholders.sortedByDescending { it.initialState.offset }
-    for (placeholder in sortedPlaceholders) {
-      val studentAnswer = placeholder.studentAnswer
-      if (studentAnswer != null) {
-        val startOffset = placeholder.initialState.offset
-        val endOffset = startOffset + placeholder.initialState.length
-        runUndoTransparentWriteAction {
-          taskFile.getDocument(project)?.replaceString(startOffset, endOffset, studentAnswer)
-        }
+  companion object {
+    private val LOG: Logger = Logger.getInstance(FileChanged::class.java)
+
+    private fun setText(baseDir: VirtualFile, path: String, text: String) {
+      val file = baseDir.findFileByRelativePath(path)
+      if (file == null) {
+        LOG.warn("Can't find file `$path` in `$baseDir`")
+        return
+      }
+
+      val document = runReadAction { FileDocumentManager.getInstance().getDocument(file) }
+      if (document == null) {
+        LOG.warn("Can't get document for `$file`")
+      } else {
+        runUndoTransparentWriteAction { document.setText(text) }
       }
     }
   }
 }
 
-private class TaskFileRemoved(path: String, taskFile: TaskFile) : ReversedTaskDiff(TaskFileAdded(path, taskFile))
+private class TaskFileAdded(path: String, nextTaskFile: TaskFile) :
+  TaskFileDiff(FileAdded(path, nextTaskFile.text), null, nextTaskFile)
+
+private class TaskFileRemoved(path: String, prevTaskFile: TaskFile) :
+  TaskFileDiff(FileRemoved(path, prevTaskFile.text), prevTaskFile, null)
+
+private class TaskFileChanged(path: String, prevTaskFile: TaskFile, nextTaskFile: TaskFile) :
+  TaskFileDiff(FileChanged(path, prevTaskFile.text, nextTaskFile.text), prevTaskFile, nextTaskFile)
