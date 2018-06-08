@@ -51,6 +51,23 @@ class JCheckersTest : JCheckersTestBase() {
         """)
         testFile("output.txt", "OK")
       }
+      outputTask("OutputTaskWithSeveralFiles") {
+        javaTaskFile("Utils.java", """
+          public class Utils {
+            public static String ok() {
+              return "OK";
+            }
+          }
+        """)
+        javaTaskFile("Task.java", """
+          public class Task {
+            public static void main(String[] args) {
+              System.out.println(Utils.ok());
+            }
+          }
+        """)
+        testFile("output.txt", "OK")
+      }
     }
   }
 
