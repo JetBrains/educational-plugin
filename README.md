@@ -1,4 +1,6 @@
 [![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+
+[![Build Status](https://travis-ci.org/JetBrains/educational-plugin.svg?branch=master)](https://travis-ci.org/JetBrains/educational-plugin)
 ## Educational Plugin
 
 This plugin allows to learn and teach programming languages and technologies 
