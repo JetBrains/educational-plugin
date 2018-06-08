@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
+import com.jetbrains.edu.learning.stepik.serialization.UTCDateAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -39,6 +40,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class StepikClient {
@@ -97,7 +99,7 @@ public class StepikClient {
         .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter())
         .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
         .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter())
-        .setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        .registerTypeAdapter(Date.class, new UTCDateAdapter())
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   }
 
