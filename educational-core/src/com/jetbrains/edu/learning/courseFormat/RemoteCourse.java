@@ -150,7 +150,15 @@ public class RemoteCourse extends Course {
   public void setUpdated() {
     setUpdateDate(StepikConnector.getCourseUpdateDate(id));
     visitLessons((lesson) -> {
-      lesson.setUpdateDate(StepikConnector.getLessonUpdateDate(lesson.getId()));
+      Date lessonUpdateDate = StepikConnector.getLessonUpdateDate(lesson.getId());
+      Date unitUpdateDate = StepikConnector.getUnitUpdateDate(lesson.unitId);
+      if (lessonUpdateDate != null && unitUpdateDate != null && lessonUpdateDate.after(unitUpdateDate)) {
+        lesson.setUpdateDate(lessonUpdateDate);
+      }
+      else {
+        lesson.setUpdateDate(unitUpdateDate);
+      }
+
       for (Task task : lesson.getTaskList()) {
         task.setUpdateDate(StepikConnector.getTaskUpdateDate(task.getStepId()));
       }
