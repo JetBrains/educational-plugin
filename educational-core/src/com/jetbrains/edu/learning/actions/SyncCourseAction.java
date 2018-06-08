@@ -1,5 +1,7 @@
 package com.jetbrains.edu.learning.actions;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
@@ -41,13 +43,15 @@ public class SyncCourseAction extends DumbAwareAction {
     assert course != null;
     if (course instanceof RemoteCourse) {
       if (course.isUpToDate()) {
-        return;
+        new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
       }
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
-        course.setUpdated();
-      }, "Updating Course", true, project);
+      else {
+        ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+          ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+          new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
+          course.setUpdated();
+        }, "Updating Course", true, project);
+      }
     }
 
     if (CCUtils.isCourseCreator(project)) {
