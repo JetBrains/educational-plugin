@@ -224,6 +224,7 @@ public class StepikWrappers {
     int section;
     int lesson;
     int position;
+    @SerializedName("update_date") Date updateDate;
     List<Integer> assignments;
 
     public void setSection(int section) {
@@ -248,6 +249,14 @@ public class StepikWrappers {
 
     public void setId(int id) {
       this.id = id;
+    }
+
+    public Date getUpdateDate() {
+      return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+      this.updateDate = updateDate;
     }
   }
 
