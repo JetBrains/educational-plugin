@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.checker.*
 import com.jetbrains.edu.learning.checker.CheckUtils.*
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
 import java.util.regex.Pattern
@@ -177,10 +178,8 @@ private fun findMainClass(project: Project, task: Task, mainClassForFile: (Proje
       }
     }
 
-    val taskDir = task.getTaskDir(project) ?: return@runReadAction null
-
-    for ((name, _) in task.taskFiles) {
-      val file = taskDir.findChild(name) ?: continue
+    for ((_, taskFile) in task.taskFiles) {
+      val file = taskFile.getVirtualFile(project) ?: continue
       return@runReadAction mainClassForFile(project, file) ?: continue
     }
     null
