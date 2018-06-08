@@ -41,7 +41,7 @@ public class StepikUtils {
     else if (task instanceof CodeTask && adaptive) {
       finalText += "<br/><br/><b>Note</b>: Use standard input to obtain input for the task.";
     }
-    if (!(task instanceof EduTask) && !(task instanceof OutputTask)) {
+    if (course != null && course.isStudy()) {
       finalText += getFooterWithLink(task, adaptive);
     }
 
