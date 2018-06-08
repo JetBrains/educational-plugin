@@ -64,7 +64,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
 
-    if (((RemoteCourse)course).getId() > 0) {
+    if (course.getId() > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       if (lesson.getId() <= 0) {
         e.getPresentation().setText("Upload Lesson to Stepik");
@@ -117,8 +117,12 @@ public class CCPushLesson extends DumbAwareAction {
       int result = Messages.showYesNoDialog(project, "Since you have sections, we'll have to wrap this lesson into section before upload",
                                             "Wrap Lesson Into Sections", "Wrap and Post", "Cancel", null);
       if (result == Messages.YES) {
-        CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
-        CCPushSection.doPush(project, lesson.getSection(), (RemoteCourse)course);
+        boolean wrapped = CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
+        if (wrapped) {
+          Section section = lesson.getSection();
+          assert section != null;
+          CCPushSection.doPush(project, section, (RemoteCourse)course);
+        }
       }
     });
   }

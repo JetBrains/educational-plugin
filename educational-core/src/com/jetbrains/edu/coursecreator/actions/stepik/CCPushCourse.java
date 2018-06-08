@@ -81,12 +81,12 @@ public class CCPushCourse extends DumbAwareAction {
           updateCourseInfo(project, (RemoteCourse) course);
           updateCourseContent(indicator, course, project);
           try {
-            updateAdditionalMaterials(project, ((RemoteCourse)course).getId());
+            updateAdditionalMaterials(project, course.getId());
           }
           catch (IOException e1) {
             LOG.warn(e1);
           }
-          showNotification(project, "Course is updated", openOnStepikAction("/course/" + ((RemoteCourse)course).getId())
+          showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId())
           );
         }
       });
