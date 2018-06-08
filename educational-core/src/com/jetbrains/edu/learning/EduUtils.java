@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning;
 
 import com.google.common.collect.Lists;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -1162,7 +1160,13 @@ public class EduUtils {
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
           .create();
       zipFile.close();
-      return gson.fromJson(jsonText, Course.class);
+      JsonParser parser = new JsonParser();
+      JsonObject object = parser.parse(jsonText).getAsJsonObject();
+      JsonElement id = object.get("id");
+      if (id != null && 0 != id.getAsInt()) {
+        return gson.fromJson(object, RemoteCourse.class);
+      }
+      return gson.fromJson(object, Course.class);
     }
     catch (IOException e) {
       LOG.error("Failed to unzip course archive");
