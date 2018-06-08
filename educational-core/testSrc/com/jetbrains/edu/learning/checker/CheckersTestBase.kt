@@ -33,9 +33,9 @@ import com.intellij.testFramework.*
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.junit.Assert
@@ -61,20 +61,19 @@ abstract class CheckersTestBase : UsefulTestCase() {
         return super.shouldRunTest() && (!SystemInfo.isLinux || System.getenv("TEAMCITY_VERSION") == null)
     }
 
-    fun doTest() {
+    protected fun doTest() {
         UIUtil.dispatchAllInvocationEvents()
 
         val exceptions = arrayListOf<AssertionError>()
         for (lesson in myCourse.lessons) {
             for (task in lesson.getTaskList()) {
                 try {
-                    val taskDir = task.getTaskDir(myProject) ?: error("Cannot find task directory for task ${task.name}")
-                    val firstTaskFile = task.getTaskFiles().values.first()
-                    val taskFile = EduUtils.findTaskFileInDir(firstTaskFile, taskDir) ?: continue
+                    val taskFile = task.getTaskFiles().values.first()
+                    val virtualFile = taskFile.getVirtualFile(myProject)
+                                      ?: error("Can't find virtual file for `${taskFile.name}` task file in `${task.name} task`")
+                    FileEditorManager.getInstance(myProject).openFile(virtualFile, true)
 
-                    FileEditorManager.getInstance(myProject).openFile(taskFile, true)
-
-                    launchAction(taskFile, CheckAction())
+                    launchAction(virtualFile, CheckAction())
 
                     UIUtil.dispatchAllInvocationEvents()
                 } catch (e: AssertionError) {

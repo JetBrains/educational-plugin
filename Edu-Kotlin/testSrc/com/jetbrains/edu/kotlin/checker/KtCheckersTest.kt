@@ -45,6 +45,17 @@ class KtCheckersTest : KtCheckersTestBase() {
         """)
         testFile("output.txt", "OK")
       }
+      outputTask("OutputTaskWithSeveralFiles") {
+        kotlinTaskFile("utils.kt", """
+          fun ok(): String = "OK"
+        """)
+        kotlinTaskFile("Task.kt", """
+          fun main(args: Array<String>) {
+              println(ok())
+          }
+        """)
+        testFile("output.txt", "OK")
+      }
     }
   }
 

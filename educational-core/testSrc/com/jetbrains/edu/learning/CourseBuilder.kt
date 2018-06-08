@@ -114,13 +114,15 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
     lesson.name = name
   }
 
-  fun task(
+  private fun task(
     task: Task,
     name: String? = null,
     taskDescription: String? = null,
     taskDescriptionFormat: DescriptionFormat? = null,
     buildTask: TaskBuilder.() -> Unit = {}
   ) {
+    // we want to know task files order in tests
+    task.taskFiles = LinkedHashMap()
     val taskBuilder = TaskBuilder(lesson, task)
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
