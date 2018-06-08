@@ -153,7 +153,7 @@ public class CCStepikConnector {
       postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
       StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
       courseOnRemote.setUpdated();
-      showNotification(project, "Course is published", seeOnStepikAction("/course/" + courseOnRemote.getId()));
+      showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
@@ -745,8 +745,8 @@ public class CCStepikConnector {
     notification.notify(project);
   }
 
-  public static AnAction seeOnStepikAction(@NotNull String url) {
-    return new AnAction("See on Stepik") {
+  public static AnAction openOnStepikAction(@NotNull String url) {
+    return new AnAction("Open on Stepik") {
       @Override
       public void actionPerformed(AnActionEvent e) {
         BrowserUtil.browse(StepikNames.STEPIK_URL + url);
