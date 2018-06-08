@@ -238,6 +238,12 @@ public class StepikConnector {
     return lesson == null ? null : lesson.getUpdateDate();
   }
 
+  public static Date getUnitUpdateDate(final int unitId) {
+    Unit unit = getUnit(unitId);
+
+    return unit == null ? null : unit.getUpdateDate();
+  }
+
   @Nullable
   public static Lesson getLessonFromServer(final int lessonId) {
     final String url = StepikNames.LESSONS + "/" + lessonId;
