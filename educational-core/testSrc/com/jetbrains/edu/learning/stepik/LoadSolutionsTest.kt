@@ -1,8 +1,10 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.vfs.VfsUtil
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
@@ -20,16 +22,18 @@ class LoadSolutionsTest : StepikTestCase() {
   private val taskStatusErrorMessage = "Wrong task status, expected Solved"
   private val fileUpdateErrorMessage = "File text weren't updated"
 
-  override fun setUp() {
-    super.setUp()
-    configureByTaskFile(getInitialFileName())
-    val course = StudyTaskManager.getInstance(project).course
-    CCStepikConnector.postCourseWithProgress(project, course!!)
-    solveFirstTask()
-  }
-
   @Test
   fun testTaskStatuses() {
+    StudyTaskManager.getInstance(project).course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("fizz.kt", "no placeholders")
+        }
+      }
+    }
+    CCStepikConnector.postCourseWithProgress(project, StudyTaskManager.getInstance(project).course!!)
+    solveFirstTask()
+
     val task = firstTask(StudyTaskManager.getInstance(project).course)
     val progresses = Array(1, { PROGRESS_ID_PREFIX + task.stepId.toString() })
     val taskStatuses = taskStatuses(progresses)
@@ -41,6 +45,17 @@ class LoadSolutionsTest : StepikTestCase() {
 
   @Test
   fun testTasksToUpdate() {
+    StudyTaskManager.getInstance(project).course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      lesson("lesson1") {
+        eduTask {
+          taskFile("fizz.kt", "no placeholders")
+        }
+      }
+    }
+
+    CCStepikConnector.postCourseWithProgress(project, StudyTaskManager.getInstance(project).course!!)
+    solveFirstTask()
+
     val course = StudyTaskManager.getInstance(project).course!! as RemoteCourse
     val task = firstTask(StudyTaskManager.getInstance(project).course)
     val courseFromStepik = StepikConnector.getCourseFromStepik(EduSettings.getInstance().user, course.id, true) as RemoteCourse
@@ -78,7 +93,10 @@ class LoadSolutionsTest : StepikTestCase() {
     remoteCourse!!.init(null, null, false)
     remoteCourse.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(project).course = remoteCourse
-    configureByTaskFile(getInitialFileName())
+
+    val file = myFixture.findFileInTempDir(getInitialFileName())
+    myFixture.configureFromExistingVirtualFile(file)
+    FileEditorManager.getInstance(myFixture.project).openFile(file, true)
     return remoteCourse
   }
 
@@ -116,7 +134,7 @@ class LoadSolutionsTest : StepikTestCase() {
     StepikConnector.postSolution(task, true, project)
   }
 
-  private fun getInitialFileName() = getNameWithoutPrefix() + ".txt"
+  private fun getInitialFileName() = "fizz.kt"
 
   private fun getNameWithoutPrefix() = name.replaceFirst("test", "").decapitalize()
 
