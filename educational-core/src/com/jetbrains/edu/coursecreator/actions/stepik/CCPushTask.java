@@ -100,7 +100,7 @@ public class CCPushTask extends DumbAwareAction {
           if (isPosted) {
             CCStepikConnector.showNotification(project, "Task " + task.getName() + " uploaded",
                                                CCStepikConnector
-                                                 .seeOnStepikAction("/lesson/" + task.getLesson().getId() + "/step/" + task.getIndex())
+                                                 .openOnStepikAction("/lesson/" + task.getLesson().getId() + "/step/" + task.getIndex())
             );
           }
           else {
@@ -112,7 +112,7 @@ public class CCPushTask extends DumbAwareAction {
           if (isPosted) {
             int lessonId = task.getLesson().getId();
             CCStepikConnector.showNotification(project, "Task " + task.getName() + " updated",
-                                               CCStepikConnector.seeOnStepikAction("/lesson/" + lessonId + "/step/" + task.getIndex())
+                                               CCStepikConnector.openOnStepikAction("/lesson/" + lessonId + "/step/" + task.getIndex())
             );
           }
           else {
