@@ -133,7 +133,7 @@ public class CCPushLesson extends DumbAwareAction {
     if (lesson.getId() > 0) {
       int lessonId = CCStepikConnector.updateLesson(project, lesson, true);
       if (lessonId != -1) {
-        CCStepikConnector.showNotification(project, "Lesson updated", CCStepikConnector.seeOnStepikAction("/lesson/" + lessonId));
+        CCStepikConnector.showNotification(project, "Lesson updated", CCStepikConnector.openOnStepikAction("/lesson/" + lessonId));
       }
     }
     else {
@@ -150,7 +150,7 @@ public class CCPushLesson extends DumbAwareAction {
         sectionId = sections.get(sections.size() - 1);
         lesson.unitId = CCStepikConnector.postUnit(lessonId, lesson.getIndex(), sectionId, project);
       }
-      CCStepikConnector.showNotification(project, "Lesson uploaded", CCStepikConnector.seeOnStepikAction("/lesson/" + lesson.getId()));
+      CCStepikConnector.showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
     }
   }
 }
