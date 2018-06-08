@@ -51,10 +51,10 @@ public class CCPushTask extends DumbAwareAction {
       return;
     }
     Lesson lesson = CCUtils.lessonFromDir(course, lessonDir, project);
-    if (lesson != null && lesson.getId() > 0 && ((RemoteCourse)course).getId() > 0) {
+    if (lesson != null && lesson.getId() > 0 && course.getId() > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       final Task task = lesson.getTask(taskDir.getName());
-      if (task.getStepId() <= 0) {
+      if (task != null && task.getStepId() <= 0) {
         e.getPresentation().setText("Upload Task to Stepik");
       }
     }
