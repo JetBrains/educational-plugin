@@ -88,7 +88,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
 
             if (updated) {
               CCStepikConnector.showNotification(project, "Section \"${section.name}\" updated",
-                                                 CCStepikConnector.seeOnStepikAction("/course/" + course.id))
+                                                 CCStepikConnector.openOnStepikAction("/course/" + course.id))
             }
           }
           else {
@@ -100,7 +100,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
                                       section.position + 1)
             }
             CCStepikConnector.showNotification(project, "Section \"${section.name}\" posted",
-                                               CCStepikConnector.seeOnStepikAction("/course/" + course.id))
+                                               CCStepikConnector.openOnStepikAction("/course/" + course.id))
           }
         }
       })
