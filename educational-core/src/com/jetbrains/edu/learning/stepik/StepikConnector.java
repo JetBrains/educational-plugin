@@ -589,6 +589,7 @@ public class StepikConnector {
       final int lessonCount = lessonsFromUnits.size();
       for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
         Lesson lesson = lessonsFromUnits.get(lessonIndex);
+        lesson.unitId = Integer.parseInt(unitIds[lessonIndex]);
         if (progressIndicator != null && updateIndicator) {
           final int readableIndex = lessonIndex + 1;
           progressIndicator.checkCanceled();
