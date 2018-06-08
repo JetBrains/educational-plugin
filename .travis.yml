@@ -1,0 +1,32 @@
+language: java
+
+jdk:
+ - oraclejdk8
+
+branches:
+  only:
+  - master
+  - 181
+  - studio-181
+  - 173
+  - studio-173
+
+env:
+ global:
+   secure: cEqsyaEikA55U7jI08Vt9hMS5DZne7DUOWqj8X2FDEW3euteXo76DlpJI6eoWfPXXxRGjaw/84CQyxF1FhP6DNzK6VMxzJyFaVqysd7keSczJqVNun88DwJmwRlzZdh599p9AxqpwMUBs3fawO61y0/sb9/A+ovEPQMUqrpY8bT5DTJcMFnQg/WiWK18MQrXxiDhiKt33zlzSkYWh4eMQxl+FReoxur4Y/IaXZFWqWhZMwstIXjNPEEYkg9sVxW0m31GShTxJxVpH3qwxKcGfFSe7fWh6P22bD2RqmRB444c3+WBVBspEcO9ntYSN0jxx4ldXo8BUmthPG+vK+FKGm6quV7qDsDC6YCnmR3lqNzRDTPegl96oOgovL5F2YhaQnA1rRE2V4O6+ZdBU2214rQm21PjvVnair3E63iVzwbMKkFMgOMpS18SGyZ7AhttcV3qvDUbLUMWiQV0LHv99Qu7EeqQlBgIoiiyui3Ud5qoQZuU2MbQpBOajdVOAYHZJ6OYYaHAo/4saykfltwwAcifukyLyvH5zQODA7v3imddLRvkiElOEigNg0j8atVqDN8qldkNxNVSfSjSyZVhQjICJ0Y5RBfnxgKYohvl79+ka5kW8nVfTv2xQ/x1KPYVaoydVHKdVbi9TxUrC9oNDcoiDH1I0Od9EQhbE7dDYhw=
+
+install: true
+
+script:
+  - ./gradlew prepareJavaFx check -Pkotlin.incremental=false --no-daemon --continue
+
+# https://docs.travis-ci.com/user/languages/java/#Caching
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
+  - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
