@@ -78,16 +78,17 @@ public class CCPushCourse extends DumbAwareAction {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           indicator.setIndeterminate(false);
-          updateCourseInfo(project, (RemoteCourse) course);
-          updateCourseContent(indicator, course, project);
-          try {
-            updateAdditionalMaterials(project, course.getId());
+          if (updateCourseInfo(project, (RemoteCourse) course)) {
+            updateCourseContent(indicator, course, project);
+            try {
+              updateAdditionalMaterials(project, course.getId());
+            }
+            catch (IOException e1) {
+              LOG.warn(e1);
+            }
+            showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId())
+            );
           }
-          catch (IOException e1) {
-            LOG.warn(e1);
-          }
-          showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId())
-          );
         }
       });
     }
