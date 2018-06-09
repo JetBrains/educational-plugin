@@ -31,10 +31,10 @@ public class RemoteCourse extends Course {
   @SerializedName("is_idea_compatible") private boolean isCompatible = true;
 
   // in CC mode is used to store top-level lessons section id
-  @SerializedName("sections") List<Integer> sectionIds;
+  @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
   @Expose private int id;
-  @Expose @SerializedName("update_date") private Date myUpdateDate;
+  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date();
   @Expose private boolean isAdaptive = false;
   @Expose @SerializedName("is_public") boolean isPublic;
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses
