@@ -5,10 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.KeyedLazyInstance;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -87,7 +84,8 @@ public class RemoteCourse extends Course {
 
     final Date date = courseFromServer.getUpdateDate();
     if (date == null) return true;
-    if (date.after(myUpdateDate)) {
+    if (myUpdateDate == null) return true;
+    if (EduUtils.isAfter(date, myUpdateDate)) {
       return false;
     }
 
@@ -152,7 +150,7 @@ public class RemoteCourse extends Course {
     visitLessons((lesson) -> {
       Date lessonUpdateDate = StepikConnector.getLessonUpdateDate(lesson.getId());
       Date unitUpdateDate = StepikConnector.getUnitUpdateDate(lesson.unitId);
-      if (lessonUpdateDate != null && unitUpdateDate != null && lessonUpdateDate.after(unitUpdateDate)) {
+      if (lessonUpdateDate != null && unitUpdateDate != null && EduUtils.isAfter(lessonUpdateDate, unitUpdateDate)) {
         lesson.setUpdateDate(lessonUpdateDate);
       }
       else {

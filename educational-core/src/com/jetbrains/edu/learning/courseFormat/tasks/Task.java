@@ -272,7 +272,7 @@ public abstract class Task extends StudyItem {
     final Date date = StepikConnector.getTaskUpdateDate(getStepId());
     if (date == null) return true;
     if (myUpdateDate == null) return false;
-    return !date.after(myUpdateDate);
+    return !EduUtils.isAfter(date, myUpdateDate);
   }
 
   // used in json serialization/deserialization

@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,15 +72,17 @@ public class Section extends ItemContainer {
     if (id == 0) return true;
     Section section = StepikConnector.getSection(id);
     if (section.getUpdateDate() == null) return true;
-    if (myUpdateDate == null) return false;
-    if (section.units.size() != getLessons().size()) return false;
+    if (myUpdateDate == null) return true;
+    if (section.units.size() != getLessons().size()) {
+      return false;
+    }
     for (Lesson lesson : getLessons()) {
       if (!lesson.isUpToDate()) {
         return false;
       }
     }
 
-    return !section.getUpdateDate().after(myUpdateDate);
+    return !EduUtils.isAfter(section.getUpdateDate(), myUpdateDate);
   }
 
   public void setUpdateDate(Date updateDate) {
