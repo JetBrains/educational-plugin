@@ -67,6 +67,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
+import com.intellij.util.Time;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.io.ZipUtil;
 import com.intellij.util.io.zip.JBZipEntry;
@@ -1276,5 +1277,10 @@ public class EduUtils {
     }
     String relativePath = FileUtil.getRelativePath(taskDir.getPath(), createdFile.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
     return relativePath != null && relativePath.startsWith(sourceDir);
+  }
+
+  public static boolean isAfter(Date date, Date date2) {
+    long diff = date.getTime() - date2.getTime();
+    return diff > Time.MINUTE;
   }
 }
