@@ -312,7 +312,7 @@ public class CCStepikConnector {
       section.setPosition(position);
       final int sectionId = postModule(project, section, id);
       final int lessonId = postLesson(project, lesson);
-      postUnit(lessonId, position, sectionId, project);
+      lesson.unitId = postUnit(lessonId, position, sectionId, project);
     }
   }
 

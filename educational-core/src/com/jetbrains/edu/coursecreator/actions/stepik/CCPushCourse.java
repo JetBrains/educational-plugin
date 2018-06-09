@@ -133,7 +133,7 @@ public class CCPushCourse extends DumbAwareAction {
       else {
         int lessonId = postLesson(project, lesson);
         Integer sectionId = ((RemoteCourse)course).getSectionIds().get(0);
-        postUnit(lessonId, lesson.getIndex(), sectionId, project);
+        lesson.unitId = postUnit(lessonId, lesson.getIndex(), sectionId, project);
       }
     }
 
