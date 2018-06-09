@@ -523,8 +523,8 @@ public class CCStepikConnector {
     return false;
   }
 
-  public static void updateCourseInfo(@NotNull final Project project, @NotNull final RemoteCourse course) {
-    if (!checkIfAuthorized(project, "update course")) return;
+  public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final RemoteCourse course) {
+    if (!checkIfAuthorized(project, "update course")) return false;
 
     // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
@@ -544,7 +544,7 @@ public class CCStepikConnector {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) {
         LOG.warn("Http client is null");
-        return;
+        return false;
       }
       final CloseableHttpResponse response = client.execute(request);
       final HttpEntity responseEntity = response.getEntity();
@@ -553,6 +553,7 @@ public class CCStepikConnector {
       EntityUtils.consume(responseEntity);
       if (line.getStatusCode() == HttpStatus.SC_FORBIDDEN) {
         showNoRightsToUpdateNotification(project, course);
+        return false;
       }
       if (line.getStatusCode() != HttpStatus.SC_OK) {
         final String message = FAILED_TITLE + "course ";
@@ -563,9 +564,11 @@ public class CCStepikConnector {
       }
 
       course.setUpdated();
+      return true;
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
+      return false;
     }
   }
 
