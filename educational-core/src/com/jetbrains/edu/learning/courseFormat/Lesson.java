@@ -155,12 +155,16 @@ public class Lesson extends StudyItem {
     if (unit == null) return true;
     if (unit.getUpdateDate() == null) return true;
 
-    if (myUpdateDate == null) return false;
-    if (lessonInfo.steps.size() != taskList.size()) return false;
-    for (Task task : taskList) {
-      if (!task.isUpToDate()) return false;
+    if (myUpdateDate == null) return true;
+    if (lessonInfo.steps.size() != taskList.size()) {
+      return false;
     }
-    return !lessonInfo.myUpdateDate.after(myUpdateDate) && !unit.getUpdateDate().after(myUpdateDate);
+    for (Task task : taskList) {
+      if (!task.isUpToDate()) {
+        return false;
+      }
+    }
+    return !EduUtils.isAfter(lessonInfo.myUpdateDate, myUpdateDate) && !EduUtils.isAfter(unit.getUpdateDate(), myUpdateDate);
   }
 
   public boolean isAdditional() {
