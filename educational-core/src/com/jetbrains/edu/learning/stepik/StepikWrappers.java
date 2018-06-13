@@ -235,6 +235,10 @@ public class StepikWrappers {
       this.position = position;
     }
 
+    public int getPosition() {
+      return position;
+    }
+
     public void setLesson(int lesson) {
       this.lesson = lesson;
     }
