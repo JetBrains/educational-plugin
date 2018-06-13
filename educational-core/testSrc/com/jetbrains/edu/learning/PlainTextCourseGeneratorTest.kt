@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 
@@ -410,6 +411,28 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
             file("FizzBuzz.kt", code = "fun fooBar(): String = \"Foo\" + \"Bar\"")
             file("task.html")
           }
+        }
+      }
+    }
+  }
+
+  fun `test invalid symbols`() {
+    courseWithFiles {
+      lesson("lesson/name") {
+        eduTask("task:name")
+      }
+    }
+
+    if (SystemInfo.isWindows) {
+      checkFileTree {
+        dir("lesson name") {
+          dir("task name")
+        }
+      }
+    } else {
+      checkFileTree {
+        dir("lesson name") {
+          dir("task:name")
         }
       }
     }
