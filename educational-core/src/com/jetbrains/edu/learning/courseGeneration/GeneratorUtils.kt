@@ -6,6 +6,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.AtomicReference
 object GeneratorUtils {
 
   private val LOG: Logger = Logger.getInstance(GeneratorUtils::class.java)
+  private val WINDOWS_INVALID_SYMBOLS: Regex = "[/\\\\:<>\"?*|]".toRegex()
 
   @Throws(IOException::class)
   @JvmStatic
@@ -244,7 +246,7 @@ object GeneratorUtils {
    */
   @JvmStatic
   fun getUniqueValidName(parentDir: VirtualFile, name: String): String {
-    val validName = if (name.contains("/")) name.replace("/", " ") else name
+    val validName = name.convertToValidName()
     var index = 0
     var candidateName = validName
     while (parentDir.findChild(candidateName) != null) {
@@ -253,6 +255,8 @@ object GeneratorUtils {
     }
     return candidateName
   }
+
+  private fun String.convertToValidName(): String = if (SystemInfo.isWindows) replace(WINDOWS_INVALID_SYMBOLS, " ") else replace("/", " ")
 
   private fun createUniqueDir(parentDir: VirtualFile, item: StudyItem): VirtualFile {
     val (baseDirName, needUpdateItem) = if (item is Task && item.isFrameworkTask && item.course?.isStudy == true)  {
