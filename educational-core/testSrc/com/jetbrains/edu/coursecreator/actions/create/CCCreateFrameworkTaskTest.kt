@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
