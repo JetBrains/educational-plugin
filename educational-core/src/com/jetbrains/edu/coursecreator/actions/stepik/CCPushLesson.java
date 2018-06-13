@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -134,10 +135,10 @@ public class CCPushLesson extends DumbAwareAction {
   // public for tests
   public static void doPush(Lesson lesson, Project project, Course course) {
     if (lesson.getId() > 0) {
+      StepikWrappers.Unit unit = StepikConnector.getUnit(lesson.unitId);
       int lessonId = CCStepikConnector.updateLesson(project, lesson, true);
       if (lessonId != -1) {
-        Lesson updatedLesson = StepikConnector.getLesson(lessonId);
-        boolean positionChanged = lesson.getIndex() != updatedLesson.getIndex();
+        boolean positionChanged = lesson.getIndex() != unit.getPosition();
         if (positionChanged) {
           List<Lesson> lessons = lesson.getSection() != null ? lesson.getSection().getLessons() : course.getLessons();
           updateLessonsPositions(project, 0, lessons);
