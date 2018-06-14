@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik
 
+import com.google.common.collect.Lists
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -77,8 +78,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
       createNewLessons(newLessons, project.baseDir)
     }
     val lessonsUpdated = updateLessons(courseFromServer.lessons.filter { course.getLesson(it.id) != null }, course)
-    course.clearItems()
-    course.addItems(courseFromServer.items)
+    course.items = Lists.newArrayList(courseFromServer.items)
     setCourseInfo(courseFromServer)
 
     return Pair(lessonsUpdated, newLessons.size)
