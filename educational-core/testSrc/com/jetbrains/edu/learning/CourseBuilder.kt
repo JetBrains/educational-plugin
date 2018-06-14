@@ -1,9 +1,7 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -220,14 +218,13 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
 
   fun taskFileFromResources(name: String, path: String, buildTaskFile: TaskFileBuilder.() -> Unit = {}) {
     val ioFile = File(path)
-    val disposable = Disposable { VfsRootAccess.disallowRootAccess(ioFile.absolutePath) }
     try {
       VfsRootAccess.allowRootAccess(ioFile.absolutePath)
       val file = LocalFileSystem.getInstance().findFileByIoFile(ioFile) ?: error("Can't find `$path`")
       val text = CCUtils.loadText(file)
       taskFile(name, text, buildTaskFile)
     } finally {
-      Disposer.dispose(disposable)
+      VfsRootAccess.disallowRootAccess(ioFile.absolutePath)
     }
   }
 
