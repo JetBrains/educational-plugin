@@ -40,8 +40,8 @@ public class AnswerPlaceholderDependency {
   private int myPlaceholderIndex;
 
   @Expose
-  @SerializedName("is_invisible")
-  private boolean myIsInvisible;
+  @SerializedName("is_visible")
+  private boolean myIsVisible = true;
 
   private AnswerPlaceholder myAnswerPlaceholder = null;
 
@@ -53,24 +53,15 @@ public class AnswerPlaceholderDependency {
                                      @NotNull String lessonName,
                                      @NotNull String taskName,
                                      @NotNull String fileName,
-                                     int placeholderIndex) {
-    this(answerPlaceholder, sectionName, lessonName, taskName, fileName, placeholderIndex, false);
-  }
-
-  public AnswerPlaceholderDependency(@NotNull AnswerPlaceholder answerPlaceholder,
-                                     @Nullable String sectionName,
-                                     @NotNull String lessonName,
-                                     @NotNull String taskName,
-                                     @NotNull String fileName,
                                      int placeholderIndex,
-                                     boolean isInvisible) {
+                                     boolean isVisible) {
     mySectionName = sectionName;
     myLessonName = lessonName;
     myTaskName = taskName;
     myFileName = fileName;
     myPlaceholderIndex = placeholderIndex;
     myAnswerPlaceholder = answerPlaceholder;
-    myIsInvisible = isInvisible;
+    myIsVisible = isVisible;
   }
 
   @Nullable
@@ -104,7 +95,12 @@ public class AnswerPlaceholderDependency {
   }
 
   @Nullable
-  public static AnswerPlaceholderDependency create(@NotNull AnswerPlaceholder answerPlaceholder, @NotNull String text)
+  public static AnswerPlaceholderDependency create(@NotNull AnswerPlaceholder answerPlaceholder, @NotNull String text) {
+    return create(answerPlaceholder, text, true);
+  }
+
+  @Nullable
+  public static AnswerPlaceholderDependency create(@NotNull AnswerPlaceholder answerPlaceholder, @NotNull String text, boolean isVisible)
     throws InvalidDependencyException {
     if (StringUtil.isEmptyOrSpaces(text)) {
       return null;
@@ -124,7 +120,7 @@ public class AnswerPlaceholderDependency {
       String taskName = matcher.group(4);
       String file = FileUtil.toSystemIndependentName(matcher.group(5));
       int placeholderIndex = Integer.parseInt(matcher.group(6)) - 1;
-      AnswerPlaceholderDependency dependency = new AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, file, placeholderIndex);
+      AnswerPlaceholderDependency dependency = new AnswerPlaceholderDependency(answerPlaceholder, sectionName, lessonName, taskName, file, placeholderIndex, isVisible);
       AnswerPlaceholder targetPlaceholder = dependency.resolve(course);
       if (targetPlaceholder == null) {
         throw new InvalidDependencyException(text, "non existing answer placeholder");
@@ -201,12 +197,12 @@ public class AnswerPlaceholderDependency {
     myPlaceholderIndex = placeholderIndex;
   }
 
-  public boolean isInvisible() {
-    return myIsInvisible;
+  public boolean isVisible() {
+    return myIsVisible;
   }
 
-  public void setInvisible(boolean invisible) {
-    myIsInvisible = invisible;
+  public void setVisible(boolean visible) {
+    myIsVisible = visible;
   }
 
   @Override
