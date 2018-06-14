@@ -152,6 +152,7 @@ public class CCStepikConnector {
       ApplicationManager.getApplication().invokeAndWait(() -> FileDocumentManager.getInstance().saveAllDocuments());
       postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
       StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
+      courseOnRemote.init(null, null, true);
       courseOnRemote.setUpdated();
       showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
     }
