@@ -201,7 +201,7 @@ public class AnswerPlaceholder {
   }
 
   public boolean isVisible() {
-    return myPlaceholderDependency == null || !myPlaceholderDependency.isInvisible() || !isInitializedFromDependency();
+    return myPlaceholderDependency == null || myPlaceholderDependency.isVisible() || !isInitializedFromDependency();
   }
 
   public static class MyInitialState {
