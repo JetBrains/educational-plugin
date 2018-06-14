@@ -224,9 +224,8 @@ public class StepikConnector {
                            ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
                              ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
                              new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
+                             course.setUpdated();
                            }, "Updating Course", true, project);
-
-                           course.setUpdated();
                          }
                        });
     notification.notify(project);
