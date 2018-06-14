@@ -283,10 +283,6 @@ public class Course extends ItemContainer {
     return myCompatibility;
   }
 
-  public void setItems(List<StudyItem> items) {
-    this.items = items;
-  }
-
   public void addItem(@NotNull StudyItem item, int index) {
     items.add(index, item);
   }
