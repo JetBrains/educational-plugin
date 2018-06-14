@@ -55,16 +55,8 @@ public abstract class ItemContainer extends StudyItem {
     items.add(lesson);
   }
 
-  public void addItems(@NotNull final List<StudyItem> itemsToAdd) {
-    items.addAll(itemsToAdd);
-  }
-
   public void removeLesson(@NotNull Lesson lesson) {
     items.remove(lesson);
-  }
-
-  public void clearItems() {
-    items.clear();
   }
 
   public void sortItems() {
@@ -96,5 +88,9 @@ public abstract class ItemContainer extends StudyItem {
         visitor.visit((Section)item);
       }
     }
+  }
+
+  public void setItems(List<StudyItem> items) {
+    this.items = items;
   }
 }
