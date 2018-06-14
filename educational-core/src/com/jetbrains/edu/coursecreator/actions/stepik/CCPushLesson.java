@@ -15,7 +15,10 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -24,7 +27,6 @@ import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class CCPushLesson extends DumbAwareAction {
@@ -165,9 +167,8 @@ public class CCPushLesson extends DumbAwareAction {
         lesson.unitId = CCStepikConnector.postUnit(lessonId, lesson.getIndex(), sectionId, project);
         if (lesson.getIndex() < course.getLessons().size()) {
           List<Lesson> lessons = course.getLessons();
-          lessons.sort(Comparator.comparingInt(StudyItem::getIndex));
           updateLessonsPositions(project,
-                                 lesson.getIndex() + 1, lessons.subList(lesson.getIndex(), course.getLessons().size()));
+                                 lesson.getIndex() + 1, lessons.subList(lesson.getIndex(), lessons.size()));
         }
       }
       CCStepikConnector.showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
