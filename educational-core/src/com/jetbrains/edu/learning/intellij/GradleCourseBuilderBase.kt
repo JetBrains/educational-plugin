@@ -16,7 +16,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   abstract val buildGradleTemplateName: String
 
-  open val buildGradleVariables: Map<String, String> = mapOf("GRADLE_VERSION" to EduGradleUtils.gradleVersion())
+  open val buildGradleVariables: Map<String, String> by lazy { mapOf("GRADLE_VERSION" to EduGradleUtils.gradleVersion()) }
 
   override fun refreshProject(project: Project) {
     ExternalSystemUtil.refreshProjects(project, GradleConstants.SYSTEM_ID, true, ProgressExecutionMode.MODAL_SYNC)
