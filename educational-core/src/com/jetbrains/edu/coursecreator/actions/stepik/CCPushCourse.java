@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
@@ -112,6 +113,7 @@ public class CCPushCourse extends DumbAwareAction {
   private static void updateCourseContent(@NotNull ProgressIndicator indicator, Course course, Project project) {
     if (!((RemoteCourse)course).getSectionIds().isEmpty() && course.getLessons().isEmpty()) {
       deleteSection(project, ((RemoteCourse)course).getSectionIds().get(0));
+      ((RemoteCourse)course).setSectionIds(Collections.emptyList());
     }
 
     int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
