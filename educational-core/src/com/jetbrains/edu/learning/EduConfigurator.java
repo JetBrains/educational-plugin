@@ -134,4 +134,13 @@ public interface EduConfigurator<Settings> {
   default String getMockTemplate() {
     return "";
   }
+
+  /**
+   * Provide IDE plugin ids which are required for correct work of courses for the corresponding language.
+   *
+   * @return list of plugin ids
+   */
+  default List<String> pluginRequirements() {
+    return Collections.emptyList();
+  }
 }
