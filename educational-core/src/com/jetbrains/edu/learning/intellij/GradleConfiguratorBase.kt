@@ -17,6 +17,8 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   override fun getSourceDir(): String = EduNames.SRC
   override fun getTestDir(): String = EduNames.TEST
 
+  override fun pluginRequirements(): List<String> = listOf("org.jetbrains.plugins.gradle", "JUnit")
+
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
       ".idea", "EduTestRunner.java", "gradlew", "gradlew.bat", "local.properties", "gradle.properties",

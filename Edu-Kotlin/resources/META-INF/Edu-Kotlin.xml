@@ -1,6 +1,7 @@
 <idea-plugin>
     <depends>com.intellij.modules.lang</depends>
     <depends>org.jetbrains.kotlin</depends>
+    <depends>org.jetbrains.plugins.gradle</depends>
     <depends>JUnit</depends>
 
 
