@@ -11,15 +11,13 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.components.JBLabel
+import com.intellij.ui.HyperlinkLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduConfiguratorManager
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.EduLanguageDecorator
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
 import java.awt.BorderLayout
@@ -43,10 +41,12 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   private val myPathField: PathField = PathField()
   private val myLocationField: LabeledComponent<TextFieldWithBrowseButton> = createLocationField()
 
-  private val myErrorLabel = JBLabel()
+  private val myErrorLabel = HyperlinkLabel()
 
   private val myCourse: Course = (course ?: Course()).apply { courseMode = CCUtils.COURSE_MODE }
   private lateinit var myLanguageSettings: EduCourseBuilder.LanguageSettings<*>
+
+  private var myRequiredAndDisabledPlugins: List<String> = emptyList()
 
   private var myValidationListener: ValidationListener? = null
 
@@ -80,6 +80,8 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
     add(myPanel, BorderLayout.NORTH)
     add(bottomPanel, BorderLayout.SOUTH)
+
+    myErrorLabel.addHyperlinkListener { enablePlugins(myRequiredAndDisabledPlugins) }
 
     myLanguageComboBox.renderer = object : DefaultListCellRenderer() {
       override fun getListCellRendererComponent(list: JList<*>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component {
@@ -136,15 +138,18 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   }
 
   private fun doValidation() {
-    val message = when {
-      myTitleField.text.isNullOrBlank() -> "Enter course title"
-      myAuthorField.text.isNullOrBlank() -> "Enter course instructor"
-      myDescriptionTextArea.text.isNullOrBlank() -> "Enter course description"
-      locationString.isBlank() -> "Enter course location"
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> "Can't create course at this location"
-      else -> null
+    val (message, link) = when {
+      myTitleField.text.isNullOrBlank() -> "Enter course title" to null
+      myAuthorField.text.isNullOrBlank() -> "Enter course instructor"  to null
+      myDescriptionTextArea.text.isNullOrBlank() -> "Enter course description" to null
+      locationString.isBlank() -> "Enter course location"  to null
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> "Can't create course at this location"  to null
+      myRequiredAndDisabledPlugins.isNotEmpty() -> "Some required plugins are disabled. " to "Enable plugins"
+      else -> null to null
     }
-    myErrorLabel.text = message
+    if (message != null) {
+      myErrorLabel.setHyperlinkText(message, link ?: "", "")
+    }
     myErrorLabel.isVisible = message != null
     myValidationListener?.onInputDataValidated(message == null)
   }
@@ -180,6 +185,9 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     val settings = arrayListOf<LabeledComponent<*>>(myLocationField)
     settings.addAll(myLanguageSettings.getLanguageSettingsComponents(myCourse))
     myAdvancedSettings.setSettingsComponents(settings)
+
+    myRequiredAndDisabledPlugins = getDisabledPlugins(configurator.pluginRequirements())
+    doValidation()
   }
 
   private fun collectLanguages(course: Course?) {
