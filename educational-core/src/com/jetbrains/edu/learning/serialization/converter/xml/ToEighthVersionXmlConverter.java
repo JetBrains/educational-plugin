@@ -47,14 +47,16 @@ public class ToEighthVersionXmlConverter implements XmlConverter {
           String descriptionFileName = taskDescriptionData.getKey() + "." + extension;
           VirtualFile descriptionFile = taskDir.findChild(descriptionFileName);
           if (descriptionFile == null) {
-            ApplicationManager.getApplication().runWriteAction(() -> {
-              try {
-                VirtualFile descriptionVirtualFile = taskDir.createChildData(StudyTaskManager.class, descriptionFileName);
-                VfsUtil.saveText(descriptionVirtualFile, taskDescriptionData.getValue());
-              } catch (IOException e) {
-                LOG.error(e);
-              }
-            });
+            ApplicationManager.getApplication().invokeAndWait(
+              () -> ApplicationManager.getApplication().runWriteAction(() -> {
+                try {
+                  VirtualFile descriptionVirtualFile = taskDir.createChildData(StudyTaskManager.class, descriptionFileName);
+                  VfsUtil.saveText(descriptionVirtualFile, taskDescriptionData.getValue());
+                }
+                catch (IOException e) {
+                  LOG.error(e);
+                }
+              }));
           }
         }
       }
