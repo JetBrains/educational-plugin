@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.serialization.converter.xml
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
@@ -25,28 +26,32 @@ class ToNinthVersionXmlConverter : XmlConverter {
       val lessonDir = EduUtils.getCourseDir(project).findChild(EduNames.LESSON + getAsInt(lesson, INDEX)) ?: throw StudyUnrecognizedFormatException()
       for (task in getChildList(lesson, TASK_LIST)) {
         val taskDir = lessonDir.findChild(EduNames.TASK + getAsInt(task, INDEX)) ?: throw StudyUnrecognizedFormatException()
-        runWriteAction {
-          val taskName = getName(task)
-          val uniqueValidName = GeneratorUtils.getUniqueValidName(lessonDir, taskName)
-          val nameElement = getChildWithName(task, NAME)
-          if (nameElement != null && uniqueValidName != taskName) {
-            changeValue(nameElement, uniqueValidName)
-            addChildWithName(task, CUSTOM_NAME, taskName)
+        ApplicationManager.getApplication().invokeAndWait {
+          runWriteAction {
+            val taskName = getName(task)
+            val uniqueValidName = GeneratorUtils.getUniqueValidName(lessonDir, taskName)
+            val nameElement = getChildWithName(task, NAME)
+            if (nameElement != null && uniqueValidName != taskName) {
+              changeValue(nameElement, uniqueValidName)
+              addChildWithName(task, CUSTOM_NAME, taskName)
+            }
+            taskDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
           }
-          taskDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
         }
         removeSubtaskInfos(task)
         migrateDescription(task)
       }
-      runWriteAction {
-        val lessonName = getName(lesson)
-        val uniqueValidName = GeneratorUtils.getUniqueValidName(project.baseDir, lessonName)
-        val nameElement = getChildWithName(lesson, NAME)
-        if (nameElement != null && uniqueValidName != lessonName) {
-          changeValue(nameElement, uniqueValidName)
-          addChildWithName(lesson, CUSTOM_NAME, lessonName)
+      ApplicationManager.getApplication().invokeAndWait {
+        runWriteAction {
+          val lessonName = getName(lesson)
+          val uniqueValidName = GeneratorUtils.getUniqueValidName(project.baseDir, lessonName)
+          val nameElement = getChildWithName(lesson, NAME)
+          if (nameElement != null && uniqueValidName != lessonName) {
+            changeValue(nameElement, uniqueValidName)
+            addChildWithName(lesson, CUSTOM_NAME, lessonName)
+          }
+          lessonDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
         }
-        lessonDir.rename(ToNinthVersionXmlConverter::class.java, uniqueValidName)
       }
     }
     val lessons = getChildWithName(courseElement, LESSONS)
