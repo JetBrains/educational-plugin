@@ -1,7 +1,8 @@
 package com.jetbrains.edu.learning.newproject.ui
 
+import com.intellij.ide.plugins.PluginManager
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.MessageType.*
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -11,21 +12,18 @@ import com.jetbrains.edu.learning.getDisabledPlugins
 import java.awt.Color
 
 sealed class ErrorState(
-  rawMessage: String?,
+  val message: ErrorMessage?,
   val foregroundColor: Color,
-  val hasLink: Boolean,
   val courseCanBeStarted: Boolean
 ) {
 
-  val message: String? = rawMessage?.let(UIUtil::toHtml)
-
-  object None : ErrorState(null, Color.BLACK, false, true)
-  object NothingSelected : ErrorState(null, Color.BLACK, false, courseCanBeStarted = true)
-  object NotLoggedIn : ErrorState("<u><b>Log in</b></u> to Stepik to see more courses", WARNING.titleForeground, true, courseCanBeStarted = true)
-  object LoginRequired : ErrorState("<u><b>Log in</b></u> to Stepik to start this course", ERROR.titleForeground, true, courseCanBeStarted = false)
-  object IncompatibleVersion : ErrorState("<u><b>Update</b></u> plugin to start this course", ERROR.titleForeground, true, courseCanBeStarted = false)
+  object None : ErrorState(null, Color.BLACK, true)
+  object NothingSelected : ErrorState(null, Color.BLACK, true)
+  object NotLoggedIn : ErrorState(ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
+  object LoginRequired : ErrorState(ErrorMessage("", "Log in", " to Stepik to start this course"), ERROR.titleForeground, false)
+  object IncompatibleVersion : ErrorState(ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
-    ErrorState("Some required plugins are disabled. <u><b>Enable plugins</b></u>", ERROR.titleForeground, true, courseCanBeStarted = false)
+    ErrorState(errorMessage(disabledPluginIds), ERROR.titleForeground, false)
 
   companion object {
     @JvmStatic
@@ -41,6 +39,21 @@ sealed class ErrorState(
       }
     }
 
+    @JvmStatic
+    fun errorMessage(disabledPluginIds: List<String>): ErrorMessage {
+      val pluginName = if (disabledPluginIds.size == 1) {
+        PluginManager.getPlugin(PluginId.getId(disabledPluginIds[0]))?.name
+      } else {
+        null
+      }
+      val beforeLink = if (pluginName != null) {
+        "Required \"$pluginName\" plugin is disabled. "
+      } else {
+        "Some required plugins are disabled. "
+      }
+      return ErrorMessage(beforeLink, "Enable", "")
+    }
+
     private fun isLoggedIn(): Boolean = EduSettings.getInstance().user != null
 
     private fun isLoginRequired(selectedCourse: Course): Boolean =
@@ -48,3 +61,4 @@ sealed class ErrorState(
   }
 }
 
+data class ErrorMessage(val beforeLink: String, val link: String = "", val afterLink: String = "")
