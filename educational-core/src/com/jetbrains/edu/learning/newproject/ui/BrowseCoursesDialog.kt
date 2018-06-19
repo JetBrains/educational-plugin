@@ -7,14 +7,13 @@ import javax.swing.JComponent
 
 class BrowseCoursesDialog(val courses: List<Course>) : DialogWrapper(true) {
 
-  val panel = CoursesPanel(courses).apply {
-    addCourseValidationListener(this@BrowseCoursesDialog::setOKActionEnabled)
-  }
+  val panel = CoursesPanel(courses)
 
   init {
     title = "Select Course"
     myOKAction = OpenCourseAction(this)
     init()
+    panel.addCourseValidationListener(this::setOKActionEnabled)
   }
 
   override fun createCenterPanel(): JComponent = panel
