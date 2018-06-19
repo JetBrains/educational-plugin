@@ -20,6 +20,8 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
+import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
+import com.jetbrains.edu.learning.newproject.ui.ErrorState
 import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.event.ItemEvent
@@ -138,20 +140,20 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   }
 
   private fun doValidation() {
-    val (message, link) = when {
-      myTitleField.text.isNullOrBlank() -> "Enter course title" to null
-      myAuthorField.text.isNullOrBlank() -> "Enter course instructor"  to null
-      myDescriptionTextArea.text.isNullOrBlank() -> "Enter course description" to null
-      locationString.isBlank() -> "Enter course location"  to null
-      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> "Can't create course at this location"  to null
-      myRequiredAndDisabledPlugins.isNotEmpty() -> "Some required plugins are disabled. " to "Enable plugins"
-      else -> null to null
+    val errorMessage = when {
+      myTitleField.text.isNullOrBlank() -> ErrorMessage("Enter course title")
+      myAuthorField.text.isNullOrBlank() -> ErrorMessage("Enter course instructor")
+      myDescriptionTextArea.text.isNullOrBlank() -> ErrorMessage("Enter course description")
+      locationString.isBlank() -> ErrorMessage("Enter course location")
+      !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ErrorMessage("Can't create course at this location")
+      myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins)
+      else -> null
     }
-    if (message != null) {
-      myErrorLabel.setHyperlinkText(message, link ?: "", "")
+    if (errorMessage != null) {
+      myErrorLabel.setHyperlinkText(errorMessage.beforeLink, errorMessage.link, errorMessage.afterLink)
     }
-    myErrorLabel.isVisible = message != null
-    myValidationListener?.onInputDataValidated(message == null)
+    myErrorLabel.isVisible = errorMessage != null
+    myValidationListener?.onInputDataValidated(errorMessage == null)
   }
 
   private fun createLocationField(): LabeledComponent<TextFieldWithBrowseButton> {
