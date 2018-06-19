@@ -25,7 +25,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
@@ -49,8 +48,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.*;
 import java.util.List;
 
@@ -64,7 +61,7 @@ public class CoursesPanel extends JPanel {
   private JPanel myMainPanel;
   private JPanel myCourseListPanel;
   private FilterComponent mySearchField;
-  private JBLabel myErrorLabel;
+  private HyperlinkLabel myErrorLabel;
   private JSplitPane mySplitPane;
   private JPanel mySplitPaneRoot;
   private JBList<Course> myCoursesList;
@@ -90,7 +87,6 @@ public class CoursesPanel extends JPanel {
     myCoursesList.setEmptyText(NO_COURSES);
     updateModel(myCourses, null);
     myErrorLabel.setVisible(false);
-    myErrorLabel.setBorder(JBUI.Borders.empty(20, 10, 0, 0));
 
     ColoredListCellRenderer<Course> renderer = getCourseRenderer();
     myCoursesList.setCellRenderer(renderer);
@@ -107,32 +103,16 @@ public class CoursesPanel extends JPanel {
     myCourseListPanel.add(toolbarDecoratorPanel, BorderLayout.CENTER);
     myCourseListPanel.setBorder(JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 1, 1, 1));
     myCoursesList.setBackground(LIST_COLOR);
-    myErrorLabel.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.LoginRequired.INSTANCE) {
-          addLoginListener(CoursesPanel.this::updateCoursesList);
-          StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
-        } else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
-          PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
-        } else if (myErrorState instanceof ErrorState.RequiredPluginsDisabled) {
-          List<String> disabledPluginIds = ((ErrorState.RequiredPluginsDisabled)myErrorState).getDisabledPluginIds();
-          enablePlugins(disabledPluginIds);
-        }
-      }
 
-      @Override
-      public void mouseEntered(MouseEvent e) {
-        if (myErrorState.getHasLink()) {
-          e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        }
-      }
-
-      @Override
-      public void mouseExited(MouseEvent e) {
-        if (myErrorState.getHasLink()) {
-          e.getComponent().setCursor(Cursor.getDefaultCursor());
-        }
+    myErrorLabel.addHyperlinkListener(e -> {
+      if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.LoginRequired.INSTANCE) {
+        addLoginListener(this::updateCoursesList);
+        StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
+      } else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
+        PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
+      } else if (myErrorState instanceof ErrorState.RequiredPluginsDisabled) {
+        List<String> disabledPluginIds = ((ErrorState.RequiredPluginsDisabled)myErrorState).getDisabledPluginIds();
+        enablePlugins(disabledPluginIds);
       }
     });
 
@@ -193,10 +173,10 @@ public class CoursesPanel extends JPanel {
       myCoursePanel.bindCourse(selectedCourse);
     }
 
-    String message = errorState.getMessage();
+    ErrorMessage message = errorState.getMessage();
     if (message != null) {
       myErrorLabel.setVisible(true);
-      myErrorLabel.setText(message);
+      myErrorLabel.setHyperlinkText(message.getBeforeLink(), message.getLink(), message.getAfterLink());
     } else {
       myErrorLabel.setVisible(false);
     }
