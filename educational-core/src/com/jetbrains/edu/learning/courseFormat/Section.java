@@ -21,7 +21,7 @@ public class Section extends ItemContainer {
   private int id;
   @Expose
   @SerializedName("update_date")
-  private Date myUpdateDate;
+  private Date myUpdateDate = new Date(0);
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     int index = 1;
