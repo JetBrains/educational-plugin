@@ -26,7 +26,7 @@ public class Lesson extends StudyItem {
   @Transient public List<Integer> steps;
   @Transient public List<String> tags;
   @Transient boolean is_public;
-  @Expose @SerializedName("update_date") private Date myUpdateDate;
+  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
 
   @Expose
   @SerializedName("title")
