@@ -60,7 +60,7 @@ public abstract class Task extends StudyItem {
   @Expose protected Map<String, String> additionalFiles = new HashMap<>();
 
   @Transient private Lesson myLesson;
-  @Expose @SerializedName("update_date") private Date myUpdateDate;
+  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
 
   public Task() {}
 
