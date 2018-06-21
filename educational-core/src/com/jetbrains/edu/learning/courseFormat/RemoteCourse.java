@@ -31,7 +31,7 @@ public class RemoteCourse extends Course {
   @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
   @Expose private int id;
-  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date();
+  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
   @Expose private boolean isAdaptive = false;
   @Expose @SerializedName("is_public") boolean isPublic;
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses
