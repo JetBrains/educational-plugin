@@ -60,6 +60,7 @@ public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());
   private static final String FAILED_TITLE = "Failed to publish ";
   private static final String JETBRAINS_USER_ID = "17813950";
+  private static final List<Integer> TESTER_USER_IDS = Lists.newArrayList(17869355);
   private static final String PUSH_COURSE_GROUP_ID = "Push.course";
 
   private CCStepikConnector() {
@@ -139,7 +140,7 @@ public class CCStepikConnector {
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
       courseOnRemote.setLanguage(course.getLanguageID());
 
-      if (!ApplicationManager.getApplication().isInternal()) {
+      if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUser)) {
         addJetBrainsUserAsAdmin(client, getAdminsGroupId(responseString));
       }
       int sectionCount;
@@ -161,6 +162,10 @@ public class CCStepikConnector {
     catch (IOException e) {
       LOG.error(e.getMessage());
     }
+  }
+
+  private static boolean isTestAccount(@Nullable StepicUser user) {
+    return user != null && TESTER_USER_IDS.contains(user.getId());
   }
 
   private static void addJetBrainsUserAsAdmin(@NotNull CloseableHttpClient client, @NotNull String groupId) {
