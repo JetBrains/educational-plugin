@@ -134,9 +134,9 @@ public class StepikAuthorizedClient {
     if (tokenInfo == null) {
       return null;
     }
+
     return login(tokenInfo);
   }
-
 
   public static StepicUser login(@NotNull StepikWrappers.TokenInfo tokenInfo) {
     final StepicUser user = new StepicUser(tokenInfo);

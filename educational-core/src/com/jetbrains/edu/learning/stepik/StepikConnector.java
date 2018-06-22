@@ -159,8 +159,18 @@ public class StepikConnector {
       LOG.warn("Cannot load course list " + e.getMessage());
     }
     addInProgressCourses(user, result);
+    addAdaptiveCourse(result);
     LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms");
     return result;
+  }
+
+  private static void addAdaptiveCourse(@NotNull List<Course> result) {
+    final Course altCourse = new RemoteCourse();
+    altCourse.setDescription("Learn everything in Java");
+    altCourse.setName("ALT Java");
+    altCourse.setLanguage("JAVA");
+    ((RemoteCourse)altCourse).setAdaptive(true);
+    result.add(altCourse);
   }
 
   private static void addInProgressCourses(@Nullable StepicUser user, List<Course> result) {
@@ -303,16 +313,16 @@ public class StepikConnector {
                                   @NotNull List<Integer> featuredCourses) throws IOException {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse info : courses) {
-      if (!info.isAdaptive() && StringUtil.isEmptyOrSpaces(info.getType())) continue;
+      if (info.isAdaptive() || StringUtil.isEmptyOrSpaces(info.getType())) continue;
 
       CourseCompatibility compatibility = info.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
 
       setCourseAuthors(info);
 
-      if (info.isAdaptive()) {
-        info.setDescription("This is a Stepik Adaptive course.\n\n" + info.getDescription() + ADAPTIVE_NOTE);
-      }
+      //if (info.isAdaptive()) {
+      //  info.setDescription("This is a Stepik Adaptive course.\n\n" + info.getDescription() + ADAPTIVE_NOTE);
+      //}
       if (info.isPublic() && !featuredCourses.contains(info.getId())) {
         info.setDescription(info.getDescription() + NOT_VERIFIED_NOTE);
       }
@@ -389,6 +399,7 @@ public class StepikConnector {
       }
     }
     else {
+      // TODO: get alt adaptive course here
       final Lesson lesson = new Lesson();
       lesson.setName(EduNames.ADAPTIVE);
       remoteCourse.addLesson(lesson);

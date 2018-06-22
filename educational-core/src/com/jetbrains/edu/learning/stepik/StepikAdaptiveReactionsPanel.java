@@ -33,6 +33,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
   private static final String BORING_LABEL_TOOLTIP = "Click To Get A More Challenging Task";
 
   public StepikAdaptiveReactionsPanel(@NotNull final Project project) {
+    // TODO: correctly react here
     myProject = project;
     setLayout(new GridBagLayout());
     setBackground(UIUtil.getTextFieldBackground());

@@ -1,0 +1,10 @@
+<idea-plugin>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.stepik.alt.HyperskillSettings"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.alt.HyperskillOAuthRestService"/>
+  </extensions>
+  <extensions defaultExtensionNs="Educational">
+    <optionsProvider instance="com.jetbrains.edu.learning.stepik.alt.HyperskillOptions"/>
+  </extensions>
+</idea-plugin>

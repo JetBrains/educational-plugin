@@ -68,7 +68,7 @@ public class SyncCourseAction extends DumbAwareAction {
     }
 
     if (course.isAdaptive()) {
-      updateAdaptiveCourse(project, course);
+      //updateAdaptiveCourse(project, course);
     }
     else {
       StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
