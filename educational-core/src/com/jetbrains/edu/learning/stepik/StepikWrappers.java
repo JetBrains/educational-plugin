@@ -522,7 +522,7 @@ public class StepikWrappers {
     @Expose String refreshToken;
     @Expose String tokenType;
     @Expose String scope;
-    @Expose int expiresIn;
+    @Expose long expiresIn;
 
     public TokenInfo() {
       accessToken = "";
@@ -535,6 +535,10 @@ public class StepikWrappers {
 
     public String getRefreshToken() {
       return refreshToken;
+    }
+
+    public long getExpiresIn() {
+      return expiresIn;
     }
   }
 

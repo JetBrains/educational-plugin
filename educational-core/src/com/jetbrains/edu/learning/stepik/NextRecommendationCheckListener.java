@@ -29,6 +29,7 @@ public class NextRecommendationCheckListener implements CheckListener {
     if (!(course instanceof RemoteCourse && course.isAdaptive())) {
       return;
     }
+    // TODO: get hyperskill recommendations
     if (!(task instanceof TheoryTask) && myStatusBeforeCheck == CheckStatus.Solved) {
       return;
     }
