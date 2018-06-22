@@ -21,24 +21,20 @@ public class NextPlaceholderAction extends PlaceholderNavigationAction {
     super("Navigate to the Next Answer Placeholder", "Navigate to the next answer placeholder", AllIcons.Actions.Forward);
   }
 
+  @Nullable
   @Override
   protected AnswerPlaceholder getTargetPlaceholder(@NotNull final TaskFile taskFile, int offset) {
     final AnswerPlaceholder selectedAnswerPlaceholder = taskFile.getAnswerPlaceholder(offset);
     final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
-    if (selectedAnswerPlaceholder == null) {
-      for (AnswerPlaceholder placeholder : placeholders) {
-        if (placeholder.getOffset() > offset) {
-          return placeholder;
-        }
+    int startIndex = selectedAnswerPlaceholder != null ? selectedAnswerPlaceholder.getIndex() + 1 : 0;
+    if (!EduUtils.indexIsValid(startIndex, placeholders)) return null;
+
+    for (AnswerPlaceholder placeholder : placeholders.subList(startIndex, placeholders.size())) {
+      if (placeholder.getOffset() > offset && placeholder.isVisible()) {
+        return placeholder;
       }
     }
-    else {
-      int index = selectedAnswerPlaceholder.getIndex();
-      if (EduUtils.indexIsValid(index, placeholders)) {
-        int newIndex = index + 1;
-        return placeholders.get(newIndex == placeholders.size() ? 0 : newIndex);
-      }
-    }
+
     return null;
   }
 
