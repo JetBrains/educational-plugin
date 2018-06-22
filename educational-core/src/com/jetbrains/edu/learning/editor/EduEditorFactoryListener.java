@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.editor;
 
-
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -33,9 +32,14 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFa
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
+
+  private static final Map<Document, EduDocumentListener> ourDocumentListeners = new HashMap<>();
+
   private TaskFile myTaskFile;
 
   private static class WindowSelectionListener extends EditorMouseAdapter {
@@ -90,7 +94,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
           StepikConnector.postTheory(task, project);
         }
 
-        EduEditor.addDocumentListener(document, new EduDocumentListener(project, myTaskFile));
+        addDocumentListener(document, new EduDocumentListener(project, myTaskFile));
 
         boolean isStudyProject = course.isStudy();
         if (!myTaskFile.getAnswerPlaceholders().isEmpty() && myTaskFile.isValid(editor.getDocument().getText())) {
@@ -109,7 +113,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
   public void editorReleased(@NotNull EditorFactoryEvent event) {
     final Editor editor = event.getEditor();
     final Document document = editor.getDocument();
-    EduEditor.removeListener(document);
+    removeDocumentListener(document);
     if (myTaskFile != null) {
       final List<AnswerPlaceholder> placeholders = myTaskFile.getAnswerPlaceholders();
       for (AnswerPlaceholder placeholder : placeholders) {
@@ -117,5 +121,22 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       }
     }
     editor.getSelectionModel().removeSelection();
+  }
+
+  public static void addDocumentListener(@NotNull final Document document, @NotNull final EduDocumentListener listener) {
+    document.addDocumentListener(listener);
+    ourDocumentListeners.put(document, listener);
+  }
+
+  public static void removeDocumentListener(Document document) {
+    final EduDocumentListener listener = ourDocumentListeners.get(document);
+    if (listener != null) {
+      document.removeDocumentListener(listener);
+    }
+    ourDocumentListeners.remove(document);
+  }
+
+  public static boolean hasDocumentListener(@NotNull final Document document) {
+    return ourDocumentListeners.containsKey(document);
   }
 }
