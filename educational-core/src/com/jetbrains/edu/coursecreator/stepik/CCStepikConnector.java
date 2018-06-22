@@ -139,7 +139,9 @@ public class CCStepikConnector {
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
       courseOnRemote.setLanguage(course.getLanguageID());
 
-      addJetBrainsUserAsAdmin(client, getAdminsGroupId(responseString));
+      if (!ApplicationManager.getApplication().isInternal()) {
+        addJetBrainsUserAsAdmin(client, getAdminsGroupId(responseString));
+      }
       int sectionCount;
       if (CourseExt.getHasSections(course)) {
         sectionCount = postSections(project, courseOnRemote);
