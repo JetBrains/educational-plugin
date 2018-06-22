@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,26 +19,20 @@ public class PrevPlaceholderAction extends PlaceholderNavigationAction {
           AllIcons.Actions.Back);
   }
 
-
   @Nullable
   @Override
   protected AnswerPlaceholder getTargetPlaceholder(@NotNull final TaskFile taskFile, int offset) {
     final AnswerPlaceholder selectedAnswerPlaceholder = taskFile.getAnswerPlaceholder(offset);
     final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
-    if (selectedAnswerPlaceholder == null) {
-      for (int i = placeholders.size() - 1; i >= 0; i--) {
-        final AnswerPlaceholder placeholder = placeholders.get(i);
-        if (placeholder.getOffset() < offset) {
-          return placeholder;
-        }
+    int endIndex = selectedAnswerPlaceholder != null ? selectedAnswerPlaceholder.getIndex() : placeholders.size();
+    if (!EduUtils.indexIsValid(endIndex - 1, placeholders)) return null;
+
+    for (AnswerPlaceholder placeholder : CollectionsKt.asReversed(placeholders.subList(0, endIndex))) {
+      if (placeholder.getOffset() < offset && placeholder.isVisible()) {
+        return placeholder;
       }
     }
-    else {
-      int prevIndex = selectedAnswerPlaceholder.getIndex() - 1;
-      if (EduUtils.indexIsValid(prevIndex, placeholders)) {
-        return placeholders.get(prevIndex);
-      }
-    }
+
     return null;
   }
 
