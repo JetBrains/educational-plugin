@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.io.IOException
@@ -139,10 +140,21 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   protected fun findTask(lessonIndex: Int, taskIndex: Int): Task = getCourse().lessons[lessonIndex].taskList[taskIndex]
 
   protected fun findVirtualFile(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {
-    val task = findTask(lessonIndex, taskIndex)
-    val taskDir = task.getTaskDir(project)!!
-    val taskFile = task.getTaskFile(taskFilePath)!!
-    return EduUtils.findTaskFileInDir(taskFile, taskDir)!!
+    return findTask(lessonIndex, taskIndex).getTaskFile(taskFilePath)?.getVirtualFile(project)!!
+  }
+
+  protected fun Course.findTask(lessonName: String, taskName: String): Task {
+    return getLesson(lessonName)?.getTask(taskName) ?: error("Can't find `$taskName` in `$lessonName`")
+  }
+
+  protected fun Task.openTaskFileInEditor(taskFilePath: String, placeholderIndex: Int? = null) {
+    val taskFile = getTaskFile(taskFilePath) ?: error("Can't find task file `$taskFilePath` in `$name`")
+    val file = taskFile.getVirtualFile(project) ?: error("Can't find virtual file for `${taskFile.name}` task")
+    myFixture.openFileInEditor(file)
+    if (placeholderIndex != null) {
+      val placeholder = taskFile.answerPlaceholders[placeholderIndex]
+      myFixture.editor.selectionModel.setSelection(placeholder.offset, placeholder.offset + placeholder.realLength)
+    }
   }
 
   // TODO: set up more items which are enabled in real course project
