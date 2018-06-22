@@ -32,8 +32,7 @@ public class NavigatePlaceholderTest extends EduTestCase {
     configureByTaskFile(2, 1, "taskFile1.txt");
     final int caretOffset = myFixture.getCaretOffset();
     myFixture.testAction(new NextPlaceholderAction());
-    assertNotEquals(caretOffset, myFixture.getCaretOffset());
-    assertEquals(12, myFixture.getCaretOffset());
+    assertEquals(caretOffset, myFixture.getCaretOffset());
   }
 
   public void testOnePlaceholderPrevious() {
@@ -47,16 +46,14 @@ public class NavigatePlaceholderTest extends EduTestCase {
     configureByTaskFile(1, 2, "taskFile2.txt");
     final int caretOffset = myFixture.getCaretOffset();
     myFixture.testAction(new NextPlaceholderAction());
-    assertNotEquals(caretOffset, myFixture.getCaretOffset());
-    assertEquals(12, myFixture.getCaretOffset());
+    assertEquals(caretOffset, myFixture.getCaretOffset());
   }
 
   public void testFirstPlaceholderPrevious() {
     configureByTaskFile(1, 1, "taskFile1.txt");
     final int caretOffset = myFixture.getCaretOffset();
-    myFixture.testAction(new NextPlaceholderAction());
-    assertNotEquals(caretOffset, myFixture.getCaretOffset());
-    assertEquals(44, myFixture.getCaretOffset());
+    myFixture.testAction(new PrevPlaceholderAction());
+    assertEquals(caretOffset, myFixture.getCaretOffset());
   }
 
   public void testNotInPlaceholderNext() {
