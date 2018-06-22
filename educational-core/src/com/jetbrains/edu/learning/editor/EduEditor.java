@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.editor;
 
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.impl.EditorImpl;
 import com.intellij.openapi.fileEditor.impl.text.PsiAwareTextEditorImpl;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider;
@@ -9,17 +8,14 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.ui.components.labels.ActionLink;
 import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Implementation of StudyEditor which has panel with special buttons and task text
@@ -30,7 +26,6 @@ public class EduEditor extends PsiAwareTextEditorImpl {
   public static final String BROKEN_SOLUTION_ERROR_TEXT_END = " to solve it again";
   public static final String ACTION_TEXT = "Reset task";
   private final TaskFile myTaskFile;
-  private static final Map<Document, EduDocumentListener> myDocumentListeners = new HashMap<>();
 
   public EduEditor(@NotNull final Project project, @NotNull final VirtualFile file) {
     super(project, file, TextEditorProvider.getInstance());
@@ -57,19 +52,6 @@ public class EduEditor extends PsiAwareTextEditorImpl {
 
   public TaskFile getTaskFile() {
     return myTaskFile;
-  }
-
-  public static void addDocumentListener(@NotNull final Document document, @NotNull final EduDocumentListener listener) {
-    document.addDocumentListener(listener);
-    myDocumentListeners.put(document, listener);
-  }
-
-  public static void removeListener(Document document) {
-    final EduDocumentListener listener = myDocumentListeners.get(document);
-    if (listener != null) {
-      document.removeDocumentListener(listener);
-    }
-    myDocumentListeners.remove(document);
   }
 
   public void showLoadingPanel() {

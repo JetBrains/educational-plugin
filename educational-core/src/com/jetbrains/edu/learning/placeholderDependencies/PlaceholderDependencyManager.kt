@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
 import com.intellij.openapi.application.runUndoTransparentWriteAction
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.ui.EditorNotifications
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 
 
 object PlaceholderDependencyManager {
@@ -58,8 +58,8 @@ object PlaceholderDependencyManager {
     val document = placeholderToReplace.taskFile.getDocument(project)!!
     val startOffset = placeholderToReplace.offset
     val endOffset = startOffset + placeholderToReplace.realLength
-    val isFileOpen = FileEditorManager.getInstance(project).isFileOpen(placeholderToReplace.taskFile.getVirtualFile(project)!!)
-    val eduDocumentListener = if (isFileOpen) null else EduDocumentListener(project, placeholderToReplace.taskFile)
+    val hasListener = EduEditorFactoryListener.hasDocumentListener(document)
+    val eduDocumentListener = if (hasListener) null else EduDocumentListener(project, placeholderToReplace.taskFile)
     if (eduDocumentListener != null) {
       document.addDocumentListener(eduDocumentListener)
     }
