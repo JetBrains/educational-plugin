@@ -284,10 +284,10 @@ class TaskFileBuilder(val task: Task) {
     }
   }
 
-  fun placeholder(index: Int, possibleAnswer: String = "", dependency: String = "") {
+  fun placeholder(index: Int, possibleAnswer: String = "", dependency: String = "", isVisible: Boolean = true) {
     val answerPlaceholder = taskFile.answerPlaceholders[index]
     answerPlaceholder.possibleAnswer = possibleAnswer
-    val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency)
+    val createdDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependency, isVisible)
     if (createdDependency != null) {
       answerPlaceholder.placeholderDependency = createdDependency
     }
