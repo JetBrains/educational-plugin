@@ -30,7 +30,9 @@ import java.util.concurrent.atomic.AtomicReference
 object GeneratorUtils {
 
   private val LOG: Logger = Logger.getInstance(GeneratorUtils::class.java)
-  private val WINDOWS_INVALID_SYMBOLS: Regex = "[/\\\\:<>\"?*|]".toRegex()
+
+  private val UNIX_INVALID_SYMBOLS: Regex = "[/:]".toRegex()
+  private val WINDOWS_INVALID_SYMBOLS: Regex = "[/\\\\:<>\"?*|;]".toRegex()
 
   @Throws(IOException::class)
   @JvmStatic
@@ -256,7 +258,10 @@ object GeneratorUtils {
     return candidateName
   }
 
-  private fun String.convertToValidName(): String = if (SystemInfo.isWindows) replace(WINDOWS_INVALID_SYMBOLS, " ") else replace("/", " ")
+  private fun String.convertToValidName(): String {
+    val invalidSymbols = if (SystemInfo.isWindows) WINDOWS_INVALID_SYMBOLS else UNIX_INVALID_SYMBOLS
+    return replace(invalidSymbols, " ")
+  }
 
   private fun createUniqueDir(parentDir: VirtualFile, item: StudyItem): VirtualFile {
     val (baseDirName, needUpdateItem) = if (item is Task && item.isFrameworkTask && item.course?.isStudy == true)  {

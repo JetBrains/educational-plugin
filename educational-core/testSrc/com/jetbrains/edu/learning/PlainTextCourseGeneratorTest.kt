@@ -419,20 +419,26 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
   fun `test invalid symbols`() {
     courseWithFiles {
       lesson("lesson/name") {
-        eduTask("task:name")
+        eduTask("task?1")
+        eduTask("task:2")
+        eduTask("task;3")
       }
     }
 
     if (SystemInfo.isWindows) {
       checkFileTree {
         dir("lesson name") {
-          dir("task name")
+          dir("task 1")
+          dir("task 2")
+          dir("task 3")
         }
       }
     } else {
       checkFileTree {
         dir("lesson name") {
-          dir("task:name")
+          dir("task?1")
+          dir("task 2")
+          dir("task;3")
         }
       }
     }
