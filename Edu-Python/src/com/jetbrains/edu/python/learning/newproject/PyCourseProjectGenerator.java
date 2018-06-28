@@ -81,14 +81,14 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
           final PyPackageManager packageManager = PyPackageManager.getInstance(baseSdk);
           return packageManager.createVirtualEnv(virtualEnvPath, false);
         }
-      }, getAllSdks(), baseSdk, project.getBasePath());
+      }, getAllSdks(), baseSdk, project.getBasePath(), null);
       if (sdk == null) {
         LOG.warn("Failed to create virtual env in " + virtualEnvPath);
         return;
       }
       settings.setSdk(sdk);
       SdkConfigurationUtil.addSdk(sdk);
-      PySdkExtKt.associateWithProject(sdk, project, false);
+      PySdkExtKt.associateWithModule(sdk, null, project.getBasePath());
     }
   }
 

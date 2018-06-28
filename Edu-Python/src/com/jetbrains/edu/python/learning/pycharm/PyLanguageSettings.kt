@@ -17,7 +17,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
       if (it != null && PythonSdkType.isVirtualEnv(it)) {
         val data = it.sdkAdditionalData as PythonSdkAdditionalData?
         if (data != null) {
-          val path = data.associatedProjectPath
+          val path = data.associatedModulePath
           if (path != null) {
             return@removeIf true
           }
@@ -27,7 +27,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
     }
 
     val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
-    val sdkChooser = PythonSdkChooserCombo(null, sdks, null) { true }
+    val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
     sdkChooser.addChangedListener {
       mySettings.sdk = sdkChooser.comboBox.selectedItem as? Sdk
     }
