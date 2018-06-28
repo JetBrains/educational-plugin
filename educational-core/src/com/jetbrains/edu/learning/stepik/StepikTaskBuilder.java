@@ -222,6 +222,7 @@ public class StepikTaskBuilder {
     TheoryTask task = new TheoryTask(myName);
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
+    task.setUpdateDate(myStepSource.update_date);
     final String stepText = "This is " + myName.toLowerCase() + " task.";
     task.setDescriptionText(stepText);
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
