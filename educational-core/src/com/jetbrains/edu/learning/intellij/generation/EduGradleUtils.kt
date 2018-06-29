@@ -30,24 +30,17 @@ object EduGradleUtils {
     @Throws(IOException::class)
     fun createProjectGradleFiles(
       projectPath: String,
-      projectName: String,
-      buildGradleTemplateName: String,
-      buildGradleVariables: Map<String, String>
+      configTemplates: Map<String, String>,
+      configVariables: Map<String, String>
     ) {
         val projectDir = VfsUtil.findFileByIoFile(File(FileUtil.toSystemDependentName(projectPath)), true) ?: return
-
-        if (projectDir.findChild(GradleConstants.DEFAULT_SCRIPT_NAME) == null) {
-            val buildTemplate = FileTemplateManager.getDefaultInstance().getInternalTemplate(buildGradleTemplateName)
-            var gradleScriptText = buildTemplate.text
-            for ((key, value) in buildGradleVariables) {
-                gradleScriptText = gradleScriptText.replace("\$$key\$", value)
+        for ((name, templateName) in configTemplates) {
+            if (projectDir.findChild(name) == null) {
+              val configText = FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName)?.getText(configVariables) ?: continue
+                createChildFile(projectDir, name, configText)
             }
-            createChildFile(projectDir, GradleConstants.DEFAULT_SCRIPT_NAME, gradleScriptText)
         }
-
-        val settingsTemplate = FileTemplateManager.getDefaultInstance().getInternalTemplate(GradleConstants.SETTINGS_FILE_NAME)
-        createChildFile(projectDir, GradleConstants.SETTINGS_FILE_NAME, settingsTemplate.text.replace("\$PROJECT_NAME\$", projectName))
-    }
+   }
 
     @JvmStatic
     fun setGradleSettings(project: Project, location: String) {

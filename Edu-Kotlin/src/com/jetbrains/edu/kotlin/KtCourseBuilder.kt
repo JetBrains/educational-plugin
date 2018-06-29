@@ -1,5 +1,6 @@
 package com.jetbrains.edu.kotlin
 
+import com.intellij.openapi.project.Project
 import com.intellij.util.text.VersionComparatorUtil
 import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.pluginVersion
@@ -8,8 +9,8 @@ open class KtCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = KOTLIN_BUILD_GRADLE_TEMPLATE_NAME
 
-  override val buildGradleVariables: Map<String, String>
-    get() = super.buildGradleVariables + Pair("KOTLIN_VERSION", kotlinPluginVersion)
+  override fun getConfigVariables(project: Project): Map<String, String> =
+    super.getConfigVariables(project) + Pair("KOTLIN_VERSION", kotlinPluginVersion)
 
   override fun getTaskTemplateName(): String = KtConfigurator.TASK_KT
   override fun getTestTemplateName(): String = KtConfigurator.TESTS_KT
