@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '$KOTLIN_VERSION$'
+    ext.kotlin_version = '${KOTLIN_VERSION}'
 
     repositories {
         mavenCentral()
@@ -91,5 +91,5 @@ configure(subprojects.findAll {it.name != 'util'}) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '$GRADLE_VERSION$'
+  gradleVersion = '${GRADLE_VERSION}'
 }
