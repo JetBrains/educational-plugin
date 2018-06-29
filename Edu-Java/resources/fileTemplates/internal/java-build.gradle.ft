@@ -72,5 +72,5 @@ configure(subprojects.findAll {it.name != 'util'}) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '$GRADLE_VERSION$'
+  gradleVersion = '${GRADLE_VERSION}'
 }
