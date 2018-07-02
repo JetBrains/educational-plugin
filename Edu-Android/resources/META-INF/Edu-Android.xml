@@ -1,0 +1,23 @@
+<idea-plugin>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>org.jetbrains.android</depends>
+    <depends>org.jetbrains.plugins.gradle</depends>
+    <depends>JUnit</depends>
+
+    <application-components>
+        <component>
+            <implementation-class>com.jetbrains.edu.android.AndroidApplicationComponent
+            </implementation-class>
+        </component>
+    </application-components>
+
+    <extensions defaultExtensionNs="Educational">
+        <configurator language="edu-android"
+                      implementationClass="com.jetbrains.edu.android.AndroidConfigurator"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="educational">
+        <languageDecorator language="edu-android"
+                           implementationClass="com.jetbrains.edu.android.AndroidLanguageDecorator"/>
+    </extensions>
+</idea-plugin>
