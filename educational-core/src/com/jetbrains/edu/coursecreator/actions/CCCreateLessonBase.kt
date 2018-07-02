@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -33,7 +34,9 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemName: String, icon: Icon) :
       LOG.info("Failed to get configurator for " + course.languageID)
       return null
     }
-    return configurator.courseBuilder.createLessonContent(project, item, parentDirectory)
+    val lessonDir = configurator.courseBuilder.createLessonContent(project, item, parentDirectory)
+    YamlFormatSynchronizer.saveItem(item, project)
+    return lessonDir
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int {

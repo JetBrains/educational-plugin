@@ -36,6 +36,7 @@ import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
@@ -95,6 +96,9 @@ public abstract class CourseProjectGenerator<S> {
 
   protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
     EduUtils.openFirstTask(myCourse, project);
+    if (CCUtils.isCourseCreator(project)) {
+      YamlFormatSynchronizer.saveAll(project);
+    }
   }
 
   /**
