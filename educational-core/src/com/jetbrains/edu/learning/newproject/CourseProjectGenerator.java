@@ -34,8 +34,6 @@ import com.intellij.platform.PlatformProjectOpenProcessor;
 import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
-import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
@@ -44,7 +42,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
@@ -168,12 +165,10 @@ public abstract class CourseProjectGenerator<S> {
     GeneratorUtils.initializeCourse(project, myCourse);
 
     if (CCUtils.isCourseCreator(project) && myCourse.getItems().isEmpty()) {
-      final Lesson lesson = new CCCreateLesson().createAndInitItem(project, myCourse, null, EduNames.LESSON + 1, 1);
-      myCourse.addLesson(lesson);
-      final Task task = new CCCreateTask().createAndInitItem(project, myCourse, lesson, EduNames.TASK + 1, 1);
-      assert task != null;
-      lesson.addTask(task);
-      myCourseBuilder.initNewTask(task);
+      final Lesson lesson = myCourseBuilder.createInitialLesson(project, myCourse);
+      if (lesson != null) {
+        myCourse.addLesson(lesson);
+      }
     }
 
     try {
