@@ -329,4 +329,16 @@ public abstract class Task extends StudyItem {
   public void setFeedbackLink(@NotNull FeedbackLink feedbackLink) {
     myFeedbackLink = feedbackLink;
   }
+
+  @Override
+  @Nullable
+  public VirtualFile getDir(@NotNull Project project) {
+    return getTaskDir(project);
+  }
+
+  @NotNull
+  @Override
+  public Course getCourse() {
+    return myLesson.getCourse();
+  }
 }

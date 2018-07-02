@@ -3,10 +3,13 @@ package com.jetbrains.edu.learning.courseFormat;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.lang.Language;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -142,6 +145,18 @@ public class Course extends ItemContainer {
   @Override
   public int getId() {
     return 0;
+  }
+
+  @Override
+  @NotNull
+  public VirtualFile getDir(@NotNull Project project) {
+    return EduUtils.getCourseDir(project);
+  }
+
+  @NotNull
+  @Override
+  public Course getCourse() {
+    return this;
   }
 
   public String getDescription() {
