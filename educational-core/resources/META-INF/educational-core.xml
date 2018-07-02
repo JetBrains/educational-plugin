@@ -231,6 +231,9 @@
     <editorActionHandler action="EditorDeleteToLineEnd" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
     <editorActionHandler action="EditorDeleteToLineStart" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
     <editorActionHandler action="EditorDeleteLine" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
+    <experimentalFeature id="edu.course.creator.yaml" percentOfUsers="0">
+      <description>Enables yaml config files in course creation projects</description>
+    </experimentalFeature>
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
