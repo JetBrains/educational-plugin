@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -34,7 +35,9 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
   override fun createItemDir(project: Project, item: Task,
                              parentDirectory: VirtualFile, course: Course): VirtualFile? {
     val configurator = EduConfiguratorManager.forLanguage(course.languageById!!)
-    return configurator?.courseBuilder?.createTaskContent(project, item, parentDirectory, course)
+    val taskDir = configurator?.courseBuilder?.createTaskContent(project, item, parentDirectory, course)
+    YamlFormatSynchronizer.saveItem(item, project)
+    return taskDir
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int =

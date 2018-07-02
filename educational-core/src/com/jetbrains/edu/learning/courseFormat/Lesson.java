@@ -84,6 +84,7 @@ public class Lesson extends StudyItem {
     return CollectionsKt.filter(taskList, task -> !(task instanceof TheoryTask));
   }
 
+  @NotNull
   @Transient
   public Course getCourse() {
     return myCourse;
@@ -205,5 +206,11 @@ public class Lesson extends StudyItem {
       return mySection;
     }
     return myCourse;
+  }
+
+  @Override
+  @Nullable
+  public VirtualFile getDir(@NotNull Project project) {
+    return getLessonDir(project);
   }
 }
