@@ -323,14 +323,15 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun wrapIntoSection(project: Project, course: Course, lessonsToWrap: List<Lesson>, sectionName: String): Boolean {
+  fun wrapIntoSection(project: Project, course: Course, lessonsToWrap: List<Lesson>, sectionName: String): Section? {
     Collections.sort(lessonsToWrap, EduUtils.INDEX_COMPARATOR)
     val minIndex = lessonsToWrap[0].index
     val maxIndex = lessonsToWrap[lessonsToWrap.size - 1].index
 
-    val sectionDir = createSectionDir(project, sectionName) ?: return false
+    val sectionDir = createSectionDir(project, sectionName) ?: return null
 
     val section = createSection(lessonsToWrap, sectionName, minIndex)
+    section.course = course
 
     for (i in lessonsToWrap.indices) {
       val lesson = lessonsToWrap[i]
@@ -347,7 +348,7 @@ object CCUtils {
 
     updateHigherElements(EduUtils.getCourseDir(project).children, Function { file ->  course.getItem(file.name) }, maxIndex, delta)
     course.addItem(section, section.index - 1)
-    return true
+    return section
   }
 
   private fun createSection(lessonsToWrap: List<Lesson>, sectionName: String, index: Int): Section {
@@ -372,7 +373,8 @@ object CCUtils {
     })
   }
 
-  private fun createSectionDir(project: Project, sectionName: String): VirtualFile? {
+  @JvmStatic
+  fun createSectionDir(project: Project, sectionName: String): VirtualFile? {
     return ApplicationManager.getApplication().runWriteAction(Computable<VirtualFile> {
       try {
         return@Computable VfsUtil.createDirectoryIfMissing(EduUtils.getCourseDir(project), sectionName)

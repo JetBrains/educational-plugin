@@ -117,10 +117,8 @@ public class CCPushLesson extends DumbAwareAction {
       int result = Messages.showYesNoDialog(project, "Since you have sections, we'll have to wrap this lesson into section before upload",
                                             "Wrap Lesson Into Sections", "Wrap and Post", "Cancel", null);
       if (result == Messages.YES) {
-        boolean wrapped = CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
-        if (wrapped) {
-          Section section = lesson.getSection();
-          assert section != null;
+       Section section = CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
+        if (section != null) {
           CCPushSection.doPush(project, section, (RemoteCourse)course);
         }
       }
