@@ -1,12 +1,11 @@
 package com.jetbrains.edu.coursecreator.actions.sections;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduNames;
@@ -18,8 +17,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
 
@@ -48,15 +45,9 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
       LOG.info("Failed to get configurator for " + course.getLanguageID());
       return null;
     }
-    final Ref<VirtualFile> sectionDir = Ref.create();
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      try {
-        sectionDir.set(VfsUtil.createDirectoryIfMissing(parentDirectory, section.getName()));
-      } catch (IOException e) {
-        LOG.error("Failed to create section directory", e);
-      }
-    });
-    return sectionDir.get();
+    VirtualFile sectionDir = CCUtils.createSectionDir(project, section.getName());
+    YamlFormatSynchronizer.saveItem(section, project);
+    return sectionDir;
   }
 
   @Override
@@ -91,6 +82,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   @Override
   public Section createAndInitItem(@NotNull Project project, @NotNull Course course, @Nullable StudyItem parentItem, @NotNull String name, int index) {
     final Section section = new Section();
+    section.setCourse(course);
     section.setName(name);
     section.setIndex(index);
     return section;
