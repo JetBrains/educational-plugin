@@ -2,10 +2,10 @@ package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import junit.framework.TestCase
 import org.apache.http.Consts
 import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -92,15 +92,15 @@ abstract class StepikTestCase : EduTestCase() {
   }
 
   fun checkCourseUploaded(course: RemoteCourse) {
-    val uploadedCourse = findUploadedCourse(course)
+    val uploadedCourse = StepikConnector.getCourseFromStepik(EduSettings.getInstance().user, course.id, true)
     assertNotNull("Uploaded courses not found among courses available to instructor", uploadedCourse)
     println("Course with id ${(uploadedCourse as RemoteCourse).id} was uploaded successfully")
   }
 
   protected fun findUploadedCourse(course: RemoteCourse): Course? {
-    val courses = EduUtils.getCoursesUnderProgress()
-    assertTrue(courses!!.size >= 1)
-    return courses.find { c -> (c is RemoteCourse) && (c.id == course.id) && (c.name == course.name) }
+    val uploadedCourse = StepikConnector.getCourseFromStepik(EduSettings.getInstance().user, course.id, true)
+    TestCase.assertNotNull("Cannot find uploaded course", uploadedCourse)
+    return uploadedCourse
   }
 
   private fun getTokens(): StepikWrappers.TokenInfo? {
