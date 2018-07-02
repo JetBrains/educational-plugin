@@ -14,4 +14,5 @@
     <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
     <depends optional="true" config-file="Edu-Kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
+    <depends optional="true" config-file="Edu-Android.xml">org.jetbrains.android</depends>
 </idea-plugin>

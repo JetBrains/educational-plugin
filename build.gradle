@@ -256,7 +256,7 @@ configure(project(':educational-core')) {
     }
 }
 
-configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala')]) {
+configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android')]) {
     dependencies {
         compile project(':educational-core')
         testCompile project(':educational-core').sourceSets.test.output
@@ -289,11 +289,15 @@ configure(project(':Edu-Scala')) {
     intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
 }
 
+configure(project(':Edu-Android')) {
+    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy'
+}
+
 runIde.systemProperty("-Didea.is.internal", "true")
 runIde.systemProperty("-ea", "")
 
 dependencies {
-    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala')
+    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android')
 }
 
 idea {
