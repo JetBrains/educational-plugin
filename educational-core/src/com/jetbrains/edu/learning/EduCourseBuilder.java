@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
+import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -78,6 +80,16 @@ public interface EduCourseBuilder<Settings> {
    * Allows to update project modules and the whole project structure
    */
   default void refreshProject(@NotNull final Project project) {}
+
+  @Nullable
+  default Lesson createInitialLesson(@NotNull Project project, @NotNull Course course) {
+    Lesson lesson = new CCCreateLesson().createAndInitItem(project, course, null, EduNames.LESSON + 1, 1);
+    Task task = new CCCreateTask().createAndInitItem(project, course, lesson, EduNames.TASK + 1, 1);
+    if (task != null) {
+      lesson.addTask(task);
+    }
+    return lesson;
+  }
 
   /**
    * Add initial content for a new task: task and tests files if the corresponding files don't exist.
