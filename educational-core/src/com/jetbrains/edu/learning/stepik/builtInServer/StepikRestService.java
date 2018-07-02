@@ -136,7 +136,7 @@ public class StepikRestService extends RestService {
       }
 
       Section section = StepikConnector.getSection(unit.getSection());
-      courseId = section.getCourse();
+      courseId = section.getCourseId();
       if (courseId == 0) {
         return log("Unrecognized the course id");
       }

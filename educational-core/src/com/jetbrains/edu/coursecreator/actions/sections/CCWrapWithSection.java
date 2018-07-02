@@ -10,11 +10,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +57,9 @@ public class CCWrapWithSection extends DumbAwareAction {
       return;
     }
 
-    if (!CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName)) return;
+    Section section = CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName);
+    if (section == null) return;
+    YamlFormatSynchronizer.saveItem(section, project);
     ProjectView.getInstance(project).refresh();
     StepikCourseChangeHandler.contentChanged(course);
   }

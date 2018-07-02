@@ -252,7 +252,7 @@ public class CCStepikConnector {
   public static boolean updateSection(@NotNull Project project, @NotNull Section section) {
     RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    section.setCourse(course.getId());
+    section.setCourseId(course.getId());
     boolean updated = updateSectionInfo(project, section);
     if (updated) {
       for (Lesson lesson : section.getLessons()) {
@@ -274,7 +274,7 @@ public class CCStepikConnector {
     sectionToPost.setName(section.getName());
     sectionToPost.setPosition(section.getPosition());
     sectionToPost.setId(section.getId());
-    sectionToPost.setCourse(section.getCourse());
+    sectionToPost.setCourseId(section.getCourseId());
 
     return sectionToPost;
   }
@@ -417,7 +417,7 @@ public class CCStepikConnector {
 
   private static int postModule(@NotNull Project project, @NotNull Section section, int courseId) {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS);
-    section.setCourse(courseId);
+    section.setCourseId(courseId);
     final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
     sectionContainer.setSection(section);
     String requestBody = new Gson().toJson(sectionContainer);
