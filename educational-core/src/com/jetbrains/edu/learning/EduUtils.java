@@ -74,6 +74,7 @@ import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -1220,6 +1221,9 @@ public class EduUtils {
 
   public static boolean canBeAddedAsTaskFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     if (virtualFile.isDirectory()) {
+      return false;
+    }
+    if (YamlFormatSynchronizer.isConfigFile(virtualFile)) {
       return false;
     }
     if (virtualFile.getPath().contains(CCUtils.GENERATED_FILES_FOLDER)) {
