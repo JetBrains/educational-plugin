@@ -43,7 +43,3 @@ private class ProgrammingLanguageConverter : StdConverter<String, String>() {
 private class LanguageConverter : StdConverter<String, String>() {
   override fun convert(languageCode: String): String = Locale(languageCode).displayName
 }
-
-private class StudyItemConverter : StdConverter<StudyItem, String>() {
-  override fun convert(item: StudyItem): String = item.name
-}
