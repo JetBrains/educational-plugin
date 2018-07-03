@@ -263,6 +263,25 @@ public class StepikConnector {
     return null;
   }
 
+  public static int getTaskPosition(final int taskId) {
+    final String url = StepikNames.STEPS + String.valueOf(taskId);
+    try {
+      StepContainer container = StepikAuthorizedClient.getFromStepik(url, StepContainer.class);
+      if (container == null) {
+        container = StepikClient.getFromStepik(url, StepContainer.class);
+      }
+      List<StepSource> steps = container.steps;
+      if (!steps.isEmpty()) {
+        return steps.get(0).position;
+      }
+    }
+    catch (IOException e) {
+      LOG.warn("Could not retrieve task with id=" + taskId);
+    }
+
+    return -1;
+  }
+
   public static Date getTaskUpdateDate(final int taskId) {
     final String url = StepikNames.STEPS + String.valueOf(taskId);
     try {
