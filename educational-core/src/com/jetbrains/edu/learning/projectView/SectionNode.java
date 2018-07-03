@@ -17,10 +17,14 @@ import javax.swing.*;
 
 
 public class SectionNode extends EduNode {
+  @NotNull protected final Project myProject;
+  @NotNull protected final ViewSettings myViewSettings;
   private final Section mySection;
 
   public SectionNode(@NotNull Project project, @NotNull ViewSettings viewSettings, @NotNull Section section, @Nullable PsiDirectory psiDirectory) {
     super(project, psiDirectory, viewSettings);
+    myProject = project;
+    myViewSettings = viewSettings;
     mySection = section;
   }
 
