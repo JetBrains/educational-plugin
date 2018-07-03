@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.projectView;
 
 import com.intellij.ide.projectView.ViewSettings;
+import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -20,5 +21,14 @@ public class CCSectionNode extends SectionNode {
   @NotNull
   protected LessonNode createLessonNode(@NotNull PsiDirectory directory, @NotNull Lesson lesson) {
     return new CCLessonNode(myProject, directory, getSettings(), lesson);
+  }
+
+  @Override
+  protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
+    AbstractTreeNode node = super.modifyChildNode(child);
+    if (node != null) {
+      return node;
+    }
+    return CCCourseViewUtil.produceConfigNodeOrNull(myProject, myViewSettings, child);
   }
 }
