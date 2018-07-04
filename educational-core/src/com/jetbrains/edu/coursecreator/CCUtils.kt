@@ -196,7 +196,6 @@ object CCUtils {
       val utilTaskFile = TaskFile()
       utilTaskFile.name = path
       utilTaskFile.text = loadText(file)
-      utilTaskFile.task = task
       task.addTaskFile(utilTaskFile)
     })
   }

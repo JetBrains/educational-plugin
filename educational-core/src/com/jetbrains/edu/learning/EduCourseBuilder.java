@@ -100,7 +100,6 @@ public interface EduCourseBuilder<Settings> {
   default void initNewTask(@NotNull final Task task) {
     if (task.taskFiles.isEmpty()) {
       TaskFile taskFile = new TaskFile();
-      taskFile.setTask(task);
       String taskTemplateName = getTaskTemplateName();
       if (taskTemplateName != null) {
         taskFile.name = taskTemplateName;
