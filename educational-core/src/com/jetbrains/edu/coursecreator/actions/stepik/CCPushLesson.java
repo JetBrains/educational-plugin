@@ -152,14 +152,15 @@ public class CCPushLesson extends DumbAwareAction {
       if (CourseExt.getHasSections(course)) {
         Section section = lesson.getSection();
         assert section != null;
+        int position = lessonPosition(section, lesson);
         int lessonId = CCStepikConnector.postLesson(project, lesson);
         lesson.unitId = CCStepikConnector.postUnit(lessonId, lesson.getIndex(), section.getId(), project);
         if (lesson.getIndex() < section.getLessons().size()) {
-          updateLessonsPositions(project,
-                                 lesson.getIndex() + 1, section.getLessons().subList(lesson.getIndex(), section.getLessons().size()));
+          updateLessonsPositions(project, position + 1, section.getLessons());
         }
       }
       else {
+        int position = lessonPosition(course, lesson);
         final int lessonId = CCStepikConnector.postLesson(project, lesson);
         int sectionId;
         final List<Integer> sections = ((RemoteCourse)course).getSectionIds();
@@ -167,8 +168,7 @@ public class CCPushLesson extends DumbAwareAction {
         lesson.unitId = CCStepikConnector.postUnit(lessonId, lesson.getIndex(), sectionId, project);
         if (lesson.getIndex() < course.getLessons().size()) {
           List<Lesson> lessons = course.getLessons();
-          updateLessonsPositions(project,
-                                 lesson.getIndex() + 1, lessons.subList(lesson.getIndex(), lessons.size()));
+          updateLessonsPositions(project, position + 1, lessons);
         }
       }
       CCStepikConnector.showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
@@ -181,15 +181,42 @@ public class CCPushLesson extends DumbAwareAction {
     }
   }
 
-  private static void updateLessonsPositions(@NotNull Project project, int initialPosition, List<Lesson> lessonsToUpdate) {
-    int position = initialPosition;
-    for (Lesson lesson : lessonsToUpdate) {
-      if (lesson.getId() == 0) continue;
+  private static void updateLessonsPositions(@NotNull Project project, int initialPosition, List<Lesson> lessons) {
+    int position = 1;
+
+    // update positions for posted lessons only
+    for (Lesson lesson : lessons) {
+      // skip unpushed lessons
+      if (lesson.getId() == 0) {
+        continue;
+      }
+
+      // skip lessons before target
+      if (position < initialPosition) {
+        continue;
+      }
       int index = lesson.getIndex();
       lesson.setIndex(position++);
       CCStepikConnector.updateLessonInfo(project, lesson, false);
       lesson.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
       lesson.setIndex(index);
     }
+  }
+
+  private static int lessonPosition(@NotNull ItemContainer parent, @NotNull Lesson lesson) {
+    int position = 1;
+    for (StudyItem item : parent.getItems()) {
+      if (item.getId() == 0) {
+        continue;
+      }
+
+      if (item.getName().equals(lesson.getName())) {
+        continue;
+      }
+
+      position ++;
+    }
+
+    return position;
   }
 }
