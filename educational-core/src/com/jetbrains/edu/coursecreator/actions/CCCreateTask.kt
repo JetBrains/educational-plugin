@@ -5,14 +5,15 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -35,7 +36,7 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
   override fun createItemDir(project: Project, item: Task,
                              parentDirectory: VirtualFile, course: Course): VirtualFile? {
     val configurator = EduConfiguratorManager.forLanguage(course.languageById!!)
-    val taskDir = configurator?.courseBuilder?.createTaskContent(project, item, parentDirectory, course)
+    val taskDir = configurator?.courseBuilder?.createTaskContent(project, item, parentDirectory)
     YamlFormatSynchronizer.saveItem(item)
     return taskDir
   }
@@ -67,8 +68,12 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
     newTask.lesson = parentItem
     newTask.addDefaultTaskDescription()
     if (parentItem is FrameworkLesson) {
-      val prevTask = parentItem.getTaskList().getOrNull(index - 2) ?: return newTask
-      val prevTaskDir = prevTask.getTaskDir(project) ?: return newTask
+      val prevTask = parentItem.getTaskList().getOrNull(index - 2)
+      val prevTaskDir = prevTask?.getTaskDir(project)
+      if (prevTask == null || prevTaskDir == null) {
+        initTask(course, parentItem, newTask)
+        return newTask
+      }
       FileDocumentManager.getInstance().saveAllDocuments()
       // We can't just copy text from course objects because they can contain outdated text
       // in reason that we don't synchronize them with files system
@@ -90,8 +95,16 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
             placeholder.placeholderDependency = dependency.copy(taskName = newTask.name)
           }
         }
+    } else {
+      initTask(course, parentItem, newTask)
     }
     return newTask
+  }
+
+  private fun initTask(course: Course, lesson: Lesson, task: Task) {
+    if (!course.isStudy) {
+      course.configurator?.courseBuilder?.initNewTask(lesson, task)
+    }
   }
 
   private fun TaskFile.copyForNewTask(taskDir: VirtualFile, newTask: Task): TaskFile {

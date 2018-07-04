@@ -105,7 +105,8 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
   public VirtualFile createItem(@NotNull final Project project, @NotNull final VirtualFile sourceDirectory,
                                 @NotNull final Course course) {
     StudyItem parentItem = getParentItem(course, sourceDirectory);
-    final Item item = getItem(sourceDirectory, project, course, parentItem);
+    final Item item =
+      getItem(sourceDirectory, project, course, parentItem);
     if (item == null) {
       LOG.info("Failed to create study item");
       return null;

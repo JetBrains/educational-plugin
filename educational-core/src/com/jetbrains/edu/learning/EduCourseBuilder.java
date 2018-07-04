@@ -61,11 +61,7 @@ public interface EduCourseBuilder<Settings> {
   @Nullable
   default VirtualFile createTaskContent(@NotNull final Project project,
                                         @NotNull final Task task,
-                                        @NotNull final VirtualFile parentDirectory,
-                                        @NotNull final Course course) {
-    if (!course.isStudy()) {
-      initNewTask(task);
-    }
+                                        @NotNull final VirtualFile parentDirectory) {
     try {
       GeneratorUtils.createTask(task, parentDirectory);
     } catch (IOException e) {
@@ -97,7 +93,7 @@ public interface EduCourseBuilder<Settings> {
    *
    * @param task initializing task
    */
-  default void initNewTask(@NotNull final Task task) {
+  default void initNewTask(@NotNull final Lesson lesson, @NotNull final Task task) {
     if (task.taskFiles.isEmpty()) {
       TaskFile taskFile = new TaskFile();
       String taskTemplateName = getTaskTemplateName();
