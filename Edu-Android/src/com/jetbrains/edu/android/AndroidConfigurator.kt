@@ -10,6 +10,9 @@ class AndroidConfigurator : GradleConfiguratorBase() {
 
   override fun getCourseBuilder(): GradleCourseBuilderBase = courseBuilder
 
+  override fun getSourceDir(): String = "src/main"
+  override fun getTestDir(): String = "src/test"
+
   override fun getTestFileName(): String {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }

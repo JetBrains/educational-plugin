@@ -297,7 +297,7 @@ public class StepikAdaptiveConnector {
     ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
       if (configurator != null) {
-        configurator.getCourseBuilder().createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
+        configurator.getCourseBuilder().createTaskContent(project, task, lessonDir);
       }
     }));
   }
@@ -326,7 +326,7 @@ public class StepikAdaptiveConnector {
         removeOldProjectFiles(project, task, oldTaskName);
         EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
         if (configurator != null) {
-          configurator.getCourseBuilder().createTaskContent(project, task, lessonDir, task.getLesson().getCourse());
+          configurator.getCourseBuilder().createTaskContent(project, task, lessonDir);
         }
       }
       catch (IOException e) {

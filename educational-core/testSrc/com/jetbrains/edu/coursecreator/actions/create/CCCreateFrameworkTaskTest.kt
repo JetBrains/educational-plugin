@@ -75,7 +75,6 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
         }
         dir(newTaskName) {
           file("Task.kt", "fun foo(): String = \"Foo\"")
-          file("Tests.txt")
           file("task.html")
         }
       }
@@ -168,7 +167,6 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
         }
         dir(newTaskName) {
           file("Task.kt")
-          file("Tests.txt")
           file("build.gradle")
           file("task.html")
         }
@@ -206,7 +204,6 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
         }
         dir(newTaskName) {
           file("Task.kt")
-          file("Tests.txt")
           file(imageName)
           file("task.html")
         }
@@ -266,7 +263,6 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
             apply plugin: "kotlin"
             apply plugin: "java"
           """)
-          file("Tests.txt")
           file("task.html")
         }
       }
