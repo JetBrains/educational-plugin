@@ -452,6 +452,7 @@ public class StepikConnector {
 
       final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
       if (hasVisibleSections(allSections, remoteCourse.getName())) {
+        remoteCourse.setSectionIds(Collections.emptyList());
         int itemIndex = 1;
         for (Section section : allSections) {
           if (progressIndicator != null) {
@@ -470,6 +471,7 @@ public class StepikConnector {
             }
             else if (section.getName().equals(remoteCourse.getName())) {
               remoteCourse.addLessons(lessonsFromUnits);
+              remoteCourse.setSectionIds(Collections.singletonList(section.getId()));
             }
             else {
               section.setIndex(itemIndex);
@@ -490,6 +492,7 @@ public class StepikConnector {
         if (unitIds.length > 0) {
           final List<Lesson> lessons = getLessons(remoteCourse);
           remoteCourse.addLessons(lessons);
+          remoteCourse.setSectionIds(allSections.stream().map(s -> s.getId()).collect(Collectors.toList()));
         }
       }
     }
