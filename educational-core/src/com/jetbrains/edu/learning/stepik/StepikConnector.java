@@ -566,6 +566,17 @@ public class StepikConnector {
     List<Lesson> lessons = lessonContainers.stream().flatMap(lessonContainer -> lessonContainer.lessons.stream()).collect(Collectors.toList());
     List<Unit> units = unitContainers.stream().flatMap(container -> container.units.stream()).collect(Collectors.toList());
 
+    for (int i = 0; i < lessons.size(); i++) {
+      Lesson lesson = lessons.get(i);
+      Unit unit = units.get(i);
+      if (EduUtils.isAfter(lesson.getUpdateDate(), unit.getUpdateDate())) {
+        lesson.setUpdateDate(lesson.getUpdateDate());
+      }
+      else {
+        lesson.setUpdateDate(unit.getUpdateDate());
+      }
+    }
+
     return sortLessonsByUnits(units, lessons);
   }
 
