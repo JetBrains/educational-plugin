@@ -1,0 +1,8 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <id>com.jetbrains.edu.android</id>
+    <depends optional="true" config-file="Edu-Android.xml">org.jetbrains.android</depends>
+
+    <extensions defaultExtensionNs="Educational">
+        <checkListener implementation="com.jetbrains.edu.learning.checker.CheckActionListener"/>
+    </extensions>
+</idea-plugin>

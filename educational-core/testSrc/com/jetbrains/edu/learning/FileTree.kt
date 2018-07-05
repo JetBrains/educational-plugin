@@ -10,7 +10,7 @@ import org.junit.Assert
 fun fileTree(block: FileTreeBuilder.() -> Unit): FileTree = FileTree(FileTreeBuilderImpl().apply(block).intoDirectory())
 
 interface FileTreeBuilder {
-  fun dir(name: String, block: FileTreeBuilder.() -> Unit = {})
+  fun dir(path: String, block: FileTreeBuilder.() -> Unit = {})
   fun file(name: String, code: String? = null)
   fun java(name: String, @Language("JAVA") code: String) = file(name, code)
   fun kotlin(name: String, @Language("kotlin") code: String) = file(name, code)
@@ -87,9 +87,9 @@ fun fullyRefreshDirectory(directory: VirtualFile) {
 }
 
 private class FileTreeBuilderImpl(val directory: MutableMap<String, Entry> = mutableMapOf()) : FileTreeBuilder {
-  override fun dir(name: String, block: FileTreeBuilder.() -> Unit) {
-    check('/' !in name) { "Bad directory name `$name`" }
-    directory[name] = FileTreeBuilderImpl().apply(block).intoDirectory()
+  override fun dir(path: String, block: FileTreeBuilder.() -> Unit) {
+    val pathSegments = path.split("/")
+    forPathSegments(pathSegments, block)
   }
 
   override fun file(name: String, code: String?) {
@@ -98,6 +98,14 @@ private class FileTreeBuilderImpl(val directory: MutableMap<String, Entry> = mut
   }
 
   fun intoDirectory() = Entry.Directory(directory)
+
+  private fun forPathSegments(pathSegments: List<String>, lastBlock: FileTreeBuilder.() -> Unit) {
+    directory[pathSegments[0]] = if (pathSegments.size == 1) {
+      FileTreeBuilderImpl().apply(lastBlock).intoDirectory()
+    } else {
+      FileTreeBuilderImpl().apply { forPathSegments(pathSegments.drop(1), lastBlock) }.intoDirectory()
+    }
+  }
 }
 
 sealed class Entry {

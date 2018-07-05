@@ -290,7 +290,7 @@ configure(project(':Edu-Scala')) {
 }
 
 configure(project(':Edu-Android')) {
-    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy'
+    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy', 'IntelliLang', 'smali'
 }
 
 runIde.systemProperty("-Didea.is.internal", "true")
