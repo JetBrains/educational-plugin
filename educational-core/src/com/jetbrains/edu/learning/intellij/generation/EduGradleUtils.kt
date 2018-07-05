@@ -12,8 +12,7 @@ import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtilRt
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils.createChildFile
 import org.gradle.util.GradleVersion
@@ -40,11 +39,10 @@ object EduGradleUtils {
     @JvmStatic
     @Throws(IOException::class)
     fun createProjectGradleFiles(
-      projectPath: String,
+      projectDir: VirtualFile,
       configTemplates: Map<String, String>,
       configVariables: Map<String, String>
     ) {
-        val projectDir = VfsUtil.findFileByIoFile(File(FileUtil.toSystemDependentName(projectPath)), true) ?: return
         for ((name, templateName) in configTemplates) {
             if (projectDir.findChild(name) == null) {
               val configText = getInternalTemplateText(templateName, configVariables) ?: continue
