@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -42,16 +43,23 @@ public class SyncCourseAction extends DumbAwareAction {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     if (course instanceof RemoteCourse) {
-      if (course.isUpToDate()) {
-        new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
-      }
-      else {
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course", true) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-          new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
-          course.setUpdated();
-        }, "Updating Course", true, project);
-      }
+
+          if (course.isUpToDate()) {
+            ApplicationManager.getApplication().invokeLater(() -> {
+              Notification notification = new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
+              notification.notify(project);
+            });
+          }
+          else {
+            new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
+            course.setUpdated();
+          }
+        }
+      });
     }
 
     if (CCUtils.isCourseCreator(project)) {
