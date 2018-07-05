@@ -15,6 +15,31 @@ allprojects {
     google()
     jcenter()
   }
+  afterEvaluate {
+    if (extensions.findByName("android") != null) {
+      android {
+        testOptions {
+          unitTests {
+            includeAndroidResources = true
+            all {
+              afterTest { TestDescriptor test, TestResult result ->
+                if (result.resultType == TestResult.ResultType.FAILURE) {
+                  def message = result.exception?.message ?: "Wrong answer"
+                  def lines = message.readLines()
+                  println "#educational_plugin FAILED + " + lines[0]
+                  lines[1..-1].forEach { line ->
+                    println "#educational_plugin" + line
+                  }
+                  // we need this to separate output of different tests
+                  println
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 task clean(type: Delete) {
