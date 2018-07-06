@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -28,6 +29,7 @@ public class CCSectionRenameHandler extends CCRenameHandler implements TitledHan
     Section section = course.getSection(directory.getName());
     if (section != null) {
       processRename(section, EduNames.SECTION, course, project, directory.getVirtualFile());
+      StepikCourseChangeHandler.INSTANCE.infoChanged(section);
     }
   }
 

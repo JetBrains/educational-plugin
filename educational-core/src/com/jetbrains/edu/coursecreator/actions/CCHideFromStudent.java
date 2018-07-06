@@ -8,6 +8,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.NewPlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -62,12 +63,15 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
         }
       }
       ProjectView.getInstance(myProject).refresh();
+      StepikCourseChangeHandler.INSTANCE.notChanged(myTask);
     }
 
     @Override
     public void redo() {
       hideFromStudent(myFile, myProject, myTask.getTaskFiles(), myTaskFile);
       ProjectView.getInstance(myProject).refresh();
+
+      StepikCourseChangeHandler.INSTANCE.changed(myTask);
     }
 
     @Override
