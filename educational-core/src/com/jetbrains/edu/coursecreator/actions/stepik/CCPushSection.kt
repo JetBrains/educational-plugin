@@ -13,6 +13,7 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -80,6 +81,13 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
             section.position = sectionPosition(course, section.name)
             val positionChanged = sectionFromServer.position != section.position
             val updated = CCStepikConnector.updateSection(project, section)
+            section.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+            for (lesson in section.lessons) {
+              lesson.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+              for (task in lesson.taskList) {
+                task.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+              }
+            }
 
             if (positionChanged && section.position < course.sections.size) {
               updateSectionsPositions(project, course.sections, 1 + if (course.hasTopLevelLessons) 1 else 0)
@@ -130,6 +138,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
         if (s.id == 0) continue
         s.position = position++
         CCStepikConnector.updateSectionInfo(project, s)
+        s.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
       }
     }
   }
