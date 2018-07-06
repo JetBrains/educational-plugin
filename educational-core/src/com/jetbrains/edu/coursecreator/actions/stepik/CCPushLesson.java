@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -15,11 +15,9 @@ import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
@@ -105,7 +103,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
 
-    ProgressManager.getInstance().run(new Task.Modal(project, "Uploading Lesson", true) {
+    ProgressManager.getInstance().run(new Modal(project, "Uploading Lesson", true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading lesson to " + StepikNames.STEPIK_URL);
@@ -139,6 +137,8 @@ public class CCPushLesson extends DumbAwareAction {
     if (lesson.getId() > 0) {
       StepikWrappers.Unit unit = StepikConnector.getUnit(lesson.unitId);
       int lessonId = CCStepikConnector.updateLesson(project, lesson, true);
+      lesson.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
+      setUpdated(lesson);
       if (lessonId != -1) {
         boolean positionChanged = lesson.getIndex() != unit.getPosition();
         if (positionChanged) {
@@ -175,6 +175,12 @@ public class CCPushLesson extends DumbAwareAction {
     }
   }
 
+  private static void setUpdated(Lesson lesson) {
+    for (Task task : lesson.taskList) {
+      task.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
+    }
+  }
+
   private static void updateLessonsPositions(@NotNull Project project, int initialPosition, List<Lesson> lessonsToUpdate) {
     int position = initialPosition;
     for (Lesson lesson : lessonsToUpdate) {
@@ -182,8 +188,8 @@ public class CCPushLesson extends DumbAwareAction {
       int index = lesson.getIndex();
       lesson.setIndex(position++);
       CCStepikConnector.updateLessonInfo(project, lesson, false);
+      lesson.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
       lesson.setIndex(index);
     }
-
   }
 }
