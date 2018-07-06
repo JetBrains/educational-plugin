@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.delete
 
 import com.intellij.ide.actions.DeleteAction
-import com.intellij.openapi.ui.TestDialog
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -277,7 +276,7 @@ class CCDeleteActionTest : CCActionTestCase() {
     assertNotNull(task6.getTaskFile("Task.kt")!!.answerPlaceholders[0].placeholderDependency)
   }
 
-  private class TestDeleteDialog(
+  class TestDeleteDialog(
     private val expectedTasks: List<Task> = emptyList(),
     private val notExpectedTasks: List<Task> = emptyList()
   ) : EduTestDialog() {

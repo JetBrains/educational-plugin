@@ -18,6 +18,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -105,6 +106,9 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
         return;
       }
       List<Task> taskList = targetLesson.getTaskList();
+      StepikCourseChangeHandler.INSTANCE.contentChanged(taskToMove.getLesson());
+      StepikCourseChangeHandler.INSTANCE.contentChanged(targetLesson);
+      StepikCourseChangeHandler.INSTANCE.changed(taskToMove);
       moveTask(sourceDirectory, taskToMove, taskList.isEmpty() ? null : taskList.get(taskList.size() - 1),
                1, targetVFile, targetLesson);
     }
@@ -118,6 +122,8 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
         return;
       }
       final int delta = getDelta(project, targetTask);
+
+      StepikCourseChangeHandler.INSTANCE.changed(taskToMove);
       moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.getLesson());
     }
     ProjectView.getInstance(project).refresh();

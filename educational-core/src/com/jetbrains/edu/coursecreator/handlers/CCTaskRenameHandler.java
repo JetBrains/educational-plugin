@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -42,6 +43,7 @@ public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandle
     Task task = lesson.getTask(directoryName);
     if (task != null) {
       processRename(task, EduNames.TASK, course, project, directory.getVirtualFile());
+      StepikCourseChangeHandler.INSTANCE.changed(task);
     }
   }
 
