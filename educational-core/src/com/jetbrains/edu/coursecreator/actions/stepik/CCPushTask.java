@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
@@ -109,6 +110,7 @@ public class CCPushTask extends DumbAwareAction {
         }
         else {
           boolean isPosted = CCStepikConnector.updateTask(project, task);
+          task.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
           if (isPosted) {
             int lessonId = task.getLesson().getId();
             CCStepikConnector.showNotification(project, "Task " + task.getName() + " updated",
