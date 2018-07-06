@@ -28,12 +28,13 @@ version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
 import de.undercouch.gradle.tasks.download.Download
 import org.apache.tools.ant.taskdefs.condition.Os
+import groovy.io.FileType
 
 String downloadStudioIfNeededAndGetPath() {
-    if (!rootProject.hasProperty("studioVersion")) throw IllegalStateException("studioVersion is unspecified")
-    if (!rootProject.hasProperty("studioBuildVersion")) throw IllegalStateException("studioBuildVersion is unspecified")
+    if (!rootProject.hasProperty("studioVersion")) throw new IllegalStateException("studioVersion is unspecified")
+    if (!rootProject.hasProperty("studioBuildVersion")) throw new IllegalStateException("studioBuildVersion is unspecified")
     def osFamily = getOsFamily()
-    if (osFamily == null) throw IllegalStateException("current os family is unsupported")
+    if (osFamily == null) throw new IllegalStateException("current os family is unsupported")
 
     def studioZip = file("${rootProject.projectDir}/dependencies/studio-$studioVersion-$studioBuildVersion-${osFamily}.zip")
     if (!studioZip.exists()) {
@@ -50,7 +51,7 @@ String downloadStudioIfNeededAndGetPath() {
             into studioFolder
         }
     }
-    return "$studioFolder/${studioContentPath()}"
+    return studioPath(studioFolder)
 }
 
 static String getOsFamily() {
@@ -60,13 +61,21 @@ static String getOsFamily() {
     return null
 }
 
-static String studioContentPath() {
+static String studioPath(File studioFolder) {
     def osFamily = getOsFamily()
-    if (osFamily == null) throw IllegalStateException("current os family is unsupported")
+    if (osFamily == null) throw new IllegalStateException("current os family is unsupported")
     if (osFamily == "mac") {
-        return "Android Studio.app/Contents"
+        def candidates = []
+        studioFolder.eachFileMatch(FileType.DIRECTORIES, ~/Android Studio.*\.app/) {
+            candidates << it
+        }
+        switch (candidates.size()) {
+            case 0: throw new IllegalStateException("Can't find any folder matching `Android Studio*.app` in `$studioFolder`")
+            case 1: return "${candidates[0]}/Contents"
+            default: throw new IllegalStateException("More than one folder matching `Android Studio*.app` found in `$studioFolder`")
+        }
     } else {
-        return "android-studio"
+        return "$studioFolder/android-studio"
     }
 }
 
