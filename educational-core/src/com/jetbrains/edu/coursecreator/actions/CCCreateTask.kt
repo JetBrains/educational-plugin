@@ -5,23 +5,29 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
+import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import icons.EducationalCoreIcons
 import java.io.IOException
-
 import java.util.Collections
+import kotlin.collections.ArrayList
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, EducationalCoreIcons.Task) {
 
   override fun addItem(course: Course, item: Task) {
     item.lesson.addTask(item)
+
+    StepikCourseChangeHandler.contentChanged(item.lesson)
   }
 
   override fun getStudyOrderable(item: StudyItem, course: Course): Function<VirtualFile, out StudyItem> =
