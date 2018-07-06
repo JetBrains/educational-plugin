@@ -166,6 +166,7 @@
 
     <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
     <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepik"/>
+    <action id="Educational.Educator.CCShowChangedFiles" class="com.jetbrains.edu.coursecreator.actions.stepik.CCShowChangedFiles"/>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
