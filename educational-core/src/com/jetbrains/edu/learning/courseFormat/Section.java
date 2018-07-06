@@ -25,6 +25,10 @@ public class Section extends ItemContainer {
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     int index = 1;
+
+    if (course != null) {
+      this.course = course.getId();
+    }
     for (StudyItem lesson : items) {
       if (lesson instanceof Lesson) {
         lesson.setIndex(index);
