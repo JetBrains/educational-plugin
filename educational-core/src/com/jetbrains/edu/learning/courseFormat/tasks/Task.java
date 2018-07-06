@@ -62,6 +62,11 @@ public abstract class Task extends StudyItem {
   @Transient private Lesson myLesson;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
 
+  @Expose
+  @SerializedName("feedback_link")
+  @NotNull
+  private FeedbackLink myFeedbackLink = new FeedbackLink();
+
   public Task() {}
 
   public Task(@NotNull final String name) {
@@ -314,5 +319,14 @@ public abstract class Task extends StudyItem {
   @Override
   public int getId() {
     return myStepId;
+  }
+
+  @NotNull
+  public FeedbackLink getFeedbackLink() {
+    return myFeedbackLink;
+  }
+
+  public void setFeedbackLink(@NotNull FeedbackLink feedbackLink) {
+    myFeedbackLink = feedbackLink;
   }
 }
