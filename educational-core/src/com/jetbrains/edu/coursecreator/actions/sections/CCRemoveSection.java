@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -69,6 +70,7 @@ public class CCRemoveSection extends DumbAwareAction {
                                    sectionIndex-1, lessonsFromSection.size());
       course.addLessons(lessonsFromSection);
       course.sortItems();
+      StepikCourseChangeHandler.INSTANCE.contentChanged(course);
     }
 
     ProjectView.getInstance(project).refresh();

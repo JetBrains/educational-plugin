@@ -18,6 +18,7 @@ import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.ui.CCMoveStudyItemDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -122,9 +123,12 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
 
     sourceLesson.setIndex(newItemIndex);
     sourceLesson.setSection(targetSection);
+    StepikCourseChangeHandler.INSTANCE.infoChanged(sourceLesson);
 
     sourceContainer.removeLesson(sourceLesson);
     targetContainer.addLesson(sourceLesson);
+    StepikCourseChangeHandler.INSTANCE.contentChanged(sourceContainer);
+    StepikCourseChangeHandler.INSTANCE.contentChanged(targetContainer);
 
     course.sortItems();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {

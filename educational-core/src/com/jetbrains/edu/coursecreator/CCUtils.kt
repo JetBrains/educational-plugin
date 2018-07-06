@@ -22,6 +22,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
 import com.intellij.util.ThrowableConsumer
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
@@ -66,6 +67,7 @@ object CCUtils {
       val item = getStudyItem.`fun`(dir)
       val newIndex = item.index + delta
       item.index = newIndex
+      StepikCourseChangeHandler.infoChanged(item)
     }
   }
 

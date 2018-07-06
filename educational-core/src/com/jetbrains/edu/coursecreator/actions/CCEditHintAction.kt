@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 
 class CCEditHintAction(private val myPlaceholder: AnswerPlaceholder?) : AnAction("Edit Hint", "Edit Hint", AllIcons.Modules.Edit) {
@@ -18,6 +19,8 @@ class CCEditHintAction(private val myPlaceholder: AnswerPlaceholder?) : AnAction
       myPlaceholder.length = answerPlaceholderText.length
       myPlaceholder.hints = dlg.hints
     }
+
+    StepikCourseChangeHandler.changed(myPlaceholder)
   }
 
   override fun update(e: AnActionEvent) {
