@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.courseFormat;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class StudyItem {
@@ -49,6 +50,7 @@ public abstract class StudyItem {
     myIndex = index;
   }
 
+  @NotNull
   public StepikChangeStatus getStepikChangeStatus() {
     return myStepikChangeStatus;
   }
