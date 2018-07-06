@@ -12,6 +12,7 @@ import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCourseInfoPanel;
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +72,7 @@ public class CCChangeCourseInfo extends DumbAwareAction {
       setVersion(course, panel);
       ProjectView.getInstance(project).refresh();
       ProjectInspectionProfileManager.getInstance(project).fireProfileChanged();
+      StepikCourseChangeHandler.INSTANCE.infoChanged(course);
     }
   }
 

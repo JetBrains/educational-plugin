@@ -10,8 +10,7 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
+import com.jetbrains.edu.learning.courseFormat.*
 import javax.swing.Icon
 
 val Course.configurator: EduConfigurator<*>? get() {
@@ -54,3 +53,26 @@ fun Course.getDecoratedLogo(icon: Icon?): Icon? {
 val Course.hasSections: Boolean get() = !sections.isEmpty()
 
 val Course.hasTopLevelLessons: Boolean get() = !lessons.isEmpty()
+
+fun Course.setPushed() {
+  stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+  items.forEach {
+    it.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+    if (it is Section) {
+      it.lessons.forEach {
+        setPushed(it)
+      }
+    }
+
+    if (it is Lesson) {
+      setPushed(it)
+    }
+  }
+}
+
+private fun setPushed(it: Lesson) {
+  it.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+  it.taskList.forEach {
+    it.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+  }
+}
