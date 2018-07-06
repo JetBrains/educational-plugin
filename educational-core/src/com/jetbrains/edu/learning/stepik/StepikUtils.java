@@ -17,6 +17,7 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
@@ -51,6 +52,9 @@ public class StepikUtils {
   @NotNull
   private static String getFooterWithLink(Task task, boolean adaptive) {
     final String link = adaptive ? getAdaptiveLink(task) : getLink(task, task.getIndex());
+    if (link == null) {
+      return "";
+    }
     return "<div class=\"footer\">" + "<a href=" + link + ">Leave a comment</a>" + "</div>";
   }
 
@@ -59,12 +63,19 @@ public class StepikUtils {
     if (task == null) {
       return null;
     }
-    Lesson lesson = task.getLesson();
-    if (lesson == null || !(lesson.getCourse() instanceof RemoteCourse)) {
-      return null;
+    final FeedbackLink feedbackLink = task.getFeedbackLink();
+    switch (feedbackLink.getType()) {
+      case NONE: return null;
+      case CUSTOM: return feedbackLink.getLink();
+      case STEPIK: {
+        Lesson lesson = task.getLesson();
+        if (lesson == null || !(lesson.getCourse() instanceof RemoteCourse)) {
+          return null;
+        }
+        return String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.getId(), stepNumber);
+      }
     }
-
-    return String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.getId(), stepNumber);
+    return null;
   }
 
   @Nullable
