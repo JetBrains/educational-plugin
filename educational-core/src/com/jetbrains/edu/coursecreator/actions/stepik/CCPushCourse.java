@@ -81,6 +81,7 @@ public class CCPushCourse extends DumbAwareAction {
           indicator.setIndeterminate(false);
           if (updateCourseInfo(project, (RemoteCourse) course)) {
             updateCourseContent(indicator, course, project);
+            CourseExt.setPushed(course);
             try {
               updateAdditionalMaterials(project, course.getId());
             }
