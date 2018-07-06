@@ -110,10 +110,10 @@ allprojects {
     }
 
     intellij {
-        if (project.hasProperty("ideaVersion")) {
-            version ideaVersion
-        } else if (project.hasProperty("ideaPath")) {
-            localPath ideaPath
+        if (project.hasProperty("androidStudioPath")) {
+            localPath androidStudioPath
+        } else {
+            localPath downloadStudioIfNeededAndGetPath()
         }
     }
 
@@ -250,11 +250,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
 }
 
 configure([project(':educational-core'), project(':Edu-Java')]) {
-    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
+    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy', 'smali'
 }
 
 configure(project(':Edu-Kotlin')) {
-    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
+    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy', 'smali'
 
 
     task createTwitterProperties() {
@@ -272,7 +272,7 @@ configure(project(':Edu-Python')) {
 }
 
 configure(project(':Edu-Scala')) {
-    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
+    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy', 'smali'
 }
 
 runIde.systemProperty("-Didea.is.internal", "true")
