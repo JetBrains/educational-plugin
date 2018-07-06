@@ -248,28 +248,30 @@ public class StepikTaskBuilder {
     Task task = createPluginTask();
     task.setStepId(myStepId);
     task.setUpdateDate(myStepSource.update_date);
-    task.setName(myStep.options != null ? myStep.options.title : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
+    StepikWrappers.StepOptions stepOptions = myStep.options;
+    task.setName(stepOptions != null ? stepOptions.title : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 
-    for (StepikWrappers.FileWrapper wrapper : myStep.options.test) {
+    for (StepikWrappers.FileWrapper wrapper : stepOptions.test) {
       task.addTestsTexts(wrapper.name, wrapper.text);
     }
-    if (myStep.options.additionalFiles != null) {
-      for (StepikWrappers.FileWrapper wrapper : myStep.options.additionalFiles) {
+    if (stepOptions.additionalFiles != null) {
+      for (StepikWrappers.FileWrapper wrapper : stepOptions.additionalFiles) {
         task.addAdditionalFile(wrapper.name, wrapper.text);
       }
     }
-    if (myStep.options.descriptionText != null) {
-      task.setDescriptionText(myStep.options.descriptionText);
+    if (stepOptions.descriptionText != null) {
+      task.setDescriptionText(stepOptions.descriptionText);
     } else {
       task.setDescriptionText(myStep.text);
     }
-    if (myStep.options.descriptionFormat != null) {
-      task.setDescriptionFormat(myStep.options.descriptionFormat);
+    if (stepOptions.descriptionFormat != null) {
+      task.setDescriptionFormat(stepOptions.descriptionFormat);
     }
 
+    task.setFeedbackLink(stepOptions.myFeedbackLink);
     task.taskFiles = new HashMap<>();      // TODO: it looks like we don't need taskFiles as map anymore
-    if (myStep.options.files != null) {
-      for (TaskFile taskFile : myStep.options.files) {
+    if (stepOptions.files != null) {
+      for (TaskFile taskFile : stepOptions.files) {
         addPlaceholdersTexts(taskFile);
         task.taskFiles.put(taskFile.name, taskFile);
       }

@@ -56,6 +56,10 @@ public class StepikWrappers {
     @Expose public String descriptionText;
     @SerializedName(SerializationUtils.Json.DESCRIPTION_FORMAT)
     @Expose public DescriptionFormat descriptionFormat;
+    @Expose
+    @SerializedName("feedback_link")
+    @NotNull
+    public FeedbackLink myFeedbackLink = new FeedbackLink();
     @Expose public List<TaskFile> files;
     @Expose public List<List<String>> samples;
     @SerializedName("additional_files")
@@ -76,6 +80,7 @@ public class StepikWrappers {
       setAdditionalFiles(task, source);
       source.taskType = task.getTaskType();
       source.lessonType = task.getLesson() instanceof FrameworkLesson ? "framework" : null;
+      source.myFeedbackLink = task.getFeedbackLink();
       return source;
     }
 
