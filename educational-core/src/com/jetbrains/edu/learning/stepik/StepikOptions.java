@@ -93,6 +93,7 @@ public class StepikOptions implements OptionsProvider {
   @Override
   public void reset() {
     final EduSettings stepikSettings = EduSettings.getInstance();
+    myUser = stepikSettings.getUser();
     myEnableTestingFromSamples.setSelected(stepikSettings.isEnableTestingFromSamples());
     updateLoginLabels(stepikSettings.getUser());
   }
