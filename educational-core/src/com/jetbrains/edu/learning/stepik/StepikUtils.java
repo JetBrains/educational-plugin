@@ -15,6 +15,7 @@
  */
 package com.jetbrains.edu.learning.stepik;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
@@ -59,6 +60,7 @@ public class StepikUtils {
   }
 
   @Nullable
+  @VisibleForTesting
   public static String getLink(@Nullable Task task, int stepNumber) {
     if (task == null) {
       return null;
