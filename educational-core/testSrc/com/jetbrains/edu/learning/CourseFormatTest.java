@@ -70,21 +70,21 @@ public class CourseFormatTest {
 
   @Test
   public void testDescription() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    final Task task = taskList.get(0);
-    assertTrue(task instanceof EduTask);
-    EduTask eduTask = (EduTask) task;
-
+    EduTask eduTask = getFirstEduTask();
     assertEquals("First task description", eduTask.getTaskDescription(false, null));
   }
 
   @Test
-  public void testHint() throws IOException {
+  public void testFeedbackLinks() throws IOException {
+    EduTask eduTask = getFirstEduTask();
+
+    FeedbackLink feedbackLink = eduTask.getFeedbackLink();
+    assertEquals(FeedbackLink.LinkType.CUSTOM, feedbackLink.getType());
+    assertEquals("https://www.jetbrains.com/", feedbackLink.getLink());
+  }
+
+  @NotNull
+  private EduTask getFirstEduTask() throws IOException {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons();
     assertFalse("No lessons found", lessons.isEmpty());
@@ -93,8 +93,12 @@ public class CourseFormatTest {
     assertFalse("No tasks found", taskList.isEmpty());
     final Task task = taskList.get(0);
     assertTrue(task instanceof EduTask);
-    EduTask eduTask = (EduTask) task;
+    return (EduTask)task;
+  }
 
+  @Test
+  public void testHint() throws IOException {
+    EduTask eduTask = getFirstEduTask();
     final TaskFile taskFile = eduTask.getTaskFile("task.py");
     assertNotNull(taskFile);
     final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
@@ -106,16 +110,7 @@ public class CourseFormatTest {
 
   @Test
   public void testPlaceholderText() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    final Task task = taskList.get(0);
-    assertTrue(task instanceof EduTask);
-    EduTask eduTask = (EduTask) task;
-
+    EduTask eduTask = getFirstEduTask();
     final TaskFile taskFile = eduTask.getTaskFile("task.py");
     assertNotNull(taskFile);
     final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
@@ -125,16 +120,7 @@ public class CourseFormatTest {
 
   @Test
   public void testPossibleAnswer() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    final Task task = taskList.get(0);
-    assertTrue(task instanceof EduTask);
-    EduTask eduTask = (EduTask) task;
-
+    EduTask eduTask = getFirstEduTask();
     final TaskFile taskFile = eduTask.getTaskFile("task.py");
     assertNotNull(taskFile);
     final List<AnswerPlaceholder> answerPlaceholders = taskFile.getAnswerPlaceholders();
