@@ -45,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -217,8 +218,7 @@ public class CCStepikConnector {
       section.setName(item.getName());
       List<Lesson> lessons = ((Section)item).getLessons();
 
-      final int sectionId = postModule(project, section, course.getId());
-      ((Section)item).setId(sectionId);
+      final int sectionId = postSectionInfo(project, section, course.getId());
 
       postLessons(project, indicator, course, sectionId, lessons);
     }
@@ -227,19 +227,51 @@ public class CCStepikConnector {
 
   private static void postTopLevelLessons(@NotNull Project project, @NotNull RemoteCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+    final int sectionId = postTopLevelLessonsSection(project, course);
+    course.setSectionIds(Collections.singletonList(sectionId));
+    postLessons(project, indicator, course, sectionId, course.getLessons());
+  }
+
+  public static int postTopLevelLessonsSection(@NotNull Project project, @NotNull RemoteCourse course) {
     Section section = new Section();
     section.setName(course.getName());
     section.setPosition(1);
-    final int sectionId = postModule(project, section, course.getId());
-    course.setSectionIds(Collections.singletonList(sectionId));
-    postLessons(project, indicator, course, sectionId, course.getLessons());
+    return postSectionInfo(project, section, course.getId());
+  }
+
+  public static int findTopLevelLessonsSection(@NotNull Project project, @Nullable Lesson topLevelLesson) {
+    if (topLevelLesson != null) {
+      StepikWrappers.Unit unit = StepikConnector.getUnit(topLevelLesson.unitId);
+      return unit.getSection();
+    }
+    else {
+      Course course = StudyTaskManager.getInstance(project).getCourse();
+      assert  course != null;
+      RemoteCourse courseInfo = StepikConnector
+        .getCourseFromStepik(EduSettings.getInstance().getUser(), course.getId(), true);
+      if (courseInfo != null) {
+        String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
+        try {
+          List<Section> sections = StepikConnector.getSections(sectionIds);
+          for (Section section : sections) {
+            if (section.getName().equals(courseInfo.getName())) {
+              return section.getId();
+            }
+          }
+        }
+        catch (URISyntaxException | IOException e) {
+          LOG.warn(e.getMessage());
+        }
+      }
+    }
+
+    return -1;
   }
 
   public static int postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
     RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final int sectionId = postModule(project, copySection(section), course.getId());
-    section.setId(sectionId);
+    final int sectionId = postSectionInfo(project, copySection(section), course.getId());
     postLessons(project, indicator, course, sectionId, section.getLessons());
 
     return sectionId;
@@ -314,9 +346,8 @@ public class CCStepikConnector {
       final Section section = new Section();
       section.setName(StepikNames.PYCHARM_ADDITIONAL);
       section.setPosition(position);
-      final int sectionId = postModule(project, section, id);
-      final int lessonId = postLesson(project, lesson);
-      lesson.unitId = postUnit(lessonId, position, sectionId, project);
+      final int sectionId = postSectionInfo(project, section, id);
+      postLesson(project, lesson, position, sectionId);
     }
   }
 
@@ -413,7 +444,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static int postModule(@NotNull Project project, @NotNull Section section, int courseId) {
+  public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS);
     section.setCourseId(courseId);
     final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
@@ -437,6 +468,7 @@ public class CCStepikConnector {
         return -1;
       }
       final Section postedSection = new Gson().fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
+      section.setId(postedSection.getId());
       return postedSection.getId();
     }
     catch (IOException e) {
