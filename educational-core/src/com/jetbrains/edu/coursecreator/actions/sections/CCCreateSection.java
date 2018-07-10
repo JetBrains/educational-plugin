@@ -47,6 +47,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
     }
     VirtualFile sectionDir = CCUtils.createSectionDir(project, section.getName());
     YamlFormatSynchronizer.saveItem(section);
+    YamlFormatSynchronizer.saveItem(course);
     return sectionDir;
   }
 
