@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions;
+package com.jetbrains.edu.coursecreator.actions.taskFile;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.command.undo.BasicUndoableAction;
