@@ -28,7 +28,9 @@ class PlainTextConfigurator : EduConfigurator<Unit> {
 }
 
 class PlainTextCourseBuilder : EduCourseBuilder<Unit> {
-  override fun getLanguageSettings(): EduCourseBuilder.LanguageSettings<Unit> = EduCourseBuilder.LanguageSettings { }
+  override fun getLanguageSettings(): LanguageSettings<Unit> = object : LanguageSettings<Unit>() {
+    override fun getSettings() {}
+  }
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Unit> = PlainTextCourseGenerator(this, course)
   override fun getTaskTemplateName(): String? = "Task.txt"
   override fun getTestTemplateName(): String? = "Tests.txt"

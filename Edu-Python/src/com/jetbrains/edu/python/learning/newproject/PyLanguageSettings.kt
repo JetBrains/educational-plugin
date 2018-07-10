@@ -13,7 +13,7 @@ import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ComboboxWithBrowseButton
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator.getBaseSdk
 import com.jetbrains.python.newProject.PyNewProjectSettings
@@ -24,7 +24,7 @@ import icons.PythonIcons
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
-internal open class PyLanguageSettings : EduCourseBuilder.LanguageSettings<PyNewProjectSettings> {
+internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>() {
 
   protected val mySettings: PyNewProjectSettings = PyNewProjectSettings()
 
@@ -82,6 +82,7 @@ internal open class PyLanguageSettings : EduCourseBuilder.LanguageSettings<PyNew
       }
     }
     mySettings.sdk = selectedSdk
+    notifyListeners()
   }
 
   companion object {

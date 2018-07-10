@@ -10,12 +10,12 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.openapi.util.Condition
 import com.intellij.ui.ComboboxWithBrowseButton
-import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
-open class JdkLanguageSettings : EduCourseBuilder.LanguageSettings<JdkProjectSettings> {
+open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
 
   private val myModel: ProjectSdksModel = createSdkModel()
   private var myJdkSettings: JdkProjectSettings = JdkProjectSettings(myModel, null)
@@ -35,6 +35,7 @@ open class JdkLanguageSettings : EduCourseBuilder.LanguageSettings<JdkProjectSet
     myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem)
     jdkComboBox.addItemListener {
       myJdkSettings = JdkProjectSettings(myModel, jdkComboBox.selectedItem)
+      notifyListeners()
     }
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(comboboxWithBrowseButton, "Jdk", BorderLayout.WEST))
   }

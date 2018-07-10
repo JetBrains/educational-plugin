@@ -13,14 +13,15 @@ import java.util.List;
 public class AdvancedSettings extends JPanel {
 
   private final JPanel myAdvancedSettings = new JPanel();
+  private final HideableDecorator myDecorator;
 
   public AdvancedSettings() {
     super(new BorderLayout());
     myAdvancedSettings.setLayout(new BoxLayout(myAdvancedSettings, BoxLayout.Y_AXIS));
     add(myAdvancedSettings, BorderLayout.CENTER);
 
-    HideableDecorator decorator = new HideableDecorator(this, "Advanced Settings", false);
-    decorator.setContentComponent(myAdvancedSettings);
+    myDecorator = new HideableDecorator(this, "Advanced Settings", false);
+    myDecorator.setContentComponent(myAdvancedSettings);
     myAdvancedSettings.setBorder(JBUI.Borders.empty(0, IdeBorderFactory.TITLED_BORDER_INDENT, 5, 0));
   }
 
@@ -32,5 +33,9 @@ public class AdvancedSettings extends JPanel {
     UIUtil.mergeComponentsWithAnchor(settings);
     myAdvancedSettings.revalidate();
     myAdvancedSettings.repaint();
+  }
+
+  public void setOn(boolean on) {
+    myDecorator.setOn(on);
   }
 }

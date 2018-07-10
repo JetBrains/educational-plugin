@@ -46,7 +46,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   private val myErrorLabel = HyperlinkLabel()
 
   private val myCourse: Course = (course ?: Course()).apply { courseMode = CCUtils.COURSE_MODE }
-  private lateinit var myLanguageSettings: EduCourseBuilder.LanguageSettings<*>
+  private lateinit var myLanguageSettings: LanguageSettings<*>
 
   private var myRequiredAndDisabledPlugins: List<String> = emptyList()
 
@@ -147,7 +147,15 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       locationString.isBlank() -> ErrorMessage("Enter course location")
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ErrorMessage("Can't create course at this location")
       myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins)
-      else -> null
+      else -> {
+        val errorMessage = myLanguageSettings.validate()
+        if (errorMessage != null) {
+          myAdvancedSettings.setOn(true)
+          ErrorMessage(errorMessage)
+        } else {
+          null
+        }
+      }
     }
     if (errorMessage != null) {
       myErrorLabel.setHyperlinkText(errorMessage.beforeLink, errorMessage.link, errorMessage.afterLink)
@@ -183,6 +191,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     val configurator = EduConfiguratorManager.forLanguage(language) ?: return
     myCourse.language = language.id
     myLanguageSettings = configurator.courseBuilder.languageSettings
+    myLanguageSettings.addSettingsChangeListener { doValidation() }
 
     val settings = arrayListOf<LabeledComponent<*>>(myLocationField)
     settings.addAll(myLanguageSettings.getLanguageSettingsComponents(myCourse))

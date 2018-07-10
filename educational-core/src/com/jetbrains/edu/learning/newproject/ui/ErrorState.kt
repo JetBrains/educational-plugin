@@ -13,18 +13,22 @@ import com.jetbrains.edu.learning.stepik.StepikUtils.isLoggedIn
 import java.awt.Color
 
 sealed class ErrorState(
+  private val severity: Int,
   val message: ErrorMessage?,
   val foregroundColor: Color,
   val courseCanBeStarted: Boolean
 ) {
 
-  object None : ErrorState(null, Color.BLACK, true)
-  object NothingSelected : ErrorState(null, Color.BLACK, true)
-  object NotLoggedIn : ErrorState(ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
-  object LoginRequired : ErrorState(ErrorMessage("", "Log in", " to Stepik to start this course"), ERROR.titleForeground, false)
-  object IncompatibleVersion : ErrorState(ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
+  object NothingSelected : ErrorState(0, null, Color.BLACK, true)
+  object None : ErrorState(1, null, Color.BLACK, true)
+  object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
+  object LoginRequired : ErrorState(3, ErrorMessage("", "Log in", " to Stepik to start this course"), ERROR.titleForeground, false)
+  object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
-    ErrorState(errorMessage(disabledPluginIds), ERROR.titleForeground, false)
+    ErrorState(3, errorMessage(disabledPluginIds), ERROR.titleForeground, false)
+  class LanguageSettingsError(message: String) : ErrorState(3, ErrorMessage(message), ERROR.titleForeground, false)
+
+  fun merge(other: ErrorState): ErrorState = if (severity < other.severity) other else this
 
   companion object {
     @JvmStatic
