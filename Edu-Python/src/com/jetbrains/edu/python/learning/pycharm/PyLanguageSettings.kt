@@ -30,6 +30,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
     val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
     sdkChooser.addChangedListener {
       mySettings.sdk = sdkChooser.comboBox.selectedItem as? Sdk
+      notifyListeners()
     }
     if (fakeSdk != null) {
       sdkChooser.comboBox.selectedItem = fakeSdk

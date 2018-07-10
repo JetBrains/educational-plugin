@@ -15,10 +15,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.EduCourseBuilder;
-import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.stepik.StepicUser;
@@ -49,7 +46,7 @@ public class CoursePanel extends JPanel {
 
   private AdvancedSettings myAdvancedSettings;
   private JPanel myCourseDescriptionPanel;
-  private EduCourseBuilder.LanguageSettings<?> myLanguageSettings;
+  private LanguageSettings<?> myLanguageSettings;
   @Nullable
   private FilterComponent mySearchField;
 
@@ -95,10 +92,11 @@ public class CoursePanel extends JPanel {
     myDescriptionTextArea.addHyperlinkListener(new BrowserHyperlinkListener());
   }
 
-  public void bindCourse(@NotNull Course course) {
+  public LanguageSettings<?> bindCourse(@NotNull Course course) {
     myCourseDescriptionPanel.setVisible(true);
     updateCourseDescriptionPanel(course);
     updateAdvancedSettings(course);
+    return myLanguageSettings;
   }
 
   public void hideContent() {
@@ -121,6 +119,15 @@ public class CoursePanel extends JPanel {
               .getDocument()
               .addDocumentListener(listener);
     }
+  }
+
+  @Nullable
+  public String validateSettings() {
+    String message = myLanguageSettings.validate();
+    if (message != null) {
+      myAdvancedSettings.setOn(true);
+    }
+    return message;
   }
 
   private static void setTextAreaAttributes(JEditorPane textArea, int leftMargin) {

@@ -37,7 +37,7 @@ class CreateNewStepikCoursePanel : JPanel(BorderLayout()) {
   val projectSettings: Any get() = myCoursePanel.projectSettings
 
   fun bindCourse(course: Course) {
-    myCoursePanel.bindCourse(course)
+    myCoursePanel.bindCourse(course).addSettingsChangeListener { doValidation() }
   }
 
   fun setValidationListener(listener: ValidationListener?) {
@@ -58,7 +58,7 @@ class CreateNewStepikCoursePanel : JPanel(BorderLayout()) {
     val message = when {
       locationString.isBlank() -> "Enter course location"
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> "Can't create course at this location"
-      else -> null
+      else -> myCoursePanel.validateSettings()
     }
     myErrorLabel.text = message
     myErrorLabel.isVisible = message != null

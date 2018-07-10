@@ -162,16 +162,26 @@ public class CoursesPanel extends JPanel {
 
   private void processSelectionChanged() {
     Course selectedCourse = myCoursesList.getSelectedValue();
-    myErrorState = ErrorState.forCourse(selectedCourse);
-    notifyListeners(myErrorState.getCourseCanBeStarted());
-    updateCourseInfoPanel(selectedCourse, myErrorState);
+    if (selectedCourse != null) {
+      myCoursePanel.bindCourse(selectedCourse).addSettingsChangeListener(() -> doValidation(selectedCourse));
+    }
+    doValidation(selectedCourse);
   }
 
-  private void updateCourseInfoPanel(@Nullable Course selectedCourse, @NotNull ErrorState errorState) {
-    if (selectedCourse != null) {
-      myCoursePanel.bindCourse(selectedCourse);
+  private void doValidation(@Nullable Course course) {
+    ErrorState languageError = ErrorState.NothingSelected.INSTANCE;
+    if (course != null) {
+      String languageSettingsMessage = myCoursePanel.validateSettings();
+      languageError = languageSettingsMessage == null
+                      ? ErrorState.None.INSTANCE
+                      : new ErrorState.LanguageSettingsError(languageSettingsMessage);
     }
+    myErrorState = ErrorState.forCourse(course).merge(languageError);
+    notifyListeners(myErrorState.getCourseCanBeStarted());
+    updateErrorInfo(myErrorState);
+  }
 
+  private void updateErrorInfo(@NotNull ErrorState errorState) {
     ErrorMessage message = errorState.getMessage();
     if (message != null) {
       myErrorLabel.setVisible(true);

@@ -6,6 +6,7 @@ import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMo
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
 import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
@@ -36,7 +37,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
     }
   }
 
-  override fun getLanguageSettings(): EduCourseBuilder.LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = JdkLanguageSettings()
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator =
     GradleCourseProjectGenerator(this, course)

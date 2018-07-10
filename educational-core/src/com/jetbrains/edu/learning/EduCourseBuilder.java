@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
@@ -17,10 +16,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * The main interface provides courses creation for some language.
@@ -139,33 +135,5 @@ public interface EduCourseBuilder<Settings> {
   @Nullable
   default CourseProjectGenerator<Settings> getCourseProjectGenerator(@NotNull Course course) {
     return null;
-  }
-
-  /**
-   * Main interface responsible for course project language settings such as JDK or interpreter
-   *
-   * @param <Settings> container type holds project settings state
-   */
-  interface LanguageSettings<Settings> {
-
-    /**
-     * Returns list of UI components that allows user to select course project settings such as project JDK or interpreter.
-     *
-     * @param course course of creating project
-     * @return list of UI components with project settings
-     */
-    @NotNull
-    default List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course) {
-      return Collections.emptyList();
-    }
-
-    /**
-     * Returns project settings associated with state of language settings UI component.
-     * It should be passed into project generator to set chosen settings in course project.
-     *
-     * @return project settings object
-     */
-    @NotNull
-    Settings getSettings();
   }
 }
