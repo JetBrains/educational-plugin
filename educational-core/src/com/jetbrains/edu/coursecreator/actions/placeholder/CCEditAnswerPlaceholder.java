@@ -3,8 +3,10 @@ package com.jetbrains.edu.coursecreator.actions.placeholder;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,10 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
     if (answerPlaceholder == null) {
       return;
     }
+    performEditPlaceholder(project, answerPlaceholder);
+  }
+
+  public static void performEditPlaceholder(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
     CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), answerPlaceholder.getHints());
     dlg.setTitle("Edit Answer Placeholder");
     if (dlg.showAndGet()) {
@@ -36,8 +42,10 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
         StepikCourseChangeHandler.changed(answerPlaceholder);
       }
       answerPlaceholder.setPlaceholderText(answerPlaceholderText);
-      answerPlaceholder.setLength(answerPlaceholderText.length());
+      answerPlaceholder.setLength(StringUtil
+                                    .notNullize(answerPlaceholderText).length());
       answerPlaceholder.setHints(dlg.getHints());
+      YamlFormatSynchronizer.saveItem(answerPlaceholder.getTaskFile().getTask());
     }
   }
 

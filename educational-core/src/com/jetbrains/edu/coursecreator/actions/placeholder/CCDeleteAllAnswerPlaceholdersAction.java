@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
-import com.intellij.openapi.command.undo.BasicUndoableAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -90,26 +89,26 @@ public class CCDeleteAllAnswerPlaceholdersAction extends DumbAwareAction {
   }
 
 
-  private static class ClearPlaceholders extends BasicUndoableAction {
+  private static class ClearPlaceholders extends TaskFileUndoableAction {
     private final List<AnswerPlaceholder> myPlaceholders;
     private final Editor myEditor;
     private final TaskFile myTaskFile;
 
     public ClearPlaceholders(TaskFile taskFile, List<AnswerPlaceholder> placeholders, Editor editor) {
-      super(editor.getDocument());
+      super(taskFile, editor);
       myTaskFile = taskFile;
       myPlaceholders = placeholders;
       myEditor = editor;
     }
 
     @Override
-    public void undo() {
+    public void performUndo() {
       myTaskFile.getAnswerPlaceholders().addAll(myPlaceholders);
       updateView(myEditor, myTaskFile);
     }
 
     @Override
-    public void redo() {
+    public void performRedo() {
       List<AnswerPlaceholder> placeholders = myTaskFile.getAnswerPlaceholders();
       for (AnswerPlaceholder placeholder : placeholders) {
         NewPlaceholderPainter.removePainter(myEditor, placeholder);

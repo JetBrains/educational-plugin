@@ -36,7 +36,7 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
                              parentDirectory: VirtualFile, course: Course): VirtualFile? {
     val configurator = EduConfiguratorManager.forLanguage(course.languageById!!)
     val taskDir = configurator?.courseBuilder?.createTaskContent(project, item, parentDirectory, course)
-    YamlFormatSynchronizer.saveItem(item, project)
+    YamlFormatSynchronizer.saveItem(item)
     return taskDir
   }
 

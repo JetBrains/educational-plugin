@@ -2,8 +2,6 @@ package com.jetbrains.edu.coursecreator.actions.placeholder;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.command.undo.BasicUndoableAction;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
@@ -75,31 +73,27 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     EduUtils.runUndoableAction(project, "Add Answer Placeholder", action);
   }
 
-  static class AddAction extends BasicUndoableAction {
+  static class AddAction extends TaskFileUndoableAction {
     private final AnswerPlaceholder myPlaceholder;
-    private final TaskFile myTaskFile;
-    private final Editor myEditor;
 
     public AddAction(AnswerPlaceholder placeholder, TaskFile taskFile, Editor editor) {
-      super(editor.getDocument());
+      super(taskFile, editor);
       myPlaceholder = placeholder;
-      myTaskFile = taskFile;
-      myEditor = editor;
     }
 
     @Override
-    public void undo() throws UnexpectedUndoException {
-      final List<AnswerPlaceholder> answerPlaceholders = myTaskFile.getAnswerPlaceholders();
+    public void performUndo() {
+      final List<AnswerPlaceholder> answerPlaceholders = getTaskFile().getAnswerPlaceholders();
       if (answerPlaceholders.contains(myPlaceholder)) {
         answerPlaceholders.remove(myPlaceholder);
-        NewPlaceholderPainter.removePainter(myEditor, myPlaceholder);
+        NewPlaceholderPainter.removePainter(getEditor(), myPlaceholder);
       }
     }
 
     @Override
-    public void redo() throws UnexpectedUndoException {
-      myTaskFile.addAnswerPlaceholder(myPlaceholder);
-      NewPlaceholderPainter.paintPlaceholder(myEditor, myPlaceholder);
+    public void performRedo(){
+      getTaskFile().addAnswerPlaceholder(myPlaceholder);
+      NewPlaceholderPainter.paintPlaceholder(getEditor(), myPlaceholder);
     }
   }
 

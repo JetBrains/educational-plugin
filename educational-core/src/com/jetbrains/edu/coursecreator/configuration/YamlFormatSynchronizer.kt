@@ -21,6 +21,7 @@ import com.jetbrains.edu.coursecreator.configuration.YamlFormatSettings.TASK_CON
 import com.jetbrains.edu.coursecreator.configuration.mixins.*
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -59,11 +60,17 @@ object YamlFormatSynchronizer {
   private fun VirtualFile.getDocument(): Document? = FileDocumentManager.getInstance().getDocument(this)
 
   @JvmStatic
-  fun saveItem(item: StudyItem, project: Project) {
+  fun saveItem(item: StudyItem) {
     if (YamlFormatSettings.isDisabled()) {
       return
     }
-    if (item.course.isStudy) {
+    val course = item.course
+    if (course.isStudy) {
+      return
+    }
+    val project = course.project
+    if (project == null) {
+      LOG.info("Failed to find project for course")
       return
     }
     val fileName = when (item) {
@@ -92,15 +99,15 @@ object YamlFormatSynchronizer {
       LOG.error("Attempt to create config files for project without course")
       return
     }
-    saveItem(course, project)
+    saveItem(course)
     for (item in course.items) {
-      saveItem(item, project)
+      saveItem(item)
     }
     course.visitLessons(LessonVisitor { lesson ->
       for (task in lesson.getTaskList()) {
-        saveItem(task, project)
+        saveItem(task)
       }
-      saveItem(lesson, project)
+      saveItem(lesson)
       true
     })
   }
