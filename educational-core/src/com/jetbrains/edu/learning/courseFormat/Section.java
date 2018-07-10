@@ -15,6 +15,7 @@ import java.util.List;
 
 public class Section extends ItemContainer {
   public List<Integer> units;
+  @SerializedName("course")
   private int courseId;
   @Expose
   @SerializedName("title")
