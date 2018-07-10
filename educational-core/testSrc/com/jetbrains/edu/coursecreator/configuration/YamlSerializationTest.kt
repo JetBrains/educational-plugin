@@ -66,6 +66,7 @@ class YamlSerializationTest : EduTestCase() {
     |      task: task1
     |      file: Test.java
     |      placeholder: 1
+    |      is_visible: true
     |""".trimMargin("|"))
   }
 

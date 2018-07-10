@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.configuration.mixins
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -30,24 +29,8 @@ abstract class AnswerPlaceholderDependencyYamlMixin {
   private var myPlaceholderIndex: Int = -1
 
   @JsonProperty("is_visible")
-  @JsonInclude(JsonInclude.Include.CUSTOM, valueFilter = DefaultTrueFilter::class)
   private var myIsVisible = true
 
-}
-
-/**
- * Filters default true values for boolean properties
- *
- * See {@link com.fasterxml.jackson.annotation.JsonInclude.Include.CUSTOM} for information why it works
- */
-@Suppress("EqualsOrHashCode")
-class DefaultTrueFilter {
-  override fun equals(other: Any?): Boolean {
-    if (other is Boolean && false == other) {
-      return false;
-    }
-    return true
-  }
 }
 
 class PlaceholderIndexConverter: StdConverter<Int, Int>() {
