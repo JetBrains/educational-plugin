@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.placeholder
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.ui.EditorNotifications
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -13,6 +14,7 @@ class CCAddDependency : CCAnswerPlaceholderAction(null, "Adds/Edits dependency o
     val (dependencyPath, isVisible) = CCDependencyDialog(state.project, answerPlaceholder).showAndGetResult() ?: return
 
     answerPlaceholder.placeholderDependency = AnswerPlaceholderDependency.create(answerPlaceholder, dependencyPath, isVisible)
+    YamlFormatSynchronizer.saveItem(state.taskFile.task)
     EditorNotifications.getInstance(state.project).updateNotifications(state.file.virtualFile)
   }
 
