@@ -9,6 +9,8 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.MapDataContext;
 import com.jetbrains.edu.coursecreator.CCTestCase;
+import com.jetbrains.edu.coursecreator.actions.taskFile.CCAddAsTaskFile;
+import com.jetbrains.edu.coursecreator.actions.taskFile.CCHideFromStudent;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
