@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
@@ -27,7 +28,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 object YamlFormatSynchronizer {
   private val LOG = Logger.getInstance(YamlFormatSynchronizer.javaClass)
 
-  private val MAPPER: ObjectMapper by lazy {
+  @VisibleForTesting
+  val MAPPER: ObjectMapper by lazy {
     val yamlFactory = YAMLFactory()
     yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
     yamlFactory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
