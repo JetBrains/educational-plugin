@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.MapDataContext;
 import com.jetbrains.edu.coursecreator.CCTestCase;
+import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview;
 import com.jetbrains.edu.learning.EduTestDialog;
 import com.jetbrains.edu.coursecreator.CCTestsUtil;
 import com.jetbrains.edu.learning.EduTestDialogKt;
