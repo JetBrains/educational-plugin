@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.projectView
 
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -41,10 +41,12 @@ object CourseViewUtils {
   @JvmStatic
   fun findTaskDirectory(project: Project, baseDir: PsiDirectory, task: Task): PsiDirectory? {
     val sourceDirName = task.sourceDir
-    if (StringUtil.isNotEmpty(sourceDirName)) {
+    if (!sourceDirName.isNullOrEmpty()) {
       val isCourseCreatorGradleProject = EduGradleUtils.isConfiguredWithGradle(project) && CCUtils.isCourseCreator(project)
       if (!isCourseCreatorGradleProject) {
-        return baseDir.findSubdirectory(sourceDirName!!)
+        val vFile = baseDir.virtualFile
+        val sourceVFile = vFile.findFileByRelativePath(sourceDirName!!) ?: return baseDir
+        return PsiManager.getInstance(project).findDirectory(sourceVFile)
       }
     }
     return baseDir
