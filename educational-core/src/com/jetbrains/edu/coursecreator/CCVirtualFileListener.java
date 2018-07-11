@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -33,6 +34,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
       Task task = EduUtils.getTaskForFile(myProject, createdFile);
       assert task != null;
       task.addTaskFile(taskRelativePath);
+      YamlFormatSynchronizer.saveItem(task);
       StepikCourseChangeHandler.INSTANCE.changed(task);
     }
   }
@@ -141,6 +143,7 @@ public class CCVirtualFileListener implements VirtualFileListener {
       return;
     }
     task.getTaskFiles().remove(EduUtils.pathRelativeToTask(project, removedTaskFile));
-    StepikCourseChangeHandler.INSTANCE.changed(task);
+    YamlFormatSynchronizer.saveItem(task);
+    StepikCourseChangeHandler.changed(task);
   }
 }
