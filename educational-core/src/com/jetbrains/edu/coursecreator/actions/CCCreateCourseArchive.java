@@ -17,7 +17,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,11 +40,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
 
 import static com.jetbrains.edu.learning.EduNames.COURSE_META_FILE;
@@ -149,7 +144,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
             final VirtualFile taskDir = task.getTaskDir(project);
             if (taskDir == null) continue;
             convertToStudentTaskFiles(task, taskDir);
-            addTestsToTask(task);
+            CCUtils.loadTestTextsToTask(project, task, taskDir, true);
             addDescriptions(task);
           }
           return true;
@@ -189,40 +184,6 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         } else {
           LOG.warn(String.format("Can't find description file for task `%s`", task.getName()));
         }
-      }
-
-      private void addTestsToTask(Task task) {
-        task.getTestsText().clear();
-        final List<VirtualFile> testFiles = getTestFiles(task, project);
-        for (VirtualFile file : testFiles) {
-          try {
-            task.addTestsTexts(file.getName(), VfsUtilCore.loadText(file));
-          }
-          catch (IOException e) {
-            LOG.warn("Failed to load text " + file.getName());
-          }
-        }
-      }
-
-      private List<VirtualFile> getTestFiles(@NotNull Task task, @NotNull Project project) {
-        List<VirtualFile> testFiles = new ArrayList<>();
-        VirtualFile taskDir = task.getTaskDir(project);
-        if (taskDir == null) {
-          return testFiles;
-        }
-        String testDirPath = TaskExt.getTestDir(task);
-        if (StringUtil.isNotEmpty(testDirPath)) {
-          VirtualFile testDir = taskDir.findFileByRelativePath(testDirPath);
-          if (testDir == null) {
-            return testFiles;
-          }
-          testFiles.addAll(Arrays.asList(testDir.getChildren()));
-        } else {
-          testFiles.addAll(Arrays.stream(taskDir.getChildren())
-                             .filter(file -> EduUtils.isTestsFile(project, file))
-                             .collect(Collectors.toList()));
-        }
-        return testFiles;
       }
     });
 

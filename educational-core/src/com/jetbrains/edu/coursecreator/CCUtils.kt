@@ -24,7 +24,9 @@ import com.intellij.util.PathUtil
 import com.intellij.util.ThrowableConsumer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduUtils.getTestFiles
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.testDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -402,6 +404,25 @@ object CCUtils {
       val sectionDir = lessonDir.parent ?: return null
       val section = course.getSection(sectionDir.name) ?: return null
       return section.getLesson(lessonDir.name)
+    }
+  }
+
+  @JvmOverloads
+  @JvmStatic
+  fun loadTestTextsToTask(project: Project, task: Task, taskDir: VirtualFile, clearTestTexts: Boolean = false) {
+    if (clearTestTexts) {
+      task.testsText.clear()
+    }
+    val testDir = task.findTestDir(taskDir) ?: taskDir
+
+    val testFiles = getTestFiles(task, project)
+    for (file in testFiles) {
+      try {
+        val path = FileUtil.getRelativePath(testDir.path, file.path, VfsUtilCore.VFS_SEPARATOR_CHAR)
+        task.addTestsTexts(path, VfsUtilCore.loadText(file))
+      } catch (e: IOException) {
+        LOG.warn(String.format("Failed to load text for `%s`", file))
+      }
     }
   }
 }

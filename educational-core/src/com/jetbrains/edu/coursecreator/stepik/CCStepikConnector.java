@@ -16,7 +16,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.coursecreator.CCUtils;
@@ -47,7 +46,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -490,20 +488,10 @@ public class CCStepikConnector {
                                         + String.valueOf(task.getStepId()));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
 
-      final Language language = lesson.getCourse().getLanguageById();
-      final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
-      if (configurator == null) return false;
-      List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren())
-        .filter(file -> configurator.isTestFile(project, file))
-        .collect(Collectors.toList());
-      for (VirtualFile file : testFiles) {
-        try {
-          task.addTestsTexts(file.getName(), VfsUtilCore.loadText(file));
-        }
-        catch (IOException e) {
-          LOG.warn("Failed to load text " + file.getName());
-        }
-      }
+    final Language language = lesson.getCourse().getLanguageById();
+    final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
+    if (configurator == null) return false;
+    CCUtils.loadTestTextsToTask(project, task, taskDir);
     final String[] requestBody = new String[1];
       ApplicationManager.getApplication().invokeAndWait(() -> requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId)));
       request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
