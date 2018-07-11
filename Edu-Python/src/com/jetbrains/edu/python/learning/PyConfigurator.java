@@ -45,7 +45,7 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   }
 
   @Override
-  public boolean isTestFile(VirtualFile file) {
+  public boolean isTestFile(@NotNull Project project, @NotNull VirtualFile file) {
     return TESTS_PY.equals(file.getName());
   }
 

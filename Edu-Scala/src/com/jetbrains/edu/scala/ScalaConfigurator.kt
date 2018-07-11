@@ -1,7 +1,6 @@
 package com.jetbrains.edu.scala
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase
@@ -13,8 +12,6 @@ class ScalaConfigurator : GradleConfiguratorBase() {
   override fun getCourseBuilder() = myCourseBuilder
 
   override fun getTestFileName(): String = TEST_SCALA
-
-  override fun isTestFile(file: VirtualFile): Boolean = TEST_SCALA == file.name
 
   override fun isEnabled(): Boolean = !EduUtils.isAndroidStudio()
 

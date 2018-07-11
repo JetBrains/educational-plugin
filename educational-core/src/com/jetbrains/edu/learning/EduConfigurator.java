@@ -49,7 +49,7 @@ public interface EduConfigurator<Settings> {
   /**
    * @return true for all the test files
    */
-  default boolean isTestFile(VirtualFile file) {
+  default boolean isTestFile(@NotNull Project project, @NotNull VirtualFile file) {
     return false;
   }
 

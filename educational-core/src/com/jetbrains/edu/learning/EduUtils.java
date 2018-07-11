@@ -268,7 +268,7 @@ public class EduUtils {
     if (configurator == null) {
       return false;
     }
-    return configurator.isTestFile(file);
+    return configurator.isTestFile(project, file);
   }
 
   public static List<VirtualFile> getTestFiles(@NotNull Task task, @NotNull Project project) {
@@ -294,7 +294,7 @@ public class EduUtils {
     }
 
     return Arrays.stream(testDir.getChildren())
-      .filter(configurator::isTestFile)
+      .filter(file -> configurator.isTestFile(project, file))
       .collect(Collectors.toList());
   }
 

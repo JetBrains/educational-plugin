@@ -493,8 +493,9 @@ public class CCStepikConnector {
       final Language language = lesson.getCourse().getLanguageById();
       final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
       if (configurator == null) return false;
-      List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren()).filter(configurator::isTestFile)
-                                                 .collect(Collectors.toList());
+      List<VirtualFile> testFiles = Arrays.stream(taskDir.getChildren())
+        .filter(file -> configurator.isTestFile(project, file))
+        .collect(Collectors.toList());
       for (VirtualFile file : testFiles) {
         try {
           task.addTestsTexts(file.getName(), VfsUtilCore.loadText(file));
