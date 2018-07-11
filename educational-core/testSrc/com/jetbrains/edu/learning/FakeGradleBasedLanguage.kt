@@ -26,7 +26,7 @@ class FakeGradleConfigurator : GradleConfiguratorBase() {
 
   override fun getCourseBuilder(): GradleCourseBuilderBase = courseBuilder
   override fun getTestFileName(): String = TEST_FILE_NAME
-  override fun isTestFile(file: VirtualFile): Boolean = file.name == testFileName
+  override fun isTestFile(project: Project, file: VirtualFile): Boolean = file.name == testFileName
 
   override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
     object : TaskChecker<EduTask>(task, project) {

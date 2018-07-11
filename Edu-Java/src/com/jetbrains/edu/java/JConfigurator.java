@@ -1,7 +1,6 @@
 package com.jetbrains.edu.java;
 
 import com.intellij.ide.fileTemplates.FileTemplateManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase;
@@ -26,11 +25,6 @@ public class JConfigurator extends GradleConfiguratorBase {
   @Override
   public String getTestFileName() {
     return TEST_JAVA;
-  }
-
-  @Override
-  public boolean isTestFile(VirtualFile file) {
-    return TEST_JAVA.equals(file.getName());
   }
 
   @Override
