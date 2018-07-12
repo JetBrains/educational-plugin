@@ -5,6 +5,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import org.intellij.lang.annotations.Language
+import org.junit.Assert
 
 fun fileTree(block: FileTreeBuilder.() -> Unit): FileTree = FileTree(FileTreeBuilderImpl().apply(block).intoDirectory())
 
@@ -36,13 +37,14 @@ class FileTree(private val rootDirectory: Entry.Directory) {
         when (entry) {
           is Entry.File -> {
             check(!child.isDirectory)
-            if (fixture != null && entry.text != null) {
-              fixture.openFileInEditor(child)
-              fixture.checkResult(entry.text)
-            }
-            else if(entry.text != null) {
-              val actualText = VfsUtil.loadText(child)
-              check(actualText == entry.text, { "Expected: \n${entry.text} \n Actual: \n${actualText}" })
+            if (entry.text != null) {
+              if (fixture != null) {
+                fixture.openFileInEditor(child)
+                fixture.checkResult(entry.text)
+              } else {
+                val actualText = VfsUtil.loadText(child)
+                Assert.assertEquals(entry.text, actualText)
+              }
             }
           }
           is Entry.Directory -> go(entry, child)
