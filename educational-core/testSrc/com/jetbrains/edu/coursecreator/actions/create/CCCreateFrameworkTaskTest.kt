@@ -220,4 +220,62 @@ class CCCreateFrameworkTaskTest : CCActionTestCase() {
                       VfsUtil.loadBytes(originalImage),
                       VfsUtil.loadBytes(imageCopy))
   }
+
+  fun `test copy actual text of files`() {
+    val lessonName = "lesson1"
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      frameworkLesson(lessonName) {
+        eduTask("task1") {
+          taskFile("Task.kt", "fun foo(): String = TODO()")
+          additionalFile("build.gradle", "apply plugin: \"kotlin\"")
+        }
+      }
+    }
+
+    typeAtTheEndOfFile("lesson1/task1/Task.kt", "\nfun bar(): String = TODO()")
+    typeAtTheEndOfFile("lesson1/task1/build.gradle", "\napply plugin: \"java\"")
+
+    val newTaskName = "task2"
+    val lessonFile = findFile(lessonName)
+
+    withVirtualFileListener(course) {
+      withTestDialog(EduTestInputDialog(newTaskName)) {
+        testAction(dataContext(lessonFile), CCCreateTask())
+      }
+    }
+
+    fileTree {
+      dir(lessonName) {
+        dir("task1") {
+          file("Task.kt", """
+            fun foo(): String = TODO()
+            fun bar(): String = TODO()
+          """)
+          file("build.gradle", """
+            apply plugin: "kotlin"
+            apply plugin: "java"
+          """)
+          file("task.html")
+        }
+        dir(newTaskName) {
+          file("Task.kt", """
+            fun foo(): String = TODO()
+            fun bar(): String = TODO()
+          """)
+          file("build.gradle", """
+            apply plugin: "kotlin"
+            apply plugin: "java"
+          """)
+          file("Tests.txt")
+          file("task.html")
+        }
+      }
+    }.assertEquals(root, myFixture)
+  }
+
+  private fun typeAtTheEndOfFile(path: String, text: String) {
+    val psiFile = myFixture.configureFromTempProjectFile(path)
+    myFixture.editor.caretModel.moveToOffset(psiFile.textLength)
+    myFixture.type(text)
+  }
 }

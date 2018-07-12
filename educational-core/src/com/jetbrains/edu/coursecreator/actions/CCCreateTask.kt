@@ -69,8 +69,14 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
       val prevTask = parentItem.getTaskList().getOrNull(index - 2) ?: return newTask
       val prevTaskDir = prevTask.getTaskDir(project) ?: return newTask
       FileDocumentManager.getInstance().saveAllDocuments()
-      newTask.taskFiles = prevTask.taskFiles.mapValues { (_, taskFile) -> taskFile.copyForNewTask(prevTaskDir, newTask) }
-      newTask.additionalFiles = HashMap(prevTask.additionalFiles)
+      // We can't just copy text from course objects because they can contain outdated text
+      // in reason that we don't synchronize them with files system
+      // So we need to load actual files text from filesystem
+      newTask.taskFiles = prevTask.taskFiles.mapValuesTo(HashMap()) { (_, taskFile) -> taskFile.copyForNewTask(prevTaskDir, newTask) }
+      newTask.additionalFiles = prevTask.additionalFiles.mapValuesTo(HashMap()) { (path, oldText) ->
+        val file = prevTaskDir.findFileByRelativePath(path) ?: return@mapValuesTo oldText
+        CCUtils.loadText(file)
+      }
 
       // If we insert new task between `task1` and `task2`
       // we should change target of all placeholder dependencies of `task2` from task file of `task1`
