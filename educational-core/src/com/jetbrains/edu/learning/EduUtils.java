@@ -51,8 +51,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
-import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -61,7 +59,6 @@ import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
@@ -73,8 +70,6 @@ import com.intellij.util.io.ZipUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -1217,67 +1212,6 @@ public class EduUtils {
   public static Section getSection(@NotNull VirtualFile sectionDir, @NotNull final Course course) {
     if (!sectionDir.isDirectory()) return null;
     return course.getSection(sectionDir.getName());
-  }
-
-  public static boolean canBeAddedAsTaskFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-    if (virtualFile.isDirectory()) {
-      return false;
-    }
-    if (YamlFormatSynchronizer.isConfigFile(virtualFile)) {
-      return false;
-    }
-    if (virtualFile.getPath().contains(CCUtils.GENERATED_FILES_FOLDER)) {
-      return false;
-    }
-    if (project.getBasePath() !=null && !FileUtil.isAncestor(project.getBasePath(), virtualFile.getPath(), true)) {
-      return false;
-    }
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return false;
-    }
-    TaskFile taskFile = getTaskFile(project, virtualFile);
-    if (taskFile != null) {
-      return false;
-    }
-
-    String taskRelativePath = pathRelativeToTask(project, virtualFile);
-
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
-    if (configurator != null && configurator.excludeFromArchive(project, virtualFile.getPath())) {
-      return false;
-    }
-
-    if (isTestsFile(project, virtualFile)
-        || isTaskDescriptionFile(virtualFile.getName())
-        || taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
-        || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)
-        || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
-      return false;
-    }
-    Task task = getTaskForFile(project, virtualFile);
-    if (task == null) {
-      return false;
-    }
-
-    if (!isInsideTaskFileDirectory(course, virtualFile)) {
-      return false;
-    }
-    return true;
-  }
-
-  private static boolean isInsideTaskFileDirectory(@NotNull Course course, @NotNull VirtualFile createdFile) {
-    String sourceDir = CourseExt.getSourceDir(course);
-    if (sourceDir == null || sourceDir.isEmpty()) {
-      return true;
-    }
-
-    VirtualFile taskDir = getTaskDir(course, createdFile);
-    if (taskDir == null) {
-      return false;
-    }
-    String relativePath = FileUtil.getRelativePath(taskDir.getPath(), createdFile.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
-    return relativePath != null && relativePath.startsWith(sourceDir);
   }
 
   public static boolean isAfter(Date date, Date date2) {
