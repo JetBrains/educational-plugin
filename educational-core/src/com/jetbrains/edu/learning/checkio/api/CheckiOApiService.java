@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.checkio.api;
 
-import com.jetbrains.edu.learning.checkio.model.CheckioUser;
+import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import com.jetbrains.edu.learning.checkio.model.Tokens;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -8,7 +8,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
-public interface CheckioApiService {
+public interface CheckiOApiService {
 
   @Headers({"Content-Type: application/x-www-form-urlencoded"})
   @POST("oauth/token/")
@@ -30,5 +30,5 @@ public interface CheckioApiService {
   );
 
   @GET("oauth/information/")
-  Call<CheckioUser> getUserInfo(@Query("access_token") String accessToken);
+  Call<CheckiOUser> getUserInfo(@Query("access_token") String accessToken);
 }

@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.checkio.api;
 
-import com.jetbrains.edu.learning.checkio.CheckioNames;
-import com.jetbrains.edu.learning.checkio.controllers.CheckioAuthorizationController;
-import com.jetbrains.edu.learning.checkio.model.CheckioUser;
+import com.jetbrains.edu.learning.checkio.CheckiONames;
+import com.jetbrains.edu.learning.checkio.controllers.CheckiOAuthorizationController;
+import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import com.jetbrains.edu.learning.checkio.model.Tokens;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,29 +14,29 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 import java.util.function.UnaryOperator;
 
-public class CheckioApiController {
+public class CheckiOApiController {
   private static class CheckioApiControllerHolder {
-    public static final CheckioApiController INSTANCE = new CheckioApiController();
+    public static final CheckiOApiController INSTANCE = new CheckiOApiController();
   }
 
-  public static CheckioApiController getInstance() {
+  public static CheckiOApiController getInstance() {
     return CheckioApiControllerHolder.INSTANCE;
   }
 
   private final Retrofit retrofit = new Retrofit.Builder()
-    .baseUrl(CheckioNames.CHECKIO_URL)
+    .baseUrl(CheckiONames.CHECKIO_URL)
     .addConverterFactory(GsonConverterFactory.create())
     .build();
 
-  private final CheckioApiService apiService = retrofit.create(CheckioApiService.class);
+  private final CheckiOApiService apiService = retrofit.create(CheckiOApiService.class);
 
   @Nullable
   public Tokens getTokens(@NotNull String code, @NotNull String redirectUri) {
     return getResponseBodyAndApply(
       apiService.getTokens(
-        CheckioNames.GRANT_TYPE.AUTHORIZATION_CODE,
-        CheckioNames.CLIENT_SECRET,
-        CheckioNames.CLIENT_ID,
+        CheckiONames.GRANT_TYPE.AUTHORIZATION_CODE,
+        CheckiONames.CLIENT_SECRET,
+        CheckiONames.CLIENT_ID,
         code,
         redirectUri
       ),
@@ -51,9 +51,9 @@ public class CheckioApiController {
   public Tokens refreshTokens(@NotNull String refreshToken) {
     return getResponseBodyAndApply(
       apiService.refreshTokens(
-        CheckioNames.GRANT_TYPE.REFRESH_TOKEN,
-        CheckioNames.CLIENT_SECRET,
-        CheckioNames.CLIENT_ID,
+        CheckiONames.GRANT_TYPE.REFRESH_TOKEN,
+        CheckiONames.CLIENT_SECRET,
+        CheckiONames.CLIENT_ID,
         refreshToken
       ),
       (tokens) -> {
@@ -64,7 +64,7 @@ public class CheckioApiController {
   }
 
   @Nullable
-  public CheckioUser getUser(@NotNull Tokens tokens) {
+  public CheckiOUser getUser(@NotNull Tokens tokens) {
     return getResponseBodyAndApply(
       apiService.getUserInfo(tokens.getAccessToken()),
       (user) -> {
@@ -74,8 +74,8 @@ public class CheckioApiController {
   }
 
   @Nullable
-  public CheckioUser getUser(@NotNull String code) {
-    Tokens tokens = getTokens(code, CheckioAuthorizationController.getOauthRedirectUri());
+  public CheckiOUser getUser(@NotNull String code) {
+    Tokens tokens = getTokens(code, CheckiOAuthorizationController.getOauthRedirectUri());
     return tokens == null ? null : getResponseBodyAndApply(
       apiService.getUserInfo(tokens.getAccessToken()),
       (user) -> {

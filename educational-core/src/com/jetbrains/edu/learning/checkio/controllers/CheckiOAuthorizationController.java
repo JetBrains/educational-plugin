@@ -5,9 +5,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.util.messages.Topic;
-import com.jetbrains.edu.learning.checkio.CheckioNames;
-import com.jetbrains.edu.learning.checkio.api.CheckioApiController;
-import com.jetbrains.edu.learning.checkio.model.CheckioUser;
+import com.jetbrains.edu.learning.checkio.CheckiONames;
+import com.jetbrains.edu.learning.checkio.api.CheckiOApiController;
+import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import org.apache.http.client.utils.URIBuilder;
 import org.jetbrains.annotations.NotNull;
 import spark.Spark;
@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
-public class CheckioAuthorizationController {
+public class CheckiOAuthorizationController {
   private static String OAUTH_REDIRECT_HOST = "http://localhost";
   private static int OAUTH_REDIRECT_PORT = 36655;
   private static String OAUTH_REDIRECT_URI = OAUTH_REDIRECT_HOST + ":" + OAUTH_REDIRECT_PORT;
@@ -33,10 +33,10 @@ public class CheckioAuthorizationController {
 
   private static URI getOauthLink() {
     try {
-      return new URIBuilder(CheckioNames.CHECKIO_OAUTH_URL + "/")
+      return new URIBuilder(CheckiONames.CHECKIO_OAUTH_URL + "/")
         .addParameter("redirect_uri", getOauthRedirectUri())
         .addParameter("response_type", "code")
-        .addParameter("client_id", CheckioNames.CLIENT_ID)
+        .addParameter("client_id", CheckiONames.CLIENT_ID)
         .build();
     }
     catch (URISyntaxException ignored) {
@@ -50,12 +50,12 @@ public class CheckioAuthorizationController {
 
   private static String getOauthResultPage(boolean succeeded) {
     return succeeded
-           ? getPageOrDefault(CheckioNames.CHECKIO_OAUTH_SUCCEED_PAGE, CheckioNames.CHECKIO_OAUTH_SUCCEED_DEFAULT_MESSAGE)
-           : getPageOrDefault(CheckioNames.CHECKIO_OAUTH_FAILED_PAGE, CheckioNames.CHECKIO_OAUTH_FAILED_DEFAULT_MESSAGE);
+           ? getPageOrDefault(CheckiONames.CHECKIO_OAUTH_SUCCEED_PAGE, CheckiONames.CHECKIO_OAUTH_SUCCEED_DEFAULT_MESSAGE)
+           : getPageOrDefault(CheckiONames.CHECKIO_OAUTH_FAILED_PAGE, CheckiONames.CHECKIO_OAUTH_FAILED_DEFAULT_MESSAGE);
   }
 
   private static String getPageOrDefault(@NotNull String pagePath, @NotNull String defaultMessage) {
-    try (InputStream pageTemplateStream = CheckioAuthorizationController.class.getResourceAsStream(pagePath)) {
+    try (InputStream pageTemplateStream = CheckiOAuthorizationController.class.getResourceAsStream(pagePath)) {
       String pageTemplate = StreamUtil.readText(pageTemplateStream, Charset.forName("UTF-8"));
       return pageTemplate.replaceAll("%IDE_NAME", ApplicationNamesInfo.getInstance().getFullProductName());
     } catch (IOException e) {
@@ -81,7 +81,7 @@ public class CheckioAuthorizationController {
           return null; // Show 404 if request doesn't have `code` query
         }
 
-        CheckioUser newUser = CheckioApiController.getInstance().getUser(code);
+        CheckiOUser newUser = CheckiOApiController.getInstance().getUser(code);
         if (newUser != null) {
           ApplicationManager.getApplication().getMessageBus().syncPublisher(LOGGED_IN).userLoggedIn(newUser);
           return getOauthResultPage(true);
@@ -94,6 +94,6 @@ public class CheckioAuthorizationController {
 
   @FunctionalInterface
   public interface CheckioUserLoggedIn {
-    void userLoggedIn(CheckioUser user);
+    void userLoggedIn(CheckiOUser user);
   }
 }

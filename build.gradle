@@ -254,6 +254,16 @@ configure(project(':educational-core')) {
         src 'https://raw.githubusercontent.com/ozh/github-colors/master/colors.json'
         dest "${projectDir}/resources/languageColors/colors.json"
     }
+
+    task createCheckiOOAuthProperties() {
+        def checkioFile = file("${projectDir}/resources/checkio/checkio-oauth.properties")
+        Properties props = new Properties()
+        props.setProperty("checkioClientId", checkioClientId)
+        props.setProperty("checkioClientSecret", checkioClientSecret)
+        props.store(checkioFile.newWriter(), null)
+    }
+
+    processResources.dependsOn(createCheckiOOAuthProperties)
 }
 
 configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala')]) {

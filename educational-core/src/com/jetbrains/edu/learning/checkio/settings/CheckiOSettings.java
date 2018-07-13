@@ -5,35 +5,35 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.jetbrains.edu.learning.checkio.model.CheckioUser;
+import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@State(name = "CheckioSettings", storages = @Storage("other.xml"))
-public class CheckioSettings implements PersistentStateComponent<CheckioSettings> {
-  private CheckioUser user;
+@State(name = "CheckiOSettings", storages = @Storage("other.xml"))
+public class CheckiOSettings implements PersistentStateComponent<CheckiOSettings> {
+  private CheckiOUser user;
 
   @Nullable
   @Override
-  public CheckioSettings getState() {
+  public CheckiOSettings getState() {
     return this;
   }
 
   @Override
-  public void loadState(@NotNull CheckioSettings settings) {
+  public void loadState(@NotNull CheckiOSettings settings) {
     XmlSerializerUtil.copyBean(settings, this);
   }
 
-  public static CheckioSettings getInstance() {
-    return ServiceManager.getService(CheckioSettings.class);
+  public static CheckiOSettings getInstance() {
+    return ServiceManager.getService(CheckiOSettings.class);
   }
 
   @Nullable
-  public CheckioUser getUser() {
+  public CheckiOUser getUser() {
     return user;
   }
 
-  public void setUser(@Nullable final CheckioUser user) {
+  public void setUser(@Nullable final CheckiOUser user) {
     this.user = user;
   }
 }

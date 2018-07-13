@@ -5,8 +5,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.components.JBLabel;
-import com.jetbrains.edu.learning.checkio.controllers.CheckioAuthorizationController;
-import com.jetbrains.edu.learning.checkio.model.CheckioUser;
+import com.jetbrains.edu.learning.checkio.controllers.CheckiOAuthorizationController;
+import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import com.jetbrains.edu.learning.checkio.ui.CheckioOptionsUIProvider;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
 import org.jetbrains.annotations.Nls;
@@ -16,7 +16,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.util.Objects;
 
-public class CheckioOptions implements OptionsProvider {
+public class CheckiOOptions implements OptionsProvider {
   private final CheckioOptionsUIProvider UIProvider = new CheckioOptionsUIProvider();
 
   private JBLabel myLoginLabel = UIProvider.getLoginLabel();
@@ -24,7 +24,7 @@ public class CheckioOptions implements OptionsProvider {
   private JPanel myPanel = UIProvider.getPanel();
   private HyperlinkAdapter myLoginListener;
 
-  private CheckioUser myUser;
+  private CheckiOUser myUser;
 
   @Nls
   @Override
@@ -40,25 +40,25 @@ public class CheckioOptions implements OptionsProvider {
 
   @Override
   public boolean isModified() {
-    return !Objects.equals(myUser, CheckioSettings.getInstance().getUser());
+    return !Objects.equals(myUser, CheckiOSettings.getInstance().getUser());
   }
 
   @Override
   public void reset() {
-    myUser = CheckioSettings.getInstance().getUser();
+    myUser = CheckiOSettings.getInstance().getUser();
     updateLoginLabels(myUser);
   }
 
   @Override
   public void apply() throws ConfigurationException {
     if (isModified()) {
-      CheckioSettings.getInstance().setUser(myUser);
+      CheckiOSettings.getInstance().setUser(myUser);
     }
 
     reset();
   }
 
-  private void updateLoginLabels(CheckioUser user) {
+  private void updateLoginLabels(CheckiOUser user) {
     if (myLoginListener != null) {
       myLoginLink.removeHyperlinkListener(myLoginListener);
     }
@@ -82,14 +82,14 @@ public class CheckioOptions implements OptionsProvider {
     return new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent event) {
-        ApplicationManager.getApplication().getMessageBus().connect().subscribe(CheckioAuthorizationController.LOGGED_IN, (newUser) -> {
+        ApplicationManager.getApplication().getMessageBus().connect().subscribe(CheckiOAuthorizationController.LOGGED_IN, (newUser) -> {
           if (!Objects.equals(myUser, newUser)) {
-            CheckioSettings.getInstance().setUser(myUser);
+            CheckiOSettings.getInstance().setUser(myUser);
             myUser = newUser;
             updateLoginLabels(myUser);
           }
         });
-        CheckioAuthorizationController.doAuthorize();
+        CheckiOAuthorizationController.doAuthorize();
       }
     };
   }
