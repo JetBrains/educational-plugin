@@ -232,7 +232,7 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void initComponent() {
-    if (isStudentProject(myProject)) {
+    if (!ApplicationManager.getApplication().isUnitTestMode() && isStudentProject(myProject)) {
       VirtualFileManager.getInstance().addVirtualFileListener(new UserCreatedFileListener(myProject));
     }
   }
