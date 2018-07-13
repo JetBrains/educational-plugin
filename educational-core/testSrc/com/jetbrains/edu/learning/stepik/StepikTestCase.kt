@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
@@ -26,7 +27,7 @@ abstract class StepikTestCase : EduTestCase() {
     private const val CSRF = "csrfmiddlewaretoken"
   }
 
-  private lateinit var user: StepicUser
+  protected lateinit var user: StepicUser
 
   private lateinit var httpClient: CloseableHttpClient
 
@@ -92,15 +93,9 @@ abstract class StepikTestCase : EduTestCase() {
   }
 
   fun checkCourseUploaded(course: RemoteCourse) {
-    val uploadedCourse = StepikConnector.getCourseFromStepik(EduSettings.getInstance().user, course.id, true)
+    val uploadedCourse = StepikConnector.getCourseFromStepik(user, course.id, true)
     assertNotNull("Uploaded courses not found among courses available to instructor", uploadedCourse)
     println("Course with id ${(uploadedCourse as RemoteCourse).id} was uploaded successfully")
-  }
-
-  protected fun findUploadedCourse(course: RemoteCourse): Course? {
-    val uploadedCourse = StepikConnector.getCourseFromStepik(EduSettings.getInstance().user, course.id, true)
-    TestCase.assertNotNull("Cannot find uploaded course", uploadedCourse)
-    return uploadedCourse
   }
 
   private fun getTokens(): StepikWrappers.TokenInfo? {

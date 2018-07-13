@@ -44,7 +44,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushCourse.doPush(project, courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkTopLevelLessons(courseFromStepik, localCourse)
   }
 
@@ -66,7 +66,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushCourse.doPush(project, courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkTopLevelLessons(courseFromStepik, localCourse)
   }
 
@@ -91,7 +91,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val newLesson = addNewLesson("lesson3", 3, localCourse, localCourse)
     CCPushLesson.doPush(newLesson, project, localCourse)
 
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkTopLevelLessons(courseFromStepik, localCourse)
   }
 
@@ -121,7 +121,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushLesson.doPush(lesson1, project, localCourse)
     CCPushLesson.doPush(lesson2, project, localCourse)
 
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkTopLevelLessons(courseFromStepik, localCourse)
   }
 
@@ -141,7 +141,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushCourse.doPush(project, courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -177,7 +177,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushSection.doPush(project, section1, localCourse)
     CCPushSection.doPush(project, section2, localCourse)
 
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -207,7 +207,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val newLesson = addNewLesson("lesson3", 3, localCourse, section!!)
     CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course)
 
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -238,7 +238,7 @@ open class StepikIntegrationTest : StepikTestCase() {
 
     CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course)
 
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -263,7 +263,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     localCourse.init(null, null, false)
     CCPushSection.doPush(project, newSection, localCourse)
 
-    val courseFromStepik = findUploadedCourse(localCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, localCourse.id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
@@ -284,7 +284,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCUtils.wrapIntoSection(project, localCourse!!, localCourse.lessons, "section1")
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = findUploadedCourse(localCourse as RemoteCourse)
+    val courseFromStepik = StepikConnector.getCourseFromStepik(user, (localCourse as RemoteCourse).id, true)
     checkSections(courseFromStepik, localCourse)
   }
 
