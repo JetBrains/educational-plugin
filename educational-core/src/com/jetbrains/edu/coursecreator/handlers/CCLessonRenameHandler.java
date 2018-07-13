@@ -5,10 +5,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import org.jetbrains.annotations.NotNull;
 
 public class CCLessonRenameHandler extends CCRenameHandler implements TitledHandler {
@@ -23,6 +25,8 @@ public class CCLessonRenameHandler extends CCRenameHandler implements TitledHand
     if (lesson != null) {
       processRename(lesson, EduNames.LESSON, course, project, item.getVirtualFile());
       StepikCourseChangeHandler.infoChanged(lesson);
+      Section section = lesson.getSection();
+      YamlFormatSynchronizer.saveItem(section != null ? section : course);
     }
   }
 
