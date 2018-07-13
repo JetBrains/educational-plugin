@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.checkio.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.intellij.util.xmlb.annotations.Property;
-import com.jetbrains.edu.learning.checkio.api.CheckioApiController;
+import com.jetbrains.edu.learning.checkio.api.CheckiOApiController;
 
-public class CheckioUser {
+public class CheckiOUser {
   @SerializedName("username")
   private String myUsername;
 
@@ -17,7 +17,7 @@ public class CheckioUser {
   @Property
   private Tokens myTokens;
 
-  private CheckioUser() {
+  private CheckiOUser() {
     myUsername = "";
     myEmail = "";
     myUid = -1;
@@ -54,7 +54,7 @@ public class CheckioUser {
 
   public String getAccessToken() {
     if (!myTokens.isUpToDate()) {
-      setTokens(CheckioApiController.getInstance().refreshTokens(myTokens.getRefreshToken()));
+      setTokens(CheckiOApiController.getInstance().refreshTokens(myTokens.getRefreshToken()));
     }
     return myTokens == null ? null : myTokens.getAccessToken();
   }
@@ -69,7 +69,7 @@ public class CheckioUser {
       return false;
     }
 
-    CheckioUser other = (CheckioUser) o;
+    CheckiOUser other = (CheckiOUser) o;
     return getUsername().equals(other.getUsername()) &&
            getEmail().equals(other.getEmail()) &&
            getUid() == other.getUid();

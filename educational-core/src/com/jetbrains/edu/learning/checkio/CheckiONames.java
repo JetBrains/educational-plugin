@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.checkio;
 
-public class CheckioNames {
-  public static final String CLIENT_ID = "clientId";
-  public static final String CLIENT_SECRET = "clientSecret";
+public class CheckiONames {
+  public static final String CLIENT_ID = CheckiOOAuthBundle.message("checkioClientId");
+  public static final String CLIENT_SECRET = CheckiOOAuthBundle.message("checkioClientSecret");
 
   public static final String CHECKIO_URL = "https://checkio.org";
   public static final String CHECKIO_OAUTH_SERVICE = "/oauth/authorize";
