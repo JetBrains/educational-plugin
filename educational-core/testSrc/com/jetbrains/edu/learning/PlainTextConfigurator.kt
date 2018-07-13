@@ -4,6 +4,7 @@ import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
@@ -16,7 +17,8 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 class PlainTextConfigurator : EduConfigurator<Unit> {
 
   override fun getCourseBuilder() = PlainTextCourseBuilder()
-  override fun getTestFileName() = "test.txt"
+  override fun getTestFileName() = "Tests.txt"
+  override fun isTestFile(file: VirtualFile): Boolean = file.name == testFileName
 
   override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
     object : TaskChecker<EduTask>(task, project) {
