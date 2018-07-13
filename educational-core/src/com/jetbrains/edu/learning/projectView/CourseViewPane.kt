@@ -29,7 +29,6 @@ import com.intellij.ide.util.PropertiesComponent
 import com.intellij.ide.util.treeView.AbstractTreeBuilder
 import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.ide.util.treeView.AbstractTreeUpdater
-import com.intellij.ide.util.treeView.AlphaComparator
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.util.ColorProgressBar
@@ -76,7 +75,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
 
   override fun createComponent(): JComponent {
     val component = super.createComponent()
-    installComparator(AlphaComparator.INSTANCE)
+    installComparator(EduNodeComparator)
 
     if (!EduUtils.isStudentProject(myProject)) return component
     val panel = JPanel(BorderLayout())
