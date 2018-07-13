@@ -21,6 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -78,6 +79,7 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
       taskFiles.remove(oldName);
       taskFiles.put(EduUtils.pathRelativeToTask(project, file.getVirtualFile()), taskFile);
       StepikCourseChangeHandler.changed(taskFile);
+      YamlFormatSynchronizer.saveItem(task);
     }
 
     @Override
