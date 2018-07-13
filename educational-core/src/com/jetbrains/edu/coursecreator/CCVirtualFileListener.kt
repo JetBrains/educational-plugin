@@ -1,75 +1,39 @@
 package com.jetbrains.edu.coursecreator
 
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileEvent
-import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.EduVirtualFileListener
+import com.jetbrains.edu.learning.EduVirtualFileListener.NewFileKind.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 
-class CCVirtualFileListener(private val project: Project) : VirtualFileListener {
+class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) {
 
-  override fun fileCreated(event: VirtualFileEvent) {
-    val createdFile = event.file
-    if (EduUtils.canBeAddedAsTaskFile(project, createdFile)) {
-      val taskRelativePath = EduUtils.pathRelativeToTask(project, createdFile)
-      val task = EduUtils.getTaskForFile(project, createdFile) ?: error("Task for `$createdFile` shouldn't be null here")
-      task.addTaskFile(taskRelativePath)
-      YamlFormatSynchronizer.saveItem(task)
-      StepikCourseChangeHandler.changed(task)
-    }
+  override fun fileInTaskCreated(event: VirtualFileEvent, fileInfo: FileInfo.FileInTask) {
+    super.fileInTaskCreated(event, fileInfo)
+    YamlFormatSynchronizer.saveItem(fileInfo.task)
+    StepikCourseChangeHandler.changed(fileInfo.task)
   }
 
   override fun fileDeleted(event: VirtualFileEvent) {
+    val fileInfo = event.fileInfo(project) ?: return
     val removedFile = event.file
-    val path = removedFile.path
-    if (path.contains(CCUtils.GENERATED_FILES_FOLDER)) return
 
-    val courseDir = EduUtils.getCourseDir(project)
-    if (!FileUtil.isAncestor(courseDir.path, removedFile.path, true)) return
-    val course = StudyTaskManager.getInstance(project).course ?: return
-    val taskFile = EduUtils.getTaskFile(project, removedFile)
-    if (taskFile != null) {
-      deleteTaskFile(project, removedFile, taskFile)
-      return
-    }
-    if (EduUtils.isTaskDirectory(project, removedFile)) {
-      val task = EduUtils.getTask(removedFile, course) ?: error("Task for `$removedFile` shouldn't be null here")
-      StepikCourseChangeHandler.contentChanged(task.lesson)
-      deleteTask(course, removedFile)
-      val configurator = course.configurator
-      if (configurator != null) {
-        ApplicationManager.getApplication().invokeLater { configurator.courseBuilder.refreshProject(project) }
-      }
-    }
-    if (EduUtils.getLesson(removedFile, course) != null) {
-      val removedLesson = EduUtils.getLesson(removedFile, course) ?: return
-
-      val section = removedLesson.section
-      if (section == null) {
-        StepikCourseChangeHandler.contentChanged(course)
-      } else {
-        StepikCourseChangeHandler.contentChanged(section)
-      }
-
-      deleteLesson(course, removedFile)
-    }
-    if (course.getSection(removedFile.name) != null) {
-      deleteSection(course, removedFile)
-      StepikCourseChangeHandler.contentChanged(course)
+    when (fileInfo) {
+      is FileInfo.SectionDirectory -> deleteSection(fileInfo, removedFile)
+      is FileInfo.LessonDirectory -> deleteLesson(fileInfo, removedFile)
+      is FileInfo.TaskDirectory -> deleteTask(fileInfo, removedFile)
+      is FileInfo.FileInTask -> deleteFileInTask(fileInfo)
     }
   }
 
-  private fun deleteLesson(course: Course, removedLessonFile: VirtualFile) {
-    val removedLesson = EduUtils.getLesson(removedLessonFile, course) ?: return
+  private fun deleteLesson(info: FileInfo.LessonDirectory, removedLessonFile: VirtualFile) {
+    val removedLesson = info.lesson
+    val course = removedLesson.course
     val section = removedLesson.section
     val parentDir = removedLessonFile.parent
     if (section != null) {
@@ -85,29 +49,40 @@ class CCVirtualFileListener(private val project: Project) : VirtualFileListener 
     }
   }
 
-  private fun deleteSection(course: Course, removedFile: VirtualFile) {
-    val removedSection = course.getSection(removedFile.name) ?: return
+  private fun deleteSection(info: FileInfo.SectionDirectory, removedFile: VirtualFile) {
+    val removedSection = info.section
+    val course = removedSection.course
     val parentDir = removedFile.parent
     CCUtils.updateHigherElements(parentDir.children, Function { course.getItem(it.name) }, removedSection.index, -1)
     course.removeSection(removedSection)
     YamlFormatSynchronizer.saveItem(course)
+    StepikCourseChangeHandler.contentChanged(course)
   }
 
-  private fun deleteTask(course: Course, removedTask: VirtualFile) {
+  private fun deleteTask(info: FileInfo.TaskDirectory, removedTask: VirtualFile) {
+    val task = info.task
+    val course = task.course
     val lessonDir = removedTask.parent ?: error("`$removedTask` parent shouldn't be null")
-    val lesson = EduUtils.getLesson(lessonDir, course) ?: error("Lesson for `$lessonDir` shouldn't be null here")
-    val task = lesson.getTask(removedTask.name) ?: return
+    val lesson = task.lesson
     CCUtils.updateHigherElements(lessonDir.children, Function { lesson.getTask(it.name) }, task.index, -1)
     lesson.getTaskList().remove(task)
-    StepikCourseChangeHandler.contentChanged(lesson)
     YamlFormatSynchronizer.saveItem(lesson)
+    StepikCourseChangeHandler.contentChanged(lesson)
+
+    val configurator = course.configurator
+    if (configurator != null) {
+      runInEdt { configurator.courseBuilder.refreshProject(project) }
+    }
   }
 
-  private fun deleteTaskFile(project: Project, removedTaskFile: VirtualFile, taskFile: TaskFile) {
-    val task = taskFile.task ?: return
-    task.getTaskFiles().remove(EduUtils.pathRelativeToTask(project, removedTaskFile))
+  private fun deleteFileInTask(info: FileInfo.FileInTask) {
+    val (task, pathInTask, kind) = info
+    when (kind) {
+      TASK_FILE -> task.getTaskFiles().remove(pathInTask)
+      TEST_FILE -> task.testsText.remove(pathInTask)
+      ADDITIONAL_FILE -> task.additionalFiles.remove(pathInTask)
+    }
     YamlFormatSynchronizer.saveItem(task)
     StepikCourseChangeHandler.changed(task)
-
   }
 }
