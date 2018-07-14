@@ -4,7 +4,7 @@ import com.intellij.ui.HoverHyperlinkLabel
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.layout.*
 
-class CheckioOptionsUIProvider {
+class CheckiOOptionsUIProvider {
   val loginLabel = JBLabel()
   val loginLink = HoverHyperlinkLabel("")
 

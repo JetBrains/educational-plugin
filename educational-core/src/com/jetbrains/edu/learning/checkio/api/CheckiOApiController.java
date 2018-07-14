@@ -15,8 +15,10 @@ import java.io.IOException;
 import java.util.function.UnaryOperator;
 
 public class CheckiOApiController {
+  private CheckiOApiController() {}
+
   private static class CheckioApiControllerHolder {
-    public static final CheckiOApiController INSTANCE = new CheckiOApiController();
+    private static final CheckiOApiController INSTANCE = new CheckiOApiController();
   }
 
   public static CheckiOApiController getInstance() {
