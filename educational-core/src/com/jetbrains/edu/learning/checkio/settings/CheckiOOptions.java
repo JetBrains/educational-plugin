@@ -7,7 +7,7 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.edu.learning.checkio.controllers.CheckiOAuthorizationController;
 import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
-import com.jetbrains.edu.learning.checkio.ui.CheckioOptionsUIProvider;
+import com.jetbrains.edu.learning.checkio.ui.CheckiOOptionsUIProvider;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.Objects;
 
 public class CheckiOOptions implements OptionsProvider {
-  private final CheckioOptionsUIProvider UIProvider = new CheckioOptionsUIProvider();
+  private final CheckiOOptionsUIProvider UIProvider = new CheckiOOptionsUIProvider();
 
   private JBLabel myLoginLabel = UIProvider.getLoginLabel();
   private HoverHyperlinkLabel myLoginLink = UIProvider.getLoginLink();
