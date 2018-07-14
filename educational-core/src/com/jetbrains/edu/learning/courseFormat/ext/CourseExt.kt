@@ -70,9 +70,9 @@ fun Course.setPushed() {
   }
 }
 
-private fun setPushed(it: Lesson) {
-  it.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
-  it.taskList.forEach {
+private fun setPushed(lesson: Lesson) {
+  lesson.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+  lesson.taskList.forEach {
     it.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
   }
 }
