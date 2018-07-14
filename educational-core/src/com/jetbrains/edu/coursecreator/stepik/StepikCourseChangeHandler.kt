@@ -1,89 +1,84 @@
 package com.jetbrains.edu.coursecreator.stepik
 
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 object StepikCourseChangeHandler {
+  @JvmStatic
   fun changed(placeholder: AnswerPlaceholder) {
     val taskFile = placeholder.taskFile ?: return
     changed(taskFile)
   }
 
+  @JvmStatic
   fun changed(taskFile: TaskFile) {
     changed(taskFile.task)
   }
 
+  @JvmStatic
   fun changed(task: Task) {
     if (task.id == 0) return
-    task.stepikChangeStatus = StepikChangeStatus.INFO_AND_CONTENT
+    task.stepikChangeStatus = INFO_AND_CONTENT
   }
 
+  @JvmStatic
   fun notChanged(task: Task) {
     if (task.id == 0) return
-    task.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+    task.stepikChangeStatus = UP_TO_DATE
   }
 
+  @JvmStatic
   fun infoChanged(lesson: Lesson) {
     if (lesson.id == 0) return
-    lesson.stepikChangeStatus = if (lesson.stepikChangeStatus == StepikChangeStatus.CONTENT) StepikChangeStatus.INFO_AND_CONTENT else StepikChangeStatus.INFO
+    lesson.stepikChangeStatus = if (lesson.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
   }
 
+  @JvmStatic
   fun contentChanged(lesson: Lesson) {
     if (lesson.id == 0) return
-    lesson.stepikChangeStatus = if (lesson.stepikChangeStatus == StepikChangeStatus.INFO) StepikChangeStatus.INFO_AND_CONTENT else StepikChangeStatus.CONTENT
+    lesson.stepikChangeStatus = if (lesson.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
   }
 
+  @JvmStatic
   fun infoChanged(section: Section) {
     if (section.id == 0) return
-    section.stepikChangeStatus = if (section.stepikChangeStatus == StepikChangeStatus.CONTENT) StepikChangeStatus.INFO_AND_CONTENT else StepikChangeStatus.INFO
+    section.stepikChangeStatus = if (section.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
   }
 
+  @JvmStatic
   fun contentChanged(section: Section) {
     if (section.id == 0) return
-    section.stepikChangeStatus = if (section.stepikChangeStatus == StepikChangeStatus.INFO) StepikChangeStatus.INFO_AND_CONTENT else StepikChangeStatus.CONTENT
+    section.stepikChangeStatus = if (section.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
   }
 
+  @JvmStatic
   fun infoChanged(course: Course) {
     if (course !is RemoteCourse) return
-    course.stepikChangeStatus = if (course.stepikChangeStatus == StepikChangeStatus.CONTENT) StepikChangeStatus.INFO_AND_CONTENT else StepikChangeStatus.INFO
+    course.stepikChangeStatus = if (course.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
   }
 
+  @JvmStatic
   fun contentChanged(course: Course) {
     if (course !is RemoteCourse) return
-    course.stepikChangeStatus = if (course.stepikChangeStatus == StepikChangeStatus.INFO) StepikChangeStatus.INFO_AND_CONTENT else StepikChangeStatus.CONTENT
+    course.stepikChangeStatus = if (course.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
   }
 
+  @JvmStatic
   fun contentChanged(itemContainer: ItemContainer) {
-    if (itemContainer is Course) {
-      contentChanged(itemContainer)
-      return
-    }
-
-    if (itemContainer is Section) {
-      contentChanged(itemContainer)
-      return
+    when (itemContainer) {
+      is Course -> contentChanged(itemContainer)
+      is Section -> contentChanged(itemContainer)
     }
   }
 
+  @JvmStatic
   fun infoChanged(item: StudyItem?) {
-    if (item is Course) {
-      infoChanged(item)
-      return
-    }
-
-    if (item is Section) {
-      infoChanged(item)
-      return
-    }
-
-    if (item is Lesson) {
-      infoChanged(item)
-      return
-    }
-
-    if (item is Task) {
-      changed(item)
-      return
+    when (item) {
+      is Course -> infoChanged(item)
+      is Section -> infoChanged(item)
+      is Lesson -> infoChanged(item)
+      is Task -> changed(item)
     }
   }
 }
