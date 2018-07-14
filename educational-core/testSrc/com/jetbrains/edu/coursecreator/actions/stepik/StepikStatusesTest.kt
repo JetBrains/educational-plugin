@@ -48,10 +48,9 @@ class StepikStatusesTest: CCActionTestCase() {
           }
         }
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
-    checkStatus(StudyTaskManager.getInstance(project).course!!, StepikChangeStatus.UP_TO_DATE)
+    checkStatus(course, StepikChangeStatus.UP_TO_DATE)
   }
 
   fun `test course section added`() {
@@ -63,15 +62,13 @@ class StepikStatusesTest: CCActionTestCase() {
           }
         }
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val section2 = findFile("section1")
     testAction(dataContext(section2), CCTestCreateSection("section2", 2))
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
     checkStatus(StudyTaskManager.getInstance(project).course!!, StepikChangeStatus.CONTENT)
-    checkOtherItemsUpToDate(currentCourse, currentCourse)
+    checkOtherItemsUpToDate(course, course)
   }
 
   fun `test course section deleted`() {
@@ -90,17 +87,15 @@ class StepikStatusesTest: CCActionTestCase() {
           }
         }
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val section2 = findFile("section2")
     withTestDialog(EduTestDialog()) {
       testAction(dataContext(section2), DeleteAction())
     }
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-    checkStatus(currentCourse, StepikChangeStatus.CONTENT)
-    checkOtherItemsUpToDate(currentCourse, currentCourse)
+    checkStatus(course, StepikChangeStatus.CONTENT)
+    checkOtherItemsUpToDate(course, course)
   }
 
   fun `test course lesson added`() {
@@ -112,16 +107,14 @@ class StepikStatusesTest: CCActionTestCase() {
           }
         }
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val projectDir = EduUtils.getCourseDir(project)
     withTestDialog(EduTestInputDialog("lesson2")) {
       testAction(dataContext(projectDir), CCCreateLesson())
     }
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-    checkStatus(currentCourse, StepikChangeStatus.CONTENT)
+    checkStatus(course, StepikChangeStatus.CONTENT)
   }
 
   fun `test course lesson deleted`() {
@@ -138,17 +131,15 @@ class StepikStatusesTest: CCActionTestCase() {
           taskFile("fizz.kt")
         }
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val lesson = findFile("lesson1")
     withTestDialog(EduTestDialog()) {
       testAction(dataContext(lesson), DeleteAction())
     }
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-    checkStatus(currentCourse, StepikChangeStatus.CONTENT)
-    checkOtherItemsUpToDate(currentCourse, currentCourse)
+    checkStatus(course, StepikChangeStatus.CONTENT)
+    checkOtherItemsUpToDate(course, course)
   }
 
   fun `test course lesson moved`() {
@@ -157,9 +148,7 @@ class StepikStatusesTest: CCActionTestCase() {
       section {
         lesson("lesson2")
       }
-    }
-
-    setCourseAndInit(course)
+    }.asRemote()
 
     val sourceVFile = findFile("lesson1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -167,19 +156,18 @@ class StepikStatusesTest: CCActionTestCase() {
     val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCLessonMoveHandlerDelegate()
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
+    TestCase.assertTrue("Cannot move: ${sourceDir}, ${targetDir}", handler.canMove(arrayOf(sourceDir), targetDir))
     handler.doMove(project, arrayOf(sourceDir), targetDir, {})
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-    checkStatus(currentCourse, StepikChangeStatus.CONTENT)
+    checkStatus(course, StepikChangeStatus.CONTENT)
 
-    val changedSection = currentCourse.sections[0]!!
+    val changedSection = course.sections[0]!!
     checkStatus(changedSection, StepikChangeStatus.INFO_AND_CONTENT)
 
-    val changedLesson = currentCourse.sections[0].getLesson("lesson1")!!
+    val changedLesson = course.sections[0].getLesson("lesson1")!!
     checkStatus(changedLesson, StepikChangeStatus.INFO)
 
-    checkOtherItemsUpToDate(currentCourse, currentCourse, changedSection, changedLesson)
+    checkOtherItemsUpToDate(course, course, changedSection, changedLesson)
   }
 
   fun `test section renamed`() {
@@ -191,8 +179,7 @@ class StepikStatusesTest: CCActionTestCase() {
           }
         }
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val section = findFile("section1")
 
@@ -202,23 +189,17 @@ class StepikStatusesTest: CCActionTestCase() {
     TestCase.assertNotNull(renameHandler)
     renameHandler.invoke(project, null, null, dataContext)
 
-
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-
-    val changedSection = currentCourse.sections[0]
+    val changedSection = course.sections[0]
     checkStatus(changedSection, StepikChangeStatus.INFO)
 
-    checkOtherItemsUpToDate(currentCourse, changedSection)
+    checkOtherItemsUpToDate(course, changedSection)
   }
 
   fun `test section moved`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section()
       section()
-    }
-    StudyTaskManager.getInstance(project).course = convertToRemoteCourse(course)
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-    currentCourse.init(null, null, true)
+    }.asRemote()
 
     val sourceVFile = findFile("section2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -226,16 +207,16 @@ class StepikStatusesTest: CCActionTestCase() {
     val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCSectionMoveHandlerTest(0)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
+    TestCase.assertTrue("Cannot move: ${sourceDir}, ${targetDir}", handler.canMove(arrayOf(sourceDir), targetDir))
     handler.doMove(project, arrayOf(sourceDir), targetDir, {})
 
-    val firstChangedSection = currentCourse.sections[0]
+    val firstChangedSection = course.sections[0]
     checkStatus(firstChangedSection, StepikChangeStatus.INFO)
 
-    val secondChangedSection = currentCourse.sections[1]
+    val secondChangedSection = course.sections[1]
     checkStatus(secondChangedSection, StepikChangeStatus.INFO)
 
-    checkOtherItemsUpToDate(currentCourse, firstChangedSection, secondChangedSection)
+    checkOtherItemsUpToDate(course, firstChangedSection, secondChangedSection)
   }
 
   fun `test section moved to the top`() {
@@ -246,8 +227,7 @@ class StepikStatusesTest: CCActionTestCase() {
       section()
       section()
       section()
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val sourceVFile = findFile("section6")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -255,12 +235,10 @@ class StepikStatusesTest: CCActionTestCase() {
     val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCSectionMoveHandlerTest(0)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
+    TestCase.assertTrue("Cannot move: ${sourceDir}, ${targetDir}", handler.canMove(arrayOf(sourceDir), targetDir))
     handler.doMove(project, arrayOf(sourceDir), targetDir, {})
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-
-    currentCourse.sections.forEach {
+    course.sections.forEach {
       checkStatus(it, StepikChangeStatus.INFO)
     }
   }
@@ -273,8 +251,7 @@ class StepikStatusesTest: CCActionTestCase() {
       section()
       section()
       section()
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val sourceVFile = findFile("section4")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -282,18 +259,16 @@ class StepikStatusesTest: CCActionTestCase() {
     val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCSectionMoveHandlerTest(0)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
+    TestCase.assertTrue("Cannot move: ${sourceDir}, ${targetDir}", handler.canMove(arrayOf(sourceDir), targetDir))
     handler.doMove(project, arrayOf(sourceDir), targetDir, {})
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-
-    currentCourse.sections.sortBy { it.index }
-    val changedSections = currentCourse.sections.subList(2, 6)
+    course.sections.sortBy { it.index }
+    val changedSections = course.sections.subList(2, 6)
     changedSections.forEach {
       checkStatus(it, StepikChangeStatus.INFO)
     }
 
-    checkOtherItemsUpToDate(currentCourse, *changedSections.toTypedArray())
+    checkOtherItemsUpToDate(course, *changedSections.toTypedArray())
   }
 
   fun `test lesson added into section`() {
@@ -306,19 +281,16 @@ class StepikStatusesTest: CCActionTestCase() {
           eduTask()
         }
       }
-    }
-    setCourseAndInit(course)
-
-    val currentCourse = StudyTaskManager.getInstance(project).course
+    }.asRemote()
 
     Messages.setTestInputDialog { "lesson3" }
-    val sectionDir = EduUtils.getCourseDir(project).findChild(currentCourse!!.sections[0].name)
+    val sectionDir = EduUtils.getCourseDir(project).findChild(course.sections[0].name)
     testAction(dataContext(sectionDir!!), CCCreateLesson())
 
-    val changedSection = currentCourse.sections[0]
+    val changedSection = course.sections[0]
     checkStatus(changedSection, StepikChangeStatus.CONTENT)
 
-    checkOtherItemsUpToDate(currentCourse, changedSection)
+    checkOtherItemsUpToDate(course, changedSection)
   }
 
   fun `test lesson deleted from section`() {
@@ -327,19 +299,17 @@ class StepikStatusesTest: CCActionTestCase() {
         lesson("lesson1")
         lesson("lesson2")
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val lessonToDelete = findFile("section1/lesson2")
     withTestDialog(EduTestDialog()) {
       testAction(dataContext(lessonToDelete), DeleteAction())
     }
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-    val changedSection = currentCourse.sections[0]
+    val changedSection = course.sections[0]
     checkStatus(changedSection, StepikChangeStatus.CONTENT)
 
-    checkOtherItemsUpToDate(currentCourse, changedSection)
+    checkOtherItemsUpToDate(course, changedSection)
   }
 
   fun `test lesson moved between sections`() {
@@ -351,8 +321,7 @@ class StepikStatusesTest: CCActionTestCase() {
         lesson("lesson1")
         lesson("lesson2")
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val sourceVFile = findFile("section2/lesson2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -360,17 +329,15 @@ class StepikStatusesTest: CCActionTestCase() {
     val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCLessonMoveHandlerTest(0)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
+    TestCase.assertTrue("Cannot move: ${sourceDir}, ${targetDir}", handler.canMove(arrayOf(sourceDir), targetDir))
     handler.doMove(project, arrayOf(sourceDir), targetDir, {})
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-
-    currentCourse.sections.sortBy { it.index }
-    currentCourse.sections.forEach {
+    course.sections.sortBy { it.index }
+    course.sections.forEach {
       checkStatus(it, StepikChangeStatus.CONTENT)
     }
 
-    checkOtherItemsUpToDate(currentCourse, *currentCourse.sections.toTypedArray())
+    checkOtherItemsUpToDate(course, *course.sections.toTypedArray())
   }
 
   fun `test task added`() {
@@ -380,18 +347,16 @@ class StepikStatusesTest: CCActionTestCase() {
           eduTask()
         }
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val lessonDir = findFile("section1/lesson1")
     withTestDialog(EduTestInputDialog("task2")) {
       testAction(dataContext(lessonDir), CCCreateTask())
     }
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-    val changedLesson = currentCourse.sections[0].lessons[0]
+    val changedLesson = course.sections[0].lessons[0]
     checkStatus(changedLesson, StepikChangeStatus.CONTENT)
-    checkOtherItemsUpToDate(currentCourse, changedLesson)
+    checkOtherItemsUpToDate(course, changedLesson)
   }
 
   fun `test task deleted`() {
@@ -402,8 +367,7 @@ class StepikStatusesTest: CCActionTestCase() {
           eduTask()
         }
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val lessonDir = findFile("section1/lesson1/task1")
     val testDialog = CCDeleteActionTest.TestDeleteDialog()
@@ -411,10 +375,9 @@ class StepikStatusesTest: CCActionTestCase() {
       testAction(dataContext(lessonDir), DeleteAction())
     }
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-    val changedLesson = currentCourse.sections[0].lessons[0]
+    val changedLesson = course.sections[0].lessons[0]
     checkStatus(changedLesson, StepikChangeStatus.CONTENT)
-    checkOtherItemsUpToDate(currentCourse, changedLesson)
+    checkOtherItemsUpToDate(course, changedLesson)
   }
 
   fun `test task moved between lessons`() {
@@ -428,8 +391,7 @@ class StepikStatusesTest: CCActionTestCase() {
         eduTask("task1")
         eduTask("task3")
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val sourceVFile = findFile("lesson2/task3")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -437,16 +399,14 @@ class StepikStatusesTest: CCActionTestCase() {
     val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCTaskMoveHandlerTest(0)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
+    TestCase.assertTrue("Cannot move: ${sourceDir}, ${targetDir}", handler.canMove(arrayOf(sourceDir), targetDir))
     handler.doMove(project, arrayOf(sourceDir), targetDir, {})
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-
-    currentCourse.lessons.forEach {
+    course.lessons.forEach {
       checkStatus(it, StepikChangeStatus.CONTENT)
     }
 
-    checkOtherItemsUpToDate(currentCourse, *currentCourse.lessons.toTypedArray())
+    checkOtherItemsUpToDate(course, *course.lessons.toTypedArray())
   }
 
   fun `test task moved inside lesson`() {
@@ -456,8 +416,7 @@ class StepikStatusesTest: CCActionTestCase() {
         eduTask("task2")
         eduTask("task3")
       }
-    }
-    setCourseAndInit(course)
+    }.asRemote()
 
     val sourceVFile = findFile("lesson1/task2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -465,29 +424,27 @@ class StepikStatusesTest: CCActionTestCase() {
     val targetDir = PsiManager.getInstance(project).findDirectory(targetVFile)
 
     val handler = CCTaskMoveHandlerTest(1)
-    TestCase.assertTrue(handler.canMove(arrayOf(sourceDir), targetDir))
+    TestCase.assertTrue("Cannot move: ${sourceDir}, ${targetDir}", handler.canMove(arrayOf(sourceDir), targetDir))
     handler.doMove(project, arrayOf(sourceDir), targetDir, {})
 
-    val currentCourse = StudyTaskManager.getInstance(project).course!!
-
-    val changedTask2 = currentCourse.lessons[0].getTask("task2")!!
+    val changedTask2 = course.lessons[0].getTask("task2")!!
     checkStatus(changedTask2, StepikChangeStatus.INFO_AND_CONTENT)
 
-    val changedTask3 = currentCourse.lessons[0].getTask("task3")!!
+    val changedTask3 = course.lessons[0].getTask("task3")!!
     checkStatus(changedTask3, StepikChangeStatus.INFO_AND_CONTENT)
 
-    checkOtherItemsUpToDate(currentCourse, changedTask2, changedTask3)
+    checkOtherItemsUpToDate(course, changedTask2, changedTask3)
   }
 
   private fun checkStatus(changedItem: StudyItem, expectedStatus: StepikChangeStatus) {
-    TestCase.assertTrue("Wrong status ${changedItem.name}. Expected: $expectedStatus. Actual: ${changedItem.stepikChangeStatus}",
-                        changedItem.stepikChangeStatus == expectedStatus)
+    TestCase.assertEquals("Wrong status ${changedItem.name}. Expected: $expectedStatus. Actual: ${changedItem.stepikChangeStatus}",
+                        changedItem.stepikChangeStatus, expectedStatus)
   }
 
   private fun checkOtherItemsUpToDate(course: Course, vararg changedItems: StudyItem) {
     if (course !in changedItems) {
-      TestCase.assertTrue("Wrong status for ${course.name}.Expected status: UP_TO_DATE. Actual: ${course.stepikChangeStatus}",
-                          course.stepikChangeStatus == StepikChangeStatus.UP_TO_DATE)
+      TestCase.assertEquals("Wrong status for ${course.name}.Expected status: UP_TO_DATE. Actual: ${course.stepikChangeStatus}",
+                          course.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
     }
 
     for (item in course.items) {
@@ -496,8 +453,8 @@ class StepikStatusesTest: CCActionTestCase() {
       }
 
       if (item is Section) {
-        TestCase.assertTrue("Wrong status for ${item.name}.Expected status: UP_TO_DATE. Actual: ${item.stepikChangeStatus}",
-                            item.stepikChangeStatus == StepikChangeStatus.UP_TO_DATE)
+        TestCase.assertEquals("Wrong status for ${item.name}.Expected status: UP_TO_DATE. Actual: ${item.stepikChangeStatus}",
+                            item.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
         for (lesson in item.lessons) {
           checkLessonsUpToDate(lesson, changedItems)
         }
@@ -516,31 +473,48 @@ class StepikStatusesTest: CCActionTestCase() {
       return
     }
 
-    TestCase.assertTrue("Wrong status for ${lesson.name}.Expected status: UP_TO_DATE. Actual: ${lesson.stepikChangeStatus}",
-                        lesson.stepikChangeStatus == StepikChangeStatus.UP_TO_DATE)
+    TestCase.assertEquals("Wrong status for ${lesson.name}.Expected status: UP_TO_DATE. Actual: ${lesson.stepikChangeStatus}",
+                        lesson.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
 
     for (task in lesson.taskList) {
       if (task in changedItems) {
         continue
       }
-      TestCase.assertTrue("Wrong status for ${task.name}.Expected status: UP_TO_DATE. Actual: ${task.stepikChangeStatus}",
-                          task.stepikChangeStatus == StepikChangeStatus.UP_TO_DATE)
+      TestCase.assertEquals("Wrong status for ${task.name}.Expected status: UP_TO_DATE. Actual: ${task.stepikChangeStatus}",
+                          task.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
     }
   }
 
-  private fun setCourseAndInit(course: Course) {
-    StudyTaskManager.getInstance(project).course = convertToRemoteCourse(course)
-    StudyTaskManager.getInstance(project).course!!.init(null, null, true)
+  private inner class CCSectionMoveHandlerTest(private val myDelta: Int) : CCSectionMoveHandlerDelegate() {
+    override fun getDelta(project: Project, targetItem: StudyItem): Int {
+      return myDelta
+    }
   }
 
+  private inner class CCLessonMoveHandlerTest(private val myDelta: Int) : CCLessonMoveHandlerDelegate() {
+    override fun getDelta(project: Project, targetItem: StudyItem): Int {
+      return myDelta
+    }
+  }
 
-  private fun convertToRemoteCourse(course: Course): RemoteCourse {
+  private inner class CCTaskMoveHandlerTest(private val myDelta: Int) : CCTaskMoveHandlerDelegate() {
+    override fun getDelta(project: Project, targetItem: StudyItem): Int {
+      return myDelta
+    }
+  }
+
+  override fun tearDown() {
+    VirtualFileManager.getInstance().removeVirtualFileListener(ccVirtualFileListener)
+    super.tearDown()
+  }
+
+  private fun Course.asRemote(): RemoteCourse {
     val remoteCourse = RemoteCourse()
     remoteCourse.id = 1
-    remoteCourse.name = course.name
+    remoteCourse.name = name
     remoteCourse.courseMode = CCUtils.COURSE_MODE
-    remoteCourse.items = Lists.newArrayList(course.items)
-    remoteCourse.language = course.language
+    remoteCourse.items = Lists.newArrayList(items)
+    remoteCourse.language = language
 
     for (item in remoteCourse.items) {
       if (item is Section) {
@@ -560,27 +534,10 @@ class StepikStatusesTest: CCActionTestCase() {
         }
       }
     }
+
+    remoteCourse.init(null, null, true)
+    StudyTaskManager.getInstance(project).course = remoteCourse
     return remoteCourse
   }
-
-
-  internal inner class CCSectionMoveHandlerTest(private val myDelta: Int) : CCSectionMoveHandlerDelegate() {
-    override fun getDelta(project: Project, targetItem: StudyItem): Int {
-      return myDelta
-    }
-  }
-
-  internal inner class CCLessonMoveHandlerTest(private val myDelta: Int) : CCLessonMoveHandlerDelegate() {
-    override fun getDelta(project: Project, targetItem: StudyItem): Int {
-      return myDelta
-    }
-  }
-
-  internal inner class CCTaskMoveHandlerTest(private val myDelta: Int) : CCTaskMoveHandlerDelegate() {
-    override fun getDelta(project: Project, targetItem: StudyItem): Int {
-      return myDelta
-    }
-  }
-
 }
 
