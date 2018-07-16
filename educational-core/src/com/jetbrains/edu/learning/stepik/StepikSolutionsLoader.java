@@ -164,9 +164,10 @@ public class StepikSolutionsLoader implements Disposable {
     ApplicationManager.getApplication().invokeLater(() -> {
       if (mySelectedTask != null && tasksToUpdate.contains(mySelectedTask)) {
         EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
-        assert selectedEduEditor != null;
-        selectedEduEditor.showLoadingPanel();
-        enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getStepId()));
+        if (selectedEduEditor != null) {
+          selectedEduEditor.showLoadingPanel();
+          enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getStepId()));
+        }
       }
     });
 
