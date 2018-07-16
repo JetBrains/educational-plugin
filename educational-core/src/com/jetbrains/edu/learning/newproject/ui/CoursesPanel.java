@@ -34,6 +34,8 @@ import com.jetbrains.edu.learning.EduLanguageDecorator;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOConnector;
+import com.jetbrains.edu.learning.checkio.settings.CheckiOSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
@@ -108,7 +110,10 @@ public class CoursesPanel extends JPanel {
       if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.LoginRequired.INSTANCE) {
         addLoginListener(this::updateCoursesList);
         StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
-      } else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
+      } else if (myErrorState == ErrorState.CheckiOLoginRequired.INSTANCE) {
+        addCheckiOLoginListener(this::updateCoursesList);
+        CheckiOConnector.doAuthorize();
+      }else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
         PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
       } else if (myErrorState instanceof ErrorState.RequiredPluginsDisabled) {
         List<String> disabledPluginIds = ((ErrorState.RequiredPluginsDisabled)myErrorState).getDisabledPluginIds();
@@ -117,6 +122,23 @@ public class CoursesPanel extends JPanel {
     });
 
     processSelectionChanged();
+  }
+
+  private void addCheckiOLoginListener(Runnable... postLoginActions) {
+    if (myBusConnection != null) {
+      myBusConnection.disconnect();
+    }
+    myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
+    myBusConnection.subscribe(CheckiOConnector.LOGGED_IN, (newTokens, newUser) -> {
+      CheckiOSettings.getInstance().setUser(newUser);
+      ApplicationManager.getApplication().invokeLater(() -> {
+        for (Runnable action : postLoginActions) {
+          action.run();
+        }
+        myBusConnection.disconnect();
+        myBusConnection = null;
+      }, ModalityState.any());
+    });
   }
 
   private void addLoginListener(Runnable... postLoginActions) {

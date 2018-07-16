@@ -65,13 +65,6 @@ public class EduNames {
   public static final String CHECKIO_PYTHON = "CheckiO-Python";
   public static final String CHECKIO_PYTHON_INTERPRETER = "python-3";
 
-
-  public static final String OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html";
-  public static final String OAUTH_ERROR_PAGE = "/oauthResponsePages/errorPage.html";
-
-  public static final String OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html";
-  public static final String OAUTH_ERROR_PAGE = "/oauthResponsePages/errorPage.html";
-
   public static final String OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html";
   public static final String OAUTH_ERROR_PAGE = "/oauthResponsePages/errorPage.html";
 

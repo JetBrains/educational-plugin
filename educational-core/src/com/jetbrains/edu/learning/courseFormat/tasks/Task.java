@@ -23,6 +23,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Implementation of task which contains task files, tests, input file for tests
@@ -73,7 +77,6 @@ public abstract class Task extends StudyItem {
 
   public void init(@Nullable Course course, @Nullable final StudyItem parentItem, boolean isRestarted) {
     setLesson(parentItem instanceof Lesson ? (Lesson)parentItem : null);
-    if (!isRestarted) myStatus = CheckStatus.Unchecked;
     for (TaskFile taskFile : getTaskFileValues()) {
       taskFile.initTaskFile(this, isRestarted);
     }
@@ -213,24 +216,22 @@ public abstract class Task extends StudyItem {
 
     Task task = (Task)o;
 
-    if (getIndex() != task.getIndex()) return false;
-    if (name != null ? !name.equals(task.name) : task.name != null) return false;
-    if (taskFiles != null ? !taskFiles.equals(task.taskFiles) : task.taskFiles != null) return false;
-    if (descriptionText != null ? !descriptionText.equals(task.descriptionText) : task.descriptionText != null) return false;
-    if (descriptionFormat != null ? !descriptionFormat.equals(task.descriptionFormat) : task.descriptionFormat != null) return false;
-    if (testsText != null ? !testsText.equals(task.testsText) : task.testsText != null) return false;
-
-    return true;
+    return getIndex() == task.getIndex() &&
+           Objects.equals(name, task.name) &&
+           Objects.equals(taskFiles, task.taskFiles) &&
+           Objects.equals(descriptionText, task.descriptionText) &&
+           Objects.equals(descriptionFormat, task.descriptionFormat) &&
+           Objects.equals(testsText, task.testsText);
   }
 
   @Override
   public int hashCode() {
-    int result = name != null ? name.hashCode() : 0;
+    int result = Objects.hashCode(name);
     result = 31 * result + getIndex();
-    result = 31 * result + (taskFiles != null ? taskFiles.hashCode() : 0);
-    result = 31 * result + (descriptionText != null ? descriptionText.hashCode() : 0);
-    result = 31 * result + (descriptionFormat != null ? descriptionFormat.hashCode() : 0);
-    result = 31 * result + (testsText != null ? testsText.hashCode() : 0);
+    result = 31 * result + Objects.hashCode(taskFiles);
+    result = 31 * result + Objects.hashCode(descriptionText);
+    result = 31 * result + Objects.hashCode(descriptionFormat);
+    result = 31 * result + Objects.hashCode(testsText);
     return result;
   }
 

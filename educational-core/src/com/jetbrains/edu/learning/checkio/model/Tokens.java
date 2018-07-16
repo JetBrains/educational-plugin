@@ -6,8 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import java.util.Objects;
-
 public class Tokens {
   @Property
   @SerializedName("access_token")

@@ -22,10 +22,12 @@
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOConfigurator" language="CheckiO-Python"/>
   </extensions>
 
   <extensions defaultExtensionNs="educational">
     <languageDecorator implementationClass="com.jetbrains.edu.python.learning.PyLanguageDecorator" language="Python" />
+    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.PyLanguageDecorator" language="CheckiO-Python" />
   </extensions>
 
   <actions>
@@ -48,6 +50,9 @@
     <component>
       <implementation-class>com.jetbrains.edu.python.learning.PyInitialConfigurator</implementation-class>
       <headless-implementation-class/>
+    </component>
+    <component>
+      <implementation-class>com.jetbrains.edu.python.learning.checkio.PyCheckiOApplicationComponent</implementation-class>
     </component>
   </application-components>
 
