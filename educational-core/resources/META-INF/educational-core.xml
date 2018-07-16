@@ -198,6 +198,7 @@
     <applicationService serviceImplementation="com.jetbrains.edu.learning.checkio.settings.CheckiOSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.checkio.controllers.CheckiORestService"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
 
