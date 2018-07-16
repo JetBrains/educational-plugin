@@ -89,7 +89,8 @@ public class CCStepikConnector {
     });
   }
 
-  private static void postCourse(@NotNull final Project project, @NotNull Course course) {
+  // public for tests
+  public static void postCourse(@NotNull final Project project, @NotNull Course course) {
     if (!checkIfAuthorized(project, "post course")) return;
 
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
