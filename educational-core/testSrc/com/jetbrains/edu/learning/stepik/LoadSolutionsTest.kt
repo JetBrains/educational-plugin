@@ -5,7 +5,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourse
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -31,7 +31,8 @@ class LoadSolutionsTest : StepikTestCase() {
         }
       }
     }
-    CCStepikConnector.postCourseWithProgress(project, StudyTaskManager.getInstance(project).course!!)
+    postCourse(project, StudyTaskManager.getInstance(project).course!!)
+
     solveFirstTask()
 
     val task = firstTask(StudyTaskManager.getInstance(project).course)
@@ -53,7 +54,7 @@ class LoadSolutionsTest : StepikTestCase() {
       }
     }
 
-    CCStepikConnector.postCourseWithProgress(project, StudyTaskManager.getInstance(project).course!!)
+    postCourse(project, StudyTaskManager.getInstance(project).course!!)
     solveFirstTask()
 
     val course = StudyTaskManager.getInstance(project).course!! as RemoteCourse
