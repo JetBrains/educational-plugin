@@ -27,7 +27,7 @@ public class Course extends ItemContainer {
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
 
-  @Expose @SerializedName("programming_language") private String myProgrammingLanguage = EduNames.PYTHON;
+  @Expose @SerializedName("programming_language") private String myProgrammingLanguage = EduNames.JAVA;
   @Expose @SerializedName("language") private String myLanguageCode = "en";
 
   //this field is used to distinguish ordinary and CheckIO projects,

@@ -1104,7 +1104,7 @@ public class EduUtils {
     try {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        List<Course> courses = execCancelable(() -> StepikConnector.getCourseInfos(EduSettings.getInstance().getUser()));
+        List<Course> courses = execCancelable(EduUtils::getRemoteCourses);
         if (courses == null) return Lists.newArrayList();
         List<Course> bundledCourses = getBundledCourses();
         for (Course bundledCourse : bundledCourses) {
@@ -1121,6 +1121,13 @@ public class EduUtils {
     } catch (RuntimeException e) {
       return Lists.newArrayList();
     }
+  }
+
+  @NotNull
+  private static List<Course> getRemoteCourses() {
+    List<Course> courses = StepikConnector.getCourses(EduSettings.getInstance().getUser());
+    courses.add(new CheckiOCourse());
+    return courses;
   }
 
   @NotNull
