@@ -4,7 +4,6 @@ package com.jetbrains.edu.learning.courseView
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
@@ -20,20 +19,18 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import junit.framework.TestCase
 import org.junit.Assert
-import java.io.IOException
 
 class CourseViewTest : EduTestCase() {
-
-  private var myCourse: Course? = null
 
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
-    myCourse?.language = PlainTextLanguage.INSTANCE.id
     ProjectViewTestUtil.setupImpl(project, true)
   }
 
   fun testCoursePane() {
+    createCourseAndInit()
+
     configureByTaskFile(1, 1, "taskFile1.txt")
     val pane = createPane()
 
@@ -48,11 +45,12 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testProjectOpened() {
+    createCourseAndInit()
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
     val pane = projectView.currentProjectViewPane
     PlatformTestUtil.waitWhileBusy(pane.tree)
-    EduUtils.openFirstTask(myCourse!!, project)
+    EduUtils.openFirstTask(StudyTaskManager.getInstance(project).course!!, project)
     PlatformTestUtil.waitForAlarm(600)
     PlatformTestUtil.waitWhileBusy(pane.tree)
     val structure = "-Project\n" +
@@ -67,6 +65,7 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testExpandAfterNavigation() {
+    createCourseAndInit()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -85,6 +84,7 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testCourseProgress() {
+    createCourseAndInit()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -94,12 +94,14 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testSwitchingPane() {
+    createCourseAndInit()
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
     TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
   }
 
   fun testCheckTask() {
+    createCourseAndInit()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -117,6 +119,29 @@ class CourseViewTest : EduTestCase() {
 
     val refreshTaskFileAction = RefreshTaskFileAction()
     launchAction(taskFile, refreshTaskFileAction)
+  }
+
+  private fun createCourseAndInit() {
+    val course = courseWithFiles("Edu test course") {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
+            placeholder(0, "2")
+          }
+        }
+        eduTask {
+          taskFile("taskFile2.txt")
+        }
+        eduTask {
+          taskFile("taskFile3.txt")
+        }
+        eduTask {
+          taskFile("taskFile4.txt")
+        }
+      }
+    }
+    StudyTaskManager.getInstance(project).course = course
+    StudyTaskManager.getInstance(project).course!!.init(null, null, true)
   }
 
   private fun launchAction(taskFile: VirtualFile, action: AnAction) {
@@ -140,19 +165,6 @@ class CourseViewTest : EduTestCase() {
     val targetTask = NavigationUtils.nextTask(eduState.task)
     TestCase.assertNotNull(targetTask)
     NavigationUtils.navigateToTask(project, targetTask!!)
-  }
-
-  @Throws(IOException::class)
-  override fun createCourse() {
-    myFixture.copyDirectoryToProject("lesson1", "lesson1")
-    myCourse = Course()
-    myCourse!!.language = PlainTextLanguage.INSTANCE.id
-    myCourse!!.name = "Edu test course"
-    StudyTaskManager.getInstance(myFixture.project).course = myCourse
-
-    val lesson1 = createLesson(1, 4)
-    myCourse!!.addLesson(lesson1)
-    myCourse!!.init(null, null, false)
   }
 
   private fun createPane(): CourseViewPane {
