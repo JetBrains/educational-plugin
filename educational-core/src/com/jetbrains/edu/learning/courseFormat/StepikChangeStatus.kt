@@ -10,18 +10,26 @@ enum class StepikChangeStatus {
    * changed [com.jetbrains.edu.learning.courseFormat.tasks.Task];
    * [Course], [Section], [Lesson] if [INFO] and [CONTENT] were changed both.
    */
-  INFO_AND_CONTENT,
+  INFO_AND_CONTENT {
+    override fun toString(): String = "Info and Content changed"
+  },
 
   /**
    * Used for [Course], [Section], [Lesson]. Indicates that some information, e.g. name, position, has been changed
    */
-  INFO,
+  INFO{
+    override fun toString(): String = "Info changed"
+  },
 
   /**
    * Used for [Course], [Section], [Lesson], indicates that its elements number has been changed, e.g. a lesson has been deleted.
    */
-  CONTENT,
+  CONTENT{
+    override fun toString(): String = "Content changed"
+  },
 
-  UP_TO_DATE
+  UP_TO_DATE{
+    override fun toString(): String = "Up to date"
+  };
 }
 
