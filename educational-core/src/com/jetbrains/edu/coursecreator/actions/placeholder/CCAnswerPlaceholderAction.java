@@ -60,7 +60,7 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
       return;
     }
     performAnswerPlaceholderAction(state);
-    StepikCourseChangeHandler.INSTANCE.changed(state.myTaskFile);
+    StepikCourseChangeHandler.changed(state.myTaskFile);
   }
 
   protected abstract void performAnswerPlaceholderAction(@NotNull final CCState state);

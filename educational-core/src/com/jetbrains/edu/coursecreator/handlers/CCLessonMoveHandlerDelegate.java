@@ -123,12 +123,12 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
 
     sourceLesson.setIndex(newItemIndex);
     sourceLesson.setSection(targetSection);
-    StepikCourseChangeHandler.INSTANCE.infoChanged(sourceLesson);
+    StepikCourseChangeHandler.infoChanged(sourceLesson);
 
     sourceContainer.removeLesson(sourceLesson);
     targetContainer.addLesson(sourceLesson);
-    StepikCourseChangeHandler.INSTANCE.contentChanged(sourceContainer);
-    StepikCourseChangeHandler.INSTANCE.contentChanged(targetContainer);
+    StepikCourseChangeHandler.contentChanged(sourceContainer);
+    StepikCourseChangeHandler.contentChanged(targetContainer);
 
     course.sortItems();
     ApplicationManager.getApplication().runWriteAction(new Runnable() {

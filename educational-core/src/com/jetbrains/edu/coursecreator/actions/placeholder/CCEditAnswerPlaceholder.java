@@ -35,7 +35,7 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
     if (dlg.showAndGet()) {
       final String answerPlaceholderText = dlg.getTaskText();
       if (isChanged(answerPlaceholder, dlg)) {
-        StepikCourseChangeHandler.INSTANCE.changed(answerPlaceholder);
+        StepikCourseChangeHandler.changed(answerPlaceholder);
       }
       answerPlaceholder.setPlaceholderText(answerPlaceholderText);
       answerPlaceholder.setLength(answerPlaceholderText.length());
