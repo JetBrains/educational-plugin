@@ -77,7 +77,7 @@ public class CCRefactoringElementListenerProvider implements RefactoringElementL
       }
       taskFiles.remove(oldName);
       taskFiles.put(EduUtils.pathRelativeToTask(project, file.getVirtualFile()), taskFile);
-      StepikCourseChangeHandler.INSTANCE.changed(taskFile);
+      StepikCourseChangeHandler.changed(taskFile);
     }
 
     @Override

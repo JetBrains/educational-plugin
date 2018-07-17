@@ -57,7 +57,7 @@ public class CCWrapWithSection extends DumbAwareAction {
 
     if (!CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName)) return;
     ProjectView.getInstance(project).refresh();
-    StepikCourseChangeHandler.INSTANCE.contentChanged(course);
+    StepikCourseChangeHandler.contentChanged(course);
   }
 
   @NotNull

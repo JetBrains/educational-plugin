@@ -72,7 +72,7 @@ public class CCChangeCourseInfo extends DumbAwareAction {
       setVersion(course, panel);
       ProjectView.getInstance(project).refresh();
       ProjectInspectionProfileManager.getInstance(project).fireProfileChanged();
-      StepikCourseChangeHandler.INSTANCE.infoChanged(course);
+      StepikCourseChangeHandler.infoChanged(course);
     }
   }
 

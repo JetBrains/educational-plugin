@@ -37,7 +37,7 @@ public class EduDocumentListener implements DocumentListener {
     if (!myTaskFile.isTrackChanges()) {
       return;
     }
-    StepikCourseChangeHandler.INSTANCE.changed(myTaskFile);
+    StepikCourseChangeHandler.changed(myTaskFile);
     if (myTaskFile.getAnswerPlaceholders().isEmpty()) return;
 
     if (!(e instanceof DocumentEventImpl)) {
