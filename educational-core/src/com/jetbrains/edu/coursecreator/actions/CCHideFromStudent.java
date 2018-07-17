@@ -63,7 +63,7 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
         }
       }
       ProjectView.getInstance(myProject).refresh();
-      StepikCourseChangeHandler.INSTANCE.notChanged(myTask);
+      StepikCourseChangeHandler.notChanged(myTask);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class CCHideFromStudent extends CCTaskFileActionBase {
       hideFromStudent(myFile, myProject, myTask.getTaskFiles(), myTaskFile);
       ProjectView.getInstance(myProject).refresh();
 
-      StepikCourseChangeHandler.INSTANCE.changed(myTask);
+      StepikCourseChangeHandler.changed(myTask);
     }
 
     @Override
