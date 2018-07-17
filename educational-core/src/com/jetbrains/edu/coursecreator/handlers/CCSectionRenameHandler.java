@@ -29,7 +29,7 @@ public class CCSectionRenameHandler extends CCRenameHandler implements TitledHan
     Section section = course.getSection(directory.getName());
     if (section != null) {
       processRename(section, EduNames.SECTION, course, project, directory.getVirtualFile());
-      StepikCourseChangeHandler.INSTANCE.infoChanged(section);
+      StepikCourseChangeHandler.infoChanged(section);
     }
   }
 
