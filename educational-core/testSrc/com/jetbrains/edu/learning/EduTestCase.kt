@@ -37,6 +37,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   override fun setUp() {
     super.setUp()
     registerPlainTextConfigurator(myFixture.testRootDisposable)
+    registerFakeGradleConfigurator(myFixture.testRootDisposable)
     createCourse()
 
     val dockManager = DockManager.getInstance(myFixture.project)
@@ -139,9 +140,12 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
   protected fun findTask(lessonIndex: Int, taskIndex: Int): Task = getCourse().lessons[lessonIndex].taskList[taskIndex]
 
-  protected fun findVirtualFile(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {
+  protected fun findFileInTask(lessonIndex: Int, taskIndex: Int, taskFilePath: String): VirtualFile {
     return findTask(lessonIndex, taskIndex).getTaskFile(taskFilePath)?.getVirtualFile(project)!!
   }
+
+  protected fun findFile(path: String): VirtualFile =
+    LightPlatformTestCase.getSourceRoot().findFileByRelativePath(path) ?: error("Can't find `$path`")
 
   protected fun Course.findTask(lessonName: String, taskName: String): Task {
     return getLesson(lessonName)?.getTask(taskName) ?: error("Can't find `$taskName` in `$lessonName`")

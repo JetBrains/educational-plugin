@@ -65,7 +65,7 @@ class CCEditTaskDescriptionTest : EduTestCase() {
     "No selected editor")
 
   private fun doOpenTaskDescription(): Presentation {
-    val virtualFile = findVirtualFile(0, 0, "task.txt")
+    val virtualFile = findFileInTask(0, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
     return myFixture.testAction(CCEditTaskDescription())
   }
