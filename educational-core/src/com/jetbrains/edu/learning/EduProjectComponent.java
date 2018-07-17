@@ -258,7 +258,7 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void initComponent() {
-    if (!ApplicationManager.getApplication().isUnitTestMode() && isStudentProject(myProject)) {
+    if (!OpenApiExtKt.isUnitTestMode() && isStudentProject(myProject)) {
       VirtualFileManager.getInstance().addVirtualFileListener(new UserCreatedFileListener(myProject));
     }
   }
