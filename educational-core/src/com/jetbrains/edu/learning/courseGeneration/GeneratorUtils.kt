@@ -32,7 +32,7 @@ object GeneratorUtils {
   private val LOG: Logger = Logger.getInstance(GeneratorUtils::class.java)
 
   private val UNIX_INVALID_SYMBOLS: Regex = "[/:]".toRegex()
-  private val WINDOWS_INVALID_SYMBOLS: Regex = "[/\\\\:<>\"?*|;]".toRegex()
+  private val WINDOWS_INVALID_SYMBOLS: Regex = "[/\\\\:<>\"?*|;&]".toRegex()
 
   @Throws(IOException::class)
   @JvmStatic
