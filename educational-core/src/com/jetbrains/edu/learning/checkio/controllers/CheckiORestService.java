@@ -24,6 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CheckiORestService extends RestService {
+  private CheckiORestService() {}
+
   private static final Pattern OAUTH_CODE_PATTERN = Pattern.compile(CheckiONames.EDU_CHECKIO_OAUTH_SERVICE + "\\?code=(\\w+)");
 
   @NotNull

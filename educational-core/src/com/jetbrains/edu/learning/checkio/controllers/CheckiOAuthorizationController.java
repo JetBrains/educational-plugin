@@ -11,6 +11,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class CheckiOAuthorizationController {
+  private CheckiOAuthorizationController() {}
+
   public static final Topic<CheckioUserLoggedIn> LOGGED_IN = Topic.create("Edu.logInCheckiOUSer", CheckioUserLoggedIn.class);
 
   public static void doAuthorize() {
