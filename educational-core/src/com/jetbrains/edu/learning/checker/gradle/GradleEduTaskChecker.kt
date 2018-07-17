@@ -9,12 +9,14 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
-class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
+open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
   override fun check(): CheckResult {
-    val taskName = "${getGradleProjectName(task)}:test"
+    val gradleTask = getGradleTask()
+    val taskName = gradleTask.taskName
     val cmd = generateGradleCommandLine(
       project,
-      taskName
+      taskName,
+      *gradleTask.params.toTypedArray()
     ) ?: return FAILED_TO_CHECK
 
     return try {
@@ -25,8 +27,12 @@ class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTas
     }
   }
 
+  protected open fun getGradleTask() = GradleTask("${getGradleProjectName(task)}:$TEST_TASK_NAME")
+
   override fun onTaskFailed(message: String) {
     super.onTaskFailed("Wrong solution")
     CheckUtils.showTestResultsToolWindow(project, message)
   }
+
+  protected class GradleTask(val taskName: String, val params: List<String> = emptyList())
 }
