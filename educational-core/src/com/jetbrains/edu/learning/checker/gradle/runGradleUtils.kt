@@ -4,6 +4,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
@@ -21,6 +22,10 @@ import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
 import java.util.regex.Pattern
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
+
+const val TEST_TASK_NAME = "test"
+
+const val TESTS_ARG = "--tests"
 
 private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected: ?(.*) but was: ?(.*)", Pattern.MULTILINE or Pattern.DOTALL)
 
@@ -152,7 +157,7 @@ fun runGradleRunTask(project: Project, task: Task,
                      mainClassForFile: (Project, VirtualFile) -> String?): ExecutionResult<String, CheckResult> {
   val mainClassName = findMainClass(project, task, mainClassForFile)
           ?: return Err(CheckResult(CheckStatus.Unchecked, "Unable to execute task ${task.name}"))
-  val taskName = "${getGradleProjectName(task)}:run"
+  val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
   val cmd = generateGradleCommandLine(
     project,
     taskName,
@@ -188,4 +193,14 @@ private fun findMainClass(project: Project, task: Task, mainClassForFile: (Proje
 private fun getSelectedFile(project: Project): VirtualFile? {
   val editor = EduUtils.getSelectedEditor(project) ?: return null
   return FileDocumentManager.getInstance().getFile(editor.document)
+}
+
+/**
+ * There are two types of supported gradle projects: module-per-task and one module for the whole course
+ */
+fun Task.hasSeparateModule(project: Project): Boolean {
+  val taskDir = getTaskDir(project) ?: error("Dir for task $name not found")
+  val taskModule = ModuleUtil.findModuleForFile(taskDir, project) ?: error("Module for task $name not found")
+  val courseModule = ModuleUtil.findModuleForFile(EduUtils.getCourseDir(project), project)
+  return taskModule != courseModule
 }
