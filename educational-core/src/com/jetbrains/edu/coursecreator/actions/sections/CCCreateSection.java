@@ -30,7 +30,7 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   @Override
   protected void addItem(@NotNull Course course, @NotNull Section section) {
     course.addSection(section);
-    StepikCourseChangeHandler.INSTANCE.contentChanged(course);
+    StepikCourseChangeHandler.contentChanged(course);
   }
 
   @Override
