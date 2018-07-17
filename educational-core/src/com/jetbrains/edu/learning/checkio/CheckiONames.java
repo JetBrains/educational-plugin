@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checkio;
 import org.jetbrains.ide.RestService;
 
 public class CheckiONames {
+  public static final String CHECKIO_NAME = "CheckiO";
   public static final String CLIENT_ID = CheckiOOAuthBundle.message("checkioClientId");
   public static final String CLIENT_SECRET = CheckiOOAuthBundle.message("checkioClientSecret");
 
