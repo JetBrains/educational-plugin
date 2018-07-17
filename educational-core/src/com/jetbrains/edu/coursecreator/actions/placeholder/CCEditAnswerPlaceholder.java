@@ -43,7 +43,7 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
   }
 
-  private static boolean isChanged(@NotNull AnswerPlaceholder answerPlaceholder, CCCreateAnswerPlaceholderDialog dialog) {
+  private static boolean isChanged(@NotNull AnswerPlaceholder answerPlaceholder, @NotNull CCCreateAnswerPlaceholderDialog dialog) {
     if (!dialog.getTaskText().equals(answerPlaceholder.getPlaceholderText())) {
       return true;
     }
