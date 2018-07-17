@@ -1,6 +1,5 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder;
 
-import com.google.common.collect.Streams;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
@@ -8,7 +7,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.pty4j.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -54,9 +52,7 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
       return true;
     }
 
-    return Streams
-      .zip(oldHints.stream(), newHints.stream(), (oldHint, newHint) -> Pair.create(oldHint, newHint))
-      .anyMatch(pair -> !pair.first.equals(pair.second));
+    return !newHints.equals(oldHints);
   }
 
   @Override
