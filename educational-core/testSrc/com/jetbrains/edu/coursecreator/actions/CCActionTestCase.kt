@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
@@ -63,7 +62,4 @@ abstract class CCActionTestCase : EduTestCase() {
       action.actionPerformed(e)
     }
   }
-
-  fun findFile(path: String): VirtualFile =
-    LightPlatformTestCase.getSourceRoot().findFileByRelativePath(path) ?: error("Can't find `$path`")
 }
