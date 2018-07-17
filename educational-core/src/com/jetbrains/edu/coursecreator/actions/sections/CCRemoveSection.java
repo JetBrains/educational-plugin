@@ -70,7 +70,7 @@ public class CCRemoveSection extends DumbAwareAction {
                                    sectionIndex-1, lessonsFromSection.size());
       course.addLessons(lessonsFromSection);
       course.sortItems();
-      StepikCourseChangeHandler.INSTANCE.contentChanged(course);
+      StepikCourseChangeHandler.contentChanged(course);
     }
 
     ProjectView.getInstance(project).refresh();
