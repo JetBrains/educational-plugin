@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class CCShowChangedFiles extends DumbAwareAction {
 
@@ -25,35 +24,34 @@ public class CCShowChangedFiles extends DumbAwareAction {
     }
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof RemoteCourse)) {
-      return;
-    }
+    assert course != null;
 
+    StringBuilder message = buildChangeMessage(course);
+    Messages.showInfoMessage(message.toString(), "Course Changes");
+  }
+
+  // public for test
+  @NotNull
+  public static StringBuilder buildChangeMessage(Course course) {
     StringBuilder message = new StringBuilder();
     if (course.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-      message
-        .append("course : ")
-        .append(course.getStepikChangeStatus())
-        .append("\n");
+      appendChangeLine("", course, message);
     }
 
-    message.append("\t");
     for (StudyItem item : course.getItems()) {
       if (item.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-        message.append(item.getName());
-        message.append(" ");
-        message.append(item.getStepikChangeStatus());
-        message.append("\n");
+        appendChangeLine("", item, message);
       }
 
       if (item instanceof Section) {
         for (Lesson lesson : ((Section)item).getLessons()) {
           if (lesson.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-            appendLessonLine(item.getName(), lesson, message);
+            appendChangeLine(item.getName() + "/", lesson, message);
           }
           for (Task task : lesson.taskList) {
             if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-              appendTaskLine(message, (Section)item, lesson, task);
+              String parentsLine = item.getName() + "/" + lesson.getName() + "/";
+              appendChangeLine(parentsLine, task, message);
             }
           }
         }
@@ -61,38 +59,22 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
       if (item instanceof Lesson) {
         for (Task task : ((Lesson)item).taskList) {
-          message.append(task.getName());
           if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-            appendTaskLine(message, null, (Lesson)item, task);
+            appendChangeLine(item.getName() + "/", task, message);
           }
         }
       }
     }
-
-    Messages.showInfoMessage(message.toString(), "Course Changes");
+    return message;
   }
 
-  private void appendTaskLine(@NotNull StringBuilder message, @Nullable Section section, @NotNull Lesson lesson, @NotNull Task task) {
-    if (section != null) {
-      message.append(section.getName());
-      message.append("/");
-    }
-    message.append(lesson.getName());
-    message.append("/");
-    message.append(task.getName());
-    message.append(" ");
-    message.append(task.getStepikChangeStatus());
-    message.append("\n");
-  }
-
-  private static void appendLessonLine(@NotNull String parentName,
-                                       @NotNull Lesson lesson, @NotNull StringBuilder message) {
-    message.append(parentName);
-    message.append("/");
-    message.append(lesson.getName());
-    message.append(" ");
-    message.append(lesson.getStepikChangeStatus());
-    message.append("\n");
+  private static void appendChangeLine(@NotNull String parentsLine, @NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
+    stringBuilder
+      .append(parentsLine)
+      .append(item.getName())
+      .append(" ")
+      .append(item.getStepikChangeStatus())
+      .append("\n");
   }
 
   @Override
