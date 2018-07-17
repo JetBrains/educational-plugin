@@ -422,6 +422,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
         eduTask("task?1")
         eduTask("task:2")
         eduTask("task;3")
+        eduTask("task&4")
       }
     }
 
@@ -431,6 +432,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
           dir("task 1")
           dir("task 2")
           dir("task 3")
+          dir("task 4")
         }
       }
     } else {
@@ -439,6 +441,7 @@ class PlainTextCourseGeneratorTest : EduTestCase() {
           dir("task?1")
           dir("task 2")
           dir("task;3")
+          dir("task&4")
         }
       }
     }
