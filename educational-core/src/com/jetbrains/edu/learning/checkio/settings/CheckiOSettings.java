@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 @State(name = "CheckiOSettings", storages = @Storage("other.xml"))
 public class CheckiOSettings implements PersistentStateComponent<CheckiOSettings> {
+  private CheckiOSettings() {}
   private CheckiOUser user;
 
   @Nullable

@@ -17,6 +17,8 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.Objects;
 
 public class CheckiOOptions implements OptionsProvider {
+  private CheckiOOptions() {}
+
   private final CheckiOOptionsUIProvider UIProvider = new CheckiOOptionsUIProvider();
 
   private JBLabel myLoginLabel = UIProvider.getLoginLabel();
