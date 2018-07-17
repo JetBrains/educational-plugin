@@ -22,7 +22,7 @@ public class CCLessonRenameHandler extends CCRenameHandler implements TitledHand
     Lesson lesson = EduUtils.getLesson(item.getVirtualFile(), course);
     if (lesson != null) {
       processRename(lesson, EduNames.LESSON, course, project, item.getVirtualFile());
-      StepikCourseChangeHandler.INSTANCE.infoChanged(lesson);
+      StepikCourseChangeHandler.infoChanged(lesson);
     }
   }
 
