@@ -96,7 +96,7 @@ public class CCSectionMoveHandlerDelegate extends MoveHandlerDelegate {
     CCUtils.updateHigherElements(itemDirs, file -> course.getItem(file.getName()), newItemIndex - 1, 1);
 
     sourceSection.setIndex(newItemIndex);
-    StepikCourseChangeHandler.INSTANCE.infoChanged(sourceSection);
+    StepikCourseChangeHandler.infoChanged(sourceSection);
     course.sortItems();
     ProjectView.getInstance(project).refresh();
   }

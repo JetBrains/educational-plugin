@@ -43,7 +43,7 @@ public class CCTaskRenameHandler extends CCRenameHandler implements TitledHandle
     Task task = lesson.getTask(directoryName);
     if (task != null) {
       processRename(task, EduNames.TASK, course, project, directory.getVirtualFile());
-      StepikCourseChangeHandler.INSTANCE.changed(task);
+      StepikCourseChangeHandler.changed(task);
     }
   }
 
