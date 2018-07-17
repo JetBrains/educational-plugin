@@ -36,7 +36,7 @@ class PlaceholderDependencyTest : EduTestCase() {
 
     getCourse().lessons[0].taskList[0].status = CheckStatus.Solved
 
-    val virtualFile = findVirtualFile(1, 0, "Task.kt")
+    val virtualFile = findFileInTask(1, 0, "Task.kt")
     myFixture.openFileInEditor(virtualFile)
 
     checkPlaceholderContent("print(1)", findPlaceholder(1, 0, "Task.kt", 1))
@@ -56,7 +56,7 @@ class PlaceholderDependencyTest : EduTestCase() {
       }
     }
 
-    val virtualFile = findVirtualFile(1, 0, "task.txt")
+    val virtualFile = findFileInTask(1, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
 
     checkEditorNotification(virtualFile, listOf("task1"))
@@ -88,7 +88,7 @@ class PlaceholderDependencyTest : EduTestCase() {
 
     getCourse().lessons[0].taskList[0].status = CheckStatus.Failed
 
-    val virtualFile = findVirtualFile(1, 0, "Task.kt")
+    val virtualFile = findFileInTask(1, 0, "Task.kt")
     myFixture.openFileInEditor(virtualFile)
 
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "Task.kt", 1))
@@ -124,7 +124,7 @@ class PlaceholderDependencyTest : EduTestCase() {
 
     getCourse().lessons[0].taskList[0].status = CheckStatus.Solved
 
-    val virtualFile = findVirtualFile(1, 0, "Task.kt")
+    val virtualFile = findFileInTask(1, 0, "Task.kt")
     myFixture.openFileInEditor(virtualFile)
 
     checkPlaceholderContent("print(1)", findPlaceholder(1, 0, "Task.kt", 0))
@@ -150,7 +150,7 @@ class PlaceholderDependencyTest : EduTestCase() {
     val secondPlaceholder = findPlaceholder(1, 0, "task.txt", 1)
     CCUtils.replaceAnswerPlaceholder(secondPlaceholder.taskFile.getDocument(project)!!, secondPlaceholder)
 
-    val virtualFile = findVirtualFile(1, 0, "task.txt")
+    val virtualFile = findFileInTask(1, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
 
     RefreshTaskFileAction.refresh(project)
