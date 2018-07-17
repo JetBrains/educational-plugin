@@ -17,10 +17,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import icons.EducationalCoreIcons
 import java.io.IOException
-import java.util.Collections
-import kotlin.collections.ArrayList
-import kotlin.collections.component1
-import kotlin.collections.component2
+import java.util.*
+
 
 open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, EducationalCoreIcons.Task) {
 
