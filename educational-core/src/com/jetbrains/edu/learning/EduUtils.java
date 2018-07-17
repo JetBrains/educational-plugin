@@ -778,13 +778,12 @@ public class EduUtils {
     final Map<String, TaskFile> taskFiles = firstTask.getTaskFiles();
     final VirtualFile activeVirtualFile = getActiveVirtualFile(taskDir, taskFiles);
     if (activeVirtualFile != null) {
-      final PsiFile file = PsiManager.getInstance(project).findFile(activeVirtualFile);
       if (ApplicationManager.getApplication().isUnitTestMode()) {
-        ProjectView.getInstance(project).select(file, activeVirtualFile, false);
+        ProjectView.getInstance(project).select(activeVirtualFile, activeVirtualFile, false);
       }
       else {
         StartupManager.getInstance(project).registerPostStartupActivity(
-          () -> ProjectView.getInstance(project).select(file, activeVirtualFile, false));
+          () -> ProjectView.getInstance(project).select(activeVirtualFile, activeVirtualFile, false));
       }
       final FileEditor[] editors = FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
       if (editors.length == 0) {
@@ -795,15 +794,6 @@ public class EduUtils {
         selectFirstAnswerPlaceholder((EduEditor)studyEditor, project);
       }
       FileEditorManager.getInstance(project).openFile(activeVirtualFile, true);
-    }
-    else {
-      String first = getFirst(taskFiles.keySet());
-      if (first != null) {
-        NewVirtualFile firstFile = ((VirtualDirectoryImpl)taskDir).refreshAndFindChild(first);
-        if (firstFile != null) {
-          FileEditorManager.getInstance(project).openFile(firstFile, true);
-        }
-      }
     }
   }
 
@@ -817,6 +807,12 @@ public class EduUtils {
         if (!taskFile.getAnswerPlaceholders().isEmpty()) {
           activeVirtualFile = virtualFile;
         }
+      }
+    }
+    if (activeVirtualFile == null) {
+      Map.Entry<String, TaskFile> first = getFirst(taskFiles.entrySet());
+      if (first != null) {
+        return findTaskFileInDir(first.getValue(), taskDir);
       }
     }
     return activeVirtualFile;
