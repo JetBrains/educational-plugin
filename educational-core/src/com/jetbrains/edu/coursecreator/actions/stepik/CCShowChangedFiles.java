@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class CCShowChangedFiles extends DumbAwareAction {
 
   public CCShowChangedFiles() {
-    super("Show Changed Files", "Show changed files", null);
+    super("Compare with Course on Stepik", "Show changed files comparing to the course on Stepik", null);
   }
 
   @Override
