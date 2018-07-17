@@ -39,6 +39,12 @@ fun Task.findTestDir(taskDir: VirtualFile): VirtualFile? {
   return taskDir.findFileByRelativePath(testDir)
 }
 
+fun Task.findTestDir(): VirtualFile? {
+  val project = this.course?.project ?: return null
+  val taskDir = getTaskDir(project) ?: return null
+  return findTestDir(taskDir)
+}
+
 val Task.placeholderDependencies: List<AnswerPlaceholderDependency>
   get() = taskFiles.values.flatMap { it.answerPlaceholders.mapNotNull { it.placeholderDependency } }
 
