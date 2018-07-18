@@ -14,10 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +78,7 @@ public class CCPushCourse extends DumbAwareAction {
           indicator.setIndeterminate(false);
           if (updateCourseInfo(project, (RemoteCourse) course)) {
             updateCourseContent(indicator, course, project);
-            CourseExt.setPushed(course);
+            setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
             try {
               updateAdditionalMaterials(project, course.getId());
             }
@@ -139,7 +136,29 @@ public class CCPushCourse extends DumbAwareAction {
         lesson.unitId = postUnit(lessonId, lesson.getIndex(), sectionId, project);
       }
     }
+  }
 
 
+  private static void setStatusRecursively(@NotNull Course course,
+                                           @SuppressWarnings("SameParameterValue") @NotNull StepikChangeStatus status) {
+    for (StudyItem item : course.getItems()) {
+      item.setStepikChangeStatus(status);
+      if (item instanceof Section) {
+        for (Lesson lesson : ((Section)item).getLessons()) {
+          setLessonStatus(lesson, status);
+        }
+      }
+
+      if (item instanceof Lesson) {
+        setLessonStatus((Lesson)item, status);
+      }
+    }
+  }
+
+  private static void setLessonStatus(@NotNull Lesson lesson, @NotNull StepikChangeStatus status) {
+    lesson.setStepikChangeStatus(status);
+    for (com.jetbrains.edu.learning.courseFormat.tasks.Task task : lesson.taskList) {
+      task.setStepikChangeStatus(status);
+    }
   }
 }
