@@ -7,9 +7,7 @@ branches:
   only:
   - master
   - 181
-  - studio-181
   - 173
-  - studio-173
 
 env:
  global:
@@ -18,7 +16,7 @@ env:
 install: true
 
 script:
-  - ./gradlew prepareJavaFx check -Pkotlin.incremental=false --no-daemon --continue
+  - travis_wait ./gradlew prepareJavaFx check -Pkotlin.incremental=false --no-daemon --continue
 
 # https://docs.travis-ci.com/user/languages/java/#Caching
 before_cache:
