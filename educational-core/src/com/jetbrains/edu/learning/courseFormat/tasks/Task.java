@@ -54,7 +54,7 @@ public abstract class Task extends StudyItem {
   @Expose private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
 
   @SerializedName("additional_files")
-  @Expose protected Map<String, String> additionalFiles = new HashMap<>();
+  @Expose protected Map<String, AdditionalFile> additionalFiles = new HashMap<>();
 
   @Transient private Lesson myLesson;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
@@ -118,13 +118,14 @@ public abstract class Task extends StudyItem {
     this.testsText = testsText;
   }
 
-  public Map<String, String> getAdditionalFiles() {
+  @NotNull
+  public Map<String, AdditionalFile> getAdditionalFiles() {
     return additionalFiles;
   }
 
   @SuppressWarnings("unused")
   //used for deserialization
-  public void setAdditionalFiles(Map<String, String> additionalFiles) {
+  public void setAdditionalFiles(@NotNull Map<String, AdditionalFile> additionalFiles) {
     this.additionalFiles = additionalFiles;
   }
 
@@ -132,8 +133,12 @@ public abstract class Task extends StudyItem {
     testsText.put(name, text);
   }
 
-  public void addAdditionalFile(String name, String text) {
-    additionalFiles.put(name, text);
+  public void addAdditionalFile(@NotNull String name, @NotNull String text) {
+    additionalFiles.put(name, new AdditionalFile(text, true));
+  }
+
+  public void addAdditionalFile(@NotNull String name, @NotNull AdditionalFile file) {
+    additionalFiles.put(name, file);
   }
 
   @Nullable

@@ -206,7 +206,7 @@ object CCUtils {
   }
 
   private fun addAdditionalFile(task: Task, baseDir: VirtualFile, file: VirtualFile) {
-    addToTask(baseDir, file, ThrowableConsumer { path -> task.addAdditionalFile(path, loadText(file)) })
+    addToTask(baseDir, file, ThrowableConsumer { path -> task.addAdditionalFile(path, AdditionalFile(loadText(file), false)) })
   }
 
   @JvmStatic

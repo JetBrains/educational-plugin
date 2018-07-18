@@ -110,7 +110,7 @@ object GeneratorUtils {
       createTaskFile(taskDir, taskFileContent)
     }
     createFiles(taskDir, task.testTextMap)
-    createFiles(taskDir, task.additionalFiles)
+    createFiles(taskDir, task.additionalFiles.mapValues { (_, file) -> file.text })
     val course = task.course
     if (CCUtils.COURSE_MODE == course.courseMode) {
       createDescriptionFile(taskDir, task)
@@ -162,7 +162,7 @@ object GeneratorUtils {
     val task = lesson.taskList.singleOrNull() ?: return emptyMap()
     val filesToCreate = HashMap(task.testsText)
     task.getTaskFiles().mapValuesTo(filesToCreate) { entry -> entry.value.text }
-    filesToCreate.putAll(task.additionalFiles)
+    filesToCreate.putAll(task.additionalFiles.mapValues { (_, file) -> file.text })
     return filesToCreate
   }
 

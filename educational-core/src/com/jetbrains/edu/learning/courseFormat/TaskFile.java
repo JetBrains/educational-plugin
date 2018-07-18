@@ -28,7 +28,10 @@ public class TaskFile {
   private boolean myTrackChanges = true;
   private boolean myTrackLengths = true;
   private boolean myHighlightErrors = false;
+  @Expose @SerializedName("is_visible")
+  private boolean myIsVisible = true;
   @Expose @SerializedName("placeholders") private List<AnswerPlaceholder> myAnswerPlaceholders = new ArrayList<>();
+
   @Transient private Task myTask;
 
   public TaskFile() {
@@ -128,6 +131,14 @@ public class TaskFile {
 
   public void setHighlightErrors(boolean highlightErrors) {
     myHighlightErrors = highlightErrors;
+  }
+
+  public boolean isVisible() {
+    return myIsVisible;
+  }
+
+  public void setVisible(boolean visible) {
+    myIsVisible = visible;
   }
 
   public void sortAnswerPlaceholders() {
