@@ -46,6 +46,8 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     checkEquals(loadElement(expected), converted)
   }
 
+  fun test9to10() = doTest(9)
+
   private fun doTest(version: Int) {
     val name = getTestName(true)
     val before = Paths.get(testDataPath).resolve("$name.xml")
@@ -57,6 +59,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
       3 -> converted = SerializationUtils.Xml.convertToFourthVersion(project, element)
       4 -> converted = SerializationUtils.Xml.convertToFifthVersion(project, element)
       7 -> converted = SerializationUtils.Xml.convertToSeventhVersion(project, element)
+      9 -> converted = SerializationUtils.Xml.convertToTenthVersion(project, element)
     }
     checkEquals(loadElement(after), converted)
   }

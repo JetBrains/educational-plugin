@@ -50,6 +50,8 @@ public class SerializationUtils {
     public final static String COURSE_ELEMENT = "courseElement";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
     public final static String REMOTE_COURSE = "RemoteCourse";
+    public static final String SECTION = "Section";
+    public static final String LESSON = "Lesson";
     public static final String MAP = "map";
     public static final String KEY = "key";
     public static final String VALUE = "value";
@@ -100,6 +102,10 @@ public class SerializationUtils {
     public static final String HINTS = "hints";
     public static final String DESCRIPTION_TEXT = "descriptionText";
     public static final String DESCRIPTION_FORMAT = "descriptionFormat";
+    public static final String ADDITIONAL_FILE = "AdditionalFile";
+    public static final String ADDITIONAL_FILES = "additionalFiles";
+    public static final String TEXT = "text";
+    public static final String VISIBLE = "visible";
 
     private Xml() {
     }
@@ -161,9 +167,16 @@ public class SerializationUtils {
       return new ToEighthVersionXmlConverter().convert(project, state);
     }
 
+    @NotNull
     public static Element convertToNinthVersion(@NotNull Project project,
                                                 @NotNull Element state) throws StudyUnrecognizedFormatException {
       return new ToNinthVersionXmlConverter().convert(project, state);
+    }
+
+    @NotNull
+    public static Element convertToTenthVersion(@NotNull Project project,
+                                                @NotNull Element element) throws StudyUnrecognizedFormatException {
+      return new ToTenthVersionXmlConverter().convert(project, element);
     }
 
     @Nullable
