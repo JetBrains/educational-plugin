@@ -92,6 +92,38 @@
       <option name="descriptionFormat" value="HTML" />
     </EduTask>
     ```
+    
+10. Convert additional files map to have `visible` property for each additional file
+    Before:
+    ```xml
+    <EduTask>
+      <!-- other fields -->
+      <option name="additionalFiles">
+        <map>
+          <entry key="additional_file.txt" value="some text" />
+        </map>
+      </option>
+    </EduTask>
+    ```
+    
+    After:
+    ```xml
+    <EduTask>
+      <!-- other fields -->
+      <option name="additionalFiles">
+        <map>
+          <entry key="additional_file.txt">
+            <value>
+              <AdditionalFile>
+                <option name="text" value="some text" />
+                <option name="visible" value="true" />
+              </AdditionalFile>
+            </value>
+          </entry>
+        </map>
+      </option>
+    </EduTask>
+    ```
 
 ### JSON format version
 

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="StudySettings">
+  <StudyTaskManager>
+    <option name="course">
+      <Course>
+        <option name="authors">
+          <list />
+        </option>
+        <option name="courseMode" value="Course Creator" />
+        <option name="courseType" value="PyCharm" />
+        <option name="customPresentableName" />
+        <option name="description" value="Test Course format 9" />
+        <option name="index" value="-1" />
+        <option name="language" value="kotlin" />
+        <option name="languageCode" value="en" />
+        <option name="name" value="Test Course format 9" />
+        <option name="items">
+          <list>
+            <Section>
+              <option name="course" value="0" />
+              <option name="customPresentableName" />
+              <option name="id" value="0" />
+              <option name="index" value="1" />
+              <option name="name" value="section1" />
+              <option name="position" value="0" />
+              <option name="updateDate" value="0" />
+              <option name="units" />
+              <option name="items">
+                <list>
+                  <Lesson>
+                    <option name="customPresentableName" />
+                    <option name="id" value="0" />
+                    <option name="index" value="1" />
+                    <option name="name" value="lesson1" />
+                    <option name="updateDate" value="0" />
+                    <option name="taskList">
+                      <list>
+                        <EduTask>
+                          <option name="additionalFiles">
+                            <map>
+                              <entry key="additional_file.txt" value="some text" />
+                            </map>
+                          </option>
+                          <option name="customPresentableName" />
+                          <option name="descriptionFormat" value="HTML" />
+                          <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;" />
+                          <option name="index" value="1" />
+                          <option name="name" value="task1" />
+                          <option name="status" value="Unchecked" />
+                          <option name="stepId" value="0" />
+                          <option name="testsText">
+                            <map>
+                              <entry key="Tests.kt" value="import org.junit.Assert&#10;import org.junit.Test&#10;&#10;class Test {&#10;    @Test fun testSolution() {&#10;        //TODO: implement your test here&#10;        Assert.assertTrue(&quot;Tests not implemented for the task&quot;, false)&#10;    }&#10;}" />
+                            </map>
+                          </option>
+                          <option name="updateDate" value="0" />
+                          <option name="taskFiles">
+                            <map>
+                              <entry key="Task.kt">
+                                <value>
+                                  <TaskFile>
+                                    <option name="answerPlaceholders">
+                                      <list />
+                                    </option>
+                                    <option name="highlightErrors" value="false" />
+                                    <option name="trackChanges" value="true" />
+                                    <option name="trackLengths" value="true" />
+                                    <option name="userCreated" value="false" />
+                                    <option name="name" value="Task.kt" />
+                                    <option name="text" value="// type your solution here" />
+                                  </TaskFile>
+                                </value>
+                              </entry>
+                            </map>
+                          </option>
+                        </EduTask>
+                      </list>
+                    </option>
+                    <option name="unitId" value="0" />
+                  </Lesson>
+                </list>
+              </option>
+            </Section>
+            <Lesson>
+              <option name="customPresentableName" />
+              <option name="id" value="0" />
+              <option name="index" value="2" />
+              <option name="name" value="lesson2" />
+              <option name="updateDate" value="0" />
+              <option name="taskList">
+                <list>
+                  <EduTask>
+                    <option name="additionalFiles">
+                      <map>
+                        <entry key="additional_file.txt" value="some text" />
+                      </map>
+                    </option>
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;" />
+                    <option name="index" value="1" />
+                    <option name="name" value="task1" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="0" />
+                    <option name="testsText">
+                      <map>
+                        <entry key="Tests.kt" value="import org.junit.Assert&#10;import org.junit.Test&#10;&#10;class Test {&#10;    @Test fun testSolution() {&#10;        //TODO: implement your test here&#10;        Assert.assertTrue(&quot;Tests not implemented for the task&quot;, false)&#10;    }&#10;}" />
+                      </map>
+                    </option>
+                    <option name="updateDate" value="0" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="Task.kt">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="false" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="name" value="Task.kt" />
+                              <option name="text" value="// type your solution here" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                  </EduTask>
+                </list>
+              </option>
+              <option name="unitId" value="0" />
+            </Lesson>
+          </list>
+        </option>
+      </Course>
+    </option>
+    <option name="VERSION" value="9" />
+    <option name="myUserTests">
+      <map />
+    </option>
+  </StudyTaskManager>
+</component>
