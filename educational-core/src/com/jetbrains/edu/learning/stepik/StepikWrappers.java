@@ -18,10 +18,7 @@ import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapt
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class StepikWrappers {
   private static final Logger LOG = Logger.getInstance(StepOptions.class);
@@ -63,7 +60,7 @@ public class StepikWrappers {
     @Expose public List<TaskFile> files;
     @Expose public List<List<String>> samples;
     @SerializedName("additional_files")
-    @Expose public List<FileWrapper> additionalFiles;
+    @Expose public Map<String, AdditionalFile> additionalFiles;
     @Expose public Integer executionMemoryLimit;
     @Expose public Integer executionTimeLimit;
     @Expose public Map<String, String> codeTemplates;
@@ -120,10 +117,7 @@ public class StepikWrappers {
   }
 
   private static void setAdditionalFiles(@NotNull Task task, @NotNull StepOptions stepOptions) {
-    stepOptions.additionalFiles = new ArrayList<>();
-    for (Map.Entry<String, String> entry : task.getAdditionalFiles().entrySet()) {
-      stepOptions.additionalFiles.add(new FileWrapper(entry.getKey(), entry.getValue()));
-    }
+    stepOptions.additionalFiles = new HashMap<>(task.getAdditionalFiles());
   }
 
   private static void addFileWrapper(@NotNull VirtualFile file, List<FileWrapper> wrappers) {
