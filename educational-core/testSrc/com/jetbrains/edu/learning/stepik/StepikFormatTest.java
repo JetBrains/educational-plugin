@@ -4,10 +4,7 @@ import com.google.gson.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,6 +35,16 @@ public class StepikFormatTest {
   @Test
   public void fromThirdVersion() throws IOException {
     doStepOptionsCreationTest();
+  }
+
+  @Test
+  public void fromFifthVersion() throws IOException {
+    StepikWrappers.StepOptions options = getStepOptions();
+    assertEquals(1, options.additionalFiles.size());
+    AdditionalFile file = options.additionalFiles.get("additional_file.txt");
+    assertNotNull(file);
+    assertEquals("some text", file.getText());
+    assertEquals(true, file.isVisible());
   }
 
   @Test
@@ -207,7 +214,7 @@ public class StepikFormatTest {
   }
 
   @Test
-  public void  testOptionsFeedbackLinks() throws IOException {
+  public void testOptionsFeedbackLinks() throws IOException {
     StepikWrappers.StepOptions stepOptions = getStepOptions();
     assertEquals(FeedbackLink.LinkType.CUSTOM, stepOptions.myFeedbackLink.getType());
   }

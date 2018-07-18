@@ -31,7 +31,6 @@ public class SerializationUtils {
   public static final String HINT = "hint";
   public static final String ADDITIONAL_HINTS = "additional_hints";
   public static final String OFFSET = "offset";
-  public static final String TEXT = "text";
   public static final String LESSONS = "lessons";
   public static final String ITEMS = "items";
   public static final String COURSE = "course";
@@ -400,6 +399,9 @@ public class SerializationUtils {
     public static final String FILE_WRAPPER_TEXT = "text";
     public static final String DESCRIPTION_TEXT = "description_text";
     public static final String DESCRIPTION_FORMAT = "description_format";
+    public static final String ADDITIONAL_FILES = "additional_files";
+    public static final String TEXT = "text";
+    public static final String IS_VISIBLE = "is_visible";
 
     private Json() {
     }

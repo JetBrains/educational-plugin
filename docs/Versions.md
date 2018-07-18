@@ -218,3 +218,32 @@
       "description_format": "html"
     }
     ```
+
+6.  Convert `additional_files` list to map and add `is_visible` property to each element
+
+    Before:
+    ```json
+    {
+      // other properties
+      "additional_files": [
+        {
+          "name": "additional_file.txt",
+          "text": "some text"
+        }
+      ]
+    }
+    ```
+    
+    After:
+    ```json
+    {
+      // other properties
+      "additional_files": {
+         "additional_file.txt": {
+           "text": "some text",
+           "is_visible": true  
+         }
+       }
+    }
+    ```
+ 

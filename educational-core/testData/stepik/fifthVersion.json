@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "id": 390037,
+      "lesson": 111624,
+      "position": 1,
+      "status": "ready",
+      "block": {
+        "name": "pycharm",
+        "text": "\nWrite your task text here.\n<br>\n",
+        "video": null,
+        "animation": null,
+        "options": {
+          "task_type": "edu",
+          "test": [
+            {
+              "name": "Tests.kt",
+              "text": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
+            }
+          ],
+          "title": "task1",
+          "description_text": "<html>\nWrite your task text here.\n<br>\n</html>",
+          "description_format": "html",
+          "files": [
+            {
+              "name": "Task.kt",
+              "text": "// type your solution here",
+              "placeholders": []
+            }
+          ],
+          "additional_files": [
+            {
+              "name": "additional_file.txt",
+              "text": "some text"
+            }
+          ],
+          "format_version": 5
+        },
+        "subtitle_files": []
+      },
+      "actions": {
+        "edit_instructions": "#",
+        "submit": "#"
+      },
+      "progress": "77-390037",
+      "subscriptions": [
+        "31-77-390037",
+        "30-77-390037"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 0,
+      "passed_by": 0,
+      "correct_ratio": null,
+      "worth": 0,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-07-18T14:47:08Z",
+      "update_date": "2018-07-18T14:47:08Z",
+      "discussions_count": 0,
+      "discussion_proxy": "77-390037-1",
+      "discussion_threads": [
+        "77-390037-1",
+        "77-390037-2"
+      ]
+    }
+  ]
+}
