@@ -100,9 +100,7 @@ object YamlFormatSynchronizer {
       return
     }
     saveItem(course)
-    for (item in course.items) {
-      saveItem(item)
-    }
+    course.visitSections(SectionVisitor { section -> saveItem(section) })
     course.visitLessons(LessonVisitor { lesson ->
       for (task in lesson.getTaskList()) {
         saveItem(task)
