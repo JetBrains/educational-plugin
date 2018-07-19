@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
@@ -19,6 +20,8 @@ import java.util.List;
 /**
  * Implementation of task file which contains task windows for student to type in and
  * which is visible to student in project view
+ *
+ * Update {@link StepikChangeRetriever#isEqualTo(TaskFile, TaskFile)} if you added new property that has to be compared
  */
 
 public class TaskFile extends StudyFile {

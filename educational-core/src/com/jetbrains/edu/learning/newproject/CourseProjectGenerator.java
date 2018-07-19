@@ -35,6 +35,7 @@ import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PathUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
+import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
@@ -183,6 +184,9 @@ public abstract class CourseProjectGenerator<S> {
         if (CCUtils.isCourseCreator(project)) {
           CCUtils.initializeCCPlaceholders(project,myCourse);
         }
+        if (myCourse instanceof RemoteCourse && myCourse.isFromZip()) {
+          setStepikChangeStatuses(project);
+        }
         createAdditionalFiles(project, baseDir);
         EduUsagesCollector.projectTypeCreated(courseTypeId(myCourse));
 
@@ -191,6 +195,19 @@ public abstract class CourseProjectGenerator<S> {
       loadSolutions(project, myCourse);
     } catch (IOException e) {
       LOG.error("Failed to generate course", e);
+    }
+  }
+
+  private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
+    StepicUser user = EduSettings.getInstance().getUser();
+    RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, myCourse.getId(), ((RemoteCourse)myCourse).isCompatible());
+    if (courseFromStepik != null) {
+      StepikConnector.fillItems(courseFromStepik);
+      courseFromStepik.init(null, null, false);
+      new StepikChangeRetriever(project, courseFromStepik).setStepikChangeStatuses();
+    }
+    else {
+      LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
     }
   }
 

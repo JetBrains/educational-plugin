@@ -403,6 +403,7 @@ public class CoursesPanel extends JPanel {
                 String fileName = file.getPath();
                 Course course = EduUtils.getLocalCourse(fileName);
                 if (course != null) {
+                  course.setFromZip(true);
                   EduUsagesCollector.courseArchiveImported();
                   myCourses.add(course);
                   updateModel(myCourses, course.getName());

@@ -398,7 +398,6 @@ public class StepikConnector {
     }
   }
 
-  @VisibleForTesting
   public static void fillItems(@NotNull RemoteCourse remoteCourse) throws IOException {
     try {
       String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);

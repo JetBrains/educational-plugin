@@ -150,6 +150,12 @@ public class Lesson extends StudyItem {
     myUpdateDate = updateDate;
   }
 
+  @Transient
+  public boolean isPublic() {
+    return is_public;
+  }
+
+  @Transient
   public void setPublic(boolean isPublic) {
     this.is_public = isPublic;
   }
