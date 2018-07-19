@@ -36,6 +36,8 @@ public class RemoteCourse extends Course {
   @Expose @SerializedName("is_public") boolean isPublic;
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses
 
+  @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
+
   public String getType() {
     return myType;
   }
@@ -236,6 +238,14 @@ public class RemoteCourse extends Course {
 
   public void setCompatible(boolean compatible) {
     isCompatible = compatible;
+  }
+
+  public Date getAdditionalMaterialsUpdateDate() {
+    return myAdditionalMaterialsUpdateDate;
+  }
+
+  public void setAdditionalMaterialsUpdateDate(@NotNull Date additionalMaterialsUpdateDate) {
+    myAdditionalMaterialsUpdateDate = additionalMaterialsUpdateDate;
   }
 
   @NotNull
