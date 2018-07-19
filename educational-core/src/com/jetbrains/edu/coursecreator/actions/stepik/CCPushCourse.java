@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.Task.Modal;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -16,6 +16,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,7 +73,7 @@ public class CCPushCourse extends DumbAwareAction {
           }
         }
       }
-      ProgressManager.getInstance().run(new Task.Modal(project, "Updating Course", true) {
+      ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           indicator.setIndeterminate(false);
@@ -157,7 +158,7 @@ public class CCPushCourse extends DumbAwareAction {
 
   private static void setLessonStatus(@NotNull Lesson lesson, @NotNull StepikChangeStatus status) {
     lesson.setStepikChangeStatus(status);
-    for (com.jetbrains.edu.learning.courseFormat.tasks.Task task : lesson.taskList) {
+    for (Task task : lesson.taskList) {
       task.setStepikChangeStatus(status);
     }
   }

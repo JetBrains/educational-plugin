@@ -334,7 +334,10 @@ public class CCStepikConnector {
         indicator.setText2("Publishing additional files");
       }
 
-      updateLesson(project, postedLesson, false);
+      Lesson updatedLesson = updateLesson(project, postedLesson, false);
+      if (updatedLesson != null) {
+        ((RemoteCourse)course).setAdditionalMaterialsUpdateDate(updatedLesson.getUpdateDate());
+      }
     }
   }
 
@@ -681,17 +684,17 @@ public class CCStepikConnector {
     return null;
   }
 
-  public static int updateLesson(@NotNull final Project project,
+  public static Lesson updateLesson(@NotNull final Project project,
                                  @NotNull final Lesson lesson,
                                  boolean showNotification) {
     Lesson postedLesson = updateLessonInfo(project, lesson, showNotification);
 
     if (postedLesson != null) {
       updateLessonTasks(project, lesson, postedLesson);
-      return postedLesson.getId();
+      return postedLesson;
     }
 
-    return -1;
+    return null;
   }
 
   private static void updateLessonTasks(@NotNull Project project,
