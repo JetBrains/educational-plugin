@@ -1240,7 +1240,7 @@ public class EduUtils {
     String taskRelativePath = pathRelativeToTask(project, virtualFile);
 
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
-    if (configurator != null && configurator.excludeFromArchive(virtualFile.getPath())) {
+    if (configurator != null && configurator.excludeFromArchive(project, virtualFile.getPath())) {
       return false;
     }
 

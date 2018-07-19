@@ -2,11 +2,10 @@ package com.jetbrains.edu.java;
 
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase;
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings;
+import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase;
 import org.jetbrains.annotations.NotNull;
 
 public class JConfigurator extends GradleConfiguratorBase {
@@ -19,7 +18,7 @@ public class JConfigurator extends GradleConfiguratorBase {
 
   @NotNull
   @Override
-  public EduCourseBuilder<JdkProjectSettings> getCourseBuilder() {
+  public GradleCourseBuilderBase getCourseBuilder() {
     return myCourseBuilder;
   }
 
