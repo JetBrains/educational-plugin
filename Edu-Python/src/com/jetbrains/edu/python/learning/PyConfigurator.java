@@ -1,5 +1,6 @@
 package com.jetbrains.edu.python.learning;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PlatformUtils;
@@ -39,7 +40,7 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   }
 
   @Override
-  public boolean excludeFromArchive(@NotNull String path) {
+  public boolean excludeFromArchive(@NotNull Project project, @NotNull String path) {
     return path.contains("__pycache__") || path.endsWith(".pyc");
   }
 

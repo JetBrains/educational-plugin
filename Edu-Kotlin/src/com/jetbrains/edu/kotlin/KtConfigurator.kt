@@ -4,16 +4,14 @@ import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
-import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 
 open class KtConfigurator : GradleConfiguratorBase() {
 
   private val myCourseBuilder = KtCourseBuilder()
 
-  override fun getCourseBuilder(): EduCourseBuilder<JdkProjectSettings> = myCourseBuilder
+  override fun getCourseBuilder() = myCourseBuilder
 
   override fun getTestFileName(): String = TESTS_KT
 
