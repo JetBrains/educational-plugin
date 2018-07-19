@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
@@ -41,7 +42,7 @@ public interface EduConfigurator<Settings> {
   /**
    * Used in educator plugin to filter files to be packed into course archive
    */
-  boolean excludeFromArchive(@NotNull String name);
+  boolean excludeFromArchive(@NotNull Project project, @NotNull String name);
 
   /**
    * @return true for all the test files

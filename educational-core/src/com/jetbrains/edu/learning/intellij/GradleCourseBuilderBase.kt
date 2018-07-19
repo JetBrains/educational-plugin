@@ -26,7 +26,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   open fun getConfigVariables(project: Project): Map<String, String> {
     return mapOf("GRADLE_VERSION" to EduGradleUtils.gradleVersion(),
-                 "PROJECT_NAME" to project.name)
+                 "PROJECT_NAME" to EduGradleUtils.sanitizeName(project.name))
   }
 
   override fun refreshProject(project: Project) {
