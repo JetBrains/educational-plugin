@@ -160,7 +160,7 @@ object CCUtils {
         if (GENERATED_FILES_FOLDER == name || Project.DIRECTORY_STORE_FOLDER == name) return false
         if (file.isDirectory) return true
         if (EduUtils.isTaskDescriptionFile(name) || EduUtils.isTestsFile(project, file)) return true
-        if (name.contains(".iml") || configurator != null && configurator.excludeFromArchive(file.path)) return false
+        if (name.contains(".iml") || configurator != null && configurator.excludeFromArchive(project, file.path)) return false
 
         val taskFile = EduUtils.getTaskFile(project, file)
         if (taskFile == null) {
