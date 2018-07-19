@@ -27,6 +27,11 @@ object EduGradleUtils {
     }
 
     @JvmStatic
+    fun getInternalTemplateText(templateName: String, configVariables: Map<String, String>)  =
+      FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName)?.getText(configVariables)
+
+
+    @JvmStatic
     @Throws(IOException::class)
     fun createProjectGradleFiles(
       projectPath: String,
@@ -36,7 +41,7 @@ object EduGradleUtils {
         val projectDir = VfsUtil.findFileByIoFile(File(FileUtil.toSystemDependentName(projectPath)), true) ?: return
         for ((name, templateName) in configTemplates) {
             if (projectDir.findChild(name) == null) {
-              val configText = FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName)?.getText(configVariables) ?: continue
+              val configText = getInternalTemplateText(templateName, configVariables) ?: continue
                 createChildFile(projectDir, name, configText)
             }
         }
