@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -63,7 +64,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     }
 
     val sectionIds = course.sections.map { it.id }
-    val newSections = courseFromServer.sections.filter { section -> section.id !in sectionIds}
+    val newSections = courseFromServer.sections.filter { section -> section.id !in sectionIds }
     if (!newSections.isEmpty()) {
       createNewSections(project, newSections)
     }
@@ -81,7 +82,26 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     course.items = Lists.newArrayList(courseFromServer.items)
     setCourseInfo(courseFromServer)
 
+    updateAdditionalMaterialsFiles(courseFromServer)
+
     return Pair(lessonsUpdated, newLessons.size)
+  }
+
+  private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
+    for (lesson in courseFromServer.items.filterIsInstance(Lesson::class.java)) {
+      if (lesson.isAdditional) {
+        if (!EduUtils.isAfter(lesson.updateDate, course.additionalMaterialsUpdateDate)) {
+          return
+        }
+        course.additionalMaterialsUpdateDate = lesson.updateDate
+
+        val filesToCreate = GeneratorUtils.additionalFilesToCreate(lesson)
+        val baseDir = project.baseDir
+        for ((name, value) in filesToCreate) {
+          GeneratorUtils.createChildFile(baseDir, name, value)
+        }
+      }
+    }
   }
 
   private fun setCourseInfo(courseFromServer: Course) {
@@ -140,7 +160,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
 
   @Throws(URISyntaxException::class, IOException::class)
   private fun updateSections(sectionsFromServer: List<Section>) {
-    val sectionsById = course.sections.associateBy{ it.id }
+    val sectionsById = course.sections.associateBy { it.id }
     for (sectionFromServer in sectionsFromServer) {
       sectionFromServer.lessons.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
 
