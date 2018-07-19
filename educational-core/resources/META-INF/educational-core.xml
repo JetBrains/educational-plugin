@@ -129,6 +129,7 @@
       <action id="Educational.Educator.PushLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson"/>
       <action id="Educational.Educator.PushSection" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection"/>
       <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
+      <action id="Educational.Educator.UpdateAdditionalMaterials" class="com.jetbrains.edu.coursecreator.actions.stepik.UpdateAdditionalMaterials"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
     </group>
 
