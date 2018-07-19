@@ -18,7 +18,10 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
-import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.ext.course
+import com.jetbrains.edu.learning.courseFormat.ext.dirName
+import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
+import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.intellij.EduIntellijUtils
@@ -74,8 +77,11 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createLesson(lesson: Lesson, courseDir: VirtualFile) {
-    if (EduNames.ADDITIONAL_MATERIALS == lesson.name) {
+    if (lesson.isAdditional) {
       createAdditionalFiles(lesson, courseDir)
+      if (lesson.course is RemoteCourse) {
+        (lesson.course as RemoteCourse).additionalMaterialsUpdateDate = lesson.updateDate
+      }
     } else {
       val lessonDir = createUniqueDir(courseDir, lesson)
       val taskList = lesson.getTaskList()
@@ -144,15 +150,21 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   private fun createAdditionalFiles(lesson: Lesson, courseDir: VirtualFile) {
-    val taskList = lesson.getTaskList()
-    if (taskList.size != 1) return
-    val task = taskList[0]
+    val filesToCreate = additionalFilesToCreate(lesson)
 
+    createFiles(courseDir, filesToCreate)
+  }
+
+  fun additionalFilesToCreate(lesson: Lesson): Map<String, String> {
+    if (!lesson.isAdditional) {
+      return emptyMap()
+    }
+
+    val task = lesson.taskList.singleOrNull() ?: return emptyMap()
     val filesToCreate = HashMap(task.testsText)
     task.getTaskFiles().mapValuesTo(filesToCreate) { entry -> entry.value.text }
     filesToCreate.putAll(task.additionalFiles)
-
-    createFiles(courseDir, filesToCreate)
+    return filesToCreate
   }
 
   @Throws(IOException::class)
