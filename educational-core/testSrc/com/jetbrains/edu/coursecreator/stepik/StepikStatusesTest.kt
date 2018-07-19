@@ -456,13 +456,13 @@ class StepikStatusesTest: EduActionTestCase() {
 
 internal fun checkStatus(changedItem: StudyItem, expectedStatus: StepikChangeStatus) {
   TestCase.assertEquals("Wrong status ${changedItem.name}. Expected: $expectedStatus. Actual: ${changedItem.stepikChangeStatus}",
-                        changedItem.stepikChangeStatus, expectedStatus)
+                        expectedStatus, changedItem.stepikChangeStatus)
 }
 
 internal fun checkOtherItemsUpToDate(course: Course, vararg changedItems: StudyItem) {
   if (course !in changedItems) {
     TestCase.assertEquals("Wrong status for ${course.name}.Expected status: UP_TO_DATE. Actual: ${course.stepikChangeStatus}",
-                          course.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
+                          StepikChangeStatus.UP_TO_DATE, course.stepikChangeStatus)
   }
 
   for (item in course.items) {
@@ -472,7 +472,7 @@ internal fun checkOtherItemsUpToDate(course: Course, vararg changedItems: StudyI
 
     if (item is Section) {
       TestCase.assertEquals("Wrong status for ${item.name}.Expected status: UP_TO_DATE. Actual: ${item.stepikChangeStatus}",
-                            item.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
+                            StepikChangeStatus.UP_TO_DATE, item.stepikChangeStatus)
       for (lesson in item.lessons) {
         checkLessonsUpToDate(lesson, changedItems)
       }
@@ -492,14 +492,14 @@ internal fun checkLessonsUpToDate(lesson: Lesson,
   }
 
   TestCase.assertEquals("Wrong status for ${lesson.name}.Expected status: UP_TO_DATE. Actual: ${lesson.stepikChangeStatus}",
-                        lesson.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
+                        StepikChangeStatus.UP_TO_DATE, lesson.stepikChangeStatus)
 
   for (task in lesson.taskList) {
     if (task in changedItems) {
       continue
     }
     TestCase.assertEquals("Wrong status for ${task.name}.Expected status: UP_TO_DATE. Actual: ${task.stepikChangeStatus}",
-                          task.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
+                          StepikChangeStatus.UP_TO_DATE, task.stepikChangeStatus)
   }
 }
 

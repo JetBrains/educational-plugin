@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning
 
+import com.google.common.collect.Lists
 import com.intellij.lang.Language
 import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -18,6 +19,9 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.CCVirtualFileListener
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -176,4 +180,37 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
       virtualFileManager.removeVirtualFileListener(listener)
     }
   }
+
+  protected fun Course.asRemote(): RemoteCourse {
+    val remoteCourse = RemoteCourse()
+    remoteCourse.id = 1
+    remoteCourse.name = name
+    remoteCourse.courseMode = CCUtils.COURSE_MODE
+    remoteCourse.items = Lists.newArrayList(items)
+    remoteCourse.language = language
+
+    for (item in remoteCourse.items) {
+      if (item is Section) {
+        item.id = item.index
+        for (lesson in item.lessons) {
+          lesson.id = lesson.index
+          for (task in lesson.taskList) {
+            task.stepId = task.index
+          }
+        }
+      }
+
+      if (item is Lesson) {
+        item.id = item.index
+        for (task in item.taskList) {
+          task.stepId = task.index
+        }
+      }
+    }
+
+    remoteCourse.init(null, null, true)
+    StudyTaskManager.getInstance(project).course = remoteCourse
+    return remoteCourse
+  }
+
 }

@@ -24,7 +24,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
           }
         }
       }
-    }
+    }.asRemote()
 
     checkMessage(course, "No changes")
   }
@@ -45,11 +45,14 @@ class CCShowChangedFilesTest: EduActionTestCase() {
           }
         }
       }
-    }
+    }.asRemote()
 
-    course.getSection("section2")!!.stepikChangeStatus = CONTENT
+    val changedSection = course.getSection("section2")!!
+    changedSection.stepikChangeStatus = CONTENT
+    changedSection.id = 0
+    changedSection.lessons[0].id = 0
 
-    checkMessage(course,  "section2 $CONTENT\n" )
+    checkMessage(course,  "section2 $CONTENT\nsection2 new\nsection2/lesson1 new\n")
   }
 
   fun `test course lesson moved`() {
@@ -57,7 +60,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
       lesson()
       lesson("lesson2")
       section()
-    }
+    }.asRemote()
 
     course.stepikChangeStatus = CONTENT
     course.sections[0].stepikChangeStatus = INFO_AND_CONTENT
@@ -78,7 +81,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
           }
         }
       }
-    }
+    }.asRemote()
 
     val changedSection = course.sections[0]
     changedSection.stepikChangeStatus = INFO
@@ -95,11 +98,12 @@ class CCShowChangedFilesTest: EduActionTestCase() {
           eduTask()
         }
       }
-    }
+    }.asRemote()
 
     val changedSection = course.sections[0]
     changedSection.stepikChangeStatus = CONTENT
-    checkMessage(course, "${changedSection.name} ${CONTENT}\n")
+    changedSection.lessons[1].id = 0
+    checkMessage(course, "${changedSection.name} ${CONTENT}\nsection1/lesson2 new\n")
   }
 
   fun `test lesson moved between sections`() {
@@ -111,7 +115,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
         lesson("lesson1")
         lesson("lesson2")
       }
-    }
+    }.asRemote()
 
     course.sections.forEach {
       it.stepikChangeStatus = CONTENT
@@ -132,7 +136,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
         eduTask("task1")
         eduTask("task3")
       }
-    }
+    }.asRemote()
 
     course.lessons.forEach {
       it.stepikChangeStatus = CONTENT
@@ -148,7 +152,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
         eduTask("task2")
         eduTask("task3")
       }
-    }
+    }.asRemote()
 
     val changedTask2 = course.lessons[0].getTask("task2")!!
     changedTask2.stepikChangeStatus = INFO_AND_CONTENT

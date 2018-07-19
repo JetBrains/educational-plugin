@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -25,6 +26,8 @@ import java.util.*;
 
 /**
  * Implementation of task which contains task files, tests, input file for tests
+ *
+ * Update {@link StepikChangeRetriever#isEqualTo(Task, Task)} if you added new property that has to be compared
  *
  * To implement new task there are 5 steps to be done:
  * - Extend {@link Task} class

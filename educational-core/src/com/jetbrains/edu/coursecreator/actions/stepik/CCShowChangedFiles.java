@@ -49,20 +49,39 @@ public class CCShowChangedFiles extends DumbAwareAction {
         appendChangeLine(item, builder);
       }
 
+      if (isNew(item)) {
+        appendChangeLine(item, builder, "New");
+      }
+
       if (item instanceof Section) {
         for (Lesson lesson : ((Section)item).getLessons()) {
           if (lesson.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
             appendChangeLine(lesson, builder);
           }
+
+          // all tasks of new lesson are new
+          if (isNew(lesson)) {
+            appendChangeLine(lesson, builder, "New");
+            continue;
+          }
+
           for (Task task : lesson.taskList) {
             if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
               appendChangeLine(task, builder);
+            }
+            if (isNew(task)) {
+              appendChangeLine(task, builder, "New");
             }
           }
         }
       }
 
       if (item instanceof Lesson) {
+        // all tasks of new lesson are new
+        if (isNew(item)) {
+          continue;
+        }
+
         for (Task task : ((Lesson)item).taskList) {
           if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
             appendChangeLine(task, builder);
@@ -77,11 +96,23 @@ public class CCShowChangedFiles extends DumbAwareAction {
     return message;
   }
 
+  /**
+   * Check if current item is recently added and isn't on Stepik. We have to do it as
+   * we don't have "New" StepikChangeStatus
+   */
+  private static boolean isNew(@NotNull StudyItem item) {
+    return item.getId() == 0;
+  }
+
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
+    appendChangeLine(item, stringBuilder, item.getStepikChangeStatus().toString());
+  }
+
+  private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder, @NotNull String status) {
     stringBuilder
       .append(getPath(item))
       .append(" ")
-      .append(item.getStepikChangeStatus())
+      .append(status)
       .append("\n");
   }
 
