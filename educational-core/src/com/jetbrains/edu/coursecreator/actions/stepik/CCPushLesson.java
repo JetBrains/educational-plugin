@@ -136,7 +136,8 @@ public class CCPushLesson extends DumbAwareAction {
   public static void doPush(Lesson lesson, Project project, Course course) {
     if (lesson.getId() > 0) {
       StepikWrappers.Unit unit = StepikConnector.getUnit(lesson.unitId);
-      int lessonId = CCStepikConnector.updateLesson(project, lesson, true);
+      Lesson updatedLesson = CCStepikConnector.updateLesson(project, lesson, true);
+      int lessonId = updatedLesson == null ? -1 : updatedLesson.getId();
       lesson.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
       setUpdated(lesson);
       if (lessonId != -1) {
