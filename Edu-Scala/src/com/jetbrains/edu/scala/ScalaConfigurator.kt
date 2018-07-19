@@ -2,17 +2,15 @@ package com.jetbrains.edu.scala
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
 
 class ScalaConfigurator : GradleConfiguratorBase() {
 
   private val myCourseBuilder = ScalaCourseBuilder()
 
-  override fun getCourseBuilder(): EduCourseBuilder<JdkProjectSettings> = myCourseBuilder
+  override fun getCourseBuilder() = myCourseBuilder
 
   override fun getTestFileName(): String = TEST_SCALA
 
