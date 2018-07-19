@@ -24,6 +24,7 @@ hs_err_pid*
 !.idea/runConfigurations/*
 !.idea/inspectionProfiles/*
 !.idea/codeStyles/*
+!.idea/vcs.xml
 .idea/
 build/
 .gradle/
