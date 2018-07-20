@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
 
-public class AdditionalFile {
+public class AdditionalFile implements VisibleFile {
 
   @SerializedName("text")
   @Expose
@@ -31,10 +31,12 @@ public class AdditionalFile {
     myText = text;
   }
 
+  @Override
   public boolean isVisible() {
     return myIsVisible;
   }
 
+  @Override
   public void setVisible(boolean visible) {
     myIsVisible = visible;
   }
