@@ -1,6 +1,5 @@
-package com.jetbrains.edu.coursecreator.actions.stepik
+package com.jetbrains.edu.coursecreator.stepik
 
-import com.google.common.collect.Lists
 import com.intellij.ide.actions.DeleteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -431,55 +430,6 @@ class StepikStatusesTest: EduActionTestCase() {
     checkOtherItemsUpToDate(course, changedTask2, changedTask3)
   }
 
-  private fun checkStatus(changedItem: StudyItem, expectedStatus: StepikChangeStatus) {
-    TestCase.assertEquals("Wrong status ${changedItem.name}. Expected: $expectedStatus. Actual: ${changedItem.stepikChangeStatus}",
-                        changedItem.stepikChangeStatus, expectedStatus)
-  }
-
-  private fun checkOtherItemsUpToDate(course: Course, vararg changedItems: StudyItem) {
-    if (course !in changedItems) {
-      TestCase.assertEquals("Wrong status for ${course.name}.Expected status: UP_TO_DATE. Actual: ${course.stepikChangeStatus}",
-                          course.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
-    }
-
-    for (item in course.items) {
-      if (item in changedItems) {
-        continue
-      }
-
-      if (item is Section) {
-        TestCase.assertEquals("Wrong status for ${item.name}.Expected status: UP_TO_DATE. Actual: ${item.stepikChangeStatus}",
-                            item.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
-        for (lesson in item.lessons) {
-          checkLessonsUpToDate(lesson, changedItems)
-        }
-      }
-
-      if (item is Lesson) {
-        checkLessonsUpToDate(item, changedItems)
-      }
-    }
-
-  }
-
-  private fun checkLessonsUpToDate(lesson: Lesson,
-                                   changedItems: Array<out StudyItem>) {
-    if (lesson in changedItems) {
-      return
-    }
-
-    TestCase.assertEquals("Wrong status for ${lesson.name}.Expected status: UP_TO_DATE. Actual: ${lesson.stepikChangeStatus}",
-                        lesson.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
-
-    for (task in lesson.taskList) {
-      if (task in changedItems) {
-        continue
-      }
-      TestCase.assertEquals("Wrong status for ${task.name}.Expected status: UP_TO_DATE. Actual: ${task.stepikChangeStatus}",
-                          task.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
-    }
-  }
-
   private inner class CCSectionMoveHandlerTest(private val myDelta: Int) : CCSectionMoveHandlerDelegate() {
     override fun getDelta(project: Project, targetItem: StudyItem): Int {
       return myDelta
@@ -502,37 +452,54 @@ class StepikStatusesTest: EduActionTestCase() {
     VirtualFileManager.getInstance().removeVirtualFileListener(ccVirtualFileListener)
     super.tearDown()
   }
+}
 
-  private fun Course.asRemote(): RemoteCourse {
-    val remoteCourse = RemoteCourse()
-    remoteCourse.id = 1
-    remoteCourse.name = name
-    remoteCourse.courseMode = CCUtils.COURSE_MODE
-    remoteCourse.items = Lists.newArrayList(items)
-    remoteCourse.language = language
+internal fun checkStatus(changedItem: StudyItem, expectedStatus: StepikChangeStatus) {
+  TestCase.assertEquals("Wrong status ${changedItem.name}. Expected: $expectedStatus. Actual: ${changedItem.stepikChangeStatus}",
+                        changedItem.stepikChangeStatus, expectedStatus)
+}
 
-    for (item in remoteCourse.items) {
-      if (item is Section) {
-        item.id = 1
-        for (lesson in item.lessons) {
-          lesson.id = 1
-          for (task in lesson.taskList) {
-            task.stepId = 1
-          }
-        }
-      }
+internal fun checkOtherItemsUpToDate(course: Course, vararg changedItems: StudyItem) {
+  if (course !in changedItems) {
+    TestCase.assertEquals("Wrong status for ${course.name}.Expected status: UP_TO_DATE. Actual: ${course.stepikChangeStatus}",
+                          course.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
+  }
 
-      if (item is Lesson) {
-        item.id = 1
-        for (task in item.taskList) {
-          task.stepId = 1
-        }
+  for (item in course.items) {
+    if (item in changedItems) {
+      continue
+    }
+
+    if (item is Section) {
+      TestCase.assertEquals("Wrong status for ${item.name}.Expected status: UP_TO_DATE. Actual: ${item.stepikChangeStatus}",
+                            item.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
+      for (lesson in item.lessons) {
+        checkLessonsUpToDate(lesson, changedItems)
       }
     }
 
-    remoteCourse.init(null, null, true)
-    StudyTaskManager.getInstance(project).course = remoteCourse
-    return remoteCourse
+    if (item is Lesson) {
+      checkLessonsUpToDate(item, changedItems)
+    }
+  }
+
+}
+
+internal fun checkLessonsUpToDate(lesson: Lesson,
+                                 changedItems: Array<out StudyItem>) {
+  if (lesson in changedItems) {
+    return
+  }
+
+  TestCase.assertEquals("Wrong status for ${lesson.name}.Expected status: UP_TO_DATE. Actual: ${lesson.stepikChangeStatus}",
+                        lesson.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
+
+  for (task in lesson.taskList) {
+    if (task in changedItems) {
+      continue
+    }
+    TestCase.assertEquals("Wrong status for ${task.name}.Expected status: UP_TO_DATE. Actual: ${task.stepikChangeStatus}",
+                          task.stepikChangeStatus, StepikChangeStatus.UP_TO_DATE)
   }
 }
 
