@@ -69,6 +69,9 @@ public class EduNames {
   public static final String OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html";
   public static final String OAUTH_ERROR_PAGE = "/oauthResponsePages/errorPage.html";
 
+  public static final String OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html";
+  public static final String OAUTH_ERROR_PAGE = "/oauthResponsePages/errorPage.html";
+
   private EduNames() {
   }
 
