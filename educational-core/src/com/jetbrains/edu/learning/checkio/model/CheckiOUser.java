@@ -20,7 +20,6 @@ public class CheckiOUser {
     myUsername = "";
     myEmail = "";
     myUid = -1;
-    myTokens = new Tokens();
   }
 
   public String getUsername() {
@@ -49,9 +48,6 @@ public class CheckiOUser {
 
   @Override
   public int hashCode() {
-    int result = myUid;
-    result = 31 * result + myUsername.hashCode();
-    result = 31 * result + myEmail.hashCode();
-    return result;
+    return myUid;
   }
 }

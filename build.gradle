@@ -29,6 +29,7 @@ def buildNumber = System.getenv("BUILD_NUMBER")
 version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
 import de.undercouch.gradle.tasks.download.Download
+import kotlin.Pair
 import org.apache.tools.ant.taskdefs.condition.Os
 import groovy.io.FileType
 import java.nio.file.Files
