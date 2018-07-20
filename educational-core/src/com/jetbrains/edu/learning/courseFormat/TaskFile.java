@@ -21,7 +21,7 @@ import java.util.List;
  * which is visible to student in project view
  */
 
-public class TaskFile {
+public class TaskFile implements VisibleFile {
   @Expose public String name;
   @Expose public String text;
   private boolean myUserCreated = false;
@@ -133,10 +133,12 @@ public class TaskFile {
     myHighlightErrors = highlightErrors;
   }
 
+  @Override
   public boolean isVisible() {
     return myIsVisible;
   }
 
+  @Override
   public void setVisible(boolean visible) {
     myIsVisible = visible;
   }
