@@ -21,6 +21,7 @@ public class CheckiOOAuthBundle {
   @NonNls
   private static final String BUNDLE = "checkio.checkio-oauth";
 
+  @NotNull
   private static ResourceBundle getBundle() {
     ResourceBundle bundle = SoftReference.dereference(ourBundle);
     if (bundle == null) {

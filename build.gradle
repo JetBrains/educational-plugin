@@ -29,10 +29,8 @@ def buildNumber = System.getenv("BUILD_NUMBER")
 version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 
 import de.undercouch.gradle.tasks.download.Download
-import kotlin.Pair
 import org.apache.tools.ant.taskdefs.condition.Os
 import groovy.io.FileType
-
 import java.nio.file.Files
 
 String downloadStudioIfNeededAndGetPath() {
@@ -84,14 +82,11 @@ static String studioPath(File studioFolder) {
     }
 }
 
-static void createProperties(File location, Pair<String, String>... properties) {
+static void createProperties(File location, LinkedHashMap<String, String> properties) {
     createFile(location.toPath())
     Properties props = new Properties()
 
-    for (Pair<String, String> property : properties) {
-        props.setProperty(property.first, property.second)
-    }
-
+    properties.each {key, value -> props.setProperty(key, value)}
     props.store(location.newWriter(), null)
 }
 
@@ -180,8 +175,10 @@ allprojects {
             exclude module: 'kotlin-stdlib'
             exclude module: 'kotlin-reflect'
         }
-      compile 'com.squareup.retrofit2:retrofit:2.4.0'
-      implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+        compile 'com.squareup.retrofit2:retrofit:2.4.0'
+        implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
     }
 }
@@ -283,8 +280,10 @@ configure(project(':educational-core')) {
     task createCheckiOOAuthProperties() {
         createProperties(
           file("${projectDir}/resources/checkio/checkio-oauth.properties"),
-          new Pair("checkioClientId", checkioClientId),
-          new Pair("checkioClientSecret", checkioClientSecret)
+          [
+            "checkioClientId" : checkioClientId,
+            "checkioClientSecret" : checkioClientSecret
+          ]
         )
     }
 
@@ -309,8 +308,10 @@ configure(project(':Edu-Kotlin')) {
     task createTwitterProperties() {
         createProperties(
           file("${projectDir}/resources/twitter/kotlin_koans/oauth_twitter.properties"),
-          new Pair("consumerKey", consumerKey),
-          new Pair("consumerSecret", consumerSecret)
+          [
+            "consumerKey" : consumerKey,
+            "consumerSecret" : consumerSecret
+          ]
         )
     }
     processResources.dependsOn(createTwitterProperties)

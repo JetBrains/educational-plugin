@@ -5,14 +5,18 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOConnector;
 import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
+import com.jetbrains.edu.learning.checkio.model.Tokens;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @State(name = "CheckiOSettings", storages = @Storage("other.xml"))
 public class CheckiOSettings implements PersistentStateComponent<CheckiOSettings> {
   private CheckiOSettings() {}
-  private CheckiOUser user;
+
+  private CheckiOUser myUser;
+  private Tokens myTokens;
 
   @Nullable
   @Override
@@ -31,10 +35,19 @@ public class CheckiOSettings implements PersistentStateComponent<CheckiOSettings
 
   @Nullable
   public CheckiOUser getUser() {
-    return user;
+    return myUser;
+  }
+
+  @Nullable
+  public Tokens getTokens() {
+    return myTokens;
   }
 
   public void setUser(@Nullable final CheckiOUser user) {
-    this.user = user;
+    this.myUser = user;
+  }
+
+  public void setTokens(@Nullable Tokens tokens) {
+    this.myTokens = tokens;
   }
 }

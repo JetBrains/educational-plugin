@@ -2,20 +2,19 @@ package com.jetbrains.edu.learning.checkio.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.intellij.util.xmlb.annotations.Property;
-import com.jetbrains.edu.learning.checkio.api.CheckiOApiController;
 
 public class CheckiOUser {
+  @Property
   @SerializedName("username")
   private String myUsername;
 
+  @Property
   @SerializedName("email")
   private String myEmail;
 
+  @Property
   @SerializedName("uid")
   private int myUid;
-
-  @Property
-  private Tokens myTokens;
 
   private CheckiOUser() {
     myUsername = "";
@@ -34,33 +33,6 @@ public class CheckiOUser {
 
   public int getUid() {
     return myUid;
-  }
-
-  @SuppressWarnings("unused") // used for deserialization
-  public void setUsername(String username) {
-    myUsername = username;
-  }
-
-  @SuppressWarnings("unused")
-  public void setEmail(String email) {
-    myEmail = email;
-  }
-
-
-  @SuppressWarnings("unused")
-  public void setUid(int uid) {
-    myUid = uid;
-  }
-
-  public String getAccessToken() {
-    if (!myTokens.isUpToDate()) {
-      setTokens(CheckiOApiController.getInstance().refreshTokens(myTokens.getRefreshToken()));
-    }
-    return myTokens == null ? null : myTokens.getAccessToken();
-  }
-
-  public void setTokens(Tokens tokens) {
-    myTokens = tokens;
   }
 
   @Override
