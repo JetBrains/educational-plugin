@@ -5,7 +5,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOConnector;
 import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import com.jetbrains.edu.learning.checkio.model.Tokens;
 import org.jetbrains.annotations.NotNull;
