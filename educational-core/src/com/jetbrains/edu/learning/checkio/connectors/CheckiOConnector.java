@@ -4,8 +4,6 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.Topic;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.checkio.CheckiONames;
 import com.jetbrains.edu.learning.checkio.CheckiOOAuthBundle;
 import com.jetbrains.edu.learning.checkio.api.CheckiOApiService;

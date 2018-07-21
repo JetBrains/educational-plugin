@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.checkio.connectors;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.authUtils.BuiltinServerUtils;
 import com.jetbrains.edu.learning.checkio.CheckiONames;
 import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import com.jetbrains.edu.learning.checkio.model.Tokens;
@@ -78,14 +78,14 @@ public class CheckiORestService extends RestService {
                                           @NotNull ChannelHandlerContext context,
                                           @NotNull String errorMessage) throws IOException {
     LOG.error(errorMessage);
-    EduUtils.showErrorPage(request, context, CheckiONames.CHECKIO, errorMessage);
+    BuiltinServerUtils.showErrorPage(request, context, CheckiONames.CHECKIO, errorMessage);
     return errorMessage;
   }
 
   @Nullable
   private static String sendOkResponse(@NotNull HttpRequest request, @NotNull ChannelHandlerContext context) throws IOException {
     LOG.info("Successful CheckiO authorization");
-    EduUtils.showOkPage(request, context, CheckiONames.CHECKIO);
+    BuiltinServerUtils.showOkPage(request, context, CheckiONames.CHECKIO);
     return null;
   }
 }

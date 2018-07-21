@@ -14,7 +14,6 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
@@ -49,9 +48,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -93,10 +90,6 @@ import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 import kotlin.text.StringsKt;
 import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.IElementType;
@@ -109,14 +102,12 @@ import org.intellij.markdown.parser.MarkdownParser;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.io.Responses;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -1289,47 +1280,5 @@ public class EduUtils {
   public static boolean isAfter(Date date, Date date2) {
     long diff = date.getTime() - date2.getTime();
     return diff > Time.MINUTE;
-  }
-
-  public static void showOkPage(@NotNull HttpRequest request, @NotNull ChannelHandlerContext context, @NotNull String platformName)
-    throws IOException {
-
-    final String pageContent = getPageTemplate(EduNames.OAUTH_OK_PAGE)
-      .replaceAll("%IDE_NAME", ApplicationNamesInfo.getInstance().getFullProductName())
-      .replaceAll("%PLATFORM_NAME", platformName);
-
-    Responses.send(createResponse(pageContent), context.channel(), request);
-  }
-
-  public static void showErrorPage(@NotNull HttpRequest request,
-                                   @NotNull ChannelHandlerContext context,
-                                   @NotNull String platformName,
-                                   @NotNull String errorMessage) throws IOException {
-
-    final String pageContent = getPageTemplate(EduNames.OAUTH_ERROR_PAGE)
-      .replaceAll("%ERROR_MESSAGE", errorMessage)
-      .replaceAll("%PLATFORM_NAME", platformName);
-
-    Responses.send(createResponse(pageContent), context.channel(), request);
-  }
-
-  @NotNull
-  private static HttpResponse createResponse(@NotNull String template) throws IOException {
-    try (
-      BufferExposingByteArrayOutputStream byteOut = new BufferExposingByteArrayOutputStream();
-    ) {
-      byteOut.write(StreamUtil.loadFromStream(new ByteArrayInputStream(template.getBytes(Charset.forName("UTF-8")))));
-      HttpResponse response = Responses.response("text/html", Unpooled.wrappedBuffer(byteOut.getInternalBuffer(), 0, byteOut.size()));
-      Responses.addNoCache(response);
-      response.headers().set("X-Frame-Options", "Deny");
-      return response;
-    }
-  }
-
-  @NotNull
-  private static String getPageTemplate(@NotNull String pagePath) throws IOException {
-    try (InputStream pageTemplateStream = EduUtils.class.getResourceAsStream(pagePath)) {
-      return StreamUtil.readText(pageTemplateStream, Charset.forName("UTF-8"));
-    }
   }
 }

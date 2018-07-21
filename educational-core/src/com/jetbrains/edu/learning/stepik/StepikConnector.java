@@ -9,7 +9,6 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -19,7 +18,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
@@ -27,23 +25,20 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import org.apache.http.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,10 +48,8 @@ import org.jetbrains.ide.BuiltInServerManager;
 import javax.swing.event.HyperlinkEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -950,8 +943,9 @@ public class StepikConnector {
   @NotNull
   public static String getOAuthRedirectUrl() {
     if (EduUtils.isAndroidStudio()) {
-      CustomServerAuthorizer customServerAuthorizer = new CustomServerAuthorizer();
-      int port = customServerAuthorizer.startServer();
+      CustomAuthorizationServer customServer = new CustomAuthorizationServer(StepikNames.STEPIK);
+
+      int port = customServer.handle(createContextHandler(customServer));
       if (port != -1) {
         return "http://localhost:" + port;
       }
@@ -966,6 +960,20 @@ public class StepikConnector {
     }
 
     return StepikNames.EXTERNAL_REDIRECT_URL;
+  }
+
+  private static CustomAuthorizationServer.ContextHandler createContextHandler(CustomAuthorizationServer server) {
+    return new CustomAuthorizationServer.ContextHandler(server) {
+      @Override
+      public String afterCodeReceived(@NotNull String code) {
+        StepicUser user = StepikAuthorizedClient.login(code, "http://localhost:" + getPort());
+        if (user != null) {
+          EduSettings.getInstance().setUser(user);
+          return null;
+        }
+        return "Couldn't get user info";
+      }
+    };
   }
 
   public static void doAuthorize(@NotNull Runnable externalRedirectUrlHandler) {
@@ -1104,107 +1112,4 @@ public class StepikConnector {
   public static List<Integer> getInProgressCourses() {
     return getCoursesIds(IN_PROGRESS_COURSES_LINK);
   }
-
-  private static class CustomServerAuthorizer {
-    private static final int DEFAULT_AUTH_SERVER_PORT = 36656;
-    private static final int PORT_TO_TRY_NUMBER = 10;
-    private HttpServer myServer;
-
-    private int startServer() {
-      int port = -1;
-      for (int i = 0; i < PORT_TO_TRY_NUMBER; i++) {
-        if (available(DEFAULT_AUTH_SERVER_PORT + i)) {
-          port = DEFAULT_AUTH_SERVER_PORT + i;
-          break;
-        }
-      }
-      if (port != -1) {
-        SocketConfig socketConfig = SocketConfig.custom()
-                .setSoTimeout(15000)
-                .setTcpNoDelay(true)
-                .build();
-        myServer = ServerBootstrap.bootstrap()
-                .setListenerPort(port)
-                .setServerInfo("Edu Tools Auth Server")
-                .registerHandler("*", new MyContextHandler())
-                .setSocketConfig(socketConfig)
-                .create();
-        try {
-          myServer.start();
-        }
-        catch (IOException e) {
-          LOG.warn(e.getMessage());
-          return -1;
-        }
-      }
-
-      return port;
-    }
-
-    private static boolean available(int port) {
-      try (Socket ignored = new Socket("localhost", port)) {
-        return false;
-      }
-      catch (IOException ignored) {
-        return true;
-      }
-    }
-
-
-    private class MyContextHandler implements HttpRequestHandler {
-
-      private void stopServerInNewThread() {
-        ApplicationManager.getApplication().executeOnPooledThread(() -> {
-          try {
-            LOG.info("Stopping server");
-            myServer.stop();
-            LOG.info("Server stopped");
-          }
-          catch (Exception e) {
-            LOG.warn(e.getMessage());
-          }
-        });
-      }
-
-      @Override
-      public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws IOException {
-        LOG.info("Handling auth response");
-
-        try {
-          List<NameValuePair> parse = URLEncodedUtils.parse(new URI(httpRequest.getRequestLine().getUri()), "UTF-8");
-          for (NameValuePair pair : parse) {
-            if (pair.getName().equals("code")) {
-              String code = pair.getValue();
-              StepicUser user = StepikAuthorizedClient.login(code, "http://localhost:" + myServer.getLocalPort());
-              if (user != null) {
-                EduSettings.getInstance().setUser(user);
-                sendResponse(httpResponse, "/oauthResponsePages/okPage.html");
-              }
-              else {
-                sendResponse(httpResponse, "/oauthResponsePages/errorPage.html");
-              }
-              break;
-            }
-          }
-        }
-        catch (URISyntaxException e) {
-          LOG.warn(e.getMessage());
-          sendResponse(httpResponse, "/oauthResponsePages/errorPage.html");
-        }
-        finally {
-          stopServerInNewThread();
-        }
-      }
-
-      private void sendResponse(HttpResponse httpResponse, String pageAddress) throws IOException {
-        InputStream pageTemplateStream = getClass().getResourceAsStream(pageAddress);
-        String pageTemplate = StreamUtil.readText(pageTemplateStream, Charset.forName("UTF-8"));
-        String pageWithProductName = pageTemplate.replaceAll("%IDE_NAME", ApplicationNamesInfo.getInstance().getFullProductName());
-        httpResponse.setHeader("Content-Type", "text/html");
-        httpResponse.setEntity(new StringEntity(pageWithProductName));
-      }
-    }
-  }
-
-
 }
