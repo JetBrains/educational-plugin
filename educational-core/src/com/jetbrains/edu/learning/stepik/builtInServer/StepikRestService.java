@@ -18,32 +18,27 @@ package com.jetbrains.edu.learning.stepik.builtInServer;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
-import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.AppIcon;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.authUtils.BuiltinServerUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.stepik.*;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.RestService;
-import org.jetbrains.io.Responses;
 
 import javax.swing.*;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -170,7 +165,7 @@ public class StepikRestService extends RestService {
         StepicUser user = StepikAuthorizedClient.login(code, StepikConnector.getOAuthRedirectUrl());
         if (user != null) {
           EduSettings.getInstance().setUser(user);
-          EduUtils.showOkPage(request, context, StepikNames.STEPIK);
+          BuiltinServerUtils.showOkPage(request, context, StepikNames.STEPIK);
           showStepikNotification(NotificationType.INFORMATION,
                                  "Logged in as " + user.getFirstName() + " " + user.getLastName());
           focusOnApplicationWindow();
@@ -178,7 +173,7 @@ public class StepikRestService extends RestService {
         }
       }
 
-      EduUtils.showErrorPage(request, context, StepikNames.STEPIK, "Couldn't find code parameter for Stepik OAuth");
+      BuiltinServerUtils.showErrorPage(request, context, StepikNames.STEPIK, "Couldn't find code parameter for Stepik OAuth");
       showStepikNotification(NotificationType.ERROR, "Failed to log in");
       return "Couldn't find code parameter for Stepik OAuth";
     }
@@ -195,24 +190,6 @@ public class StepikRestService extends RestService {
       AppIcon.getInstance().requestFocus((IdeFrame)frame);
       frame.toFront();
     });
-  }
-
-  private void sendHtmlResponse(@NotNull HttpRequest request, @NotNull ChannelHandlerContext context, String pagePath) throws IOException {
-    BufferExposingByteArrayOutputStream byteOut = new BufferExposingByteArrayOutputStream();
-    InputStream pageTemplateStream = getClass().getResourceAsStream(pagePath);
-    String pageTemplate = StreamUtil.readText(pageTemplateStream, Charset.forName("UTF-8"));
-    try {
-      String pageWithProductName = pageTemplate.replaceAll("%IDE_NAME", ApplicationNamesInfo.getInstance().getFullProductName());
-      byteOut.write(StreamUtil.loadFromStream(new ByteArrayInputStream(pageWithProductName.getBytes(Charset.forName("UTF-8")))));
-      HttpResponse response = Responses.response("text/html", Unpooled.wrappedBuffer(byteOut.getInternalBuffer(), 0, byteOut.size()));
-      Responses.addNoCache(response);
-      response.headers().set("X-Frame-Options", "Deny");
-      Responses.send(response, context.channel(), request);
-    }
-    finally {
-      byteOut.close();
-      pageTemplateStream.close();
-    }
   }
 
   private static void showStepikNotification(@NotNull NotificationType notificationType, @NotNull String text) {
