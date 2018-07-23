@@ -16,6 +16,10 @@ public class CheckiOOAuthBundle {
     return CommonBundle.message(getBundle(), key, params);
   }
 
+  public static String messageOrDefault(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull String defaultValue, @NotNull Object... params) {
+    return CommonBundle.messageOrDefault(getBundle(), key, defaultValue, params);
+  }
+
   private static Reference<ResourceBundle> ourBundle;
 
   @NonNls
