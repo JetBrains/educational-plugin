@@ -17,7 +17,6 @@ class PlainTextConfigurator : EduConfigurator<Unit> {
 
   override fun getCourseBuilder() = PlainTextCourseBuilder()
   override fun getTestFileName() = "test.txt"
-  override fun excludeFromArchive(name: String) = false
 
   override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
     object : TaskChecker<EduTask>(task, project) {
