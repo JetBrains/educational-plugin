@@ -11,8 +11,8 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 
 
 class UpdateAdditionalMaterials: DumbAwareAction("Update Additional Materials") {
-  override fun actionPerformed(e: AnActionEvent?) {
-    val project = e?.project ?: return
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
     if (course !is RemoteCourse) {
       return
