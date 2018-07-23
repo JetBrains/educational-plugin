@@ -59,7 +59,7 @@ public class CheckiORestService extends RestService {
       }
 
       final Tokens newTokens = CheckiOConnector.getTokens(code);
-      final CheckiOUser newUser = newTokens == null ? null : CheckiOConnector.getUser(newTokens.getAccessToken());
+      final CheckiOUser newUser = CheckiOConnector.getUser();
 
       if (newUser != null) {
         ApplicationManager.getApplication().getMessageBus().syncPublisher(CheckiOConnector.LOGGED_IN).loggedIn(newTokens, newUser);
