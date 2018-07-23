@@ -3,8 +3,10 @@ package com.jetbrains.edu.learning.ui
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import icons.EducationalCoreIcons
+import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.FlowLayout
 import java.awt.event.MouseAdapter
@@ -34,6 +36,14 @@ class SelectRolePanel : JPanel() {
         myStudent.icon = EducationalCoreIcons.StudentHover
         teacher.icon = EducationalCoreIcons.Teacher
       }
+
+      override fun mouseEntered(e: MouseEvent?) {
+        UIUtil.setCursor(myStudent, Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))
+      }
+
+      override fun mouseExited(e: MouseEvent?) {
+        UIUtil.setCursor(myStudent, Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
+      }
     })
     studentPanel.add(myStudent)
     studentPanel.add(JLabel("Learner", SwingConstants.CENTER))
@@ -48,6 +58,14 @@ class SelectRolePanel : JPanel() {
         PropertiesComponent.getInstance().setValue(CCPluginToggleAction.COURSE_CREATOR_ENABLED, true)
         myStudent.icon = EducationalCoreIcons.Student
         teacher.icon = EducationalCoreIcons.TeacherHover
+      }
+
+      override fun mouseEntered(e: MouseEvent?) {
+        UIUtil.setCursor(teacher, Cursor.getPredefinedCursor(Cursor.HAND_CURSOR))
+      }
+
+      override fun mouseExited(e: MouseEvent?) {
+        UIUtil.setCursor(teacher, Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
       }
     })
     add(teacherPanel)
