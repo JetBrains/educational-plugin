@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
@@ -149,7 +150,9 @@ public class Lesson extends StudyItem {
   }
 
   public boolean isUpToDate() {
-    if (myId == 0) return true;
+    boolean isLoggedIn = EduSettings.getInstance().getUser() != null;
+    if (myId == 0 || !isLoggedIn) return true;
+
     Lesson lessonInfo = StepikConnector.getLessonFromServer(myId);
     if (lessonInfo == null) return true;
     if (lessonInfo.myUpdateDate == null) return true;
