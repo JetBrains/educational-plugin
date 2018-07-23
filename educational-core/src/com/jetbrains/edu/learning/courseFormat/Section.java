@@ -112,11 +112,13 @@ public class Section extends ItemContainer {
     return EduUtils.getCourseDir(project).findChild(getName());
   }
 
+  @Transient
   @NotNull
   public Course getCourse() {
     return myCourse;
   }
 
+  @Transient
   public void setCourse(Course course) {
     myCourse = course;
   }
