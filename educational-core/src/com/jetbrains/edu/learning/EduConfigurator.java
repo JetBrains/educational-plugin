@@ -42,7 +42,9 @@ public interface EduConfigurator<Settings> {
   /**
    * Used in educator plugin to filter files to be packed into course archive
    */
-  boolean excludeFromArchive(@NotNull Project project, @NotNull String name);
+  default boolean excludeFromArchive(@NotNull Project project, @NotNull String path) {
+    return false;
+  }
 
   /**
    * @return true for all the test files
