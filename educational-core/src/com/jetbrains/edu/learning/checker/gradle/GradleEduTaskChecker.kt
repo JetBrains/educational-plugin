@@ -11,17 +11,17 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
   override fun check(): CheckResult {
-    val gradleTask = getGradleTask()
-    val taskName = gradleTask.taskName
+    val (taskName, params) = getGradleTask()
     val cmd = generateGradleCommandLine(
       project,
       taskName,
-      *gradleTask.params.toTypedArray()
+      *params.toTypedArray()
     ) ?: return FAILED_TO_CHECK
 
     return try {
       return parseTestsOutput(cmd.createProcess(), cmd.commandLineString, taskName)
-    } catch (e: ExecutionException) {
+    }
+    catch (e: ExecutionException) {
       Logger.getInstance(GradleEduTaskChecker::class.java).info(CheckUtils.FAILED_TO_CHECK_MESSAGE, e)
       FAILED_TO_CHECK
     }
@@ -34,5 +34,5 @@ open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<E
     CheckUtils.showTestResultsToolWindow(project, message)
   }
 
-  protected class GradleTask(val taskName: String, val params: List<String> = emptyList())
+  protected data class GradleTask(val taskName: String, val params: List<String> = emptyList())
 }
