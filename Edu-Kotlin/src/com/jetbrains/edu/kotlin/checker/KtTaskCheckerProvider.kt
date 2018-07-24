@@ -20,7 +20,7 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
 
       override fun getGradleTask(): GradleTask {
         if (task.hasSeparateModule(project)) {
-          return super.getGradleTask();
+          return super.getGradleTask()
         }
         val testDir = task.findTestDir() ?: error("Failed to find test dir for task ${task.name}")
         val testClasses: List<String> = runInEdtAndGet {
