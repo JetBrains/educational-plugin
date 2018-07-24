@@ -179,7 +179,11 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
    * For example, for `fun foo() = <p>TODO()</p>` text
    * it creates task file with `fun foo() = TODO()` text and placeholder with `TODO()` as placeholder text.
    */
-  fun taskFile(name: String, text: String = "", buildTaskFile: TaskFileBuilder.() -> Unit = {}) {
+  fun taskFile(
+    name: String, text: String = "",
+    visible: Boolean = true,
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) {
     val taskFileBuilder = TaskFileBuilder(task)
     taskFileBuilder.withName(name)
     val textBuilder = StringBuilder(text.trimIndent())
@@ -188,6 +192,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     taskFileBuilder.withPlaceholders(placeholders)
     taskFileBuilder.buildTaskFile()
     val taskFile = taskFileBuilder.taskFile
+    taskFile.isVisible = visible
     taskFile.task = task
     task.addTaskFile(taskFile)
   }
@@ -195,34 +200,43 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   fun kotlinTaskFile(
     name: String,
     @Language("kotlin") text: String = "",
+    visible: Boolean = true,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile)
 
   fun javaTaskFile(
     name: String,
     @Language("JAVA") text: String = "",
+    visible: Boolean = true,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile)
 
   fun pythonTaskFile(
     name: String,
     @Language("Python") text: String = "",
+    visible: Boolean = true,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile)
 
   fun scalaTaskFile(
     name: String,
     @Language("Scala") text: String = "",
+    visible: Boolean = true,
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
-  ) = taskFile(name, text, buildTaskFile)
+  ) = taskFile(name, text, visible, buildTaskFile)
 
-  fun taskFileFromResources(name: String, path: String, buildTaskFile: TaskFileBuilder.() -> Unit = {}) {
+  fun taskFileFromResources(
+    name: String,
+    path: String,
+    visible: Boolean = true,
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) {
     val ioFile = File(path)
     try {
       VfsRootAccess.allowRootAccess(ioFile.absolutePath)
       val file = LocalFileSystem.getInstance().findFileByIoFile(ioFile) ?: error("Can't find `$path`")
       val text = CCUtils.loadText(file)
-      taskFile(name, text, buildTaskFile)
+      taskFile(name, text, visible, buildTaskFile)
     } finally {
       VfsRootAccess.disallowRootAccess(ioFile.absolutePath)
     }
@@ -237,8 +251,20 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   fun pythonTestFile(name: String, @Language("Python") text: String = "") = testFile(name, text)
   fun scalaTestFile(name: String, @Language("Scala") text: String = "") = testFile(name, text)
 
-  fun additionalFile(name: String, text: String = "") {
-    task.addAdditionalFile(name, text)
+  fun additionalFile(name: String, text: String = "", visible: Boolean = true) {
+    task.addAdditionalFile(name, AdditionalFile(text, visible))
+  }
+
+  fun dir(dirName: String, buildTask: TaskBuilder.() -> Unit) {
+    val tmpTask = EduTask()
+    val innerBuilder = TaskBuilder(lesson, tmpTask)
+    innerBuilder.buildTask()
+    for ((_, taskFile) in tmpTask.taskFiles) {
+      taskFile.name = "$dirName/${taskFile.name}"
+      task.addTaskFile(taskFile)
+    }
+    task.additionalFiles.plusAssign(tmpTask.additionalFiles.mapKeys { (path, _) -> "$dirName/$path"})
+    task.testsText.plusAssign(tmpTask.testsText.mapKeys { (path, _) -> "$dirName/$path"})
   }
 
   private fun extractPlaceholdersFromText(text: StringBuilder): List<AnswerPlaceholder> {
