@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
-import com.jetbrains.edu.learning.courseFormat.ext.course
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
 import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
@@ -113,7 +112,7 @@ object GeneratorUtils {
     createFiles(taskDir, task.testTextMap)
     createFiles(taskDir, task.additionalFiles)
     val course = task.course
-    if (course != null && CCUtils.COURSE_MODE == course.courseMode) {
+    if (CCUtils.COURSE_MODE == course.courseMode) {
       createDescriptionFile(taskDir, task)
     }
   }
@@ -276,7 +275,7 @@ object GeneratorUtils {
   }
 
   private fun createUniqueDir(parentDir: VirtualFile, item: StudyItem): VirtualFile {
-    val (baseDirName, needUpdateItem) = if (item is Task && item.isFrameworkTask && item.course?.isStudy == true)  {
+    val (baseDirName, needUpdateItem) = if (item is Task && item.isFrameworkTask && item.course.isStudy)  {
       item.dirName to false
     } else {
       item.name to true
