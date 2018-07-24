@@ -1,9 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions
 
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
@@ -55,11 +52,12 @@ abstract class CCActionTestCase : EduTestCase() {
     return studyItem
   }
 
-  fun testAction(context: DataContext, action: AnAction) {
+  fun testAction(context: DataContext, action: AnAction, runAction: Boolean = true): Presentation {
     val e = TestActionEvent(context, action)
     action.beforeActionPerformedUpdate(e)
-    if (e.presentation.isEnabledAndVisible) {
+    if (e.presentation.isEnabledAndVisible && runAction) {
       action.actionPerformed(e)
     }
+    return e.presentation
   }
 }
