@@ -144,8 +144,8 @@ object NavigationUtils {
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
-  private fun getFirstTaskFile(taskDir: VirtualFile, project: Project): VirtualFile? {
-    return taskDir.children.firstOrNull { EduUtils.getTaskFile(project, it) != null }
+  private fun getFirstTaskFile(taskDir: VirtualFile, taskFiles: MutableCollection<TaskFile>): VirtualFile? {
+    return taskFiles.map { EduUtils.findTaskFileInDir(it, taskDir) }.firstOrNull()
   }
 
   @JvmStatic
@@ -183,7 +183,8 @@ object NavigationUtils {
     // We need update dependencies before file opening to find out which placeholders are visible
     PlaceholderDependencyManager.updateDependentPlaceholders(project, task)
 
-    var fileToActivate = getFirstTaskFile(taskDir, project)
+    var fileToActivate : VirtualFile? = null
+
     for ((_, taskFile) in taskFiles) {
       if (taskFile.answerPlaceholders.isEmpty()) continue
       // We want to open task file only if it has `new` placeholder(s).
@@ -194,6 +195,10 @@ object NavigationUtils {
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
       fileToActivate = virtualFile
     }
+    if (fileToActivate == null) {
+      fileToActivate = getFirstTaskFile(taskDir, taskFiles.values)
+    }
+
     EduUsagesCollector.taskNavigation()
     ProjectView.getInstance(project).refresh()
     if (fileToActivate != null) {
