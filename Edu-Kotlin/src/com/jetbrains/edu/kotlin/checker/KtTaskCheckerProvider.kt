@@ -1,11 +1,11 @@
 package com.jetbrains.edu.kotlin.checker
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.testFramework.runInEdtAndGet
 import com.jetbrains.edu.learning.checker.gradle.*
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
@@ -23,15 +23,18 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
           return super.getGradleTask()
         }
         val testDir = task.findTestDir() ?: error("Failed to find test dir for task ${task.name}")
-        val testClasses: List<String> = runInEdtAndGet {
-          runReadAction {
+
+        var testClasses: List<String>? = null
+
+        ApplicationManager.getApplication().invokeAndWait {
+          testClasses = runReadAction {
             testDir.children.mapNotNull {
               val psiFile = PsiManager.getInstance(project).findFile(it) ?: return@mapNotNull null
               KotlinJUnitRunConfigurationProducer.getTestClass(psiFile)?.qualifiedName
             }
           }
         }
-        return GradleTask(TEST_TASK_NAME, testClasses.flatMap { listOf(TESTS_ARG, it) })
+        return GradleTask(TEST_TASK_NAME, testClasses?.flatMap { listOf(TESTS_ARG, it) } ?: emptyList())
       }
     }
   }
