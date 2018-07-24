@@ -7,12 +7,12 @@ import junit.framework.TestCase
 
 class NavigateTaskTest : EduTestCase() {
   fun `test next task`() {
-    configureByTaskFile(1, 1, "taskFile1.txt")
+    configureByTaskFile(1, 2, "taskFile2.txt")
     myFixture.testAction(NextTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
     val task = taskFile!!.task
-    TestCase.assertEquals(2, task.index)
+    TestCase.assertEquals(3, task.index)
   }
 
   fun `test previous task`() {
@@ -25,7 +25,7 @@ class NavigateTaskTest : EduTestCase() {
   }
 
   fun `test next lesson`() {
-    configureByTaskFile(1, 2, "taskFile2.txt")
+    configureByTaskFile(1, 3, "taskFile3.txt")
     myFixture.testAction(NextTaskAction())
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
@@ -41,7 +41,7 @@ class NavigateTaskTest : EduTestCase() {
     val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
     val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
     val task = taskFile!!.task
-    TestCase.assertEquals(2, task.index)
+    TestCase.assertEquals(3, task.index)
     val lesson = task.lesson
     TestCase.assertEquals(1, lesson.index)
   }
@@ -68,6 +68,24 @@ class NavigateTaskTest : EduTestCase() {
     TestCase.assertEquals(1, lesson.index)
   }
 
+  fun `test next task with placeholder`() {
+    configureByTaskFile(1, 1, "taskFile1.txt")
+    myFixture.testAction(NextTaskAction())
+    val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
+    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val task = taskFile!!.task
+    TestCase.assertEquals(2, task.index)
+  }
+
+  fun `test previous task with placeholder`() {
+    configureByTaskFile(1, 3, "taskFile3.txt")
+    myFixture.testAction(PreviousTaskAction())
+    val currentFile = FileEditorManagerEx.getInstanceEx(myFixture.project).currentFile
+    val taskFile = EduUtils.getTaskFile(myFixture.project, currentFile!!)
+    val task = taskFile!!.task
+    TestCase.assertEquals(2, task.index)
+  }
+
   override fun createCourse() {
     courseWithFiles {
       lesson {
@@ -75,7 +93,12 @@ class NavigateTaskTest : EduTestCase() {
           taskFile("taskFile1.txt")
         }
         eduTask {
-          taskFile("taskFile2.txt")
+          taskFile("taskFile2.txt", "a = <p>TODO()</p>") {
+            placeholder(0, "hello")
+          }
+        }
+        eduTask {
+          taskFile("taskFile3.txt")
         }
       }
       lesson {
