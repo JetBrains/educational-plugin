@@ -14,20 +14,20 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 val Task.course: Course? get() = lesson?.course
 
-val Task.project: Project? get() = course?.project
+val Task.project: Project? get() = course.project
 
-val Task.sourceDir: String? get() = course?.sourceDir
-val Task.testDir: String? get() = course?.testDir
+val Task.sourceDir: String? get() = course.sourceDir
+val Task.testDir: String? get() = course.testDir
 
 val Task.testTextMap: Map<String, String> get() {
-  val course = course ?: return emptyMap()
+  val course = course
   val testDir = course.testDir ?: return emptyMap()
   return if (testDir.isEmpty()) testsText else testsText.mapKeys { (path, _) -> "$testDir/$path" }
 }
 
 val Task.isFrameworkTask: Boolean get() = lesson is FrameworkLesson
 
-val Task.dirName: String get() = if (isFrameworkTask && course?.isStudy == true) EduNames.TASK else name
+val Task.dirName: String get() = if (isFrameworkTask && course.isStudy) EduNames.TASK else name
 
 fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
   val sourceDir = sourceDir ?: return null
@@ -50,13 +50,13 @@ val Task.placeholderDependencies: List<AnswerPlaceholderDependency>
 
 fun Task.getUnsolvedTaskDependencies(): List<Task> {
   return placeholderDependencies
-    .mapNotNull { it.resolve(course ?: return@mapNotNull null)?.taskFile?.task }
+    .mapNotNull { it.resolve(course)?.taskFile?.task }
     .filter { it.status != CheckStatus.Solved }
     .distinct()
 }
 
 fun Task.getDependentTasks(): Set<Task> {
-  val course = course ?: return emptySet()
+  val course = course
   return course.items.flatMap { item ->
     when (item) {
       is Lesson -> item.getTaskList()
