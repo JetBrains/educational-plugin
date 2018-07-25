@@ -399,7 +399,7 @@ public class EduUtils {
 
   @Nullable
   public static String getTaskTextFromTask(@Nullable final VirtualFile taskDirectory, @Nullable final Task task) {
-    if (task == null || task.getLesson() == null || task.getLesson().getCourse() == null) {
+    if (task == null || task.getLesson() == null) {
       return null;
     }
     String text = task.getTaskDescription(taskDirectory) != null ? task.getTaskDescription(taskDirectory) : getTaskTextByTaskName(task, taskDirectory);
@@ -961,6 +961,7 @@ public class EduUtils {
         UndoManager.getInstance(project).undoableActionPerformed(action);
       }
 
+      @NotNull
       @Override
       protected UndoConfirmationPolicy getUndoConfirmationPolicy() {
         return confirmationPolicy;
