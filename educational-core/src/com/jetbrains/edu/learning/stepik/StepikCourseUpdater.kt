@@ -19,8 +19,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.stepik.StepikConnector.getCourse
-import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseFromStepik
+import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.StepikConnector.loadCourseStructure
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
@@ -35,9 +35,9 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   fun updateCourse() {
     oldLessonDirectories.clear()
     oldSectionDirectories.clear()
-    val courseFromServer = courseFromServer(project, course)
-    addTopLevelLessons(courseFromServer)
-    val (updatedLessons, newLessons) = doUpdate(courseFromServer)
+    courseFromServer(project, course)
+    addTopLevelLessons(course)
+    val (updatedLessons, newLessons) = doUpdate(course)
     runInEdt {
       synchronize()
       ProjectView.getInstance(project).refresh()
@@ -365,19 +365,17 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     }
   }
 
-  private fun courseFromServer(project: Project, currentCourse: RemoteCourse): Course? {
-    var course: Course? = null
+  private fun courseFromServer(project: Project, currentCourse: RemoteCourse): Boolean {
     try {
-      val remoteCourse = getCourseFromStepik(EduSettings.getInstance().user, currentCourse.id, true)
-      if (remoteCourse != null) {
-        course = getCourse(project, remoteCourse)
+      val remoteCourse = getCourseInfo(EduSettings.getInstance().user, currentCourse.id, true)
+      if (remoteCourse != null && loadCourseStructure(project, remoteCourse)) {
+        return true
       }
     }
     catch (e: IOException) {
       LOG.warn(e.message)
     }
 
-    return course
+    return false
   }
-
 }

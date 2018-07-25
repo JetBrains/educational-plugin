@@ -157,7 +157,7 @@ public class EduBuiltInServerUtils {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       execCancelable(() -> {
         StepicUser user = StepikAuthorizedClient.getCurrentUser();
-        RemoteCourse course = StepikConnector.getCourseFromStepik(user, courseId, true);
+        RemoteCourse course = StepikConnector.getCourseInfo(user, courseId, true);
         showDialog(course, stepId);
         return null;
       });
