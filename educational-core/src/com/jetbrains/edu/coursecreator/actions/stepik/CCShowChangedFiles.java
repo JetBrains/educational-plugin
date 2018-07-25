@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.stepik;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -31,7 +32,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
     Messages.showInfoMessage(message, course.getName() + " Comparing to Stepik");
   }
 
-  // public for test
+  @VisibleForTesting
   @NotNull
   public static String buildChangeMessage(@NotNull Course course) {
     StringBuilder builder = new StringBuilder();
