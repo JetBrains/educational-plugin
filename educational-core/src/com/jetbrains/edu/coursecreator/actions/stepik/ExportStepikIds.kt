@@ -45,6 +45,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
       }
       if (item is Lesson) {
         addChildren("task_list", item.taskList)
+        jsonObject.addProperty("unit_id", item.unitId)
       }
       jsonObject
     }
