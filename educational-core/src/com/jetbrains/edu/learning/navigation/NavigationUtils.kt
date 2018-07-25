@@ -144,8 +144,9 @@ object NavigationUtils {
     navigateToAnswerPlaceholder(editor, firstAnswerPlaceholder)
   }
 
-  private fun getFirstTaskFile(taskDir: VirtualFile, taskFiles: MutableCollection<TaskFile>): VirtualFile? {
-    return taskFiles.map { EduUtils.findTaskFileInDir(it, taskDir) }.firstOrNull()
+  private fun getFirstTaskFile(taskDir: VirtualFile, taskFiles: Collection<TaskFile>): VirtualFile? {
+    val firstVisibleTaskFile = taskFiles.firstOrNull { it.isVisible } ?: return null
+    return EduUtils.findTaskFileInDir(firstVisibleTaskFile, taskDir)
   }
 
   @JvmStatic
@@ -190,7 +191,7 @@ object NavigationUtils {
       // We want to open task file only if it has `new` placeholder(s).
       // Currently, we consider that `new` placeholder is a visible placeholder,
       // i.e. placeholder without dependency or with visible dependency.
-      if (taskFile.answerPlaceholders.all { !it.isVisible }) continue
+      if (!taskFile.isVisible || taskFile.answerPlaceholders.all { !it.isVisible }) continue
       val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
       FileEditorManager.getInstance(project).openFile(virtualFile, true)
       fileToActivate = virtualFile
