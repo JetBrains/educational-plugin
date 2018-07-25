@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions.stepik;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -83,17 +84,15 @@ public class CCShowChangedFiles extends DumbAwareAction {
 
   @Override
   public void update(AnActionEvent e) {
-    e.getPresentation().setEnabledAndVisible(false);
+    Presentation presentation = e.getPresentation();
+    presentation.setEnabledAndVisible(false);
     final Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) {
       return;
     }
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course instanceof RemoteCourse && !course.isStudy()) {
-      e.getPresentation().setEnabledAndVisible(true);
-    }
-    else {
-      e.getPresentation().setEnabledAndVisible(false);
+      presentation.setEnabledAndVisible(true);
     }
   }
 }
