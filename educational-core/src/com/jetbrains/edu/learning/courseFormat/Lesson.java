@@ -47,6 +47,8 @@ public class Lesson extends StudyItem {
   @Transient
   private Course myCourse = null;
 
+  @Expose
+  @SerializedName("unit_id")
   public int unitId = 0;
 
   @Transient
