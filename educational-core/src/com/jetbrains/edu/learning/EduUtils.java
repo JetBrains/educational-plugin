@@ -1092,11 +1092,11 @@ public class EduUtils {
    * @return null if process was canceled, otherwise not null list of courses
    */
   @Nullable
-  public static List<Course> getCoursesUnderProgress() {
+  public static List<Course> getCourseInfosUnderProgress() {
     try {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        List<Course> courses = execCancelable(() -> StepikConnector.getCourses(EduSettings.getInstance().getUser()));
+        List<Course> courses = execCancelable(() -> StepikConnector.getCourseInfos(EduSettings.getInstance().getUser()));
         if (courses == null) return Lists.newArrayList();
         List<Course> bundledCourses = getBundledCourses();
         for (Course bundledCourse : bundledCourses) {

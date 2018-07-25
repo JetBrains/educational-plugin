@@ -8,6 +8,6 @@ import com.jetbrains.edu.learning.isUnitTestMode
 class StepikCoursesProvider : CoursesProvider {
   override fun loadCourses(): List<Course> {
     checkIsBackgroundThread()
-    return if (isUnitTestMode) emptyList() else StepikConnector.getCourses(null)
+    return if (isUnitTestMode) emptyList() else StepikConnector.getCourseInfos(null)
   }
 }
