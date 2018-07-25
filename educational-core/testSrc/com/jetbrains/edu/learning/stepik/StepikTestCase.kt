@@ -2,11 +2,8 @@ package com.jetbrains.edu.learning.stepik
 
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
-import junit.framework.TestCase
 import org.apache.http.Consts
 import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -93,7 +90,7 @@ abstract class StepikTestCase : EduTestCase() {
   }
 
   fun checkCourseUploaded(course: RemoteCourse) {
-    val uploadedCourse = StepikConnector.getCourseFromStepik(user, course.id, true)
+    val uploadedCourse = StepikConnector.getCourseInfo(user, course.id, true)
     assertNotNull("Uploaded courses not found among courses available to instructor", uploadedCourse)
     println("Course with id ${(uploadedCourse as RemoteCourse).id} was uploaded successfully")
   }

@@ -71,7 +71,7 @@ public class CCStepikConnector {
     final String url = StepikNames.COURSES + "/" + courseId;
     final StepicUser user = EduSettings.getInstance().getUser();
     try {
-      final StepikWrappers.CoursesContainer coursesContainer = StepikConnector.getCoursesFromStepik(user, url);
+      final StepikWrappers.CoursesContainer coursesContainer = StepikConnector.getCourseContainers(user, url);
       return coursesContainer == null ? null : coursesContainer.courses.get(0);
     }
     catch (IOException e) {

@@ -9,7 +9,7 @@ import icons.EducationalCoreIcons
 class BrowseCoursesAction : DumbAwareAction("Browse Courses", "Browse list of available courses", EducationalCoreIcons.CourseAction) {
 
   override fun actionPerformed(e: AnActionEvent) {
-    val courses = EduUtils.getCoursesUnderProgress() ?: return
+    val courses = EduUtils.getCourseInfosUnderProgress() ?: return
     BrowseCoursesDialog(courses).show()
   }
 }

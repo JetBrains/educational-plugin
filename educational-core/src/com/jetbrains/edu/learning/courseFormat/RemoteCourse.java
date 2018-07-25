@@ -82,7 +82,7 @@ public class RemoteCourse extends Course {
   public boolean isUpToDate() {
     if (id == 0 || !StepikUtils.isLoggedIn()) return true;
 
-    RemoteCourse courseFromServer = StepikConnector.getCourseFromStepik(EduSettings.getInstance().getUser(), id, isCompatible);
+    RemoteCourse courseFromServer = StepikConnector.getCourseInfo(EduSettings.getInstance().getUser(), id, isCompatible);
     if (courseFromServer == null) return true;
 
     final Date date = courseFromServer.getUpdateDate();

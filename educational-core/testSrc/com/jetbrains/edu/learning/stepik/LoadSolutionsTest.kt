@@ -59,8 +59,8 @@ class LoadSolutionsTest : StepikTestCase() {
 
     val course = StudyTaskManager.getInstance(project).course!! as RemoteCourse
     val task = firstTask(StudyTaskManager.getInstance(project).course)
-    val courseFromStepik = StepikConnector.getCourseFromStepik(EduSettings.getInstance().user, course.id, true) as RemoteCourse
-    val remoteCourse = StepikConnector.getCourse(project, courseFromStepik)
+    val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as RemoteCourse
+    StepikConnector.loadCourseStructure(project, remoteCourse)
 
     val tasksToUpdate = StepikSolutionsLoader.getInstance(project).tasksToUpdate(remoteCourse as Course)
     assertTrue(taskNumberMismatchMessage(1, tasksToUpdate!!.size), tasksToUpdate.size == 1)
@@ -89,8 +89,8 @@ class LoadSolutionsTest : StepikTestCase() {
   private fun firstTask(course: Course?) = course!!.lessons!![0].taskList!![0]
 
   private fun createCourseFromStepik(course: RemoteCourse): RemoteCourse? {
-    val courseFromStepik = StepikConnector.getCourseFromStepik(EduSettings.getInstance().user, course.id, true) as RemoteCourse
-    val remoteCourse = StepikConnector.getCourse(project, courseFromStepik)
+    val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as RemoteCourse
+    StepikConnector.loadCourseStructure(project, remoteCourse)
     remoteCourse!!.init(null, null, false)
     remoteCourse.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(project).course = remoteCourse

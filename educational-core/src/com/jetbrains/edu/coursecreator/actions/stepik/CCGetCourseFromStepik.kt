@@ -33,13 +33,13 @@ class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Cou
       showError(courseId)
       return
     }
-    val course = StepikConnector.getCourse(project, info)
-    if (course == null) {
+
+    if (!StepikConnector.loadCourseStructure(project, info)) {
       showError(courseId)
       return
     }
     runInEdt {
-      CCNewCourseDialog("Get Course From Stepik", "Create", course).show()
+      CCNewCourseDialog("Get Course From Stepik", "Create", info).show()
     }
   }
 

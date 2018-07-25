@@ -121,11 +121,11 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Course> getCourses(@Nullable StepicUser user) {
+  public static List<Course> getCourseInfos(@Nullable StepicUser user) {
     LOG.info("Loading courses started...");
     long startTime = System.currentTimeMillis();
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    final List<Integer> featuredCourses = getFeaturedCourses();
+    final List<Integer> featuredCourses = getFeaturedCoursesIds();
 
     List<Callable<List<Course>>> tasks = ContainerUtil.newArrayList();
     for (int i = 0; i < THREAD_NUMBER; i++) {
@@ -134,7 +134,7 @@ public class StepikConnector {
         List<Course> courses = ContainerUtil.newArrayList();
         try {
           int pageNumber = currentThread + 1;
-          while (addCoursesFromStepik(user, courses, pageNumber, featuredCourses)) {
+          while (addCourseInfos(user, courses, pageNumber, featuredCourses)) {
             if (indicator != null && indicator.isCanceled()) {
               return null;
             }
@@ -167,10 +167,10 @@ public class StepikConnector {
   }
 
   private static void addInProgressCourses(@Nullable StepicUser user, List<Course> result) {
-    final List<Integer> inProgressCourses = getInProgressCourses();
+    final List<Integer> inProgressCourses = getInProgressCoursesIds();
     for (Integer courseId : inProgressCourses) {
       try {
-        final RemoteCourse info = getCourseFromStepik(user, courseId, false);
+        final RemoteCourse info = getCourseInfo(user, courseId, false);
         if (info == null) continue;
         CourseCompatibility compatibility = info.getCompatibility();
         if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
@@ -187,7 +187,7 @@ public class StepikConnector {
   }
 
   public static Date getCourseUpdateDate(final int courseId) {
-    RemoteCourse course = getCourseFromStepik(EduSettings.getInstance().getUser(), courseId, true);
+    RemoteCourse course = getCourseInfo(EduSettings.getInstance().getUser(), courseId, true);
 
     return course == null ? null : course.getUpdateDate();
   }
@@ -301,11 +301,11 @@ public class StepikConnector {
     return null;
   }
 
-  public static CoursesContainer getCoursesFromStepik(@Nullable StepicUser user, @NotNull URI url) throws IOException {
-    return getCoursesFromStepik(user, url.toString());
+  public static CoursesContainer getCourseContainers(@Nullable StepicUser user, @NotNull URI url) throws IOException {
+    return getCourseContainers(user, url.toString());
   }
 
-  public static CoursesContainer getCoursesFromStepik(@Nullable StepicUser user, @NotNull String url) throws IOException {
+  public static CoursesContainer getCourseContainers(@Nullable StepicUser user, @NotNull String url) throws IOException {
     final CoursesContainer coursesContainer;
     if (user != null) {
       coursesContainer = StepikAuthorizedClient.getFromStepik(url, CoursesContainer.class, user);
@@ -321,8 +321,8 @@ public class StepikConnector {
     return coursesContainer;
   }
 
-  private static boolean addCoursesFromStepik(@Nullable StepicUser user, List<Course> result, int pageNumber,
-                                              @NotNull List<Integer> featuredCourses) throws IOException {
+  private static boolean addCourseInfos(@Nullable StepicUser user, List<Course> result, int pageNumber,
+                                        @NotNull List<Integer> featuredCourses) throws IOException {
     final URI url;
     try {
       url = new URIBuilder(StepikNames.COURSES).addParameter("is_idea_compatible", "true").
@@ -332,20 +332,20 @@ public class StepikConnector {
       LOG.error(e.getMessage());
       return false;
     }
-    final CoursesContainer coursesContainer = getCoursesFromStepik(user, url);
+    final CoursesContainer coursesContainer = getCourseContainers(user, url);
     addAvailableCourses(result, coursesContainer, featuredCourses);
     return coursesContainer.meta.containsKey("has_next") && coursesContainer.meta.get("has_next") == Boolean.TRUE;
   }
 
   @Nullable
-  public static RemoteCourse getCourseFromStepik(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) {
+  public static RemoteCourse getCourseInfo(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) {
     final URI url;
     final CoursesContainer coursesContainer;
     try {
       url = new URIBuilder(StepikNames.COURSES + "/" + courseId)
         .addParameter("is_idea_compatible", String.valueOf(isIdeaCompatible))
         .build();
-      coursesContainer = getCoursesFromStepik(user, url);
+      coursesContainer = getCourseContainers(user, url);
     }
     catch (URISyntaxException | IOException e) {
       LOG.error(e.getMessage());
@@ -404,7 +404,7 @@ public class StepikConnector {
     return CourseVisibility.PublicVisibility.INSTANCE;
   }
 
-  public static RemoteCourse getCourseByLink(@NotNull StepicUser user, @NotNull String link) {
+  public static RemoteCourse getCourseInfoByLink(@NotNull StepicUser user, @NotNull String link) {
     int courseId;
     try {
       courseId = Integer.parseInt(link);
@@ -413,7 +413,7 @@ public class StepikConnector {
       courseId = getCourseIdFromLink(link);
     }
     if (courseId != -1) {
-      return getCourseFromStepik(user, courseId, false);
+      return getCourseInfo(user, courseId, false);
     }
     return null;
   }
@@ -435,17 +435,17 @@ public class StepikConnector {
     return -1;
   }
 
-  @Nullable
-  public static RemoteCourse getCourse(@Nullable final Project project, @NotNull final RemoteCourse remoteCourse) {
+  public static boolean loadCourseStructure(@Nullable final Project project, @NotNull final RemoteCourse remoteCourse) {
     final List<StudyItem> items = remoteCourse.getItems();
-    if (!items.isEmpty()) return remoteCourse;
+    if (!items.isEmpty()) return true;
     if (!remoteCourse.isAdaptive()) {
       try {
         fillItems(remoteCourse);
-        return remoteCourse;
+        return true;
       }
       catch (IOException e) {
         LOG.error(e);
+        return false;
       }
     }
     else {
@@ -457,9 +457,8 @@ public class StepikConnector {
       if (recommendation != null) {
         lesson.addTask(recommendation);
       }
-      return remoteCourse;
+      return true;
     }
-    return null;
   }
 
   public static void fillItems(@NotNull RemoteCourse remoteCourse) throws IOException {
@@ -1086,7 +1085,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Integer> getFeaturedCourses() {
+  public static List<Integer> getFeaturedCoursesIds() {
     return getCoursesIds(PROMOTED_COURSES_LINK);
   }
 
@@ -1104,7 +1103,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Integer> getInProgressCourses() {
+  public static List<Integer> getInProgressCoursesIds() {
     return getCoursesIds(IN_PROGRESS_COURSES_LINK);
   }
 

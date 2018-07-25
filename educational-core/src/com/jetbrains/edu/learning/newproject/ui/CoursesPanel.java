@@ -139,7 +139,7 @@ public class CoursesPanel extends JPanel {
 
   private void updateCoursesList() {
     Course selectedCourse = myCoursesList.getSelectedValue();
-    List<Course> courses = EduUtils.getCoursesUnderProgress();
+    List<Course> courses = EduUtils.getCourseInfosUnderProgress();
     myCourses = courses != null ? courses : Lists.newArrayList();
     updateModel(myCourses, selectedCourse.getName());
     myErrorLabel.setVisible(false);
@@ -390,7 +390,7 @@ public class CoursesPanel extends JPanel {
         String courseLink = dialogWrapper.courseLink();
         StepicUser user = EduSettings.getInstance().getUser();
         assert user != null;
-        RemoteCourse course = StepikConnector.getCourseByLink(user, courseLink);
+        RemoteCourse course = StepikConnector.getCourseInfoByLink(user, courseLink);
         List<Language> languages = getLanguagesUnderProgress(course);
 
         if (languages == null || languages.isEmpty()) {
