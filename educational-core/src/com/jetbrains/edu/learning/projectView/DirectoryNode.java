@@ -4,26 +4,27 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DirectoryNode extends EduNode {
 
-  @NotNull protected final Project myProject;
+  @NotNull
+  protected final Project myProject;
   protected final ViewSettings myViewSettings;
+  @NotNull
+  protected final Task myTask;
 
   public DirectoryNode(@NotNull Project project,
                        PsiDirectory value,
-                       ViewSettings viewSettings) {
+                       ViewSettings viewSettings,
+                       @NotNull Task task) {
     super(project, value, viewSettings);
     myProject = project;
     myViewSettings = viewSettings;
+    myTask = task;
   }
 
   @Override
@@ -34,23 +35,10 @@ public class DirectoryNode extends EduNode {
   @Nullable
   @Override
   public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
-    Object value = childNode.getValue();
-    if (value instanceof PsiDirectory) {
-      return createChildDirectoryNode(null, (PsiDirectory)value);
-    }
-    if (value instanceof PsiElement) {
-      PsiFile psiFile = ((PsiElement) value).getContainingFile();
-      if (psiFile == null) return null;
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-      if (virtualFile == null) {
-        return null;
-      }
-      return EduUtils.getTaskFile(myProject, virtualFile) != null ? childNode : null;
-    }
-    return null;
+    return CourseViewUtils.modifyTaskChildNode(myProject, childNode, myTask, this::createChildDirectoryNode);
   }
 
-  public PsiDirectoryNode createChildDirectoryNode(StudyItem item, PsiDirectory value) {
-    return new DirectoryNode(myProject, value, myViewSettings);
+  public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
+    return new DirectoryNode(myProject, value, myViewSettings, myTask);
   }
 }

@@ -58,7 +58,7 @@ public class TaskNode extends EduNode {
   }
 
   public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
-    return new DirectoryNode(myProject, value, getSettings());
+    return new DirectoryNode(myProject, value, getSettings(), myTask);
   }
 
   @NotNull
