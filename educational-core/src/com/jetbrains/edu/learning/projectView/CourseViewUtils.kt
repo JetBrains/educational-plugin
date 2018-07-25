@@ -32,7 +32,9 @@ object CourseViewUtils {
       is PsiElement -> {
         val psiFile = value.containingFile ?: return null
         val virtualFile = psiFile.virtualFile ?: return null
-        if (EduUtils.getTaskFile(project, virtualFile) != null) childNode else null
+        val path = EduUtils.pathRelativeToTask(project, virtualFile)
+        val visibleFile = task.getTaskFile(path) ?: task.additionalFiles[path]
+        if (visibleFile?.isVisible == true) childNode else null
       }
       else -> null
     }

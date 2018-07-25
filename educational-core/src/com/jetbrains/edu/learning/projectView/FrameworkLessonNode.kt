@@ -33,7 +33,7 @@ class FrameworkLessonNode(
     return ProjectViewDirectoryHelper.getInstance(myProject).getDirectoryChildren(taskDirectory, settings, true)
       .mapNotNull { child ->
         CourseViewUtils.modifyTaskChildNode(myProject, child, task) { dir ->
-          DirectoryNode(myProject, dir, settings)
+          DirectoryNode(myProject, dir, settings, task)
         }
       }
   }
