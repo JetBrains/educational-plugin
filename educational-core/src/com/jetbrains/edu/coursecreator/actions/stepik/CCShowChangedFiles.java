@@ -26,32 +26,32 @@ public class CCShowChangedFiles extends DumbAwareAction {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
 
-    StringBuilder message = buildChangeMessage(course);
-    Messages.showInfoMessage(message.toString(), "Course Changes");
+    String message = buildChangeMessage(course);
+    Messages.showInfoMessage(message, course.getName() + " Comparing to Stepik");
   }
 
   // public for test
   @NotNull
-  public static StringBuilder buildChangeMessage(Course course) {
-    StringBuilder message = new StringBuilder();
+  public static String buildChangeMessage(@NotNull Course course) {
+    StringBuilder builder = new StringBuilder();
     if (course.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-      appendChangeLine("", course, message);
+      appendChangeLine("", course, builder);
     }
 
     for (StudyItem item : course.getItems()) {
       if (item.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-        appendChangeLine("", item, message);
+        appendChangeLine("", item, builder);
       }
 
       if (item instanceof Section) {
         for (Lesson lesson : ((Section)item).getLessons()) {
           if (lesson.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-            appendChangeLine(item.getName() + "/", lesson, message);
+            appendChangeLine(item.getName() + "/", lesson, builder);
           }
           for (Task task : lesson.taskList) {
             if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
               String parentsLine = item.getName() + "/" + lesson.getName() + "/";
-              appendChangeLine(parentsLine, task, message);
+              appendChangeLine(parentsLine, task, builder);
             }
           }
         }
@@ -60,10 +60,14 @@ public class CCShowChangedFiles extends DumbAwareAction {
       if (item instanceof Lesson) {
         for (Task task : ((Lesson)item).taskList) {
           if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-            appendChangeLine(item.getName() + "/", task, message);
+            appendChangeLine(item.getName() + "/", task, builder);
           }
         }
       }
+    }
+    String message = builder.toString();
+    if (message.isEmpty()) {
+      return "No changes";
     }
     return message;
   }
