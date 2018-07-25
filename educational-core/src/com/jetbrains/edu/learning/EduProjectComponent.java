@@ -121,9 +121,7 @@ public class EduProjectComponent implements ProjectComponent {
       return;
     }
 
-    // Android Studio imports gradle project itself but not in tests
-    boolean needImportForCurrentPlatform = ApplicationManager.getApplication().isUnitTestMode() || !isAndroidStudio();
-    if (needImportForCurrentPlatform && myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
+    if (myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
       EduGradleUtils.importGradleProject(myProject, projectBasePath);
     }
 
