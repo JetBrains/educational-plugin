@@ -24,60 +24,27 @@ object StepikCourseChangeHandler {
 
   @JvmStatic
   fun notChanged(task: Task) {
-    if (task.id == 0) return
+    if (task.stepId == 0) return
     task.stepikChangeStatus = UP_TO_DATE
   }
 
   @JvmStatic
-  fun infoChanged(lesson: Lesson) {
-    if (lesson.id == 0) return
-    lesson.stepikChangeStatus = if (lesson.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
-  }
-
-  @JvmStatic
-  fun contentChanged(lesson: Lesson) {
-    if (lesson.id == 0) return
-    lesson.stepikChangeStatus = if (lesson.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
-  }
-
-  @JvmStatic
-  fun infoChanged(section: Section) {
-    if (section.id == 0) return
-    section.stepikChangeStatus = if (section.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
-  }
-
-  @JvmStatic
-  fun contentChanged(section: Section) {
-    if (section.id == 0) return
-    section.stepikChangeStatus = if (section.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
-  }
-
-  @JvmStatic
-  fun infoChanged(course: Course) {
-    if (course !is RemoteCourse) return
-    course.stepikChangeStatus = if (course.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
-  }
-
-  @JvmStatic
-  fun contentChanged(course: Course) {
-    if (course !is RemoteCourse) return
-    course.stepikChangeStatus = if (course.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
-  }
-
-  @JvmStatic
-  fun contentChanged(itemContainer: ItemContainer) {
-    when (itemContainer) {
-      is Course -> contentChanged(itemContainer)
-      is Section -> contentChanged(itemContainer)
+  fun contentChanged(studyItem: StudyItem) {
+    when (studyItem) {
+      is Course -> studyItem.stepikChangeStatus = if (studyItem.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
+      is Section -> studyItem.stepikChangeStatus = if (studyItem.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
+      is Lesson -> studyItem.stepikChangeStatus = if (studyItem.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
     }
   }
 
   @JvmStatic
   fun infoChanged(item: StudyItem?) {
+    if (item?.id == 0) return
+
     when (item) {
-      is Course -> infoChanged(item)
-      is Section -> infoChanged(item)
-      is Lesson -> infoChanged(item)
+      is Course -> item.stepikChangeStatus = if (item.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
+      is Section -> item.stepikChangeStatus = if (item.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
+      is Lesson -> item.stepikChangeStatus = if (item.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
       is Task -> changed(item)
     }
   }
