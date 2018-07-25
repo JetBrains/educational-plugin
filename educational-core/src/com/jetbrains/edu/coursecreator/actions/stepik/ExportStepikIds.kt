@@ -1,9 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.stepik
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonSerializer
+import com.google.gson.*
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -22,6 +19,14 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids as json", null) {
 
 
+  private fun <T>JsonObject.addChildren(propertyName: String, children: List<T>, serializeChild: (T) -> JsonElement){
+    val jsonArray = JsonArray()
+    for (childItem in children) {
+      jsonArray.add(serializeChild(childItem))
+    }
+    add(propertyName, jsonArray)
+  }
+
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
@@ -31,21 +36,21 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
       jsonObject.addProperty("title", item.name)
       jsonObject.addProperty("id", item.id)
 
-
-      val addChildren: (String, List<StudyItem>) -> Unit = { propertyName, children ->
-        val jsonArray = JsonArray()
-        for (childItem in children) {
-          jsonArray.add(context.serialize(childItem, StudyItem::class.java))
-        }
-        jsonObject.add(propertyName, jsonArray)
-      }
+      val serializeStudyItem: (StudyItem) -> JsonElement =  {itemToSerialize -> context.serialize(itemToSerialize, StudyItem::class.java)}
 
       if (item is ItemContainer) {
-        addChildren("items", item.items)
+        jsonObject.addChildren("items", item.items, serializeStudyItem)
       }
       if (item is Lesson) {
-        addChildren("task_list", item.taskList)
+        jsonObject.addChildren("task_list", item.taskList, serializeStudyItem)
         jsonObject.addProperty("unit_id", item.unitId)
+      }
+      if (item is RemoteCourse) {
+        if (item.sectionIds.isNotEmpty()) {
+          jsonObject.addChildren("sectionIds", item.sectionIds) { id ->
+            JsonPrimitive(id)
+          }
+        }
       }
       jsonObject
     }

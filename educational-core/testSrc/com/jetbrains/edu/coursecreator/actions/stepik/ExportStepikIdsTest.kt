@@ -79,6 +79,9 @@ class ExportStepikIdsTest : EduTestCase() {
         }
       ]
     }
+  ],
+  "sectionIds": [
+    1
   ]
 }
     """.trimIndent()
@@ -100,6 +103,9 @@ class ExportStepikIdsTest : EduTestCase() {
     visitLessons { lesson ->
       val section = lesson.section
       val sectionId = section?.id ?: 1
+      if (section == null) {
+        sectionIds.add(lesson.index)
+      }
       lesson.id = 10 * sectionId + lesson.index
       lesson.unitId = lesson.id
       for (task in lesson.taskList) {
