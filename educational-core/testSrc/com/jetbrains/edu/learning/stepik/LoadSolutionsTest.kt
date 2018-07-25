@@ -86,12 +86,12 @@ class LoadSolutionsTest : StepikTestCase() {
     check(oldTaskFile, taskFile)
   }
 
-  private fun firstTask(course: Course?) = course!!.lessons!![0].taskList!![0]
+  private fun firstTask(course: Course?) = course!!.lessons[0].taskList!![0]
 
   private fun createCourseFromStepik(course: RemoteCourse): RemoteCourse? {
     val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as RemoteCourse
     StepikConnector.loadCourseStructure(project, remoteCourse)
-    remoteCourse!!.init(null, null, false)
+    remoteCourse.init(null, null, false)
     remoteCourse.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(project).course = remoteCourse
 
