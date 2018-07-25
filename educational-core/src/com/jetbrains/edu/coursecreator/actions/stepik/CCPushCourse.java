@@ -142,17 +142,12 @@ public class CCPushCourse extends DumbAwareAction {
 
   private static void setStatusRecursively(@NotNull Course course,
                                            @SuppressWarnings("SameParameterValue") @NotNull StepikChangeStatus status) {
-    for (StudyItem item : course.getItems()) {
-      item.setStepikChangeStatus(status);
-      if (item instanceof Section) {
-        for (Lesson lesson : ((Section)item).getLessons()) {
-          setLessonStatus(lesson, status);
-        }
-      }
-
-      if (item instanceof Lesson) {
-        setLessonStatus((Lesson)item, status);
-      }
+    course.visitLessons(lesson -> {
+      setLessonStatus(lesson, status);
+        return true;
+    });
+    for (Section section : course.getSections()) {
+      section.setStepikChangeStatus(status);
     }
   }
 
