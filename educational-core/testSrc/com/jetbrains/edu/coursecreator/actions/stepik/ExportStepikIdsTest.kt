@@ -59,7 +59,8 @@ class ExportStepikIdsTest : EduTestCase() {
           "title": "task1",
           "id": 111
         }
-      ]
+      ],
+      "unit_id": 11
     },
     {
       "title": "section2",
@@ -73,7 +74,8 @@ class ExportStepikIdsTest : EduTestCase() {
               "title": "task1",
               "id": 211
             }
-          ]
+          ],
+          "unit_id": 21
         }
       ]
     }
@@ -99,6 +101,7 @@ class ExportStepikIdsTest : EduTestCase() {
       val section = lesson.section
       val sectionId = section?.id ?: 1
       lesson.id = 10 * sectionId + lesson.index
+      lesson.unitId = lesson.id
       for (task in lesson.taskList) {
         task.stepId = 10 * lesson.id + task.index
       }
