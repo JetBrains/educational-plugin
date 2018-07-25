@@ -56,9 +56,6 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
     List<String> newHints = dialog.getHints();
     List<String> oldHints = answerPlaceholder.getHints();
-    if (newHints.size() != oldHints.size()) {
-      return true;
-    }
 
     return !newHints.equals(oldHints);
   }
