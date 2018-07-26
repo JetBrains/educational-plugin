@@ -1,18 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.edu.learning.courseView
 
-import com.intellij.ide.projectView.ProjectView
-import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.ProjectViewTestUtil
-import com.intellij.util.ui.tree.TreeUtil
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.projectView.CourseViewPane
-
-class NodesTest: EduTestCase() {
-  override fun setUp() {
-    super.setUp()
-    ProjectViewTestUtil.setupImpl(project, true)
-  }
+class NodesTest: CourseViewTestBase() {
 
   fun testSections() {
     courseWithFiles {
@@ -115,17 +104,5 @@ class NodesTest: EduTestCase() {
     |   -TaskNode task2
     |    taskFile.txt
     """.trimMargin("|"))
-  }
-
-  private fun assertCourseView(structure: String) {
-    val projectView = ProjectView.getInstance(project)
-    projectView.refresh()
-    projectView.changeView(CourseViewPane.ID)
-    val pane = projectView.currentProjectViewPane
-    val tree = pane.tree
-    PlatformTestUtil.waitWhileBusy(tree)
-    TreeUtil.expandAll(tree)
-    PlatformTestUtil.waitWhileBusy(tree)
-    PlatformTestUtil.assertTreeEqual(tree, structure + "\n")
   }
 }

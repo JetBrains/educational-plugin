@@ -3,34 +3,23 @@ package com.jetbrains.edu.learning.courseView
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.*
+import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.UsefulTestCase
 import com.jetbrains.edu.learning.EduState
-import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import junit.framework.TestCase
 import org.junit.Assert
 
-class CourseViewTest : EduTestCase() {
-
-  @Throws(Exception::class)
-  override fun setUp() {
-    super.setUp()
-    ProjectViewTestUtil.setupImpl(project, true)
-  }
+class CourseViewTest : CourseViewTestBase() {
 
   fun testCoursePane() {
-    createCourseAndInit()
-
     configureByTaskFile(1, 1, "taskFile1.txt")
     val pane = createPane()
 
@@ -45,14 +34,13 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testProjectOpened() {
-    createCourseAndInit()
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
     val pane = projectView.currentProjectViewPane
-    PlatformTestUtil.waitWhileBusy(pane.tree)
+    waitWhileBusy(pane.tree)
     EduUtils.openFirstTask(StudyTaskManager.getInstance(project).course!!, project)
     PlatformTestUtil.waitForAlarm(600)
-    PlatformTestUtil.waitWhileBusy(pane.tree)
+    waitWhileBusy(pane.tree)
     val structure = "-Project\n" +
                           " -CourseNode Edu test course  0/4\n" +
                           "  -LessonNode lesson1\n" +
@@ -65,7 +53,6 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testExpandAfterNavigation() {
-    createCourseAndInit()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -84,7 +71,6 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testCourseProgress() {
-    createCourseAndInit()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -94,14 +80,12 @@ class CourseViewTest : EduTestCase() {
   }
 
   fun testSwitchingPane() {
-    createCourseAndInit()
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
     TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
   }
 
   fun testCheckTask() {
-    createCourseAndInit()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -114,15 +98,15 @@ class CourseViewTest : EduTestCase() {
     val pane = projectView.currentProjectViewPane
     val structure = "-Project\n" +
                           " +CourseNode Edu test course  1/4\n"
-    PlatformTestUtil.waitWhileBusy(pane.tree)
+    waitWhileBusy(pane.tree)
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
 
     val refreshTaskFileAction = RefreshTaskFileAction()
     launchAction(taskFile, refreshTaskFileAction)
   }
 
-  private fun createCourseAndInit() {
-    val course = courseWithFiles("Edu test course") {
+  override fun createCourse() {
+    courseWithFiles("Edu test course") {
       lesson {
         eduTask {
           taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
@@ -140,22 +124,11 @@ class CourseViewTest : EduTestCase() {
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = course
-    StudyTaskManager.getInstance(project).course!!.init(null, null, true)
   }
 
   private fun launchAction(taskFile: VirtualFile, action: AnAction) {
-    val e = getActionEvent(taskFile, action)
-    action.beforeActionPerformedUpdate(e)
-    Assert.assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
-    action.actionPerformed(e)
-  }
-
-  private fun getActionEvent(virtualFile: VirtualFile, action: AnAction): TestActionEvent {
-    val context = MapDataContext()
-    context.put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(virtualFile))
-    context.put<Project>(CommonDataKeys.PROJECT, project)
-    return TestActionEvent(context, action)
+    val presentation = testAction(dataContext(taskFile), action)
+    Assert.assertTrue(presentation.isEnabledAndVisible)
   }
 
   private fun navigateToNextTask() {
