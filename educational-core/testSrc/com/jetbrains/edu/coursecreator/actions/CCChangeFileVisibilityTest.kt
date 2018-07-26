@@ -12,6 +12,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCChangeFileVisibility
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCHideFromStudent
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCMakeVisibleToStudent
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
@@ -19,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.VisibleFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-class CCChangeFileVisibilityTest : CCActionTestCase() {
+class CCChangeFileVisibilityTest : EduActionTestCase() {
 
   fun `test single task file`() = doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1")
   fun `test single additional file`() = doAvailableTest(false, "additionalFile1.txt", pathPrefix = "lesson1/task1")

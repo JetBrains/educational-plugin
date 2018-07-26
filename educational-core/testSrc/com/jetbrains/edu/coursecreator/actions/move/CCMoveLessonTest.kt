@@ -4,12 +4,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import junit.framework.TestCase
 
-class CCMoveLessonTest : CCActionTestCase() {
+class CCMoveLessonTest : EduActionTestCase() {
 
   fun `test move lesson to section`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {

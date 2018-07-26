@@ -3,13 +3,13 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 
-class CCCreateTaskTest : CCActionTestCase() {
+class CCCreateTaskTest : EduActionTestCase() {
 
   fun `test create task in lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {

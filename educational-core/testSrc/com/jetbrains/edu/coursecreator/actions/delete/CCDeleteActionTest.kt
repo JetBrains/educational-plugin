@@ -4,13 +4,13 @@ import com.intellij.ide.actions.DeleteAction
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.withTestDialog
 
-class CCDeleteActionTest : CCActionTestCase() {
+class CCDeleteActionTest : EduActionTestCase() {
 
   fun `test delete task`() {
     courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
