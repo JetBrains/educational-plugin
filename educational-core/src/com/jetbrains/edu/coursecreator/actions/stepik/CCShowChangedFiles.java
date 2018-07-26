@@ -11,6 +11,10 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
+import org.jsoup.helper.StringUtil;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class CCShowChangedFiles extends DumbAwareAction {
 
@@ -37,23 +41,22 @@ public class CCShowChangedFiles extends DumbAwareAction {
   public static String buildChangeMessage(@NotNull Course course) {
     StringBuilder builder = new StringBuilder();
     if (course.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-      appendChangeLine("", course, builder);
+      appendChangeLine(course, builder);
     }
 
     for (StudyItem item : course.getItems()) {
       if (item.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-        appendChangeLine("", item, builder);
+        appendChangeLine(item, builder);
       }
 
       if (item instanceof Section) {
         for (Lesson lesson : ((Section)item).getLessons()) {
           if (lesson.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-            appendChangeLine(item.getName() + "/", lesson, builder);
+            appendChangeLine(lesson, builder);
           }
           for (Task task : lesson.taskList) {
             if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-              String parentsLine = item.getName() + "/" + lesson.getName() + "/";
-              appendChangeLine(parentsLine, task, builder);
+              appendChangeLine(task, builder);
             }
           }
         }
@@ -62,7 +65,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
       if (item instanceof Lesson) {
         for (Task task : ((Lesson)item).taskList) {
           if (task.getStepikChangeStatus() != StepikChangeStatus.UP_TO_DATE) {
-            appendChangeLine(item.getName() + "/", task, builder);
+            appendChangeLine(task, builder);
           }
         }
       }
@@ -74,10 +77,9 @@ public class CCShowChangedFiles extends DumbAwareAction {
     return message;
   }
 
-  private static void appendChangeLine(@NotNull String parentsLine, @NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
+  private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
     stringBuilder
-      .append(parentsLine)
-      .append(item.getName())
+      .append(getPath(item))
       .append(" ")
       .append(item.getStepikChangeStatus())
       .append("\n");
@@ -95,5 +97,18 @@ public class CCShowChangedFiles extends DumbAwareAction {
     if (course instanceof RemoteCourse && !course.isStudy()) {
       presentation.setEnabledAndVisible(true);
     }
+  }
+
+  private static String getPath(@NotNull StudyItem item) {
+    ArrayList<String> parents = new ArrayList<>();
+    StudyItem parent = item.getParent();
+    while (!(parent instanceof Course)) {
+      parents.add(parent.getName());
+      parent = parent.getParent();
+    }
+    Collections.reverse(parents);
+
+    String parentsLine = StringUtil.join(parents, "/");
+    return parentsLine + "/" + item.getName();
   }
 }
