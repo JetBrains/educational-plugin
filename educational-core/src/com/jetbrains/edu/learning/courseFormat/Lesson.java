@@ -93,6 +93,12 @@ public class Lesson extends StudyItem {
     return myCourse;
   }
 
+  @NotNull
+  @Override
+  public StudyItem getParent() {
+    return mySection == null ? myCourse : mySection;
+  }
+
   @Transient
   public void setCourse(Course course) {
     myCourse = course;
