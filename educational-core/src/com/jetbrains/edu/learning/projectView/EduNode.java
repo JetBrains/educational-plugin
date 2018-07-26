@@ -40,13 +40,7 @@ public abstract class EduNode extends PsiDirectoryNode {
 
   @Override
   public String getTestPresentation() {
-    final PresentationData presentation = getPresentation();
-    final List<ColoredFragment> fragments = presentation.getColoredText();
-    final StringBuilder builder = new StringBuilder();
-    for (ColoredFragment fragment : fragments) {
-      builder.append(fragment.getText());
-    }
-    return getClass().getSimpleName() + " " + builder.toString();
+    return CourseViewUtils.testPresentation(this);
   }
 
   @Override

@@ -1,6 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.edu.learning.courseView
 
+import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduNames
+
 class NodesTest: CourseViewTestBase() {
 
   fun testSections() {
@@ -104,5 +107,68 @@ class NodesTest: CourseViewTestBase() {
     |   -TaskNode task2
     |    taskFile.txt
     """.trimMargin("|"))
+  }
+
+  fun `test invisible files in student mode`() {
+    courseWithInvisibleItems(EduNames.STUDY)
+    assertCourseView("""
+      -Project
+       -CourseNode Test Course  0/2
+        -LessonNode lesson1
+         -TaskNode task1
+          -DirectoryNode folder1
+           taskFile3.txt
+          taskFile1.txt
+         -TaskNode task2
+          additionalFile1.txt
+          -DirectoryNode folder
+           additionalFile3.txt
+    """.trimIndent(), ignoreOrder = true)
+  }
+
+  fun `test invisible files in educator mode`() {
+    courseWithInvisibleItems(CCUtils.COURSE_MODE)
+    assertCourseView("""
+      -Project
+       -CCCourseNode Test Course (Course Creation)
+        -CCLessonNode lesson1
+         -CCTaskNode task1
+          -CCNode folder1
+           taskFile3.txt
+           CCStudentInvisibleFileNode taskFile4.txt
+          CCStudentInvisibleFileNode task.html
+          taskFile1.txt
+          CCStudentInvisibleFileNode taskFile2.txt
+         -CCTaskNode task2
+          additionalFile1.txt
+          CCStudentInvisibleFileNode additionalFile2.txt
+          -CCNode folder
+           additionalFile3.txt
+           CCStudentInvisibleFileNode additionalFile4.txt
+          CCStudentInvisibleFileNode task.html
+    """.trimIndent(), ignoreOrder = true)
+  }
+
+  private fun courseWithInvisibleItems(courseMode: String) {
+    courseWithFiles(courseMode = courseMode) {
+      lesson {
+        eduTask {
+          taskFile("taskFile1.txt")
+          taskFile("taskFile2.txt", visible = false)
+          dir("folder1") {
+            taskFile("taskFile3.txt")
+            taskFile("taskFile4.txt", visible = false)
+          }
+        }
+        eduTask {
+          additionalFile("additionalFile1.txt")
+          additionalFile("additionalFile2.txt", visible = false)
+          dir("folder") {
+            additionalFile("additionalFile3.txt")
+            additionalFile("additionalFile4.txt", visible = false)
+          }
+        }
+      }
+    }
   }
 }
