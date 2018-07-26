@@ -4,14 +4,14 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.withTestDialog
 import org.junit.Assert.assertArrayEquals
 
-class CCCreateFrameworkTaskTest : CCActionTestCase() {
+class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
   private val root: VirtualFile get() = LightPlatformTestCase.getSourceRoot()
 

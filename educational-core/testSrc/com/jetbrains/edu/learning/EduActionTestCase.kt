@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.learning
 
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.vfs.VirtualFile
@@ -6,13 +6,10 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
-import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 
-abstract class CCActionTestCase : EduTestCase() {
+abstract class EduActionTestCase : EduTestCase() {
 
   fun dataContext(files: Array<VirtualFile>): DataContext {
     return MapDataContext().apply {

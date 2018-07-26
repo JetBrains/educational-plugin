@@ -3,12 +3,12 @@ package com.jetbrains.edu.coursecreator.actions.move
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.handlers.CCTaskMoveHandlerDelegate
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import junit.framework.TestCase
 
-class CCMoveTaskTest : CCActionTestCase() {
+class CCMoveTaskTest : EduActionTestCase() {
 
   fun `test move to another lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {

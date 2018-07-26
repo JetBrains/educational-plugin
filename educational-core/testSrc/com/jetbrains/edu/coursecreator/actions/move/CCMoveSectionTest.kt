@@ -3,12 +3,12 @@ package com.jetbrains.edu.coursecreator.actions.move
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.handlers.CCSectionMoveHandlerDelegate
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import junit.framework.TestCase
 
-class CCMoveSectionTest : CCActionTestCase() {
+class CCMoveSectionTest : EduActionTestCase() {
 
   fun `test move section before lesson`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {

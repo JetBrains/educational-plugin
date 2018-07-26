@@ -4,13 +4,13 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 
-class CCCreateLessonTest : CCActionTestCase() {
+class CCCreateLessonTest : EduActionTestCase() {
 
   fun `test create lesson in course`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {

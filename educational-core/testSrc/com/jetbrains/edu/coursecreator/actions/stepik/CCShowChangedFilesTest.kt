@@ -1,12 +1,12 @@
 package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.*
 import junit.framework.TestCase
 
-class CCShowChangedFilesTest: CCActionTestCase() {
+class CCShowChangedFilesTest: EduActionTestCase() {
 
   fun `test course up to date`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {

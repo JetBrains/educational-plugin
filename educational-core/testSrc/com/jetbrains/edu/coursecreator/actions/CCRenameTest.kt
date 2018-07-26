@@ -12,11 +12,12 @@ import com.jetbrains.edu.coursecreator.handlers.CCDescriptionFileRenameHandler
 import com.jetbrains.edu.coursecreator.handlers.CCLessonRenameHandler
 import com.jetbrains.edu.coursecreator.handlers.CCSectionRenameHandler
 import com.jetbrains.edu.coursecreator.handlers.CCTaskRenameHandler
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import junit.framework.TestCase
 
-class CCRenameTest : CCActionTestCase() {
+class CCRenameTest : EduActionTestCase() {
 
   fun `test rename section`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
