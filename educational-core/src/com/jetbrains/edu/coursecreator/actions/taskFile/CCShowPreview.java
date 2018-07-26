@@ -71,8 +71,11 @@ public class CCShowPreview extends DumbAwareAction {
       return;
     }
     final PsiFile file = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
-    if (file != null && EduUtils.getTaskFile(project, file.getVirtualFile()) != null) {
-      presentation.setEnabledAndVisible(true);
+    if (file != null) {
+      TaskFile taskFile = EduUtils.getTaskFile(project, file.getVirtualFile());
+      if (taskFile != null && taskFile.isVisible()) {
+        presentation.setEnabledAndVisible(true);
+      }
     }
   }
 
@@ -93,7 +96,7 @@ public class CCShowPreview extends DumbAwareAction {
     }
     VirtualFile virtualFile = file.getVirtualFile();
     TaskFile taskFile = EduUtils.getTaskFile(project, virtualFile);
-    if (taskFile == null) {
+    if (taskFile == null || !taskFile.isVisible()) {
       return;
     }
     final PsiDirectory taskDir = file.getContainingDirectory();

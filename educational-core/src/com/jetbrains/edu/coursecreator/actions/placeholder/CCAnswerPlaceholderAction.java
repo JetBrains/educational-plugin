@@ -42,7 +42,7 @@ abstract public class CCAnswerPlaceholderAction extends DumbAwareAction {
       return null;
     }
     TaskFile taskFile = EduUtils.getTaskFile(project, virtualFile);
-    if (taskFile == null) {
+    if (taskFile == null || !taskFile.isVisible()) {
       return null;
     }
     AnswerPlaceholder answerPlaceholder = EduUtils.getAnswerPlaceholder(editor.getCaretModel().getOffset(), getPlaceholders(taskFile));
