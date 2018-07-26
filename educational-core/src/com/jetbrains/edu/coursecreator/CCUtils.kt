@@ -123,6 +123,8 @@ object CCUtils {
   @JvmStatic
   fun createAdditionalLesson(course: Course, project: Project,
                              name: String): Lesson? {
+    ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
+
     val baseDir = project.baseDir
     val configurator = EduConfiguratorManager.forLanguage(course.languageById!!)
 
