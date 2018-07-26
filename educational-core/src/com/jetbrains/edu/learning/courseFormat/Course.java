@@ -104,7 +104,7 @@ public class Course extends ItemContainer {
   @Nullable
   public Lesson getLesson(int lessonId) {
     return (Lesson)items.stream().filter(Lesson.class::isInstance).
-      filter(item -> ((Lesson)item).getId() == lessonId).findFirst().orElse(null);
+      filter(item -> item.getId() == lessonId).findFirst().orElse(null);
   }
 
   @NotNull
