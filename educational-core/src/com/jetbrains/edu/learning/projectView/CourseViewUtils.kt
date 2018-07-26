@@ -4,6 +4,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
@@ -52,5 +53,17 @@ object CourseViewUtils {
       }
     }
     return baseDir
+  }
+
+  @JvmStatic
+  fun testPresentation(node: AbstractTreeNode<out PsiFileSystemItem>): String {
+    val presentation = node.presentation
+    val fragments = presentation.coloredText
+    val className = node.javaClass.simpleName
+    return if (fragments.isEmpty()) {
+      "$className ${node.value.name}"
+    } else {
+      fragments.joinToString(separator = "", prefix = "$className ") { it.text }
+    }
   }
 }
