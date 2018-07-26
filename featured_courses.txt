@@ -6,9 +6,3 @@
 3213 # Python Unit-Testing Course
 3212 # Django Tutorial
 2057 # Python. Functional Programming
-5559 # Java Practice Intro
-5801 # Java Practice Types
-5803 # Java Practice Statements
-5804 # Java Practice Arrays
-5806 # Java Practice Classes
-5807 # Java Practice Collections
