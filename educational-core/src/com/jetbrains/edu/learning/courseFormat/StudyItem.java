@@ -70,4 +70,7 @@ public abstract class StudyItem {
 
   @NotNull
   public abstract Course getCourse();
+
+  @NotNull
+  public abstract StudyItem getParent();
 }

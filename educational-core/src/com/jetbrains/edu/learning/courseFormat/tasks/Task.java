@@ -354,4 +354,10 @@ public abstract class Task extends StudyItem {
       this.taskFiles.put(taskFile.name, taskFile);
     }
   }
+
+  @NotNull
+  @Override
+  public StudyItem getParent() {
+    return myLesson;
+  }
 }

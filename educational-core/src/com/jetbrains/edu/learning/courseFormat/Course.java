@@ -159,6 +159,12 @@ public class Course extends ItemContainer {
     return this;
   }
 
+  @NotNull
+  @Override
+  public StudyItem getParent() {
+    return this;
+  }
+
   public String getDescription() {
     return description;
   }

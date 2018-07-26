@@ -124,4 +124,10 @@ public class Section extends ItemContainer {
   public void setCourse(Course course) {
     myCourse = course;
   }
+
+  @NotNull
+  @Override
+  public StudyItem getParent() {
+    return myCourse;
+  }
 }
