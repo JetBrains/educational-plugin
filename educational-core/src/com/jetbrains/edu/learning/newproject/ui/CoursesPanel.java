@@ -13,7 +13,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DefaultProjectFactory;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -426,7 +425,7 @@ public class CoursesPanel extends JPanel {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
         return EduUtils.execCancelable(() -> StepikConnector.getSupportedLanguages(course));
-      }, "Getting Available Languages", true, DefaultProjectFactory.getInstance().getDefaultProject() );
+      }, "Getting Available Languages", true, null);
     }
 
     private void showFailedToAddCourseNotification() {
