@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.DefaultProjectFactoryImpl;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +56,7 @@ public class OAuthDialog extends DialogWrapper {
       else {
         setError("Login Failed");
       }
-    }, myProgressTitle, true, new DefaultProjectFactoryImpl().getDefaultProject());
+    }, myProgressTitle, true, null);
   }
 
   private void setError(@NotNull String errorText) {
