@@ -1,5 +1,6 @@
 package com.jetbrains.edu.python.learning.checkio;
 
+import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
@@ -24,8 +25,8 @@ public class PyCheckiOConfigurator implements EduConfigurator<PyNewProjectSettin
   }
 
   @Override
-  public boolean excludeFromArchive(@NotNull String name) {
-    return name.contains("__pycache__") || name.endsWith(".pyc");
+  public boolean excludeFromArchive(@NotNull Project project, @NotNull String path) {
+    return path.contains("__pycache__") || path.endsWith(".pyc");
   }
 
   @Override
