@@ -20,7 +20,6 @@ import com.intellij.ide.impl.ProjectUtil;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -29,7 +28,10 @@ import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.newproject.CreateNewStepikCourseDialog;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -47,8 +49,6 @@ import static com.jetbrains.edu.learning.EduUtils.execCancelable;
 import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
 
 public class EduBuiltInServerUtils {
-
-  private static final Logger LOG = Logger.getInstance(EduBuiltInServerUtils.class);
 
   public static boolean focusOpenProject(int courseId, int stepId) {
     Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
@@ -108,8 +108,7 @@ public class EduBuiltInServerUtils {
       if (component == null) {
         continue;
       }
-      StudyTaskManager studyTaskManager = getDefaultTaskManager();
-      int courseId = getCourseId(studyTaskManager, component);
+      int courseId = getCourseId(component);
 
       if (courseId == targetCourseId) {
         PropertiesComponent.getInstance().setValue(StepikNames.STEP_ID, stepId, 0);
@@ -138,13 +137,14 @@ public class EduBuiltInServerUtils {
     return component;
   }
 
-  private static int getCourseId(@NotNull StudyTaskManager studyTaskManager, @NotNull Element component) {
+  private static int getCourseId(@NotNull Element component) {
     try {
+      final StudyTaskManager studyTaskManager = new StudyTaskManager();
       studyTaskManager.loadState(component);
       Course course = studyTaskManager.getCourse();
 
       if (course instanceof RemoteCourse) {
-        return ((RemoteCourse)course).getId();
+        return course.getId();
       }
     }
     catch (IllegalStateException | XmlSerializationException ignored) {
@@ -153,18 +153,15 @@ public class EduBuiltInServerUtils {
   }
 
   public static boolean createProject(int courseId, int stepId) {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      Project defaultProject = ProjectManager.getInstance().getDefaultProject();
-      ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        execCancelable(() -> {
-          StepicUser user = StepikAuthorizedClient.getCurrentUser();
-          RemoteCourse course = StepikConnector.getCourseFromStepik(user, courseId, true);
-          showDialog(course, stepId);
-          return null;
-        });
-      }, "Getting Course", true, defaultProject);
-    });
+    ApplicationManager.getApplication().invokeLater(() -> ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+      execCancelable(() -> {
+        StepicUser user = StepikAuthorizedClient.getCurrentUser();
+        RemoteCourse course = StepikConnector.getCourseFromStepik(user, courseId, true);
+        showDialog(course, stepId);
+        return null;
+      });
+    }, "Getting Course", true, null));
 
     return true;
   }
@@ -178,11 +175,5 @@ public class EduBuiltInServerUtils {
         Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course");
       }
     });
-  }
-
-  @NotNull
-  private static StudyTaskManager getDefaultTaskManager() {
-    Project defaultProject = ProjectManager.getInstance().getDefaultProject();
-    return StudyTaskManager.getInstance(defaultProject);
   }
 }
