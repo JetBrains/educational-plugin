@@ -82,7 +82,7 @@ public class BrowserWindow extends JFrame {
 
   public static final String SRC_ATTRIBUTE = "src";
   private JFXPanel myPanel;
-  private WebView myWebComponent;
+  protected WebView myWebComponent;
   private StackPane myPane;
 
   private WebEngine myEngine;
