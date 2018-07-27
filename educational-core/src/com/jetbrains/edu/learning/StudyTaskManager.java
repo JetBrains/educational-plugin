@@ -48,9 +48,9 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
 
   public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();
 
-  @Transient private final Project myProject;
+  @Transient @Nullable private final Project myProject;
 
-  public StudyTaskManager(Project project) {
+  public StudyTaskManager(@Nullable Project project) {
     myProject = project;
   }
 
@@ -60,7 +60,9 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
 
   public void setCourse(Course course) {
     myCourse = course;
-    myProject.getMessageBus().syncPublisher(COURSE_SET).courseSet(course);
+    if (myProject != null) {
+      myProject.getMessageBus().syncPublisher(COURSE_SET).courseSet(course);
+    }
   }
 
   @Nullable
@@ -141,27 +143,29 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
         LOG.error("StudyTaskManager doesn't contain any version:\n" + state.getValue());
         return;
       }
-      switch (version) {
-        case 1:
-          state = SerializationUtils.Xml.convertToSecondVersion(myProject, state);
-        case 2:
-          state = SerializationUtils.Xml.convertToThirdVersion(myProject, state);
-        case 3:
-          state = SerializationUtils.Xml.convertToFourthVersion(myProject, state);
-        case 4:
-          state = SerializationUtils.Xml.convertToFifthVersion(myProject, state);
-          updateTestHelper();
-        case 5:
-          state = SerializationUtils.Xml.convertToSixthVersion(myProject, state);
-        case 6:
-          state = SerializationUtils.Xml.convertToSeventhVersion(myProject, state);
-        case 7:
-          state = SerializationUtils.Xml.convertToEighthVersion(myProject, state);
-        case 8:
-          state = SerializationUtils.Xml.convertToNinthVersion(myProject, state);
-          // uncomment for future versions
-          //case 9:
-          // state = SerializationUtils.Xml.convertToTenthVersion(myProject, state);
+      if (myProject != null) {
+        switch (version) {
+          case 1:
+            state = SerializationUtils.Xml.convertToSecondVersion(myProject, state);
+          case 2:
+            state = SerializationUtils.Xml.convertToThirdVersion(myProject, state);
+          case 3:
+            state = SerializationUtils.Xml.convertToFourthVersion(myProject, state);
+          case 4:
+            state = SerializationUtils.Xml.convertToFifthVersion(myProject, state);
+            updateTestHelper();
+          case 5:
+            state = SerializationUtils.Xml.convertToSixthVersion(myProject, state);
+          case 6:
+            state = SerializationUtils.Xml.convertToSeventhVersion(myProject, state);
+          case 7:
+            state = SerializationUtils.Xml.convertToEighthVersion(myProject, state);
+          case 8:
+            state = SerializationUtils.Xml.convertToNinthVersion(myProject, state);
+            // uncomment for future versions
+            //case 9:
+            // state = SerializationUtils.Xml.convertToTenthVersion(myProject, state);
+        }
       }
       deserialize(state);
       VERSION = EduVersions.XML_FORMAT_VERSION;
@@ -175,6 +179,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   private void updateTestHelper() {
+    if (myProject == null) return;
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       final VirtualFile baseDir = myProject.getBaseDir();
       if (baseDir == null) {
