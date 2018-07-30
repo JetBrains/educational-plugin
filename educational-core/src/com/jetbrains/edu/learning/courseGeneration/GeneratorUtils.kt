@@ -78,9 +78,6 @@ object GeneratorUtils {
   fun createLesson(lesson: Lesson, courseDir: VirtualFile) {
     if (lesson.isAdditional) {
       createAdditionalFiles(lesson, courseDir)
-      if (lesson.course is RemoteCourse) {
-        (lesson.course as RemoteCourse).additionalMaterialsUpdateDate = lesson.updateDate
-      }
     } else {
       val lessonDir = createUniqueDir(courseDir, lesson)
       val taskList = lesson.getTaskList()

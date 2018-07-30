@@ -488,6 +488,7 @@ public class StepikConnector {
               final Lesson lesson = lessonsFromUnits.get(0);
               lesson.setIndex(itemIndex);
               remoteCourse.addLesson(lesson);
+              remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
             }
             else if (section.getName().equals(remoteCourse.getName())) {
               remoteCourse.addLessons(lessonsFromUnits);
