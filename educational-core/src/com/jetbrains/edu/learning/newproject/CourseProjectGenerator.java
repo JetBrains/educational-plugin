@@ -47,10 +47,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepicUser;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepik.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -198,7 +195,7 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
-    if (course.isStudy() && course instanceof RemoteCourse && EduSettings.getInstance().getUser() != null) {
+    if (course.isStudy() && course instanceof RemoteCourse && StepikUtils.isLoggedIn()) {
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       if (isEnrolled) {
         StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);

@@ -300,8 +300,7 @@ public class CCStepikConnector {
   }
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
-    boolean isAuthorized = EduSettings.getInstance().getUser() != null;
-    if (!isAuthorized) {
+    if (!StepikUtils.isLoggedIn()) {
       showStepikNotification(project, NotificationType.ERROR, failedActionName);
       return false;
     }

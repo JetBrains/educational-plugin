@@ -17,12 +17,15 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.diagnostic.Logger;
+import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,5 +99,9 @@ public class StepikUtils {
       LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
                              info.getName(), courseType));
     }
+  }
+
+  public static boolean isLoggedIn() {
+    return EduSettings.getInstance().getUser() != null;
   }
 }

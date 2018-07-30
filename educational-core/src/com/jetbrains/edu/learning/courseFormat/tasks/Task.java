@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -272,8 +271,7 @@ public abstract class Task extends StudyItem {
   }
 
   public boolean isUpToDate() {
-    boolean isLoggedIn = EduSettings.getInstance().getUser() != null;
-    if (getStepId() == 0 || !isLoggedIn) return true;
+    if (getStepId() == 0 || !StepikUtils.isLoggedIn()) return true;
 
     final Date date = StepikConnector.getTaskUpdateDate(getStepId());
     if (date == null) return true;
