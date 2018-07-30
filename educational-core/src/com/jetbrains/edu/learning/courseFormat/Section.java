@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,8 +83,7 @@ public class Section extends ItemContainer {
   }
 
   public boolean isUpToDate() {
-    boolean isLoggedIn = EduSettings.getInstance().getUser() != null;
-    if (id == 0 || !isLoggedIn) return true;
+    if (id == 0 || !StepikUtils.isLoggedIn()) return true;
 
     Section section = StepikConnector.getSection(id);
     if (section.getUpdateDate() == null) return true;

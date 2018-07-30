@@ -2,13 +2,14 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.ui.MessageType.*
+import com.intellij.openapi.ui.MessageType.ERROR
+import com.intellij.openapi.ui.MessageType.WARNING
 import com.jetbrains.edu.learning.EduConfiguratorManager
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.getDisabledPlugins
+import com.jetbrains.edu.learning.stepik.StepikUtils.isLoggedIn
 import java.awt.Color
 
 sealed class ErrorState(
@@ -53,8 +54,6 @@ sealed class ErrorState(
       }
       return ErrorMessage(beforeLink, "Enable", "")
     }
-
-    private fun isLoggedIn(): Boolean = EduSettings.getInstance().user != null
 
     private fun isLoginRequired(selectedCourse: Course): Boolean =
       selectedCourse.isAdaptive || selectedCourse is RemoteCourse && !selectedCourse.isCompatible

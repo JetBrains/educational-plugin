@@ -7,11 +7,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import kotlin.collections.CollectionsKt;
 import one.util.streamex.StreamEx;
@@ -150,8 +150,7 @@ public class Lesson extends StudyItem {
   }
 
   public boolean isUpToDate() {
-    boolean isLoggedIn = EduSettings.getInstance().getUser() != null;
-    if (myId == 0 || !isLoggedIn) return true;
+    if (myId == 0 || !StepikUtils.isLoggedIn()) return true;
 
     Lesson lessonInfo = StepikConnector.getLessonFromServer(myId);
     if (lessonInfo == null) return true;
