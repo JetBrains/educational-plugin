@@ -11,6 +11,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.externalSystem.model.DataNode;
+import com.intellij.openapi.externalSystem.model.project.ProjectData;
+import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.ex.KeymapManagerEx;
 import com.intellij.openapi.module.Module;
@@ -20,6 +24,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -32,6 +37,7 @@ import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
@@ -39,6 +45,7 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -123,6 +130,27 @@ public class EduProjectComponent implements ProjectComponent {
 
     if (myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
       EduGradleUtils.importGradleProject(myProject, projectBasePath);
+    } else if (isAndroidStudio()) {
+      // Unexpectedly, Android Studio corrupts content root paths after course project reopening
+      // And project structure can't show project tree because of it.
+      // We don't know better and cleaner way how to fix it than to refresh project.
+      EduGradleUtils.importGradleProject(myProject, projectBasePath, new ExternalProjectRefreshCallback() {
+        @Override
+        public void onSuccess(@Nullable DataNode<ProjectData> externalProject) {
+          // We have to open current opened file in project view manually
+          // because it can't restore previous state.
+          VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
+          for (VirtualFile file : files) {
+            Task task = getTaskForFile(myProject, file);
+            if (task != null) {
+              ProjectView.getInstance(myProject).select(file, file, false);
+            }
+          }
+        }
+
+        @Override
+        public void onFailure(@NotNull String errorMessage, @Nullable String errorDetails) { }
+      });
     }
 
     // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
