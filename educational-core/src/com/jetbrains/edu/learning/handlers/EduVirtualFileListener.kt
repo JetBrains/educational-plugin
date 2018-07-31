@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
@@ -7,6 +7,9 @@ import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
