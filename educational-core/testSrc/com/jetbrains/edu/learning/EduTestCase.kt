@@ -18,7 +18,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
-import com.jetbrains.edu.coursecreator.CCVirtualFileListener
+import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import java.io.IOException
 
 abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
@@ -166,7 +167,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   protected inline fun withVirtualFileListener(course: Course, action: () -> Unit) {
     val virtualFileManager = VirtualFileManager.getInstance()
 
-    val listener = if (course.isStudy) UserCreatedFileListener(project) else CCVirtualFileListener(project)
+    val listener = if (course.isStudy) UserCreatedFileListener(project)
+    else CCVirtualFileListener(project)
     virtualFileManager.addVirtualFileListener(listener)
     try {
       action()
