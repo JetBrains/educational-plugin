@@ -1,0 +1,436 @@
+diff --git a/Edu-Java/testResources/META-INF/plugin.xml b/Edu-Java/testResources/META-INF/plugin.xml
+index c09e7e73d..5278ba576 100644
+--- a/Edu-Java/testResources/META-INF/plugin.xml
++++ b/Edu-Java/testResources/META-INF/plugin.xml
+@@ -1,5 +1,6 @@
+ <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+     <id>com.jetbrains.edu.java</id>
++    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+     <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
+ 
+     <extensions defaultExtensionNs="Educational">
+diff --git a/Edu-Kotlin/testResources/META-INF/plugin.xml b/Edu-Kotlin/testResources/META-INF/plugin.xml
+index 1f4d26990..c9fb71c71 100644
+--- a/Edu-Kotlin/testResources/META-INF/plugin.xml
++++ b/Edu-Kotlin/testResources/META-INF/plugin.xml
+@@ -1,5 +1,6 @@
+ <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+     <id>com.jetbrains.edu.kotlin</id>
++    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+     <depends optional="true" config-file="Edu-Kotlin.xml">com.intellij.modules.java</depends>
+ 
+     <extensions defaultExtensionNs="Educational">
+diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
+index 5e2f41ecc..e825027e3 100644
+--- a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
++++ b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
+@@ -81,14 +81,14 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
+           final PyPackageManager packageManager = PyPackageManager.getInstance(baseSdk);
+           return packageManager.createVirtualEnv(virtualEnvPath, false);
+         }
+-      }, getAllSdks(), baseSdk, project.getBasePath(), null);
++      }, getAllSdks(), baseSdk, project.getBasePath());
+       if (sdk == null) {
+         LOG.warn("Failed to create virtual env in " + virtualEnvPath);
+         return;
+       }
+       settings.setSdk(sdk);
+       SdkConfigurationUtil.addSdk(sdk);
+-      PySdkExtKt.associateWithModule(sdk, null, project.getBasePath());
++      PySdkExtKt.associateWithProject(sdk, project, false);
+     }
+   }
+ 
+diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
+index 3ec6bd2c6..00ddbfb5c 100644
+--- a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
++++ b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
+@@ -17,7 +17,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
+       if (it != null && PythonSdkType.isVirtualEnv(it)) {
+         val data = it.sdkAdditionalData as PythonSdkAdditionalData?
+         if (data != null) {
+-          val path = data.associatedModulePath
++          val path = data.associatedProjectPath
+           if (path != null) {
+             return@removeIf true
+           }
+@@ -27,7 +27,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
+     }
+ 
+     val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
+-    val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
++    val sdkChooser = PythonSdkChooserCombo(null, sdks, null) { true }
+     sdkChooser.addChangedListener {
+       mySettings.sdk = sdkChooser.comboBox.selectedItem as? Sdk
+     }
+diff --git a/Edu-Python/testResources/META-INF/plugin.xml b/Edu-Python/testResources/META-INF/plugin.xml
+index 5c7158398..a20004f8c 100644
+--- a/Edu-Python/testResources/META-INF/plugin.xml
++++ b/Edu-Python/testResources/META-INF/plugin.xml
+@@ -1,4 +1,5 @@
+ <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+     <id>com.jetbrains.edu.python</id>
++    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+     <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
+ </idea-plugin>
+diff --git a/Edu-Scala/testResources/META-INF/plugin.xml b/Edu-Scala/testResources/META-INF/plugin.xml
+index 5eca860a3..edce8141e 100644
+--- a/Edu-Scala/testResources/META-INF/plugin.xml
++++ b/Edu-Scala/testResources/META-INF/plugin.xml
+@@ -1,4 +1,5 @@
+ <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+     <id>com.jetbrains.edu.scala</id>
++    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+     <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
+ </idea-plugin>
+diff --git a/educational-core/resources/featured_courses.txt b/educational-core/resources/featured_courses.txt
+new file mode 100644
+index 000000000..f5c52012b
+--- /dev/null
++++ b/educational-core/resources/featured_courses.txt
+@@ -0,0 +1,16 @@
++4222
++238
++568
++3215
++3216
++3213
++3212
++2057
++4798
++4799
++4800
++4801
++4802
++4803
++4804
++4805
+\ No newline at end of file
+diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
+index a9c1908ff..8416b7cd0 100644
+--- a/educational-core/src/icons/EducationalCoreIcons.java
++++ b/educational-core/src/icons/EducationalCoreIcons.java
+@@ -37,5 +37,5 @@ public class EducationalCoreIcons {
+ 
+   public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
+   public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
+-  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
++  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
+ }
+diff --git a/educational-core/testData/projectView/lesson1/task1/taskFile1.txt b/educational-core/testData/projectView/lesson1/task1/taskFile1.txt
+new file mode 100644
+index 000000000..8ae930517
+--- /dev/null
++++ b/educational-core/testData/projectView/lesson1/task1/taskFile1.txt
+@@ -0,0 +1 @@
++Look! There <placeholder hint="my hint">i<caret>s</placeholder> placeholder.
+\ No newline at end of file
+diff --git a/educational-core/testData/projectView/lesson1/task2/taskFile2.txt b/educational-core/testData/projectView/lesson1/task2/taskFile2.txt
+new file mode 100644
+index 000000000..fafd4ac93
+--- /dev/null
++++ b/educational-core/testData/projectView/lesson1/task2/taskFile2.txt
+@@ -0,0 +1 @@
++Look!<caret> There <placeholder hint="my hint2">is</placeholder> placeholder.
+\ No newline at end of file
+diff --git a/educational-core/testData/projectView/lesson1/task3/taskFile3.txt b/educational-core/testData/projectView/lesson1/task3/taskFile3.txt
+new file mode 100644
+index 000000000..6b4b31a86
+--- /dev/null
++++ b/educational-core/testData/projectView/lesson1/task3/taskFile3.txt
+@@ -0,0 +1 @@
++Look! There <placeholder hint="my hint1" hint2="my hint2">i<caret>s</placeholder> placeholder.
+\ No newline at end of file
+diff --git a/educational-core/testData/projectView/lesson1/task4/taskFile4.txt b/educational-core/testData/projectView/lesson1/task4/taskFile4.txt
+new file mode 100644
+index 000000000..b3f872d0e
+--- /dev/null
++++ b/educational-core/testData/projectView/lesson1/task4/taskFile4.txt
+@@ -0,0 +1 @@
++Look! There <placeholder>i<caret>s</placeholder> placeholder.
+\ No newline at end of file
+diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
+index c6654db70..797ba6b7d 100644
+--- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
++++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
+@@ -4,6 +4,7 @@ package com.jetbrains.edu.learning.courseView
+ import com.intellij.ide.projectView.ProjectView
+ import com.intellij.openapi.actionSystem.AnAction
+ import com.intellij.openapi.actionSystem.CommonDataKeys
++import com.intellij.openapi.fileTypes.PlainTextLanguage
+ import com.intellij.openapi.project.Project
+ import com.intellij.openapi.util.Disposer
+ import com.intellij.openapi.vfs.VirtualFile
+@@ -19,18 +20,20 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
+ import com.jetbrains.edu.learning.projectView.CourseViewPane
+ import junit.framework.TestCase
+ import org.junit.Assert
++import java.io.IOException
+ 
+ class CourseViewTest : EduTestCase() {
+ 
++  private var myCourse: Course? = null
++
+   @Throws(Exception::class)
+   override fun setUp() {
+     super.setUp()
++    myCourse?.language = PlainTextLanguage.INSTANCE.id
+     ProjectViewTestUtil.setupImpl(project, true)
+   }
+ 
+   fun testCoursePane() {
+-    createCourseAndInit()
+-
+     configureByTaskFile(1, 1, "taskFile1.txt")
+     val pane = createPane()
+ 
+@@ -45,12 +48,11 @@ class CourseViewTest : EduTestCase() {
+   }
+ 
+   fun testProjectOpened() {
+-    createCourseAndInit()
+     val projectView = ProjectView.getInstance(project)
+     projectView.changeView(CourseViewPane.ID)
+     val pane = projectView.currentProjectViewPane
+     PlatformTestUtil.waitWhileBusy(pane.tree)
+-    EduUtils.openFirstTask(StudyTaskManager.getInstance(project).course!!, project)
++    EduUtils.openFirstTask(myCourse!!, project)
+     PlatformTestUtil.waitForAlarm(600)
+     PlatformTestUtil.waitWhileBusy(pane.tree)
+     val structure = "-Project\n" +
+@@ -65,7 +67,6 @@ class CourseViewTest : EduTestCase() {
+   }
+ 
+   fun testExpandAfterNavigation() {
+-    createCourseAndInit()
+     configureByTaskFile(1, 1, "taskFile1.txt")
+     val projectView = ProjectView.getInstance(project)
+     projectView.changeView(CourseViewPane.ID)
+@@ -84,7 +85,6 @@ class CourseViewTest : EduTestCase() {
+   }
+ 
+   fun testCourseProgress() {
+-    createCourseAndInit()
+     configureByTaskFile(1, 1, "taskFile1.txt")
+     val projectView = ProjectView.getInstance(project)
+     projectView.changeView(CourseViewPane.ID)
+@@ -94,14 +94,12 @@ class CourseViewTest : EduTestCase() {
+   }
+ 
+   fun testSwitchingPane() {
+-    createCourseAndInit()
+     val projectView = ProjectView.getInstance(project)
+     projectView.changeView(CourseViewPane.ID)
+     TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
+   }
+ 
+   fun testCheckTask() {
+-    createCourseAndInit()
+     configureByTaskFile(1, 1, "taskFile1.txt")
+     val projectView = ProjectView.getInstance(project)
+     projectView.changeView(CourseViewPane.ID)
+@@ -121,29 +119,6 @@ class CourseViewTest : EduTestCase() {
+     launchAction(taskFile, refreshTaskFileAction)
+   }
+ 
+-  private fun createCourseAndInit() {
+-    val course = courseWithFiles("Edu test course") {
+-      lesson {
+-        eduTask {
+-          taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
+-            placeholder(0, "2")
+-          }
+-        }
+-        eduTask {
+-          taskFile("taskFile2.txt")
+-        }
+-        eduTask {
+-          taskFile("taskFile3.txt")
+-        }
+-        eduTask {
+-          taskFile("taskFile4.txt")
+-        }
+-      }
+-    }
+-    StudyTaskManager.getInstance(project).course = course
+-    StudyTaskManager.getInstance(project).course!!.init(null, null, true)
+-  }
+-
+   private fun launchAction(taskFile: VirtualFile, action: AnAction) {
+     val e = getActionEvent(taskFile, action)
+     action.beforeActionPerformedUpdate(e)
+@@ -167,6 +142,19 @@ class CourseViewTest : EduTestCase() {
+     NavigationUtils.navigateToTask(project, targetTask!!)
+   }
+ 
++  @Throws(IOException::class)
++  override fun createCourse() {
++    myFixture.copyDirectoryToProject("lesson1", "lesson1")
++    myCourse = Course()
++    myCourse!!.language = PlainTextLanguage.INSTANCE.id
++    myCourse!!.name = "Edu test course"
++    StudyTaskManager.getInstance(myFixture.project).course = myCourse
++
++    val lesson1 = createLesson(1, 4)
++    myCourse!!.addLesson(lesson1)
++    myCourse!!.init(null, null, false)
++  }
++
+   private fun createPane(): CourseViewPane {
+     val pane = CourseViewPane(project)
+     pane.createComponent()
+diff --git a/featured_courses.txt b/featured_courses.txt
+index ff83ef07b..19513e5d2 100644
+--- a/featured_courses.txt
++++ b/featured_courses.txt
+@@ -5,4 +5,10 @@
+ 3216 # Introduction to Classic Ciphers
+ 3213 # Python Unit-Testing Course
+ 3212 # Django Tutorial
+-2057 # Python. Functional Programming
+\ No newline at end of file
++2057 # Python. Functional Programming
++5559 # Java Practice Intro
++5801 # Java Practice Types
++5803 # Java Practice Statements
++5804 # Java Practice Arrays
++5806 # Java Practice Classes
++5807 # Java Practice Collections
+\ No newline at end of file
+diff --git a/gradle.properties b/gradle.properties
+index e3d065cfc..1aee32e04 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,26 +1,26 @@
+ # format: <corresponding pycharm edu version>-<idea version>
+-pluginVersion=SNAPSHOT-IJ-2018.2
++pluginVersion=SNAPSHOT-IJ-2018.1
+ 
+ # check latest available version here https://plugins.jetbrains.com/plugin/7322-python-community-edition
+-pythonPluginVersion=2018.2.182.3341.29
++pythonPluginVersion=2018.1.181.4668.68
+ 
+ # check latest available version here https://plugins.jetbrains.com/plugin/1347-scala
+-scalaPluginVersion=2018.2.3
++scalaPluginVersion=2018.1.9
+ 
+ # needed for twitting functionality available currently only for kotlin
+ consumerKey=
+ consumerSecret=
+ stepik_test_client_secret=
+ 
+-customSinceBuild=182.3341.29
+-customUntilBuild=183.*
++customSinceBuild=181.3986
++customUntilBuild=182.*
+ javafx=http://download.jetbrains.com/idea/open-jfx/javafx-sdk-overlay.zip
+ 
+ # copy-pasted from markdown plugin properties: IDEA/contrib/markdown/gradle.properties
+ markdownParserVersion = 0.1.28
+ 
+ # optional value specifying idea version used on CI
+-ideaVersion=182-EAP-SNAPSHOT
++ideaVersion=IC-2018.1.5
+ 
+ # versions of Android Studio
+ # see https://developer.android.com/studio/index.html to get the latest version
+diff --git a/push.py b/push.py
+deleted file mode 100644
+index 617995821..000000000
+--- a/push.py
++++ /dev/null
+@@ -1,93 +0,0 @@
+-import os
+-import subprocess
+-import tempfile
+-from abc import ABC, abstractmethod
+-
+-repo = os.getcwd()
+-check_tests = False
+-branches = ['studio-181', '181', 'studio-173', '173', '182-1.8-release', '181-1.8-release', '173-1.8-release']
+-master = 'master'
+-
+-
+-class ShellCommandExecutor(ABC):
+-
+-    def __init__(self, root_dir):
+-        self.root_dir = root_dir
+-
+-    @staticmethod
+-    @abstractmethod
+-    def __command__():
+-        pass
+-
+-    def execute(self, params):
+-        return subprocess.check_output("{0} {1}".format(self.__command__(), params), cwd=self.root_dir, shell=True,
+-                                       universal_newlines=True)
+-
+-
+-class Git(ShellCommandExecutor):
+-    @staticmethod
+-    def __command__():
+-        return "git"
+-
+-    def add_worktree(self, dir, branch):
+-        return self.execute("worktree add {0} origin/{1}".format(dir, branch))
+-
+-    def prune_worktrees(self):
+-        return self.execute("worktree prune")
+-
+-    def checkout_temp_branch(self, branch):
+-        return self.execute("checkout -b temp-{0} origin/{0}".format(branch))
+-
+-    def fetch(self):
+-        return self.execute("fetch")
+-
+-    def cherry_pick(self, hash):
+-        return self.execute("cherry-pick {0}".format(hash))
+-
+-    def get_unpushed_master_commits(self):
+-        return self.execute("log origin/master..master --pretty=format:\"%h\"").split("\n")[::-1]
+-
+-    def push(self, branch):
+-        return self.execute("push origin HEAD:{0}".format(branch))
+-
+-    def remove_temp_branch(self, branch):
+-        return self.execute("branch -D temp-{0}".format(branch))
+-
+-
+-class Gradle(ShellCommandExecutor):
+-    @staticmethod
+-    def __command__():
+-        return "./gradlew"
+-
+-    def build_plugin(self):
+-        return self.execute("buildPlugin")
+-
+-    def run_tests(self):
+-        return self.execute("test --rerun-tasks")
+-
+-
+-if __name__ == '__main__':
+-    sourceRepo = Git(repo)
+-    sourceRepo.fetch()
+-    for branch in branches:
+-        try:
+-            with tempfile.TemporaryDirectory() as tempDir:
+-                sourceRepo.add_worktree(tempDir, branch)
+-                working_Tree = Git(tempDir)
+-                working_Tree.checkout_temp_branch(branch)
+-
+-                for commit in sourceRepo.get_unpushed_master_commits():
+-                    working_Tree.cherry_pick(commit)
+-
+-                gradle = Gradle(tempDir)
+-                gradle.build_plugin()
+-                if check_tests:
+-                    gradle.run_tests()
+-
+-                working_Tree.push(branch)
+-
+-        finally:
+-            sourceRepo.prune_worktrees()
+-            sourceRepo.remove_temp_branch(branch)
+-
+-    sourceRepo.push(master)
+\ No newline at end of file
