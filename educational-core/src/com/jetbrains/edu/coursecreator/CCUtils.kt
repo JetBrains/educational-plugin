@@ -160,7 +160,11 @@ object CCUtils {
         if (name == archiveName) return false
         if (name == EduNames.STEPIK_IDS_JSON) return false
         if (GENERATED_FILES_FOLDER == name || Project.DIRECTORY_STORE_FOLDER == name) return false
-        if (file.isDirectory) return true
+        if (file.isDirectory) {
+          // All files inside task directory are already handled by `CCVirtualFileListener`
+          // so here we don't need to process them again
+          return EduUtils.getTask(file, course) == null
+        }
         if (EduUtils.isTaskDescriptionFile(name) || EduUtils.isTestsFile(project, file)) return true
         if (name.contains(".iml") || configurator != null && configurator.excludeFromArchive(project, file.path)) return false
 
