@@ -23,10 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.io.IOException;
 import java.util.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Implementation of task which contains task files, tests, input file for tests

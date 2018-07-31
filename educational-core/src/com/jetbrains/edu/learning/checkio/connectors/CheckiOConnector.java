@@ -158,20 +158,20 @@ public final class CheckiOConnector {
 
       if (!response.isSuccessful()) {
         final String error = response.errorBody() == null ? "" : response.errorBody().string();
-        LOG.error("Unsuccessful response: " + error);
+        LOG.warn("Unsuccessful response: " + error);
         return null;
       }
 
       T responseBody = response.body();
 
       if (responseBody == null) {
-        LOG.error("Response body is null: " + response.toString());
+        LOG.warn("Response body is null: " + response.toString());
         return null;
       }
 
       return function.apply(responseBody);
     } catch (IOException e) {
-      LOG.error(e);
+      LOG.warn(e.getMessage());
       return null;
     }
   }
@@ -185,11 +185,11 @@ public final class CheckiOConnector {
     final Pattern spacesStringPattern = Pattern.compile("\\p{javaWhitespace}*");
 
     if (spacesStringPattern.matcher(CLIENT_ID).matches()) {
-      LOG.error("client_id is not provided");
+      LOG.warn("client_id is not provided");
       return false;
     }
     if (spacesStringPattern.matcher(CLIENT_SECRET).matches()) {
-      LOG.error("client_secret is not provided");
+      LOG.warn("client_secret is not provided");
       return false;
     }
     return true;
@@ -254,7 +254,7 @@ public final class CheckiOConnector {
         .build();
     }
     catch (URISyntaxException e) {
-      LOG.error(e);
+      LOG.warn(e.getMessage());
       return null;
     }
   }

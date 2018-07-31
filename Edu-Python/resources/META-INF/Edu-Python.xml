@@ -23,6 +23,7 @@
     <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOConfigurator" language="CheckiO-Python"/>
+    <coursesProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="educational">

@@ -29,12 +29,6 @@ public class PyCheckiOConfigurator implements EduConfigurator<PyNewProjectSettin
     return path.contains("__pycache__") || path.endsWith(".pyc");
   }
 
-  @Override
-  public boolean isEnabled() {
-    // TODO
-    return true;
-  }
-
   @NotNull
   @Override
   public TaskCheckerProvider getTaskCheckerProvider() {

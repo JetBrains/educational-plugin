@@ -49,7 +49,7 @@ import java.awt.*;
 public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel implements DataProvider, Disposable {
 
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
-  private static final String TASK_INFO_ID = "taskInfo";
+  public static final String TASK_INFO_ID = "taskInfo";
   private static final String HELP_ID = "task.description";
 
   public static final String EMPTY_TASK_TEXT = "Please, open any task to see task description";
