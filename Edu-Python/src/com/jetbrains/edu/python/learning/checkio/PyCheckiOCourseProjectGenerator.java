@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOConnector;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.model.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.model.CheckiOMissionList;
 import com.jetbrains.edu.learning.checkio.model.CheckiOStation;
@@ -13,8 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.python.learning.PyCourseBuilder;
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.List;
 
 public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
@@ -26,24 +27,39 @@ public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
   }
 
   @Override
-  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {
+  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) {
 
   }
 
   @Override
   protected boolean beforeProjectGenerated() {
     final CheckiOMissionList missions = CheckiOConnector.getMissionList();
-    if (missions == null) {
-      LOG.warn("Mission list is null");
+    final CheckiOCourse newCourse = generateCourseFromMissions(missions);
+
+    if (newCourse == null) {
+      LOG.warn("Error occurred generating course");
       return false;
     }
 
-    final List<CheckiOStation> stations = missions.groupByStation();
-    for (CheckiOStation station : stations) {
-      Lesson lesson = createLessonContent(station);
-      myCourse.addLesson(lesson);
-    }
+    myCourse = newCourse;
     return true;
+  }
+
+  @Nullable
+  private static CheckiOCourse generateCourseFromMissions(@Nullable CheckiOMissionList missions) {
+    if (missions == null) {
+      LOG.warn("Mission list is null");
+      return null;
+    }
+
+    final List<CheckiOStation> stations = missions.groupByStation();
+    final CheckiOCourse newCourse = new CheckiOCourse();
+
+    for (CheckiOStation station : stations) {
+      final Lesson newLesson = createLessonContent(station);
+      newCourse.addLesson(newLesson);
+    }
+    return newCourse;
   }
 
   @NotNull

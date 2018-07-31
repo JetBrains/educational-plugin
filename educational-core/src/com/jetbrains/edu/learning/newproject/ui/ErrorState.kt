@@ -5,8 +5,8 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.MessageType.*
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.settings.CheckiOSettings
-import com.jetbrains.edu.learning.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse

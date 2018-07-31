@@ -1,6 +1,7 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.checkio.courseFormat;
 
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.courseFormat.Course;
 
 public class CheckiOCourse extends Course {
   public CheckiOCourse() {

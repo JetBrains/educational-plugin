@@ -111,7 +111,10 @@ public class CoursesPanel extends JPanel {
         addLoginListener(this::updateCoursesList);
         StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
       } else if (myErrorState == ErrorState.CheckiOLoginRequired.INSTANCE) {
-        addCheckiOLoginListener(this::updateCoursesList);
+        addCheckiOLoginListener(
+          () -> myErrorLabel.setVisible(false),
+          () -> notifyListeners(true)
+        );
         CheckiOConnector.doAuthorize();
       }else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
         PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
@@ -131,13 +134,7 @@ public class CoursesPanel extends JPanel {
     myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
     myBusConnection.subscribe(CheckiOConnector.LOGGED_IN, (newTokens, newUser) -> {
       CheckiOSettings.getInstance().setUser(newUser);
-      ApplicationManager.getApplication().invokeLater(() -> {
-        for (Runnable action : postLoginActions) {
-          action.run();
-        }
-        myBusConnection.disconnect();
-        myBusConnection = null;
-      }, ModalityState.any());
+      runPostLoginActions(postLoginActions);
     });
   }
 
@@ -148,15 +145,19 @@ public class CoursesPanel extends JPanel {
     myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
     myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, () -> {
       if (StepikUtils.isLoggedIn()) {
-        ApplicationManager.getApplication().invokeLater(() -> {
-          for (Runnable action : postLoginActions) {
-            action.run();
-          }
-          myBusConnection.disconnect();
-          myBusConnection = null;
-        }, ModalityState.any());
+        runPostLoginActions(postLoginActions);
       }
     });
+  }
+
+  private void runPostLoginActions(Runnable... postLoginActions) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      for (Runnable action : postLoginActions) {
+        action.run();
+      }
+      myBusConnection.disconnect();
+      myBusConnection = null;
+    }, ModalityState.any());
   }
 
   private void updateCoursesList() {
