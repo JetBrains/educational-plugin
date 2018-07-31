@@ -4,7 +4,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.CCVirtualFileListener
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.FakeGradleConfigurator

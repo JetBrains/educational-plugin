@@ -1,15 +1,16 @@
-package com.jetbrains.edu.coursecreator
+package com.jetbrains.edu.coursecreator.handlers
 
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.util.Function
+import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
-import com.jetbrains.edu.learning.EduVirtualFileListener
-import com.jetbrains.edu.learning.EduVirtualFileListener.NewFileKind.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
+import com.jetbrains.edu.learning.handlers.EduVirtualFileListener.NewFileKind.*
 
 class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) {
 
