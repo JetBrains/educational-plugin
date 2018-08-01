@@ -40,7 +40,7 @@ class FakeGradleConfigurator : GradleConfiguratorBase() {
 }
 
 class FakeGradleCourseBuilder : GradleCourseBuilderBase() {
-  override val buildGradleTemplateName: String = "fake-language-build.gradle.ft"
+  override val buildGradleTemplateName: String = "fake-language-build.gradle"
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(this, course)
   override fun refreshProject(project: Project) {}
 }
