@@ -25,7 +25,9 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.project
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
 
 object YamlFormatSynchronizer {
@@ -120,6 +122,24 @@ object YamlFormatSynchronizer {
   fun isConfigFile(file: VirtualFile): Boolean {
     val name = file.name
     return COURSE_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name || SECTION_CONFIG == name
+  }
+
+  @VisibleForTesting
+  fun deserializeTask(taskYaml: String): Task {
+    val treeNode = MAPPER.readTree(taskYaml)
+    val type = treeNode.get("type")?.asText()
+    val typeNotSpecifiedMessage = "task type not specified"
+    if (type == null) {
+      throw InvalidYamlFormatException(typeNotSpecifiedMessage)
+    }
+    val clazz = when (type) {
+      "edu" -> EduTask::class.java
+      "output" -> OutputTask::class.java
+      "theory" -> TheoryTask::class.java
+      "null" -> throw InvalidYamlFormatException(typeNotSpecifiedMessage)
+      else -> throw InvalidYamlFormatException("Unsupported task type '$type'")
+    }
+    return MAPPER.treeToValue(treeNode, clazz)
   }
 
   private fun saveConfigDocument(dir: VirtualFile, configFileName: String, item: StudyItem) {
