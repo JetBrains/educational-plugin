@@ -4,7 +4,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase
+import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase
 
 open class KtConfigurator : GradleConfiguratorBase() {
 

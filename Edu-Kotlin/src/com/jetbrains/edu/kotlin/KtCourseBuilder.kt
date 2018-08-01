@@ -2,7 +2,7 @@ package com.jetbrains.edu.kotlin
 
 import com.intellij.openapi.project.Project
 import com.intellij.util.text.VersionComparatorUtil
-import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.pluginVersion
 
 open class KtCourseBuilder : GradleCourseBuilderBase() {

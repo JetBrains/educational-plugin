@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.projectView.DirectoryNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

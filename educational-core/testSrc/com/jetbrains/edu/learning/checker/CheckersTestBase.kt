@@ -36,7 +36,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.junit.Assert
 import org.junit.ComparisonFailure

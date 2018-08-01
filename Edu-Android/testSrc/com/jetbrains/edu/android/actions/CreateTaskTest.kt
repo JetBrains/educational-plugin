@@ -7,7 +7,7 @@ import com.jetbrains.edu.coursecreator.actions.CCActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
 import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 

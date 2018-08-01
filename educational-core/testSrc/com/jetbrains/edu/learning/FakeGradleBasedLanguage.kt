@@ -13,10 +13,10 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
-import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase
-import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
-import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase
+import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 
 object FakeGradleBasedLanguage : Language("FakeGradleBasedLanguage")
 

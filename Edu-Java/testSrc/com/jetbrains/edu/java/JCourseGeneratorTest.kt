@@ -2,7 +2,7 @@ package com.jetbrains.edu.java
 
 import com.intellij.lang.java.JavaLanguage
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 
 class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
 

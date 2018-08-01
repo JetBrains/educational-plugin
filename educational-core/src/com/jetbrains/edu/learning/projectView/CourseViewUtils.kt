@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 
 object CourseViewUtils {
 

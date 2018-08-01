@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.intellij
+package com.jetbrains.edu.learning.gradle
 
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox

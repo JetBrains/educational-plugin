@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import java.util.regex.Pattern
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="

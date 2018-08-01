@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.intellij.generation
+package com.jetbrains.edu.learning.gradle.generation
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.components.ServiceManager

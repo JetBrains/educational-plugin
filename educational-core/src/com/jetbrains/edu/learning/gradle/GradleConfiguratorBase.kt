@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.intellij
+package com.jetbrains.edu.learning.gradle
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
-import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.io.IOException

@@ -23,8 +23,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase;
-import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
+import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
