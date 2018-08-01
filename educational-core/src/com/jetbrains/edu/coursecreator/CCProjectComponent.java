@@ -178,7 +178,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
     List<VirtualFile> result = new ArrayList<>();
     for (Lesson lesson : course.getLessons()) {
       for (Task task : lesson.getTaskList()) {
-        result.addAll(EduUtils.getTestFiles(task, project));
+        result.addAll(EduUtils.getTestFiles(project, task));
       }
     }
     return result;

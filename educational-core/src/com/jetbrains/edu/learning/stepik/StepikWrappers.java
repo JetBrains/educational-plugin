@@ -112,7 +112,7 @@ public class StepikWrappers {
         return;
       }
 
-      List<VirtualFile> testFiles = EduUtils.getTestFiles(task, project);
+      List<VirtualFile> testFiles = EduUtils.getTestFiles(project, task);
       for (VirtualFile testFile : testFiles) {
         addFileWrapper(testFile, source.test);
       }
