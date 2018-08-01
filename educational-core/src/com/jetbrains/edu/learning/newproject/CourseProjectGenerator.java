@@ -42,6 +42,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
@@ -92,6 +93,10 @@ public abstract class CourseProjectGenerator<S> {
     EduUtils.openFirstTask(myCourse, project);
     if (CCUtils.isCourseCreator(project)) {
       YamlFormatSynchronizer.saveAll(project);
+
+      // reset wrong statuses set during project generation in CCVirtualFileListener
+      // as it listens new files creation
+      StepikUtils.setStatusRecursively(myCourse, StepikChangeStatus.UP_TO_DATE);
     }
   }
 

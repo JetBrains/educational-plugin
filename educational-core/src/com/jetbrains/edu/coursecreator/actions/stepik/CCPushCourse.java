@@ -16,8 +16,8 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -79,7 +79,7 @@ public class CCPushCourse extends DumbAwareAction {
           indicator.setIndeterminate(false);
           if (updateCourseInfo(project, (RemoteCourse) course)) {
             updateCourseContent(indicator, course, project);
-            setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
+            StepikUtils.setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
             try {
               updateAdditionalMaterials(project, course.getId());
             }
@@ -136,25 +136,6 @@ public class CCPushCourse extends DumbAwareAction {
         Integer sectionId = ((RemoteCourse)course).getSectionIds().get(0);
         lesson.unitId = postUnit(lessonId, lesson.getIndex(), sectionId, project);
       }
-    }
-  }
-
-
-  private static void setStatusRecursively(@NotNull Course course,
-                                           @SuppressWarnings("SameParameterValue") @NotNull StepikChangeStatus status) {
-    course.visitLessons(lesson -> {
-      setLessonStatus(lesson, status);
-        return true;
-    });
-    for (Section section : course.getSections()) {
-      section.setStepikChangeStatus(status);
-    }
-  }
-
-  private static void setLessonStatus(@NotNull Lesson lesson, @NotNull StepikChangeStatus status) {
-    lesson.setStepikChangeStatus(status);
-    for (Task task : lesson.taskList) {
-      task.setStepikChangeStatus(status);
     }
   }
 }
