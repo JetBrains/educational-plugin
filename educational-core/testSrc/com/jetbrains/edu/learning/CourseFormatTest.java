@@ -19,11 +19,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.*;
-import static org.junit.Assert.assertNotNull;
 
-
-public class CourseFormatTest {
+public class CourseFormatTest extends EduTestCase {
   @Rule
   public TestName name = new TestName();
 
@@ -205,15 +202,12 @@ public class CourseFormatTest {
   }
 
   @NotNull
-  private static String getTestDataPath() {
-    return FileUtil.join("testData/format");
+  protected String getTestDataPath() {
+    return super.getTestDataPath() + "/format";
   }
 
   @NotNull
   private String getTestFile() {
-    final String methodName = name.getMethodName();
-    String fileName = methodName.substring("test".length());
-    fileName = Character.toLowerCase(fileName.charAt(0)) + fileName.substring(1);
-    return fileName + ".json";
+    return getTestName(true) + ".json";
   }
 }
