@@ -38,8 +38,8 @@ object StepikCourseChangeHandler {
   }
 
   @JvmStatic
-  fun infoChanged(item: StudyItem?) {
-    if (item?.id == 0) return
+  fun infoChanged(item: StudyItem) {
+    if (item.id == 0) return
 
     when (item) {
       is Course -> item.stepikChangeStatus = if (item.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
