@@ -20,6 +20,7 @@ plugins {
     id "java"
     id "idea"
     id "de.undercouch.download" version "3.4.3"
+    id 'net.saliman.properties' version '1.4.6'
 }
 
 
