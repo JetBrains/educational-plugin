@@ -9,10 +9,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
-import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import kotlin.collections.CollectionsKt;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
@@ -153,29 +150,6 @@ public class Lesson extends StudyItem {
 
   public void setPublic(boolean isPublic) {
     this.is_public = isPublic;
-  }
-
-  public boolean isUpToDate() {
-    if (myId == 0 || !StepikUtils.isLoggedIn()) return true;
-
-    Lesson lessonInfo = StepikConnector.getLessonFromServer(myId);
-    if (lessonInfo == null) return true;
-    if (lessonInfo.myUpdateDate == null) return true;
-
-    StepikWrappers.Unit unit = StepikConnector.getUnit(unitId);
-    if (unit == null) return true;
-    if (unit.getUpdateDate() == null) return true;
-
-    if (myUpdateDate == null) return true;
-    if (lessonInfo.steps.size() != taskList.size()) {
-      return false;
-    }
-    for (Task task : taskList) {
-      if (!task.isUpToDate()) {
-        return false;
-      }
-    }
-    return !EduUtils.isAfter(lessonInfo.myUpdateDate, myUpdateDate) && !EduUtils.isAfter(unit.getUpdateDate(), myUpdateDate);
   }
 
   public boolean isAdditional() {

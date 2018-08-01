@@ -154,7 +154,7 @@ public class CCStepikConnector {
       postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
       StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
       courseOnRemote.init(null, null, true);
-      courseOnRemote.setUpdated();
+      StepikUpdateDateExt.setUpdated(courseOnRemote);
       showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
     }
     catch (IOException e) {
@@ -562,7 +562,7 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
       }
 
-      course.setUpdated();
+      StepikUpdateDateExt.setUpdated(course);
       return true;
     }
     catch (IOException e) {

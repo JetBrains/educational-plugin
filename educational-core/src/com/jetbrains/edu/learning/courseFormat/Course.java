@@ -173,12 +173,6 @@ public class Course extends ItemContainer {
     this.description = description;
   }
 
-  public boolean isUpToDate() {
-    return true;
-  }
-
-  public void setUpdated() {}
-
   public Language getLanguageById() {
     return Language.findLanguageByID(getLanguageID());
   }
