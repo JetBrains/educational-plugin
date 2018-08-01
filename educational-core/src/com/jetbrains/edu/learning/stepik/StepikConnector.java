@@ -187,12 +187,6 @@ public class StepikConnector {
     }
   }
 
-  public static Date getCourseUpdateDate(final int courseId) {
-    RemoteCourse course = getCourseInfo(EduSettings.getInstance().getUser(), courseId, true);
-
-    return course == null ? null : course.getUpdateDate();
-  }
-
   public static void updateCourseIfNeeded(@NotNull Project project, @NotNull RemoteCourse course) {
     int id = course.getId();
 
@@ -207,7 +201,7 @@ public class StepikConnector {
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(new Backgroundable(project, "Updating Course") {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        if (!course.isUpToDate()) {
+        if (!StepikUpdateDateExt.isUpToDate(course)) {
           showUpdateAvailableNotification(project, course);
         }
       }
@@ -225,43 +219,11 @@ public class StepikConnector {
                            ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
                              ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
                              new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
-                             course.setUpdated();
+                             StepikUpdateDateExt.setUpdated((RemoteCourse)course);
                            }, "Updating Course", true, project);
                          }
                        });
     notification.notify(project);
-  }
-
-  public static Date getLessonUpdateDate(final int lessonId) {
-    Lesson lesson = getLessonFromServer(lessonId);
-
-    return lesson == null ? null : lesson.getUpdateDate();
-  }
-
-  public static Date getUnitUpdateDate(final int unitId) {
-    Unit unit = getUnit(unitId);
-
-    return unit == null ? null : unit.getUpdateDate();
-  }
-
-  @Nullable
-  public static Lesson getLessonFromServer(final int lessonId) {
-    final String url = StepikNames.LESSONS + "/" + lessonId;
-    try {
-      LessonContainer container = StepikAuthorizedClient.getFromStepik(url, LessonContainer.class);
-      if (container == null) {
-        container = StepikClient.getFromStepik(url, LessonContainer.class);
-      }
-      List<Lesson> lessons = container.lessons;
-      if (!lessons.isEmpty()) {
-        return lessons.get(0);
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Could not retrieve lesson with id=" + lessonId);
-    }
-
-    return null;
   }
 
   public static int getTaskPosition(final int taskId) {
@@ -281,25 +243,6 @@ public class StepikConnector {
     }
 
     return -1;
-  }
-
-  public static Date getTaskUpdateDate(final int taskId) {
-    final String url = StepikNames.STEPS + String.valueOf(taskId);
-    try {
-      StepContainer container = StepikAuthorizedClient.getFromStepik(url, StepContainer.class);
-      if (container == null) {
-        container = StepikClient.getFromStepik(url, StepContainer.class);
-      }
-      List<StepSource> steps = container.steps;
-      if (!steps.isEmpty()) {
-        return steps.get(0).update_date;
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Could not retrieve an update date for a task with id=" + taskId);
-    }
-
-    return null;
   }
 
   private static CoursesContainer getCourseContainers(@Nullable StepicUser user, @NotNull URI url) throws IOException {
@@ -590,7 +533,7 @@ public class StepikConnector {
     for (int i = 0; i < lessons.size(); i++) {
       Lesson lesson = lessons.get(i);
       Unit unit = units.get(i);
-      if (EduUtils.isAfter(lesson.getUpdateDate(), unit.getUpdateDate())) {
+      if (StepikUpdateDateExt.isSignificantlyAfter(lesson.getUpdateDate(), unit.getUpdateDate())) {
         lesson.setUpdateDate(lesson.getUpdateDate());
       }
       else {
@@ -1010,10 +953,6 @@ public class StepikConnector {
       LOG.warn("Failed getting section: " + sectionId);
     }
     return new Section();
-  }
-
-  public static Date getSectionUpdateDate(int sectionId) {
-    return getSection(sectionId).getUpdateDate();
   }
 
   public static Lesson getLesson(int lessonId) {

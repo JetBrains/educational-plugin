@@ -6,8 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,24 +78,6 @@ public class Section extends ItemContainer {
   @Override
   public void setName(String name) {
     this.name = name;
-  }
-
-  public boolean isUpToDate() {
-    if (id == 0 || !StepikUtils.isLoggedIn()) return true;
-
-    Section section = StepikConnector.getSection(id);
-    if (section.getUpdateDate() == null) return true;
-    if (myUpdateDate == null) return true;
-    if (section.units.size() != getLessons().size()) {
-      return false;
-    }
-    for (Lesson lesson : getLessons()) {
-      if (!lesson.isUpToDate()) {
-        return false;
-      }
-    }
-
-    return !EduUtils.isAfter(section.getUpdateDate(), myUpdateDate);
   }
 
   public void setUpdateDate(Date updateDate) {

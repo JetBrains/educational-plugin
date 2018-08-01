@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -90,7 +89,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
     for (lesson in courseFromServer.items.filterIsInstance(Lesson::class.java)) {
       if (lesson.isAdditional) {
-        if (!EduUtils.isAfter(lesson.updateDate, course.additionalMaterialsUpdateDate)) {
+        if (!lesson.updateDate.isSignificantlyAfter(course.additionalMaterialsUpdateDate)) {
           return
         }
         course.additionalMaterialsUpdateDate = lesson.updateDate

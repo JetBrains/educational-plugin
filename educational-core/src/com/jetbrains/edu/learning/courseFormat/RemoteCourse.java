@@ -5,11 +5,9 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.KeyedLazyInstance;
-import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -76,97 +74,6 @@ public class RemoteCourse extends Course {
       tags.add(new InProgressTag());
     }
     return tags;
-  }
-
-  @Override
-  public boolean isUpToDate() {
-    if (id == 0 || !StepikUtils.isLoggedIn()) return true;
-
-    RemoteCourse courseFromServer = StepikConnector.getCourseInfo(EduSettings.getInstance().getUser(), id, isCompatible);
-    if (courseFromServer == null) return true;
-
-    final Date date = courseFromServer.getUpdateDate();
-    if (date == null) return true;
-    if (myUpdateDate == null) return true;
-    if (EduUtils.isAfter(date, myUpdateDate)) {
-      return false;
-    }
-
-    if (!checkSectionsNumber(courseFromServer)) return false;
-
-    if (!checkTopLevelLessons(courseFromServer)) return false;
-
-    for (StudyItem item : items) {
-      if (item instanceof Section) {
-        if (!((Section)item).isUpToDate()) {
-          return false;
-        }
-      }
-      else if (item instanceof Lesson) {
-        if (!((Lesson)item).isUpToDate()) {
-          return false;
-        }
-      }
-    }
-
-    return true;
-  }
-
-  private boolean checkTopLevelLessons(RemoteCourse courseFromServer) {
-    if (!getLessons().isEmpty() && courseFromServer.sectionIds.size() > 0) {
-      Section section = StepikConnector.getSection(courseFromServer.sectionIds.get(0));
-      boolean hasNewTopLevelLessons = getLessons().size() < section.units.size();
-      if (hasNewTopLevelLessons) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-
-  // As we don't store additional sections locally, we ned to remove it for our courses. But Stepik
-  // course doesn't have additional materials sections, so fo them we shouldn't do anything
-  private boolean checkSectionsNumber(RemoteCourse courseFromServer) {
-    boolean hasAdditional;
-    if (courseFromServer.sectionIds.isEmpty()) {
-      hasAdditional = false;
-    }
-    else {
-      Section lastSection = StepikConnector.getSection(courseFromServer.sectionIds.get(courseFromServer.sectionIds.size() - 1));
-      hasAdditional =
-        EduNames.ADDITIONAL_MATERIALS.equals(lastSection.getName()) || StepikNames.PYCHARM_ADDITIONAL.equals(lastSection.getName());
-    }
-    int remoteSectionsWithoutAdditional = courseFromServer.sectionIds.size() - (hasAdditional ? 1 : 0);
-
-    int localSectionsSize = (getLessons(false).isEmpty() ? 0 : 1) + getSections().size();
-
-    if (localSectionsSize < remoteSectionsWithoutAdditional) {
-      return false;
-    }
-
-    return true;
-  }
-
-  @Override
-  public void setUpdated() {
-    setUpdateDate(StepikConnector.getCourseUpdateDate(id));
-    visitLessons((lesson) -> {
-      Date lessonUpdateDate = StepikConnector.getLessonUpdateDate(lesson.getId());
-      Date unitUpdateDate = StepikConnector.getUnitUpdateDate(lesson.unitId);
-      if (lessonUpdateDate != null && unitUpdateDate != null && EduUtils.isAfter(lessonUpdateDate, unitUpdateDate)) {
-        lesson.setUpdateDate(lessonUpdateDate);
-      }
-      else {
-        lesson.setUpdateDate(unitUpdateDate);
-      }
-
-      for (Task task : lesson.getTaskList()) {
-        task.setUpdateDate(StepikConnector.getTaskUpdateDate(task.getStepId()));
-      }
-      return true;
-    });
-
-    visitSections(section -> section.setUpdateDate(StepikConnector.getSectionUpdateDate((section).getId())));
   }
 
   public void setUpdateDate(Date date) {
