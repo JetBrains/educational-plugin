@@ -9,8 +9,8 @@ open class KtCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = KOTLIN_BUILD_GRADLE_TEMPLATE_NAME
 
-  override fun getConfigVariables(project: Project): Map<String, String> =
-    super.getConfigVariables(project) + Pair("KOTLIN_VERSION", kotlinPluginVersion)
+  override fun templateVariables(project: Project): Map<String, String> =
+    super.templateVariables(project) + Pair("KOTLIN_VERSION", kotlinPluginVersion)
 
   override fun getTaskTemplateName(): String = KtConfigurator.TASK_KT
   override fun getTestTemplateName(): String = KtConfigurator.TESTS_KT
