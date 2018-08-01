@@ -2,6 +2,8 @@ package com.jetbrains.edu.coursecreator.configuration
 
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
 
 
 class YamlDeserializationTest: EduTestCase() {
@@ -28,5 +30,29 @@ class YamlDeserializationTest: EduTestCase() {
     assertEquals(programmingLanguage, course.languageById.displayName)
     assertNotNull(course.description)
     assertEquals(listOf(firstLesson, secondLesson), course.items.map { it.name })
+  }
+
+  fun `test section`() {
+    val firstLesson = "Introduction Lesson"
+    val secondLesson = "Advanced Lesson"
+    val yamlContent = """
+      |content:
+      |- $firstLesson
+      |- $secondLesson
+    """.trimMargin("|")
+    val section = YamlFormatSynchronizer.MAPPER.readValue(yamlContent, Section::class.java)
+    assertEquals(listOf(firstLesson, secondLesson), section.items.map { it.name })
+  }
+
+  fun `test lesson`() {
+    val firstTask = "Introduction Task"
+    val secondTask = "Advanced Task"
+    val yamlContent = """
+      |content:
+      |- $firstTask
+      |- $secondTask
+    """.trimMargin("|")
+    val lesson = YamlFormatSynchronizer.MAPPER.readValue(yamlContent, Lesson::class.java)
+    assertEquals(listOf(firstTask, secondTask), lesson.getTaskList().map { it.name })
   }
 }
