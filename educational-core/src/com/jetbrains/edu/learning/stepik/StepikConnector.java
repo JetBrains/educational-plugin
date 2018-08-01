@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -301,7 +302,7 @@ public class StepikConnector {
     return null;
   }
 
-  public static CoursesContainer getCourseContainers(@Nullable StepicUser user, @NotNull URI url) throws IOException {
+  private static CoursesContainer getCourseContainers(@Nullable StepicUser user, @NotNull URI url) throws IOException {
     return getCourseContainers(user, url.toString());
   }
 
@@ -359,7 +360,7 @@ public class StepikConnector {
     }
   }
 
-  static void addAvailableCourses(List<Course> result, CoursesContainer coursesContainer,
+  private static void addAvailableCourses(List<Course> result, CoursesContainer coursesContainer,
                                   @NotNull List<Integer> featuredCourses) throws IOException {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse info : courses) {
@@ -461,6 +462,7 @@ public class StepikConnector {
     }
   }
 
+  @VisibleForTesting
   public static void fillItems(@NotNull RemoteCourse remoteCourse) throws IOException {
     try {
       String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
@@ -519,7 +521,7 @@ public class StepikConnector {
     }
   }
 
-  public static List<Lesson> getLessons(RemoteCourse remoteCourse) throws IOException {
+  private static List<Lesson> getLessons(RemoteCourse remoteCourse) throws IOException {
     try {
       String[] unitIds = getUnitsIds(remoteCourse);
       if (unitIds.length > 0) {
@@ -556,7 +558,7 @@ public class StepikConnector {
             .toArray(String[]::new);
   }
 
-  public static boolean hasVisibleSections(@NotNull final List<Section> sections, String courseName) {
+  private static boolean hasVisibleSections(@NotNull final List<Section> sections, String courseName) {
     if (sections.isEmpty()) {
       return false;
     }
@@ -617,6 +619,7 @@ public class StepikConnector {
     return sorted;
   }
 
+  @VisibleForTesting
   public static List<Lesson> getLessonsFromUnits(RemoteCourse remoteCourse, String[] unitIds, boolean updateIndicator) throws IOException {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
@@ -842,7 +845,7 @@ public class StepikConnector {
     return null;
   }
 
-  public static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
+  private static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
     List<T> result = new ArrayList<>();
 
     int length = ids.length;
@@ -905,7 +908,7 @@ public class StepikConnector {
     }
   }
 
-  public static String postAttempt(int id) throws IOException {
+  static String postAttempt(int id) throws IOException {
     final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
     if (client == null || !StepikUtils.isLoggedIn()) return "";
     final HttpPost attemptRequest = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ATTEMPTS);
@@ -942,7 +945,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static String createOAuthLink(String authRedirectUrl) {
+  private static String createOAuthLink(String authRedirectUrl) {
     return "https://stepik.org/oauth2/authorize/" +
            "?client_id=" + StepikNames.CLIENT_ID +
            "&redirect_uri=" + authRedirectUrl +
@@ -1085,7 +1088,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Integer> getFeaturedCoursesIds() {
+  private static List<Integer> getFeaturedCoursesIds() {
     return getCoursesIds(PROMOTED_COURSES_LINK);
   }
 
@@ -1103,7 +1106,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Integer> getInProgressCoursesIds() {
+  private static List<Integer> getInProgressCoursesIds() {
     return getCoursesIds(IN_PROGRESS_COURSES_LINK);
   }
 
@@ -1207,6 +1210,4 @@ public class StepikConnector {
       }
     }
   }
-
-
 }
