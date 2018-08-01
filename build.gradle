@@ -3,7 +3,7 @@ buildscript {
     ext.scalaPluginVersion = scalaPluginVersion
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
     ext.studioSandbox = project.buildDir.absolutePath + File.separator + "studio-sandbox"
-    ext.kotlinVersion = "1.2.41"
+    ext.kotlinVersion = "1.2.51"
     ext.jacksonVersion = "2.9.5"
     repositories {
         maven {
@@ -157,6 +157,8 @@ allprojects {
             exclude module: 'kotlin-stdlib'
             exclude module: 'kotlin-reflect'
         }
+        compile "com.squareup.retrofit2:retrofit:2.4.+"
+        compile "com.squareup.retrofit2:converter-jackson:2.4.+"
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
     }
 }
@@ -256,7 +258,7 @@ configure(project(':educational-core')) {
     }
 }
 
-configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala')]) {
+configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':edu-server-integration')]) {
     dependencies {
         compile project(':educational-core')
         testCompile project(':educational-core').sourceSets.test.output
@@ -311,3 +313,16 @@ allprojects {
         }
     }
 }
+
+configure(project(':edu-server-integration')) {
+    dependencies {
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    }
+}
+/*
+ * Note:
+ * Removing this dependency causes following error in src exec files,
+ * testSrc exec files is running fine though:
+ * java.lang.NoClassDefFoundError: kotlin/jvm/internal/Intrinsics
+ *
+ */

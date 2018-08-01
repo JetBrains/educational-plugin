@@ -1,0 +1,11 @@
+{
+  "type": "course",
+  "id": 23,
+  "last_modified": "2018-07-19 17:25:25.512635",
+  "version": "1.9-2018.3-193",
+  "language": "en",
+  "programming_language": "rust",
+  "title": "test-title",
+  "summary": "test-summary",
+  "items": []
+}
