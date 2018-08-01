@@ -64,8 +64,8 @@ public class CCProjectComponent extends AbstractProjectComponent {
       if (courseBuilder instanceof GradleCourseBuilderBase && !EduGradleUtils.isConfiguredWithGradle(myProject)) {
         GradleCourseBuilderBase gradleCourseBuilder = (GradleCourseBuilderBase)courseBuilder;
         convertToGradleProject(studyCourse,
-                               gradleCourseBuilder.getConfigMap(),
-                               gradleCourseBuilder.getConfigVariables(myProject));
+                               gradleCourseBuilder.getTemplates(),
+                               gradleCourseBuilder.templateVariables(myProject));
       }
     }
   }

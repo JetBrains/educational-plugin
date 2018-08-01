@@ -26,7 +26,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
     if (GradleConstants.SETTINGS_FILE_NAME == name) {
       try {
         val settingsDefaultText = EduGradleUtils.getInternalTemplateText(courseBuilder.settingGradleTemplateName,
-                                                                         courseBuilder.getConfigVariables(project))
+                                                                         courseBuilder.templateVariables(project))
         val file = File(path)
         return if (file.exists()) FileUtil.loadFile(file) == settingsDefaultText else true
       }

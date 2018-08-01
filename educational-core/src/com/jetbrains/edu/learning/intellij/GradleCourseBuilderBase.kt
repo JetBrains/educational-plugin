@@ -21,11 +21,11 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
   /**
    * Map from config file name which should be created in project to template file name
    */
-  open val configMap: Map<String, String>
+  open val templates: Map<String, String>
     get() = mapOf(GradleConstants.DEFAULT_SCRIPT_NAME to buildGradleTemplateName,
                   GradleConstants.SETTINGS_FILE_NAME to settingGradleTemplateName)
 
-  open fun getConfigVariables(project: Project): Map<String, String> {
+  open fun templateVariables(project: Project): Map<String, String> {
     return mapOf("GRADLE_VERSION" to EduGradleUtils.gradleVersion(),
                  "PROJECT_NAME" to EduGradleUtils.sanitizeName(project.name))
   }
