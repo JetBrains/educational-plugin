@@ -3,7 +3,7 @@ package com.jetbrains.edu.scala
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
-import com.jetbrains.edu.learning.intellij.GradleConfiguratorBase
+import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase
 
 class ScalaConfigurator : GradleConfiguratorBase() {
 

@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import junit.framework.TestCase
 
 class CCVirtualFileListenerTest : EduTestCase() {

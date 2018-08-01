@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.intellij.generation
+package com.jetbrains.edu.learning.gradle.generation
 
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.runWriteAction
@@ -13,9 +13,9 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Consumer
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
-import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils.sanitizeName
+import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils.sanitizeName
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
 open class GradleCourseProjectGenerator(

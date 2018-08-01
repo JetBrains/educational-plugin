@@ -18,7 +18,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.getDependentTasks
 import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import java.util.*
 import kotlin.collections.HashSet

@@ -3,7 +3,7 @@ package com.jetbrains.edu.java
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
 import junit.framework.TestCase
 import java.util.*

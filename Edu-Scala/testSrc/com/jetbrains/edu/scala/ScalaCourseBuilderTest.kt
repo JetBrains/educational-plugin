@@ -3,7 +3,7 @@ package com.jetbrains.edu.scala
 import com.jetbrains.edu.learning.CourseGenerationTestBase
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.newCourse
 import org.jetbrains.plugins.scala.ScalaLanguage
 

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.intellij
+package com.jetbrains.edu.learning.gradle
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ModalityState
@@ -8,8 +8,8 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils
-import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
+import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.plugins.gradle.util.GradleConstants
 

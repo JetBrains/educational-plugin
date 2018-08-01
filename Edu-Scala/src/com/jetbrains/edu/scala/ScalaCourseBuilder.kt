@@ -1,6 +1,6 @@
 package com.jetbrains.edu.scala
 
-import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 
 class ScalaCourseBuilder : GradleCourseBuilderBase() {
 

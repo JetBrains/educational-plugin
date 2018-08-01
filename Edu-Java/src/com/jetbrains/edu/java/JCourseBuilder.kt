@@ -1,8 +1,8 @@
 package com.jetbrains.edu.java
 
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
-import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 
 class JCourseBuilder : GradleCourseBuilderBase() {
 

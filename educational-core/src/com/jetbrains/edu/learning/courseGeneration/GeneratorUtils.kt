@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseGeneration
 import com.intellij.lang.LanguageCommenters
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -10,6 +11,9 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiClassOwner
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiModifier
 import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
@@ -23,7 +27,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
 import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.intellij.EduIntellijUtils
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
 import java.util.*
@@ -243,12 +246,42 @@ object GeneratorUtils {
       for (task in lesson.getTaskList()) {
         if (task is CodeTask) {
           for (taskFile in task.getTaskFiles().values) {
-            EduIntellijUtils.nameTaskFileAfterContainingClass(task, taskFile, project)
+            nameTaskFileAfterContainingClass(project, task, taskFile)
           }
         }
       }
       true
     }
+  }
+
+  private fun nameTaskFileAfterContainingClass(project: Project, task: Task, taskFile: TaskFile) {
+    val language = task.course.languageById
+    val fileType = language?.associatedFileType
+    if (fileType == null) {
+      LOG.warn("Cannot rename task file. Unable to find associated file type for language: " + language.id)
+      return
+    }
+    task.getTaskFiles().remove(taskFile.name)
+    taskFile.name = publicClassName(project, taskFile, fileType) + "." + fileType.defaultExtension
+    task.taskFiles[taskFile.name] = taskFile
+  }
+
+  private fun publicClassName(project: Project, taskFile: TaskFile, fileType: LanguageFileType): String {
+    var fileName = "Main"
+    val file = PsiFileFactory.getInstance(project).createFileFromText(taskFile.name, fileType, taskFile.text)
+    if (file is PsiClassOwner) {
+      val classes = file.classes
+      for (aClass in classes) {
+        val className = aClass.name
+        val isPublic = aClass.hasModifierProperty(PsiModifier.PUBLIC) || fileName == className
+        if (isPublic && className != null) {
+          fileName = className
+          break
+        }
+      }
+    }
+
+    return fileName
   }
 
   /**

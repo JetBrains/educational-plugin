@@ -13,8 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {

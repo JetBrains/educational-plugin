@@ -5,9 +5,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.intellij.GradleCourseBuilderBase
-import com.jetbrains.edu.learning.intellij.JdkProjectSettings
-import com.jetbrains.edu.learning.intellij.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 
 class JCourseProjectGenerator(builder: GradleCourseBuilderBase,course: Course) : GradleCourseProjectGenerator(builder, course) {
 
