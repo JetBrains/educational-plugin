@@ -28,6 +28,7 @@ abstract class TaskYamlMixin {
 
   @JsonProperty("task_files")
   open fun setTaskFileValues(taskFiles: List<TaskFile>) {
+    throw NotImplementedInMixin()
   }
 }
 
