@@ -100,6 +100,7 @@ allprojects {
     apply plugin: "org.jetbrains.intellij"
     apply plugin: "java"
     apply plugin: "kotlin"
+    apply plugin: 'net.saliman.properties'
 
 
     tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
