@@ -270,16 +270,7 @@ public class EduUtils {
     return configurator.isTestFile(project, file);
   }
 
-  public static List<VirtualFile> getTestFiles(@NotNull Task task, @NotNull Project project) {
-    final Course course = task.getLesson().getCourse();
-    final Language language = course.getLanguageById();
-
-    final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
-    if (configurator == null) {
-      LOG.warn(String.format("Can't find configurator for `%s` language", language.getDisplayName()));
-      return Collections.emptyList();
-    }
-
+  public static List<VirtualFile> getTestFiles(@NotNull Project project, @NotNull Task task) {
     final VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
@@ -292,16 +283,15 @@ public class EduUtils {
       return Collections.emptyList();
     }
 
-    ArrayList<VirtualFile> testFiles = new ArrayList<>();
-    VfsUtilCore.visitChildrenRecursively(testDir, new VirtualFileVisitor(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
-      @Override
-      public boolean visitFile(@NotNull VirtualFile file) {
-        if (!file.isDirectory() && configurator.isTestFile(project, file)) {
-          testFiles.add(file);
-        }
-        return true;
+    List<VirtualFile> testFiles = new ArrayList<>();
+    for (String testFilePath : task.getTestsText().keySet()) {
+      VirtualFile testFile = testDir.findFileByRelativePath(testFilePath);
+      if (testFile == null) {
+        LOG.warn(String.format("Can't find test file by `%s` path", testFilePath));
+      } else {
+        testFiles.add(testFile);
       }
-    });
+    }
     return testFiles;
   }
 

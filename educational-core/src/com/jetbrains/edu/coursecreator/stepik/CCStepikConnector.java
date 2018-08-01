@@ -490,7 +490,7 @@ public class CCStepikConnector {
     final Language language = lesson.getCourse().getLanguageById();
     final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
     if (configurator == null) return false;
-    CCUtils.loadTestTextsToTask(project, task, taskDir);
+    CCUtils.loadTestTextsToTask(task, taskDir);
     final String[] requestBody = new String[1];
       ApplicationManager.getApplication().invokeAndWait(() -> requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId)));
       request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));

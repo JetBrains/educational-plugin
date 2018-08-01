@@ -144,7 +144,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
             final VirtualFile taskDir = task.getTaskDir(project);
             if (taskDir == null) continue;
             convertToStudentTaskFiles(task, taskDir);
-            CCUtils.loadTestTextsToTask(project, task, taskDir, true);
+            CCUtils.loadTestTextsToTask(task, taskDir);
             addDescriptions(task);
           }
           return true;

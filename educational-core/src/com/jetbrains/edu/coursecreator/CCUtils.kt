@@ -24,7 +24,6 @@ import com.intellij.util.PathUtil
 import com.intellij.util.ThrowableConsumer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.EduUtils.getTestFiles
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
@@ -407,21 +406,24 @@ object CCUtils {
     }
   }
 
-  @JvmOverloads
   @JvmStatic
-  fun loadTestTextsToTask(project: Project, task: Task, taskDir: VirtualFile, clearTestTexts: Boolean = false) {
-    if (clearTestTexts) {
-      task.testsText.clear()
+  fun loadTestTextsToTask(task: Task, taskDir: VirtualFile) {
+    val testDir = task.findTestDir(taskDir)
+    if (testDir == null) {
+      LOG.warn("Can't find test dir for `${task.name}` task")
+      return
     }
-    val testDir = task.findTestDir(taskDir) ?: taskDir
 
-    val testFiles = getTestFiles(task, project)
-    for (file in testFiles) {
-      try {
-        val path = FileUtil.getRelativePath(testDir.path, file.path, VfsUtilCore.VFS_SEPARATOR_CHAR)
-        task.addTestsTexts(path, VfsUtilCore.loadText(file))
-      } catch (e: IOException) {
-        LOG.warn(String.format("Failed to load text for `%s`", file))
+    for ((path, _) in task.testsText) {
+      val file = testDir.findFileByRelativePath(path)
+      if (file != null) {
+        try {
+          task.addTestsTexts(path, loadText(file))
+        } catch (e: IOException) {
+          LOG.warn("Failed to load text for `$file`")
+        }
+      } else {
+        LOG.warn("Can't find file by `$path` path")
       }
     }
   }
