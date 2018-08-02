@@ -1,3 +1,18 @@
+diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidLanguageSettings.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidLanguageSettings.kt
+index 769914606..4a955cc11 100644
+--- a/Edu-Android/src/com/jetbrains/edu/android/AndroidLanguageSettings.kt
++++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidLanguageSettings.kt
+@@ -4,8 +4,8 @@ import com.android.tools.idea.sdk.IdeSdks
+ import com.android.tools.idea.ui.ApplicationUtils
+ import com.android.tools.idea.welcome.config.FirstRunWizardMode
+ import com.android.tools.idea.welcome.install.FirstRunWizardDefaults
+-import com.android.tools.idea.welcome.wizard.deprecated.ConsolidatedProgressStep
+-import com.android.tools.idea.welcome.wizard.deprecated.InstallComponentsPath
++import com.android.tools.idea.welcome.wizard.ConsolidatedProgressStep
++import com.android.tools.idea.welcome.wizard.InstallComponentsPath
+ import com.android.tools.idea.wizard.WizardConstants
+ import com.android.tools.idea.wizard.dynamic.DialogWrapperHost
+ import com.android.tools.idea.wizard.dynamic.DynamicWizard
 diff --git a/Edu-Java/testResources/META-INF/plugin.xml b/Edu-Java/testResources/META-INF/plugin.xml
 index c09e7e73d..5278ba576 100644
 --- a/Edu-Java/testResources/META-INF/plugin.xml
@@ -42,7 +57,7 @@ index 5e2f41ecc..e825027e3 100644
    }
  
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
-index 3ec6bd2c6..00ddbfb5c 100644
+index c171bcc49..bcef799f6 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 @@ -17,7 +17,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
@@ -62,7 +77,7 @@ index 3ec6bd2c6..00ddbfb5c 100644
 +    val sdkChooser = PythonSdkChooserCombo(null, sdks, null) { true }
      sdkChooser.addChangedListener {
        mySettings.sdk = sdkChooser.comboBox.selectedItem as? Sdk
-     }
+       notifyListeners()
 diff --git a/Edu-Python/testResources/META-INF/plugin.xml b/Edu-Python/testResources/META-INF/plugin.xml
 index 5c7158398..a20004f8c 100644
 --- a/Edu-Python/testResources/META-INF/plugin.xml
@@ -83,6 +98,19 @@ index 5eca860a3..edce8141e 100644
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
+diff --git a/build.gradle b/build.gradle
+index 5390f1b1a..c0b250f4c 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -291,7 +291,7 @@ configure(project(':Edu-Scala')) {
+ }
+ 
+ configure(project(':Edu-Android')) {
+-    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy', 'IntelliLang', 'smali'
++    intellij.plugins 'junit', 'properties', 'android', 'gradle', 'Groovy', 'IntelliLang'
+ }
+ 
+ runIde.systemProperty("-Didea.is.internal", "true")
 diff --git a/educational-core/resources/META-INF/educational-core.xml b/educational-core/resources/META-INF/educational-core.xml
 index 34f9ce934..85b95cc63 100644
 --- a/educational-core/resources/META-INF/educational-core.xml
@@ -170,7 +198,7 @@ index d96034f45..cd1ad2f9c 100644
  
      // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
 diff --git a/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt b/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
-index d9e283052..0da5947c2 100644
+index ddafd5446..c4bb177d3 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
 @@ -1,14 +1,8 @@
@@ -188,7 +216,7 @@ index d9e283052..0da5947c2 100644
  import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
  import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
  import com.intellij.openapi.project.Project
-@@ -78,34 +72,14 @@ object EduGradleUtils {
+@@ -76,34 +70,14 @@ object EduGradleUtils {
          ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
      }
  
@@ -322,19 +350,6 @@ index b7d765da5..000000000
 -  }
 -}
 \ No newline at end of file
-diff --git a/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java b/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
-index eebecba69..da135eabc 100644
---- a/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
-+++ b/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
-@@ -353,7 +353,7 @@ public class StepikAdaptiveConnector {
-   private static void setToolWindowText(@NotNull Project project, @NotNull Task task) {
-     final TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
-     if (window != null) {
--      ApplicationManager.getApplication().invokeLater(() -> window.setCurrentTask(project, task));
-+      window.setCurrentTask(project, task);
-     }
-   }
- 
 diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
 index a9c1908ff..8416b7cd0 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
