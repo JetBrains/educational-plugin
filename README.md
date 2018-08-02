@@ -39,11 +39,11 @@ should be used
 4. Use appropriate run configuration
 Different configurations use different *.properties file. This can be changed manually using `-PenvironmentName=%branch.name%` argument
 
-Everything works:
+Everything works:\
 5. Revert patch `git reset --hard && git clean -fd`
 6. Push all the changes
 
-Something went wrong:
+Something went wrong:\
 5. Fix errors caused by compatibility issues in idea branches
 6. Create new patch file `git diff %feature.branch% > patcher/%branch.name%.patch`
 7. Commit new patch file
