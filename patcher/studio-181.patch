@@ -168,42 +168,6 @@ index 000000000..b3f872d0e
 @@ -0,0 +1 @@
 +Look! There <placeholder>i<caret>s</placeholder> placeholder.
 \ No newline at end of file
-diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/CourseFormatTest.java b/educational-core/testSrc/com/jetbrains/edu/learning/CourseFormatTest.java
-index 8b06f61f9..d0c451c90 100644
---- a/educational-core/testSrc/com/jetbrains/edu/learning/CourseFormatTest.java
-+++ b/educational-core/testSrc/com/jetbrains/edu/learning/CourseFormatTest.java
-@@ -19,8 +19,11 @@ import java.io.IOException;
- import java.util.List;
- import java.util.Map;
- 
-+import static junit.framework.TestCase.*;
-+import static org.junit.Assert.assertNotNull;
- 
--public class CourseFormatTest extends EduTestCase {
-+
-+public class CourseFormatTest {
-   @Rule
-   public TestName name = new TestName();
- 
-@@ -202,12 +205,15 @@ public class CourseFormatTest extends EduTestCase {
-   }
- 
-   @NotNull
--  protected String getTestDataPath() {
--    return super.getTestDataPath() + "/format";
-+  private static String getTestDataPath() {
-+    return FileUtil.join("testData/format");
-   }
- 
-   @NotNull
-   private String getTestFile() {
--    return getTestName(true) + ".json";
-+    final String methodName = name.getMethodName();
-+    String fileName = methodName.substring("test".length());
-+    fileName = Character.toLowerCase(fileName.charAt(0)) + fileName.substring(1);
-+    return fileName + ".json";
-   }
- }
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
 index c6654db70..797ba6b7d 100644
 --- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
