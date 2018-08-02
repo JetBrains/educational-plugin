@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.checkio.CheckiONames;
 import com.jetbrains.edu.learning.checkio.CheckiOOAuthBundle;
 import com.jetbrains.edu.learning.checkio.api.CheckiOApiService;
-import com.jetbrains.edu.learning.checkio.model.CheckiOMissionList;
+import com.jetbrains.edu.learning.checkio.model.CheckiOMissionListWrapper;
 import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import com.jetbrains.edu.learning.checkio.model.Tokens;
 import com.jetbrains.edu.learning.checkio.settings.CheckiOSettings;
@@ -124,7 +124,7 @@ public final class CheckiOConnector {
   }
 
   @Nullable
-  public static CheckiOMissionList getMissionList() {
+  public static CheckiOMissionListWrapper getMissionList() {
     final Tokens currentTokens = requireTokensExistAndUpToDate();
     if (currentTokens == null) {
       return null;
@@ -158,7 +158,7 @@ public final class CheckiOConnector {
 
       if (!response.isSuccessful()) {
         final String error = response.errorBody() == null ? "" : response.errorBody().string();
-        LOG.warn("Unsuccessful response: " + error);
+        LOG.warn("Unsuccessful response: " + response.code() + "," + error);
         return null;
       }
 
@@ -171,7 +171,7 @@ public final class CheckiOConnector {
 
       return function.apply(responseBody);
     } catch (IOException e) {
-      LOG.warn(e.getMessage());
+      LOG.warn("Network error: " + e.getMessage());
       return null;
     }
   }

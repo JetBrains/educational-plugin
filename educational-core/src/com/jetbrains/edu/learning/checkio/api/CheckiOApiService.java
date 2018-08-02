@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.checkio.api;
 
-import com.jetbrains.edu.learning.checkio.model.CheckiOMissionList;
+import com.jetbrains.edu.learning.checkio.model.CheckiOMissionListWrapper;
 import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
 import com.jetbrains.edu.learning.checkio.model.Tokens;
 import retrofit2.Call;
@@ -31,5 +31,5 @@ public interface CheckiOApiService {
   Call<CheckiOUser> getUserInfo(@Query("access_token") String accessToken);
 
   @GET("api/user-missions/")
-  Call<CheckiOMissionList> getMissionList(@Query("token") String accessToken);
+  Call<CheckiOMissionListWrapper> getMissionList(@Query("token") String accessToken);
 }

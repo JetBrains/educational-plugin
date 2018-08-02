@@ -24,7 +24,7 @@ import org.w3c.dom.html.HTMLTextAreaElement;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.TimeUnit;
 
 public class PyCheckiOMissionChecker implements Callable<CheckResult> {
   private static final Logger LOG = Logger.getInstance(PyCheckiOMissionChecker.class);
@@ -35,7 +35,7 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
   private final BrowserWindow myBrowserWindow;
   private final CheckiOTestResultHandler myResultHandler = new CheckiOTestResultHandler();
 
-  private AtomicInteger myCheckResult = new AtomicInteger();
+  private CheckResult myCheckResult;
   private CountDownLatch myLatch = new CountDownLatch(1);
 
   public PyCheckiOMissionChecker(@NotNull Project project, @NotNull Task task) {
@@ -43,7 +43,7 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
     myTask = task;
 
     myBrowserWindow = new BrowserWindow(myProject, false, false);
-    }
+  }
 
   @NotNull
   @Override
@@ -59,7 +59,7 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
     final String code = selectedEditor.getDocument().getText();
 
     if (accessToken == null) {
-      return new CheckResult(CheckStatus.Unchecked, "Log in to CheckiO to check the task");
+      return new CheckResult(CheckStatus.Unchecked, "Log in to Py CheckiO to check the task");
     }
 
     try {
@@ -77,13 +77,16 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
     throws InterruptedException {
     setTestFormLoadedListener(accessToken, taskId, interpreter, code);
     setCheckDoneListener();
-    loadForm();
+    loadTestForm();
 
-    myLatch.await();
-    return createResult(myCheckResult.get());
+    boolean timeoutExceeded = !myLatch.await(15L, TimeUnit.SECONDS);
+    if (timeoutExceeded) {
+      myCheckResult = new CheckResult(CheckStatus.Unchecked, "Checking took too much time");
+    }
+    return myCheckResult;
   }
 
-  private void loadForm() {
+  private void loadTestForm() {
     Platform.runLater(() -> {
       final String formUrl = CheckiOConnector.class.getResource(CheckiONames.CHECKIO_TEST_FORM_URL).toExternalForm();
       myBrowserWindow.getEngine().load(formUrl);
@@ -95,6 +98,11 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
       final Ref<Boolean> visited = new Ref<>(Boolean.FALSE);
 
       myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener((observable, oldState, newState) -> {
+        if (newState == Worker.State.FAILED) {
+          setConnectionError();
+          return;
+        }
+
         if (myBrowserWindow.getEngine().getLocation().contains("checkio.org") && newState == Worker.State.SUCCEEDED && !visited.get()) {
           visited.set(Boolean.TRUE);
 
@@ -117,6 +125,11 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
                                          @NotNull String interpreter,
                                          @NotNull String code) {
     Platform.runLater(() -> myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener(((observable, oldState, newState) -> {
+      if (newState == Worker.State.FAILED) {
+        setConnectionError();
+        return;
+      }
+
       if (newState == Worker.State.SUCCEEDED && myBrowserWindow.getEngine().getLocation().contains("checkioTestForm.html")) {
         final Document documentWithForm = myBrowserWindow.getEngine().getDocument();
         ((HTMLInputElement)documentWithForm.getElementById("access-token")).setValue(accessToken);
@@ -129,11 +142,10 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
     })));
   }
 
-  @NotNull
-  private static CheckResult createResult(int result) {
-    return result == 1
-           ? new CheckResult(CheckStatus.Solved, "All tests passed")
-           : new CheckResult(CheckStatus.Failed, "Tests failed");
+  private void setConnectionError() {
+    LOG.warn(CheckResult.CONNECTION_FAILED.getMessage());
+    myCheckResult = CheckResult.CONNECTION_FAILED;
+    myLatch.countDown();
   }
 
   public JFXPanel getBrowserPanel() {
@@ -143,7 +155,9 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
   public class CheckiOTestResultHandler {
     @SuppressWarnings("unused") // used in JS code
     public void handleTestEvent(int result) {
-      myCheckResult.set(result);
+      myCheckResult = result == 1 ?
+                      new CheckResult(CheckStatus.Solved, "All tests passed") :
+                      new CheckResult(CheckStatus.Failed, "Tests failed");
       myLatch.countDown();
     }
   }

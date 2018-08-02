@@ -134,6 +134,7 @@ public class CoursesPanel extends JPanel {
     myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
     myBusConnection.subscribe(CheckiOConnector.LOGGED_IN, (newTokens, newUser) -> {
       CheckiOSettings.getInstance().setUser(newUser);
+      CheckiOSettings.getInstance().setTokens(newTokens);
       runPostLoginActions(postLoginActions);
     });
   }

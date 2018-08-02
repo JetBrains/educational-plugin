@@ -1,22 +1,29 @@
 package com.jetbrains.edu.python.learning.checkio;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
-import com.jetbrains.edu.learning.checkio.model.CheckiOMission;
-import com.jetbrains.edu.learning.checkio.model.CheckiOMissionList;
-import com.jetbrains.edu.learning.checkio.model.CheckiOStation;
-import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
+import com.jetbrains.edu.learning.checkio.model.CheckiOMissionListWrapper;
+import com.jetbrains.edu.learning.checkio.model.CheckiOMissionWrapper;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.python.learning.PyCourseBuilder;
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
   private static final Logger LOG = Logger.getInstance(PyCheckiOCourseProjectGenerator.class);
@@ -33,8 +40,8 @@ public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
 
   @Override
   protected boolean beforeProjectGenerated() {
-    final CheckiOMissionList missions = CheckiOConnector.getMissionList();
-    final CheckiOCourse newCourse = generateCourseFromMissions(missions);
+    final CheckiOMissionListWrapper missionListWrapper = CheckiOConnector.getMissionList();
+    final CheckiOCourse newCourse = generateCourseFromMissions(missionListWrapper);
 
     if (newCourse == null) {
       LOG.warn("Error occurred generating course");
@@ -46,60 +53,64 @@ public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
   }
 
   @Nullable
-  private static CheckiOCourse generateCourseFromMissions(@Nullable CheckiOMissionList missions) {
-    if (missions == null) {
+  private static CheckiOCourse generateCourseFromMissions(@Nullable CheckiOMissionListWrapper missionsListWrapper) {
+    if (missionsListWrapper == null) {
       LOG.warn("Mission list is null");
       return null;
     }
 
-    final List<CheckiOStation> stations = missions.groupByStation();
-    final CheckiOCourse newCourse = new CheckiOCourse();
-
-    for (CheckiOStation station : stations) {
-      final Lesson newLesson = createLessonContent(station);
-      newCourse.addLesson(newLesson);
-    }
-    return newCourse;
+    final List<CheckiOMission> missionsList = generateMissionsFromWrapper(missionsListWrapper);
+    final List<CheckiOStation> stations = generateStationsFromMissions(missionsList);
+    return generateCourseFromStations(stations);
   }
 
   @NotNull
-  private static Lesson createLessonContent(@NotNull CheckiOStation station) {
-    final Lesson lesson = new Lesson();
+  private static CheckiOMission generateMissionFromWrapper(@NotNull CheckiOMissionWrapper missionWrapper) {
+    CheckiOMission mission = new CheckiOMission();
 
-    lesson.setName(station.getName());
-    lesson.setId(station.getId());
+    CheckiOStation station = new CheckiOStation();
+    station.setId(missionWrapper.getStationId());
+    station.setName(missionWrapper.getStationName());
 
-    for (CheckiOMission mission : station.getMissions()) {
-      Task task = createTaskContent(mission);
-      lesson.addTask(task);
-    }
-    return lesson;
-  }
+    mission.setStation(station);
+    mission.setStepId(missionWrapper.getId());
+    mission.setName(missionWrapper.getTitle());
+    mission.setDescriptionFormat(DescriptionFormat.HTML);
+    mission.setDescriptionText(missionWrapper.getDescription());
+    mission.setStatus(missionWrapper.isSolved() ? CheckStatus.Solved : CheckStatus.Unchecked);
 
-  @NotNull
-  private static Task createTaskContent(@NotNull CheckiOMission mission) {
-    final Task task = new EduTask();
-
-    task.setStepId(mission.getId());
-    task.setName(mission.getTitle());
-    task.setDescriptionFormat(DescriptionFormat.HTML);
-    task.setDescriptionText(mission.getDescription());
-
-    TaskFile taskFile = createTaskFileContent(mission);
-    task.addTaskFile(taskFile);
-
-    task.setStatus(mission.isSolved() ? CheckStatus.Solved : CheckStatus.Unchecked);
-    return task;
-  }
-
-  @NotNull
-  private static TaskFile createTaskFileContent(@NotNull CheckiOMission mission) {
     final TaskFile taskFile = new TaskFile();
-
-    taskFile.name = mission.getTitle() + ".py";
-    taskFile.text = mission.getCode().replaceAll("\r\n", "\n");
+    taskFile.name = mission.getName() + ".py";
+    taskFile.text = missionWrapper.getCode().replaceAll("\r\n", "\n");
     taskFile.setHighlightErrors(true);
+    mission.addTaskFile(taskFile);
 
-    return taskFile;
+    return mission;
+  }
+
+  @NotNull
+  private static List<CheckiOMission> generateMissionsFromWrapper(@NotNull CheckiOMissionListWrapper missionListWrapper) {
+    return missionListWrapper.getMissions().stream().map(PyCheckiOCourseProjectGenerator::generateMissionFromWrapper)
+      .collect(Collectors.toList());
+  }
+
+  @NotNull
+  private static List<CheckiOStation> generateStationsFromMissions(@NotNull List<CheckiOMission> missions) {
+    final Multimap<CheckiOStation, CheckiOMission> stationsMap = MultimapBuilder
+      .treeKeys(Comparator.comparing(CheckiOStation::getId))
+      .treeSetValues(Comparator.comparing(CheckiOMission::getId))
+      .build();
+
+    missions.forEach(mission -> stationsMap.put(mission.getStation(), mission));
+    stationsMap.forEach(CheckiOStation::addMission);
+
+    return new ArrayList<>(stationsMap.keySet());
+  }
+
+  @NotNull
+  private static CheckiOCourse generateCourseFromStations(@NotNull List<CheckiOStation> stationsList) {
+    final CheckiOCourse course = new CheckiOCourse();
+    stationsList.forEach(course::addStation);
+    return course;
   }
 }

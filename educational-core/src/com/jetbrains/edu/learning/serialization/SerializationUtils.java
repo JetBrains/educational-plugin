@@ -50,6 +50,7 @@ public class SerializationUtils {
     public final static String COURSE_ELEMENT = "courseElement";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
     public final static String REMOTE_COURSE = "RemoteCourse";
+    public static final String CHECKIO_COURSE = "CheckiOCourse";
     public static final String MAP = "map";
     public static final String KEY = "key";
     public static final String VALUE = "value";
