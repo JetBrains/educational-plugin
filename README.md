@@ -32,4 +32,22 @@ Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetb
 should be used
 7. To build plugin distributions use *buildPlugin* gradle task
 
+### Workflow for checking compatibility with different Idea/Studio branches
+1. Develop feature in feature branch %feature.branch%
+2. Commit changes
+3. Run `apply -3 --ignore-space-change --ignore-whitespace patcher/%branch.name%.patch` command where %branch.name% is desired branch.
+4. Use appropriate run configuration
+Different configurations use different *.properties file. This can be changed manually using `-PenvironmentName=%branch.name%` argument
+
+Everything works:
+5. Revert patch `git reset --hard && git clean -fd`
+6. Push all the changes
+
+Something went wrong:
+5. Fix errors caused by compatibility issues in idea branches
+6. Create new patch file `git diff %feature.branch% > patcher/%branch.name%.patch`
+7. Commit new patch file
+8. Revert `git reset --hard && git clean -fd`
+9. Push all the changes
+
 
