@@ -40,14 +40,14 @@ should be used
 Different configurations use different *.properties file. This can be changed manually using `-PenvironmentName=%branch.name%` argument
 
 Everything works:\
-5. Revert patch `git reset --hard && git clean -fd`
+5. Revert patch `git reset --hard && git clean -fd`\
 6. Push all the changes
 
 Something went wrong:\
-5. Fix errors caused by compatibility issues in idea branches
-6. Create new patch file `git diff %feature.branch% > patcher/%branch.name%.patch`
-7. Commit new patch file
-8. Revert `git reset --hard && git clean -fd`
+5. Fix errors caused by compatibility issues in idea branches\
+6. Create new patch file `git diff %feature.branch% > patcher/%branch.name%.patch`\
+7. Commit new patch file\
+8. Revert `git reset --hard && git clean -fd`\
 9. Push all the changes
 
 
