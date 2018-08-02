@@ -42,12 +42,12 @@ index 3ec6bd2c6..00ddbfb5c 100644
        mySettings.sdk = sdkChooser.comboBox.selectedItem as? Sdk
      }
 diff --git a/build.gradle b/build.gradle
-index 893880be3..03cf114db 100644
+index 4b8f6ff40..62e2952de 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -111,10 +111,10 @@ allprojects {
+@@ -113,10 +113,10 @@ allprojects {
      }
- 
+
      intellij {
 -        if (project.hasProperty("ideaVersion")) {
 -            version ideaVersion
@@ -59,10 +59,10 @@ index 893880be3..03cf114db 100644
 +            localPath downloadStudioIfNeededAndGetPath()
          }
      }
- 
-@@ -163,10 +163,10 @@ allprojects {
- 
- 
+
+@@ -165,10 +165,10 @@ allprojects {
+
+
  intellij {
 -    if (project.hasProperty("ideaVersion")) {
 -        version ideaVersion
@@ -75,28 +75,28 @@ index 893880be3..03cf114db 100644
      }
      if (project.hasProperty("customSinceBuild")) {
          patchPluginXml.sinceBuild = customSinceBuild
-@@ -264,11 +264,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
+@@ -266,11 +266,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
  }
- 
+
  configure([project(':educational-core'), project(':Edu-Java')]) {
 -    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
 +    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy', 'smali'
  }
- 
+
  configure(project(':Edu-Kotlin')) {
 -    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
 +    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy', 'smali'
- 
- 
+
+
      task createTwitterProperties() {
-@@ -286,7 +286,7 @@ configure(project(':Edu-Python')) {
+@@ -288,7 +288,7 @@ configure(project(':Edu-Python')) {
  }
- 
+
  configure(project(':Edu-Scala')) {
 -    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
 +    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy', 'smali'
  }
- 
+
  runIde.systemProperty("-Didea.is.internal", "true")
 diff --git a/educational-core/resources/META-INF/educational-core.xml b/educational-core/resources/META-INF/educational-core.xml
 index 34f9ce934..85b95cc63 100644
@@ -113,34 +113,20 @@ index 34f9ce934..85b95cc63 100644
      <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
      <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
 diff --git a/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java b/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
-index 2a9e53b30..1a24e9c03 100644
+index d96034f45..e2fd88019 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
-@@ -121,7 +121,9 @@ public class EduProjectComponent implements ProjectComponent {
+@@ -129,7 +129,9 @@ public class EduProjectComponent implements ProjectComponent {
        return;
      }
- 
+
 -    if (myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
 +    // Android Studio imports gradle project itself but not in tests
 +    boolean needImportForCurrentPlatform = ApplicationManager.getApplication().isUnitTestMode() || !isAndroidStudio();
 +    if (needImportForCurrentPlatform && myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
        EduGradleUtils.importGradleProject(myProject, projectBasePath);
-     }
- 
-diff --git a/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt b/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
-index 0da5947c2..b92efd183 100644
---- a/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
-+++ b/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
-@@ -79,7 +79,8 @@ object EduGradleUtils {
-                                             .useDefaultCallback()
-                                             .use(ProgressExecutionMode.IN_BACKGROUND_ASYNC)
-                                             .dontReportRefreshErrors()
--                                            .build())
-+                                            .build(),
-+                                          false)
-     }
- 
-     @JvmStatic
+     } else if (isAndroidStudio()) {
+       // Unexpectedly, Android Studio corrupts content root paths after course project reopening
 diff --git a/educational-core/src/com/jetbrains/edu/learning/projectView/CourseViewPane.kt b/educational-core/src/com/jetbrains/edu/learning/projectView/CourseViewPane.kt
 index 6868df389..5895ddad5 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/projectView/CourseViewPane.kt
