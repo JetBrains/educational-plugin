@@ -14,7 +14,7 @@ val mapper = jacksonObjectMapper()
   .addMixIn(StudyItem::class.java, StudyItemMixIn::class.java)
 
 
-fun test_course_empty() {
+fun test_deserialize_empty_course() {
   val json = File("$resPath/empty_course.json").readText()
   val course = mapper.readValue<Course>(json)
   check(course.name == "test-title")
@@ -24,7 +24,7 @@ fun test_course_empty() {
 }
 
 
-fun test_section_empty() {
+fun test_deserialize_empty_section() {
   val json = File("$resPath/empty_section.json").readText()
   val section = mapper.readValue<Section>(json)
   check(section.name == "test-section-title")
@@ -32,7 +32,7 @@ fun test_section_empty() {
 }
 
 
-fun test_lesson_empty() {
+fun test_deserialize_empty_lesson() {
   val json = File("$resPath/empty_lesson.json").readText()
   val lesson = mapper.readValue<Lesson>(json)
   check(lesson.name == "test-lesson-title")
@@ -40,7 +40,7 @@ fun test_lesson_empty() {
 }
 
 
-fun test_course_1() {
+fun test_deserialize_structure_course() {
   val json = File("$resPath/course_1.json").readText()
   val course = mapper.readValue<Course>(json)
   check(course.name == "test-course-title")
@@ -58,8 +58,8 @@ fun test_course_1() {
 
 
 fun main(args: Array<String>) {
-  test_course_empty()
-  test_section_empty()
-  test_lesson_empty()
-  test_course_1()
+  test_deserialize_empty_course()
+  test_deserialize_empty_section()
+  test_deserialize_empty_lesson()
+  test_deserialize_structure_course()
 }

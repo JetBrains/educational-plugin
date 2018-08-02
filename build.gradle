@@ -12,6 +12,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     }
 }
 
@@ -157,8 +158,8 @@ allprojects {
             exclude module: 'kotlin-stdlib'
             exclude module: 'kotlin-reflect'
         }
-        compile "com.squareup.retrofit2:retrofit:2.4.+"
-        compile "com.squareup.retrofit2:converter-jackson:2.4.+"
+        compile "com.squareup.retrofit2:retrofit:2.4.0"
+        compile "com.squareup.retrofit2:converter-jackson:2.4.0"
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
     }
 }
@@ -316,13 +317,15 @@ allprojects {
 
 configure(project(':edu-server-integration')) {
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+         compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion" // fix issue 1
+         compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion" // fix issue 2
     }
 }
-/*
- * Note:
- * Removing this dependency causes following error in src exec files,
- * testSrc exec files is running fine though:
- * java.lang.NoClassDefFoundError: kotlin/jvm/internal/Intrinsics
+/* Note:
+ *
+ * Issue 1: `java.lang.NoClassDefFoundError: kotlin/jvm/internal/Intrinsics`
+ * in all `src` exec files, testSrc exec files is running fine though
+ *
+ * Issue 2: `java.lang.NoClassDefFoundError: kotlin/reflect/jvm/internal/KotlinReflectionInternalError`
  *
  */
