@@ -65,6 +65,10 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
     this.myShouldUseJavaFx = shouldUseJavaFx;
   }
 
+  public static boolean isLoggedIn() {
+    return getInstance().myUser != null;
+  }
+
   private static void updateStepikUserWidget() {
     StepikUserWidget widget = EduUtils.getStepikWidget();
     if (widget != null) {

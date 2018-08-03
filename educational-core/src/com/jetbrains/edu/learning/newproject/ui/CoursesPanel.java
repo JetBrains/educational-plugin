@@ -40,7 +40,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -140,7 +139,7 @@ public class CoursesPanel extends JPanel {
     }
     myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
     myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, () -> {
-      if (StepikUtils.isLoggedIn()) {
+      if (EduSettings.isLoggedIn()) {
         runPostLoginActions(postLoginActions);
       }
     });
@@ -362,7 +361,7 @@ public class CoursesPanel extends JPanel {
               importLocalCourse();
             }
             else if (stepikCourseOption.equals(selectedValue)) {
-              if (!StepikUtils.isLoggedIn()) {
+              if (!EduSettings.isLoggedIn()) {
                 int result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik", "Log in", "Cancel", null);
                 if (result == Messages.OK) {
                   addLoginListener(CoursesPanel.this::updateCoursesList,  () -> importStepikCourse());

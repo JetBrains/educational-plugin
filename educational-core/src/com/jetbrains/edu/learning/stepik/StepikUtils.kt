@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 @file:JvmName("StepikUtils")
+
 package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
-import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
-import com.jetbrains.edu.learning.courseFormat.ext.course
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import java.util.regex.Pattern
 
 object StepikUtils {
-
   private val LOG = Logger.getInstance(StepikUtils::class.java)
   private val PYCHARM_COURSE_TYPE = Pattern.compile(String.format("%s(\\d*) (\\w+)", StepikNames.PYCHARM_PREFIX))
 
   @JvmStatic
-  fun wrapStepikTasks(task: Task, text: String, adaptive: Boolean): String {
+  fun wrapStepikTasks(task: Task, text: String): String {
     var finalText = text
     val course = task.course
-    if (task is TheoryTask && course != null && course.isAdaptive) {
-      finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. "
+    if (course.isAdaptive) {
+      when (task) {
+        is TheoryTask -> finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. "
+        is CodeTask ->  finalText += "<br/><br/><b>Note</b>: Use standard input to obtain input for the task."
+      }
     }
-    else if (task is CodeTask && adaptive) {
-      finalText += "<br/><br/><b>Note</b>: Use standard input to obtain input for the task."
-    }
-    if (course != null && course.isStudy) {
-      finalText += getFooterWithLink(task, adaptive)
+    if (course.isStudy) {
+      finalText += getFooterWithLink(task, course.isAdaptive)
     }
 
     return finalText
@@ -51,24 +47,18 @@ object StepikUtils {
 
   private fun getFooterWithLink(task: Task, adaptive: Boolean): String {
     val link = if (adaptive) getAdaptiveLink(task) else getLink(task, task.index)
-    return "<div class=\"footer\"><a href=$link>Leave a comment</a></div>"
+    return """<div class="footer"><a href=$link>Leave a comment</a></div>"""
   }
 
-  private fun getLink(task: Task?, stepNumber: Int): String? {
-    if (task == null) {
-      return null
-    }
-    val lesson = task.lesson
-    return if (lesson == null || lesson.course !is RemoteCourse) {
-      null
-    }
-    else String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.id, stepNumber)
-
+  fun getLink(task: Task?, stepNumber: Int): String? {
+    val lesson = task?.lesson
+    val course = lesson?.course
+    return if (course is RemoteCourse) "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${stepNumber}" else null
   }
 
   private fun getAdaptiveLink(task: Task?): String? {
     val link = getLink(task, 1)
-    return if (link == null) null else "$link?adaptive=true"
+    return link?.let { "$link?adaptive=true" }
   }
 
   @JvmStatic
@@ -82,23 +72,6 @@ object StepikUtils {
     else {
       LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
                              info.name, courseType))
-    }
-  }
-
-  @JvmStatic
-  fun getTopLevelSectionId(project: Project, course: RemoteCourse): Int {
-    return if (!course.sectionIds.isEmpty()) {
-      course.sectionIds[0]
-    }
-    else {
-      val topLevelLesson = course.lessons.first { it.stepikChangeStatus == StepikChangeStatus.UP_TO_DATE }
-      val id = CCStepikConnector.findTopLevelLessonsSection(project, topLevelLesson)
-      if (id != -1) {
-        return id
-      }
-      else {
-        return CCStepikConnector.postTopLevelLessonsSection(project, course)
-      }
     }
   }
 }

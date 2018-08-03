@@ -101,11 +101,6 @@ public class RemoteCourse extends Course {
     this.id = id;
   }
 
-  public void copyCourseParameters(RemoteCourse course) {
-    setName(course.getName());
-    setUpdateDate(course.getUpdateDate());
-  }
-
   private void updateType(String language) {
     final int separator = myType.indexOf(" ");
     final String version;

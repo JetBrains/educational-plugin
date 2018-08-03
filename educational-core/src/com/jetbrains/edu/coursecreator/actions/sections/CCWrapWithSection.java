@@ -63,6 +63,11 @@ public class CCWrapWithSection extends DumbAwareAction {
     YamlFormatSynchronizer.saveItem(course);
     ProjectView.getInstance(project).refresh();
     StepikCourseChangeHandler.contentChanged(course);
+    for (Lesson lesson : section.getLessons()) {
+      if (lesson.getId() != 0) {
+        StepikCourseChangeHandler.infoChanged(lesson);
+      }
+    }
   }
 
   @NotNull

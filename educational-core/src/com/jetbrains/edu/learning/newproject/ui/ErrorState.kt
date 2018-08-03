@@ -5,6 +5,7 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.MessageType.ERROR
 import com.intellij.openapi.ui.MessageType.WARNING
 import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
@@ -13,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.StepikUtils
 import java.awt.Color
 
 sealed class ErrorState(
@@ -66,7 +66,7 @@ sealed class ErrorState(
       return ErrorMessage(beforeLink, "Enable", "")
     }
 
-    private fun isLoggedInToStepik(): Boolean = StepikUtils.isLoggedIn()
+    private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()
 
     private fun isStepikLoginRequired(selectedCourse: Course): Boolean =
       selectedCourse.isAdaptive || selectedCourse is RemoteCourse && !selectedCourse.isCompatible
