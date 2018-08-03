@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -86,6 +87,8 @@ public class CCPushCourse extends DumbAwareAction {
             catch (IOException e1) {
               LOG.warn(e1);
             }
+
+            StepikUpdateDateExt.setUpdated((RemoteCourse)course);
             showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId())
             );
           }

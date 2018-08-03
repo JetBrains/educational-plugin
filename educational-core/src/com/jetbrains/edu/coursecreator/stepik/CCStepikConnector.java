@@ -11,7 +11,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -562,7 +561,6 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
       }
 
-      StepikUpdateDateExt.setUpdated(course);
       return true;
     }
     catch (IOException e) {
