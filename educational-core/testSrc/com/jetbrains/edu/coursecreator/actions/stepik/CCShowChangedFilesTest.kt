@@ -26,7 +26,7 @@ class CCShowChangedFilesTest: CCActionTestCase() {
       }
     }
 
-    checkMessage(course, "")
+    checkMessage(course, "No changes")
   }
 
   fun `test course content changed`() {
@@ -160,7 +160,7 @@ class CCShowChangedFilesTest: CCActionTestCase() {
   }
 
   private fun checkMessage(course: Course, expectedMessage: String) {
-    TestCase.assertEquals(expectedMessage, CCShowChangedFiles.buildChangeMessage(course).toString())
+    TestCase.assertEquals(expectedMessage, CCShowChangedFiles.buildChangeMessage(course))
   }
 }
 
