@@ -200,7 +200,7 @@ public abstract class Task extends StudyItem {
       }
     }
     if (getLesson().getCourse() instanceof RemoteCourse && taskText != null) {
-      taskText = StepikUtils.wrapStepikTasks(this, taskText, getLesson().getCourse().isAdaptive());
+      taskText = StepikUtils.wrapStepikTasks(this, taskText);
     }
     return taskText;
   }
