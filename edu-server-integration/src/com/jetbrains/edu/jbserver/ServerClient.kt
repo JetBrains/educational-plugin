@@ -1,4 +1,4 @@
-package com.jetbrains.edu.serverClient
+package com.jetbrains.edu.jbserver
 
 import retrofit2.Call
 import retrofit2.Retrofit
