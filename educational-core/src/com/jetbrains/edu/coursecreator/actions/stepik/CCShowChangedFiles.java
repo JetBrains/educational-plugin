@@ -109,6 +109,6 @@ public class CCShowChangedFiles extends DumbAwareAction {
     Collections.reverse(parents);
 
     String parentsLine = StringUtil.join(parents, "/");
-    return parentsLine + "/" + item.getName();
+    return parentsLine + (parentsLine.isEmpty() ? "" : "/") + item.getName();
   }
 }
