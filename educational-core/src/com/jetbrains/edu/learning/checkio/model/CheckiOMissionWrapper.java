@@ -9,6 +9,7 @@ public class CheckiOMissionWrapper {
   private String title;
   private String description;
   private String code;
+  private long secondsPast;
 
   public int getId() {
     return id;
@@ -36,5 +37,9 @@ public class CheckiOMissionWrapper {
 
   public String getCode() {
     return code;
+  }
+
+  public long getSecondsFromLastChange() {
+    return secondsPast;
   }
 }

@@ -5,8 +5,11 @@ import com.intellij.openapi.application.ex.ApplicationUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
+import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
@@ -27,12 +30,15 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
 
   @Override
   public void onTaskSolved(@NotNull String message) {
+    updateCourse();
     super.onTaskSolved(message);
   }
 
-  @Override
-  public void onTaskFailed(@NotNull String message) {
-    super.onTaskFailed(message);
+  private void updateCourse() {
+    final CheckiOCourse course = (CheckiOCourse) StudyTaskManager.getInstance(project).getCourse();
+    assert course != null;
+
+    CheckiOCourseUpdater.doUpdate(course, project);
   }
 
   @NotNull

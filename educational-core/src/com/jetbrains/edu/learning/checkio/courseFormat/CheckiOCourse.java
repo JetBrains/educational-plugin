@@ -30,4 +30,9 @@ public class CheckiOCourse extends Course {
   public List<CheckiOStation> getStations() {
     return items.stream().filter(CheckiOStation.class::isInstance).map(CheckiOStation.class::cast).collect(Collectors.toList());
   }
+
+  @Override
+  public String toString() {
+    return "stations=[" + getStations().stream().map(CheckiOStation::toString).collect(Collectors.joining("\n")) + "]";
+  }
 }
