@@ -1,0 +1,16 @@
+{
+  "offset": 301,
+  "length": 7,
+  "hints": [
+    "hint 1", "hint 2"
+  ],
+  "possible_answer": "answer",
+  "placeholder_text": "todo",
+  "dependency": {
+    "section": "section-dep",
+    "lesson": "lesson-dep",
+    "task": "task-dep",
+    "file": "file-dep",
+    "placeholder": 1
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "type": "edu",
+  "id": 96145,
+  "version_id": 99634,
+  "last_modified": "2018-08-06 16:39:13.758513",
+  "name": "task-name-94255",
+  "description": "test-task-edu-decs-15633",
+  "description_format": "html",
+  "task_files": {
+    "file-1": {
+      "name": "file-1",
+      "text": "content-13695",
+      "placeholders": []
+    },
+    "file-2": {
+      "name": "file-2",
+      "text": "content-84632",
+      "placeholders": [
+        {
+          "offset": 27,
+          "length": 11,
+          "hints": [
+            "hint-13658",
+            "hint-45782"
+          ],
+          "possible_answer": "answer-13659",
+          "placeholder_text": "todo-12569"
+        },
+        {
+          "offset": 46,
+          "length": 11,
+          "hints": [],
+          "possible_answer": "answer-94365",
+          "placeholder_text": "todo-24658"
+        }
+      ]
+    },
+    "file-3": {
+      "name": "file-3",
+      "text": "content-23665",
+      "placeholders": [
+        {
+          "offset": 79,
+          "length": 15,
+          "hints": [],
+          "possible_answer": "answer-57582",
+          "placeholder_text": "todo-57277",
+          "dependency": {
+            "section": "section-dep-94748",
+            "lesson": "lesson-dep-13654",
+            "task": "task-dep-96354",
+            "file": "file-dep-16583",
+            "placeholder": 2
+          }
+        }
+      ]
+    }
+  },
+  "test_files": {
+    "test-1": "test-content-13658",
+    "test-2": "test-content-96584",
+    "test-3": "test-content-55897"
+  }
+}

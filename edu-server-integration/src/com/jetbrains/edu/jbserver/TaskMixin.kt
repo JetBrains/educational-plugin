@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
   JsonSubTypes.Type(value = ChoiceTask::class, name = "choice")
 ))
 @JsonIgnoreProperties(value = *arrayOf(
-  "format", "last_modified"
+  "format", "last_modified", "version_id"
 ))
 abstract class TaskMixIn {
 
@@ -37,7 +37,7 @@ abstract class TaskMixIn {
   lateinit var taskFiles: HashMap<String, TaskFile>
 
   @JsonProperty("test_files")
-  lateinit var testsText: HashMap<String, TaskFile>
+  lateinit var testsText: HashMap<String, String>
 
 }
 

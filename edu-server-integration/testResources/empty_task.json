@@ -1,0 +1,11 @@
+{
+  "type": "theory",
+  "id": 1307,
+  "version_id": 3571,
+  "last_modified": "2018-08-06 12:35:47.136579",
+  "name": "test-task-theory",
+  "description": "test-task-theory-decs",
+  "description_format": "md",
+  "task_files": {},
+  "test_files": {}
+}

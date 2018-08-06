@@ -1,0 +1,29 @@
+{
+  "name": "file-name-3301",
+  "text": "file-content-08672241",
+  "placeholders": [
+    {
+      "offset": 42,
+      "length": 7,
+      "hints": [],
+      "possible_answer": "answer-23174611",
+      "placeholder_text": "todo-67",
+      "dependency": {
+        "section": "section-dep-9645696",
+        "lesson": "lesson-dep-5654756",
+        "task": "task-dep-1265799",
+        "file": "file-dep-8633256",
+        "placeholder": 2
+      }
+    },{
+      "offset": 163,
+      "length": 5,
+      "hints": [
+        "hint-13",
+        "hint-72"
+      ],
+      "possible_answer": "answer-2940345937",
+      "placeholder_text": "todo-46"
+    }
+  ]
+}

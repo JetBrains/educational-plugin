@@ -19,9 +19,9 @@ abstract class StudyItemMixin
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "version",
+  "id", "last_modified", "version", "course_files",
   "course", "tags", "authors", "courseType", "courseMode",
-  "visibility", "lessons", "lessons", "sections", "upToDate", "languageById",
+  "visibility", "lessons", "sections", "upToDate", "languageById",
   "languageID", "languageVersion", "adaptive", "study", "authorFullNames",
   "languageCode", "compatibility", "index", "customPresentableName",
   "presentableName", "stepikChangeStatus", "humanLanguage"

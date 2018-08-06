@@ -43,7 +43,19 @@
       "title": "item-1-2",
       "description": "item-1-2-desc",
       "description_format": "md",
-      "items": []
+      "items": [
+        {
+          "type": "output",
+          "id": 18654,
+          "version_id": 96314,
+          "last_modified": "2018-08-06 17:49:27.486359",
+          "name": "item-1-2-1-name",
+          "description": "item-1-2-1-decs",
+          "description_format": "md",
+          "task_files": {},
+          "test_files": {}
+        }
+      ]
     }
   ]
 }
