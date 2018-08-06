@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
-import junit.framework.TestCase
 
 
 class YamlDeserializationTest: EduTestCase() {
@@ -66,8 +65,8 @@ class YamlDeserializationTest: EduTestCase() {
     |- name: Test.java
     |""".trimMargin("|")
     val task = YamlFormatSynchronizer.deserializeTask(yamlContent)
-    TestCase.assertTrue(task is OutputTask)
-    TestCase.assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
+    assertTrue(task is OutputTask)
+    assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
   }
 
   fun `test edu task`() {
