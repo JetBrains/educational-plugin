@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,7 @@ public class SyncCourseAction extends DumbAwareAction {
         public void run(@NotNull ProgressIndicator indicator) {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
 
-          if (course.isUpToDate()) {
+          if (StepikUpdateDateExt.isUpToDate((RemoteCourse)course)) {
             ApplicationManager.getApplication().invokeLater(() -> {
               Notification notification = new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
               notification.notify(project);
@@ -56,7 +57,7 @@ public class SyncCourseAction extends DumbAwareAction {
           }
           else {
             new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
-            course.setUpdated();
+            StepikUpdateDateExt.setUpdated((RemoteCourse)course);
           }
         }
       });

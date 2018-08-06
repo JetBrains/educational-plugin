@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import icons.EducationalCoreIcons;
@@ -266,15 +265,6 @@ public abstract class Task extends StudyItem {
 
   public Date getUpdateDate() {
     return myUpdateDate;
-  }
-
-  public boolean isUpToDate() {
-    if (getStepId() == 0 || !StepikUtils.isLoggedIn()) return true;
-
-    final Date date = StepikConnector.getTaskUpdateDate(getStepId());
-    if (date == null) return true;
-    if (myUpdateDate == null) return false;
-    return !EduUtils.isAfter(date, myUpdateDate);
   }
 
   // used in json serialization/deserialization
