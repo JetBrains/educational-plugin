@@ -910,7 +910,7 @@ public class EduUtils {
         return null;
       }
       if (isImage(taskFile.name)) {
-        taskFile.text = Base64.encodeBase64String(answerFile.contentsToByteArray());
+        taskFile.setText(Base64.encodeBase64String(answerFile.contentsToByteArray()));
         return taskFile;
       }
       Document document = FileDocumentManager.getInstance().getDocument(answerFile);
@@ -931,7 +931,7 @@ public class EduUtils {
       }
       taskFile.setTrackLengths(true);
       studentDocument.removeDocumentListener(listener);
-      taskFile.text = studentDocument.getImmutableCharSequence().toString();
+      taskFile.setText(studentDocument.getImmutableCharSequence().toString());
       return taskFile;
     }
     catch (IOException e) {

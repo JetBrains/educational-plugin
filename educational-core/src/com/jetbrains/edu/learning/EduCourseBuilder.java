@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
@@ -97,12 +98,12 @@ public interface EduCourseBuilder<Settings> {
       String taskTemplateName = getTaskTemplateName();
       if (taskTemplateName != null) {
         taskFile.name = taskTemplateName;
-        taskFile.text = EduUtils.getTextFromInternalTemplate(taskTemplateName);
+        taskFile.setText(StringUtil.notNullize(EduUtils.getTextFromInternalTemplate(taskTemplateName)));
       } else {
         GeneratorUtils.DefaultFileProperties taskFileProperties =
           GeneratorUtils.createDefaultFile(task.getLesson().getCourse(), "Task", "type task text here");
         taskFile.name = taskFileProperties.getName();
-        taskFile.text = taskFileProperties.getText();
+        taskFile.setText(taskFileProperties.getText());
       }
       task.addTaskFile(taskFile);
     }

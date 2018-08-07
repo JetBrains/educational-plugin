@@ -124,7 +124,7 @@ public class CCShowPreview extends DumbAwareAction {
 
   private static void showPreviewDialog(@NotNull Project project, @NotNull TaskFile taskFile) {
     final FrameWrapper showPreviewFrame = new FrameWrapper(project);
-    final LightVirtualFile userFile = new LightVirtualFile(taskFile.name, taskFile.text);
+    final LightVirtualFile userFile = new LightVirtualFile(taskFile.name, taskFile.getText());
     showPreviewFrame.setTitle(userFile.getName());
     LabeledEditor labeledEditor = new LabeledEditor(null);
     final EditorFactory factory = EditorFactory.getInstance();

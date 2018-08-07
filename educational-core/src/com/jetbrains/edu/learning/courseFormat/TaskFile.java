@@ -21,15 +21,12 @@ import java.util.List;
  * which is visible to student in project view
  */
 
-public class TaskFile implements VisibleFile {
+public class TaskFile extends StudyFile {
   @Expose public String name;
-  @Expose public String text;
   private boolean myUserCreated = false;
   private boolean myTrackChanges = true;
   private boolean myTrackLengths = true;
   private boolean myHighlightErrors = false;
-  @Expose @SerializedName("is_visible")
-  private boolean myIsVisible = true;
   @Expose @SerializedName("placeholders") private List<AnswerPlaceholder> myAnswerPlaceholders = new ArrayList<>();
 
   @Transient private Task myTask;
@@ -131,16 +128,6 @@ public class TaskFile implements VisibleFile {
 
   public void setHighlightErrors(boolean highlightErrors) {
     myHighlightErrors = highlightErrors;
-  }
-
-  @Override
-  public boolean isVisible() {
-    return myIsVisible;
-  }
-
-  @Override
-  public void setVisible(boolean visible) {
-    myIsVisible = visible;
   }
 
   public void sortAnswerPlaceholders() {

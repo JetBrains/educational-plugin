@@ -227,7 +227,7 @@ public class StepikFormatTest {
     assertEquals(1, files.size());
     final TaskFile taskFile = files.get(0);
     assertEquals("hello_world.py", taskFile.name);
-    assertEquals("print(\"Hello, world! My name is type your name\")\n", taskFile.text);
+    assertEquals("print(\"Hello, world! My name is type your name\")\n", taskFile.getText());
   }
 
   private StepikWrappers.StepOptions getStepOptions() throws IOException {
@@ -251,7 +251,7 @@ public class StepikFormatTest {
     assertEquals(32, offset);
     final int length = placeholders.get(0).getLength();
     assertEquals(14, length);
-    assertEquals("type your name", taskFile.text.substring(offset, offset + length));
+    assertEquals("type your name", taskFile.getText().substring(offset, offset + length));
   }
 
   @Test

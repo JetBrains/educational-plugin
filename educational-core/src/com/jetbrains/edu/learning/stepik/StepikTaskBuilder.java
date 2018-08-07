@@ -299,7 +299,7 @@ public class StepikTaskBuilder {
   }
 
   private static void addPlaceholdersTexts(TaskFile file) {
-    final String fileText = file.text;
+    final String fileText = file.getText();
     final List<AnswerPlaceholder> placeholders = file.getAnswerPlaceholders();
     for (AnswerPlaceholder placeholder : placeholders) {
       final int offset = placeholder.getOffset();
@@ -312,7 +312,7 @@ public class StepikTaskBuilder {
 
   private static void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
     final TaskFile taskFile = new TaskFile();
-    taskFile.text = editorText;
+    taskFile.setText(editorText);
     taskFile.name = taskFileName;
     task.taskFiles.put(taskFile.name, taskFile);
   }

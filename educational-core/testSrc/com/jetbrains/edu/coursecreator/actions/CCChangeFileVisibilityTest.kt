@@ -14,10 +14,7 @@ import com.jetbrains.edu.coursecreator.actions.taskFile.CCHideFromStudent
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCMakeVisibleToStudent
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
-import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.VisibleFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
@@ -65,7 +62,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     val taskDir = task.getTaskDir(project) ?: error("Can't find task dir of `${task.name}` task")
 
     val selectedFiles = mutableListOf<VirtualFile>()
-    val affectedCourseFiles = mutableListOf<VisibleFile>()
+    val affectedCourseFiles = mutableListOf<StudyFile>()
 
     for (path in paths) {
       val fullPath = if (pathPrefix.isEmpty()) path else "$pathPrefix/$path"
@@ -134,7 +131,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     action: CCChangeFileVisibility,
     oppositeAction: CCChangeFileVisibility,
     dataContext: DataContext,
-    affectedCourseFiles: List<VisibleFile>,
+    affectedCourseFiles: List<StudyFile>,
     task: Task,
     shouldActionBeEnabled: Boolean = true,
     shouldOppositeActionBeEnabled: Boolean = false
