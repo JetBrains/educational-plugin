@@ -1,5 +1,5 @@
 diff --git a/Edu-Java/testResources/META-INF/plugin.xml b/Edu-Java/testResources/META-INF/plugin.xml
-index c09e7e73d..5278ba576 100644
+index c09e7e7..5278ba5 100644
 --- a/Edu-Java/testResources/META-INF/plugin.xml
 +++ b/Edu-Java/testResources/META-INF/plugin.xml
 @@ -1,5 +1,6 @@
@@ -7,10 +7,10 @@ index c09e7e73d..5278ba576 100644
      <id>com.jetbrains.edu.java</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
- 
+
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Kotlin/testResources/META-INF/plugin.xml b/Edu-Kotlin/testResources/META-INF/plugin.xml
-index 1f4d26990..c9fb71c71 100644
+index 1f4d269..c9fb71c 100644
 --- a/Edu-Kotlin/testResources/META-INF/plugin.xml
 +++ b/Edu-Kotlin/testResources/META-INF/plugin.xml
 @@ -1,5 +1,6 @@
@@ -18,10 +18,10 @@ index 1f4d26990..c9fb71c71 100644
      <id>com.jetbrains.edu.kotlin</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Kotlin.xml">com.intellij.modules.java</depends>
- 
+
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
-index 5e2f41ecc..e825027e3 100644
+index 5e2f41e..e825027 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 @@ -81,14 +81,14 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
@@ -40,9 +40,9 @@ index 5e2f41ecc..e825027e3 100644
 +      PySdkExtKt.associateWithProject(sdk, project, false);
      }
    }
- 
+
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
-index 3ec6bd2c6..00ddbfb5c 100644
+index c171bcc..bcef799 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 @@ -17,7 +17,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
@@ -56,15 +56,15 @@ index 3ec6bd2c6..00ddbfb5c 100644
            }
 @@ -27,7 +27,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
      }
- 
+
      val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
 -    val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
 +    val sdkChooser = PythonSdkChooserCombo(null, sdks, null) { true }
      sdkChooser.addChangedListener {
        mySettings.sdk = sdkChooser.comboBox.selectedItem as? Sdk
-     }
+       notifyListeners()
 diff --git a/Edu-Python/testResources/META-INF/plugin.xml b/Edu-Python/testResources/META-INF/plugin.xml
-index 5c7158398..a20004f8c 100644
+index 5c71583..a20004f 100644
 --- a/Edu-Python/testResources/META-INF/plugin.xml
 +++ b/Edu-Python/testResources/META-INF/plugin.xml
 @@ -1,4 +1,5 @@
@@ -74,7 +74,7 @@ index 5c7158398..a20004f8c 100644
      <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
  </idea-plugin>
 diff --git a/Edu-Scala/testResources/META-INF/plugin.xml b/Edu-Scala/testResources/META-INF/plugin.xml
-index 5eca860a3..edce8141e 100644
+index 5eca860..edce814 100644
 --- a/Edu-Scala/testResources/META-INF/plugin.xml
 +++ b/Edu-Scala/testResources/META-INF/plugin.xml
 @@ -1,4 +1,5 @@
@@ -84,12 +84,12 @@ index 5eca860a3..edce8141e 100644
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
 diff --git a/build.gradle b/build.gradle
-index 893880be3..03cf114db 100644
+index 5390f1b..3e14481 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -111,10 +111,10 @@ allprojects {
+@@ -112,10 +112,10 @@ allprojects {
      }
- 
+
      intellij {
 -        if (project.hasProperty("ideaVersion")) {
 -            version ideaVersion
@@ -101,10 +101,10 @@ index 893880be3..03cf114db 100644
 +            localPath downloadStudioIfNeededAndGetPath()
          }
      }
- 
-@@ -163,10 +163,10 @@ allprojects {
- 
- 
+
+@@ -164,10 +164,10 @@ allprojects {
+
+
  intellij {
 -    if (project.hasProperty("ideaVersion")) {
 -        version ideaVersion
@@ -117,31 +117,31 @@ index 893880be3..03cf114db 100644
      }
      if (project.hasProperty("customSinceBuild")) {
          patchPluginXml.sinceBuild = customSinceBuild
-@@ -264,11 +264,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
+@@ -265,11 +265,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
  }
- 
+
  configure([project(':educational-core'), project(':Edu-Java')]) {
 -    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
 +    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy', 'smali'
  }
- 
+
  configure(project(':Edu-Kotlin')) {
 -    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
 +    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy', 'smali'
- 
- 
+
+
      task createTwitterProperties() {
-@@ -286,7 +286,7 @@ configure(project(':Edu-Python')) {
+@@ -287,7 +287,7 @@ configure(project(':Edu-Python')) {
  }
- 
+
  configure(project(':Edu-Scala')) {
 -    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
 +    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy', 'smali'
  }
- 
- runIde.systemProperty("-Didea.is.internal", "true")
+
+ configure(project(':Edu-Android')) {
 diff --git a/educational-core/resources/META-INF/educational-core.xml b/educational-core/resources/META-INF/educational-core.xml
-index 34f9ce934..85b95cc63 100644
+index 34f9ce9..85b95cc 100644
 --- a/educational-core/resources/META-INF/educational-core.xml
 +++ b/educational-core/resources/META-INF/educational-core.xml
 @@ -191,8 +191,7 @@
@@ -155,7 +155,7 @@ index 34f9ce934..85b95cc63 100644
      <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
      <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
 diff --git a/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java b/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
-index d96034f45..cd1ad2f9c 100644
+index 6b6a37f..ca43245 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
 @@ -11,10 +11,6 @@ import com.intellij.openapi.diagnostic.Logger;
@@ -183,20 +183,20 @@ index d96034f45..cd1ad2f9c 100644
  import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 -import com.jetbrains.edu.learning.courseFormat.tasks.Task;
  import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
- import com.jetbrains.edu.learning.intellij.generation.EduGradleUtils;
+ import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
  import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 @@ -46,7 +40,6 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
  import com.jetbrains.edu.learning.stepik.*;
  import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
  import org.jetbrains.annotations.NotNull;
 -import org.jetbrains.annotations.Nullable;
- 
+
  import javax.swing.*;
  import java.io.File;
 @@ -129,29 +122,10 @@ public class EduProjectComponent implements ProjectComponent {
        return;
      }
- 
+
 -    if (myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
 +    // Android Studio imports gradle project itself but not in tests
 +    boolean needImportForCurrentPlatform = ApplicationManager.getApplication().isUnitTestMode() || !isAndroidStudio();
@@ -224,15 +224,15 @@ index d96034f45..cd1ad2f9c 100644
 -        public void onFailure(@NotNull String errorMessage, @Nullable String errorDetails) { }
 -      });
      }
- 
+
      // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
-diff --git a/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt b/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
-index d9e283052..b92efd183 100644
---- a/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
-+++ b/educational-core/src/com/jetbrains/edu/learning/intellij/generation/EduGradleUtils.kt
+diff --git a/educational-core/src/com/jetbrains/edu/learning/gradle/generation/EduGradleUtils.kt b/educational-core/src/com/jetbrains/edu/learning/gradle/generation/EduGradleUtils.kt
+index 7ea0a52..6e0cca1 100644
+--- a/educational-core/src/com/jetbrains/edu/learning/gradle/generation/EduGradleUtils.kt
++++ b/educational-core/src/com/jetbrains/edu/learning/gradle/generation/EduGradleUtils.kt
 @@ -1,14 +1,8 @@
- package com.jetbrains.edu.learning.intellij.generation
- 
+ package com.jetbrains.edu.learning.gradle.generation
+
  import com.intellij.ide.fileTemplates.FileTemplateManager
 -import com.intellij.openapi.components.ServiceManager
  import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
@@ -245,10 +245,10 @@ index d9e283052..b92efd183 100644
  import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
  import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
  import com.intellij.openapi.project.Project
-@@ -78,34 +72,15 @@ object EduGradleUtils {
+@@ -76,34 +70,15 @@ object EduGradleUtils {
          ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
      }
- 
+
 -    @JvmOverloads
      @JvmStatic
 -    fun importGradleProject(project: Project, projectBasePath: String, callback: ExternalProjectRefreshCallback? = null) {
@@ -286,29 +286,29 @@ index d9e283052..b92efd183 100644
 +                                            .build(),
 +                                          false)
      }
- 
+
      @JvmStatic
 diff --git a/educational-core/src/com/jetbrains/edu/learning/projectView/CourseViewPane.kt b/educational-core/src/com/jetbrains/edu/learning/projectView/CourseViewPane.kt
-index 6868df389..5895ddad5 100644
+index 6868df3..5895dda 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/projectView/CourseViewPane.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/projectView/CourseViewPane.kt
 @@ -75,7 +75,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
- 
+
    override fun createComponent(): JComponent {
      val component = super.createComponent()
 -    installComparator(EduNodeComparator)
 +    installComparator(treeBuilder, EduNodeComparator)
- 
+
      if (!EduUtils.isStudentProject(myProject)) return component
      val panel = JPanel(BorderLayout())
 diff --git a/educational-core/src/com/jetbrains/edu/learning/statistics/EduUsagesCollector.java b/educational-core/src/com/jetbrains/edu/learning/statistics/EduUsagesCollector.java
-index 2dc086372..02af30eb7 100644
+index 2dc0863..02af30e 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/statistics/EduUsagesCollector.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/statistics/EduUsagesCollector.java
 @@ -15,18 +15,18 @@
   */
  package com.jetbrains.edu.learning.statistics;
- 
+
 +import com.intellij.internal.statistic.UsagesCollector;
 +import com.intellij.internal.statistic.beans.GroupDescriptor;
  import com.intellij.internal.statistic.beans.UsageDescriptor;
@@ -318,18 +318,18 @@ index 2dc086372..02af30eb7 100644
  import com.intellij.util.containers.hash.HashSet;
  import gnu.trove.TObjectIntHashMap;
  import org.jetbrains.annotations.NotNull;
- 
+
  import java.util.Set;
- 
+
 -public class EduUsagesCollector extends ProjectUsagesCollector {
 -  public static final String GROUP_ID = "statistics.educational";
 +public class EduUsagesCollector extends UsagesCollector {
 +  private static final String GROUP_ID = "educational";
- 
+
    public static void projectTypeCreated(@NotNull String projectTypeId) {
      advanceKey("project.created." + projectTypeId);
 @@ -94,12 +94,7 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
- 
+
    @NotNull
    @Override
 -  public Set<UsageDescriptor> getUsages(@NotNull Project project) {
@@ -345,7 +345,7 @@ index 2dc086372..02af30eb7 100644
 @@ -109,10 +104,11 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
      return descriptors;
    }
- 
+
 +
    @NotNull
    @Override
@@ -354,11 +354,11 @@ index 2dc086372..02af30eb7 100644
 +  public GroupDescriptor getGroupId() {
 +    return GroupDescriptor.create(GROUP_ID);
    }
- 
+
    private static void advanceKey(@NotNull String key) {
 diff --git a/educational-core/src/com/jetbrains/edu/learning/statistics/LegacyEduUsagesCollector.java b/educational-core/src/com/jetbrains/edu/learning/statistics/LegacyEduUsagesCollector.java
 deleted file mode 100644
-index b7d765da5..000000000
+index b7d765d..0000000
 --- a/educational-core/src/com/jetbrains/edu/learning/statistics/LegacyEduUsagesCollector.java
 +++ /dev/null
 @@ -1,30 +0,0 @@
@@ -394,7 +394,7 @@ index b7d765da5..000000000
 -}
 \ No newline at end of file
 diff --git a/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java b/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
-index eebecba69..da135eabc 100644
+index 0d20b14..67304d7 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
 @@ -353,7 +353,7 @@ public class StepikAdaptiveConnector {
@@ -405,13 +405,13 @@ index eebecba69..da135eabc 100644
 +      window.setCurrentTask(project, task);
      }
    }
- 
+
 diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
-index a9c1908ff..8416b7cd0 100644
+index a9c1908..8416b7c 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
 +++ b/educational-core/src/icons/EducationalCoreIcons.java
 @@ -37,5 +37,5 @@ public class EducationalCoreIcons {
- 
+
    public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
    public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
 -  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
@@ -419,7 +419,7 @@ index a9c1908ff..8416b7cd0 100644
  }
 diff --git a/educational-core/testData/projectView/lesson1/task1/taskFile1.txt b/educational-core/testData/projectView/lesson1/task1/taskFile1.txt
 new file mode 100644
-index 000000000..8ae930517
+index 0000000..8ae9305
 --- /dev/null
 +++ b/educational-core/testData/projectView/lesson1/task1/taskFile1.txt
 @@ -0,0 +1 @@
@@ -427,7 +427,7 @@ index 000000000..8ae930517
 \ No newline at end of file
 diff --git a/educational-core/testData/projectView/lesson1/task2/taskFile2.txt b/educational-core/testData/projectView/lesson1/task2/taskFile2.txt
 new file mode 100644
-index 000000000..fafd4ac93
+index 0000000..fafd4ac
 --- /dev/null
 +++ b/educational-core/testData/projectView/lesson1/task2/taskFile2.txt
 @@ -0,0 +1 @@
@@ -435,7 +435,7 @@ index 000000000..fafd4ac93
 \ No newline at end of file
 diff --git a/educational-core/testData/projectView/lesson1/task3/taskFile3.txt b/educational-core/testData/projectView/lesson1/task3/taskFile3.txt
 new file mode 100644
-index 000000000..6b4b31a86
+index 0000000..6b4b31a
 --- /dev/null
 +++ b/educational-core/testData/projectView/lesson1/task3/taskFile3.txt
 @@ -0,0 +1 @@
@@ -443,19 +443,19 @@ index 000000000..6b4b31a86
 \ No newline at end of file
 diff --git a/educational-core/testData/projectView/lesson1/task4/taskFile4.txt b/educational-core/testData/projectView/lesson1/task4/taskFile4.txt
 new file mode 100644
-index 000000000..b3f872d0e
+index 0000000..b3f872d
 --- /dev/null
 +++ b/educational-core/testData/projectView/lesson1/task4/taskFile4.txt
 @@ -0,0 +1 @@
 +Look! There <placeholder>i<caret>s</placeholder> placeholder.
 \ No newline at end of file
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
-index c6654db70..eedfbbe30 100644
+index c6654db..eedfbbe 100644
 --- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
 +++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
 @@ -2,12 +2,17 @@
  package com.jetbrains.edu.learning.courseView
- 
+
  import com.intellij.ide.projectView.ProjectView
 +import com.intellij.ide.projectView.impl.AbstractProjectViewPane
 +import com.intellij.ide.util.treeView.AbstractTreeBuilder
@@ -478,26 +478,26 @@ index c6654db70..eedfbbe30 100644
 +import java.io.IOException
 +import java.util.concurrent.TimeUnit
 +import javax.swing.JTree
- 
+
  class CourseViewTest : EduTestCase() {
 +  private var myCourse: Course? = null
- 
+
    @Throws(Exception::class)
    override fun setUp() {
      super.setUp()
 +    myCourse?.language = PlainTextLanguage.INSTANCE.id
      ProjectViewTestUtil.setupImpl(project, true)
    }
- 
+
    fun testCoursePane() {
 -    createCourseAndInit()
 -
      configureByTaskFile(1, 1, "taskFile1.txt")
      val pane = createPane()
- 
+
 @@ -45,27 +53,26 @@ class CourseViewTest : EduTestCase() {
    }
- 
+
    fun testProjectOpened() {
 -    createCourseAndInit()
      val projectView = ProjectView.getInstance(project)
@@ -528,7 +528,7 @@ index c6654db70..eedfbbe30 100644
 +    waitWhileBusy(pane)
      PlatformTestUtil.assertTreeEqual(pane.tree, structure)
    }
- 
+
    fun testExpandAfterNavigation() {
 -    createCourseAndInit()
      configureByTaskFile(1, 1, "taskFile1.txt")
@@ -536,7 +536,7 @@ index c6654db70..eedfbbe30 100644
      projectView.changeView(CourseViewPane.ID)
 @@ -84,7 +91,6 @@ class CourseViewTest : EduTestCase() {
    }
- 
+
    fun testCourseProgress() {
 -    createCourseAndInit()
      configureByTaskFile(1, 1, "taskFile1.txt")
@@ -544,14 +544,14 @@ index c6654db70..eedfbbe30 100644
      projectView.changeView(CourseViewPane.ID)
 @@ -94,14 +100,12 @@ class CourseViewTest : EduTestCase() {
    }
- 
+
    fun testSwitchingPane() {
 -    createCourseAndInit()
      val projectView = ProjectView.getInstance(project)
      projectView.changeView(CourseViewPane.ID)
      TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
    }
- 
+
    fun testCheckTask() {
 -    createCourseAndInit()
      configureByTaskFile(1, 1, "taskFile1.txt")
@@ -564,11 +564,11 @@ index c6654db70..eedfbbe30 100644
 -    PlatformTestUtil.waitWhileBusy(pane.tree)
 +    waitWhileBusy(pane)
      PlatformTestUtil.assertTreeEqual(pane.tree, structure)
- 
+
      val refreshTaskFileAction = RefreshTaskFileAction()
      launchAction(taskFile, refreshTaskFileAction)
    }
- 
+
 -  private fun createCourseAndInit() {
 -    val course = courseWithFiles("Edu test course") {
 -      lesson {
@@ -591,13 +591,13 @@ index c6654db70..eedfbbe30 100644
 -    StudyTaskManager.getInstance(project).course = course
 -    StudyTaskManager.getInstance(project).course!!.init(null, null, true)
 -  }
- 
+
    private fun launchAction(taskFile: VirtualFile, action: AnAction) {
      val e = getActionEvent(taskFile, action)
 @@ -167,6 +149,19 @@ class CourseViewTest : EduTestCase() {
      NavigationUtils.navigateToTask(project, targetTask!!)
    }
- 
+
 +  @Throws(IOException::class)
 +  override fun createCourse() {
 +    myFixture.copyDirectoryToProject("lesson1", "lesson1")
@@ -649,7 +649,7 @@ index c6654db70..eedfbbe30 100644
 +private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
 +
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
-index f65b00b68..e52a26d53 100644
+index f65b00b..e52a26d 100644
 --- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
 +++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
 @@ -113,6 +113,7 @@ class NodesTest: EduTestCase() {
@@ -659,7 +659,7 @@ index f65b00b68..e52a26d53 100644
 +    |
      """.trimMargin("|"))
    }
- 
+
 @@ -122,9 +123,9 @@ class NodesTest: EduTestCase() {
      projectView.changeView(CourseViewPane.ID)
      val pane = projectView.currentProjectViewPane
@@ -673,7 +673,7 @@ index f65b00b68..e52a26d53 100644
    }
  }
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
-index b5a5b57a8..70ae91308 100644
+index 93c3939..aae2638 100644
 --- a/resources/META-INF/plugin.xml
 +++ b/resources/META-INF/plugin.xml
 @@ -8,6 +8,7 @@
