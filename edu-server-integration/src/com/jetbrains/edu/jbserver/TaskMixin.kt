@@ -27,6 +27,9 @@ abstract class TaskMixIn {
   @JsonProperty("id")
   var myStepId: Int = 0
 
+  @JsonProperty("name")
+  lateinit var name: String
+
   @JsonProperty("description")
   lateinit var descriptionText: String
 
@@ -66,7 +69,7 @@ abstract class CodeTaskMixIn
 abstract class ChoiceTaskMixIn {
 
   @JsonProperty("choice_variants")
-  lateinit var myChoiceVariants: String
+  lateinit var myChoiceVariants: List<String>
 
   @JsonProperty("is_multichoice")
   var myIsMultipleChoice: Boolean = true
