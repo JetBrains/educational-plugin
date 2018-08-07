@@ -126,7 +126,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     taskFile.setTrackChanges(false);
     clearDocument(document);
 
-    document.setText(taskFile.text);
+    document.setText(taskFile.getText());
     taskFile.setTrackChanges(true);
   }
 

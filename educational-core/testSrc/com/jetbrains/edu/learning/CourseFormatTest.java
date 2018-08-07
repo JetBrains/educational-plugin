@@ -186,7 +186,7 @@ public class CourseFormatTest extends EduTestCase {
     final Task task = taskList.get(0);
     final TaskFile taskFile = task.getTaskFile("my_task.py");
     assertNotNull(taskFile);
-    assertEquals("def foo():\n    write function body\n", taskFile.text);
+    assertEquals("def foo():\n    write function body\n", taskFile.getText());
   }
 
   private Course getCourseFromJson() throws IOException {
