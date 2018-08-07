@@ -2,7 +2,7 @@
   "type": "course",
   "id": 31,
   "last_modified": "2018-08-01 13:57:11.175609",
-  "version": "1.9-2018.3-193",
+  "format": "1.9-2018.3-193",
   "language": "en",
   "programming_language": "rust",
   "title": "test-course-title",

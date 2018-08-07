@@ -319,6 +319,7 @@ configure(project(':edu-server-integration')) {
     dependencies {
          compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion" // fix issue 1
          compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion" // fix issue 2
+         compile 'com.squareup.okhttp3:logging-interceptor:3.11.+' // retrofit debug
     }
 }
 /* Note:
