@@ -227,7 +227,7 @@ index 6b6a37f..ca43245 100644
 
      // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
 diff --git a/educational-core/src/com/jetbrains/edu/learning/gradle/generation/EduGradleUtils.kt b/educational-core/src/com/jetbrains/edu/learning/gradle/generation/EduGradleUtils.kt
-index 7ea0a52..6e0cca1 100644
+index 7ea0a52..148248f 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/gradle/generation/EduGradleUtils.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/gradle/generation/EduGradleUtils.kt
 @@ -1,14 +1,8 @@
@@ -417,43 +417,11 @@ index a9c1908..8416b7c 100644
 -  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 +  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
  }
-diff --git a/educational-core/testData/projectView/lesson1/task1/taskFile1.txt b/educational-core/testData/projectView/lesson1/task1/taskFile1.txt
-new file mode 100644
-index 0000000..8ae9305
---- /dev/null
-+++ b/educational-core/testData/projectView/lesson1/task1/taskFile1.txt
-@@ -0,0 +1 @@
-+Look! There <placeholder hint="my hint">i<caret>s</placeholder> placeholder.
-\ No newline at end of file
-diff --git a/educational-core/testData/projectView/lesson1/task2/taskFile2.txt b/educational-core/testData/projectView/lesson1/task2/taskFile2.txt
-new file mode 100644
-index 0000000..fafd4ac
---- /dev/null
-+++ b/educational-core/testData/projectView/lesson1/task2/taskFile2.txt
-@@ -0,0 +1 @@
-+Look!<caret> There <placeholder hint="my hint2">is</placeholder> placeholder.
-\ No newline at end of file
-diff --git a/educational-core/testData/projectView/lesson1/task3/taskFile3.txt b/educational-core/testData/projectView/lesson1/task3/taskFile3.txt
-new file mode 100644
-index 0000000..6b4b31a
---- /dev/null
-+++ b/educational-core/testData/projectView/lesson1/task3/taskFile3.txt
-@@ -0,0 +1 @@
-+Look! There <placeholder hint="my hint1" hint2="my hint2">i<caret>s</placeholder> placeholder.
-\ No newline at end of file
-diff --git a/educational-core/testData/projectView/lesson1/task4/taskFile4.txt b/educational-core/testData/projectView/lesson1/task4/taskFile4.txt
-new file mode 100644
-index 0000000..b3f872d
---- /dev/null
-+++ b/educational-core/testData/projectView/lesson1/task4/taskFile4.txt
-@@ -0,0 +1 @@
-+Look! There <placeholder>i<caret>s</placeholder> placeholder.
-\ No newline at end of file
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
-index c6654db..eedfbbe 100644
+index c6654db..92d418f 100644
 --- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
 +++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
-@@ -2,12 +2,17 @@
+@@ -2,12 +2,16 @@
  package com.jetbrains.edu.learning.courseView
 
  import com.intellij.ide.projectView.ProjectView
@@ -461,7 +429,6 @@ index c6654db..eedfbbe 100644
 +import com.intellij.ide.util.treeView.AbstractTreeBuilder
  import com.intellij.openapi.actionSystem.AnAction
  import com.intellij.openapi.actionSystem.CommonDataKeys
-+import com.intellij.openapi.fileTypes.PlainTextLanguage
  import com.intellij.openapi.project.Project
  import com.intellij.openapi.util.Disposer
  import com.intellij.openapi.vfs.VirtualFile
@@ -471,42 +438,22 @@ index c6654db..eedfbbe 100644
  import com.jetbrains.edu.learning.EduState
  import com.jetbrains.edu.learning.EduTestCase
  import com.jetbrains.edu.learning.EduUtils
-@@ -19,18 +24,21 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
+@@ -19,6 +23,8 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
  import com.jetbrains.edu.learning.projectView.CourseViewPane
  import junit.framework.TestCase
  import org.junit.Assert
-+import java.io.IOException
 +import java.util.concurrent.TimeUnit
 +import javax.swing.JTree
 
  class CourseViewTest : EduTestCase() {
-+  private var myCourse: Course? = null
 
-   @Throws(Exception::class)
-   override fun setUp() {
-     super.setUp()
-+    myCourse?.language = PlainTextLanguage.INSTANCE.id
-     ProjectViewTestUtil.setupImpl(project, true)
-   }
-
-   fun testCoursePane() {
--    createCourseAndInit()
--
-     configureByTaskFile(1, 1, "taskFile1.txt")
-     val pane = createPane()
-
-@@ -45,27 +53,26 @@ class CourseViewTest : EduTestCase() {
-   }
-
-   fun testProjectOpened() {
--    createCourseAndInit()
+@@ -49,18 +55,19 @@ class CourseViewTest : EduTestCase() {
      val projectView = ProjectView.getInstance(project)
      projectView.changeView(CourseViewPane.ID)
      val pane = projectView.currentProjectViewPane
 -    PlatformTestUtil.waitWhileBusy(pane.tree)
--    EduUtils.openFirstTask(StudyTaskManager.getInstance(project).course!!, project)
 +    waitWhileBusy(pane)
-+    EduUtils.openFirstTask(myCourse!!, project)
+     EduUtils.openFirstTask(StudyTaskManager.getInstance(project).course!!, project)
      PlatformTestUtil.waitForAlarm(600)
 -    PlatformTestUtil.waitWhileBusy(pane.tree)
 +    waitWhileBusy(pane)
@@ -529,35 +476,7 @@ index c6654db..eedfbbe 100644
      PlatformTestUtil.assertTreeEqual(pane.tree, structure)
    }
 
-   fun testExpandAfterNavigation() {
--    createCourseAndInit()
-     configureByTaskFile(1, 1, "taskFile1.txt")
-     val projectView = ProjectView.getInstance(project)
-     projectView.changeView(CourseViewPane.ID)
-@@ -84,7 +91,6 @@ class CourseViewTest : EduTestCase() {
-   }
-
-   fun testCourseProgress() {
--    createCourseAndInit()
-     configureByTaskFile(1, 1, "taskFile1.txt")
-     val projectView = ProjectView.getInstance(project)
-     projectView.changeView(CourseViewPane.ID)
-@@ -94,14 +100,12 @@ class CourseViewTest : EduTestCase() {
-   }
-
-   fun testSwitchingPane() {
--    createCourseAndInit()
-     val projectView = ProjectView.getInstance(project)
-     projectView.changeView(CourseViewPane.ID)
-     TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
-   }
-
-   fun testCheckTask() {
--    createCourseAndInit()
-     configureByTaskFile(1, 1, "taskFile1.txt")
-     val projectView = ProjectView.getInstance(project)
-     projectView.changeView(CourseViewPane.ID)
-@@ -114,35 +118,13 @@ class CourseViewTest : EduTestCase() {
+@@ -114,7 +121,7 @@ class CourseViewTest : EduTestCase() {
      val pane = projectView.currentProjectViewPane
      val structure = "-Project\n" +
                            " +CourseNode Edu test course  1/4\n"
@@ -566,55 +485,7 @@ index c6654db..eedfbbe 100644
      PlatformTestUtil.assertTreeEqual(pane.tree, structure)
 
      val refreshTaskFileAction = RefreshTaskFileAction()
-     launchAction(taskFile, refreshTaskFileAction)
-   }
-
--  private fun createCourseAndInit() {
--    val course = courseWithFiles("Edu test course") {
--      lesson {
--        eduTask {
--          taskFile("taskFile1.txt", "a = <p>TODO()</p>") {
--            placeholder(0, "2")
--          }
--        }
--        eduTask {
--          taskFile("taskFile2.txt")
--        }
--        eduTask {
--          taskFile("taskFile3.txt")
--        }
--        eduTask {
--          taskFile("taskFile4.txt")
--        }
--      }
--    }
--    StudyTaskManager.getInstance(project).course = course
--    StudyTaskManager.getInstance(project).course!!.init(null, null, true)
--  }
-
-   private fun launchAction(taskFile: VirtualFile, action: AnAction) {
-     val e = getActionEvent(taskFile, action)
-@@ -167,6 +149,19 @@ class CourseViewTest : EduTestCase() {
-     NavigationUtils.navigateToTask(project, targetTask!!)
-   }
-
-+  @Throws(IOException::class)
-+  override fun createCourse() {
-+    myFixture.copyDirectoryToProject("lesson1", "lesson1")
-+    myCourse = Course()
-+    myCourse!!.language = PlainTextLanguage.INSTANCE.id
-+    myCourse!!.name = "Edu test course"
-+    StudyTaskManager.getInstance(myFixture.project).course = myCourse
-+
-+    val lesson1 = createLesson(1, 4)
-+    myCourse!!.addLesson(lesson1)
-+    myCourse!!.init(null, null, false)
-+  }
-+
-   private fun createPane(): CourseViewPane {
-     val pane = CourseViewPane(project)
-     pane.createComponent()
-@@ -178,3 +173,33 @@ class CourseViewTest : EduTestCase() {
+@@ -178,3 +185,32 @@ class CourseViewTest : EduTestCase() {
      return super.getTestDataPath() + "/projectView"
    }
  }
@@ -647,20 +518,11 @@ index c6654db..eedfbbe 100644
 +  return ui.hasPendingWork()
 +}
 +private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
-+
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
-index f65b00b..e52a26d 100644
+index 035f9ef..d9b30d5 100644
 --- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
 +++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
-@@ -113,6 +113,7 @@ class NodesTest: EduTestCase() {
-     |    A.txt
-     |   -TaskNode task2
-     |    taskFile.txt
-+    |
-     """.trimMargin("|"))
-   }
-
-@@ -122,9 +123,9 @@ class NodesTest: EduTestCase() {
+@@ -123,9 +123,9 @@ class NodesTest: EduTestCase() {
      projectView.changeView(CourseViewPane.ID)
      val pane = projectView.currentProjectViewPane
      val tree = pane.tree
@@ -669,7 +531,7 @@ index f65b00b..e52a26d 100644
      TreeUtil.expandAll(tree)
 -    PlatformTestUtil.waitWhileBusy(tree)
 +    waitWhileBusy(pane)
-     PlatformTestUtil.assertTreeEqual(tree, structure)
+     PlatformTestUtil.assertTreeEqual(tree, structure + "\n")
    }
  }
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
