@@ -317,16 +317,6 @@ allprojects {
 
 configure(project(':edu-server-integration')) {
     dependencies {
-         compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion" // fix issue 1
-         compile "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion" // fix issue 2
          compile 'com.squareup.okhttp3:logging-interceptor:3.11.+' // retrofit debug
     }
 }
-/* Note:
- *
- * Issue 1: `java.lang.NoClassDefFoundError: kotlin/jvm/internal/Intrinsics`
- * in all `src` exec files, testSrc exec files is running fine though
- *
- * Issue 2: `java.lang.NoClassDefFoundError: kotlin/reflect/jvm/internal/KotlinReflectionInternalError`
- *
- */

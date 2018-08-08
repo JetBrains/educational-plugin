@@ -67,34 +67,6 @@ interface EduServerApi {
 
   }
 
-  @GET("/courses") fun getCourses(): Call<CourseList> // fixme
-
-  /* Problem:
-   *
-   * while mapping response smth causes exception
-   * `java.lang.ClassNotFoundException: com.intellij.lang.Language`
-   *
-   * jackson by itself successfully maps response to objects
-   * (see `testResponces.kt`)
-   *
-   * mapping to my custom data class works fine too
-   *
-   */
-
-}
-
-
-fun main(args: Array<String>) {
-
-
-  val service = EduServerApi.create()
-  val response = service.getCourses().execute()
-  val courseList = response.body()
-
-  courseList?.courses?.asSequence()?.forEach {
-    println("Name: ${it.name}")
-    println("Desc: ${it.description}")
-    println()
-  }
+  @GET("/courses") fun getCourses(): Call<CourseList>
 
 }
