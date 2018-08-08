@@ -112,7 +112,7 @@ index 5390f1b..c0b250f 100644
 
  runIde.systemProperty("-Didea.is.internal", "true")
 diff --git a/educational-core/resources/META-INF/educational-core.xml b/educational-core/resources/META-INF/educational-core.xml
-index 34f9ce9..85b95cc 100644
+index 2e3c562..1d400de 100644
 --- a/educational-core/resources/META-INF/educational-core.xml
 +++ b/educational-core/resources/META-INF/educational-core.xml
 @@ -191,8 +191,7 @@
@@ -300,104 +300,59 @@ index a9c1908..8416b7c 100644
 -  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 +  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
  }
-diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
-index c6654db..5f721ea 100644
---- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
-+++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
-@@ -2,12 +2,16 @@
+diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTestBase.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTestBase.kt
+index 0d72018..28a4b79 100644
+--- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTestBase.kt
++++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTestBase.kt
+@@ -1,11 +1,15 @@
  package com.jetbrains.edu.learning.courseView
 
  import com.intellij.ide.projectView.ProjectView
-+import com.intellij.ide.projectView.impl.AbstractProjectViewPane
 +import com.intellij.ide.util.treeView.AbstractTreeBuilder
- import com.intellij.openapi.actionSystem.AnAction
- import com.intellij.openapi.actionSystem.CommonDataKeys
- import com.intellij.openapi.project.Project
- import com.intellij.openapi.util.Disposer
- import com.intellij.openapi.vfs.VirtualFile
- import com.intellij.testFramework.*
+ import com.intellij.testFramework.PlatformTestUtil
+ import com.intellij.testFramework.ProjectViewTestUtil
 +import com.intellij.ui.tree.AsyncTreeModel
 +import com.intellij.util.ui.UIUtil
- import com.jetbrains.edu.learning.EduState
- import com.jetbrains.edu.learning.EduTestCase
- import com.jetbrains.edu.learning.EduUtils
-@@ -19,6 +23,8 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils
+ import com.intellij.util.ui.tree.TreeUtil
+ import com.jetbrains.edu.learning.EduActionTestCase
  import com.jetbrains.edu.learning.projectView.CourseViewPane
- import junit.framework.TestCase
- import org.junit.Assert
 +import java.util.concurrent.TimeUnit
-+import javax.swing.JTree
+ import javax.swing.JTree
 
- class CourseViewTest : EduTestCase() {
-
-@@ -49,10 +55,10 @@ class CourseViewTest : EduTestCase() {
-     val projectView = ProjectView.getInstance(project)
-     projectView.changeView(CourseViewPane.ID)
-     val pane = projectView.currentProjectViewPane
--    PlatformTestUtil.waitWhileBusy(pane.tree)
-+    waitWhileBusy(pane)
-     EduUtils.openFirstTask(StudyTaskManager.getInstance(project).course!!, project)
-     PlatformTestUtil.waitForAlarm(600)
--    PlatformTestUtil.waitWhileBusy(pane.tree)
-+    waitWhileBusy(pane)
-     val structure = "-Project\n" +
-                           " -CourseNode Edu test course  0/4\n" +
-                           "  -LessonNode lesson1\n" +
-@@ -114,7 +120,7 @@ class CourseViewTest : EduTestCase() {
-     val pane = projectView.currentProjectViewPane
-     val structure = "-Project\n" +
-                           " +CourseNode Edu test course  1/4\n"
--    PlatformTestUtil.waitWhileBusy(pane.tree)
-+    waitWhileBusy(pane)
-     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
-
-     val refreshTaskFileAction = RefreshTaskFileAction()
-@@ -178,3 +184,32 @@ class CourseViewTest : EduTestCase() {
-     return super.getTestDataPath() + "/projectView"
+ abstract class CourseViewTestBase : EduActionTestCase() {
+@@ -32,6 +36,34 @@ abstract class CourseViewTestBase : EduActionTestCase() {
    }
- }
-+
-+fun waitWhileBusy(pane: AbstractProjectViewPane) {
-+  val startTimeMillis = System.currentTimeMillis()
-+  while (isBusy(pane.tree)) {
-+    assertMaxWaitTimeSince(startTimeMillis)
+
+   protected fun waitWhileBusy(tree: JTree) {
+-    PlatformTestUtil.waitWhileBusy(tree)
++    val startTimeMillis = System.currentTimeMillis()
++    while (isBusy(tree)) {
++      assertMaxWaitTimeSince(startTimeMillis)
++    }
 +  }
-+}
 +
-+private fun getMillisSince(startTimeMillis: Long): Long {
-+  return System.currentTimeMillis() - startTimeMillis
-+}
++  private fun getMillisSince(startTimeMillis: Long): Long {
++    return System.currentTimeMillis() - startTimeMillis
++  }
 +
-+private fun assertMaxWaitTimeSince(startTimeMillis: Long) {
-+  assert(getMillisSince(startTimeMillis) <= MAX_WAIT_TIME) { "the waiting takes too long" }
-+}
++  private fun assertMaxWaitTimeSince(startTimeMillis: Long) {
++    assert(getMillisSince(startTimeMillis) <= MAX_WAIT_TIME) { "the waiting takes too long" }
++  }
 +
-+private fun isBusy(tree: JTree): Boolean {
-+  UIUtil.dispatchAllInvocationEvents()
-+  val model = tree.model
-+  if (model is AsyncTreeModel) {
-+    if (model.isProcessing) return true
++  private fun isBusy(tree: JTree): Boolean {
 +    UIUtil.dispatchAllInvocationEvents()
-+    return model.isProcessing
++    val model = tree.model
++    if (model is AsyncTreeModel) {
++      if (model.isProcessing) return true
++      UIUtil.dispatchAllInvocationEvents()
++      return model.isProcessing
++    }
++    val builder = AbstractTreeBuilder.getBuilderFor(tree) ?: return false
++    val ui = builder.ui ?: return false
++    return ui.hasPendingWork()
 +  }
-+  val builder = AbstractTreeBuilder.getBuilderFor(tree) ?: return false
-+  val ui = builder.ui ?: return false
-+  return ui.hasPendingWork()
-+}
-+private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
-diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
-index 035f9ef..d9b30d5 100644
---- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
-+++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
-@@ -123,9 +123,9 @@ class NodesTest: EduTestCase() {
-     projectView.changeView(CourseViewPane.ID)
-     val pane = projectView.currentProjectViewPane
-     val tree = pane.tree
--    PlatformTestUtil.waitWhileBusy(tree)
-+    waitWhileBusy(pane)
-     TreeUtil.expandAll(tree)
--    PlatformTestUtil.waitWhileBusy(tree)
-+    waitWhileBusy(pane)
-     PlatformTestUtil.assertTreeEqual(tree, structure + "\n")
++
++  companion object {
++    private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
    }
  }
