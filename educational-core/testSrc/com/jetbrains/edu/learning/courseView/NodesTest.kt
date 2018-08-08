@@ -58,34 +58,35 @@ class NodesTest: EduTestCase() {
       }
     }
 
-    assertCourseView("-Project\n" +
-                     " -CourseNode Test Course  0/10\n" +
-                     "  -LessonNode lesson1\n" +
-                     "   -TaskNode task1\n" +
-                     "    taskFile1.txt\n" +
-                     "   -TaskNode task2\n" +
-                     "    taskFile2.txt\n" +
-                     "   -TaskNode task3\n" +
-                     "    taskFile3.txt\n" +
-                     "   -TaskNode task4\n" +
-                     "    taskFile4.txt\n" +
-                     "  -SectionNode section2\n" +
-                     "   -LessonNode lesson1\n" +
-                     "    -TaskNode task1\n" +
-                     "     taskFile1.txt\n" +
-                     "    -TaskNode task2\n" +
-                     "     taskFile1.txt\n" +
-                     "   -LessonNode lesson2\n" +
-                     "    -TaskNode task1\n" +
-                     "     taskFile1.txt\n" +
-                     "    -TaskNode task2\n" +
-                     "     taskFile2.txt\n" +
-                     "  -LessonNode lesson2\n" +
-                     "   -TaskNode task1\n" +
-                     "    taskFile1.txt\n" +
-                     "   -TaskNode task2\n" +
-                     "    taskFile2.txt\n"
-    )
+    assertCourseView("""
+    |-Project
+    | -CourseNode Test Course  0/10
+    |  -LessonNode lesson1
+    |   -TaskNode task1
+    |    taskFile1.txt
+    |   -TaskNode task2
+    |    taskFile2.txt
+    |   -TaskNode task3
+    |    taskFile3.txt
+    |   -TaskNode task4
+    |    taskFile4.txt
+    |  -SectionNode section2
+    |   -LessonNode lesson1
+    |    -TaskNode task1
+    |     taskFile1.txt
+    |    -TaskNode task2
+    |     taskFile1.txt
+    |   -LessonNode lesson2
+    |    -TaskNode task1
+    |     taskFile1.txt
+    |    -TaskNode task2
+    |     taskFile2.txt
+    |  -LessonNode lesson2
+    |   -TaskNode task1
+    |    taskFile1.txt
+    |   -TaskNode task2
+    |    taskFile2.txt
+    """.trimMargin("|"))
   }
 
   fun testTaskFilesOrder() {
@@ -125,6 +126,6 @@ class NodesTest: EduTestCase() {
     PlatformTestUtil.waitWhileBusy(tree)
     TreeUtil.expandAll(tree)
     PlatformTestUtil.waitWhileBusy(tree)
-    PlatformTestUtil.assertTreeEqual(tree, structure)
+    PlatformTestUtil.assertTreeEqual(tree, structure + "\n")
   }
 }
