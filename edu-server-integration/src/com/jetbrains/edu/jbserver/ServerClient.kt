@@ -57,7 +57,7 @@ interface EduServerApi {
         .build()
 
       val retrofit = Retrofit.Builder()
-        .baseUrl("http://localhost") //.baseUrl("http://django-edu-server.herokuapp.com")
+        .baseUrl("http://django-edu-server.herokuapp.com")
         .addConverterFactory(JacksonConverterFactory.create(mapper))
         .client(client)
         .build()
@@ -67,6 +67,24 @@ interface EduServerApi {
 
   }
 
-  @GET("/courses") fun getCourses(): Call<CourseList>
+  @GET("/courses")
+  fun getCourses(): Call<CourseList>
+
+  @GET("/courses/{pk}/materials")
+  fun getCourseMaterials(@Path("pk") pk: Int): Call<Course>
+
+
+  @GET("/sections/{pks}")
+  fun getSections(@Path("pks") pks: String): Call<SectionList>
+
+  @GET("/lessons/{pks}")
+  fun getLessons(@Path("pks") pks: String): Call<LessonList>
+
+  @GET("/tasks/{pks}")
+  fun getTasks(@Path("pks") pks: String): Call<TaskList>
 
 }
+
+
+fun List<Int>.pks() = joinToString(separator = "&")
+

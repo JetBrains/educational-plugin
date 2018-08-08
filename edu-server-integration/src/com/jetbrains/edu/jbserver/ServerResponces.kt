@@ -11,3 +11,24 @@ class CourseList(
   val courses: List<Course> = listOf()
 
 )
+
+class SectionList(
+
+  @JsonProperty("sections")
+  val sections: List<Section> = listOf()
+
+)
+
+class LessonList(
+
+  @JsonProperty("lessons")
+  val lessons: List<Lesson> = listOf()
+
+)
+
+class TaskList(
+
+  @JsonProperty("tasks")
+  val tasks: List<Task> = listOf()
+
+)

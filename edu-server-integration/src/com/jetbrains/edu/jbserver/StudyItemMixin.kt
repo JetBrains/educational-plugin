@@ -51,7 +51,7 @@ abstract class CourseMixin {
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "description", "description_format",
+  "id", "last_modified", "description", "description_format", "format",
   "course", "units", "courseId", "position", "upToDate", "updateDate", "lessons", "index",
   "customPresentableName", "presentableName", "stepikChangeStatus"
 ))
@@ -68,7 +68,7 @@ abstract class SectionMixin {
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "description", "description_format",
+  "id", "last_modified", "description", "description_format", "format",
   "course", "container", "steps", "tags", "unitId", "section", "upToDate", "additional",
   "taskListForProgress", "status", "updateDate", "index", "customPresentableName",
   "presentableName", "stepikChangeStatus"
