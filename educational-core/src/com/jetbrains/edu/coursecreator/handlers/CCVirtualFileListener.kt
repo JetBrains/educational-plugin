@@ -2,17 +2,57 @@ package com.jetbrains.edu.coursecreator.handlers
 
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileEvent
+import com.intellij.openapi.vfs.*
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
-import com.jetbrains.edu.learning.handlers.EduVirtualFileListener.NewFileKind.*
+import com.jetbrains.edu.learning.handlers.EduVirtualFileListener.FileKind.*
 
 class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) {
+
+  override fun beforePropertyChange(event: VirtualFilePropertyEvent) {
+    if (event.propertyName != VirtualFile.PROP_NAME) return
+    val newName = event.newValue as? String ?: return
+    val (task, oldPath, kind) = event.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val newPath = oldPath.replaceAfterLast(VfsUtilCore.VFS_SEPARATOR_CHAR, newName, newName)
+
+    fun <T> rename(container: MutableMap<String, T>, add: (String, T) -> Unit) {
+
+      fun rename(oldPath: String, newPath: String) {
+        val obj = container.remove(oldPath) ?: return
+        add(newPath, obj)
+      }
+
+      if (event.file.isDirectory) {
+        val changedPaths = container.keys.filter { it.startsWith(oldPath) }
+        for (oldObjectPath in changedPaths) {
+          val newObjectPath = oldObjectPath.replaceFirst(oldPath, newPath)
+          rename(oldObjectPath, newObjectPath)
+        }
+      } else {
+        rename(oldPath, newPath)
+      }
+    }
+
+    when (kind) {
+      TASK_FILE -> rename(task.taskFiles) { path, taskFile ->
+        taskFile.name = path
+        task.addTaskFile(taskFile)
+      }
+      TEST_FILE -> rename(task.testsText) { path, text ->
+          task.addTestsTexts(path, text)
+      }
+      ADDITIONAL_FILE -> rename(task.additionalFiles) { path, additionalFile ->
+          task.addAdditionalFile(path, additionalFile)
+      }
+    }
+
+    StepikCourseChangeHandler.changed(task)
+    YamlFormatSynchronizer.saveItem(task)
+  }
 
   override fun fileInTaskCreated(event: VirtualFileEvent, fileInfo: FileInfo.FileInTask) {
     super.fileInTaskCreated(event, fileInfo)

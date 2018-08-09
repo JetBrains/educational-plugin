@@ -253,7 +253,6 @@ public class EduUtils {
     return new RelativePoint(editor.getComponent(), point);
   }
 
-
   public static boolean isTestsFile(@NotNull Project project, @NotNull VirtualFile file) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) {

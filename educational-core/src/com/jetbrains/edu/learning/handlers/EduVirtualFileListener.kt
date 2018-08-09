@@ -14,11 +14,13 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
+import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 abstract class EduVirtualFileListener(protected val project: Project) : VirtualFileListener {
 
   override fun fileCreated(event: VirtualFileEvent) {
+    if (event.file.isDirectory) return
     val fileInfo = event.fileInfo(project) as? FileInfo.FileInTask ?: return
     fileInTaskCreated(event, fileInfo)
   }
@@ -41,7 +43,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
   protected open fun fileInTaskCreated(event: VirtualFileEvent, fileInfo: FileInfo.FileInTask) {
     val (task, pathInTask, kind) = fileInfo
     when (kind) {
-      NewFileKind.TASK_FILE -> {
+      FileKind.TASK_FILE -> {
         if (task.getTaskFile(pathInTask) == null) {
           val taskFile = task.addTaskFile(pathInTask)
           if (EduUtils.isStudentProject(project)) {
@@ -49,12 +51,12 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
           }
         }
       }
-      NewFileKind.TEST_FILE -> {
+      FileKind.TEST_FILE -> {
         if (pathInTask !in task.testsText) {
           task.addTestsTexts(pathInTask, "")
         }
       }
-      NewFileKind.ADDITIONAL_FILE -> {
+      FileKind.ADDITIONAL_FILE -> {
         if (pathInTask !in task.additionalFiles) {
           task.addAdditionalFile(pathInTask, "")
         }
@@ -75,38 +77,41 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
       EduUtils.getSection(file, course)?.let { return FileInfo.SectionDirectory(it) }
       EduUtils.getLesson(file, course)?.let { return FileInfo.LessonDirectory(it) }
       EduUtils.getTask(file, course)?.let { return FileInfo.TaskDirectory(it) }
-    } else {
-      val task = EduUtils.getTaskForFile(project, file) ?: return null
-      val taskDir = task.getTaskDir(project) ?: return null
-
-      val taskRelativePath = EduUtils.pathRelativeToTask(project, file)
-
-      if (EduUtils.isTaskDescriptionFile(file.name)
-          || taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
-          || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)
-          || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
-        return null
-      }
-
-      if (EduUtils.isTestsFile(project, file)) return FileInfo.FileInTask(task, taskRelativePath, NewFileKind.TEST_FILE)
-      val sourceDir = task.findSourceDir(taskDir)
-      if (sourceDir != null) {
-        if (VfsUtilCore.isAncestor(sourceDir, file, true)) return FileInfo.FileInTask(task, taskRelativePath, NewFileKind.TASK_FILE)
-      }
-      return FileInfo.FileInTask(task, taskRelativePath, NewFileKind.ADDITIONAL_FILE)
     }
 
-    return null
+    val task = EduUtils.getTaskForFile(project, file) ?: return null
+    val taskDir = task.getTaskDir(project) ?: return null
+    val testDir = task.findTestDir(taskDir) ?: taskDir
+
+    val taskRelativePath = EduUtils.pathRelativeToTask(project, file)
+
+    if (EduUtils.isTaskDescriptionFile(file.name)
+        || taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
+        || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)
+        || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
+      return null
+    }
+
+    // We consider that directory has `FileKind.TEST_FILE` kind if it's child of `testDir` (if it exists).
+    // So single `EduUtils.isTestsFile` check is not enough because it doesn't work with directories at all
+    if (EduUtils.isTestsFile(project, file) || taskDir != testDir && VfsUtilCore.isAncestor(testDir, file, true)) {
+      return FileInfo.FileInTask(task, taskRelativePath, FileKind.TEST_FILE)
+    }
+    val sourceDir = task.findSourceDir(taskDir)
+    if (sourceDir != null) {
+      if (VfsUtilCore.isAncestor(sourceDir, file, true)) return FileInfo.FileInTask(task, taskRelativePath, FileKind.TASK_FILE)
+    }
+    return FileInfo.FileInTask(task, taskRelativePath, FileKind.ADDITIONAL_FILE)
   }
 
   protected sealed class FileInfo {
     data class SectionDirectory(val section: Section) : FileInfo()
     data class LessonDirectory(val lesson: Lesson) : FileInfo()
     data class TaskDirectory(val task: Task) : FileInfo()
-    data class FileInTask(val task: Task, val pathInTask: String, val kind: NewFileKind) : FileInfo()
+    data class FileInTask(val task: Task, val pathInTask: String, val kind: FileKind) : FileInfo()
   }
 
-  protected enum class NewFileKind {
+  protected enum class FileKind {
     TASK_FILE,
     TEST_FILE,
     ADDITIONAL_FILE
