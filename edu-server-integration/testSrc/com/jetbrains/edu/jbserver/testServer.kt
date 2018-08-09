@@ -1,5 +1,9 @@
 package com.jetbrains.edu.jbserver
 
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.jetbrains.edu.learning.courseFormat.Course
+import java.io.File
+
 val service = EduServerApi.create()
 
 fun getCoursesList() {
@@ -12,6 +16,11 @@ fun getCoursesList() {
 
 fun getCourseMaterials(pk: Int) {
   val course = service.getCourseMaterials(pk).execute().body()
+  course!!.print()
+}
+
+fun getCourseStructure(pk: Int) {
+  val course = service.getCourseStructure(pk).execute().body()
   course!!.print()
 }
 
@@ -37,13 +46,22 @@ fun getTasks(pks: List<Int>) {
   }
 }
 
+fun postAtomicKotlin() {
+  val json = File("/var/www/html/atomic_full.json").readText()
+  val course = mapper.readValue<Course>(json)
+  val response = service.createCourse(course).execute()
+  println("Status: ${response.code()} ${response.message()}")
+}
+
 
 fun main(args: Array<String>) {
 
   // getCoursesList()
-  // getCourseMaterials(37)
-  // getSections(listOf(23,30))
-  // getLessons(listOf(27,31))
-  // getTasks(listOf(29,33))
+  // getCourseMaterials()
+  // getSections(listOf())
+  // getLessons(listOf())
+  // getTasks(listOf())
+  // postAtomicKotlin()
+  // getCourseStructure()
 
 }

@@ -50,7 +50,7 @@ interface EduServerApi {
         .setupMapper()
 
       val interceptor = HttpLoggingInterceptor()
-        .setLevel(HttpLoggingInterceptor.Level.NONE)
+        .setLevel(HttpLoggingInterceptor.Level.BODY)
 
       val client = OkHttpClient.Builder()
         .addInterceptor(interceptor)
@@ -73,6 +73,8 @@ interface EduServerApi {
   @GET("/courses/{pk}/materials")
   fun getCourseMaterials(@Path("pk") pk: Int): Call<Course>
 
+  @GET("/courses/{pk}/structure")
+  fun getCourseStructure(@Path("pk") pk: Int): Call<Course>
 
   @GET("/sections/{pks}")
   fun getSections(@Path("pks") pks: String): Call<SectionList>
@@ -82,6 +84,9 @@ interface EduServerApi {
 
   @GET("/tasks/{pks}")
   fun getTasks(@Path("pks") pks: String): Call<TaskList>
+
+  @POST("/courses")
+  fun createCourse(@Body course: Course) : Call<Course>
 
 }
 

@@ -42,6 +42,9 @@ abstract class TaskMixIn {
   @JsonProperty("test_files")
   lateinit var testsText: HashMap<String, String>
 
+  @JsonProperty("format")
+  lateinit var format: String
+
 }
 
 

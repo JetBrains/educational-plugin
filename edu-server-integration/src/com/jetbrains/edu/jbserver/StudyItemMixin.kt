@@ -19,7 +19,7 @@ abstract class StudyItemMixin
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "format", "course_files", "change_notes",
+  "id", "last_modified", "course_files", "change_notes",
   "course", "tags", "authors", "courseType", "courseMode",
   "visibility", "lessons", "sections", "upToDate", "languageById",
   "languageID", "languageVersion", "adaptive", "study", "authorFullNames",
@@ -47,11 +47,14 @@ abstract class CourseMixin {
   @JsonIgnore
   abstract fun getLanguage(): String
 
+  @JsonProperty("format")
+  lateinit var format: String
+
 }
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "description", "description_format", "format",
+  "id", "last_modified", "description", "description_format",
   "course", "units", "courseId", "position", "upToDate", "updateDate", "lessons", "index",
   "customPresentableName", "presentableName", "stepikChangeStatus"
 ))
@@ -64,11 +67,14 @@ abstract class SectionMixin {
   @JsonProperty("items")
   lateinit var items: List<StudyItem>
 
+  @JsonProperty("format")
+  lateinit var format: String
+
 }
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "description", "description_format", "format",
+  "id", "last_modified", "description", "description_format",
   "course", "container", "steps", "tags", "unitId", "section", "upToDate", "additional",
   "taskListForProgress", "status", "updateDate", "index", "customPresentableName",
   "presentableName", "stepikChangeStatus"
@@ -81,6 +87,9 @@ abstract class LessonMixin {
 
   @JsonProperty("items")
   lateinit var taskList: List<Task>
+
+  @JsonProperty("format")
+  lateinit var format: String
 }
 
 
