@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileEvent
-import com.jetbrains.edu.learning.handlers.EduVirtualFileListener.NewFileKind.*
+import com.jetbrains.edu.learning.handlers.EduVirtualFileListener.FileKind.*
 
 class UserCreatedFileListener(project: Project) : EduVirtualFileListener(project) {
 
