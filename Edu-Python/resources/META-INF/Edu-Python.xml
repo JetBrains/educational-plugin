@@ -11,6 +11,10 @@
                      displayName="Unsupported language level for a course" groupName="Inspection.Study.Python"/>
     <configurationType implementation="com.jetbrains.edu.python.coursecreator.run.PyCCRunTestsConfigurationType"/>
     <runConfigurationProducer implementation="com.jetbrains.edu.python.coursecreator.run.PyCCRunTestsConfigurationProducer"/>
+
+    <!-- CheckiO -->
+    <httpRequestHandler implementation="com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthRestService"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOAccountHolder"/>
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">
@@ -19,12 +23,15 @@
   </extensions>
 
 
+
+
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.python.learning.PyConfigurator" language="Python"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOConfigurator" language="CheckiO-Python"/>
     <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.pycharm.PyCheckiOConfigurator" language="CheckiO-Python"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProvider"/>
+    <optionsProvider instance="com.jetbrains.edu.python.learning.checkio.settings.PyCheckiOOptions"/>
   </extensions>
 
   <extensions defaultExtensionNs="educational">

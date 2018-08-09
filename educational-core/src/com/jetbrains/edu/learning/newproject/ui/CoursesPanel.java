@@ -29,12 +29,10 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.EduLanguageDecorator;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOConnector;
-import com.jetbrains.edu.learning.checkio.settings.CheckiOSettings;
+import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.checkio.CheckiOConfigurator;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
@@ -111,12 +109,8 @@ public class CoursesPanel extends JPanel {
         addLoginListener(this::updateCoursesList);
         StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
       } else if (myErrorState == ErrorState.CheckiOLoginRequired.INSTANCE) {
-        addCheckiOLoginListener(
-          () -> myErrorLabel.setVisible(false),
-          () -> notifyListeners(true)
-        );
-        CheckiOConnector.doAuthorize();
-      }else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
+        addCheckiOLoginListener((CheckiOCourse) myCoursesList.getSelectedValue());
+      } else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
         PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
       } else if (myErrorState instanceof ErrorState.RequiredPluginsDisabled) {
         List<String> disabledPluginIds = ((ErrorState.RequiredPluginsDisabled)myErrorState).getDisabledPluginIds();
@@ -127,16 +121,17 @@ public class CoursesPanel extends JPanel {
     processSelectionChanged();
   }
 
-  private void addCheckiOLoginListener(Runnable... postLoginActions) {
-    if (myBusConnection != null) {
-      myBusConnection.disconnect();
-    }
-    myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    myBusConnection.subscribe(CheckiOConnector.LOGGED_IN, (newTokens, newUser) -> {
-      CheckiOSettings.getInstance().setUser(newUser);
-      CheckiOSettings.getInstance().setTokens(newTokens);
-      runPostLoginActions(postLoginActions);
-    });
+  private void addCheckiOLoginListener(@NotNull CheckiOCourse selectedCourse) {
+    final CheckiOConfigurator<?> checkioConfigurator =
+      (CheckiOConfigurator<?>) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById());
+    assert checkioConfigurator != null;
+
+    final CheckiOOAuthConnector checkioOAuthConnector = checkioConfigurator.getOAuthConnector();
+
+    checkioOAuthConnector.doAuthorize(
+      () -> myErrorLabel.setVisible(false),
+      () -> notifyListeners(true)
+    );
   }
 
   private void addLoginListener(Runnable... postLoginActions) {

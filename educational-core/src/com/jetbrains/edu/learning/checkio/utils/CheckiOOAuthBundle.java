@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checkio;
+package com.jetbrains.edu.learning.checkio.utils;
 
 import com.intellij.CommonBundle;
 import com.intellij.reference.SoftReference;

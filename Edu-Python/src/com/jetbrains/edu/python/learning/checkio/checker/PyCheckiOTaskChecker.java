@@ -8,11 +8,11 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseUpdater;
 import javafx.embed.swing.JFXPanel;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +38,7 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
     final CheckiOCourse course = (CheckiOCourse) StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
 
-    CheckiOCourseUpdater.doUpdate(course, project);
+    new PyCheckiOCourseUpdater(course, project).doUpdate();
   }
 
   @NotNull

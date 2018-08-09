@@ -1,19 +1,15 @@
-package com.jetbrains.edu.learning.checkio.settings;
+package com.jetbrains.edu.learning.checkio.options;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.jetbrains.edu.learning.checkio.CheckiONames;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOConnector;
-import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
-import com.jetbrains.edu.learning.checkio.model.Tokens;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import com.jetbrains.edu.learning.checkio.model.CheckiOAccount;
+import com.jetbrains.edu.learning.checkio.model.CheckiOAccountHolder;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,19 +17,27 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.util.Objects;
 
-public class CheckiOOptions implements OptionsProvider {
+public abstract class CheckiOOptions implements OptionsProvider {
   private JBLabel myLoginLabel;
   private HoverHyperlinkLabel myLoginLink;
   private JPanel myPanel;
   private HyperlinkAdapter myLoginListener;
 
-  private CheckiOUser myUser;
-  private Tokens myTokens;
+  private CheckiOAccount myCurrentAccount;
 
-  @Nls
-  @Override
-  public String getDisplayName() {
-    return "CheckiO options";
+  private final String myTitle;
+  private final CheckiOAccountHolder myAccountHolder;
+  private final CheckiOOAuthConnector myOAuthConnector;
+
+
+  protected CheckiOOptions(
+    @NotNull String optionsPanelTitle,
+    @NotNull CheckiOAccountHolder accountHolder,
+    @NotNull CheckiOOAuthConnector oauthConnector
+  ) {
+    myTitle = optionsPanelTitle;
+    myAccountHolder = accountHolder;
+    myOAuthConnector = oauthConnector;
   }
 
   @Nullable
@@ -42,7 +46,7 @@ public class CheckiOOptions implements OptionsProvider {
     myPanel = new JPanel(new GridLayoutManager(1, 2));
     addLoginLabel();
     addLoginLink();
-    myPanel.setBorder(IdeBorderFactory.createTitledBorder(CheckiONames.CHECKIO));
+    myPanel.setBorder(IdeBorderFactory.createTitledBorder(myTitle));
     return myPanel;
   }
 
@@ -67,39 +71,36 @@ public class CheckiOOptions implements OptionsProvider {
 
   @Override
   public boolean isModified() {
-    return !Objects.equals(myUser, CheckiOSettings.getInstance().getUser()) ||
-           !Objects.equals(myTokens, CheckiOSettings.getInstance().getTokens());
+    return !Objects.equals(myCurrentAccount, myAccountHolder.getAccount());
   }
 
   @Override
   public void reset() {
-    myUser = CheckiOSettings.getInstance().getUser();
-    myTokens = CheckiOSettings.getInstance().getTokens();
-    updateLoginLabels(myUser);
+    myCurrentAccount = myAccountHolder.getAccount();
+    updateLoginLabels();
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     if (isModified()) {
-      CheckiOSettings.getInstance().setUser(myUser);
-      CheckiOSettings.getInstance().setTokens(myTokens);
+      myAccountHolder.setAccount(myCurrentAccount);
     }
 
     reset();
   }
 
-  private void updateLoginLabels(@Nullable CheckiOUser user) {
+  protected void updateLoginLabels() {
     if (myLoginListener != null) {
       myLoginLink.removeHyperlinkListener(myLoginListener);
     }
 
-    if (user == null) {
+    if (!myCurrentAccount.isLoggedIn()) {
       myLoginLabel.setText("You're not logged in");
       myLoginLink.setText("Log in to CheckiO");
 
       myLoginListener = createAuthorizeListener();
     } else {
-      myLoginLabel.setText("You're logged in as " + user.getUsername());
+      myLoginLabel.setText("You're logged in as " + myCurrentAccount.getUserInfo().getUsername());
       myLoginLink.setText("Log out");
 
       myLoginListener = createLogoutListener();
@@ -113,19 +114,12 @@ public class CheckiOOptions implements OptionsProvider {
     return new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent event) {
-        ApplicationManager.getApplication().getMessageBus().connect().subscribe(CheckiOConnector.LOGGED_IN, (newTokens, newUser)-> {
-          if (!Objects.equals(myUser, newUser)) {
-            CheckiOSettings.getInstance().setUser(myUser);
-            CheckiOSettings.getInstance().setTokens(myTokens);
-
-            myUser = newUser;
-            myTokens = newTokens;
-
-            updateLoginLabels(myUser);
-          }
+        myOAuthConnector.doAuthorize(() -> {
+          final CheckiOAccount newAccount = myAccountHolder.getAccount();
+          myAccountHolder.setAccount(myCurrentAccount);
+          myCurrentAccount = newAccount;
+          updateLoginLabels();
         });
-
-        CheckiOConnector.doAuthorize();
       }
     };
   }
@@ -135,9 +129,8 @@ public class CheckiOOptions implements OptionsProvider {
     return new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent event) {
-        myTokens = null;
-        myUser = null;
-        updateLoginLabels(null);
+        myCurrentAccount.logOut();
+        updateLoginLabels();
       }
     };
   }

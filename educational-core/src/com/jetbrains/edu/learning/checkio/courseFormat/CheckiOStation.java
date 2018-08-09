@@ -20,14 +20,6 @@ public class CheckiOStation extends Lesson {
   }
 
   @Nullable
-  public CheckiOMission getMission(@NotNull String name) {
-    final Task task = getTask(name);
-    return (task instanceof CheckiOMission ? (CheckiOMission) task : null);
-  }
-
-  // This and other similar methods in CheckiOCourse/Station/Mission are
-  // created in order to be used in course update
-  @Nullable
   public CheckiOMission getMission(int id) {
     final Task task = getTask(id);
     return (task instanceof CheckiOMission ? (CheckiOMission) task : null);

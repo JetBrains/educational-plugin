@@ -1,29 +1,23 @@
 package com.jetbrains.edu.learning.checkio.courseFormat;
 
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CheckiOCourse extends Course {
-  public CheckiOCourse() {
-    setName("CheckiO");
-    setDescription("CheckiO description"); // TODO
-    setLanguage(EduNames.CHECKIO_PYTHON);
+  // used for deserialization
+  public CheckiOCourse() {}
+
+  public CheckiOCourse(@NotNull String name, @NotNull String description, @NotNull String languageID) {
+    setName(name);
+    setDescription(description); // TODO
+    setLanguage(languageID);
   }
 
   public void addStation(@NotNull CheckiOStation station) {
     addLesson(station);
-  }
-
-  @Nullable
-  public CheckiOStation getStation(@NotNull String name) {
-    final Lesson lesson = getLesson(name);
-    return (lesson instanceof CheckiOStation ? (CheckiOStation) lesson : null);
   }
 
   @NotNull

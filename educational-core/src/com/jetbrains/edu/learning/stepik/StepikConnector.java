@@ -22,10 +22,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
+import com.intellij.util.Range;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.apache.http.HttpEntity;
@@ -50,7 +52,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
-import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -892,9 +893,19 @@ public class StepikConnector {
   @NotNull
   public static String getOAuthRedirectUrl() {
     if (EduUtils.isAndroidStudio()) {
-      CustomAuthorizationServer customServer = new CustomAuthorizationServer(StepikNames.STEPIK);
+      final CustomAuthorizationServer startedServer = CustomAuthorizationServer.getServerIfStarted(StepikNames.STEPIK);
 
-      int port = customServer.handle(createContextHandler(customServer));
+      if (startedServer != null) {
+        return "http://localhost:" + startedServer.getPort();
+      }
+
+      int port = CustomAuthorizationServer.create(
+        StepikNames.STEPIK,
+        new Range<>(36656, 36665),
+        "",
+        StepikConnector::afterCodeReceived
+      );
+
       if (port != -1) {
         return "http://localhost:" + port;
       }
@@ -911,18 +922,13 @@ public class StepikConnector {
     return StepikNames.EXTERNAL_REDIRECT_URL;
   }
 
-  private static CustomAuthorizationServer.ContextHandler createContextHandler(CustomAuthorizationServer server) {
-    return new CustomAuthorizationServer.ContextHandler(server) {
-      @Override
-      public String afterCodeReceived(@NotNull String code) {
-        StepicUser user = StepikAuthorizedClient.login(code, "http://localhost:" + getPort());
-        if (user != null) {
-          EduSettings.getInstance().setUser(user);
-          return null;
-        }
-        return "Couldn't get user info";
-      }
-    };
+  public static String afterCodeReceived(@NotNull String code) {
+    final StepicUser user = StepikAuthorizedClient.login(code, getOAuthRedirectUrl());
+    if (user != null) {
+      EduSettings.getInstance().setUser(user);
+      return null;
+    }
+    return "Couldn't get user info";
   }
 
   public static void doAuthorize(@NotNull Runnable externalRedirectUrlHandler) {

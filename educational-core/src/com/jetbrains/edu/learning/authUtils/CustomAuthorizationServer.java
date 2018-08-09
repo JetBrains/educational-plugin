@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.authUtils;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import org.apache.http.HttpRequest;
+import com.intellij.util.Range;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -10,7 +10,6 @@ import org.apache.http.config.SocketConfig;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,55 +17,34 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Android Studio doesn't allow to use built-in server
- * without credentials, so {@link CustomAuthorizationServer}
+ * Android Studio doesn't allow to use built-in server,
+ * so {@link CustomAuthorizationServer}
  * is used for OAuth authorization from Android Studio.
  */
 public class CustomAuthorizationServer {
   private static final Logger LOG = Logger.getInstance(CustomAuthorizationServer.class);
 
-  private HttpServer myServer;
-  private final String myPlatformName;
+  private static final Map<String, CustomAuthorizationServer> ourServerByName = new HashMap<>();
+  private static final ReentrantLock ourLock = new ReentrantLock();
 
-  public CustomAuthorizationServer(@NotNull String platformName) {
-    this.myPlatformName = platformName;
+  private final HttpServer myServer;
+
+  private CustomAuthorizationServer(@NotNull HttpServer server) {
+    myServer = server;
   }
 
-  public int handle(@NotNull ContextHandler handler) {
-    int port = IntStream.rangeClosed(36656, 36665).filter(CustomAuthorizationServer::isPortAvailable).findFirst().orElse(-1);
-
-    if (port != -1) {
-      SocketConfig socketConfig = SocketConfig.custom()
-        .setSoTimeout(15000)
-        .setTcpNoDelay(true)
-        .build();
-
-      myServer = ServerBootstrap.bootstrap()
-        .setListenerPort(port)
-        .setServerInfo(myPlatformName + " authorization server")
-        .registerHandler("*", handler)
-        .setSocketConfig(socketConfig)
-        .create();
-
-      try {
-        myServer.start();
-        return port;
-      }
-      catch (IOException e) {
-        LOG.warn(e.getMessage());
-        return -1;
-      }
-    }
-
-    LOG.warn("No available ports");
-    return -1;
-  }
-
-  private void stopServerInNewThread() {
+  private void stopServer() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
       try {
         LOG.info("Stopping server");
@@ -79,6 +57,76 @@ public class CustomAuthorizationServer {
     });
   }
 
+  public int getPort() {
+    return myServer.getLocalPort();
+  }
+
+  public static CustomAuthorizationServer getServerIfStarted(@NotNull String platformName) {
+    return ourServerByName.get(platformName);
+  }
+
+  public static int create(
+    @NotNull String platformName,
+    @NotNull Range<Integer> portsToTry,
+    @NotNull String handlerPath,
+    @NotNull Function<String, String> afterCodeReceived
+  ) {
+    return create(
+      platformName,
+      IntStream.rangeClosed(portsToTry.getFrom(), portsToTry.getTo()).boxed().collect(Collectors.toList()),
+      handlerPath,
+      afterCodeReceived
+    );
+  }
+
+  public static int create(
+    @NotNull String platformName,
+    @NotNull Collection<Integer> portsToTry,
+    @NotNull String handlerPath,
+    @NotNull Function<String, String> afterCodeReceived
+  ) {
+    ourLock.lock();
+    int port = createServer(platformName, portsToTry, handlerPath, afterCodeReceived);
+    ourLock.unlock();
+    return port;
+  }
+
+  private static int createServer(
+    @NotNull String platformName,
+    @NotNull Collection<Integer> portsToTry,
+    @NotNull String handlerPath,
+    @NotNull Function<String, String> afterCodeReceived
+  ) {
+    int port = portsToTry.stream().filter(CustomAuthorizationServer::isPortAvailable).findFirst().orElse(-1);
+
+    if (port != -1) {
+      SocketConfig socketConfig = SocketConfig.custom()
+        .setSoTimeout(15000)
+        .setTcpNoDelay(true)
+        .build();
+
+      final HttpServer newServer = ServerBootstrap.bootstrap()
+        .setListenerPort(port)
+        .setServerInfo(platformName)
+        .registerHandler(handlerPath, createContextHandler(platformName, afterCodeReceived))
+        .setSocketConfig(socketConfig)
+        .create();
+
+      try {
+        newServer.start();
+        ourServerByName.put(platformName, new CustomAuthorizationServer(newServer));
+        return port;
+      }
+      catch (IOException e) {
+        LOG.warn(e.getMessage());
+        return -1;
+      }
+    }
+
+    LOG.warn("No available ports");
+    return -1;
+  }
+
   private static boolean isPortAvailable(int port) {
     try (Socket ignored = new Socket("localhost", port)) {
       return false;
@@ -88,34 +136,22 @@ public class CustomAuthorizationServer {
     }
   }
 
-  public int getPort() {
-    return myServer.getLocalPort();
-  }
-
-  public abstract static class ContextHandler implements HttpRequestHandler {
-    private final CustomAuthorizationServer myServer;
-
-    public ContextHandler(@NotNull CustomAuthorizationServer server) {
-      myServer = server;
-    }
-
-
-    @Override
-    public void handle(HttpRequest httpRequest, HttpResponse httpResponse, HttpContext httpContext) throws IOException {
+  private static HttpRequestHandler createContextHandler(@NotNull String platformName, @NotNull Function<String, String> afterCodeReceived) {
+    return (request, response, context) -> {
       LOG.info("Handling auth response");
 
       try {
-        List<NameValuePair> parse = URLEncodedUtils.parse(new URI(httpRequest.getRequestLine().getUri()), "UTF-8");
+        final List<NameValuePair> parse = URLEncodedUtils.parse(new URI(request.getRequestLine().getUri()), Charset.forName("UTF-8"));
         for (NameValuePair pair : parse) {
           if (pair.getName().equals("code")) {
             String code = pair.getValue();
-            String errorMessage = afterCodeReceived(code);
+            String errorMessage = afterCodeReceived.apply(code);
 
             if (errorMessage == null) {
-              sendOkResponse(httpResponse, myServer.myPlatformName);
+              sendOkResponse(response, platformName);
             } else {
               LOG.warn(errorMessage);
-              sendErrorResponse(httpResponse, myServer.myPlatformName, errorMessage);
+              sendErrorResponse(response, platformName, errorMessage);
             }
 
             break;
@@ -124,38 +160,26 @@ public class CustomAuthorizationServer {
       }
       catch (URISyntaxException e) {
         LOG.warn(e.getMessage());
-        sendErrorResponse(httpResponse, myServer.myPlatformName, "Invalid response");
+        sendErrorResponse(response, platformName, "Invalid response");
       }
       finally {
-        myServer.stopServerInNewThread();
+        ourServerByName.get(platformName).stopServer();
       }
-    }
+    };
+  }
 
-    /**
-     * This function encapsulate authorization process after receiving
-     * OAuth code. It applies to OAuth code and has to
-     * return null in case of successful authorization and not null
-     * error message otherwise.
-     * */
-    public abstract String afterCodeReceived(@NotNull String code);
+  private static void sendOkResponse(@NotNull HttpResponse httpResponse, @NotNull String platformName) throws IOException {
+    final String okPageContent = BuiltinServerUtils.getOkPageContent(platformName);
+    sendResponse(httpResponse, okPageContent);
+  }
 
-    public int getPort() {
-      return myServer.getPort();
-    }
+  private static void sendErrorResponse(@NotNull HttpResponse httpResponse, @NotNull String platformName, @NotNull String errorMessage) throws IOException {
+    final String errorPageContent = BuiltinServerUtils.getErrorPageContent(platformName, errorMessage);
+    sendResponse(httpResponse, errorPageContent);
+  }
 
-    private static void sendOkResponse(@NotNull HttpResponse httpResponse, @NotNull String platformName) throws IOException {
-      final String okPageContent = BuiltinServerUtils.getOkPageContent(platformName);
-      sendResponse(httpResponse, okPageContent);
-    }
-
-    private static void sendErrorResponse(@NotNull HttpResponse httpResponse, @NotNull String platformName, @NotNull String errorMessage) throws IOException {
-      final String errorPageContent = BuiltinServerUtils.getErrorPageContent(platformName, errorMessage);
-      sendResponse(httpResponse, errorPageContent);
-    }
-
-    private static void sendResponse(@NotNull HttpResponse httpResponse, @NotNull String pageContent) throws IOException {
-      httpResponse.setHeader("Content-Type", "text/html");
-      httpResponse.setEntity(new StringEntity(pageContent));
-    }
+  private static void sendResponse(@NotNull HttpResponse httpResponse, @NotNull String pageContent) throws IOException {
+    httpResponse.setHeader("Content-Type", "text/html");
+    httpResponse.setEntity(new StringEntity(pageContent));
   }
 }

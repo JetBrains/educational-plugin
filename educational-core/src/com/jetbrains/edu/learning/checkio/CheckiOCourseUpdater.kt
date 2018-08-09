@@ -15,18 +15,15 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.IOException
 
-class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Project) {
+abstract class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Project) {
   companion object {
     private val LOG = Logger.getInstance(CheckiOCourseUpdater::class.java)
-
-    @JvmStatic
-    fun doUpdate(course: CheckiOCourse, project: Project) {
-      CheckiOCourseUpdater(course, project).doUpdate()
-    }
   }
 
-  private fun doUpdate() {
-    val serverCourse = CheckiOUtils.getCourseFromServer()
+  protected abstract fun getCourseFromServer() : CheckiOCourse?
+
+  fun doUpdate() {
+    val serverCourse = getCourseFromServer()
 
     if (serverCourse == null) {
       LOG.warn("Couldn't get course from server")
@@ -73,9 +70,8 @@ class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Project) {
   }
 
   private fun updateStation(newStation: CheckiOStation, oldStation: CheckiOStation) {
-    val tasksById = oldStation.missionsList.associateBy { it.stepId }
     newStation.missionsList.forEach {
-      updateMission(it, tasksById[it.stepId]!!)
+      updateMission(it, oldStation.getMission(it.stepId)!!)
       it.init(course, newStation, false)
     }
 
@@ -101,7 +97,7 @@ class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Project) {
     val secondsFromLocalChange = (System.currentTimeMillis() - oldVirtualFile.timeStamp) / 1000
 
     if (secondsFromChangeOnServer < secondsFromLocalChange) {
-      CheckiOUtils.setTaskFileText(oldTaskFile, newMission.code)
+      oldTaskFile.text = newMission.taskFile?.text // TODO: task file must exist
       newMission.addTaskFile(oldTaskFile)
 
       val oldDocument = FileDocumentManager.getInstance().getDocument(oldVirtualFile)

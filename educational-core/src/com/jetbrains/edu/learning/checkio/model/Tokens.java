@@ -1,53 +1,40 @@
 package com.jetbrains.edu.learning.checkio.model;
 
-import com.google.gson.annotations.SerializedName;
 import com.intellij.util.xmlb.annotations.Property;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class Tokens {
-  @Property
-  @SerializedName("access_token")
-  private String myAccessToken;
+  @Property private String myAccessToken;
+  @Property private String myRefreshToken;
+  @Property private long myExpiringTime;
 
-  @Property
-  @SerializedName("refresh_token")
-  private String myRefreshToken;
+  @SuppressWarnings("unused") // used for deserialization
+  private Tokens() {}
 
-  @Property
-  @SerializedName("expires_in")
-  private int myExpiresIn;
+  public Tokens(@NotNull String accessToken, @NotNull String refreshToken, long expiringTime) {
+    myAccessToken = accessToken;
+    myRefreshToken = refreshToken;
+    myExpiringTime = expiringTime;
+  }
 
-  @Property
-  private int myReceivingTime;
-
-  private Tokens() { }
-
-  @Nullable
+  @NotNull
   public String getAccessToken() {
     return myAccessToken;
   }
 
-  @Nullable
+  @NotNull
   public String getRefreshToken() {
     return myRefreshToken;
   }
 
   public boolean isUpToDate() {
-    return getCurrentTimeSeconds() < getExpiringTimeSeconds();
+    return currentTimeSeconds() < myExpiringTime - 600; // subtract 10 minutes for avoiding boundary case
   }
 
-  public void markAsReceived() {
-    myReceivingTime = getCurrentTimeSeconds();
-  }
-
-  private int getExpiringTimeSeconds() {
-    return myReceivingTime + myExpiresIn;
-  }
-
-  private static int getCurrentTimeSeconds() {
-    return (int) (System.currentTimeMillis() / 1000);
+  private static long currentTimeSeconds() {
+    return System.currentTimeMillis() / 1000;
   }
 
   @Override
@@ -55,13 +42,12 @@ public class Tokens {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     Tokens tokens = (Tokens)o;
-    return myReceivingTime == tokens.myReceivingTime &&
-           Objects.equals(myAccessToken, tokens.myAccessToken) &&
+    return Objects.equals(myAccessToken, tokens.myAccessToken) &&
            Objects.equals(myRefreshToken, tokens.myRefreshToken);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(myAccessToken, myRefreshToken, myReceivingTime);
+    return Objects.hash(myAccessToken, myRefreshToken);
   }
 }

@@ -195,15 +195,10 @@
     <statistics.usagesCollector implementation="com.jetbrains.edu.learning.statistics.LegacyEduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
-    <applicationService serviceImplementation="com.jetbrains.edu.learning.checkio.settings.CheckioSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
-
-    <!-- CheckiO -->
-    <applicationService serviceImplementation="com.jetbrains.edu.learning.checkio.settings.CheckiOSettings"/>
-    <httpRequestHandler implementation="com.jetbrains.edu.learning.checkio.connectors.CheckiORestService"/>
 
     <!--for educators-->
     <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>
@@ -249,9 +244,6 @@
     <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
     <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>
-
-    <!-- CheckiO -->
-    <optionsProvider instance="com.jetbrains.edu.learning.checkio.settings.CheckiOOptions"/>
 
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>

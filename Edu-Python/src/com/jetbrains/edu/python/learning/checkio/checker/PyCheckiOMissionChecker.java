@@ -7,11 +7,12 @@ import com.intellij.openapi.util.Ref;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
-import com.jetbrains.edu.learning.checkio.CheckiONames;
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOConnector;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector;
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow;
+import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
@@ -53,7 +54,7 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
       return CheckResult.FAILED_TO_CHECK;
     }
 
-    final String accessToken = CheckiOConnector.getAccessToken();
+    final String accessToken = PyCheckiOOAuthConnector.getInstance().getAccessToken();
     final String taskId = String.valueOf(myTask.getId());
     final String interpreter = EduNames.CHECKIO_PYTHON_INTERPRETER;
     final String code = selectedEditor.getDocument().getText();
@@ -88,7 +89,7 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
 
   private void loadTestForm() {
     Platform.runLater(() -> {
-      final String formUrl = CheckiOConnector.class.getResource(CheckiONames.CHECKIO_TEST_FORM_URL).toExternalForm();
+      final String formUrl = CheckiOApiConnector.class.getResource(CheckiONames.CHECKIO_TEST_FORM_URL).toExternalForm();
       myBrowserWindow.getEngine().load(formUrl);
     });
   }

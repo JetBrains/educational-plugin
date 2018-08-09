@@ -1,35 +1,21 @@
 package com.jetbrains.edu.learning.checkio.api;
 
-import com.jetbrains.edu.learning.checkio.model.CheckiOMissionListWrapper;
-import com.jetbrains.edu.learning.checkio.model.CheckiOUser;
-import com.jetbrains.edu.learning.checkio.model.Tokens;
-import retrofit2.Call;
-import retrofit2.http.*;
+import com.jetbrains.edu.learning.checkio.connectors.ConnectorUtils;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public interface CheckiOApiService {
+import java.util.List;
 
-  @FormUrlEncoded
-  @POST("oauth/token/")
-  Call<Tokens> getTokens(
-    @Field("grant_type") String grantType,
-    @Field("client_secret") String clientSecret,
-    @Field("client_id") String clientId,
-    @Field("code") String code,
-    @Field("redirect_uri") String redirectUri
-  );
+public abstract class CheckiOApiService {
+  private final CheckiOApiInterface myApiInterface;
 
-  @FormUrlEncoded
-  @POST("oauth/token/")
-  Call<Tokens> refreshTokens(
-    @Field("grant_type") String grantType,
-    @Field("client_secret") String clientSecret,
-    @Field("client_id") String clientId,
-    @Field("refresh_token") String refreshToken
-  );
+  protected CheckiOApiService(@NotNull CheckiOApiInterface apiInterface) {
+    myApiInterface = apiInterface;
+  }
 
-  @GET("oauth/information/")
-  Call<CheckiOUser> getUserInfo(@Query("access_token") String accessToken);
-
-  @GET("api/user-missions/")
-  Call<CheckiOMissionListWrapper> getMissionList(@Query("token") String accessToken);
+  @Nullable
+  public List<CheckiOMission> getMissionList(@NotNull String token) {
+    return ConnectorUtils.getResponseBodyAndUnwrap(myApiInterface.getMissionList(token));
+  }
 }

@@ -62,6 +62,11 @@ public class CheckiOMission extends EduTask {
   }
 
   @Override
+  public boolean isToSubmitToStepik() {
+    return false;
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;

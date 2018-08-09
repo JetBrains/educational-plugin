@@ -2,16 +2,16 @@ package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
-import com.intellij.openapi.ui.MessageType.*
+import com.intellij.openapi.ui.MessageType.ERROR
+import com.intellij.openapi.ui.MessageType.WARNING
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.checkio.CheckiOConfigurator
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
-import com.jetbrains.edu.learning.checkio.settings.CheckiOSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.getDisabledPlugins
-import com.jetbrains.edu.learning.stepik.StepikUtils.isLoggedIn
 import java.awt.Color
 
 sealed class ErrorState(
@@ -43,7 +43,7 @@ sealed class ErrorState(
         course == null -> NothingSelected
         course.compatibility !== CourseCompatibility.COMPATIBLE -> IncompatibleVersion
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
-        !isLoggedInToCheckiO() && isCheckiOLoginRequired(course) -> CheckiOLoginRequired
+        isCheckiOLoginRequired(course) -> CheckiOLoginRequired
         !isLoggedIn() -> if (isLoginRequired(course)) LoginRequired else NotLoggedIn
         else -> None
       }
@@ -66,12 +66,17 @@ sealed class ErrorState(
 
     private fun isLoggedIn(): Boolean = EduSettings.getInstance().user != null
 
-    private fun isLoggedInToCheckiO(): Boolean = CheckiOSettings.getInstance().user != null
-
     private fun isLoginRequired(selectedCourse: Course): Boolean =
       selectedCourse.isAdaptive || selectedCourse is RemoteCourse && !selectedCourse.isCompatible
 
-    private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean = selectedCourse is CheckiOCourse
+    private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
+      if (selectedCourse is CheckiOCourse) {
+        val checkioConfigurator = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConfigurator<*>
+        val checkioAccountHolder = checkioConfigurator.oAuthConnector.accountHolder
+        return !checkioAccountHolder.account.isLoggedIn
+      }
+      return false
+    }
   }
 }
 
