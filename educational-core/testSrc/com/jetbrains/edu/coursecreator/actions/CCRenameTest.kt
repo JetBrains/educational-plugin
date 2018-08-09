@@ -5,7 +5,6 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestInputDialog
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCDescriptionFileRenameHandler
@@ -105,26 +104,6 @@ class CCRenameTest : EduActionTestCase() {
     TestCase.assertNotNull(lesson)
     TestCase.assertNotNull(lesson!!.getTask("task2"))
     TestCase.assertNull(lesson.getTask("task1"))
-  }
-
-  fun `test rename task file`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      lesson {
-        eduTask {
-          taskFile("taskFile1.txt")
-        }
-      }
-    }
-
-    val sourceVFile = VfsUtil.findRelativeFile(LightPlatformTestCase.getSourceRoot(), "lesson1", "task1", "taskFile1.txt")
-    val psiFile = PsiManager.getInstance(project).findFile(sourceVFile!!)
-    myFixture.renameElement(psiFile!!, "taskFile2.txt")
-    TestCase.assertEquals(1, course.items.size)
-    val lesson = course.getLesson("lesson1")
-    TestCase.assertNotNull(lesson)
-    val task = lesson!!.getTask("task1")!!
-    TestCase.assertNull(task.getTaskFile("taskFile1.txt"))
-    TestCase.assertNotNull(task.getTaskFile("taskFile2.txt"))
   }
 
   fun `test rename task description file`() {
