@@ -9,6 +9,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runUndoTransparentWriteAction
+import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -85,10 +87,14 @@ object YamlFormatSynchronizer {
       LOG.error("Failed to save ${item.javaClass.name} '${item.name}' to config file: directory not found")
       return
     }
-    ApplicationManager.getApplication().runWriteAction {
-      val file = dir.findOrCreateChildData(YamlFormatSynchronizer.javaClass, fileName)
-      val document = file.getDocument() ?: return@runWriteAction
-      document.setText(MAPPER.writeValueAsString(item))
+
+    val undoManager = UndoManager.getInstance(project)
+    if (undoManager.isUndoInProgress || undoManager.isRedoInProgress) {
+      ApplicationManager.getApplication().invokeLater {
+        saveConfigDocument(dir, fileName, item)
+      }
+    } else {
+      saveConfigDocument(dir, fileName, item)
     }
   }
 
@@ -114,5 +120,13 @@ object YamlFormatSynchronizer {
   fun isConfigFile(file: VirtualFile): Boolean {
     val name = file.name
     return COURSE_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name || SECTION_CONFIG == name
+  }
+
+  private fun saveConfigDocument(dir: VirtualFile, configFileName: String, item: StudyItem) {
+    runUndoTransparentWriteAction {
+      val file = dir.findOrCreateChildData(javaClass, configFileName)
+      val document = file.getDocument() ?: return@runUndoTransparentWriteAction
+      document.setText(MAPPER.writeValueAsString(item))
+    }
   }
 }
