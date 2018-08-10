@@ -202,8 +202,6 @@
 
     <!--for educators-->
     <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>
-    <refactoring.elementListenerProvider
-        implementation="com.jetbrains.edu.coursecreator.CCRefactoringElementListenerProvider"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCSectionMoveHandlerDelegate"
                              order="first"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate"
