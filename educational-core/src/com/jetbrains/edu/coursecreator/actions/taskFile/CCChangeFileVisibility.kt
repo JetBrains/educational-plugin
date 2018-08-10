@@ -3,7 +3,6 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -109,10 +108,7 @@ abstract class CCChangeFileVisibility(val name: String, val requiredVisibility: 
     private inline fun doAction(changeState: (State) -> Unit) {
       states.forEach(changeState)
       ProjectView.getInstance(project).refresh()
-      // invokeLater here is needed because one can't change documents while redo/undo
-      ApplicationManager.getApplication().invokeLater {
-        affectedTasks.forEach(YamlFormatSynchronizer::saveItem)
-      }
+      affectedTasks.forEach(YamlFormatSynchronizer::saveItem)
     }
 
     override fun isGlobal(): Boolean = true
