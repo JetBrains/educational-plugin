@@ -65,6 +65,9 @@ public abstract class Task extends StudyItem {
   @NotNull
   private FeedbackLink myFeedbackLink = new FeedbackLink();
 
+  // for EduServer version control
+  private int versionId;
+
   public Task() {}
 
   public Task(@NotNull final String name) {
@@ -351,5 +354,13 @@ public abstract class Task extends StudyItem {
     for (TaskFile taskFile : taskFiles) {
       this.taskFiles.put(taskFile.name, taskFile);
     }
+  }
+
+  public int getVersionId() {
+    return versionId;
+  }
+
+  public void setVersionId(int versionId) {
+    this.versionId = versionId;
   }
 }

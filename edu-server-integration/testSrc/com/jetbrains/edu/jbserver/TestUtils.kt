@@ -1,9 +1,9 @@
 package com.jetbrains.edu.jbserver
 
-import java.io.File
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import java.io.File
 
 
 // Read file from testResources
@@ -21,7 +21,7 @@ fun jsonEquals(json1: String, json2: String): Boolean {
 
 
 // Print study item
-fun StudyItem.print(indent: Int = 0, indentSize: Int = 2): Unit = when(this) {
+fun StudyItem.print(indent: Int = 0, indentSize: Int = 2): Unit = when (this) {
   is EduCourse -> {
     println(" ".repeat(indent) + "ID: $courseId")
     println(" ".repeat(indent) + "Name: $name")
@@ -51,6 +51,7 @@ fun StudyItem.print(indent: Int = 0, indentSize: Int = 2): Unit = when(this) {
   }
   is Task -> {
     println(" ".repeat(indent) + "ID: $id")
+    println(" ".repeat(indent) + "VID: $versionId")
     println(" ".repeat(indent) + "Task type: $taskType")
     println(" ".repeat(indent) + "Name: $name")
     println(" ".repeat(indent) + "LMT: $updateDate")
@@ -58,4 +59,13 @@ fun StudyItem.print(indent: Int = 0, indentSize: Int = 2): Unit = when(this) {
   else -> {
     println(" ".repeat(indent) + "unknown item `${this.javaClass}`")
   }
+}
+
+
+// Course builder extension
+// fun Course.asEduCourse() = EduCourse().apply { fromCourse(this) }
+fun Course.asEduCourse(): EduCourse {
+  val course = EduCourse()
+  course.fromCourse(this)
+  return course
 }

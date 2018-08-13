@@ -21,12 +21,17 @@ import java.util.*
   JsonSubTypes.Type(value = ChoiceTask::class, name = "choice")
 ))
 @JsonIgnoreProperties(value = *arrayOf(
-  "format", "last_modified", "version_id"
+  "format"
 ))
 abstract class TaskMixIn {
 
   @JsonProperty("id")
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   var myStepId: Int = 0
+
+  @JsonProperty("version_id")
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+  var versionId: Int = 0
 
   @JsonProperty("name")
   lateinit var name: String
@@ -44,6 +49,7 @@ abstract class TaskMixIn {
   lateinit var testsText: HashMap<String, String>
 
   @JsonProperty("last_modified")
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   lateinit var myUpdateDate: Date
 
 }

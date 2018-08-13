@@ -75,6 +75,10 @@ class CourseBuilder : LessonOwnerBuilder(Course()) {
     course.name = name
   }
 
+  fun withDescription(description: String) {
+    course.description = description
+  }
+
   fun withMode(courseMode: String) {
     course.courseMode = courseMode
   }

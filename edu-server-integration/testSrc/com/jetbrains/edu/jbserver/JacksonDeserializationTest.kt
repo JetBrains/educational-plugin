@@ -1,11 +1,15 @@
 package com.jetbrains.edu.jbserver
 
-import org.junit.Test
-import org.junit.Assert.assertTrue as check
-import com.fasterxml.jackson.module.kotlin.*
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
+import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import org.junit.Test
+import org.junit.Assert.assertTrue as check
 
 
 class JacksonDeserializationTest : EduTestCase() {

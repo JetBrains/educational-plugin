@@ -1,7 +1,10 @@
 package com.jetbrains.edu.jbserver
 
 import com.fasterxml.jackson.annotation.*
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.util.*
 
@@ -56,9 +59,11 @@ abstract class CourseMixin {
 abstract class SectionMixin {
 
   @JsonProperty("id")
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   var id: Int = 0
 
   @JsonProperty("last_modified")
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   lateinit var myUpdateDate: Date
 
   @JsonProperty("title")
@@ -77,9 +82,11 @@ abstract class SectionMixin {
 abstract class LessonMixin {
 
   @JsonProperty("id")
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   var myId: Int = 0
 
   @JsonProperty("last_modified")
+  @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   lateinit var myUpdateDate: Date
 
   @JsonProperty("title")
