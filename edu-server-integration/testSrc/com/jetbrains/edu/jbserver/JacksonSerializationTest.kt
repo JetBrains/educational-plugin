@@ -1,16 +1,21 @@
 package com.jetbrains.edu.jbserver
 
-import com.fasterxml.jackson.databind.ObjectWriter
+import org.junit.Test
+import org.junit.Assert.assertTrue as check
+import com.fasterxml.jackson.module.kotlin.*
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 
 
-val writer: ObjectWriter = mapper.writerWithDefaultPrettyPrinter()
+class JacksonSerializationTest : EduTestCase() {
 
+  val writer = jacksonObjectMapper()
+    .setupMapper()
+    .writerWithDefaultPrettyPrinter()
 
-fun testSerializationTaskFile() {
-
-  testCase("Serialize answer dependency") {
+  @Test
+  fun `test answer dependency`() {
     val obj = AnswerPlaceholderDependency()
     obj.sectionName = "section-name"
     obj.lessonName = "lesson-name"
@@ -18,11 +23,12 @@ fun testSerializationTaskFile() {
     obj.fileName = "file-name"
     obj.placeholderIndex = 3
     val json = writer.writeValueAsString(obj)
-    val answ = readResFile("answer_dependency.json")
+    val answ = readTestRes("answer_dependency.json")
     check(jsonEquals(json, answ))
   }
 
-  testCase("Serialize answer placeholder") {
+  @Test
+  fun `test answer placeholder`() {
     val dep = AnswerPlaceholderDependency()
     dep.sectionName = "section-dep"
     dep.lessonName = "lesson-dep"
@@ -37,11 +43,12 @@ fun testSerializationTaskFile() {
     obj.placeholderText = "todo"
     obj.placeholderDependency = dep
     val json = writer.writeValueAsString(obj)
-    val answ = readResFile("placeholder.json")
+    val answ = readTestRes("placeholder.json")
     check(jsonEquals(json, answ))
   }
 
-  testCase("Serialize task file") {
+  @Test
+  fun `test task file`() {
     val dep = AnswerPlaceholderDependency()
     dep.sectionName = "section-dep-9645696"
     dep.lessonName = "lesson-dep-5654756"
@@ -65,18 +72,10 @@ fun testSerializationTaskFile() {
     obj.text = "file-content-08672241"
     obj.answerPlaceholders = listOf(ph1, ph2)
     val json = writer.writeValueAsString(obj)
-    val answ = readResFile("taskfile.json")
+    val answ = readTestRes("taskfile.json")
     check(jsonEquals(json, answ))
   }
 
-}
-
-
-fun testSerializationTask() {
-
-}
-
-
-fun testSerializationCourse() {
+  // todo: use dsl to construct objects
 
 }

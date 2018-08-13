@@ -1,14 +1,22 @@
 package com.jetbrains.edu.jbserver
 
+import org.junit.Test
+import org.junit.Assert.assertTrue as check
 import com.fasterxml.jackson.module.kotlin.*
+import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 
 
-fun testDeserializationCourse() {
+class JacksonDeserializationTest : EduTestCase() {
 
-  testCase("Deserialize empty course") {
-    val json = readResFile("empty_course.json")
+  val mapper = jacksonObjectMapper().setupMapper()
+
+  /* Test course deserialization */
+
+  @Test
+  fun `test empty course`() {
+    val json = readTestRes("empty_course.json")
     val course = mapper.readValue<EduCourse>(json)
     check(course.name == "test-title")
     check(course.description == "test-summary")
@@ -17,22 +25,25 @@ fun testDeserializationCourse() {
     check(course.items.size == 0)
   }
 
-  testCase("Deserialize empty section") {
-    val json = readResFile("empty_section.json")
+  @Test
+  fun `test empty section`() {
+    val json = readTestRes("empty_section.json")
     val section = mapper.readValue<Section>(json)
     check(section.name == "test-section-title")
     check(section.items.size == 0)
   }
 
-  testCase("Deserialize empty lesson") {
-    val json = readResFile("empty_lesson.json")
+  @Test
+  fun `test empty lesson`() {
+    val json = readTestRes("empty_lesson.json")
     val lesson = mapper.readValue<Lesson>(json)
     check(lesson.name == "test-lesson-title")
     check(lesson.taskList.size == 0)
   }
 
-  testCase("Deserialize course structure") {
-    val json = readResFile("course_struct.json")
+  @Test
+  fun `test course structure`() {
+    val json = readTestRes("course_struct.json")
     val course = mapper.readValue<EduCourse>(json)
     check(course.name == "test-course-title")
     check(course.description == "test-course-summary")
@@ -64,13 +75,72 @@ fun testDeserializationCourse() {
     check(lesson.taskList[0].testsText.isEmpty())
   }
 
-}
+  /* Test task file deserialization */
 
+  @Test
+  fun `test AnswerPlaceholderDependency`() {
+    val json = readTestRes("answer_dependency.json")
+    val obj = mapper.readValue<AnswerPlaceholderDependency>(json)
+    check(obj.sectionName == "section-name")
+    check(obj.lessonName == "lesson-name")
+    check(obj.taskName == "task-name")
+    check(obj.fileName == "file-name")
+    check(obj.placeholderIndex == 3)
+  }
 
-fun testDeserializationTask() {
+  @Test
+  fun `test AnswerPlaceholder`() {
+    val json = readTestRes("placeholder.json")
+    val obj = mapper.readValue<AnswerPlaceholder>(json)
+    check(obj.offset == 301)
+    check(obj.length == 7)
+    check(obj.hints.size == 2)
+    check(obj.hints[0] == "hint 1")
+    check(obj.hints[1] == "hint 2")
+    check(obj.possibleAnswer == "answer")
+    check(obj.placeholderText == "todo")
+    val dep = obj.placeholderDependency
+    check(dep?.sectionName == "section-dep")
+    check(dep?.lessonName == "lesson-dep")
+    check(dep?.taskName == "task-dep")
+    check(dep?.fileName == "file-dep")
+    check(dep?.placeholderIndex == 1)
+  }
 
-  testCase("Deserialize empty task") {
-    val json = readResFile("empty_task.json")
+  @Test
+  fun `test task file`() {
+    val json = readTestRes("taskfile.json")
+    val file = mapper.readValue<TaskFile>(json)
+    check(file.name == "file-name-3301")
+    check(file.text == "file-content-08672241")
+    check(file.answerPlaceholders.size == 2)
+    val ph1 = file.answerPlaceholders[0]
+    val ph2 = file.answerPlaceholders[1]
+    check(ph1.offset == 42)
+    check(ph1.length == 7)
+    check(ph1.hints.size == 0)
+    check(ph1.possibleAnswer == "answer-23174611")
+    check(ph1.placeholderText == "todo-67")
+    check(ph1.placeholderDependency?.sectionName == "section-dep-9645696")
+    check(ph1.placeholderDependency?.lessonName == "lesson-dep-5654756")
+    check(ph1.placeholderDependency?.taskName == "task-dep-1265799")
+    check(ph1.placeholderDependency?.fileName == "file-dep-8633256")
+    check(ph1.placeholderDependency?.placeholderIndex == 2)
+    check(ph2.offset == 163)
+    check(ph2.length == 5)
+    check(ph2.hints.size == 2)
+    check(ph2.hints[0] == "hint-13")
+    check(ph2.hints[1] == "hint-72")
+    check(ph2.possibleAnswer == "answer-2940345937")
+    check(ph2.placeholderText == "todo-46")
+    check(ph2.placeholderDependency == null)
+  }
+
+  /* Test task deserialization */
+
+  @Test
+  fun `test empty task`() {
+    val json = readTestRes("empty_task.json")
     val task = mapper.readValue<Task>(json)
     check(task is TheoryTask)
     check(task.id == 1307)
@@ -81,26 +151,9 @@ fun testDeserializationTask() {
     check(task.testsText.isEmpty())
   }
 
-  /* Problems:
-   *
-   * 1. Enum annotations done not by mixin
-   *
-   * 2. Default value of `descriptionFormat` in class `Task` changed:
-   *      from: EduUtils.getDefaultTaskDescriptionFormat()
-   *      to:   DescriptionFormat.MD
-   *    Otherwise: get NullPointerException:
-   *      at com.intellij.openapi.components.ServiceManager.doGetService(ServiceManager.java:42)
-   *      at com.intellij.openapi.components.ServiceManager.getService(ServiceManager.java:26)
-   *      at com.jetbrains.edu.coursecreator.settings.CCSettings.getInstance(CCSettings.java:37)
-   *      at com.jetbrains.edu.learning.EduUtils.getDefaultTaskDescriptionFormat(EduUtils.java:641)
-   *      at com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask.<init>(TheoryTask.java:7)
-   *      at com.jetbrains.edu.jbserver.TestSandboxKt.main(testSandbox.kt:7)
-   *    We need to initialize ServiceManager or smth? fixme
-   *
-   */
-
-  testCase("Deserialize edu task") {
-    val json = readResFile("task_edu.json")
+  @Test
+  fun `test edu task`() {
+    val json = readTestRes("task_edu.json")
     val task = mapper.readValue<Task>(json)
     check(task is EduTask)
     check(task.stepId == 96145)
@@ -154,66 +207,6 @@ fun testDeserializationTask() {
     check(ph31?.placeholderDependency?.taskName == "task-dep-96354")
     check(ph31?.placeholderDependency?.fileName == "file-dep-16583")
     check(ph31?.placeholderDependency?.placeholderIndex == 2)
-  }
-
-}
-
-fun testDeserializationTaskFile() {
-
-  testCase("Deserialize AnswerPlaceholderDependency") {
-    val json = readResFile("answer_dependency.json")
-    val obj = mapper.readValue<AnswerPlaceholderDependency>(json)
-    check(obj.sectionName == "section-name")
-    check(obj.lessonName == "lesson-name")
-    check(obj.taskName == "task-name")
-    check(obj.fileName == "file-name")
-    check(obj.placeholderIndex == 3)
-  }
-
-  testCase("Deserialize AnswerPlaceholder") {
-    val json = readResFile("placeholder.json")
-    val obj = mapper.readValue<AnswerPlaceholder>(json)
-    check(obj.offset == 301)
-    check(obj.length == 7)
-    check(obj.hints.size == 2)
-    check(obj.hints[0] == "hint 1")
-    check(obj.hints[1] == "hint 2")
-    check(obj.possibleAnswer == "answer")
-    check(obj.placeholderText == "todo")
-    val dep = obj.placeholderDependency
-    check(dep?.sectionName == "section-dep")
-    check(dep?.lessonName == "lesson-dep")
-    check(dep?.taskName == "task-dep")
-    check(dep?.fileName == "file-dep")
-    check(dep?.placeholderIndex == 1)
-  }
-
-  testCase("Deserialize TaskFile") {
-    val json = readResFile("taskfile.json")
-    val file = mapper.readValue<TaskFile>(json)
-    check(file.name == "file-name-3301")
-    check(file.text == "file-content-08672241")
-    check(file.answerPlaceholders.size == 2)
-    val ph1 = file.answerPlaceholders[0]
-    val ph2 = file.answerPlaceholders[1]
-    check(ph1.offset == 42)
-    check(ph1.length == 7)
-    check(ph1.hints.size == 0)
-    check(ph1.possibleAnswer == "answer-23174611")
-    check(ph1.placeholderText == "todo-67")
-    check(ph1.placeholderDependency?.sectionName == "section-dep-9645696")
-    check(ph1.placeholderDependency?.lessonName == "lesson-dep-5654756")
-    check(ph1.placeholderDependency?.taskName == "task-dep-1265799")
-    check(ph1.placeholderDependency?.fileName == "file-dep-8633256")
-    check(ph1.placeholderDependency?.placeholderIndex == 2)
-    check(ph2.offset == 163)
-    check(ph2.length == 5)
-    check(ph2.hints.size == 2)
-    check(ph2.hints[0] == "hint-13")
-    check(ph2.hints[1] == "hint-72")
-    check(ph2.possibleAnswer == "answer-2940345937")
-    check(ph2.placeholderText == "todo-46")
-    check(ph2.placeholderDependency == null)
   }
 
 }

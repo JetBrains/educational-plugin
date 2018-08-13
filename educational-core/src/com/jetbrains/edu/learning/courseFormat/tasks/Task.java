@@ -52,7 +52,7 @@ public abstract class Task extends StudyItem {
   @Expose private String descriptionText;
 
   @SerializedName("description_format")
-  @Expose private DescriptionFormat descriptionFormat = DescriptionFormat.MD; //EduUtils.getDefaultTaskDescriptionFormat();
+  @Expose private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
 
   @SerializedName("additional_files")
   @Expose protected Map<String, String> additionalFiles = new HashMap<>();
