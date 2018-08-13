@@ -896,18 +896,19 @@ public class StepikConnector {
       final CustomAuthorizationServer startedServer = CustomAuthorizationServer.getServerIfStarted(StepikNames.STEPIK);
 
       if (startedServer != null) {
-        return "http://localhost:" + startedServer.getPort();
+        return startedServer.getHandlingUri();
       }
 
-      int port = CustomAuthorizationServer.create(
-        StepikNames.STEPIK,
-        new Range<>(36656, 36665),
-        "",
-        StepikConnector::afterCodeReceived
-      );
-
-      if (port != -1) {
-        return "http://localhost:" + port;
+      try {
+        return CustomAuthorizationServer.create(
+          StepikNames.STEPIK,
+          new Range<>(36656, 36665),
+          "/",
+          StepikConnector::afterCodeReceived
+        ).getHandlingUri();
+      } catch (IOException e) {
+        LOG.warn(e.getMessage());
+        return StepikNames.EXTERNAL_REDIRECT_URL;
       }
     } else {
       int port = BuiltInServerManager.getInstance().getPort();
@@ -922,8 +923,8 @@ public class StepikConnector {
     return StepikNames.EXTERNAL_REDIRECT_URL;
   }
 
-  public static String afterCodeReceived(@NotNull String code) {
-    final StepicUser user = StepikAuthorizedClient.login(code, getOAuthRedirectUrl());
+  public static String afterCodeReceived(@NotNull String code, @NotNull String redirectUri) {
+    final StepicUser user = StepikAuthorizedClient.login(code, redirectUri);
     if (user != null) {
       EduSettings.getInstance().setUser(user);
       return null;

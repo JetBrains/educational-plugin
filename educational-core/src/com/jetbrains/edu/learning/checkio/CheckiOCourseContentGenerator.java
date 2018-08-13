@@ -2,28 +2,19 @@ package com.jetbrains.edu.learning.checkio;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 public abstract class CheckiOCourseContentGenerator {
-  private static Logger LOG = Logger.getInstance(CheckiOCourseContentGenerator.class);
-
-  @Nullable
-  public  CheckiOCourse generateCourseFromMissions(@Nullable List<CheckiOMission> missionsList) {
-    if (missionsList == null) {
-      LOG.warn("Mission list is null");
-      return null;
-    }
-
+  @NotNull
+  public  CheckiOCourse generateCourseFromMissions(@NotNull List<CheckiOMission> missionsList) {
     missionsList.forEach(this::generateTaskFile);
 
     final List<CheckiOStation> stations = generateStationsFromMissions(missionsList);

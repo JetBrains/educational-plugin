@@ -21,12 +21,6 @@ public class PyCheckiOConfigurator implements CheckiOConfigurator<PyNewProjectSe
     return myCourseBuilder;
   }
 
-  @NotNull
-  @Override
-  public String getTestFileName() {
-    return "";
-  }
-
   @Override
   public boolean excludeFromArchive(@NotNull Project project, @NotNull String path) {
     return path.contains("__pycache__") || path.endsWith(".pyc");

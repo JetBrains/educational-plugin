@@ -8,7 +8,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.model.CheckiOAccount;
-import com.jetbrains.edu.learning.checkio.model.CheckiOAccountHolder;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,17 +25,14 @@ public abstract class CheckiOOptions implements OptionsProvider {
   private CheckiOAccount myCurrentAccount;
 
   private final String myTitle;
-  private final CheckiOAccountHolder myAccountHolder;
   private final CheckiOOAuthConnector myOAuthConnector;
 
 
   protected CheckiOOptions(
     @NotNull String optionsPanelTitle,
-    @NotNull CheckiOAccountHolder accountHolder,
     @NotNull CheckiOOAuthConnector oauthConnector
   ) {
     myTitle = optionsPanelTitle;
-    myAccountHolder = accountHolder;
     myOAuthConnector = oauthConnector;
   }
 
@@ -71,19 +67,19 @@ public abstract class CheckiOOptions implements OptionsProvider {
 
   @Override
   public boolean isModified() {
-    return !Objects.equals(myCurrentAccount, myAccountHolder.getAccount());
+    return !Objects.equals(myCurrentAccount, myOAuthConnector.getAccountHolder().getAccount());
   }
 
   @Override
   public void reset() {
-    myCurrentAccount = myAccountHolder.getAccount();
+    myCurrentAccount = myOAuthConnector.getAccountHolder().getAccount();
     updateLoginLabels();
   }
 
   @Override
   public void apply() {
     if (isModified()) {
-      myAccountHolder.setAccount(myCurrentAccount);
+      myOAuthConnector.getAccountHolder().setAccount(myCurrentAccount);
     }
 
     reset();
@@ -115,8 +111,8 @@ public abstract class CheckiOOptions implements OptionsProvider {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent event) {
         myOAuthConnector.doAuthorize(() -> {
-          final CheckiOAccount newAccount = myAccountHolder.getAccount();
-          myAccountHolder.setAccount(myCurrentAccount);
+          final CheckiOAccount newAccount = myOAuthConnector.getAccountHolder().getAccount();
+          myOAuthConnector.getAccountHolder().setAccount(myCurrentAccount);
           myCurrentAccount = newAccount;
           updateLoginLabels();
         });

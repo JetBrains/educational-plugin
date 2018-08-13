@@ -12,6 +12,7 @@ import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,21 +40,18 @@ public class CustomAuthorizationServer {
   private static final ReentrantLock ourLock = new ReentrantLock();
 
   private final HttpServer myServer;
+  private final String myHandlerPath;
 
-  private CustomAuthorizationServer(@NotNull HttpServer server) {
+  private CustomAuthorizationServer(@NotNull HttpServer server, @NotNull String handlerPath) {
     myServer = server;
+    myHandlerPath = handlerPath;
   }
 
   private void stopServer() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      try {
-        LOG.info("Stopping server");
-        myServer.stop();
-        LOG.info("Server stopped");
-      }
-      catch (Exception e) {
-        LOG.warn(e.getMessage());
-      }
+      LOG.info("Stopping server");
+      myServer.stop();
+      LOG.info("Server stopped");
     });
   }
 
@@ -61,16 +59,23 @@ public class CustomAuthorizationServer {
     return myServer.getLocalPort();
   }
 
+  @NotNull
+  public String getHandlingUri() {
+    return "http://localhost:" + getPort() + myHandlerPath;
+  }
+
+  @Nullable
   public static CustomAuthorizationServer getServerIfStarted(@NotNull String platformName) {
     return ourServerByName.get(platformName);
   }
 
-  public static int create(
+  @NotNull
+  public static CustomAuthorizationServer create(
     @NotNull String platformName,
     @NotNull Range<Integer> portsToTry,
     @NotNull String handlerPath,
-    @NotNull Function<String, String> afterCodeReceived
-  ) {
+    @NotNull BiFunction<String, String, String> afterCodeReceived
+  ) throws IOException {
     return create(
       platformName,
       IntStream.rangeClosed(portsToTry.getFrom(), portsToTry.getTo()).boxed().collect(Collectors.toList()),
@@ -79,52 +84,47 @@ public class CustomAuthorizationServer {
     );
   }
 
-  public static int create(
+  @NotNull
+  public static CustomAuthorizationServer create(
     @NotNull String platformName,
     @NotNull Collection<Integer> portsToTry,
     @NotNull String handlerPath,
-    @NotNull Function<String, String> afterCodeReceived
-  ) {
+    @NotNull BiFunction<String, String, String> afterCodeReceived
+  ) throws IOException {
     ourLock.lock();
-    int port = createServer(platformName, portsToTry, handlerPath, afterCodeReceived);
+    final CustomAuthorizationServer server = createServer(platformName, portsToTry, handlerPath, afterCodeReceived);
+    ourServerByName.put(platformName, server);
     ourLock.unlock();
-    return port;
+    return server;
   }
 
-  private static int createServer(
+  @NotNull
+  private static CustomAuthorizationServer createServer(
     @NotNull String platformName,
     @NotNull Collection<Integer> portsToTry,
     @NotNull String handlerPath,
-    @NotNull Function<String, String> afterCodeReceived
-  ) {
+    @NotNull BiFunction<String, String, String> afterCodeReceived
+  ) throws IOException {
     int port = portsToTry.stream().filter(CustomAuthorizationServer::isPortAvailable).findFirst().orElse(-1);
 
-    if (port != -1) {
-      SocketConfig socketConfig = SocketConfig.custom()
-        .setSoTimeout(15000)
-        .setTcpNoDelay(true)
-        .build();
-
-      final HttpServer newServer = ServerBootstrap.bootstrap()
-        .setListenerPort(port)
-        .setServerInfo(platformName)
-        .registerHandler(handlerPath, createContextHandler(platformName, afterCodeReceived))
-        .setSocketConfig(socketConfig)
-        .create();
-
-      try {
-        newServer.start();
-        ourServerByName.put(platformName, new CustomAuthorizationServer(newServer));
-        return port;
-      }
-      catch (IOException e) {
-        LOG.warn(e.getMessage());
-        return -1;
-      }
+    if (port == -1) {
+      throw new IOException("No ports available");
     }
 
-    LOG.warn("No available ports");
-    return -1;
+    final SocketConfig socketConfig = SocketConfig.custom()
+      .setSoTimeout(15000)
+      .setTcpNoDelay(true)
+      .build();
+
+    final HttpServer newServer = ServerBootstrap.bootstrap()
+      .setListenerPort(port)
+      .setServerInfo(platformName)
+      .registerHandler(handlerPath, createContextHandler(platformName, afterCodeReceived))
+      .setSocketConfig(socketConfig)
+      .create();
+
+    newServer.start();
+    return new CustomAuthorizationServer(newServer, handlerPath);
   }
 
   private static boolean isPortAvailable(int port) {
@@ -136,7 +136,11 @@ public class CustomAuthorizationServer {
     }
   }
 
-  private static HttpRequestHandler createContextHandler(@NotNull String platformName, @NotNull Function<String, String> afterCodeReceived) {
+  @NotNull
+  private static HttpRequestHandler createContextHandler(
+    @NotNull String platformName,
+    @NotNull BiFunction<String, String, String> afterCodeReceived
+  ) {
     return (request, response, context) -> {
       LOG.info("Handling auth response");
 
@@ -145,7 +149,7 @@ public class CustomAuthorizationServer {
         for (NameValuePair pair : parse) {
           if (pair.getName().equals("code")) {
             String code = pair.getValue();
-            String errorMessage = afterCodeReceived.apply(code);
+            String errorMessage = afterCodeReceived.apply(code, getServerIfStarted(platformName).getHandlingUri());
 
             if (errorMessage == null) {
               sendOkResponse(response, platformName);

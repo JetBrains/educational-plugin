@@ -4,15 +4,20 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ex.ApplicationUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
+import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
+import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseUpdater;
+import com.jetbrains.edu.python.learning.checkio.messages.PyCheckiOErrorInformer;
 import javafx.embed.swing.JFXPanel;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +43,24 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
     final CheckiOCourse course = (CheckiOCourse) StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
 
-    new PyCheckiOCourseUpdater(course, project).doUpdate();
+    try {
+      new PyCheckiOCourseUpdater(course, project).doUpdate();
+    }
+    catch (LoginRequiredException e) {
+      LOG.warn(e);
+      PyCheckiOErrorInformer.getInstance().showLoginRequiredMessage("Failed to update the course");
+    }
+    catch (NetworkException e) {
+      LOG.warn(e);
+      int result = PyCheckiOErrorInformer.getInstance().showNetworkErrorMessage("Failed to update the course");
+      if (result == Messages.OK) {
+        updateCourse();
+      }
+    }
+    catch (ApiException e) {
+      LOG.warn(e);
+      PyCheckiOErrorInformer.getInstance().showErrorDialog("Something went wrong. Course cannot be updated.", "Failed to update the course");
+    }
   }
 
   @NotNull

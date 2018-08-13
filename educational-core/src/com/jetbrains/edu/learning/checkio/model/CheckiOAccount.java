@@ -13,11 +13,23 @@ public class CheckiOAccount {
   @Property private Tokens myTokens;
   @Property private boolean myLoggedIn;
 
+  @NotNull
   public CheckiOUserInfo getUserInfo() {
+    if (!isLoggedIn()) {
+      throw new IllegalStateException("Try to get user info when logged out");
+    } else if (myUserInfo == null) {
+      throw new IllegalStateException("Logged in, but user info are null");
+    }
     return myUserInfo;
   }
 
+  @NotNull
   public Tokens getTokens() {
+    if (!isLoggedIn()) {
+      throw new IllegalStateException("Try to get tokens when logged out");
+    } else if (myTokens == null) {
+      throw new IllegalStateException("Logged in, but tokens are null");
+    }
     return myTokens;
   }
 
@@ -59,11 +71,11 @@ public class CheckiOAccount {
     if (o == null || getClass() != o.getClass()) return false;
     CheckiOAccount account = (CheckiOAccount)o;
     return isLoggedIn() == account.isLoggedIn() &&
-           Objects.equals(getUserInfo(), account.getUserInfo());
+           Objects.equals(myUserInfo, account.myUserInfo);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(getUserInfo(), isLoggedIn());
+    return Objects.hash(myUserInfo, isLoggedIn());
   }
 }

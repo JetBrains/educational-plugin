@@ -7,10 +7,11 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector
+import com.jetbrains.edu.learning.stepik.StepikNames
 
 class ChoiceTaskChecker(task: ChoiceTask, project: Project) : TaskChecker<ChoiceTask>(task, project) {
     override fun checkOnRemote(): CheckResult {
-        val user = EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
+        val user = EduSettings.getInstance().user ?: return CheckResult.loginNeeded(StepikNames.STEPIK)
         return StepikAdaptiveConnector.checkChoiceTask(task, user)
     }
 

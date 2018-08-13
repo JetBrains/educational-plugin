@@ -13,14 +13,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class CheckiOOAuthRestService extends RestService {
-  private final Pattern myOauthCodePattern;
+  private final Pattern myOAuthCodePattern;
   private final CheckiOOAuthConnector myOAuthConnector;
   private final String myPlatformName;
 
-  protected CheckiOOAuthRestService(@NotNull String platformName, @NotNull String restServicePath, @NotNull CheckiOOAuthConnector oAuthConnector) {
+  protected CheckiOOAuthRestService(
+    @NotNull String platformName,
+    @NotNull String restServicePath,
+    @NotNull CheckiOOAuthConnector oauthConnector
+  ) {
     myPlatformName = platformName;
-    myOauthCodePattern = Pattern.compile(restServicePath + "\\?code=(\\w+)");
-    myOAuthConnector = oAuthConnector;
+    myOAuthCodePattern = Pattern.compile(restServicePath + "\\?code=(\\w+)");
+    myOAuthConnector = oauthConnector;
   }
 
   @Override
@@ -31,7 +35,7 @@ public abstract class CheckiOOAuthRestService extends RestService {
   @Override
   protected boolean isHostTrusted(@NotNull FullHttpRequest request) throws InterruptedException, InvocationTargetException {
     final String uri = request.uri();
-    final Matcher codeMatcher = myOauthCodePattern.matcher(uri);
+    final Matcher codeMatcher = myOAuthCodePattern.matcher(uri);
     if (request.method() == HttpMethod.GET && codeMatcher.matches()) {
       return true;
     }
@@ -40,12 +44,14 @@ public abstract class CheckiOOAuthRestService extends RestService {
 
   @Nullable
   @Override
-  public String execute(@NotNull QueryStringDecoder decoder, @NotNull FullHttpRequest request, @NotNull ChannelHandlerContext context)
-    throws IOException {
-
+  public String execute(
+    @NotNull QueryStringDecoder decoder,
+    @NotNull FullHttpRequest request,
+    @NotNull ChannelHandlerContext context
+  ) throws IOException {
     final String uri = decoder.uri();
 
-    if (myOauthCodePattern.matcher(uri).matches()) {
+    if (myOAuthCodePattern.matcher(uri).matches()) {
       final String code = getStringParameter("code", decoder);
       assert code != null; // cannot be null because of pattern
 
@@ -55,7 +61,7 @@ public abstract class CheckiOOAuthRestService extends RestService {
       if (errorMessage == null) {
         return sendOkResponse(request, context);
       } else {
-        return sendErrorResponse(request, context, "Couldn't get user info");
+        return sendErrorResponse(request, context, errorMessage);
       }
     }
 
@@ -69,14 +75,14 @@ public abstract class CheckiOOAuthRestService extends RestService {
     @NotNull ChannelHandlerContext context,
     @NotNull String errorMessage
   ) throws IOException {
-    LOG.error(errorMessage);
+    LOG.warn(errorMessage);
     BuiltinServerUtils.showErrorPage(request, context, myPlatformName, errorMessage);
     return errorMessage;
   }
 
   @Nullable
   protected String sendOkResponse(@NotNull HttpRequest request, @NotNull ChannelHandlerContext context) throws IOException {
-    LOG.info("Successful CheckiO authorization");
+    LOG.info("Successful " + myPlatformName + " authorization");
     BuiltinServerUtils.showOkPage(request, context, myPlatformName);
     return null;
   }

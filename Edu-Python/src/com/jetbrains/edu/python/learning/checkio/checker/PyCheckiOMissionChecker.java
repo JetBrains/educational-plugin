@@ -3,16 +3,20 @@ package com.jetbrains.edu.python.learning.checkio.checker;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
+import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector;
+import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
+import com.jetbrains.edu.python.learning.checkio.messages.PyCheckiOErrorInformer;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
@@ -34,7 +38,7 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
   private final Task myTask;
 
   private final BrowserWindow myBrowserWindow;
-  private final CheckiOTestResultHandler myResultHandler = new CheckiOTestResultHandler();
+  private final CheckiOTestResultHandler myResultHandler;
 
   private CheckResult myCheckResult;
   private CountDownLatch myLatch = new CountDownLatch(1);
@@ -43,6 +47,7 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
     myProject = project;
     myTask = task;
 
+    myResultHandler = new CheckiOTestResultHandler();
     myBrowserWindow = new BrowserWindow(myProject, false, false);
   }
 
@@ -54,20 +59,29 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
       return CheckResult.FAILED_TO_CHECK;
     }
 
-    final String accessToken = PyCheckiOOAuthConnector.getInstance().getAccessToken();
-    final String taskId = String.valueOf(myTask.getId());
-    final String interpreter = EduNames.CHECKIO_PYTHON_INTERPRETER;
-    final String code = selectedEditor.getDocument().getText();
-
-    if (accessToken == null) {
-      return new CheckResult(CheckStatus.Unchecked, "Log in to Py CheckiO to check the task");
-    }
-
     try {
+      final String accessToken = PyCheckiOOAuthConnector.getInstance().getAccessToken();
+      final String taskId = String.valueOf(myTask.getId());
+      final String interpreter = EduNames.CHECKIO_PYTHON_INTERPRETER;
+      final String code = selectedEditor.getDocument().getText();
+
       return doCheck(accessToken, taskId, interpreter, code);
     }
+    catch (LoginRequiredException e) {
+      LOG.warn(e);
+      PyCheckiOErrorInformer.getInstance().showLoginRequiredMessage("Failed to check the task");
+      return CheckResult.loginNeeded(CheckiONames.PY_CHECKIO);
+    }
+    catch (NetworkException e) {
+      LOG.warn(e);
+      int result = PyCheckiOErrorInformer.getInstance().showNetworkErrorMessage("Failed to check the task");
+      if (result == Messages.OK) {
+        return call();
+      }
+      return CheckResult.CONNECTION_FAILED;
+    }
     catch (Exception e) {
-      LOG.warn(e.getMessage());
+      LOG.warn(e);
       return CheckResult.FAILED_TO_CHECK;
     }
   }
@@ -75,15 +89,20 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
   @SuppressWarnings("SameParameterValue")
   @NotNull
   private CheckResult doCheck(@NotNull String accessToken, @NotNull String taskId, @NotNull String interpreter, @NotNull String code)
-    throws InterruptedException {
+    throws InterruptedException, NetworkException {
     setTestFormLoadedListener(accessToken, taskId, interpreter, code);
     setCheckDoneListener();
     loadTestForm();
 
-    boolean timeoutExceeded = !myLatch.await(15L, TimeUnit.SECONDS);
+    boolean timeoutExceeded = !myLatch.await(30L, TimeUnit.SECONDS);
     if (timeoutExceeded) {
-      myCheckResult = new CheckResult(CheckStatus.Unchecked, "Checking took too much time");
+      return new CheckResult(CheckStatus.Unchecked, "Checking took too much time");
     }
+
+    if (myCheckResult == CheckResult.CONNECTION_FAILED) {
+      throw new NetworkException();
+    }
+
     return myCheckResult;
   }
 
@@ -144,7 +163,6 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
   }
 
   private void setConnectionError() {
-    LOG.warn(CheckResult.CONNECTION_FAILED.getMessage());
     myCheckResult = CheckResult.CONNECTION_FAILED;
     myLatch.countDown();
   }

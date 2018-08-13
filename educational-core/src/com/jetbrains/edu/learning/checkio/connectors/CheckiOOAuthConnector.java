@@ -8,6 +8,9 @@ import com.intellij.util.messages.Topic;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthService;
+import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
+import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
+import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
 import com.jetbrains.edu.learning.checkio.model.CheckiOAccountHolder;
 import com.jetbrains.edu.learning.checkio.model.CheckiOUserInfo;
 import com.jetbrains.edu.learning.checkio.model.Tokens;
@@ -17,8 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 public abstract class CheckiOOAuthConnector {
@@ -26,119 +31,122 @@ public abstract class CheckiOOAuthConnector {
 
   private final String myClientId;
   private final String myClientSecret;
-  private final CheckiOAccountHolder myAccountHolder;
   private final Topic<CheckiOUserLoggedIn> myAuthorizationTopic;
-  private MessageBusConnection myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
+  private MessageBusConnection myAuthorizationBusConnection;
+  private final ReentrantLock myAuthorizationLock;
 
   protected CheckiOOAuthConnector(
     @NotNull String clientId,
-    @NotNull String clientSecret,
-    @NotNull CheckiOAccountHolder accountHolder
+    @NotNull String clientSecret
   ) {
     myClientId = clientId;
     myClientSecret = clientSecret;
-    myAccountHolder = accountHolder;
     myAuthorizationTopic = Topic.create("Edu.checkioUserLoggedIn", CheckiOUserLoggedIn.class);
+    myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
+    myAuthorizationLock = new ReentrantLock();
   }
 
   @NotNull
-  public CheckiOAccountHolder getAccountHolder() {
-    return myAccountHolder;
+  public abstract CheckiOAccountHolder getAccountHolder();
+
+  @NotNull
+  public String getAccessToken() throws LoginRequiredException, ApiException {
+    requireUserLoggedIn();
+    ensureTokensUpToDate();
+
+    return getAccountHolder().getAccount().getTokens().getAccessToken();
   }
 
-  @Nullable
-  public String getAccessToken() {
-    final Tokens currentTokens = requireTokensExistAndUpToDate();
-    if (currentTokens == null) {
-      return null;
-    }
+  @NotNull
+  private Tokens getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
+    requireClientPropertiesExist();
 
-    return currentTokens.getAccessToken();
-  }
-
-  @Nullable
-  public Tokens getTokens(@NotNull String code) {
-    if (!requireClientPropertiesExist()) {
-      return null;
-    }
-
-    final Tokens tokens = CheckiOOAuthService.getTokens(
+    return CheckiOOAuthService.getTokens(
       CheckiONames.GRANT_TYPE.AUTHORIZATION_CODE,
       myClientSecret,
       myClientId,
       code,
-      getOauthRedirectUri()
-    );
-    myAccountHolder.getAccount().updateTokens(tokens);
-    return tokens;
+      redirectUri
+    ).get();
   }
 
-  @Nullable
-  public Tokens refreshTokens() {
-    if (!requireClientPropertiesExist()) {
-      return null;
-    }
+  @SuppressWarnings("MethodMayBeStatic")
+  @NotNull
+  private CheckiOUserInfo getUserInfo(@NotNull String accessToken) throws ApiException {
+    return CheckiOOAuthService.getUserInfo(accessToken).get();
+  }
 
-    final Tokens currentTokens = requireTokensExist();
-    if (currentTokens == null) {
-      return null;
-    }
+  @NotNull
+  private Tokens refreshTokens(@NotNull String refreshToken) throws ApiException {
+    requireClientPropertiesExist();
 
-    final Tokens newTokens = CheckiOOAuthService.refreshTokens(
+    return CheckiOOAuthService.refreshTokens(
       CheckiONames.GRANT_TYPE.REFRESH_TOKEN,
       myClientSecret,
       myClientId,
-      currentTokens.getRefreshToken()
-    );
-
-    myAccountHolder.getAccount().updateTokens(newTokens);
-    return newTokens;
+      refreshToken
+    ).get();
   }
 
-  @Nullable
-  public CheckiOUserInfo getUserInfo() {
-    final Tokens currentTokens = requireTokensExistAndUpToDate();
-    if (currentTokens == null) {
-      return null;
-    }
+  private void ensureTokensUpToDate() throws LoginRequiredException, ApiException {
+    requireUserLoggedIn();
 
-    return CheckiOOAuthService.getUserInfo(currentTokens.getAccessToken());
-  }
-
-  @Nullable
-  private Tokens requireTokensExistAndUpToDate() {
-    final Tokens currentTokens = requireTokensExist();
-    if (currentTokens == null) {
-      return null;
-    } else if (!currentTokens.isUpToDate()) {
-      final Tokens newTokens = refreshTokens();
-      myAccountHolder.getAccount().updateTokens(newTokens);
-      return newTokens;
-    } else {
-      return currentTokens;
+    if (!getAccountHolder().getAccount().getTokens().isUpToDate()) {
+      final String refreshToken = getAccountHolder().getAccount().getTokens().getRefreshToken();
+      final Tokens newTokens = refreshTokens(refreshToken);
+      getAccountHolder().getAccount().updateTokens(newTokens);
     }
   }
 
-  @Nullable
-  private Tokens requireTokensExist() {
-    final Tokens currentTokens = myAccountHolder.getAccount().getTokens();
-    if (currentTokens == null) {
-      LOG.warn("Tokens are not provided");
-      return null;
+  private void requireClientPropertiesExist() {
+    final Pattern spacesStringPattern = Pattern.compile("\\p{javaWhitespace}*");
+    if (spacesStringPattern.matcher(myClientId).matches() || spacesStringPattern.matcher(myClientSecret).matches()) {
+      final String errorMessage = "Client properties are not provided";
+      LOG.error(errorMessage);
+      throw new IllegalStateException(errorMessage);
     }
+  }
 
-    return currentTokens;
+  private void requireUserLoggedIn() throws LoginRequiredException {
+    if (!getAccountHolder().getAccount().isLoggedIn()) {
+      throw new LoginRequiredException();
+    }
   }
 
   public void doAuthorize(@NotNull Runnable... postLoginActions) {
-    final URI oauthLink = getOauthLink();
-    if (oauthLink == null) {
-      return;
+    try {
+      final String handlerUri = getOAuthHandlerUri();
+      final URI oauthLink = getOauthLink(handlerUri);
+
+      createAuthorizationListener(postLoginActions);
+      BrowserUtil.browse(oauthLink);
+    } catch (URISyntaxException | IOException e) {
+      // TODO: show message
     }
+  }
 
-    createAuthorizationListener(postLoginActions);
+  @NotNull
+  private String getOAuthHandlerUri() throws IOException {
+    if (EduUtils.isAndroidStudio()) {
+      return getCustomServer().getHandlingUri();
+    } else {
+      final int port = BuiltInServerManager.getInstance().getPort();
 
-    BrowserUtil.browse(oauthLink);
+      if (port < 63342 || port > 63362) {
+        throw new IOException("No ports available");
+      }
+
+      return buildRedirectUri(port);
+    }
+  }
+
+  @NotNull
+  private URI getOauthLink(@NotNull String oauthRedirectUri) throws URISyntaxException {
+    return new URIBuilder(CheckiONames.CHECKIO_OAUTH_URL + "/")
+      .addParameter("redirect_uri", oauthRedirectUri)
+      .addParameter("response_type", "code")
+      .addParameter("client_id", myClientId)
+      .build();
   }
 
   protected void createAuthorizationListener(@NotNull Runnable... postLoginActions) {
@@ -151,78 +159,45 @@ public abstract class CheckiOOAuthConnector {
     });
   }
 
-  public String afterCodeReceived(@NotNull String code) {
-    final Tokens newTokens = getTokens(code);
-    final CheckiOUserInfo newUserInfo = getUserInfo();
-
-    if (newUserInfo == null) {
-      return "Couldn't get user info";
-    } else {
-      myAccountHolder.getAccount().logIn(newUserInfo, newTokens);
-      ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
-      return null;
-    }
-  }
-
-  @Nullable
-  private URI getOauthLink() {
-    try {
-      return new URIBuilder(CheckiONames.CHECKIO_OAUTH_URL + "/")
-        .addParameter("redirect_uri", getOauthRedirectUri())
-        .addParameter("response_type", "code")
-        .addParameter("client_id", myClientId)
-        .build();
-    }
-    catch (URISyntaxException e) {
-      LOG.warn(e.getMessage());
-      return null;
-    }
-  }
-
   @NotNull
-  public String getOauthRedirectUri() {
-    if (EduUtils.isAndroidStudio()) {
-      final CustomAuthorizationServer startedServer = getServerIfStarted();
-
-      if (startedServer != null) {
-        return buildRedirectUri(startedServer.getPort());
-      }
-
-      int port = createCustomServer();
-
-      if (port != -1) {
-        return buildRedirectUri(port);
-      }
-
-      // TODO: show message
-    }
-
-    final int port = BuiltInServerManager.getInstance().getPort();
-    return buildRedirectUri(port);
-  }
-
   protected abstract String buildRedirectUri(int port);
 
-  protected abstract int createCustomServer();
+  @NotNull
+  protected abstract CustomAuthorizationServer getCustomServer() throws IOException;
 
-  protected abstract CustomAuthorizationServer getServerIfStarted();
+  // In case of built-in server
+  @Nullable
+  public String afterCodeReceived(@NotNull String code) {
+    return afterCodeReceived(code, buildRedirectUri(BuiltInServerManager.getInstance().getPort()));
+  }
 
-  private boolean requireClientPropertiesExist() {
-    final Pattern spacesStringPattern = Pattern.compile("\\p{javaWhitespace}*");
+  // In case of Android Studio
+  @Nullable
+  public String afterCodeReceived(@NotNull String code, @NotNull String handlingPath) {
+    myAuthorizationLock.lock();
 
-    if (spacesStringPattern.matcher(myClientId).matches()) {
-      LOG.warn("client_id is not provided");
-      return false;
+    try {
+      if (getAccountHolder().getAccount().isLoggedIn()) {
+        ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
+        return "You're logged in already";
+      }
+
+      final Tokens tokens = getTokens(code, handlingPath);
+      final CheckiOUserInfo userInfo = getUserInfo(tokens.getAccessToken());
+      getAccountHolder().getAccount().logIn(userInfo, tokens);
+      ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
+      return null;
+    } catch (NetworkException e) {
+      return "Connection failed";
+    } catch (ApiException e) {
+      return "Couldn't get user info";
+    } finally {
+      myAuthorizationLock.unlock();
     }
-    if (spacesStringPattern.matcher(myClientSecret).matches()) {
-      LOG.warn("client_secret is not provided");
-      return false;
-    }
-    return true;
   }
 
   @FunctionalInterface
-  protected interface CheckiOUserLoggedIn {
+  private interface CheckiOUserLoggedIn {
     void userLoggedIn();
   }
 }

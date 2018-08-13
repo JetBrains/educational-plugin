@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.learning.checkio;
+package com.jetbrains.edu.python.learning.checkio.courseFormat;
 
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;

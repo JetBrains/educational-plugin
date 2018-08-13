@@ -9,9 +9,11 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
+import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
+import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.IOException
 
@@ -20,16 +22,12 @@ abstract class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Proj
     private val LOG = Logger.getInstance(CheckiOCourseUpdater::class.java)
   }
 
-  protected abstract fun getCourseFromServer() : CheckiOCourse?
+  @Throws(LoginRequiredException::class, ApiException::class)
+  protected abstract fun getCourseFromServer() : CheckiOCourse
 
+  @Throws(LoginRequiredException::class, ApiException::class)
   fun doUpdate() {
     val serverCourse = getCourseFromServer()
-
-    if (serverCourse == null) {
-      LOG.warn("Couldn't get course from server")
-      return
-    }
-
     updateStations(serverCourse)
 
     runInEdt {

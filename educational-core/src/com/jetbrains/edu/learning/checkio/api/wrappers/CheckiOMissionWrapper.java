@@ -16,60 +16,22 @@ public class CheckiOMissionWrapper implements ResponseWrapper<CheckiOMission> {
   private String code;
   private long secondsPast;
 
-  public int getId() {
-    return id;
-  }
-
-  public boolean isSolved() {
-    return isSolved;
-  }
-
-  public int getStationId() {
-    return stationId;
-  }
-
-  public String getStationName() {
-    return stationName;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public String getCode() {
-    return code;
-  }
-
-  public long getSecondsFromLastChange() {
-    return secondsPast;
-  }
-
   @Override
   public CheckiOMission unwrap() {
     CheckiOMission mission = new CheckiOMission();
 
     CheckiOStation station = new CheckiOStation();
-    station.setId(getStationId());
-    station.setName(getStationName());
+    station.setId(stationId);
+    station.setName(stationName);
 
     mission.setStation(station);
-    mission.setStepId(getId());
-    mission.setName(getTitle());
+    mission.setStepId(id);
+    mission.setName(title);
     mission.setDescriptionFormat(DescriptionFormat.HTML);
-    mission.setDescriptionText(getDescription());
-    mission.setStatus(isSolved() ? CheckStatus.Solved : CheckStatus.Unchecked);
-    mission.setCode(getCode());
-    mission.setSecondsFromLastChangeOnServer(getSecondsFromLastChange());
-
-    //final TaskFile taskFile = new TaskFile();
-    //taskFile.name = mission.getName() + getTaskFileExtension();
-    //taskFile.text = getCode().replaceAll("\r\n", "\n");
-    //taskFile.setHighlightErrors(true);
-    //mission.addTaskFile(taskFile);
+    mission.setDescriptionText(description);
+    mission.setStatus(isSolved ? CheckStatus.Solved : CheckStatus.Unchecked);
+    mission.setCode(code);
+    mission.setSecondsFromLastChangeOnServer(secondsPast);
 
     return mission;
   }
