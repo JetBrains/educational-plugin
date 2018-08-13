@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
 
 
 val baseUrl = "http://django-edu-server.herokuapp.com"
@@ -57,6 +58,7 @@ interface EduServerApi {
         .setLevel(loggingLevel)
       val client = OkHttpClient.Builder()
         .addInterceptor(interceptor)
+        .readTimeout(30, TimeUnit.SECONDS)
         .build()
       val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)

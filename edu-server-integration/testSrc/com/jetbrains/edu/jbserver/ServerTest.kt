@@ -15,7 +15,7 @@ class ServerTest : EduTestCase() {
   val mapper = jacksonObjectMapper().setupMapper()
   val service = EduServerApi.create()
 
-  val doPost = false
+  val doPost = true
 
   @Test
   fun `test - get courses list`() {
@@ -69,12 +69,23 @@ class ServerTest : EduTestCase() {
     if (doPost) {
       val response = service.createCourse(course).execute()
       println("Status: ${response.code()} ${response.message()}")
-      response.body()?.print()
+      course.addMetaInformation(response.body()!!)
+      course.print()
     }
+
+    /* Issue: posting big course ends with timeout.
+     *
+     * Although course materials are stored on the server,
+     * response doesn't come in 15 seconds.
+     *
+     * Setting read timeout to 30 helps, but that's not normal.
+     * Response time: approx 27 sec.
+     *
+     */
   }
 
   @Test
-  fun `test - merge course meta info`() {
+  fun `test - post sample course`() {
     val course = course {
       withName("Sample course")
       withDescription("This is some course description")
@@ -96,11 +107,12 @@ class ServerTest : EduTestCase() {
       }
     }.asEduCourse()
 
-    val response = service.createCourse(course).execute()
-    val meta = response.body()
-    check(meta != null)
-
-    course.addMetaInformation(meta!!)
+    if (doPost) {
+      val response = service.createCourse(course).execute()
+      val meta = response.body()
+      check(meta != null)
+      course.addMetaInformation(meta!!)
+    }
   }
 
 }
