@@ -9,7 +9,7 @@ fun testDeserializationCourse() {
 
   testCase("Deserialize empty course") {
     val json = readResFile("empty_course.json")
-    val course = mapper.readValue<Course>(json)
+    val course = mapper.readValue<EduCourse>(json)
     check(course.name == "test-title")
     check(course.description == "test-summary")
     check(course.languageID == "rust")
@@ -33,7 +33,7 @@ fun testDeserializationCourse() {
 
   testCase("Deserialize course structure") {
     val json = readResFile("course_struct.json")
-    val course = mapper.readValue<Course>(json)
+    val course = mapper.readValue<EduCourse>(json)
     check(course.name == "test-course-title")
     check(course.description == "test-course-summary")
     check(course.languageID == "rust")

@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 class CourseList(
 
   @JsonProperty("courses")
-  val courses: List<Course> = listOf()
+  val courses: List<EduCourse> = listOf()
 
 )
 

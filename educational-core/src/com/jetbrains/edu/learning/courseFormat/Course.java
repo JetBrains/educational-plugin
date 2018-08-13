@@ -16,10 +16,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Course extends ItemContainer {
@@ -29,6 +26,9 @@ public class Course extends ItemContainer {
 
   @Expose @SerializedName("programming_language") private String myProgrammingLanguage = EduNames.PYTHON;
   @Expose @SerializedName("language") private String myLanguageCode = "en";
+
+  // course files for EduServer courses
+  public Map<String, String> courseFiles = new HashMap<>();
 
   //this field is used to distinguish ordinary and CheckIO projects,
   //"PyCharm" is used here for historical reasons

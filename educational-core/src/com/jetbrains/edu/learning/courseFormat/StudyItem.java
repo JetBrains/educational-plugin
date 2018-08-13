@@ -7,9 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class StudyItem {
 
-  public String format = "1.9-2018.3-7325";
-  // fix missing field format on serialization, temporally measure
-
   // from 1 to number of items
   private int myIndex = -1;
 

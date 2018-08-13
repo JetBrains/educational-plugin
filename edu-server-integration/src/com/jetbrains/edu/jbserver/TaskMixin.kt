@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import java.util.*
 
 
 @JsonTypeInfo(
@@ -42,8 +43,8 @@ abstract class TaskMixIn {
   @JsonProperty("test_files")
   lateinit var testsText: HashMap<String, String>
 
-  @JsonProperty("format")
-  lateinit var format: String
+  @JsonProperty("last_modified")
+  lateinit var myUpdateDate: Date
 
 }
 

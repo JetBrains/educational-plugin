@@ -72,10 +72,6 @@ fun testSerializationTaskFile() {
 }
 
 
-// Problem: how to test task and course serialization
-// if we don't store some fields? fixme
-
-
 fun testSerializationTask() {
 
 }

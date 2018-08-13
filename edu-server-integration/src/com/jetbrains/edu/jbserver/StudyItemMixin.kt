@@ -3,6 +3,7 @@ package com.jetbrains.edu.jbserver
 import com.fasterxml.jackson.annotation.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import java.util.*
 
 
 @JsonTypeInfo(
@@ -11,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
   property = "type"
 )
 @JsonSubTypes(*arrayOf(
-  JsonSubTypes.Type(value = Course::class, name = "course"),
+  JsonSubTypes.Type(value = EduCourse::class, name = "course"),
   JsonSubTypes.Type(value = Section::class, name = "section"),
   JsonSubTypes.Type(value = Lesson::class, name = "lesson")
 ))
@@ -19,12 +20,7 @@ abstract class StudyItemMixin
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "course_files", "change_notes",
-  "course", "tags", "authors", "courseType", "courseMode",
-  "visibility", "lessons", "sections", "upToDate", "languageById",
-  "languageID", "languageVersion", "adaptive", "study", "authorFullNames",
-  "languageCode", "compatibility", "index", "customPresentableName",
-  "presentableName", "stepikChangeStatus", "humanLanguage"
+  "change_notes", "course", "tags"
 ))
 @JsonTypeName("course")
 abstract class CourseMixin {
@@ -47,19 +43,23 @@ abstract class CourseMixin {
   @JsonIgnore
   abstract fun getLanguage(): String
 
-  @JsonProperty("format")
-  lateinit var format: String
+  @JsonProperty("course_files")
+  lateinit var courseFiles: HashMap<String, String>
 
 }
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "description", "description_format",
-  "course", "units", "courseId", "position", "upToDate", "updateDate", "lessons", "index",
-  "customPresentableName", "presentableName", "stepikChangeStatus"
+  "format", "description", "description_format"
 ))
 @JsonTypeName("section")
 abstract class SectionMixin {
+
+  @JsonProperty("id")
+  var id: Int = 0
+
+  @JsonProperty("last_modified")
+  lateinit var myUpdateDate: Date
 
   @JsonProperty("title")
   lateinit var name: String
@@ -67,20 +67,20 @@ abstract class SectionMixin {
   @JsonProperty("items")
   lateinit var items: List<StudyItem>
 
-  @JsonProperty("format")
-  lateinit var format: String
-
 }
 
 
 @JsonIgnoreProperties(value = *arrayOf(
-  "id", "last_modified", "description", "description_format",
-  "course", "container", "steps", "tags", "unitId", "section", "upToDate", "additional",
-  "taskListForProgress", "status", "updateDate", "index", "customPresentableName",
-  "presentableName", "stepikChangeStatus"
+  "format", "description", "description_format"
 ))
 @JsonTypeName("lesson")
 abstract class LessonMixin {
+
+  @JsonProperty("id")
+  var myId: Int = 0
+
+  @JsonProperty("last_modified")
+  lateinit var myUpdateDate: Date
 
   @JsonProperty("title")
   lateinit var name: String
@@ -88,12 +88,4 @@ abstract class LessonMixin {
   @JsonProperty("items")
   lateinit var taskList: List<Task>
 
-  @JsonProperty("format")
-  lateinit var format: String
 }
-
-
-/* Note: current issues
- * 1. Where to store "id", "last_modified", "description", "description_format", "version" fields
- * 2. What to do with other properties, that we don't need (now: just ignore)
- */

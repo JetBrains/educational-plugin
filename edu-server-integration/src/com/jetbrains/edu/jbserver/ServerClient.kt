@@ -9,11 +9,16 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import java.text.SimpleDateFormat
 
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+
+
+val baseUrl = "http://django-edu-server.herokuapp.com"
+val loggingLevel = HttpLoggingInterceptor.Level.NONE
 
 
 fun ObjectMapper.setupMapper() = apply {
@@ -37,6 +42,7 @@ fun ObjectMapper.setupMapper() = apply {
   disable(MapperFeature.AUTO_DETECT_SETTERS)
   disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
   setSerializationInclusion(JsonInclude.Include.NON_NULL)
+  dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSSXXX")
 }
 
 
@@ -45,23 +51,18 @@ interface EduServerApi {
   companion object {
 
     fun create(): EduServerApi {
-
       val mapper = jacksonObjectMapper()
         .setupMapper()
-
       val interceptor = HttpLoggingInterceptor()
-        .setLevel(HttpLoggingInterceptor.Level.BODY)
-
+        .setLevel(loggingLevel)
       val client = OkHttpClient.Builder()
         .addInterceptor(interceptor)
         .build()
-
       val retrofit = Retrofit.Builder()
-        .baseUrl("http://django-edu-server.herokuapp.com")
+        .baseUrl(baseUrl)
         .addConverterFactory(JacksonConverterFactory.create(mapper))
         .client(client)
         .build()
-
       return retrofit.create(EduServerApi::class.java)
     }
 
@@ -71,10 +72,10 @@ interface EduServerApi {
   fun getCourses(): Call<CourseList>
 
   @GET("/courses/{pk}/materials")
-  fun getCourseMaterials(@Path("pk") pk: Int): Call<Course>
+  fun getCourseMaterials(@Path("pk") pk: Int): Call<EduCourse>
 
   @GET("/courses/{pk}/structure")
-  fun getCourseStructure(@Path("pk") pk: Int): Call<Course>
+  fun getCourseStructure(@Path("pk") pk: Int): Call<EduCourse>
 
   @GET("/sections/{pks}")
   fun getSections(@Path("pks") pks: String): Call<SectionList>
@@ -86,7 +87,7 @@ interface EduServerApi {
   fun getTasks(@Path("pks") pks: String): Call<TaskList>
 
   @POST("/courses")
-  fun createCourse(@Body course: Course) : Call<Course>
+  fun createCourse(@Body course: Course) : Call<EduCourse>
 
 }
 
