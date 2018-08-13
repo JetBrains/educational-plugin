@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.authUtils;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.StreamUtil;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,41 +16,47 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-public class BuiltinServerUtils {
-  private BuiltinServerUtils() {}
+public class OAuthUtils {
+  private static final String OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html";
+  private static final String OAUTH_ERROR_PAGE = "/oauthResponsePages/errorPage.html";
 
-  public static void showOkPage(@NotNull HttpRequest request, @NotNull ChannelHandlerContext context, @NotNull String platformName)
-    throws IOException {
+  private static final String IDE_NAME_TEMPLATE = "%IDE_NAME";
+  private static final String PLATFORM_NAME_TEMPLATE = "%PLATFORM_NAME";
+  private static final String ERROR_MESSAGE_TEMPLATE = "%ERROR_MESSAGE";
 
-    final String pageContent = getPageTemplate(EduNames.OAUTH_OK_PAGE)
-      .replaceAll("%IDE_NAME", ApplicationNamesInfo.getInstance().getFullProductName())
-      .replaceAll("%PLATFORM_NAME", platformName);
+  private OAuthUtils() {}
 
+  // used from rest services
+  public static void showOkPage(
+    @NotNull HttpRequest request,
+    @NotNull ChannelHandlerContext context,
+    @NotNull String platformName
+  ) throws IOException {
+    final String pageContent = getOkPageContent(platformName);
     Responses.send(createResponse(pageContent), context.channel(), request);
   }
 
-  public static void showErrorPage(@NotNull HttpRequest request,
-                                   @NotNull ChannelHandlerContext context,
-                                   @NotNull String platformName,
-                                   @NotNull String errorMessage) throws IOException {
-
-    final String pageContent = getPageTemplate(EduNames.OAUTH_ERROR_PAGE)
-      .replaceAll("%ERROR_MESSAGE", errorMessage)
-      .replaceAll("%PLATFORM_NAME", platformName);
-
+  // used from rest services
+  public static void showErrorPage(
+    @NotNull HttpRequest request,
+    @NotNull ChannelHandlerContext context,
+    @NotNull String platformName,
+    @NotNull String errorMessage
+  ) throws IOException {
+    final String pageContent = getErrorPageContent(platformName, errorMessage);
     Responses.send(createResponse(pageContent), context.channel(), request);
   }
 
   public static String getOkPageContent(@NotNull String platformName) throws IOException {
-    return getPageTemplate(EduNames.OAUTH_OK_PAGE)
-      .replaceAll("%IDE_NAME", ApplicationNamesInfo.getInstance().getFullProductName())
-      .replaceAll("%PLATFORM_NAME", platformName);
+    return getPageTemplate(OAUTH_OK_PAGE)
+      .replaceAll(IDE_NAME_TEMPLATE, ApplicationNamesInfo.getInstance().getFullProductName())
+      .replaceAll(PLATFORM_NAME_TEMPLATE, platformName);
   }
 
   public static String getErrorPageContent(@NotNull String platformName, @NotNull String errorMessage) throws IOException {
-    return getPageTemplate(EduNames.OAUTH_ERROR_PAGE)
-      .replaceAll("%ERROR_MESSAGE", errorMessage)
-      .replaceAll("%PLATFORM_NAME", platformName);
+    return getPageTemplate(OAUTH_ERROR_PAGE)
+      .replaceAll(ERROR_MESSAGE_TEMPLATE, errorMessage)
+      .replaceAll(PLATFORM_NAME_TEMPLATE, platformName);
   }
 
   @NotNull

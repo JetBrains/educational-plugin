@@ -29,15 +29,15 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Android Studio doesn't allow to use built-in server,
- * so {@link CustomAuthorizationServer}
+ * Android Studio doesn't allow using built-in server,
+ * without credentials, so {@link CustomAuthorizationServer}
  * is used for OAuth authorization from Android Studio.
  */
 public class CustomAuthorizationServer {
   private static final Logger LOG = Logger.getInstance(CustomAuthorizationServer.class);
 
-  private static final Map<String, CustomAuthorizationServer> ourServerByName = new HashMap<>();
-  private static final ReentrantLock ourLock = new ReentrantLock();
+  private static final Map<String, CustomAuthorizationServer> serverByName = new HashMap<>();
+  private static final ReentrantLock lock = new ReentrantLock();
 
   private final HttpServer myServer;
   private final String myHandlerPath;
@@ -66,7 +66,7 @@ public class CustomAuthorizationServer {
 
   @Nullable
   public static CustomAuthorizationServer getServerIfStarted(@NotNull String platformName) {
-    return ourServerByName.get(platformName);
+    return serverByName.get(platformName);
   }
 
   @NotNull
@@ -74,7 +74,7 @@ public class CustomAuthorizationServer {
     @NotNull String platformName,
     @NotNull Range<Integer> portsToTry,
     @NotNull String handlerPath,
-    @NotNull BiFunction<String, String, String> afterCodeReceived
+    @NotNull CodeHandler afterCodeReceived
   ) throws IOException {
     return create(
       platformName,
@@ -89,12 +89,12 @@ public class CustomAuthorizationServer {
     @NotNull String platformName,
     @NotNull Collection<Integer> portsToTry,
     @NotNull String handlerPath,
-    @NotNull BiFunction<String, String, String> afterCodeReceived
+    @NotNull CodeHandler afterCodeReceived
   ) throws IOException {
-    ourLock.lock();
+    lock.lock();
     final CustomAuthorizationServer server = createServer(platformName, portsToTry, handlerPath, afterCodeReceived);
-    ourServerByName.put(platformName, server);
-    ourLock.unlock();
+    serverByName.put(platformName, server);
+    lock.unlock();
     return server;
   }
 
@@ -103,7 +103,7 @@ public class CustomAuthorizationServer {
     @NotNull String platformName,
     @NotNull Collection<Integer> portsToTry,
     @NotNull String handlerPath,
-    @NotNull BiFunction<String, String, String> afterCodeReceived
+    @NotNull CodeHandler afterCodeReceived
   ) throws IOException {
     int port = portsToTry.stream().filter(CustomAuthorizationServer::isPortAvailable).findFirst().orElse(-1);
 
@@ -139,7 +139,7 @@ public class CustomAuthorizationServer {
   @NotNull
   private static HttpRequestHandler createContextHandler(
     @NotNull String platformName,
-    @NotNull BiFunction<String, String, String> afterCodeReceived
+    @NotNull CodeHandler afterCodeReceived
   ) {
     return (request, response, context) -> {
       LOG.info("Handling auth response");
@@ -167,23 +167,31 @@ public class CustomAuthorizationServer {
         sendErrorResponse(response, platformName, "Invalid response");
       }
       finally {
-        ourServerByName.get(platformName).stopServer();
+        serverByName.get(platformName).stopServer();
       }
     };
   }
 
   private static void sendOkResponse(@NotNull HttpResponse httpResponse, @NotNull String platformName) throws IOException {
-    final String okPageContent = BuiltinServerUtils.getOkPageContent(platformName);
+    final String okPageContent = OAuthUtils.getOkPageContent(platformName);
     sendResponse(httpResponse, okPageContent);
   }
 
   private static void sendErrorResponse(@NotNull HttpResponse httpResponse, @NotNull String platformName, @NotNull String errorMessage) throws IOException {
-    final String errorPageContent = BuiltinServerUtils.getErrorPageContent(platformName, errorMessage);
+    final String errorPageContent = OAuthUtils.getErrorPageContent(platformName, errorMessage);
     sendResponse(httpResponse, errorPageContent);
   }
 
   private static void sendResponse(@NotNull HttpResponse httpResponse, @NotNull String pageContent) throws IOException {
     httpResponse.setHeader("Content-Type", "text/html");
     httpResponse.setEntity(new StringEntity(pageContent));
+  }
+
+  // 1. Receives `oauth code` and `redirect uri` (i.e. the path `oauth code` was handled on)
+  // 2. Authorizes new user
+  // 3. Returns error message or null in case of successful authorization
+  @FunctionalInterface
+  public interface CodeHandler extends BiFunction<String, String, String> {
+
   }
 }

@@ -923,7 +923,7 @@ public class StepikConnector {
     return StepikNames.EXTERNAL_REDIRECT_URL;
   }
 
-  public static String afterCodeReceived(@NotNull String code, @NotNull String redirectUri) {
+  private static String afterCodeReceived(@NotNull String code, @NotNull String redirectUri) {
     final StepicUser user = StepikAuthorizedClient.login(code, redirectUri);
     if (user != null) {
       EduSettings.getInstance().setUser(user);

@@ -23,7 +23,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.AppIcon;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.authUtils.BuiltinServerUtils;
+import com.jetbrains.edu.learning.authUtils.OAuthUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.stepik.*;
@@ -165,7 +165,7 @@ public class StepikRestService extends RestService {
         StepicUser user = StepikAuthorizedClient.login(code, StepikConnector.getOAuthRedirectUrl());
         if (user != null) {
           EduSettings.getInstance().setUser(user);
-          BuiltinServerUtils.showOkPage(request, context, StepikNames.STEPIK);
+          OAuthUtils.showOkPage(request, context, StepikNames.STEPIK);
           showStepikNotification(NotificationType.INFORMATION,
                                  "Logged in as " + user.getFirstName() + " " + user.getLastName());
           focusOnApplicationWindow();
@@ -173,7 +173,7 @@ public class StepikRestService extends RestService {
         }
       }
 
-      BuiltinServerUtils.showErrorPage(request, context, StepikNames.STEPIK, "Couldn't find code parameter for Stepik OAuth");
+      OAuthUtils.showErrorPage(request, context, StepikNames.STEPIK, "Couldn't find code parameter for Stepik OAuth");
       showStepikNotification(NotificationType.ERROR, "Failed to log in");
       return "Couldn't find code parameter for Stepik OAuth";
     }

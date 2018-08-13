@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.checkio.connectors;
 
-import com.jetbrains.edu.learning.authUtils.BuiltinServerUtils;
+import com.jetbrains.edu.learning.authUtils.OAuthUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import org.jetbrains.annotations.NotNull;
@@ -76,14 +76,14 @@ public abstract class CheckiOOAuthRestService extends RestService {
     @NotNull String errorMessage
   ) throws IOException {
     LOG.warn(errorMessage);
-    BuiltinServerUtils.showErrorPage(request, context, myPlatformName, errorMessage);
+    OAuthUtils.showErrorPage(request, context, myPlatformName, errorMessage);
     return errorMessage;
   }
 
   @Nullable
   protected String sendOkResponse(@NotNull HttpRequest request, @NotNull ChannelHandlerContext context) throws IOException {
     LOG.info("Successful " + myPlatformName + " authorization");
-    BuiltinServerUtils.showOkPage(request, context, myPlatformName);
+    OAuthUtils.showOkPage(request, context, myPlatformName);
     return null;
   }
 }

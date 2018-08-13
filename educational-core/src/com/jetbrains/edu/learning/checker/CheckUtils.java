@@ -50,14 +50,14 @@ public class CheckUtils {
   public static final String COMPILATION_FAILED_MESSAGE = "Compilation failed";
   public static final String NOT_RUNNABLE_MESSAGE = "Solution isn't runnable";
   public static final String FAILED_TO_CHECK_MESSAGE = "Failed to launch checking";
-  public static String loginNeededMessage(@NotNull String platformName) {
-   return "Please, login to " + platformName + " to check the task";
-  }
-
 
   private static final Logger LOG = Logger.getInstance(CheckUtils.class);
 
   private CheckUtils() {
+  }
+
+  public static String loginNeededMessage(@NotNull String platformName) {
+    return "Please, login to " + platformName + " to check the task";
   }
 
   public static void navigateToFailedPlaceholder(@NotNull final EduState eduState,

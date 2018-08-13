@@ -31,7 +31,6 @@ version = "$pluginVersion-${buildNumber == null ? "SNAPSHOT" : buildNumber}"
 import de.undercouch.gradle.tasks.download.Download
 import org.apache.tools.ant.taskdefs.condition.Os
 import groovy.io.FileType
-import java.nio.file.Files
 
 String downloadStudioIfNeededAndGetPath() {
     if (!rootProject.hasProperty("studioVersion")) throw new IllegalStateException("studioVersion is unspecified")
@@ -83,19 +82,11 @@ static String studioPath(File studioFolder) {
 }
 
 static void createProperties(File location, LinkedHashMap<String, String> properties) {
-    createFile(location.toPath())
+    location.getParentFile().mkdirs()
+    location.createNewFile()
     Properties props = new Properties()
-
-    properties.each {key, value -> props.setProperty(key, value)}
+    props.putAll(properties)
     props.store(location.newWriter(), null)
-}
-
-static void createFile(java.nio.file.Path path) {
-    def parentDirectory = path.parent
-    Files.createDirectories(parentDirectory)
-    if (!Files.exists(path)) {
-        Files.createFile(path)
-    }
 }
 
 task downloadJavaFx(type: Download) {

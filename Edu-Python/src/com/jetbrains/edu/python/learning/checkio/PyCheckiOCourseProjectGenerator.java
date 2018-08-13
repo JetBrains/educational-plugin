@@ -46,7 +46,7 @@ public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
     catch (NetworkException e) {
       LOG.warn(e);
       int result = PyCheckiOErrorInformer.getInstance().showNetworkErrorMessage("Failed to join the course");
-      if ( result == Messages.OK) {
+      if (result == Messages.OK) {
         return beforeProjectGenerated();
       }
       return false;

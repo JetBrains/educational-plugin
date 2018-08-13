@@ -63,9 +63,6 @@ public class EduNames {
   public static final String PYTHON = "Python";
   public static final String STEPIK_IDS_JSON = "stepik_ids.json";
 
-  public static final String OAUTH_OK_PAGE = "/oauthResponsePages/okPage.html";
-  public static final String OAUTH_ERROR_PAGE = "/oauthResponsePages/errorPage.html";
-
   private EduNames() {
   }
 
