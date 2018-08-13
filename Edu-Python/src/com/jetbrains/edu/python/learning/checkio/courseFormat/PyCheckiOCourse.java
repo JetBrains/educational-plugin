@@ -1,12 +1,11 @@
 package com.jetbrains.edu.python.learning.checkio.courseFormat;
 
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 
 public class PyCheckiOCourse extends CheckiOCourse {
   public PyCheckiOCourse() {
     // TODO: add description
-    super(CheckiONames.PY_CHECKIO, "CheckiO description", EduNames.CHECKIO_PYTHON);
+    super(PyCheckiONames.PY_CHECKIO, "CheckiO description", PyCheckiONames.CHECKIO_PYTHON);
   }
 }

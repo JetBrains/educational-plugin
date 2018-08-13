@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.checkio.model.CheckiOAccountHolder;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.checkio.utils.CheckiOOAuthBundle;
 import com.jetbrains.edu.python.learning.checkio.PyCheckiOAccountHolder;
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -28,13 +29,13 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
   @NotNull
   @Override
   protected String buildRedirectUri(int port) {
-    return CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST + ":" + port + CheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH;
+    return CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST + ":" + port + PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH;
   }
 
   @NotNull
   protected CustomAuthorizationServer getCustomServer() throws IOException {
     final CustomAuthorizationServer startedServer =
-      CustomAuthorizationServer.getServerIfStarted(CheckiONames.PY_CHECKIO);
+      CustomAuthorizationServer.getServerIfStarted(PyCheckiONames.PY_CHECKIO);
 
     if (startedServer != null) {
       return startedServer;
@@ -46,9 +47,9 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
   @NotNull
   private CustomAuthorizationServer createCustomServer() throws IOException {
     return CustomAuthorizationServer.create(
-      CheckiONames.PY_CHECKIO,
+      PyCheckiONames.PY_CHECKIO,
       new Range<>(36656, 36665),
-      CheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH,
+      PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH,
       this::afterCodeReceived
     );
   }

@@ -5,7 +5,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
@@ -17,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
 import com.jetbrains.edu.python.learning.checkio.messages.PyCheckiOErrorInformer;
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
@@ -62,15 +62,14 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
     try {
       final String accessToken = PyCheckiOOAuthConnector.getInstance().getAccessToken();
       final String taskId = String.valueOf(myTask.getId());
-      final String interpreter = EduNames.CHECKIO_PYTHON_INTERPRETER;
       final String code = selectedEditor.getDocument().getText();
 
-      return doCheck(accessToken, taskId, interpreter, code);
+      return doCheck(accessToken, taskId, code);
     }
     catch (LoginRequiredException e) {
       LOG.warn(e);
       PyCheckiOErrorInformer.getInstance().showLoginRequiredMessage("Failed to check the task");
-      return CheckResult.loginNeeded(CheckiONames.PY_CHECKIO);
+      return CheckResult.loginNeeded(PyCheckiONames.PY_CHECKIO);
     }
     catch (NetworkException e) {
       LOG.warn(e);
@@ -88,11 +87,14 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
 
   @SuppressWarnings("SameParameterValue")
   @NotNull
-  private CheckResult doCheck(@NotNull String accessToken, @NotNull String taskId, @NotNull String interpreter, @NotNull String code)
+  private CheckResult doCheck(@NotNull String accessToken, @NotNull String taskId, @NotNull String code)
     throws InterruptedException, NetworkException {
-    setTestFormLoadedListener(accessToken, taskId, interpreter, code);
-    setCheckDoneListener();
-    loadTestForm();
+
+    Platform.runLater(() -> {
+      setTestFormLoadedListener(accessToken, taskId, code);
+      setCheckDoneListener();
+      loadTestForm();
+    });
 
     boolean timeoutExceeded = !myLatch.await(30L, TimeUnit.SECONDS);
     if (timeoutExceeded) {
@@ -107,44 +109,39 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
   }
 
   private void loadTestForm() {
-    Platform.runLater(() -> {
-      final String formUrl = CheckiOApiConnector.class.getResource(CheckiONames.CHECKIO_TEST_FORM_URL).toExternalForm();
-      myBrowserWindow.getEngine().load(formUrl);
-    });
+    final String formUrl = CheckiOApiConnector.class.getResource(CheckiONames.CHECKIO_TEST_FORM_URL).toExternalForm();
+    myBrowserWindow.getEngine().load(formUrl);
   }
 
   private void setCheckDoneListener() {
-    Platform.runLater(() -> {
-      final Ref<Boolean> visited = new Ref<>(Boolean.FALSE);
+    final Ref<Boolean> visited = new Ref<>(Boolean.FALSE);
 
-      myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener((observable, oldState, newState) -> {
-        if (newState == Worker.State.FAILED) {
-          setConnectionError();
-          return;
-        }
+    myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener((observable, oldState, newState) -> {
+      if (newState == Worker.State.FAILED) {
+        setConnectionError();
+        return;
+      }
 
-        if (myBrowserWindow.getEngine().getLocation().contains("checkio.org") && newState == Worker.State.SUCCEEDED && !visited.get()) {
-          visited.set(Boolean.TRUE);
+      if (myBrowserWindow.getEngine().getLocation().contains("checkio.org") && newState == Worker.State.SUCCEEDED && !visited.get()) {
+        visited.set(Boolean.TRUE);
 
-          final JSObject windowObject = (JSObject)myBrowserWindow.getEngine().executeScript("window");
-          windowObject.setMember("javaHandler", myResultHandler);
+        final JSObject windowObject = (JSObject)myBrowserWindow.getEngine().executeScript("window");
+        windowObject.setMember("javaHandler", myResultHandler);
 
-          myBrowserWindow.getEngine().executeScript(
-            "function handleEvent(e) {\n" +
-            "\twindow.javaHandler.handleTestEvent(e.detail.success)\n" +
-            "}\n" +
-            "window.addEventListener(\"checkio:checkDone\", handleEvent, false)"
-          );
-        }
-      });
+        myBrowserWindow.getEngine().executeScript(
+          "function handleEvent(e) {\n" +
+          "\twindow.javaHandler.handleTestEvent(e.detail.success)\n" +
+          "}\n" +
+          "window.addEventListener(\"checkio:checkDone\", handleEvent, false)"
+        );
+      }
     });
   }
 
   private void setTestFormLoadedListener(@NotNull String accessToken,
                                          @NotNull String taskId,
-                                         @NotNull String interpreter,
                                          @NotNull String code) {
-    Platform.runLater(() -> myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener(((observable, oldState, newState) -> {
+    myBrowserWindow.getEngine().getLoadWorker().stateProperty().addListener(((observable, oldState, newState) -> {
       if (newState == Worker.State.FAILED) {
         setConnectionError();
         return;
@@ -154,12 +151,12 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
         final Document documentWithForm = myBrowserWindow.getEngine().getDocument();
         ((HTMLInputElement)documentWithForm.getElementById("access-token")).setValue(accessToken);
         ((HTMLInputElement)documentWithForm.getElementById("task-id")).setValue(taskId);
-        ((HTMLInputElement)documentWithForm.getElementById("interpreter")).setValue(interpreter);
+        ((HTMLInputElement)documentWithForm.getElementById("interpreter")).setValue(PyCheckiONames.CHECKIO_PYTHON_INTERPRETER);
         ((HTMLTextAreaElement)documentWithForm.getElementById("code")).setValue(code);
 
         ((HTMLFormElement)documentWithForm.getElementById("test-form")).submit();
       }
-    })));
+    }));
   }
 
   private void setConnectionError() {
