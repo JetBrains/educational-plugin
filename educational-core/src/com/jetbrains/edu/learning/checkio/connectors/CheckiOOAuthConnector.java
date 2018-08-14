@@ -7,6 +7,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
+import com.jetbrains.edu.learning.authUtils.OAuthUtils;
 import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthService;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
@@ -62,7 +63,7 @@ public abstract class CheckiOOAuthConnector {
     requireClientPropertiesExist();
 
     return CheckiOOAuthService.getTokens(
-      CheckiONames.GRANT_TYPE.AUTHORIZATION_CODE,
+      OAuthUtils.GRANT_TYPE.AUTHORIZATION_CODE,
       myClientSecret,
       myClientId,
       code,
@@ -81,7 +82,7 @@ public abstract class CheckiOOAuthConnector {
     requireClientPropertiesExist();
 
     return CheckiOOAuthService.refreshTokens(
-      CheckiONames.GRANT_TYPE.REFRESH_TOKEN,
+      OAuthUtils.GRANT_TYPE.REFRESH_TOKEN,
       myClientSecret,
       myClientId,
       refreshToken
@@ -122,7 +123,8 @@ public abstract class CheckiOOAuthConnector {
 
       createAuthorizationListener(postLoginActions);
       BrowserUtil.browse(oauthLink);
-    } catch (URISyntaxException | IOException e) {
+    }
+    catch (URISyntaxException | IOException e) {
       // TODO: show message
     }
   }
@@ -131,7 +133,8 @@ public abstract class CheckiOOAuthConnector {
   private String getOAuthHandlerUri() throws IOException {
     if (EduUtils.isAndroidStudio()) {
       return getCustomServer().getHandlingUri();
-    } else {
+    }
+    else {
       final int port = BuiltInServerManager.getInstance().getPort();
 
       if (port < 63342 || port > 63362) {
@@ -155,7 +158,7 @@ public abstract class CheckiOOAuthConnector {
     myAuthorizationBusConnection.disconnect();
     myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
     myAuthorizationBusConnection.subscribe(myAuthorizationTopic, () -> {
-      for (Runnable action: postLoginActions) {
+      for (Runnable action : postLoginActions) {
         action.run();
       }
     });
@@ -189,11 +192,14 @@ public abstract class CheckiOOAuthConnector {
       getAccountHolder().getAccount().logIn(userInfo, tokens);
       ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
       return null;
-    } catch (NetworkException e) {
+    }
+    catch (NetworkException e) {
       return "Connection failed";
-    } catch (ApiException e) {
+    }
+    catch (ApiException e) {
       return "Couldn't get user info";
-    } finally {
+    }
+    finally {
       myAuthorizationLock.unlock();
     }
   }

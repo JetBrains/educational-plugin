@@ -15,7 +15,7 @@ public class CheckiOMission extends EduTask {
   private String code;
   private long secondsFromLastChangeOnServer;
 
-  public CheckiOMission() {  }
+  public CheckiOMission() { }
 
   @Transient
   @NotNull
@@ -56,7 +56,8 @@ public class CheckiOMission extends EduTask {
   public void setStatus(CheckStatus status) {
     if (myStatus == CheckStatus.Unchecked) {
       myStatus = status;
-    } else if (myStatus == CheckStatus.Failed && status == CheckStatus.Solved) {
+    }
+    else if (myStatus == CheckStatus.Failed && status == CheckStatus.Solved) {
       myStatus = CheckStatus.Solved;
     }
   }
@@ -71,7 +72,7 @@ public class CheckiOMission extends EduTask {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    CheckiOMission other = (CheckiOMission) o;
+    CheckiOMission other = (CheckiOMission)o;
     return getStepId() == other.getStepId();
   }
 

@@ -95,7 +95,8 @@ public abstract class CheckiOOptions implements OptionsProvider {
       myLoginLink.setText("Log in to CheckiO");
 
       myLoginListener = createAuthorizeListener();
-    } else {
+    }
+    else {
       myLoginLabel.setText("You're logged in as " + myCurrentAccount.getUserInfo().getUsername());
       myLoginLink.setText("Log out");
 

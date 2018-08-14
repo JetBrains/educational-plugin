@@ -23,7 +23,7 @@ abstract class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Proj
   }
 
   @Throws(LoginRequiredException::class, ApiException::class)
-  protected abstract fun getCourseFromServer() : CheckiOCourse
+  protected abstract fun getCourseFromServer(): CheckiOCourse
 
   @Throws(LoginRequiredException::class, ApiException::class)
   fun doUpdate() {
@@ -47,12 +47,13 @@ abstract class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Proj
   }
 
   private fun createNewStations(newStations: List<CheckiOStation>) {
-    newStations.forEach{
+    newStations.forEach {
       it.init(course, course, false)
 
       try {
         GeneratorUtils.createLesson(it, course.getDir(project))
-      } catch (e: IOException) {
+      }
+      catch (e: IOException) {
         LOG.warn("IO error occurred creating station [${it.id}; ${it.name}]")
         LOG.warn(e.message)
       }

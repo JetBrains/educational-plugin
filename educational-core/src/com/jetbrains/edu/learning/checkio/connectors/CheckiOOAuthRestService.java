@@ -62,7 +62,8 @@ public abstract class CheckiOOAuthRestService extends OAuthRestService {
 
       if (errorMessage == null) {
         return sendOkResponse(request, context);
-      } else {
+      }
+      else {
         return sendErrorResponse(request, context, errorMessage);
       }
     }

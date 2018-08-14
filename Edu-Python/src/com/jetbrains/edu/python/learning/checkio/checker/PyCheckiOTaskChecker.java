@@ -40,7 +40,7 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
   }
 
   private void updateCourse() {
-    final CheckiOCourse course = (CheckiOCourse) StudyTaskManager.getInstance(project).getCourse();
+    final CheckiOCourse course = (CheckiOCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
 
     try {
@@ -59,7 +59,8 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
     }
     catch (ApiException e) {
       LOG.warn(e);
-      PyCheckiOErrorInformer.getInstance().showErrorDialog("Something went wrong. Course cannot be updated.", "Failed to update the course");
+      PyCheckiOErrorInformer.getInstance()
+        .showErrorDialog("Something went wrong. Course cannot be updated.", "Failed to update the course");
     }
   }
 
@@ -69,7 +70,8 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
     final PyCheckiOMissionChecker missionChecker = new PyCheckiOMissionChecker(project, task);
 
     try {
-      final CheckResult checkResult = ApplicationUtil.runWithCheckCanceled(missionChecker, ProgressManager.getInstance().getProgressIndicator());
+      final CheckResult checkResult =
+        ApplicationUtil.runWithCheckCanceled(missionChecker, ProgressManager.getInstance().getProgressIndicator());
 
       if (checkResult.getStatus() != CheckStatus.Unchecked) {
         showTestResultPanel(missionChecker.getBrowserPanel());

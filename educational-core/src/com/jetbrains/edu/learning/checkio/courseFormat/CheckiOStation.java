@@ -22,7 +22,7 @@ public class CheckiOStation extends Lesson {
   @Nullable
   public CheckiOMission getMission(int id) {
     final Task task = getTask(id);
-    return (task instanceof CheckiOMission ? (CheckiOMission) task : null);
+    return (task instanceof CheckiOMission ? (CheckiOMission)task : null);
   }
 
   @NotNull
@@ -52,5 +52,4 @@ public class CheckiOStation extends Lesson {
   public String toString() {
     return "missions=[" + getMissionsList().stream().map(CheckiOMission::toString).collect(Collectors.joining("\n")) + "]";
   }
-
 }

@@ -30,7 +30,7 @@ public class CheckiOUserInfo {
       return false;
     }
 
-    CheckiOUserInfo other = (CheckiOUserInfo) o;
+    CheckiOUserInfo other = (CheckiOUserInfo)o;
     return getUid() == other.getUid();
   }
 

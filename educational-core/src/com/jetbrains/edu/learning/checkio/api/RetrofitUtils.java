@@ -34,7 +34,8 @@ public final class RetrofitUtils {
       }
 
       return MyResponse.createSuccessful(responseWrapperBody);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       return MyResponse.createNetworkError(e);
     }
   }

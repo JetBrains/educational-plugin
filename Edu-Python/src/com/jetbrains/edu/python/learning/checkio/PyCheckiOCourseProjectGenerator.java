@@ -53,7 +53,8 @@ public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
     }
     catch (ApiException e) {
       LOG.warn(e);
-      PyCheckiOErrorInformer.getInstance().showErrorDialog("Something went wrong. Course cannot be generated.", "Failed to join the course");
+      PyCheckiOErrorInformer.getInstance()
+        .showErrorDialog("Something went wrong. Course cannot be generated.", "Failed to join the course");
       return false;
     }
   }

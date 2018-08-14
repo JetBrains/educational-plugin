@@ -17,7 +17,8 @@ public class CheckiOAccount {
   public CheckiOUserInfo getUserInfo() {
     if (!isLoggedIn()) {
       throw new IllegalStateException("Try to get user info when logged out");
-    } else if (myUserInfo == null) {
+    }
+    else if (myUserInfo == null) {
       throw new IllegalStateException("Logged in, but user info are null");
     }
     return myUserInfo;
@@ -27,7 +28,8 @@ public class CheckiOAccount {
   public Tokens getTokens() {
     if (!isLoggedIn()) {
       throw new IllegalStateException("Try to get tokens when logged out");
-    } else if (myTokens == null) {
+    }
+    else if (myTokens == null) {
       throw new IllegalStateException("Logged in, but tokens are null");
     }
     return myTokens;

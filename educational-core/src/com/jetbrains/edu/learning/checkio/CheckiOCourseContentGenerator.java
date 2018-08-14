@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checkio;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.intellij.util.PathUtil;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public abstract class CheckiOCourseContentGenerator {
   @NotNull
-  public  CheckiOCourse generateCourseFromMissions(@NotNull List<CheckiOMission> missionsList) {
+  public CheckiOCourse generateCourseFromMissions(@NotNull List<CheckiOMission> missionsList) {
     missionsList.forEach(this::generateTaskFile);
 
     final List<CheckiOStation> stations = generateStationsFromMissions(missionsList);
@@ -23,7 +24,8 @@ public abstract class CheckiOCourseContentGenerator {
 
   private void generateTaskFile(@NotNull CheckiOMission mission) {
     final TaskFile taskFile = new TaskFile();
-    taskFile.name = mission.getName() + getTaskFileExtension();
+    final String fileName = mission.getName() + getTaskFileExtension();
+    taskFile.name = PathUtil.suggestFileName(fileName, true, true);
     setTaskFileText(taskFile, mission.getCode());
     taskFile.setHighlightErrors(true);
     mission.addTaskFile(taskFile);
@@ -31,9 +33,8 @@ public abstract class CheckiOCourseContentGenerator {
 
   protected abstract String getTaskFileExtension();
 
-  @SuppressWarnings("MethodMayBeStatic")
   @NotNull
-  private  List<CheckiOStation> generateStationsFromMissions(@NotNull List<CheckiOMission> missions) {
+  private static List<CheckiOStation> generateStationsFromMissions(@NotNull List<CheckiOMission> missions) {
     final Multimap<CheckiOStation, CheckiOMission> stationsMap = MultimapBuilder
       .treeKeys(Comparator.comparing(CheckiOStation::getId))
       .treeSetValues(Comparator.comparing(CheckiOMission::getId))
@@ -50,7 +51,7 @@ public abstract class CheckiOCourseContentGenerator {
   }
 
   @NotNull
-  private  CheckiOCourse generateCourseFromStations(@NotNull List<CheckiOStation> stationsList) {
+  private CheckiOCourse generateCourseFromStations(@NotNull List<CheckiOStation> stationsList) {
     final CheckiOCourse course = getNewCourseInstance();
 
     stationsList.forEach(station -> {

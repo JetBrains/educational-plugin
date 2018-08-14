@@ -9,9 +9,8 @@ import com.jetbrains.python.newProject.PyNewProjectSettings
 
 class PyCheckiOCourseBuilder : PyCheckiOCourseBuilder() {
 
-  override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> =
-          PyLanguageSettings()
+  override fun getLanguageSettings(): LanguageSettings<PyNewProjectSettings> = PyLanguageSettings()
 
   override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<PyNewProjectSettings>? =
-          PyCheckiOCourseProjectGenerator(this, course)
+    PyCheckiOCourseProjectGenerator(this, course)
 }

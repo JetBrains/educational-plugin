@@ -105,7 +105,7 @@ public class CoursesPanel extends JPanel {
     myCoursesList.setBackground(LIST_COLOR);
 
     myErrorLabel.addHyperlinkListener(e -> {
-      if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.LoginRequired.INSTANCE) {
+      if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.StepikLoginRequired.INSTANCE) {
         addLoginListener(this::updateCoursesList);
         StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
       } else if (myErrorState == ErrorState.CheckiOLoginRequired.INSTANCE) {

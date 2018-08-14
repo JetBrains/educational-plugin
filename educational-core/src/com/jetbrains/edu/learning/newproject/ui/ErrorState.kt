@@ -8,10 +8,12 @@ import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checkio.CheckiOConfigurator
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.getDisabledPlugins
+import com.jetbrains.edu.learning.stepik.StepikNames
 import java.awt.Color
 
 sealed class ErrorState(
@@ -24,8 +26,9 @@ sealed class ErrorState(
   object NothingSelected : ErrorState(0, null, Color.BLACK, true)
   object None : ErrorState(1, null, Color.BLACK, true)
   object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
-  object LoginRequired : ErrorState(3, ErrorMessage("", "Log in", " to Stepik to start this course"), ERROR.titleForeground, false)
-  object CheckiOLoginRequired : ErrorState(3, ErrorMessage("", "Log in", " to CheckiO to start this course"), ERROR.titleForeground, false)
+  open class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)
+  object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
+  object CheckiOLoginRequired : LoginRequired(CheckiONames.CHECKIO)
   object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
 
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
@@ -44,7 +47,7 @@ sealed class ErrorState(
         course.compatibility !== CourseCompatibility.COMPATIBLE -> IncompatibleVersion
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
         isCheckiOLoginRequired(course) -> CheckiOLoginRequired
-        !isLoggedIn() -> if (isLoginRequired(course)) LoginRequired else NotLoggedIn
+        !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
       }
     }
@@ -64,9 +67,9 @@ sealed class ErrorState(
       return ErrorMessage(beforeLink, "Enable", "")
     }
 
-    private fun isLoggedIn(): Boolean = EduSettings.getInstance().user != null
+    private fun isLoggedInToStepik(): Boolean = EduSettings.getInstance().user != null
 
-    private fun isLoginRequired(selectedCourse: Course): Boolean =
+    private fun isStepikLoginRequired(selectedCourse: Course): Boolean =
       selectedCourse.isAdaptive || selectedCourse is RemoteCourse && !selectedCourse.isCompatible
 
     private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
