@@ -23,7 +23,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.AppIcon;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.authUtils.OAuthUtils;
+import com.jetbrains.edu.learning.authUtils.OAuthRestService;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.stepik.*;
@@ -45,12 +45,16 @@ import java.util.regex.Pattern;
 
 import static com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils.*;
 
-public class StepikRestService extends RestService {
+public class StepikRestService extends OAuthRestService {
   private static final Logger LOG = Logger.getInstance(StepikRestService.class.getName());
   private static final Pattern OPEN_COURSE_PATTERN = Pattern.compile("/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "\\?link=.+");
   private static final Pattern COURSE_PATTERN = Pattern.compile("https://stepik\\.org/lesson(?:/[a-zA-Z\\-]*-|/)(\\d+)/step/(\\d+)");
   private static final Pattern
     OAUTH_CODE_PATTERN = Pattern.compile("/" + RestService.PREFIX + "/" + StepikNames.EDU_STEPIK_SERVICE_NAME + "/oauth" + "\\?code=(\\w+)");
+
+  public StepikRestService() {
+    super(StepikNames.STEPIK);
+  }
 
   @NotNull
   private static String log(@NotNull String message) {
@@ -165,7 +169,7 @@ public class StepikRestService extends RestService {
         StepicUser user = StepikAuthorizedClient.login(code, StepikConnector.getOAuthRedirectUrl());
         if (user != null) {
           EduSettings.getInstance().setUser(user);
-          OAuthUtils.showOkPage(request, context, StepikNames.STEPIK);
+          showOkPage(request, context);
           showStepikNotification(NotificationType.INFORMATION,
                                  "Logged in as " + user.getFirstName() + " " + user.getLastName());
           focusOnApplicationWindow();
@@ -173,9 +177,8 @@ public class StepikRestService extends RestService {
         }
       }
 
-      OAuthUtils.showErrorPage(request, context, StepikNames.STEPIK, "Couldn't find code parameter for Stepik OAuth");
       showStepikNotification(NotificationType.ERROR, "Failed to log in");
-      return "Couldn't find code parameter for Stepik OAuth";
+      return sendErrorResponse(request, context, "Couldn't find code parameter for Stepik OAuth");
     }
 
     RestService.sendStatus(HttpResponseStatus.BAD_REQUEST, false, context.channel());

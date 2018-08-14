@@ -122,13 +122,13 @@ public class CoursesPanel extends JPanel {
   }
 
   private void addCheckiOLoginListener(@NotNull CheckiOCourse selectedCourse) {
-    final CheckiOConfigurator<?> checkioConfigurator =
+    final CheckiOConfigurator<?> checkiOConfigurator =
       (CheckiOConfigurator<?>) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById());
-    assert checkioConfigurator != null;
+    assert checkiOConfigurator != null;
 
-    final CheckiOOAuthConnector checkioOAuthConnector = checkioConfigurator.getOAuthConnector();
+    final CheckiOOAuthConnector checkiOOAuthConnector = checkiOConfigurator.getOAuthConnector();
 
-    checkioOAuthConnector.doAuthorize(
+    checkiOOAuthConnector.doAuthorize(
       () -> myErrorLabel.setVisible(false),
       () -> notifyListeners(true)
     );

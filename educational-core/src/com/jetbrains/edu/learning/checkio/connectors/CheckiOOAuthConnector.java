@@ -114,6 +114,8 @@ public abstract class CheckiOOAuthConnector {
   }
 
   public void doAuthorize(@NotNull Runnable... postLoginActions) {
+    requireClientPropertiesExist();
+
     try {
       final String handlerUri = getOAuthHandlerUri();
       final URI oauthLink = getOauthLink(handlerUri);

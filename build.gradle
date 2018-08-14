@@ -81,12 +81,13 @@ static String studioPath(File studioFolder) {
     }
 }
 
-static void createProperties(File location, LinkedHashMap<String, String> properties) {
-    location.getParentFile().mkdirs()
-    location.createNewFile()
-    Properties props = new Properties()
+void createProperties(CharSequence propFilePath, Map<String, String> properties) {
+    def propFile = file("${propFilePath}")
+    propFile.getParentFile().mkdirs()
+    propFile.createNewFile()
+    def props = new Properties()
     props.putAll(properties)
-    props.store(location.newWriter(), null)
+    props.store(propFile.newWriter(), null)
 }
 
 task downloadJavaFx(type: Download) {
@@ -270,7 +271,7 @@ configure(project(':educational-core')) {
 
     task createCheckiOOAuthProperties() {
         createProperties(
-          file("${projectDir}/resources/checkio/checkio-oauth.properties"),
+          "${projectDir}/resources/checkio/checkio-oauth.properties",
           [
             "checkioClientId" : checkioClientId,
             "checkioClientSecret" : checkioClientSecret
@@ -298,7 +299,7 @@ configure(project(':Edu-Kotlin')) {
 
     task createTwitterProperties() {
         createProperties(
-          file("${projectDir}/resources/twitter/kotlin_koans/oauth_twitter.properties"),
+          "${projectDir}/resources/twitter/kotlin_koans/oauth_twitter.properties",
           [
             "consumerKey" : consumerKey,
             "consumerSecret" : consumerSecret

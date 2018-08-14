@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
-import com.intellij.util.Range;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
@@ -902,7 +901,6 @@ public class StepikConnector {
       try {
         return CustomAuthorizationServer.create(
           StepikNames.STEPIK,
-          new Range<>(36656, 36665),
           "/",
           StepikConnector::afterCodeReceived
         ).getHandlingUri();

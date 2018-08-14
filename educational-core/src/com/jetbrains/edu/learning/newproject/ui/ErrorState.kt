@@ -71,9 +71,9 @@ sealed class ErrorState(
 
     private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
       if (selectedCourse is CheckiOCourse) {
-        val checkioConfigurator = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConfigurator<*>
-        val checkioAccountHolder = checkioConfigurator.oAuthConnector.accountHolder
-        return !checkioAccountHolder.account.isLoggedIn
+        val checkiOConfigurator = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConfigurator<*>
+        val checkiOAccountHolder = checkiOConfigurator.oAuthConnector.accountHolder
+        return !checkiOAccountHolder.account.isLoggedIn
       }
       return false
     }

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.python.learning.checkio.connectors;
 
-import com.intellij.util.Range;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.model.CheckiOAccountHolder;
@@ -48,7 +47,6 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
   private CustomAuthorizationServer createCustomServer() throws IOException {
     return CustomAuthorizationServer.create(
       PyCheckiONames.PY_CHECKIO,
-      new Range<>(36656, 36665),
       PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH,
       this::afterCodeReceived
     );

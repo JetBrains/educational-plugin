@@ -38,6 +38,7 @@ public class CustomAuthorizationServer {
 
   private static final Map<String, CustomAuthorizationServer> serverByName = new HashMap<>();
   private static final ReentrantLock lock = new ReentrantLock();
+  private static final Range<Integer> defaultPortsTotry = new Range<>(36656, 36665);
 
   private final HttpServer myServer;
   private final String myHandlerPath;
@@ -67,6 +68,20 @@ public class CustomAuthorizationServer {
   @Nullable
   public static CustomAuthorizationServer getServerIfStarted(@NotNull String platformName) {
     return serverByName.get(platformName);
+  }
+
+  @NotNull
+  public static CustomAuthorizationServer create(
+    @NotNull String platformName,
+    @NotNull String handlerPath,
+    @NotNull CodeHandler afterCodeReceived
+  ) throws IOException {
+    return create(
+      platformName,
+      defaultPortsTotry,
+      handlerPath,
+      afterCodeReceived
+    );
   }
 
   @NotNull

@@ -38,7 +38,7 @@
 
   <extensions defaultExtensionNs="educational">
     <languageDecorator implementationClass="com.jetbrains.edu.python.learning.PyLanguageDecorator" language="Python" />
-    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.PyLanguageDecorator" language="CheckiO-Python" />
+    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOLanguageDecorator" language="CheckiO-Python" />
   </extensions>
 
   <actions>
