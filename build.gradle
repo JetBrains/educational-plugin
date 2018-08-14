@@ -268,18 +268,6 @@ configure(project(':educational-core')) {
         src 'https://raw.githubusercontent.com/ozh/github-colors/master/colors.json'
         dest "${projectDir}/resources/languageColors/colors.json"
     }
-
-    task createCheckiOOAuthProperties() {
-        createProperties(
-          "${projectDir}/resources/checkio/checkio-oauth.properties",
-          [
-            "checkioClientId" : checkioClientId,
-            "checkioClientSecret" : checkioClientSecret
-          ]
-        )
-    }
-
-    processResources.dependsOn(createCheckiOOAuthProperties)
 }
 
 configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android')]) {
@@ -310,6 +298,17 @@ configure(project(':Edu-Kotlin')) {
 }
 
 configure(project(':Edu-Python')) {
+    task createCheckiOOAuthProperties() {
+        createProperties(
+          "${projectDir}/resources/checkio/checkio-oauth.properties",
+          [
+            "checkioClientId" : checkioClientId,
+            "checkioClientSecret" : checkioClientSecret
+          ]
+        )
+    }
+    processResources.dependsOn(createCheckiOOAuthProperties)
+
     intellij.plugins "PythonCore:$pythonPluginVersion"
 }
 

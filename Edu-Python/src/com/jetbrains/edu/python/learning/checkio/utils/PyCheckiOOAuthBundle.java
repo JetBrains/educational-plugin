@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checkio.utils;
+package com.jetbrains.edu.python.learning.checkio.utils;
 
 import com.intellij.CommonBundle;
 import com.intellij.reference.SoftReference;
@@ -9,12 +9,8 @@ import org.jetbrains.annotations.PropertyKey;
 import java.lang.ref.Reference;
 import java.util.ResourceBundle;
 
-public class CheckiOOAuthBundle {
-  private CheckiOOAuthBundle() {}
-
-  public static String message(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull Object... params) {
-    return CommonBundle.message(getBundle(), key, params);
-  }
+public class PyCheckiOOAuthBundle {
+  private PyCheckiOOAuthBundle() {}
 
   public static String messageOrDefault(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull String defaultValue, @NotNull Object... params) {
     return CommonBundle.messageOrDefault(getBundle(), key, defaultValue, params);

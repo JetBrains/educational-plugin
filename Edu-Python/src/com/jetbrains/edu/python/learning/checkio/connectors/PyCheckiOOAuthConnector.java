@@ -4,16 +4,16 @@ import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.model.CheckiOAccountHolder;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
-import com.jetbrains.edu.learning.checkio.utils.CheckiOOAuthBundle;
 import com.jetbrains.edu.python.learning.checkio.PyCheckiOAccountHolder;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
 public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
-  private static String CLIENT_ID = CheckiOOAuthBundle.messageOrDefault("checkioClientId", "");
-  private static String CLIENT_SECRET = CheckiOOAuthBundle.messageOrDefault("checkioClientSecret", "");
+  private static String CLIENT_ID = PyCheckiOOAuthBundle.messageOrDefault("checkioClientId", "");
+  private static String CLIENT_SECRET = PyCheckiOOAuthBundle.messageOrDefault("checkioClientSecret", "");
 
   private PyCheckiOOAuthConnector() {
     super(CLIENT_ID, CLIENT_SECRET);
