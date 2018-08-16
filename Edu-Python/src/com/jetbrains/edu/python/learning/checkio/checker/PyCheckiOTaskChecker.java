@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
@@ -66,7 +65,7 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
   @NotNull
   @Override
   public CheckResult check() {
-    final PyCheckiOMissionChecker missionChecker = new PyCheckiOMissionChecker(project, task);
+    final PyCheckiOMissionCheck missionChecker = new PyCheckiOMissionCheck(project, task);
 
     try {
       final CheckResult checkResult =

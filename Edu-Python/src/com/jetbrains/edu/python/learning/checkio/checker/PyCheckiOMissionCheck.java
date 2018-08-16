@@ -30,8 +30,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class PyCheckiOMissionChecker implements Callable<CheckResult> {
-  private static final Logger LOG = Logger.getInstance(PyCheckiOMissionChecker.class);
+public class PyCheckiOMissionCheck implements Callable<CheckResult> {
+  private static final Logger LOG = Logger.getInstance(PyCheckiOMissionCheck.class);
 
   private final Project myProject;
   private final Task myTask;
@@ -42,7 +42,7 @@ public class PyCheckiOMissionChecker implements Callable<CheckResult> {
   private CheckResult myCheckResult;
   private CountDownLatch myLatch = new CountDownLatch(1);
 
-  public PyCheckiOMissionChecker(@NotNull Project project, @NotNull Task task) {
+  public PyCheckiOMissionCheck(@NotNull Project project, @NotNull Task task) {
     myProject = project;
     myTask = task;
 
