@@ -1,10 +1,10 @@
 package com.jetbrains.edu.python.learning.checkio.connectors;
 
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
+import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.checkio.model.CheckiOAccountHolder;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
-import com.jetbrains.edu.python.learning.checkio.PyCheckiOAccountHolder;
+import com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle;
 import org.jetbrains.annotations.NotNull;
@@ -21,8 +21,13 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
 
   @NotNull
   @Override
-  public CheckiOAccountHolder getAccountHolder() {
-    return PyCheckiOAccountHolder.getInstance();
+  public CheckiOAccount getAccount() {
+    return PyCheckiOSettings.getInstance().getAccount();
+  }
+
+  @Override
+  public void setAccount(@NotNull CheckiOAccount account) {
+    PyCheckiOSettings.getInstance().setAccount(account);
   }
 
   @NotNull

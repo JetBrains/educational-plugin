@@ -67,19 +67,19 @@ public abstract class CheckiOOptions implements OptionsProvider {
 
   @Override
   public boolean isModified() {
-    return !Objects.equals(myCurrentAccount, myOAuthConnector.getAccountHolder().getAccount());
+    return !Objects.equals(myCurrentAccount, myOAuthConnector.getAccount());
   }
 
   @Override
   public void reset() {
-    myCurrentAccount = myOAuthConnector.getAccountHolder().getAccount();
+    myCurrentAccount = myOAuthConnector.getAccount();
     updateLoginLabels();
   }
 
   @Override
   public void apply() {
     if (isModified()) {
-      myOAuthConnector.getAccountHolder().setAccount(myCurrentAccount);
+      myOAuthConnector.setAccount(myCurrentAccount);
     }
 
     reset();
@@ -112,8 +112,8 @@ public abstract class CheckiOOptions implements OptionsProvider {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent event) {
         myOAuthConnector.doAuthorize(() -> {
-          final CheckiOAccount newAccount = myOAuthConnector.getAccountHolder().getAccount();
-          myOAuthConnector.getAccountHolder().setAccount(myCurrentAccount);
+          final CheckiOAccount newAccount = myOAuthConnector.getAccount();
+          myOAuthConnector.setAccount(myCurrentAccount);
           myCurrentAccount = newAccount;
           updateLoginLabels();
         });

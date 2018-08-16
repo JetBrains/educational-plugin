@@ -13,9 +13,6 @@ public class CheckiOCourse extends Course {
   // used for deserialization
   public CheckiOCourse() {}
 
-  @Property
-  private CheckiOUserInfo myCourseOwner;
-
   public CheckiOCourse(@NotNull String name, @NotNull String description, @NotNull String languageID) {
     setName(name);
     setDescription(description); // TODO
@@ -29,15 +26,6 @@ public class CheckiOCourse extends Course {
   @NotNull
   public List<CheckiOStation> getStations() {
     return items.stream().filter(CheckiOStation.class::isInstance).map(CheckiOStation.class::cast).collect(Collectors.toList());
-  }
-
-  @Nullable
-  public CheckiOUserInfo getCourseOwner() {
-    return myCourseOwner;
-  }
-
-  public void setCourseOwner(@NotNull CheckiOUserInfo courseOwner) {
-    myCourseOwner = courseOwner;
   }
 
   @Override

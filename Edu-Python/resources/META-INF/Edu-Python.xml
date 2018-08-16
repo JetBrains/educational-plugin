@@ -14,7 +14,7 @@
 
     <!-- CheckiO -->
     <httpRequestHandler implementation="com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthRestService"/>
-    <applicationService serviceImplementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOAccountHolder"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings"/>
   </extensions>
 
   <extensions defaultExtensionNs="Pythonid">

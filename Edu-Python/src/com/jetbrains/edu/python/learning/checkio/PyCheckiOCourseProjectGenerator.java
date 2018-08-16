@@ -6,7 +6,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.python.learning.PyCourseBuilder;
@@ -31,11 +30,8 @@ public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
   @Override
   protected boolean beforeProjectGenerated() {
     try {
-      final CheckiOCourse newCourse = PyCheckiOCourseContentGenerator
+      myCourse = PyCheckiOCourseContentGenerator
         .getInstance().generateCourseFromMissions(PyCheckiOApiConnector.getInstance().getMissionList());
-
-      newCourse.setCourseOwner(PyCheckiOAccountHolder.getInstance().getAccount().getUserInfo());
-      myCourse = newCourse;
       return true;
     }
     catch (LoginRequiredException e) {
