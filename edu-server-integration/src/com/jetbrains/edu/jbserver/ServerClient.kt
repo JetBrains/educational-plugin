@@ -1,5 +1,9 @@
 package com.jetbrains.edu.jbserver
 
+import java.util.concurrent.TimeUnit
+import java.text.SimpleDateFormat
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
@@ -9,13 +13,9 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import java.text.SimpleDateFormat
 
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import java.util.concurrent.TimeUnit
 
 
 val baseUrl = "http://django-edu-server.herokuapp.com"
@@ -45,6 +45,9 @@ fun ObjectMapper.setupMapper() = apply {
   setSerializationInclusion(JsonInclude.Include.NON_NULL)
   dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSSXXX")
 }
+
+
+fun List<Int>.pks() = joinToString(separator = "&")
 
 
 interface EduServerApi {
@@ -94,5 +97,24 @@ interface EduServerApi {
 }
 
 
-fun List<Int>.pks() = joinToString(separator = "&")
+object ServerClient {
+
+  private val service = EduServerApi.create()
+
+  /* Educator API */
+
+  fun createCourse(course: EduCourse): Unit = TODO()
+
+  fun updateCourse(course: EduCourse): Unit = TODO()
+
+
+  /* Learner API */
+
+  fun getAvailableCourses(): List<EduCourse> = TODO()
+
+  fun getCourseMaterials(id: Int): EduCourse = TODO()
+
+  fun getCourseUpdate(course: EduCourse): Unit = TODO()
+
+}
 
