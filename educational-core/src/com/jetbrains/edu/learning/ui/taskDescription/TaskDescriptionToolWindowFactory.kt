@@ -1,41 +1,36 @@
-package com.jetbrains.edu.learning.ui.taskDescription;
+package com.jetbrains.edu.learning.ui.taskDescription
 
-import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentManager;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import icons.EducationalCoreIcons;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.wm.ToolWindow
+import com.intellij.openapi.wm.ToolWindowFactory
+import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduUtils
+import icons.EducationalCoreIcons
 
-public class TaskDescriptionToolWindowFactory implements ToolWindowFactory, DumbAware {
-  public static final String STUDY_TOOL_WINDOW = "Task Description";
+class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
 
-
-  @Override
-  public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-    toolWindow.setIcon(EducationalCoreIcons.CourseToolWindow);
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course != null) {
-      final TaskDescriptionToolWindow taskDescriptionToolWindow;
-      if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
-        taskDescriptionToolWindow = new JavaFxToolWindow();
-      }
-      else {
-        taskDescriptionToolWindow = new SwingToolWindow();
-      }
-      taskDescriptionToolWindow.init(project);
-      final ContentManager contentManager = toolWindow.getContentManager();
-      final Content content = contentManager.getFactory().createContent(taskDescriptionToolWindow, null, false);
-      content.setCloseable(false);
-      contentManager.addContent(content);
-      Disposer.register(project, taskDescriptionToolWindow);
+  override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
+    if (!EduUtils.isStudyProject(project)) {
+      return
     }
+    toolWindow.icon = EducationalCoreIcons.CourseToolWindow
+    val taskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
+      JavaFxToolWindow()
+    }
+    else {
+      SwingToolWindow()
+    }
+    taskDescriptionToolWindow.init(project)
+    val contentManager = toolWindow.contentManager
+    val content = contentManager.factory.createContent(taskDescriptionToolWindow, null, false)
+    content.isCloseable = false
+    contentManager.addContent(content)
+    Disposer.register(project, taskDescriptionToolWindow)
+  }
+
+  companion object {
+    const val STUDY_TOOL_WINDOW = "Task Description"
   }
 }
