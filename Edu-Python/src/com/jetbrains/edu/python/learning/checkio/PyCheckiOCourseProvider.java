@@ -8,6 +8,6 @@ import org.jetbrains.annotations.NotNull;
 public class PyCheckiOCourseProvider implements CheckiOCourseProvider {
   @NotNull
   public CheckiOCourse provideCourse() {
-    return new CheckiOCourse(PyCheckiONames.PY_CHECKIO, PyCheckiONames.CHECKIO_PYTHON_LANG);
+    return new CheckiOCourse(PyCheckiONames.PY_CHECKIO, PyCheckiONames.PY_CHECKIO_LANGUAGE);
   }
 }

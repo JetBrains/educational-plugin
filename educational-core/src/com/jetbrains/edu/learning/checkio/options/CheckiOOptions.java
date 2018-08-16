@@ -28,10 +28,7 @@ public abstract class CheckiOOptions implements OptionsProvider {
   private final CheckiOOAuthConnector myOAuthConnector;
 
 
-  protected CheckiOOptions(
-    @NotNull String optionsPanelTitle,
-    @NotNull CheckiOOAuthConnector oauthConnector
-  ) {
+  protected CheckiOOptions(@NotNull String optionsPanelTitle, @NotNull CheckiOOAuthConnector oauthConnector) {
     myTitle = optionsPanelTitle;
     myOAuthConnector = oauthConnector;
   }

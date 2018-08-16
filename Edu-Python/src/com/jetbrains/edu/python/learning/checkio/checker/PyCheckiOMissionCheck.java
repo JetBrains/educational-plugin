@@ -150,7 +150,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
         final Document documentWithForm = myBrowserWindow.getEngine().getDocument();
         ((HTMLInputElement)documentWithForm.getElementById("access-token")).setValue(accessToken);
         ((HTMLInputElement)documentWithForm.getElementById("task-id")).setValue(taskId);
-        ((HTMLInputElement)documentWithForm.getElementById("interpreter")).setValue(PyCheckiONames.CHECKIO_PYTHON_INTERPRETER);
+        ((HTMLInputElement)documentWithForm.getElementById("interpreter")).setValue(PyCheckiONames.PY_CHECKIO_INTERPRETER);
         ((HTMLTextAreaElement)documentWithForm.getElementById("code")).setValue(code);
 
         ((HTMLFormElement)documentWithForm.getElementById("test-form")).submit();

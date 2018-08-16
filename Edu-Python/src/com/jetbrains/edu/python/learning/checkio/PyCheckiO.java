@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PyCheckiO extends Language implements DependentLanguage {
   protected PyCheckiO() {
-    super(PyCheckiONames.CHECKIO_PYTHON);
+    super(PyCheckiONames.PY_CHECKIO_LANGUAGE);
   }
 
   @NotNull

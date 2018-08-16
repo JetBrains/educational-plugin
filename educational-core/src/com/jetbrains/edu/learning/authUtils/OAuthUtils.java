@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.authUtils;
 
+import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.jetbrains.edu.learning.EduUtils;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 public final class OAuthUtils {
   public static class GRANT_TYPE {
@@ -26,16 +28,27 @@ public final class OAuthUtils {
 
   @NotNull
   public static String getOkPageContent(@NotNull String platformName) throws IOException {
-    return getPageTemplate(OAUTH_OK_PAGE)
-      .replaceAll(IDE_NAME, ApplicationNamesInfo.getInstance().getFullProductName())
-      .replaceAll(PLATFORM_NAME, platformName);
+    return getPageContent(OAUTH_OK_PAGE, ImmutableMap.of(
+      IDE_NAME, ApplicationNamesInfo.getInstance().getFullProductName(),
+      PLATFORM_NAME, platformName
+    ));
   }
 
   @NotNull
   public static String getErrorPageContent(@NotNull String platformName, @NotNull String errorMessage) throws IOException {
-    return getPageTemplate(OAUTH_ERROR_PAGE)
-      .replaceAll(ERROR_MESSAGE, errorMessage)
-      .replaceAll(PLATFORM_NAME, platformName);
+    return getPageContent(OAUTH_ERROR_PAGE, ImmutableMap.of(
+      ERROR_MESSAGE, errorMessage,
+      PLATFORM_NAME, platformName
+    ));
+  }
+
+  @NotNull
+  private static String getPageContent(@NotNull String pagePath, @NotNull Map<String, String> replacements) throws IOException {
+    String pageTemplate = getPageTemplate(pagePath);
+    for (Map.Entry<String, String> replacement : replacements.entrySet()) {
+      pageTemplate = pageTemplate.replaceAll(replacement.getKey(), replacement.getValue());
+    }
+    return pageTemplate;
   }
 
   @NotNull

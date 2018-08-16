@@ -26,7 +26,7 @@ sealed class ErrorState(
   object NothingSelected : ErrorState(0, null, Color.BLACK, true)
   object None : ErrorState(1, null, Color.BLACK, true)
   object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
-  open class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)
+  abstract class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
   object CheckiOLoginRequired : LoginRequired(CheckiONames.CHECKIO)
   object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
