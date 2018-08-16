@@ -3,14 +3,20 @@ package com.jetbrains.edu.learning.checkio.account;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class CheckiOAccount {
   private static final Logger LOG = Logger.getInstance(CheckiOAccount.class);
 
-  @Property private CheckiOUserInfo myUserInfo;
-  @Property private Tokens myTokens;
+  @Nullable
+  @Property
+  private CheckiOUserInfo myUserInfo;
+
+  @Nullable
+  @Property
+  private Tokens myTokens;
 
   @NotNull
   public CheckiOUserInfo getUserInfo() {

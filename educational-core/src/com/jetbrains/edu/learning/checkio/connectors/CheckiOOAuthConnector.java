@@ -33,7 +33,7 @@ public abstract class CheckiOOAuthConnector {
   private final String myClientId;
   private final String myClientSecret;
   private final Topic<CheckiOUserLoggedIn> myAuthorizationTopic;
-  private MessageBusConnection myAuthorizationBusConnection;
+  @NotNull private MessageBusConnection myAuthorizationBusConnection;
   private final ReentrantLock myAuthorizationLock;
 
   protected CheckiOOAuthConnector(

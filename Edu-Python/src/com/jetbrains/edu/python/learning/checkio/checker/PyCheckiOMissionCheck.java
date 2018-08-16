@@ -21,6 +21,7 @@ import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
 import netscape.javascript.JSObject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLFormElement;
 import org.w3c.dom.html.HTMLInputElement;
@@ -39,8 +40,8 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
   private final BrowserWindow myBrowserWindow;
   private final CheckiOTestResultHandler myResultHandler;
 
-  private CheckResult myCheckResult;
-  private CountDownLatch myLatch = new CountDownLatch(1);
+  @Nullable private CheckResult myCheckResult;
+  @NotNull private CountDownLatch myLatch = new CountDownLatch(1);
 
   public PyCheckiOMissionCheck(@NotNull Project project, @NotNull Task task) {
     myProject = project;
@@ -104,6 +105,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
       throw new NetworkException();
     }
 
+    //noinspection ConstantConditions cannot be null because of handler implementation
     return myCheckResult;
   }
 

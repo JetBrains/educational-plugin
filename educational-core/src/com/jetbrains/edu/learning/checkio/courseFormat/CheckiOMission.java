@@ -10,12 +10,19 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public class CheckiOMission extends EduTask {
-  @Transient private CheckiOStation myStation;
+  @NotNull
+  @Transient
+  private CheckiOStation myStation;
 
+  @NotNull
   private String myCode;
+
   private long mySecondsFromLastChangeOnServer;
 
-  public CheckiOMission() { }
+  public CheckiOMission() {
+    myCode = "";
+    myStation = new CheckiOStation();
+  }
 
   @Transient
   @NotNull
@@ -39,11 +46,12 @@ public class CheckiOMission extends EduTask {
     return mySecondsFromLastChangeOnServer;
   }
 
+  @NotNull
   public String getCode() {
     return myCode;
   }
 
-  public void setCode(String code) {
+  public void setCode(@NotNull String code) {
     this.myCode = code;
   }
 

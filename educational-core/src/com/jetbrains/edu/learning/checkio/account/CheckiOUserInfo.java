@@ -4,11 +4,18 @@ import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;
 
 public class CheckiOUserInfo {
-  @Property private String myUsername;
-  @Property private int myUid;
+  @NotNull
+  @Property
+  private String myUsername;
+
+  @Property
+  private int myUid;
 
   @SuppressWarnings("unused") // used for deserialization
-  private CheckiOUserInfo() {}
+  private CheckiOUserInfo() {
+    myUsername = "";
+    myUid = -1;
+  }
 
   public CheckiOUserInfo(@NotNull String username, int uid) {
     myUsername = username;

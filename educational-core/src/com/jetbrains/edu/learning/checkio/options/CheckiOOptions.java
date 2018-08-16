@@ -17,12 +17,12 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.Objects;
 
 public abstract class CheckiOOptions implements OptionsProvider {
-  private JBLabel myLoginLabel;
-  private HoverHyperlinkLabel myLoginLink;
-  private JPanel myPanel;
-  private HyperlinkAdapter myLoginListener;
+  @NotNull private JBLabel myLoginLabel = new JBLabel();
+  @NotNull private HoverHyperlinkLabel myLoginLink = new HoverHyperlinkLabel("");
+  @NotNull private JPanel myPanel = new JPanel();
+  @Nullable private HyperlinkAdapter myLoginListener;
 
-  private CheckiOAccount myCurrentAccount;
+  @NotNull private CheckiOAccount myCurrentAccount;
 
   private final String myTitle;
   private final CheckiOOAuthConnector myOAuthConnector;
@@ -31,16 +31,16 @@ public abstract class CheckiOOptions implements OptionsProvider {
   protected CheckiOOptions(@NotNull String optionsPanelTitle, @NotNull CheckiOOAuthConnector oauthConnector) {
     myTitle = optionsPanelTitle;
     myOAuthConnector = oauthConnector;
+    myCurrentAccount = oauthConnector.getAccount();
+
+    initUI();
   }
 
-  @Nullable
-  @Override
-  public JComponent createComponent() {
+  private void initUI() {
     myPanel = new JPanel(new GridLayoutManager(1, 2));
     addLoginLabel();
     addLoginLink();
     myPanel.setBorder(IdeBorderFactory.createTitledBorder(myTitle));
-    return myPanel;
   }
 
   private void addLoginLabel() {
@@ -60,6 +60,12 @@ public abstract class CheckiOOptions implements OptionsProvider {
     constraints.setColumn(1);
     constraints.setAnchor(GridConstraints.ANCHOR_WEST);
     myPanel.add(myLoginLink, constraints);
+  }
+
+  @Nullable
+  @Override
+  public JComponent createComponent() {
+    return myPanel;
   }
 
   @Override

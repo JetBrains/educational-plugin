@@ -6,12 +6,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class Tokens {
-  @Property private String myAccessToken;
-  @Property private String myRefreshToken;
-  @Property private long myExpiringTime;
+  @NotNull
+  @Property
+  private String myAccessToken;
+
+  @NotNull
+  @Property
+  private String myRefreshToken;
+
+  @Property
+  private long myExpiringTime;
 
   @SuppressWarnings("unused") // used for deserialization
-  private Tokens() {}
+  private Tokens() {
+    myAccessToken = "";
+    myRefreshToken = "";
+    myExpiringTime = -1;
+  }
 
   public Tokens(@NotNull String accessToken, @NotNull String refreshToken, long expiringTime) {
     myAccessToken = accessToken;

@@ -12,7 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 @State(name = "PyCheckiOSettings", storages = @Storage("other.xml"))
 public class PyCheckiOSettings implements PersistentStateComponent<PyCheckiOSettings> {
-  @Property private CheckiOAccount myCheckiOAccount = new CheckiOAccount();
+  @NotNull
+  @Property
+  private CheckiOAccount myCheckiOAccount = new CheckiOAccount();
 
   @Nullable
   @Override
