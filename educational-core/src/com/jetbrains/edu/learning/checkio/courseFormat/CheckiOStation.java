@@ -26,12 +26,12 @@ public class CheckiOStation extends Lesson {
   }
 
   @NotNull
-  public List<CheckiOMission> getMissionsList() {
+  public List<CheckiOMission> getMissions() {
     return getTaskList().stream().filter(CheckiOMission.class::isInstance).map(CheckiOMission.class::cast).collect(Collectors.toList());
   }
 
-  public void setMissionsList(@NotNull List<CheckiOMission> missionsList) {
-    getMissionsList().clear();
+  public void setMissions(@NotNull List<CheckiOMission> missionsList) {
+    getMissions().clear();
     addMissions(missionsList);
   }
 
@@ -50,6 +50,6 @@ public class CheckiOStation extends Lesson {
 
   @Override
   public String toString() {
-    return "missions=[" + getMissionsList().stream().map(CheckiOMission::toString).collect(Collectors.joining("\n")) + "]";
+    return "missions=[" + getMissions().stream().map(CheckiOMission::toString).collect(Collectors.joining("\n")) + "]";
   }
 }

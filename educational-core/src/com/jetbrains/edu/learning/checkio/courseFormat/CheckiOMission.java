@@ -12,8 +12,8 @@ import java.util.Collection;
 public class CheckiOMission extends EduTask {
   @Transient private CheckiOStation myStation;
 
-  private String code;
-  private long secondsFromLastChangeOnServer;
+  private String myCode;
+  private long mySecondsFromLastChangeOnServer;
 
   public CheckiOMission() { }
 
@@ -29,21 +29,22 @@ public class CheckiOMission extends EduTask {
   }
 
   public void setSecondsFromLastChangeOnServer(long secondsFromLastChangeOnServer) {
-    // zero value means that this mission hasn't start on checkio yet,
-    // so any local changes have to be after that
-    this.secondsFromLastChangeOnServer = (secondsFromLastChangeOnServer == 0 ? Long.MAX_VALUE : secondsFromLastChangeOnServer);
+    // zero value means that this mission hasn't been started on CheckiO yet,
+    // in this case we should use local task file content after course updating,
+    // so time from any local change must be less than from server
+    this.mySecondsFromLastChangeOnServer = (secondsFromLastChangeOnServer == 0 ? Long.MAX_VALUE : secondsFromLastChangeOnServer);
   }
 
   public long getSecondsFromLastChangeOnServer() {
-    return secondsFromLastChangeOnServer;
+    return mySecondsFromLastChangeOnServer;
   }
 
   public String getCode() {
-    return code;
+    return myCode;
   }
 
   public void setCode(String code) {
-    this.code = code;
+    this.myCode = code;
   }
 
   @Nullable

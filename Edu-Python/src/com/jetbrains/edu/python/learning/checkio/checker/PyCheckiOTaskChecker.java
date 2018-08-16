@@ -40,8 +40,7 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
   }
 
   private void updateCourse() {
-    final CheckiOCourse course = (CheckiOCourse)StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
+    final CheckiOCourse course = (CheckiOCourse) task.getCourse();
 
     try {
       new PyCheckiOCourseUpdater(course, project).doUpdate();

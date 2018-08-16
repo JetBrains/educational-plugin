@@ -1,17 +1,13 @@
 package com.jetbrains.edu.python.learning.checkio;
 
-import com.jetbrains.edu.learning.CoursesProvider;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.python.learning.checkio.courseFormat.PyCheckiOCourse;
+import com.jetbrains.edu.learning.checkio.CheckiOCourseProvider;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.List;
-
-public class PyCheckiOCourseProvider implements CoursesProvider {
+public class PyCheckiOCourseProvider implements CheckiOCourseProvider {
   @NotNull
-  @Override
-  public List<Course> loadCourses() {
-    return Collections.singletonList(new PyCheckiOCourse());
+  public CheckiOCourse provideCourse() {
+    return new CheckiOCourse(PyCheckiONames.PY_CHECKIO, PyCheckiONames.CHECKIO_PYTHON_LANG);
   }
 }

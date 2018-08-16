@@ -69,12 +69,12 @@ abstract class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Proj
   }
 
   private fun updateStation(newStation: CheckiOStation, oldStation: CheckiOStation) {
-    newStation.missionsList.forEach {
+    newStation.missions.forEach {
       updateMission(it, oldStation.getMission(it.stepId)!!)
       it.init(course, newStation, false)
     }
 
-    oldStation.missionsList = newStation.missionsList
+    oldStation.missions = newStation.missions
   }
 
   private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission) {

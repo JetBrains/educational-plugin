@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.checkio;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
-import com.intellij.util.PathUtil;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
@@ -14,6 +13,16 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class CheckiOCourseContentGenerator {
+  private final String DEFAULT_TASK_NAME = "mission";
+
+  private final CheckiOCourseProvider myCourseProvider;
+  private final String myTaskFileExtension;
+
+  protected CheckiOCourseContentGenerator(@NotNull CheckiOCourseProvider courseProvider, @NotNull String taskFileExtension) {
+    myCourseProvider = courseProvider;
+    myTaskFileExtension = taskFileExtension;
+  }
+
   @NotNull
   public CheckiOCourse generateCourseFromMissions(@NotNull List<CheckiOMission> missionsList) {
     missionsList.forEach(this::generateTaskFile);
@@ -24,14 +33,11 @@ public abstract class CheckiOCourseContentGenerator {
 
   private void generateTaskFile(@NotNull CheckiOMission mission) {
     final TaskFile taskFile = new TaskFile();
-    final String fileName = mission.getName() + getTaskFileExtension();
-    taskFile.name = PathUtil.suggestFileName(fileName, true, true);
+    taskFile.name = DEFAULT_TASK_NAME + "." + myTaskFileExtension;
     setTaskFileText(taskFile, mission.getCode());
     taskFile.setHighlightErrors(true);
     mission.addTaskFile(taskFile);
   }
-
-  protected abstract String getTaskFileExtension();
 
   @NotNull
   private static List<CheckiOStation> generateStationsFromMissions(@NotNull List<CheckiOMission> missions) {
@@ -52,7 +58,7 @@ public abstract class CheckiOCourseContentGenerator {
 
   @NotNull
   private CheckiOCourse generateCourseFromStations(@NotNull List<CheckiOStation> stationsList) {
-    final CheckiOCourse course = getNewCourseInstance();
+    final CheckiOCourse course = myCourseProvider.provideCourse();
 
     stationsList.forEach(station -> {
       course.addStation(station);
@@ -61,8 +67,6 @@ public abstract class CheckiOCourseContentGenerator {
 
     return course;
   }
-
-  protected abstract CheckiOCourse getNewCourseInstance();
 
   private static void setTaskFileText(@NotNull TaskFile taskFile, @NotNull String text) {
     taskFile.text = text.replaceAll("\r\n", "\n");

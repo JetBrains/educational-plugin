@@ -1,19 +1,12 @@
 package com.jetbrains.edu.python.learning.checkio;
 
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
-import com.jetbrains.edu.python.learning.checkio.courseFormat.PyCheckiOCourse;
+import com.jetbrains.python.PythonFileType;
 import org.jetbrains.annotations.NotNull;
 
 public class PyCheckiOCourseContentGenerator extends CheckiOCourseContentGenerator {
-  @Override
-  protected String getTaskFileExtension() {
-    return ".py";
-  }
-
-  @Override
-  protected CheckiOCourse getNewCourseInstance() {
-    return new PyCheckiOCourse();
+  protected PyCheckiOCourseContentGenerator() {
+    super(new PyCheckiOCourseProvider(), PythonFileType.INSTANCE.getDefaultExtension());
   }
 
   private static class Holder {

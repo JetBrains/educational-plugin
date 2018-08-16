@@ -1,21 +1,23 @@
 package com.jetbrains.edu.learning.checkio.courseFormat;
 
-import com.jetbrains.edu.learning.checkio.model.CheckiOUserInfo;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import jdk.nashorn.internal.objects.annotations.Property;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CheckiOCourse extends Course {
+  private static final String COURSE_DESCRIPTION =
+    "CheckiO is a game where you code in Python or JavaScript.\n" +
+    "Progress in the game by solving code challenges and compete for the most elegant and creative solutions.\n" +
+    "<a href=\"http://www.checkio.org/\">http://www.checkio.org/</a>";
+
   // used for deserialization
   public CheckiOCourse() {}
 
-  public CheckiOCourse(@NotNull String name, @NotNull String description, @NotNull String languageID) {
+  public CheckiOCourse(@NotNull String name, @NotNull String languageID) {
     setName(name);
-    setDescription(description); // TODO
+    setDescription(COURSE_DESCRIPTION);
     setLanguage(languageID);
   }
 
