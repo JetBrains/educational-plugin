@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checkio.model;
+package com.jetbrains.edu.learning.checkio.account;
 
 import com.intellij.util.xmlb.annotations.Property;
 import org.jetbrains.annotations.NotNull;

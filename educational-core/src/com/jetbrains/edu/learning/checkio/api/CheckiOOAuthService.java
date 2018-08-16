@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.checkio.api;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.jetbrains.edu.learning.checkio.model.CheckiOUserInfo;
-import com.jetbrains.edu.learning.checkio.model.Tokens;
+import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
+import com.jetbrains.edu.learning.checkio.account.Tokens;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.jetbrains.annotations.NotNull;
 

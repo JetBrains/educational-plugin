@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.checkio.api.wrappers;
 
 import com.google.gson.annotations.SerializedName;
-import com.jetbrains.edu.learning.checkio.model.Tokens;
+import com.jetbrains.edu.learning.checkio.account.Tokens;
 
 public class TokensWrapper implements ResponseWrapper<Tokens> {
   @SerializedName("access_token") private String myAccessToken;

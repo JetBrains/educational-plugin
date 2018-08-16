@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.checkio.model;
+package com.jetbrains.edu.learning.checkio.account;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Property;
@@ -11,12 +11,11 @@ public class CheckiOAccount {
 
   @Property private CheckiOUserInfo myUserInfo;
   @Property private Tokens myTokens;
-  @Property private boolean myLoggedIn;
 
   @NotNull
   public CheckiOUserInfo getUserInfo() {
     if (!isLoggedIn()) {
-      throw new IllegalStateException("Try to get user info when logged out");
+      throw new IllegalStateException("Attempt to get user info when logged out");
     }
     else if (myUserInfo == null) {
       throw new IllegalStateException("Logged in, but user info are null");
@@ -27,7 +26,7 @@ public class CheckiOAccount {
   @NotNull
   public Tokens getTokens() {
     if (!isLoggedIn()) {
-      throw new IllegalStateException("Try to get tokens when logged out");
+      throw new IllegalStateException("Attempt to get tokens when logged out");
     }
     else if (myTokens == null) {
       throw new IllegalStateException("Logged in, but tokens are null");
@@ -36,32 +35,30 @@ public class CheckiOAccount {
   }
 
   public boolean isLoggedIn() {
-    return myLoggedIn;
+    return myUserInfo == null;
   }
 
   public void logIn(@NotNull CheckiOUserInfo newUserInfo, @NotNull Tokens newTokens) {
     if (isLoggedIn()) {
-      LOG.warn("Try to log in when logged in already");
+      LOG.warn("Attempt to log in when logged in already");
     }
 
     myUserInfo = newUserInfo;
     myTokens = newTokens;
-    myLoggedIn = true;
   }
 
   public void logOut() {
     if (!isLoggedIn()) {
-      LOG.warn("Try to log out when logged out already");
+      LOG.warn("Attempt to log out when logged out already");
     }
 
     myUserInfo = null;
     myTokens = null;
-    myLoggedIn = false;
   }
 
   public void updateTokens(@NotNull Tokens newTokens) {
     if (!isLoggedIn()) {
-      LOG.warn("Try to update tokens when logged out");
+      LOG.warn("Attempt to update tokens when logged out");
     }
 
     myTokens = newTokens;
