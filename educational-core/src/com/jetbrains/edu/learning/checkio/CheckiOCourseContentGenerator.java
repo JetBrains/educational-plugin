@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class CheckiOCourseContentGenerator {
-  private final String DEFAULT_TASK_NAME = "mission";
+  private static final String DEFAULT_TASK_NAME = "mission";
 
   private final CheckiOCourseProvider myCourseProvider;
   private final String myTaskFileExtension;

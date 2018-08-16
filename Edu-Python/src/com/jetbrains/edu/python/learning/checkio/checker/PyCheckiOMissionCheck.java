@@ -41,7 +41,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
   private final CheckiOTestResultHandler myResultHandler;
 
   @Nullable private CheckResult myCheckResult;
-  @NotNull private CountDownLatch myLatch = new CountDownLatch(1);
+  @NotNull private final CountDownLatch myLatch = new CountDownLatch(1);
 
   public PyCheckiOMissionCheck(@NotNull Project project, @NotNull Task task) {
     myProject = project;

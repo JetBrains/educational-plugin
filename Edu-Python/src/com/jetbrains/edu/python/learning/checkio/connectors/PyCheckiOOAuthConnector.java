@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
-  private static String CLIENT_ID = PyCheckiOOAuthBundle.messageOrDefault("checkioClientId", "");
-  private static String CLIENT_SECRET = PyCheckiOOAuthBundle.messageOrDefault("checkioClientSecret", "");
+  private final static String CLIENT_ID = PyCheckiOOAuthBundle.messageOrDefault("checkioClientId", "");
+  private final static String CLIENT_SECRET = PyCheckiOOAuthBundle.messageOrDefault("checkioClientSecret", "");
 
   private PyCheckiOOAuthConnector() {
     super(CLIENT_ID, CLIENT_SECRET);
