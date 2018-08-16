@@ -6,7 +6,7 @@ import com.intellij.openapi.ui.MessageType.ERROR
 import com.intellij.openapi.ui.MessageType.WARNING
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.checkio.CheckiOConfigurator
+import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -74,9 +74,9 @@ sealed class ErrorState(
 
     private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
       if (selectedCourse is CheckiOCourse) {
-        val checkiOConfigurator = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConfigurator<*>
-        val checkiOAccountHolder = checkiOConfigurator.oAuthConnector.accountHolder
-        return !checkiOAccountHolder.account.isLoggedIn
+        val checkiOConnectorProvider = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConnectorProvider
+        val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
+        return !checkiOAccount.isLoggedIn
       }
       return false
     }

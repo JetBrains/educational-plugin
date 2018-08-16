@@ -30,7 +30,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.checkio.CheckiOConfigurator;
+import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -122,11 +122,11 @@ public class CoursesPanel extends JPanel {
   }
 
   private void addCheckiOLoginListener(@NotNull CheckiOCourse selectedCourse) {
-    final CheckiOConfigurator<?> checkiOConfigurator =
-      (CheckiOConfigurator<?>) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById());
-    assert checkiOConfigurator != null;
+    final CheckiOConnectorProvider checkiOConnectorProvider =
+      (CheckiOConnectorProvider) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById());
+    assert checkiOConnectorProvider != null;
 
-    final CheckiOOAuthConnector checkiOOAuthConnector = checkiOConfigurator.getOAuthConnector();
+    final CheckiOOAuthConnector checkiOOAuthConnector = checkiOConnectorProvider.getOAuthConnector();
 
     checkiOOAuthConnector.doAuthorize(
       () -> myErrorLabel.setVisible(false),

@@ -1,14 +1,15 @@
 package com.jetbrains.edu.python.learning.checkio.pycharm
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.python.learning.PyCourseBuilder
 import com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProjectGenerator
-import com.jetbrains.python.configuration.PyConfigurableInterpreterList
+import com.jetbrains.edu.python.learning.pycharm.PyCourseProjectGenerator
+import com.jetbrains.python.newProject.PyNewProjectSettings
 
-internal class PyCheckiOCourseProjectGenerator(builder: PyCheckiOCourseBuilder, course: Course) : PyCheckiOCourseProjectGenerator(builder, course) {
+internal class PyCheckiOCourseProjectGenerator(builder: PyCourseBuilder, course: Course) : PyCheckiOCourseProjectGenerator(builder, course) {
+  private val myPyCourseProjectGenerator = PyCourseProjectGenerator(builder, course)
 
-  override fun getAllSdks(): List<Sdk> = PyConfigurableInterpreterList.getInstance(null).allPythonSdks
-
-  override fun updateSdkIfNeeded(project: Project, sdk: Sdk?): Sdk? = sdk
+  override fun afterProjectGenerated(project: Project, settings: PyNewProjectSettings) =
+    myPyCourseProjectGenerator.afterProjectGenerated(project, settings)
 }
