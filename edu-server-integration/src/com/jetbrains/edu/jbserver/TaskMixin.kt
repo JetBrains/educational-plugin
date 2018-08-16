@@ -33,7 +33,7 @@ abstract class TaskMixIn {
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   var versionId: Int = 0
 
-  @JsonProperty("name")
+  @JsonProperty("title")
   lateinit var name: String
 
   @JsonProperty("description")
