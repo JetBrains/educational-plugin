@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.checkio;
 
 import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.TreeMultimap;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
@@ -41,10 +41,11 @@ public abstract class CheckiOCourseContentGenerator {
 
   @NotNull
   private static List<CheckiOStation> generateStationsFromMissions(@NotNull List<CheckiOMission> missions) {
-    final Multimap<CheckiOStation, CheckiOMission> stationsMap = MultimapBuilder
-      .treeKeys(Comparator.comparing(CheckiOStation::getId))
-      .treeSetValues(Comparator.comparing(CheckiOMission::getId))
-      .build();
+    final Multimap<CheckiOStation, CheckiOMission> stationsMap  = TreeMultimap.create(
+      Comparator.comparing(CheckiOStation::getId),
+      Comparator.comparing(CheckiOMission::getId)
+    );
+
 
     missions.forEach(mission -> stationsMap.put(mission.getStation(), mission));
 
