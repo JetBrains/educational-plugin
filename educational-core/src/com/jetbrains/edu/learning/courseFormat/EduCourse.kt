@@ -6,7 +6,7 @@ import java.util.ArrayList
 import com.fasterxml.jackson.annotation.JsonProperty
 
 
-class EduCourse : Course() {
+class EduCourse() : Course() {
 
   @JsonProperty("id")
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
@@ -19,7 +19,7 @@ class EduCourse : Course() {
   @JsonProperty("format")
   var format = "1.9-2018.3-3301"
 
-  fun fromCourse(course: Course) {
+  constructor(course: Course) : this() {
     name = course.name
     description = course.description
     language = course.language
@@ -28,6 +28,3 @@ class EduCourse : Course() {
   }
 
 }
-
-
-
