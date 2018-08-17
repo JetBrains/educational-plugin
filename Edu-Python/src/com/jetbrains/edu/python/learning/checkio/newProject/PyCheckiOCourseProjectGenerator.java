@@ -3,6 +3,7 @@ package com.jetbrains.edu.python.learning.checkio.newProject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.learning.checkio.newProject.CheckiOCourseGeneratingUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.python.learning.PyCourseBuilder;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector;
@@ -25,8 +26,10 @@ public class PyCheckiOCourseProjectGenerator extends PyCourseProjectGenerator {
   @Override
   protected boolean beforeProjectGenerated() {
     try {
-      myCourse = PyCheckiOCourseContentGenerator
-        .getInstance().generateCourseFromMissions(PyCheckiOApiConnector.getInstance().getMissionList());
+      myCourse = CheckiOCourseGeneratingUtils.generateCourseFromServerUnderProgress(
+        PyCheckiOCourseContentGenerator.getInstance(),
+        PyCheckiOApiConnector.getInstance()
+      );
       return true;
     }
     catch (Exception e) {
