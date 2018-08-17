@@ -41,7 +41,7 @@ public class CheckiOAccount {
   }
 
   public boolean isLoggedIn() {
-    return myUserInfo == null;
+    return myUserInfo != null;
   }
 
   public void logIn(@NotNull CheckiOUserInfo newUserInfo, @NotNull Tokens newTokens) {
