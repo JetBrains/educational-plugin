@@ -3,6 +3,7 @@ package com.jetbrains.edu.jbserver
 import java.util.Date
 import java.io.File
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -66,3 +67,39 @@ fun StudyItem.info(indent: Int = 0, indentSize: Int = 2): String = when(this) {
 
 // Course builder extension
 fun Course.asEduCourse() = EduCourse(this)
+
+
+// Return sample course
+fun sampleCourse() = course {
+  withName("Sample course")
+  withDescription("This is some course description")
+  lesson("First lesson") {
+    eduTask("PA #1") { }
+    eduTask("PA #2") { }
+    outputTask("PA #3") { }
+  }
+  section("Part 1") {
+    lesson("Second lesson") {
+      outputTask("PA #4") { }
+      outputTask("PA #5") { }
+    }
+    lesson("Third lesson") {
+      eduTask("PA #6") { }
+      eduTask("PA #7") { }
+      eduTask("PA #8") { }
+    }
+  }
+  section("Part 2") {
+    lesson("Fourth lesson") {
+      outputTask("PA #9") { }
+      eduTask("PA #10") { }
+      eduTask("PA #11") { }
+    }
+    lesson("Fifth lesson") {
+      outputTask("PA #12") { }
+      outputTask("PA #13") { }
+      eduTask("PA #14") { }
+      eduTask("PA #15") { }
+    }
+  }
+}.asEduCourse()

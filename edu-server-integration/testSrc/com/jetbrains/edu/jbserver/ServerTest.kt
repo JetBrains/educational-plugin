@@ -3,7 +3,6 @@ package com.jetbrains.edu.jbserver
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.junit.Test
 import java.io.File
@@ -17,47 +16,15 @@ class ServerTest : EduTestCase() {
 
   val doPost = false
 
-  val testCourse = 4214
-  val testSections = listOf(4292, 4365)
-  val testLessons = listOf(4366, 4372)
-  val testTasks = listOf(4375, 4379)
+  val testCourse = 5505
+  val testSections = listOf(5510, 5518)
+  val testLessons = listOf(5506, 5519)
+  val testTasks = listOf(5513, 5525)
 
 
   @Test
   fun `test - post sample course`() {
-    val course = course {
-      withName("Sample course")
-      withDescription("This is some course description")
-      lesson("First lesson") {
-        eduTask("PA #1") { }
-        eduTask("PA #2") { }
-        outputTask("PA #3") { }
-      }
-      section("Part 1") {
-        lesson("Second lesson") {
-          outputTask("PA #4") { }
-          outputTask("PA #5") { }
-        }
-        lesson("Third lesson") {
-          eduTask("PA #6") { }
-          eduTask("PA #7") { }
-          eduTask("PA #8") { }
-        }
-      }
-      section("Part 2") {
-        lesson("Fourth lesson") {
-          outputTask("PA #9") { }
-          eduTask("PA #10") { }
-          eduTask("PA #11") { }
-        }
-        lesson("Fifth lesson") {
-          outputTask("PA #12") { }
-          outputTask("PA #13") { }
-          eduTask("PA #14") { }
-          eduTask("PA #15") { }
-        }
-      }
-    }.asEduCourse()
+    val course = sampleCourse()
     if (doPost) {
       val response = service.createCourse(course).execute()
       val meta = response.body()
