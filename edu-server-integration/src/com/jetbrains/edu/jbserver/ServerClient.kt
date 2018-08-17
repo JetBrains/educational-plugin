@@ -99,7 +99,10 @@ interface EduServerApi {
   fun getTasks(@Path("pks") pks: String): Call<TaskList>
 
   @POST("/courses")
-  fun createCourse(@Body course: Course) : Call<EduCourse>
+  fun createCourse(@Body course: EduCourse): Call<EduCourse>
+
+  @PUT("/courses/{pk}/update")
+  fun updateCourse(@Body course: EduCourse): Call<EduCourse>
 
 }
 
