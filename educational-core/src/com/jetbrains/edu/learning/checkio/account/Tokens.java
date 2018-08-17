@@ -1,20 +1,20 @@
 package com.jetbrains.edu.learning.checkio.account;
 
-import com.intellij.util.xmlb.annotations.Property;
+import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class Tokens {
   @NotNull
-  @Property
+  @Tag("AccessToken")
   private String myAccessToken;
 
   @NotNull
-  @Property
+  @Tag("RefreshToken")
   private String myRefreshToken;
 
-  @Property
+  @Tag("ExpiringTime")
   private long myExpiringTime;
 
   @SuppressWarnings("unused") // used for deserialization

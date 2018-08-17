@@ -1,14 +1,14 @@
 package com.jetbrains.edu.learning.checkio.account;
 
-import com.intellij.util.xmlb.annotations.Property;
+import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 
 public class CheckiOUserInfo {
   @NotNull
-  @Property
+  @Tag("Username")
   private String myUsername;
 
-  @Property
+  @Tag("Id")
   private int myUid;
 
   @SuppressWarnings("unused") // used for deserialization

@@ -5,7 +5,8 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import com.intellij.util.xmlb.annotations.Property;
+import com.intellij.util.xmlb.annotations.Tag;
+import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 @State(name = "PyCheckiOSettings", storages = @Storage("other.xml"))
 public class PyCheckiOSettings implements PersistentStateComponent<PyCheckiOSettings> {
   @NotNull
-  @Property
+  @Tag("PyAccount")
   private CheckiOAccount myCheckiOAccount = new CheckiOAccount();
 
   @Nullable
@@ -33,10 +34,12 @@ public class PyCheckiOSettings implements PersistentStateComponent<PyCheckiOSett
   }
 
   @NotNull
+  @Transient
   public CheckiOAccount getAccount() {
     return myCheckiOAccount;
   }
 
+  @Transient
   public void setAccount(@NotNull CheckiOAccount account) {
     myCheckiOAccount = account;
   }
