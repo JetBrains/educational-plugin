@@ -7,7 +7,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ex.ToolWindowEx
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
@@ -20,13 +19,14 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       return
     }
     toolWindow.icon = EducationalCoreIcons.CourseToolWindow
-    val taskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
-      JavaFxToolWindow()
-    }
-    else {
-      SwingToolWindow()
-    }
-    taskDescriptionToolWindow.init(project)
+//    val taskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
+//      JavaFxToolWindow()
+//    }
+//    else {
+//      SwingToolWindow()
+//    }
+//    taskDescriptionToolWindow.init(project)
+    val taskDescriptionToolWindow = TaskDescriptionPanel()
     toolWindow.initTitleActions()
     val contentManager = toolWindow.contentManager
     val content = contentManager.factory.createContent(taskDescriptionToolWindow, null, false)

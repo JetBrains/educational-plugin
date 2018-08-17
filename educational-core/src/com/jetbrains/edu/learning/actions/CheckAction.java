@@ -1,10 +1,9 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.Extensions;
@@ -18,7 +17,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
@@ -29,19 +27,20 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class CheckAction extends DumbAwareActionWithShortcut {
+import javax.swing.*;
+
+public class CheckAction extends DumbAwareActionWithShortcut implements CustomComponentAction {
   public static final String SHORTCUT = "ctrl alt pressed ENTER";
   public static final String ACTION_ID = "Educational.Check";
-  private static final String CHECK_TASK = "Check Task";
+  private static final String CHECK_TASK = "Check";
   private static final String RUN_TASK = "Run Task";
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
-    super(CHECK_TASK,"Check current task", EducationalCoreIcons.CheckTask);
+    super(CHECK_TASK, "Check current task", null);
   }
 
   @Override
@@ -78,43 +77,51 @@ public class CheckAction extends DumbAwareActionWithShortcut {
 
   @Override
   public void update(AnActionEvent e) {
-    final Presentation presentation = e.getPresentation();
-    EduUtils.updateAction(e);
+    return;
+    //final Presentation presentation = e.getPresentation();
+    //EduUtils.updateAction(e);
+    //
+    //Project project = e.getProject();
+    //if (project == null) {
+    //  return;
+    //}
+    //
+    //final EduEditor studyEditor = EduUtils.getSelectedEduEditor(project);
+    //if (studyEditor != null) {
+    //  final Task task = studyEditor.getTaskFile().getTask();
+    //  if (task instanceof TheoryTask) {
+    //    //presentation.setIcon(AllIcons.Actions.Execute);
+    //    presentation.setText(RUN_TASK);
+    //    presentation.setDescription("Run current task");
+    //  }
+    //  else {
+    //    //presentation.setIcon(EducationalCoreIcons.CheckTask);
+    //    presentation.setText(CHECK_TASK);
+    //    presentation.setDescription("Check current task");
+    //  }
+    //}
+    //if (presentation.isEnabled()) {
+    //  updateDescription(e);
+    //  presentation.setEnabled(!myCheckInProgress.get());
+    //  return;
+    //}
+    //if (!CCUtils.isCourseCreator(project)) {
+    //  return;
+    //}
+    //VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
+    //if (virtualFile == null || FileEditorManager.getInstance(project).getSelectedTextEditor() == null) {
+    //  return;
+    //}
+    //if (EduUtils.isTestsFile(project, virtualFile)) {
+    //  presentation.setEnabledAndVisible(true);
+    //}
+  }
 
-    Project project = e.getProject();
-    if (project == null) {
-      return;
-    }
-
-    final EduEditor studyEditor = EduUtils.getSelectedEduEditor(project);
-    if (studyEditor != null) {
-      final Task task = studyEditor.getTaskFile().getTask();
-      if (task instanceof TheoryTask) {
-        presentation.setIcon(AllIcons.Actions.Execute);
-        presentation.setText(RUN_TASK);
-        presentation.setDescription("Run current task");
-      }
-      else {
-        presentation.setIcon(EducationalCoreIcons.CheckTask);
-        presentation.setText(CHECK_TASK);
-        presentation.setDescription("Check current task");
-      }
-    }
-    if (presentation.isEnabled()) {
-      updateDescription(e);
-      presentation.setEnabled(!myCheckInProgress.get());
-      return;
-    }
-    if (!CCUtils.isCourseCreator(project)) {
-      return;
-    }
-    VirtualFile virtualFile = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
-    if (virtualFile == null || FileEditorManager.getInstance(project).getSelectedTextEditor() == null) {
-      return;
-    }
-    if (EduUtils.isTestsFile(project, virtualFile)) {
-      presentation.setEnabledAndVisible(true);
-    }
+  @NotNull
+  @Override
+  public JComponent createCustomComponent(@NotNull Presentation presentation) {
+    JButton button = new JButton("Check");
+    return button;
   }
 
   private static void updateDescription(AnActionEvent e) {
