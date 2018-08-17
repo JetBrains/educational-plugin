@@ -4,19 +4,18 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ex.ApplicationUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
+import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseUpdater;
-import com.jetbrains.edu.python.learning.checkio.messages.PyCheckiOErrorInformer;
+import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
 import javafx.embed.swing.JFXPanel;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,24 +40,22 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
   private void updateCourse() {
     final CheckiOCourse course = (CheckiOCourse) task.getCourse();
 
+    final CheckiOErrorReporter errorReporter = new CheckiOErrorReporter("Failed to update the course");
+
     try {
       new PyCheckiOCourseUpdater(course, project).doUpdate();
     }
     catch (LoginRequiredException e) {
       LOG.warn(e);
-      PyCheckiOErrorInformer.getInstance().showLoginRequiredMessage("Failed to update the course");
+      errorReporter.reportLoginRequiredError(PyCheckiOOAuthConnector.getInstance());
     }
     catch (NetworkException e) {
       LOG.warn(e);
-      int result = PyCheckiOErrorInformer.getInstance().showNetworkErrorMessage("Failed to update the course");
-      if (result == Messages.OK) {
-        updateCourse();
-      }
+      errorReporter.reportNetworkError();
     }
-    catch (ApiException e) {
+    catch (Exception e) {
       LOG.warn(e);
-      PyCheckiOErrorInformer.getInstance()
-        .showErrorDialog("Something went wrong. Course cannot be updated.", "Failed to update the course");
+      errorReporter.reportUnexpectedError("Something went wrong. Course cannot be updated.");
     }
   }
 

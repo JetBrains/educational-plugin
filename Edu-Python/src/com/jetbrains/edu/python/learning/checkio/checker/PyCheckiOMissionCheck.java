@@ -3,18 +3,17 @@ package com.jetbrains.edu.python.learning.checkio.checker;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
+import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
-import com.jetbrains.edu.python.learning.checkio.messages.PyCheckiOErrorInformer;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
@@ -59,6 +58,8 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
       return CheckResult.FAILED_TO_CHECK;
     }
 
+    final CheckiOErrorReporter errorReporter = new CheckiOErrorReporter("Failed to check the task");
+
     try {
       final String accessToken = PyCheckiOOAuthConnector.getInstance().getAccessToken();
       final String taskId = String.valueOf(myTask.getId());
@@ -68,19 +69,17 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
     }
     catch (LoginRequiredException e) {
       LOG.warn(e);
-      PyCheckiOErrorInformer.getInstance().showLoginRequiredMessage("Failed to check the task");
+      errorReporter.reportLoginRequiredError(PyCheckiOOAuthConnector.getInstance());
       return CheckResult.loginNeeded(PyCheckiONames.PY_CHECKIO);
     }
     catch (NetworkException e) {
       LOG.warn(e);
-      int result = PyCheckiOErrorInformer.getInstance().showNetworkErrorMessage("Failed to check the task");
-      if (result == Messages.OK) {
-        return call();
-      }
+      errorReporter.reportNetworkError();
       return CheckResult.CONNECTION_FAILED;
     }
     catch (Exception e) {
       LOG.warn(e);
+      errorReporter.reportUnexpectedError();
       return CheckResult.FAILED_TO_CHECK;
     }
   }
