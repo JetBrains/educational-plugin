@@ -2,6 +2,7 @@ package com.jetbrains.edu.jbserver
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -78,5 +79,47 @@ class JacksonSerializationTest : EduTestCase() {
   }
 
   // todo: use dsl to construct objects
+  
+  @Test
+  fun `test differential update`() {
+
+    val course = course {
+      withName("Sample course")
+      withDescription("This is some course description")
+      lesson("First lesson") {
+        withId(465)
+        theoryTask ("PA #1.1") { }
+        outputTask ("PA #1.2") { }
+        eduTask("PA #1.3") { }
+      }
+      section("Part 1") {
+        withId(545)
+        lesson("Second lesson") {}
+        lesson("Third lesson") {}
+      }
+      section("Part 2") {
+        lesson("Fourth lesson") {
+          withId(659)
+        }
+        lesson("Fourth lesson") {
+          eduTask("PA #4.1") {
+            withId(6545)
+          }
+          outputTask("PA #4.2") {
+            withId(6546)
+          }
+          eduTask("PA #4.3") {
+            withTaskDescription("new task 1")
+          }
+          outputTask("PA #4.4") {
+            withTaskDescription("new task 2")
+          }
+        }
+      }
+    }.asEduCourse()
+
+    val json = writer.writeValueAsString(course)
+    check(jsonEquals(json, readTestRes("course_update.json")))
+  }
 
 }

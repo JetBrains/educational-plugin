@@ -12,6 +12,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 import com.jetbrains.edu.learning.courseFormat.*
@@ -44,6 +45,12 @@ fun ObjectMapper.setupMapper() = apply {
   disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
   setSerializationInclusion(JsonInclude.Include.NON_NULL)
   dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSSXXX")
+
+  val updateModule = SimpleModule()
+  updateModule.addSerializer(Section::class.java, SectionSerializer())
+  updateModule.addSerializer(Lesson::class.java, LessonSerializer())
+  updateModule.addSerializer(Task::class.java, TaskSerializer())
+  registerModule(updateModule)
 }
 
 

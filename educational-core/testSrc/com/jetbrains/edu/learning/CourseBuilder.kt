@@ -109,6 +109,10 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
   fun withName(name: String) {
     section.name = name
   }
+
+  fun withId(id: Int) {
+    section.id = id
+  }
 }
 
 class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = Lesson()) {
@@ -120,6 +124,10 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
 
   fun withName(name: String) {
     lesson.name = name
+  }
+
+  fun withId(id: Int) {
+    lesson.id = id
   }
 
   private fun task(
@@ -173,6 +181,10 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
   fun withTaskDescription(text: String, format: DescriptionFormat? = null) {
     task.descriptionText = text
     task.descriptionFormat = format ?: DescriptionFormat.HTML
+  }
+
+  fun withId(id: Int) {
+    task.stepId = id
   }
 
   /**

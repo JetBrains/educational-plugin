@@ -1,0 +1,60 @@
+{
+  "type": "course",
+  "format": "1.9-2018.3-3301",
+  "title": "Sample course",
+  "summary": "This is some course description",
+  "language": "en",
+  "programming_language": "TEXT",
+
+  "items": [
+    {
+      "type": "lesson",
+      "id": 465
+    },
+    {
+      "type": "section",
+      "id": 545
+    },
+    {
+      "type": "section",
+      "title": "Part 2",
+      "items": [
+        {
+          "type": "lesson",
+          "id": 659
+        },
+        {
+          "type": "lesson",
+          "title": "Fourth lesson",
+          "items": [
+            {
+              "type": "edu",
+              "id": 6545
+            },
+            {
+              "type": "output",
+              "id": 6546
+            },
+            {
+              "type": "edu",
+              "title": "PA #4.3",
+              "description": "new task 1",
+              "descriptionFormat": "html",
+              "task_files": {},
+              "test_files": {}
+            },
+            {
+              "type": "output",
+              "title": "PA #4.4",
+              "description": "new task 2",
+              "descriptionFormat": "html",
+              "task_files": {},
+              "test_files": {}
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "course_files": {}
+}
