@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.learning.checkio;
+package com.jetbrains.edu.python.learning.checkio.newProject;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;

@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector;
+import com.jetbrains.edu.python.learning.checkio.newProject.PyCheckiOCourseContentGenerator;
 import org.jetbrains.annotations.NotNull;
 
 public class PyCheckiOCourseUpdater extends CheckiOCourseUpdater {

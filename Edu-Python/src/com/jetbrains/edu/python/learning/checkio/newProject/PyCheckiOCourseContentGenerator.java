@@ -1,6 +1,7 @@
-package com.jetbrains.edu.python.learning.checkio;
+package com.jetbrains.edu.python.learning.checkio.newProject;
 
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
+import com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProvider;
 import com.jetbrains.python.PythonFileType;
 import org.jetbrains.annotations.NotNull;
 
