@@ -22,8 +22,4 @@ public class CheckiOErrorReporter {
   public void reportUnexpectedError() {
     Notifications.Bus.notify(new CheckiOUnexpectedErrorNotification(myTitle));
   }
-
-  public void reportUnexpectedError(@NotNull String content) {
-    Notifications.Bus.notify(new CheckiOUnexpectedErrorNotification(myTitle, content));
-  }
 }
