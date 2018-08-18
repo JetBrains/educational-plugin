@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checkio
 
 import com.intellij.ide.projectView.ProjectView
+import com.intellij.notification.Notifications
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
@@ -14,6 +15,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler
+import com.jetbrains.edu.learning.checkio.notifications.infos.CheckiOStationsUnlockedNotification
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.IOException
 
@@ -30,7 +32,8 @@ abstract class CheckiOCourseUpdater(
   fun doUpdate() {
     try {
       val serverCourse = contentGenerator.generateCourseFromMissions(apiConnector.missionList)
-      updateStations(serverCourse)
+      val newStations = updateStations(serverCourse)
+      showNotification(newStations)
     } catch (e: Exception) {
       DefaultErrorHandler(
         "Failed to check the task",
@@ -44,7 +47,13 @@ abstract class CheckiOCourseUpdater(
     }
   }
 
-  private fun updateStations(serverCourse: CheckiOCourse) {
+  private fun showNotification(newStations: List<CheckiOStation>) {
+    if (newStations.isNotEmpty()) {
+      Notifications.Bus.notify(CheckiOStationsUnlockedNotification(newStations))
+    }
+  }
+
+  private fun updateStations(serverCourse: CheckiOCourse): List<CheckiOStation> {
     val (existingStations, newStations) = serverCourse.stations.partition(course.stations::contains)
 
     createNewStations(newStations)
@@ -52,6 +61,8 @@ abstract class CheckiOCourseUpdater(
 
     course.items = serverCourse.items
     course.init(null, null, false)
+
+    return newStations
   }
 
   private fun createNewStations(newStations: List<CheckiOStation>) {

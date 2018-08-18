@@ -50,7 +50,7 @@ public abstract class CheckiONotification extends Notification {
     }
   }
 
-  public class Info extends CheckiONotification {
+  public static class Info extends CheckiONotification {
     public Info(
       @Nullable String title,
       @Nullable String subtitle,
