@@ -9,26 +9,34 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
-import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
-import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException
+import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.IOException
 
-abstract class CheckiOCourseUpdater(val course: CheckiOCourse, val project: Project) {
+abstract class CheckiOCourseUpdater(
+  val course: CheckiOCourse,
+  val project: Project,
+  private val contentGenerator: CheckiOCourseContentGenerator,
+  private val apiConnector: CheckiOApiConnector
+) {
   companion object {
     private val LOG = Logger.getInstance(CheckiOCourseUpdater::class.java)
   }
 
-  @Throws(LoginRequiredException::class, ApiException::class)
-  protected abstract fun getCourseFromServer(): CheckiOCourse
-
-  @Throws(LoginRequiredException::class, ApiException::class)
   fun doUpdate() {
-    val serverCourse = getCourseFromServer()
-    updateStations(serverCourse)
+    try {
+      val serverCourse = contentGenerator.generateCourseFromMissions(apiConnector.missionList)
+      updateStations(serverCourse)
+    } catch (e: Exception) {
+      DefaultErrorHandler(
+        "Failed to check the task",
+        apiConnector.oauthConnector
+      ).handle(e)
+    }
 
     runInEdt {
       synchronize()

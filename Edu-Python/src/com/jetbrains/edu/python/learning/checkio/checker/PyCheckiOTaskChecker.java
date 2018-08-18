@@ -7,15 +7,11 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
-import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
-import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseUpdater;
-import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
 import javafx.embed.swing.JFXPanel;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,24 +35,7 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
 
   private void updateCourse() {
     final CheckiOCourse course = (CheckiOCourse) task.getCourse();
-
-    final CheckiOErrorReporter errorReporter = new CheckiOErrorReporter("Failed to update the course");
-
-    try {
-      new PyCheckiOCourseUpdater(course, project).doUpdate();
-    }
-    catch (LoginRequiredException e) {
-      LOG.warn(e);
-      errorReporter.reportLoginRequiredError(PyCheckiOOAuthConnector.getInstance());
-    }
-    catch (NetworkException e) {
-      LOG.warn(e);
-      errorReporter.reportNetworkError();
-    }
-    catch (Exception e) {
-      LOG.warn(e);
-      errorReporter.reportUnexpectedError("Something went wrong. Course cannot be updated.");
-    }
+    new PyCheckiOCourseUpdater(course, project).doUpdate();
   }
 
   @NotNull

@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -55,10 +54,12 @@ public class CheckiOMission extends EduTask {
     this.myCode = code;
   }
 
-  @Nullable
+  @NotNull
   public TaskFile getTaskFile() {
     final Collection<TaskFile> taskFiles = getTaskFiles().values();
-    return taskFiles.isEmpty() ? null : taskFiles.iterator().next();
+    assert !taskFiles.isEmpty();
+
+    return taskFiles.iterator().next();
   }
 
   @Override

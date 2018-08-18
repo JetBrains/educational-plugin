@@ -19,6 +19,11 @@ public abstract class CheckiOApiConnector {
   }
 
   @NotNull
+  public CheckiOOAuthConnector getOauthConnector() {
+    return myOauthConnector;
+  }
+
+  @NotNull
   public List<CheckiOMission> getMissionList() throws LoginRequiredException, ApiException {
     final String accessToken = myOauthConnector.getAccessToken();
     final MyResponse<List<CheckiOMission>> missionListResponse = myCheckiOApiService.getMissionList(accessToken);

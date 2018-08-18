@@ -7,8 +7,7 @@ import com.intellij.openapi.util.Ref;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
-import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
-import com.jetbrains.edu.learning.checkio.notifications.errors.CheckiOErrorReporter;
+import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -58,33 +57,21 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
       return CheckResult.FAILED_TO_CHECK;
     }
 
-    final CheckiOErrorReporter errorReporter = new CheckiOErrorReporter("Failed to check the task");
-
     try {
       final String accessToken = PyCheckiOOAuthConnector.getInstance().getAccessToken();
       final String taskId = String.valueOf(myTask.getId());
       final String code = selectedEditor.getDocument().getText();
 
       return doCheck(accessToken, taskId, code);
-    }
-    catch (LoginRequiredException e) {
-      LOG.warn(e);
-      errorReporter.reportLoginRequiredError(PyCheckiOOAuthConnector.getInstance());
-      return CheckResult.loginNeeded(PyCheckiONames.PY_CHECKIO);
-    }
-    catch (NetworkException e) {
-      LOG.warn(e);
-      errorReporter.reportNetworkError();
-      return CheckResult.CONNECTION_FAILED;
-    }
-    catch (Exception e) {
-      LOG.warn(e);
-      errorReporter.reportUnexpectedError();
+    } catch (Exception e) {
+      new DefaultErrorHandler(
+        "Failed to check the task",
+        PyCheckiOOAuthConnector.getInstance()
+      ).handle(e);
       return CheckResult.FAILED_TO_CHECK;
     }
   }
 
-  @SuppressWarnings("SameParameterValue")
   @NotNull
   private CheckResult doCheck(@NotNull String accessToken, @NotNull String taskId, @NotNull String code)
     throws InterruptedException, NetworkException {
