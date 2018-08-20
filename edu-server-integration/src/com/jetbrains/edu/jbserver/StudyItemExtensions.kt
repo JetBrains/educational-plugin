@@ -13,6 +13,7 @@ fun StudyItem.addMetaInformation(meta: StudyItem): Unit = when (this) {
     for ((el, meta) in (items zip meta.items)) {
       el.addMetaInformation(meta)
     }
+    isUploaded = true
   }
   is Section -> {
     if (meta !is Section) throw ServerException("wrong response format")
@@ -20,6 +21,7 @@ fun StudyItem.addMetaInformation(meta: StudyItem): Unit = when (this) {
     for ((el, meta) in (items zip meta.items)) {
       el.addMetaInformation(meta)
     }
+    isUploaded = true
   }
   is Lesson -> {
     if (meta !is Lesson) throw ServerException("wrong response format")
@@ -27,10 +29,12 @@ fun StudyItem.addMetaInformation(meta: StudyItem): Unit = when (this) {
     for ((el, meta) in (taskList zip meta.taskList)) {
       el.addMetaInformation(meta)
     }
+    isUploaded = true
   }
   is Task -> {
     if (meta !is Task) throw ServerException("wrong response format")
     stepId = meta.stepId
+    isUploaded = true
   }
   else -> {}
 }

@@ -13,10 +13,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 class SectionSerializer(t: Class<Section>? = null) : StdSerializer<Section>(t) {
 
   override fun serialize(value: Section, gen: JsonGenerator, provider: SerializerProvider) = gen.run {
-    if (value.id != 0) {
+    if (value.id != 0)
       writeNumberField("id", value.id)
-    }
-    else {
+    if (!value.isUploaded) {
       writeStringField("title", value.name)
       writeArrayFieldStart("items")
       value.items.forEach {
@@ -39,10 +38,9 @@ class SectionSerializer(t: Class<Section>? = null) : StdSerializer<Section>(t) {
 class LessonSerializer(t: Class<Lesson>? = null) : StdSerializer<Lesson>(t) {
 
   override fun serialize(value: Lesson, gen: JsonGenerator, provider: SerializerProvider) = gen.run {
-    if (value.id != 0) {
+    if (value.id != 0)
       writeNumberField("id", value.id)
-    }
-    else {
+    if (!value.isUploaded) {
       writeStringField("title", value.name)
       writeArrayFieldStart("items")
       value.taskList.forEach {
@@ -65,7 +63,9 @@ class LessonSerializer(t: Class<Lesson>? = null) : StdSerializer<Lesson>(t) {
 class TaskSerializer(t: Class<Task>? = null) : StdSerializer<Task>(t) {
 
   override fun serialize(value: Task, gen: JsonGenerator, provider: SerializerProvider) = gen.run {
-    if (value.stepId == 0) {
+    if (value.id != 0)
+      writeNumberField("id", value.stepId)
+    if (!value.isUploaded) {
       writeStringField("title", value.name)
       writeStringField("description", value.descriptionText)
       writeObjectField("descriptionFormat", value.descriptionFormat)
@@ -73,8 +73,6 @@ class TaskSerializer(t: Class<Task>? = null) : StdSerializer<Task>(t) {
       writeObjectField("test_files", value.testsText)
       // todo : handle this by standard serializer if possible
     }
-    else
-      writeNumberField("id", value.stepId)
   }
 
   override fun serializeWithType(value: Task, gen: JsonGenerator, serializers: SerializerProvider, typeSer: TypeSerializer) {

@@ -112,6 +112,7 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
 
   fun withId(id: Int) {
     section.id = id
+    section.isUploaded = true
   }
 }
 
@@ -128,6 +129,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
 
   fun withId(id: Int) {
     lesson.id = id
+    lesson.isUploaded = true
   }
 
   private fun task(
@@ -185,6 +187,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
 
   fun withId(id: Int) {
     task.stepId = id
+    task.isUploaded = true
   }
 
   /**
