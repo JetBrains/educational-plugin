@@ -114,7 +114,8 @@ class ServerException(msg: String) : Exception("Internal server error: $msg")
 fun <R> Call<R>.safeExecute(): R {
   val response = try { execute() }
     catch (e: UnknownHostException) { null }
-    catch (e: JsonMappingException) { throw ServerException("wrong response format: ${e.message}") }
+    catch (e: JsonMappingException) { throw ServerException("wrong response format: ${e.message}")
+    }
   return response?.body() ?: throw ServerException("empty response received")
 }
 

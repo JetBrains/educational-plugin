@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 
 // Read file from testResources
-fun readTestRes(name: String) = File("testResources/$name").readText()
+fun readTestRes(name: String) = File("testData/jbserver/$name").readText()
 
 
 // Compare two json strings semantically

@@ -160,6 +160,7 @@ allprojects {
         }
         compile "com.squareup.retrofit2:retrofit:2.4.0"
         compile "com.squareup.retrofit2:converter-jackson:2.4.0"
+        compile 'com.squareup.okhttp3:logging-interceptor:3.11.+' // retrofit debug
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
     }
 }
@@ -259,7 +260,7 @@ configure(project(':educational-core')) {
     }
 }
 
-configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':edu-server-integration')]) {
+configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala')]) {
     dependencies {
         compile project(':educational-core')
         testCompile project(':educational-core').sourceSets.test.output
@@ -312,11 +313,5 @@ allprojects {
         if (rootProject.hasProperty("stepik_test_client_secret")) {
             environment 'STEPIK_TEST_CLIENT_SECRET', stepik_test_client_secret
         }
-    }
-}
-
-configure(project(':edu-server-integration')) {
-    dependencies {
-         compile 'com.squareup.okhttp3:logging-interceptor:3.11.+' // retrofit debug
     }
 }

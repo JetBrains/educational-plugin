@@ -16,10 +16,10 @@ class ServerTest : EduTestCase() {
 
   val doPost = false
 
-  val testCourse = 5505
-  val testSections = listOf(5510, 5518)
-  val testLessons = listOf(5506, 5519)
-  val testTasks = listOf(5513, 5525)
+  val testCourse = 7398
+  val testSections = listOf(7603, 7712)
+  val testLessons = listOf(7550,7691)
+  val testTasks = listOf(7693,7709)
 
 
   @Test
