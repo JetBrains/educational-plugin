@@ -37,11 +37,13 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
+import com.jetbrains.edu.jbserver.ServerClient;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -75,21 +77,33 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   protected boolean beforeProjectGenerated() {
-    if (!(myCourse instanceof RemoteCourse)) return true;
-    final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
-    if (remoteCourse.getId() > 0) {
+    if (myCourse instanceof RemoteCourse) {
+      final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
+      if (remoteCourse.getId() > 0) {
+        return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+          final StepicUser user = EduSettings.getInstance().getUser();
+          isEnrolled = StepikConnector.isEnrolledToCourse(remoteCourse.getId(), user);
+          ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+          StepikConnector.enrollToCourse(remoteCourse.getId(), user);
+          RemoteCourse loadedCourse = StepikConnector.getCourse(null, remoteCourse);
+          if (loadedCourse != null) {
+            myCourse = loadedCourse;
+            return true;
+          }
+          return false;
+        }, "Loading Course", true, null);
+      }
+    } else if (myCourse instanceof EduCourse) {
+      final EduCourse eduCourse = (EduCourse) this.myCourse;
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        final StepicUser user = EduSettings.getInstance().getUser();
-        isEnrolled = StepikConnector.isEnrolledToCourse(remoteCourse.getId(), user);
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        StepikConnector.enrollToCourse(remoteCourse.getId(), user);
-        RemoteCourse loadedCourse = StepikConnector.getCourse(null, remoteCourse);
-        if (loadedCourse != null) {
-          myCourse = loadedCourse;
+        try {
+          myCourse = ServerClient.INSTANCE.getCourseMaterials(eduCourse.getCourseId());
           return true;
+        } catch (Exception e) {
+          return false;
         }
-        return false;
-      }, "Loading Course", true, null);
+        // todo :: check error handling logic
+      }, "Loading EduCourse", true, null);
     }
     return true;
   }
