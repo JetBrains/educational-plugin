@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler;
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow;
@@ -96,7 +95,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
   }
 
   private void loadTestForm() {
-    final String formUrl = getClass().getResource(CheckiONames.CHECKIO_TEST_FORM_URL).toExternalForm();
+    final String formUrl = getClass().getResource(PyCheckiONames.PY_CHECKIO_TEST_FORM_URL).toExternalForm();
     myBrowserWindow.getEngine().load(formUrl);
   }
 
