@@ -8,30 +8,29 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 fun StudyItem.addMetaInformation(meta: StudyItem): Unit = when (this) {
   is EduCourse -> {
-    if (meta !is EduCourse) throw IllegalArgumentException()
-    this.courseId = meta.courseId
-    for ((el, meta) in (this.items zip meta.items)) {
+    if (meta !is EduCourse) throw ServerException("wrong response format")
+    courseId = meta.courseId
+    for ((el, meta) in (items zip meta.items)) {
       el.addMetaInformation(meta)
     }
   }
   is Section -> {
-    if (meta !is Section) throw IllegalArgumentException()
-    this.id = meta.id
-    for ((el, meta) in (this.items zip meta.items)) {
+    if (meta !is Section) throw ServerException("wrong response format")
+    id = meta.id
+    for ((el, meta) in (items zip meta.items)) {
       el.addMetaInformation(meta)
     }
   }
   is Lesson -> {
-    if (meta !is Lesson) throw IllegalArgumentException()
-    this.id = meta.id
-    for ((el, meta) in (this.taskList zip meta.taskList)) {
+    if (meta !is Lesson) throw ServerException("wrong response format")
+    id = meta.id
+    for ((el, meta) in (taskList zip meta.taskList)) {
       el.addMetaInformation(meta)
     }
   }
   is Task -> {
-    if (meta !is Task) throw IllegalArgumentException()
-    this.stepId = meta.stepId
+    if (meta !is Task) throw ServerException("wrong response format")
+    stepId = meta.stepId
   }
-  else -> {
-  }
+  else -> {}
 }

@@ -1,22 +1,22 @@
 package com.jetbrains.edu.jbserver
 
-import java.util.concurrent.TimeUnit
-import java.text.SimpleDateFormat
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.http.*
-import retrofit2.converter.jackson.JacksonConverterFactory
-
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.jackson.JacksonConverterFactory
+import retrofit2.http.*
+import java.net.UnknownHostException
+import java.text.SimpleDateFormat
+import java.util.concurrent.TimeUnit
 
 
 val baseUrl = "http://django-edu-server.herokuapp.com"
@@ -107,22 +107,44 @@ interface EduServerApi {
 }
 
 
+/* Error handling */
+
+class ServerException(msg: String) : Exception("Internal server error: $msg")
+
+fun <R> Call<R>.safeExecute(): R {
+  val response = try { execute() }
+    catch (e: UnknownHostException) { null }
+    catch (e: JsonMappingException) { throw ServerException("wrong response format: ${e.message}") }
+  return response?.body() ?: throw ServerException("empty response received")
+}
+
+
+/* Server client */
+
 object ServerClient {
 
   private val service = EduServerApi.create()
 
   /* Educator API */
 
-  fun createCourse(course: EduCourse): Unit = TODO()
+  fun createCourse(course: EduCourse) {
+    val metaInfo = service.createCourse(course).safeExecute()
+    course.addMetaInformation(metaInfo)
+  }
 
-  fun updateCourse(course: EduCourse): Unit = TODO()
+  fun updateCourse(course: EduCourse) {
+    val metaInfo = service.updateCourse(course.courseId, course).safeExecute()
+    course.addMetaInformation(metaInfo)
+  }
 
 
   /* Learner API */
 
-  fun getAvailableCourses(): List<EduCourse> = TODO()
+  fun getAvailableCourses() =
+    service.getCourses().safeExecute().courses
 
-  fun getCourseMaterials(id: Int): EduCourse = TODO()
+  fun getCourseMaterials(id: Int): EduCourse =
+    service.getCourseMaterials(id).safeExecute()
 
   fun getCourseUpdate(course: EduCourse): Unit = TODO()
 
