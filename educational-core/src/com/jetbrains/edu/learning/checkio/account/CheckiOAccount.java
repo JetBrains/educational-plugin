@@ -15,8 +15,8 @@ public class CheckiOAccount {
   private CheckiOUserInfo myUserInfo;
 
   @Nullable
-  @Tag("Tokens")
-  private Tokens myTokens;
+  @Tag("CheckiOTokens")
+  private CheckiOTokens myTokens;
 
   @NotNull
   public CheckiOUserInfo getUserInfo() {
@@ -30,7 +30,7 @@ public class CheckiOAccount {
   }
 
   @NotNull
-  public Tokens getTokens() {
+  public CheckiOTokens getTokens() {
     if (!isLoggedIn()) {
       throw new IllegalStateException("Attempt to get tokens when logged out");
     }
@@ -44,7 +44,7 @@ public class CheckiOAccount {
     return myUserInfo != null;
   }
 
-  public void logIn(@NotNull CheckiOUserInfo newUserInfo, @NotNull Tokens newTokens) {
+  public void logIn(@NotNull CheckiOUserInfo newUserInfo, @NotNull CheckiOTokens newTokens) {
     if (isLoggedIn()) {
       LOG.warn("Attempt to log in when logged in already");
     }
@@ -62,7 +62,7 @@ public class CheckiOAccount {
     myTokens = null;
   }
 
-  public void updateTokens(@NotNull Tokens newTokens) {
+  public void updateTokens(@NotNull CheckiOTokens newTokens) {
     if (!isLoggedIn()) {
       LOG.warn("Attempt to update tokens when logged out");
     }

@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.checkio.api;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
-import com.jetbrains.edu.learning.checkio.account.Tokens;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +22,7 @@ public final class CheckiOOAuthService {
   }
 
   @NotNull
-  public static MyResponse<Tokens> getTokens(
+  public static MyResponse<CheckiOTokens> getTokens(
     @NotNull String grantType,
     @NotNull String clientSecret,
     @NotNull String clientId,
@@ -34,7 +34,7 @@ public final class CheckiOOAuthService {
   }
 
   @NotNull
-  public static MyResponse<Tokens> refreshTokens(
+  public static MyResponse<CheckiOTokens> refreshTokens(
     @NotNull String grantType,
     @NotNull String clientSecret,
     @NotNull String clientId,

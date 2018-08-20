@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class Tokens {
+public class CheckiOTokens {
   @NotNull
   @Tag("AccessToken")
   private String myAccessToken;
@@ -18,13 +18,13 @@ public class Tokens {
   private long myExpiringTime;
 
   @SuppressWarnings("unused") // used for deserialization
-  private Tokens() {
+  private CheckiOTokens() {
     myAccessToken = "";
     myRefreshToken = "";
     myExpiringTime = -1;
   }
 
-  public Tokens(@NotNull String accessToken, @NotNull String refreshToken, long expiringTime) {
+  public CheckiOTokens(@NotNull String accessToken, @NotNull String refreshToken, long expiringTime) {
     myAccessToken = accessToken;
     myRefreshToken = refreshToken;
     myExpiringTime = expiringTime;
@@ -52,7 +52,7 @@ public class Tokens {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    Tokens tokens = (Tokens)o;
+    CheckiOTokens tokens = (CheckiOTokens)o;
     return Objects.equals(myAccessToken, tokens.myAccessToken) &&
            Objects.equals(myRefreshToken, tokens.myRefreshToken);
   }

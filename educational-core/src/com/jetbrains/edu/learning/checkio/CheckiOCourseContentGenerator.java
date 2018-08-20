@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class CheckiOCourseContentGenerator {
-  private static final String DEFAULT_TASK_NAME = "mission";
+  private static final String DEFAULT_TASK_FILE_NAME = "mission";
 
   private final CheckiOCourseProvider myCourseProvider;
   private final String myTaskFileExtension;
@@ -33,7 +33,7 @@ public abstract class CheckiOCourseContentGenerator {
 
   private void generateTaskFile(@NotNull CheckiOMission mission) {
     final TaskFile taskFile = new TaskFile();
-    taskFile.name = DEFAULT_TASK_NAME + "." + myTaskFileExtension;
+    taskFile.name = DEFAULT_TASK_FILE_NAME + "." + myTaskFileExtension;
     setTaskFileText(taskFile, mission.getCode());
     taskFile.setHighlightErrors(true);
     mission.addTaskFile(taskFile);

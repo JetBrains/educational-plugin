@@ -1,16 +1,16 @@
 package com.jetbrains.edu.learning.checkio.api.wrappers;
 
 import com.google.gson.annotations.SerializedName;
-import com.jetbrains.edu.learning.checkio.account.Tokens;
+import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
 
-public class TokensWrapper implements ResponseWrapper<Tokens> {
+public class CheckiOTokensWrapper implements ResponseWrapper<CheckiOTokens> {
   @SerializedName("access_token") private String myAccessToken;
   @SerializedName("refresh_token") private String myRefreshToken;
   @SerializedName("expires_in") private int myExpiresIn;
 
   @Override
-  public Tokens unwrap() {
-    return new Tokens(myAccessToken, myRefreshToken, currentTimeSeconds() + myExpiresIn);
+  public CheckiOTokens unwrap() {
+    return new CheckiOTokens(myAccessToken, myRefreshToken, currentTimeSeconds() + myExpiresIn);
   }
 
   private static long currentTimeSeconds() {

@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.authUtils.OAuthUtils;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
+import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
-import com.jetbrains.edu.learning.checkio.account.Tokens;
 import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthService;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
@@ -32,19 +32,13 @@ public abstract class CheckiOOAuthConnector {
 
   private final String myClientId;
   private final String myClientSecret;
-  private final Topic<CheckiOUserLoggedIn> myAuthorizationTopic;
-  @NotNull private MessageBusConnection myAuthorizationBusConnection;
-  private final ReentrantLock myAuthorizationLock;
+  private final Topic<CheckiOUserLoggedIn> myAuthorizationTopic = Topic.create("Edu.checkioUserLoggedIn", CheckiOUserLoggedIn.class);
+  @NotNull private MessageBusConnection myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
+  private final ReentrantLock myAuthorizationLock = new ReentrantLock();
 
-  protected CheckiOOAuthConnector(
-    @NotNull String clientId,
-    @NotNull String clientSecret
-  ) {
+  protected CheckiOOAuthConnector(@NotNull String clientId, @NotNull String clientSecret) {
     myClientId = clientId;
     myClientSecret = clientSecret;
-    myAuthorizationTopic = Topic.create("Edu.checkioUserLoggedIn", CheckiOUserLoggedIn.class);
-    myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    myAuthorizationLock = new ReentrantLock();
   }
 
   @NotNull
@@ -62,7 +56,7 @@ public abstract class CheckiOOAuthConnector {
   }
 
   @NotNull
-  private Tokens getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
+  private CheckiOTokens getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
     requireClientPropertiesExist();
 
     return CheckiOOAuthService.getTokens(
@@ -81,7 +75,7 @@ public abstract class CheckiOOAuthConnector {
   }
 
   @NotNull
-  private Tokens refreshTokens(@NotNull String refreshToken) throws ApiException {
+  private CheckiOTokens refreshTokens(@NotNull String refreshToken) throws ApiException {
     requireClientPropertiesExist();
 
     return CheckiOOAuthService.refreshTokens(
@@ -97,7 +91,7 @@ public abstract class CheckiOOAuthConnector {
 
     if (!getAccount().getTokens().isUpToDate()) {
       final String refreshToken = getAccount().getTokens().getRefreshToken();
-      final Tokens newTokens = refreshTokens(refreshToken);
+      final CheckiOTokens newTokens = refreshTokens(refreshToken);
       getAccount().updateTokens(newTokens);
     }
   }
@@ -190,7 +184,7 @@ public abstract class CheckiOOAuthConnector {
         return "You're logged in already";
       }
 
-      final Tokens tokens = getTokens(code, handlingPath);
+      final CheckiOTokens tokens = getTokens(code, handlingPath);
       final CheckiOUserInfo userInfo = getUserInfo(tokens.getAccessToken());
       getAccount().logIn(userInfo, tokens);
       ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();

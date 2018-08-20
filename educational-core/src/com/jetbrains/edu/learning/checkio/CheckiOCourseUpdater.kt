@@ -36,7 +36,7 @@ abstract class CheckiOCourseUpdater(
       showNotification(newStations)
     } catch (e: Exception) {
       DefaultErrorHandler(
-        "Failed to check the task",
+        "Failed to update the task",
         apiConnector.oauthConnector
       ).handle(e)
     }
@@ -67,14 +67,11 @@ abstract class CheckiOCourseUpdater(
 
   private fun createNewStations(newStations: List<CheckiOStation>) {
     newStations.forEach {
-      it.init(course, course, false)
-
       try {
         GeneratorUtils.createLesson(it, course.getDir(project))
       }
       catch (e: IOException) {
-        LOG.warn("IO error occurred creating station [${it.id}; ${it.name}]")
-        LOG.warn(e.message)
+        LOG.error("IO error occurred creating station [${it.id}; ${it.name}]", e)
       }
     }
   }
@@ -82,29 +79,38 @@ abstract class CheckiOCourseUpdater(
   private fun updateExistingStations(stationsToUpdate: List<CheckiOStation>) {
     val stationById = course.stations.associateBy { it.id }
     stationsToUpdate.forEach {
-      updateStation(it, stationById[it.id]!!)
-      it.init(course, course, false)
+      updateStation(it, stationById[it.id])
     }
   }
 
-  private fun updateStation(newStation: CheckiOStation, oldStation: CheckiOStation) {
+  private fun updateStation(newStation: CheckiOStation, oldStation: CheckiOStation?) {
+    if (oldStation == null) {
+      LOG.warn("Corresponding old station is not found for new station [${newStation.id}; ${newStation.name}]")
+      return
+    }
+
     newStation.missions.forEach {
-      updateMission(it, oldStation.getMission(it.stepId)!!)
-      it.init(course, newStation, false)
+      updateMission(it, oldStation.getMission(it.stepId))
     }
 
     oldStation.missions = newStation.missions
   }
 
-  private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission) {
-    val oldTaskFile = oldMission.taskFile
-
-    if (oldTaskFile == null) {
-      LOG.warn("TaskFile isn't provided for mission [id=${oldMission.id}; name=${oldMission.name}]")
+  private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission?) {
+    if (oldMission == null) {
+      LOG.warn("Corresponding old mission is not found for new mission [${newMission.id}; ${newMission.name}]")
       return
     }
 
-    val oldVirtualFile = EduUtils.findTaskFileInDir(oldTaskFile, oldMission.getDir(project)!!)
+    val oldTaskFile = oldMission.taskFile
+
+    val oldMissionDir = oldMission.getDir(project)
+    if (oldMissionDir == null) {
+      LOG.error("Directory for mission [${newMission.id}; ${newMission.name}] is not found.")
+      return
+    }
+
+    val oldVirtualFile = EduUtils.findTaskFileInDir(oldTaskFile, oldMissionDir)
 
     if (oldVirtualFile == null) {
       LOG.warn("VirtualFile isn't provided for mission [id=${oldMission.id}; name=${oldMission.name}]")
@@ -115,7 +121,7 @@ abstract class CheckiOCourseUpdater(
     val secondsFromLocalChange = (System.currentTimeMillis() - oldVirtualFile.timeStamp) / 1000
 
     if (secondsFromChangeOnServer < secondsFromLocalChange) {
-      oldTaskFile.text = newMission.taskFile?.text // TODO: task file must exist
+      oldTaskFile.text = newMission.taskFile.text
       newMission.addTaskFile(oldTaskFile)
 
       val oldDocument = FileDocumentManager.getInstance().getDocument(oldVirtualFile)
@@ -124,9 +130,9 @@ abstract class CheckiOCourseUpdater(
         return
       }
 
-      ApplicationManager.getApplication().runWriteAction {
+      ApplicationManager.getApplication().runWriteAction(Runnable {
         RefreshTaskFileAction.resetDocument(oldDocument, oldTaskFile)
-      }
+      })
     }
   }
 }

@@ -36,9 +36,9 @@ import java.util.stream.IntStream;
 public class CustomAuthorizationServer {
   private static final Logger LOG = Logger.getInstance(CustomAuthorizationServer.class);
 
-  private static final Map<String, CustomAuthorizationServer> serverByName = new HashMap<>();
-  private static final ReentrantLock lock = new ReentrantLock();
-  private static final Range<Integer> defaultPortsTotry = new Range<>(36656, 36665);
+  private static final Map<String, CustomAuthorizationServer> SERVER_BY_NAME = new HashMap<>();
+  private static final ReentrantLock LOCK = new ReentrantLock();
+  private static final Collection<Integer> DEFAULT_PORTS_TO_TRY = IntStream.rangeClosed(36656, 36665).boxed().collect(Collectors.toList());
 
   private final HttpServer myServer;
   private final String myHandlerPath;
@@ -67,7 +67,7 @@ public class CustomAuthorizationServer {
 
   @Nullable
   public static CustomAuthorizationServer getServerIfStarted(@NotNull String platformName) {
-    return serverByName.get(platformName);
+    return SERVER_BY_NAME.get(platformName);
   }
 
   @NotNull
@@ -76,51 +76,23 @@ public class CustomAuthorizationServer {
     @NotNull String handlerPath,
     @NotNull CodeHandler afterCodeReceived
   ) throws IOException {
-    return create(
-      platformName,
-      defaultPortsTotry,
-      handlerPath,
-      afterCodeReceived
-    );
-  }
-
-  @NotNull
-  public static CustomAuthorizationServer create(
-    @NotNull String platformName,
-    @NotNull Range<Integer> portsToTry,
-    @NotNull String handlerPath,
-    @NotNull CodeHandler afterCodeReceived
-  ) throws IOException {
-    return create(
-      platformName,
-      IntStream.rangeClosed(portsToTry.getFrom(), portsToTry.getTo()).boxed().collect(Collectors.toList()),
-      handlerPath,
-      afterCodeReceived
-    );
-  }
-
-  @NotNull
-  public static CustomAuthorizationServer create(
-    @NotNull String platformName,
-    @NotNull Collection<Integer> portsToTry,
-    @NotNull String handlerPath,
-    @NotNull CodeHandler afterCodeReceived
-  ) throws IOException {
-    lock.lock();
-    final CustomAuthorizationServer server = createServer(platformName, portsToTry, handlerPath, afterCodeReceived);
-    serverByName.put(platformName, server);
-    lock.unlock();
-    return server;
+    LOCK.lock();
+    try {
+      final CustomAuthorizationServer server = createServer(platformName, handlerPath, afterCodeReceived);
+      SERVER_BY_NAME.put(platformName, server);
+      return server;
+    } finally {
+      LOCK.unlock();
+    }
   }
 
   @NotNull
   private static CustomAuthorizationServer createServer(
     @NotNull String platformName,
-    @NotNull Collection<Integer> portsToTry,
     @NotNull String handlerPath,
     @NotNull CodeHandler afterCodeReceived
   ) throws IOException {
-    int port = portsToTry.stream().filter(CustomAuthorizationServer::isPortAvailable).findFirst().orElse(-1);
+    int port = DEFAULT_PORTS_TO_TRY.stream().filter(CustomAuthorizationServer::isPortAvailable).findFirst().orElse(-1);
 
     if (port == -1) {
       throw new IOException("No ports available");
@@ -163,8 +135,12 @@ public class CustomAuthorizationServer {
         final List<NameValuePair> parse = URLEncodedUtils.parse(new URI(request.getRequestLine().getUri()), Charset.forName("UTF-8"));
         for (NameValuePair pair : parse) {
           if (pair.getName().equals("code")) {
-            String code = pair.getValue();
-            String errorMessage = afterCodeReceived.apply(code, getServerIfStarted(platformName).getHandlingUri());
+            final String code = pair.getValue();
+
+            final CustomAuthorizationServer currentServer = getServerIfStarted(platformName);
+            assert currentServer != null; // cannot be null: if this concrete handler is working then corresponding server is working too
+
+            final String errorMessage = afterCodeReceived.apply(code, currentServer.getHandlingUri());
 
             if (errorMessage == null) {
               sendOkResponse(response, platformName);
@@ -182,7 +158,7 @@ public class CustomAuthorizationServer {
         sendErrorResponse(response, platformName, "Invalid response");
       }
       finally {
-        serverByName.get(platformName).stopServer();
+        SERVER_BY_NAME.get(platformName).stopServer();
       }
     };
   }
