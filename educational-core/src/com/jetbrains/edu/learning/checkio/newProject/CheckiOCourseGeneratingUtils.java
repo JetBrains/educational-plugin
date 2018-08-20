@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
-import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
+import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
 import org.jetbrains.annotations.NotNull;
 
 public final class CheckiOCourseGeneratingUtils {
@@ -14,7 +14,7 @@ public final class CheckiOCourseGeneratingUtils {
   public static CheckiOCourse generateCourseFromServer(
     @NotNull CheckiOCourseContentGenerator courseContentGenerator,
     @NotNull CheckiOApiConnector apiConnector
-  ) throws LoginRequiredException, ApiException {
+  ) throws CheckiOLoginRequiredException, ApiException {
     return courseContentGenerator.generateCourseFromMissions(apiConnector.getMissionList());
   }
 

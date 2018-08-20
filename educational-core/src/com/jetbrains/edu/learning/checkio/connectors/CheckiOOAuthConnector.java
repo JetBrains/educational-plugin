@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
 import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthService;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
-import com.jetbrains.edu.learning.checkio.exceptions.LoginRequiredException;
+import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.apache.http.client.utils.URIBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +48,7 @@ public abstract class CheckiOOAuthConnector {
 
 
   @NotNull
-  public String getAccessToken() throws LoginRequiredException, ApiException {
+  public String getAccessToken() throws CheckiOLoginRequiredException, ApiException {
     requireUserLoggedIn();
     ensureTokensUpToDate();
 
@@ -86,7 +86,7 @@ public abstract class CheckiOOAuthConnector {
     ).get();
   }
 
-  private void ensureTokensUpToDate() throws LoginRequiredException, ApiException {
+  private void ensureTokensUpToDate() throws CheckiOLoginRequiredException, ApiException {
     requireUserLoggedIn();
 
     if (!getAccount().getTokens().isUpToDate()) {
@@ -105,9 +105,9 @@ public abstract class CheckiOOAuthConnector {
     }
   }
 
-  private void requireUserLoggedIn() throws LoginRequiredException {
+  private void requireUserLoggedIn() throws CheckiOLoginRequiredException {
     if (!getAccount().isLoggedIn()) {
-      throw new LoginRequiredException();
+      throw new CheckiOLoginRequiredException();
     }
   }
 
