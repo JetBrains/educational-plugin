@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import junit.framework.TestCase
 
@@ -67,5 +68,29 @@ class YamlDeserializationTest: EduTestCase() {
     val task = YamlFormatSynchronizer.deserializeTask(yamlContent)
     TestCase.assertTrue(task is OutputTask)
     TestCase.assertEquals(listOf("Test.java"), task.taskFiles.map { it.key })
+  }
+
+  fun `test edu task`() {
+    val yamlContent = """
+    |type: edu
+    |task_files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: type here
+    |    dependency:
+    |      lesson: lesson1
+    |      task: task1
+    |      file: Test.java
+    |      placeholder: 1
+    |      is_visible: true
+    |""".trimMargin("|")
+    val task = YamlFormatSynchronizer.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
+    assertEquals(9, answerPlaceholder.length)
+    assertEquals(3, answerPlaceholder.possibleAnswer.length)
+    assertEquals("lesson1#task1#Test.java#1", answerPlaceholder.placeholderDependency.toString())
   }
 }

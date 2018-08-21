@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.configuration.mixins
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.util.StdConverter
 
@@ -25,7 +26,8 @@ abstract class AnswerPlaceholderDependencyYamlMixin {
   private lateinit var myFileName: String
 
   @JsonProperty("placeholder")
-  @JsonSerialize(converter = PlaceholderIndexConverter::class)
+  @JsonSerialize(converter = InternalIndexToUserVisibleConverter::class)
+  @JsonDeserialize(converter = UserVisibleIndexToInternalConverter::class)
   private var myPlaceholderIndex: Int = -1
 
   @JsonProperty("is_visible")
@@ -33,6 +35,10 @@ abstract class AnswerPlaceholderDependencyYamlMixin {
 
 }
 
-class PlaceholderIndexConverter: StdConverter<Int, Int>() {
+class InternalIndexToUserVisibleConverter: StdConverter<Int, Int>() {
   override fun convert(index: Int) = index + 1
+}
+
+class UserVisibleIndexToInternalConverter: StdConverter<Int, Int>() {
+  override fun convert(index: Int) = index - 1
 }
