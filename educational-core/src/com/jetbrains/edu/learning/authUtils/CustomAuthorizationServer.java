@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -71,9 +70,9 @@ public class CustomAuthorizationServer {
   public static CustomAuthorizationServer create(
     @NotNull String platformName,
     @NotNull String handlerPath,
-    @NotNull CodeHandler afterCodeReceived
+    @NotNull CodeHandler codeHandler
   ) throws IOException {
-      final CustomAuthorizationServer server = createServer(platformName, handlerPath, afterCodeReceived);
+      final CustomAuthorizationServer server = createServer(platformName, handlerPath, codeHandler);
       SERVER_BY_NAME.put(platformName, server);
       return server;
   }
@@ -82,7 +81,7 @@ public class CustomAuthorizationServer {
   private static synchronized CustomAuthorizationServer createServer(
     @NotNull String platformName,
     @NotNull String handlerPath,
-    @NotNull CodeHandler afterCodeReceived
+    @NotNull CodeHandler codeHandler
   ) throws IOException {
     int port = DEFAULT_PORTS_TO_TRY.stream().filter(CustomAuthorizationServer::isPortAvailable).findFirst().orElse(-1);
 
@@ -98,7 +97,7 @@ public class CustomAuthorizationServer {
     final HttpServer newServer = ServerBootstrap.bootstrap()
       .setListenerPort(port)
       .setServerInfo(platformName)
-      .registerHandler(handlerPath, createContextHandler(platformName, afterCodeReceived))
+      .registerHandler(handlerPath, createContextHandler(platformName, codeHandler))
       .setSocketConfig(socketConfig)
       .create();
 
@@ -118,7 +117,7 @@ public class CustomAuthorizationServer {
   @NotNull
   private static HttpRequestHandler createContextHandler(
     @NotNull String platformName,
-    @NotNull CodeHandler afterCodeReceived
+    @NotNull CodeHandler codeHandler
   ) {
     return (request, response, context) -> {
       LOG.info("Handling auth response");
@@ -132,7 +131,7 @@ public class CustomAuthorizationServer {
             final CustomAuthorizationServer currentServer = getServerIfStarted(platformName);
             assert currentServer != null; // cannot be null: if this concrete handler is working then corresponding server is working too
 
-            final String errorMessage = afterCodeReceived.apply(code, currentServer.getHandlingUri());
+            final String errorMessage = codeHandler.handle(code, currentServer.getHandlingUri());
 
             if (errorMessage == null) {
               sendOkResponse(response, platformName);
@@ -170,11 +169,21 @@ public class CustomAuthorizationServer {
     httpResponse.setEntity(new StringEntity(pageContent));
   }
 
-  // 1. Receives `oauth code` and `redirect uri` (i.e. the path `oauth code` was handled on)
-  // 2. Authorizes new user
-  // 3. Returns error message or null in case of successful authorization
-  @FunctionalInterface
-  public interface CodeHandler extends BiFunction<String, String, String> {
 
+  @FunctionalInterface
+  public interface CodeHandler {
+    /**
+     * @see CustomAuthorizationServer#createContextHandler(String, CodeHandler)
+     *
+     * Is called when oauth authorization code is handled by the context handler.
+     * Encapsulates authorization process and returns error message or null.
+     *
+     * @param code oauth authorization code
+     * @param handlingUri uri the code wah handled on (is used as redirect_uri in tokens request)
+     *
+     * @return non-null error message in case of error, null otherwise
+     * */
+    @Nullable
+    String handle(@NotNull String code, @NotNull String handlingUri);
   }
 }

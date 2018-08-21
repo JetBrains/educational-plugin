@@ -167,13 +167,13 @@ public abstract class CheckiOOAuthConnector {
 
   // In case of built-in server
   @Nullable
-  public String afterCodeReceived(@NotNull String code) {
-    return afterCodeReceived(code, buildRedirectUri(BuiltInServerManager.getInstance().getPort()));
+  public String codeHandler(@NotNull String code) {
+    return codeHandler(code, buildRedirectUri(BuiltInServerManager.getInstance().getPort()));
   }
 
   // In case of Android Studio
   @Nullable
-  public synchronized String afterCodeReceived(@NotNull String code, @NotNull String handlingPath) {
+  public synchronized String codeHandler(@NotNull String code, @NotNull String handlingPath) {
     try {
       if (getAccount().isLoggedIn()) {
         ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();

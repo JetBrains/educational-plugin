@@ -902,7 +902,7 @@ public class StepikConnector {
         return CustomAuthorizationServer.create(
           StepikNames.STEPIK,
           "/",
-          StepikConnector::afterCodeReceived
+          StepikConnector::codeHandler
         ).getHandlingUri();
       } catch (IOException e) {
         LOG.warn(e.getMessage());
@@ -921,7 +921,7 @@ public class StepikConnector {
     return StepikNames.EXTERNAL_REDIRECT_URL;
   }
 
-  private static String afterCodeReceived(@NotNull String code, @NotNull String redirectUri) {
+  private static String codeHandler(@NotNull String code, @NotNull String redirectUri) {
     final StepicUser user = StepikAuthorizedClient.login(code, redirectUri);
     if (user != null) {
       EduSettings.getInstance().setUser(user);

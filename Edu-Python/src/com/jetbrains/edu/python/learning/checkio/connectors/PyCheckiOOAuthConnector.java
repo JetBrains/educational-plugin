@@ -53,7 +53,7 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
     return CustomAuthorizationServer.create(
       PyCheckiONames.PY_CHECKIO,
       PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH,
-      this::afterCodeReceived
+      this::codeHandler
     );
   }
 
