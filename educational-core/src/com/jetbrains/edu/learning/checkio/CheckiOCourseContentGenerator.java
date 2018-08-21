@@ -2,9 +2,13 @@ package com.jetbrains.edu.learning.checkio;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.openapi.progress.ProgressManager;
+import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
+import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,35 +16,35 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class CheckiOCourseContentGenerator {
+public class CheckiOCourseContentGenerator {
   private static final String DEFAULT_TASK_FILE_NAME = "mission";
 
-  private final CheckiOCourseProvider myCourseProvider;
-  private final String myTaskFileExtension;
+  private final LanguageFileType myFileType;
+  private final CheckiOApiConnector myApiConnector;
 
-  protected CheckiOCourseContentGenerator(@NotNull CheckiOCourseProvider courseProvider, @NotNull String taskFileExtension) {
-    myCourseProvider = courseProvider;
-    myTaskFileExtension = taskFileExtension;
+  public CheckiOCourseContentGenerator(@NotNull LanguageFileType fileType, @NotNull CheckiOApiConnector apiConnector) {
+    myFileType = fileType;
+    myApiConnector = apiConnector;
+  }
+
+  public List<CheckiOStation> getStationsFromServer()
+    throws ApiException, CheckiOLoginRequiredException {
+    return generateStationsFromMissions(myApiConnector.getMissionList());
+  }
+
+  public List<CheckiOStation> getStationsFromServerUnderProgress() throws Exception {
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously(
+      () -> getStationsFromServer(),
+      "Getting Course from Server",
+      false,
+      null
+    );
   }
 
   @NotNull
-  public CheckiOCourse generateCourseFromMissions(@NotNull List<CheckiOMission> missionsList) {
-    missionsList.forEach(this::generateTaskFile);
+  private List<CheckiOStation> generateStationsFromMissions(@NotNull List<CheckiOMission> missions) {
+    missions.forEach(this::generateTaskFile);
 
-    final List<CheckiOStation> stations = generateStationsFromMissions(missionsList);
-    return generateCourseFromStations(stations);
-  }
-
-  private void generateTaskFile(@NotNull CheckiOMission mission) {
-    final TaskFile taskFile = new TaskFile();
-    taskFile.name = DEFAULT_TASK_FILE_NAME + "." + myTaskFileExtension;
-    setTaskFileText(taskFile, mission.getCode());
-    taskFile.setHighlightErrors(true);
-    mission.addTaskFile(taskFile);
-  }
-
-  @NotNull
-  private static List<CheckiOStation> generateStationsFromMissions(@NotNull List<CheckiOMission> missions) {
     final Multimap<CheckiOStation, CheckiOMission> stationsMap  = TreeMultimap.create(
       Comparator.comparing(CheckiOStation::getId),
       Comparator.comparing(CheckiOMission::getId)
@@ -57,16 +61,12 @@ public abstract class CheckiOCourseContentGenerator {
     return new ArrayList<>(stationsMap.keySet());
   }
 
-  @NotNull
-  private CheckiOCourse generateCourseFromStations(@NotNull List<CheckiOStation> stationsList) {
-    final CheckiOCourse course = myCourseProvider.provideCourse();
-
-    stationsList.forEach(station -> {
-      course.addStation(station);
-      station.setCourse(course);
-    });
-
-    return course;
+  private void generateTaskFile(@NotNull CheckiOMission mission) {
+    final TaskFile taskFile = new TaskFile();
+    taskFile.name = DEFAULT_TASK_FILE_NAME + "." + myFileType.getDefaultExtension();
+    setTaskFileText(taskFile, mission.getCode());
+    taskFile.setHighlightErrors(true);
+    mission.addTaskFile(taskFile);
   }
 
   private static void setTaskFileText(@NotNull TaskFile taskFile, @NotNull String text) {

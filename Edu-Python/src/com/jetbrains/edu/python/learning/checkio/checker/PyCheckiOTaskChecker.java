@@ -7,11 +7,16 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
+import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
+import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
-import com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseUpdater;
+import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector;
+import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
+import com.jetbrains.python.PythonFileType;
 import javafx.embed.swing.JFXPanel;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +40,23 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
 
   private void updateCourse() {
     final CheckiOCourse course = (CheckiOCourse) task.getCourse();
-    new PyCheckiOCourseUpdater(course, project).doUpdate();
+
+    final CheckiOCourseContentGenerator contentGenerator =
+      new CheckiOCourseContentGenerator(PythonFileType.INSTANCE, PyCheckiOApiConnector.getInstance());
+
+    try {
+      new CheckiOCourseUpdater(
+        course,
+        project,
+        contentGenerator
+      ).doUpdate();
+    }
+    catch (Exception e) {
+      new DefaultErrorHandler(
+        "Failed to update the course",
+        PyCheckiOOAuthConnector.getInstance()
+      ).handle(e);
+    }
   }
 
   @NotNull

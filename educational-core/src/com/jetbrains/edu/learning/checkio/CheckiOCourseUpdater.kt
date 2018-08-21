@@ -10,33 +10,24 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
-import com.jetbrains.edu.learning.checkio.connectors.CheckiOApiConnector
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
-import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler
 import com.jetbrains.edu.learning.checkio.notifications.infos.CheckiOStationsUnlockedNotification
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.IOException
 
-abstract class CheckiOCourseUpdater(
+class CheckiOCourseUpdater(
   val course: CheckiOCourse,
   val project: Project,
-  private val contentGenerator: CheckiOCourseContentGenerator,
-  private val apiConnector: CheckiOApiConnector
+  private val contentGenerator: CheckiOCourseContentGenerator
 ) {
 
+  @Throws(Exception::class)
   fun doUpdate() {
-    try {
-      val serverCourse = contentGenerator.generateCourseFromMissions(apiConnector.missionList)
-      val newStations = updateStations(serverCourse)
-      showNotification(newStations)
-    } catch (e: Exception) {
-      DefaultErrorHandler(
-        "Failed to update the task",
-        apiConnector.oauthConnector
-      ).handle(e)
-    }
+    val stationsFromServer = contentGenerator.stationsFromServer
+    val newStations = updateStations(stationsFromServer)
+    showNotification(newStations)
 
     runInEdt {
       synchronize()
@@ -50,11 +41,11 @@ abstract class CheckiOCourseUpdater(
     }
   }
 
-  private fun updateStations(serverCourse: CheckiOCourse): List<CheckiOStation> {
-    val (existingStations, newStations) = serverCourse.stations.partition(course.stations::contains)
+  private fun updateStations(stationsFromServer: List<CheckiOStation>): List<CheckiOStation> {
+    val (existingStations, newStations) = stationsFromServer.partition(course.stations::contains)
 
     updateExistingStations(existingStations)
-    course.items = serverCourse.items
+    course.items = stationsFromServer
     course.init(null, null, false)
     createNewStations(newStations)
 
