@@ -5,13 +5,14 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -73,7 +74,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
     final FileEditorManagerListener editorManagerListener = new FileEditorManagerListener() {
       @Override
       public void selectionChanged(@NotNull FileEditorManagerEvent event) {
-        final com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getCurrentTask(myProject);
+        final Task task = EduUtils.getCurrentTask(myProject);
         final boolean isEnabled = task != null && task.getStatus() != CheckStatus.Solved;
         StepikAdaptiveReactionsPanel.this.setEnabledRecursive(isEnabled);
       }
@@ -88,7 +89,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
     public ReactionButtonPanel(@NotNull final String text,
                                @NotNull final String enabledTooltip,
                                int reaction) {
-      com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getCurrentTask(myProject);
+      Task task = EduUtils.getCurrentTask(myProject);
       final boolean isEnabled = task != null && task.getStatus() != CheckStatus.Solved;
 
       myLabel = new JLabel(text);
@@ -135,11 +136,11 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
       @Override
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 1 && isEnabled()) {
-          final com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getCurrentTask(myProject);
+          final Task task = EduUtils.getCurrentTask(myProject);
           if (task != null && task.getStatus() != CheckStatus.Solved) {
             final ProgressIndicatorBase progress = new ProgressIndicatorBase();
             progress.setText(StepikAdaptiveConnector.LOADING_NEXT_RECOMMENDATION);
-            ProgressManager.getInstance().run(new Task.Backgroundable(myProject,
+            ProgressManager.getInstance().run(new Backgroundable(myProject,
                                                                       StepikAdaptiveConnector.LOADING_NEXT_RECOMMENDATION) {
               @Override
               public void run(@NotNull ProgressIndicator indicator) {
@@ -156,7 +157,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
 
       @Override
       public void mouseEntered(MouseEvent e) {
-        final com.jetbrains.edu.learning.courseFormat.tasks.Task task = EduUtils.getCurrentTask(myProject);
+        final Task task = EduUtils.getCurrentTask(myProject);
         if (task != null && task.getStatus() != CheckStatus.Solved && myPanel.isEnabled()) {
           setBackground(JBColor.GRAY);
         }
