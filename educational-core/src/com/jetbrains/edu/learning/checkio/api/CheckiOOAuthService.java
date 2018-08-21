@@ -3,10 +3,9 @@ package com.jetbrains.edu.learning.checkio.api;
 import com.intellij.openapi.diagnostic.Logger;
 import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.jetbrains.annotations.NotNull;
 
-import static com.jetbrains.edu.learning.checkio.api.RetrofitUtils.createRetrofitInterface;
+import static com.jetbrains.edu.learning.checkio.api.RetrofitUtils.createRetrofitOAuthInterface;
 import static com.jetbrains.edu.learning.checkio.api.RetrofitUtils.getResponse;
 
 public final class CheckiOOAuthService {
@@ -14,15 +13,14 @@ public final class CheckiOOAuthService {
 
   private CheckiOOAuthService() {}
 
-  private static final CheckiOOAuthInterface RETROFIT_OAUTH_INTERFACE =
-    createRetrofitInterface(CheckiONames.CHECKIO_OAUTH_HOST, CheckiOOAuthInterface.class);
+  private static final CheckiOOAuthInterface RETROFIT_OAUTH_INTERFACE = createRetrofitOAuthInterface();
 
   private static void log(@NotNull String requestInfo) {
     LOG.info("Executing request: " + requestInfo);
   }
 
   @NotNull
-  public static MyResponse<CheckiOTokens> getTokens(
+  public static CheckiOResponse<CheckiOTokens> getTokens(
     @NotNull String grantType,
     @NotNull String clientSecret,
     @NotNull String clientId,
@@ -34,7 +32,7 @@ public final class CheckiOOAuthService {
   }
 
   @NotNull
-  public static MyResponse<CheckiOTokens> refreshTokens(
+  public static CheckiOResponse<CheckiOTokens> refreshTokens(
     @NotNull String grantType,
     @NotNull String clientSecret,
     @NotNull String clientId,
@@ -45,7 +43,7 @@ public final class CheckiOOAuthService {
   }
 
   @NotNull
-  public static MyResponse<CheckiOUserInfo> getUserInfo(@NotNull String accessToken) {
+  public static CheckiOResponse<CheckiOUserInfo> getUserInfo(@NotNull String accessToken) {
     log("get user info");
     return getResponse(RETROFIT_OAUTH_INTERFACE.getUserInfo(accessToken));
   }

@@ -1,14 +1,14 @@
 package com.jetbrains.edu.learning.checkio.api;
 
-import com.jetbrains.edu.learning.checkio.api.wrappers.CheckiOTokensWrapper;
-import com.jetbrains.edu.learning.checkio.api.wrappers.CheckiOUserInfoWrapper;
+import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
+import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
 import retrofit2.Call;
 import retrofit2.http.*;
 
 public interface CheckiOOAuthInterface {
   @FormUrlEncoded
   @POST("oauth/token/")
-  Call<CheckiOTokensWrapper> getTokens(
+  Call<CheckiOTokens> getTokens(
     @Field("grant_type") String grantType,
     @Field("client_secret") String clientSecret,
     @Field("client_id") String clientId,
@@ -18,7 +18,7 @@ public interface CheckiOOAuthInterface {
 
   @FormUrlEncoded
   @POST("oauth/token/")
-  Call<CheckiOTokensWrapper> refreshTokens(
+  Call<CheckiOTokens> refreshTokens(
     @Field("grant_type") String grantType,
     @Field("client_secret") String clientSecret,
     @Field("client_id") String clientId,
@@ -26,5 +26,5 @@ public interface CheckiOOAuthInterface {
   );
 
   @GET("oauth/information/")
-  Call<CheckiOUserInfoWrapper> getUserInfo(@Query("access_token") String accessToken);
+  Call<CheckiOUserInfo> getUserInfo(@Query("access_token") String accessToken);
 }

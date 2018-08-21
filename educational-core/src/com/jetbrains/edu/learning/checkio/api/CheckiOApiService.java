@@ -22,7 +22,7 @@ public abstract class CheckiOApiService {
   }
 
   @NotNull
-  public MyResponse<List<CheckiOMission>> getMissionList(@NotNull String token) {
+  public CheckiOResponse<List<CheckiOMission>> getMissionList(@NotNull String token) {
     log("get mission list");
     return getResponse(myApiInterface.getMissionList(token));
   }

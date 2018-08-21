@@ -35,10 +35,7 @@ public class CheckiOMission extends EduTask {
   }
 
   public void setSecondsFromLastChangeOnServer(long secondsFromLastChangeOnServer) {
-    // zero value means that this mission hasn't been started on CheckiO yet,
-    // in this case we should use local task file content after course updating,
-    // so time from any local change must be less than from server
-    this.mySecondsFromLastChangeOnServer = (secondsFromLastChangeOnServer == 0 ? Long.MAX_VALUE : secondsFromLastChangeOnServer);
+    mySecondsFromLastChangeOnServer = secondsFromLastChangeOnServer;
   }
 
   public long getSecondsFromLastChangeOnServer() {
@@ -93,7 +90,7 @@ public class CheckiOMission extends EduTask {
 
   @Override
   public String toString() {
-    return "CheckiOMissionWrapper{" +
+    return "CheckiOMission{" +
            "id=" + getId() +
            ", stationId=" + myStation.getId() +
            ", stationName='" + myStation.getName() + '\'' +

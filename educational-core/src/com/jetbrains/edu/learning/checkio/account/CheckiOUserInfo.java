@@ -1,8 +1,11 @@
 package com.jetbrains.edu.learning.checkio.account;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOUserInfoDeserializer;
 import org.jetbrains.annotations.NotNull;
 
+@JsonAdapter(CheckiOUserInfoDeserializer.class)
 public class CheckiOUserInfo {
   @NotNull
   @Tag("Username")

@@ -1,10 +1,13 @@
 package com.jetbrains.edu.learning.checkio.account;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.intellij.util.xmlb.annotations.Tag;
+import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOTokensDeserializer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+@JsonAdapter(CheckiOTokensDeserializer.class)
 public class CheckiOTokens {
   @NotNull
   @Tag("AccessToken")
