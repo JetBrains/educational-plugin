@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.authUtils;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.Range;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -18,11 +19,9 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -34,7 +33,7 @@ public class CustomAuthorizationServer {
   private static final Logger LOG = Logger.getInstance(CustomAuthorizationServer.class);
 
   private static final Map<String, CustomAuthorizationServer> SERVER_BY_NAME = new HashMap<>();
-  private static final Collection<Integer> DEFAULT_PORTS_TO_TRY = IntStream.rangeClosed(36656, 36665).boxed().collect(Collectors.toList());
+  private static final Range<Integer> DEFAULT_PORTS_TO_TRY = new Range<>(36656, 36665);
 
   private final HttpServer myServer;
   private final String myHandlerPath;
@@ -83,7 +82,10 @@ public class CustomAuthorizationServer {
     @NotNull String handlerPath,
     @NotNull CodeHandler codeHandler
   ) throws IOException {
-    int port = DEFAULT_PORTS_TO_TRY.stream().filter(CustomAuthorizationServer::isPortAvailable).findFirst().orElse(-1);
+    int port = IntStream.rangeClosed(DEFAULT_PORTS_TO_TRY.getFrom(), DEFAULT_PORTS_TO_TRY.getTo())
+      .filter(CustomAuthorizationServer::isPortAvailable)
+      .findFirst()
+      .orElse(-1);
 
     if (port == -1) {
       throw new IOException("No ports available");
