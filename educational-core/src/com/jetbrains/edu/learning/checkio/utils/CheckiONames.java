@@ -5,7 +5,9 @@ public final class CheckiONames {
 
   public static final String CHECKIO = "CheckiO";
 
-  public static final String CHECKIO_OAUTH_HOST = "https://checkio.org";
+  public static final String CHECKIO_URL = "checkio.org";
+
+  public static final String CHECKIO_OAUTH_HOST = "https://" + CHECKIO_URL;
   private static final String CHECKIO_OAUTH_PATH = "/oauth/authorize";
   public static final String CHECKIO_OAUTH_URL = CHECKIO_OAUTH_HOST + CHECKIO_OAUTH_PATH;
 

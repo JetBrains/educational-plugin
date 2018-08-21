@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler;
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow;
@@ -105,7 +106,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
         return;
       }
 
-      if (myBrowserWindow.getEngine().getLocation().contains("checkio.org") && newState == Worker.State.SUCCEEDED && !visited.get()) {
+      if (myBrowserWindow.getEngine().getLocation().contains(CheckiONames.CHECKIO_URL) && newState == Worker.State.SUCCEEDED && !visited.get()) {
         visited.set(Boolean.TRUE);
 
         final JSObject windowObject = (JSObject)myBrowserWindow.getEngine().executeScript("window");
