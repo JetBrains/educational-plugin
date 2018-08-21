@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,7 +35,6 @@ public class CustomAuthorizationServer {
   private static final Logger LOG = Logger.getInstance(CustomAuthorizationServer.class);
 
   private static final Map<String, CustomAuthorizationServer> SERVER_BY_NAME = new HashMap<>();
-  private static final ReentrantLock LOCK = new ReentrantLock();
   private static final Collection<Integer> DEFAULT_PORTS_TO_TRY = IntStream.rangeClosed(36656, 36665).boxed().collect(Collectors.toList());
 
   private final HttpServer myServer;
@@ -75,18 +73,13 @@ public class CustomAuthorizationServer {
     @NotNull String handlerPath,
     @NotNull CodeHandler afterCodeReceived
   ) throws IOException {
-    LOCK.lock();
-    try {
       final CustomAuthorizationServer server = createServer(platformName, handlerPath, afterCodeReceived);
       SERVER_BY_NAME.put(platformName, server);
       return server;
-    } finally {
-      LOCK.unlock();
-    }
   }
 
   @NotNull
-  private static CustomAuthorizationServer createServer(
+  private static synchronized CustomAuthorizationServer createServer(
     @NotNull String platformName,
     @NotNull String handlerPath,
     @NotNull CodeHandler afterCodeReceived

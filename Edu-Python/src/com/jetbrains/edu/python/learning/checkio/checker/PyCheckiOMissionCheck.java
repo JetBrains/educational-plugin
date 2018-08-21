@@ -1,6 +1,5 @@
 package com.jetbrains.edu.python.learning.checkio.checker;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
@@ -29,8 +28,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class PyCheckiOMissionCheck implements Callable<CheckResult> {
-  private static final Logger LOG = Logger.getInstance(PyCheckiOMissionCheck.class);
-
   private final Project myProject;
   private final Task myTask;
 

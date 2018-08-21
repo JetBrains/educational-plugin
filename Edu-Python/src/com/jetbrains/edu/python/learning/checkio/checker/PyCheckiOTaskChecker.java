@@ -41,14 +41,14 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
   @NotNull
   @Override
   public CheckResult check() {
-    final PyCheckiOMissionCheck missionChecker = new PyCheckiOMissionCheck(project, task);
+    final PyCheckiOMissionCheck missionCheck = new PyCheckiOMissionCheck(project, task);
 
     try {
       final CheckResult checkResult =
-        ApplicationUtil.runWithCheckCanceled(missionChecker, ProgressManager.getInstance().getProgressIndicator());
+        ApplicationUtil.runWithCheckCanceled(missionCheck, ProgressManager.getInstance().getProgressIndicator());
 
       if (checkResult.getStatus() != CheckStatus.Unchecked) {
-        showTestResultPanel(missionChecker.getBrowserPanel());
+        showTestResultPanel(missionCheck.getBrowserPanel());
       }
 
       return checkResult;
@@ -73,8 +73,7 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
     }
   }
 
-  @SuppressWarnings("MethodMayBeStatic")
-  private JComponent createBrowserWindowUI(@NotNull JFXPanel browserPanel) {
+  private static JComponent createBrowserWindowUI(@NotNull JFXPanel browserPanel) {
     final JPanel browserWindowPanel = new JPanel();
 
     browserWindowPanel.setLayout(new BoxLayout(browserWindowPanel, BoxLayout.PAGE_AXIS));

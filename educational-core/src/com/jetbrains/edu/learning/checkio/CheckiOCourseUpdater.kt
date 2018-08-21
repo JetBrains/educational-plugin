@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.checkio
 
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notifications
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -25,9 +24,6 @@ abstract class CheckiOCourseUpdater(
   private val contentGenerator: CheckiOCourseContentGenerator,
   private val apiConnector: CheckiOApiConnector
 ) {
-  companion object {
-    private val LOG = Logger.getInstance(CheckiOCourseUpdater::class.java)
-  }
 
   fun doUpdate() {
     try {
@@ -85,8 +81,7 @@ abstract class CheckiOCourseUpdater(
 
   private fun updateStation(newStation: CheckiOStation, oldStation: CheckiOStation?) {
     if (oldStation == null) {
-      LOG.warn("Corresponding old station is not found for new station [${newStation.id}; ${newStation.name}]")
-      return
+      return LOG.error("Corresponding local station is not found for station from server [${newStation.id}; ${newStation.name}]")
     }
 
     newStation.missions.forEach {
@@ -98,24 +93,16 @@ abstract class CheckiOCourseUpdater(
 
   private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission?) {
     if (oldMission == null) {
-      LOG.warn("Corresponding old mission is not found for new mission [${newMission.id}; ${newMission.name}]")
-      return
+      return LOG.error("Corresponding local mission is not found for mission from server [${newMission.id}; ${newMission.name}]")
     }
 
     val oldTaskFile = oldMission.taskFile
 
     val oldMissionDir = oldMission.getDir(project)
-    if (oldMissionDir == null) {
-      LOG.error("Directory for mission [${newMission.id}; ${newMission.name}] is not found.")
-      return
-    }
+                        ?: return LOG.error("Directory is not found for mission [${oldMission.id}; ${oldMission.name}]")
 
     val oldVirtualFile = EduUtils.findTaskFileInDir(oldTaskFile, oldMissionDir)
-
-    if (oldVirtualFile == null) {
-      LOG.warn("VirtualFile isn't provided for mission [id=${oldMission.id}; name=${oldMission.name}]")
-      return
-    }
+                         ?: return LOG.error("VirtualFile is not found for mission [id=${oldMission.id}; name=${oldMission.name}]")
 
     val secondsFromChangeOnServer = newMission.secondsFromLastChangeOnServer
     val secondsFromLocalChange = (System.currentTimeMillis() - oldVirtualFile.timeStamp) / 1000
@@ -125,14 +112,15 @@ abstract class CheckiOCourseUpdater(
       newMission.addTaskFile(oldTaskFile)
 
       val oldDocument = FileDocumentManager.getInstance().getDocument(oldVirtualFile)
-      if (oldDocument == null) {
-        LOG.warn("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
-        return
-      }
+                        ?: return LOG.error("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
 
-      ApplicationManager.getApplication().runWriteAction(Runnable {
+      runInEdt {
         RefreshTaskFileAction.resetDocument(oldDocument, oldTaskFile)
-      })
+      }
     }
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(CheckiOCourseUpdater::class.java)
   }
 }

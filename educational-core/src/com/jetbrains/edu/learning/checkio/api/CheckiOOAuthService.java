@@ -14,7 +14,7 @@ public final class CheckiOOAuthService {
 
   private CheckiOOAuthService() {}
 
-  private static final CheckiOOAuthInterface myOAuthInterface =
+  private static final CheckiOOAuthInterface RETROFIT_OAUTH_INTERFACE =
     createRetrofitInterface(CheckiONames.CHECKIO_OAUTH_HOST, CheckiOOAuthInterface.class);
 
   private static void log(@NotNull String requestInfo) {
@@ -30,7 +30,7 @@ public final class CheckiOOAuthService {
     @NotNull String redirectUri
   ) {
     log("get tokens");
-    return getResponse(myOAuthInterface.getTokens(grantType, clientSecret, clientId, code, redirectUri));
+    return getResponse(RETROFIT_OAUTH_INTERFACE.getTokens(grantType, clientSecret, clientId, code, redirectUri));
   }
 
   @NotNull
@@ -41,12 +41,12 @@ public final class CheckiOOAuthService {
     @NotNull String refreshToken
   ) {
     log("refresh tokens");
-    return getResponse(myOAuthInterface.refreshTokens(grantType, clientSecret, clientId, refreshToken));
+    return getResponse(RETROFIT_OAUTH_INTERFACE.refreshTokens(grantType, clientSecret, clientId, refreshToken));
   }
 
   @NotNull
   public static MyResponse<CheckiOUserInfo> getUserInfo(@NotNull String accessToken) {
     log("get user info");
-    return getResponse(myOAuthInterface.getUserInfo(accessToken));
+    return getResponse(RETROFIT_OAUTH_INTERFACE.getUserInfo(accessToken));
   }
 }

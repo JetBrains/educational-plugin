@@ -8,7 +8,8 @@ import retrofit2.Call;
 import java.io.IOException;
 
 /**
- * This exception is thrown when network error occurred
+ * This exception is thrown when network error occurred,
+ * e.g. internet connection is disabled or endpoint doesn't respond
  *
  * @see MyResponse#createNetworkError(IOException)
  * @see RetrofitUtils#getResponse(Call)

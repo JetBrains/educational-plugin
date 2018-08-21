@@ -24,7 +24,6 @@ import org.jetbrains.ide.BuiltInServerManager;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 public abstract class CheckiOOAuthConnector {
@@ -34,7 +33,6 @@ public abstract class CheckiOOAuthConnector {
   private final String myClientSecret;
   private final Topic<CheckiOUserLoggedIn> myAuthorizationTopic = Topic.create("Edu.checkioUserLoggedIn", CheckiOUserLoggedIn.class);
   @NotNull private MessageBusConnection myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
-  private final ReentrantLock myAuthorizationLock = new ReentrantLock();
 
   protected CheckiOOAuthConnector(@NotNull String clientId, @NotNull String clientSecret) {
     myClientId = clientId;
@@ -175,9 +173,7 @@ public abstract class CheckiOOAuthConnector {
 
   // In case of Android Studio
   @Nullable
-  public String afterCodeReceived(@NotNull String code, @NotNull String handlingPath) {
-    myAuthorizationLock.lock();
-
+  public synchronized String afterCodeReceived(@NotNull String code, @NotNull String handlingPath) {
     try {
       if (getAccount().isLoggedIn()) {
         ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
@@ -195,9 +191,6 @@ public abstract class CheckiOOAuthConnector {
     }
     catch (ApiException e) {
       return "Couldn't get user info";
-    }
-    finally {
-      myAuthorizationLock.unlock();
     }
   }
 

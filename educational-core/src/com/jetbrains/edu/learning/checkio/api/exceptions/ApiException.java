@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.checkio.api.exceptions;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Is used as marker for all exception related to API errors
+ * Is used as marker for all exceptions related to API errors
  *
  * @see HttpException
  * @see NetworkException
