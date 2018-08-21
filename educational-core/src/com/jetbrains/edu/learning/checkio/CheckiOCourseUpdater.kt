@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checkio
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notifications
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -52,11 +53,10 @@ abstract class CheckiOCourseUpdater(
   private fun updateStations(serverCourse: CheckiOCourse): List<CheckiOStation> {
     val (existingStations, newStations) = serverCourse.stations.partition(course.stations::contains)
 
-    createNewStations(newStations)
     updateExistingStations(existingStations)
-
     course.items = serverCourse.items
     course.init(null, null, false)
+    createNewStations(newStations)
 
     return newStations
   }
@@ -87,8 +87,6 @@ abstract class CheckiOCourseUpdater(
     newStation.missions.forEach {
       updateMission(it, oldStation.getMission(it.stepId))
     }
-
-    oldStation.missions = newStation.missions
   }
 
   private fun updateMission(newMission: CheckiOMission, oldMission: CheckiOMission?) {
@@ -108,15 +106,14 @@ abstract class CheckiOCourseUpdater(
     val secondsFromLocalChange = (System.currentTimeMillis() - oldVirtualFile.timeStamp) / 1000
 
     if (secondsFromChangeOnServer < secondsFromLocalChange) {
-      oldTaskFile.text = newMission.taskFile.text
-      newMission.addTaskFile(oldTaskFile)
-
       val oldDocument = FileDocumentManager.getInstance().getDocument(oldVirtualFile)
                         ?: return LOG.error("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
 
-      runInEdt {
-        RefreshTaskFileAction.resetDocument(oldDocument, oldTaskFile)
+      runWriteAction {
+        RefreshTaskFileAction.resetDocument(oldDocument, newMission.taskFile)
       }
+    } else {
+      newMission.taskFile.text = oldTaskFile.text
     }
   }
 

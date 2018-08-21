@@ -15,10 +15,6 @@ public class CheckiOStation extends Lesson {
     addTask(mission);
   }
 
-  public void addMissions(@NotNull List<CheckiOMission> missions) {
-    missions.forEach(this::addMission);
-  }
-
   @Nullable
   public CheckiOMission getMission(int id) {
     final Task task = getTask(id);
@@ -28,11 +24,6 @@ public class CheckiOStation extends Lesson {
   @NotNull
   public List<CheckiOMission> getMissions() {
     return getTaskList().stream().filter(CheckiOMission.class::isInstance).map(CheckiOMission.class::cast).collect(Collectors.toList());
-  }
-
-  public void setMissions(@NotNull List<CheckiOMission> missionsList) {
-    getMissions().clear();
-    addMissions(missionsList);
   }
 
   @Override
