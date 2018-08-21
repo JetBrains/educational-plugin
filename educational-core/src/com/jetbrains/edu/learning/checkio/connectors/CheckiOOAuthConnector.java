@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checkio.connectors;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.MessageBusConnection;
@@ -15,6 +16,7 @@ import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthService;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
+import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.apache.http.client.utils.URIBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +122,13 @@ public abstract class CheckiOOAuthConnector {
       BrowserUtil.browse(oauthLink);
     }
     catch (URISyntaxException | IOException e) {
-      // TODO: show message
+      // IOException is thrown when there're no available ports, in some cases restarting can fix this
+      Notifications.Bus.notify(new CheckiONotification.Error(
+        "Authorization failed",
+        null,
+        "Try to restart IDE and log in again",
+        null
+      ));
     }
   }
 
