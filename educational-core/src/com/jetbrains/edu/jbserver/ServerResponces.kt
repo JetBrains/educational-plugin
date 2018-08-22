@@ -1,8 +1,10 @@
 package com.jetbrains.edu.jbserver
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.tasks.*
+import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 
 class CourseList(

@@ -1,9 +1,10 @@
 package com.jetbrains.edu.learning.courseFormat
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import java.util.Date
-import java.util.ArrayList
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.pluginVersion
+import java.util.*
 
 
 class EduCourse() : Course() {
@@ -17,7 +18,7 @@ class EduCourse() : Course() {
   var lastModified = Date(0)
 
   @JsonProperty("format")
-  var format = "1.9-2018.3-3301"
+  var format = pluginVersion(EduNames.PLUGIN_ID) ?: "n/a"
 
   constructor(course: Course) : this() {
     name = course.name

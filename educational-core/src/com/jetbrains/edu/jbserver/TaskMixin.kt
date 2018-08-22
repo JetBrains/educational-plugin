@@ -1,9 +1,9 @@
 package com.jetbrains.edu.jbserver
 
 import com.fasterxml.jackson.annotation.*
-import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.tasks.*
 import java.util.*
 
 
@@ -20,42 +20,40 @@ import java.util.*
   JsonSubTypes.Type(value = CodeTask::class, name = "code"),
   JsonSubTypes.Type(value = ChoiceTask::class, name = "choice")
 ))
-@JsonIgnoreProperties(value = *arrayOf(
-  "format"
-))
+@JsonIgnoreProperties(value = *arrayOf("format"))
 abstract class TaskMixIn {
 
-  @JsonProperty("id")
+  @JsonProperty(ID_FIELD)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   var myStepId: Int = 0
 
-  @JsonProperty("version_id")
+  @JsonProperty(VERSION_FIELD)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   var versionId: Int = 0
 
-  @JsonProperty("title")
+  @JsonProperty(TITLE_FIELD)
   lateinit var name: String
 
-  @JsonProperty("description")
+  @JsonProperty(DESCRIPTION_TEXT_FIELD)
   lateinit var descriptionText: String
 
-  @JsonProperty("description_format")
+  @JsonProperty(DESCRIPTION_FORMAT_FIELD)
   lateinit var descriptionFormat: DescriptionFormat
 
-  @JsonProperty("task_files")
+  @JsonProperty(TASK_FILES_FIELD)
   lateinit var taskFiles: HashMap<String, TaskFile>
 
-  @JsonProperty("test_files")
+  @JsonProperty(TEST_FILES_FIELD)
   lateinit var testsText: HashMap<String, String>
 
-  @JsonProperty("last_modified")
+  @JsonProperty(LAST_MODIFIED_FIELD)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   lateinit var myUpdateDate: Date
 
 }
 
 
-@JsonTypeName("theory") // M
+@JsonTypeName("theory")
 abstract class TheoryTaskMixIn
 
 
@@ -63,11 +61,11 @@ abstract class TheoryTaskMixIn
 abstract class IdeTaskMixIn
 
 
-@JsonTypeName("output") // M
+@JsonTypeName("output")
 abstract class OutputTaskMixIn
 
 
-@JsonTypeName("edu") // M
+@JsonTypeName("edu")
 abstract class EduTaskMixIn
 
 
@@ -78,10 +76,10 @@ abstract class CodeTaskMixIn
 @JsonTypeName("choice")
 abstract class ChoiceTaskMixIn {
 
-  @JsonProperty("choice_variants")
+  @JsonProperty(CHOISES_FIELD)
   lateinit var myChoiceVariants: List<String>
 
-  @JsonProperty("is_multichoice")
+  @JsonProperty(IS_MULTICHOICE_FIELD)
   var myIsMultipleChoice: Boolean = true
 
 }

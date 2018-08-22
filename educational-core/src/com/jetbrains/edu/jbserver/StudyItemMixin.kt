@@ -22,77 +22,68 @@ import java.util.*
 abstract class StudyItemMixin
 
 
-@JsonIgnoreProperties(value = *arrayOf(
-  "change_notes", "course", "tags"
-))
 @JsonTypeName("course")
+@JsonIgnoreProperties(value = *arrayOf( "change_notes", "course", "tags"))
 abstract class CourseMixin {
 
-  @JsonProperty("title")
+  @JsonProperty(TITLE_FIELD)
   lateinit var name: String
 
-  @JsonProperty("summary")
+  @JsonProperty(SUMMARY_FIELD)
   lateinit var description: String
 
-  @JsonProperty("language")
+  @JsonProperty(HUMAN_LANGUAGE_FIELD)
   lateinit var myLanguageCode: String
 
-  @JsonProperty("programming_language")
+  @JsonProperty(PROGRAMMING_LANGUAGE_FIELD)
   lateinit var myProgrammingLanguage: String
 
-  @JsonProperty("items")
+  @JsonProperty(ITEMS_FILED)
   lateinit var items: List<StudyItem>
 
-  @JsonIgnore
-  abstract fun getLanguage(): String
-
-  @JsonProperty("course_files")
+  @JsonProperty(COURSE_FILES_FIELD)
   lateinit var courseFiles: HashMap<String, String>
 
 }
 
 
-@JsonIgnoreProperties(value = *arrayOf(
-  "format", "description", "description_format"
-))
 @JsonTypeName("section")
+@JsonIgnoreProperties(value = *arrayOf("format", "description", "description_format"))
 abstract class SectionMixin {
 
-  @JsonProperty("id")
+  @JsonProperty(ID_FIELD)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   var id: Int = 0
 
-  @JsonProperty("last_modified")
+  @JsonProperty(LAST_MODIFIED_FIELD)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   lateinit var myUpdateDate: Date
 
-  @JsonProperty("title")
+  @JsonProperty(TITLE_FIELD)
   lateinit var name: String
 
-  @JsonProperty("items")
+  @JsonProperty(ITEMS_FILED)
   lateinit var items: List<StudyItem>
 
 }
 
 
-@JsonIgnoreProperties(value = *arrayOf(
-  "format", "description", "description_format"
-))
 @JsonTypeName("lesson")
+@JsonIgnoreProperties(value = *arrayOf("format", "description", "description_format"))
 abstract class LessonMixin {
 
-  @JsonProperty("id")
+  @JsonProperty(ID_FIELD)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   var myId: Int = 0
 
-  @JsonProperty("last_modified")
+  @JsonProperty(LAST_MODIFIED_FIELD)
   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
   lateinit var myUpdateDate: Date
 
-  @JsonProperty("title")
+  @JsonProperty(TITLE_FIELD)
   lateinit var name: String
 
-  @JsonProperty("items")
+  @JsonProperty(ITEMS_FILED)
   lateinit var taskList: List<Task>
 
 }

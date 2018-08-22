@@ -10,24 +10,24 @@ fun StudyItem.addMetaInformation(meta: StudyItem): Unit = when (this) {
   is EduCourse -> {
     if (meta !is EduCourse) throw ServerException("wrong response format")
     courseId = meta.courseId
-    for ((el, meta) in (items zip meta.items)) {
-      el.addMetaInformation(meta)
+    for ((el, metaEl) in (items zip meta.items)) {
+      el.addMetaInformation(metaEl)
     }
     isUploaded = true
   }
   is Section -> {
     if (meta !is Section) throw ServerException("wrong response format")
     id = meta.id
-    for ((el, meta) in (items zip meta.items)) {
-      el.addMetaInformation(meta)
+    for ((el, metaEl) in (items zip meta.items)) {
+      el.addMetaInformation(metaEl)
     }
     isUploaded = true
   }
   is Lesson -> {
     if (meta !is Lesson) throw ServerException("wrong response format")
     id = meta.id
-    for ((el, meta) in (taskList zip meta.taskList)) {
-      el.addMetaInformation(meta)
+    for ((el, metaEl) in (taskList zip meta.taskList)) {
+      el.addMetaInformation(metaEl)
     }
     isUploaded = true
   }

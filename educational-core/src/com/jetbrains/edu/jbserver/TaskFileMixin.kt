@@ -1,7 +1,6 @@
 package com.jetbrains.edu.jbserver
 
-import com.fasterxml.jackson.annotation.*
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 

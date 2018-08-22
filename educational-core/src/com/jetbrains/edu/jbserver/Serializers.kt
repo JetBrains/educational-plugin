@@ -12,12 +12,12 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class SectionSerializer(t: Class<Section>? = null) : StdSerializer<Section>(t) {
 
-  override fun serialize(value: Section, gen: JsonGenerator, provider: SerializerProvider) = gen.run {
+  override fun serialize(value: Section, generator: JsonGenerator, provider: SerializerProvider) = generator.run {
     if (value.id != 0)
-      writeNumberField("id", value.id)
+      writeNumberField(ID_FIELD, value.id)
     if (!value.isUploaded) {
-      writeStringField("title", value.name)
-      writeArrayFieldStart("items")
+      writeStringField(TITLE_FIELD, value.name)
+      writeArrayFieldStart(ITEMS_FILED)
       value.items.forEach {
         writeObject(it)
       }
@@ -25,11 +25,11 @@ class SectionSerializer(t: Class<Section>? = null) : StdSerializer<Section>(t) {
     }
   }
 
-  override fun serializeWithType(value: Section, gen: JsonGenerator, serializers: SerializerProvider, typeSer: TypeSerializer) {
-    val typeId = typeSer.typeId(value, JsonToken.START_OBJECT)
-    typeSer.writeTypePrefix(gen, typeId)
-    serialize(value, gen, serializers)
-    typeSer.writeTypeSuffix(gen, typeId)
+  override fun serializeWithType(value: Section, generator: JsonGenerator, serializers: SerializerProvider, typeSerializer: TypeSerializer) {
+    val typeId = typeSerializer.typeId(value, JsonToken.START_OBJECT)
+    typeSerializer.writeTypePrefix(generator, typeId)
+    serialize(value, generator, serializers)
+    typeSerializer.writeTypeSuffix(generator, typeId)
   }
 
 }
@@ -37,12 +37,12 @@ class SectionSerializer(t: Class<Section>? = null) : StdSerializer<Section>(t) {
 
 class LessonSerializer(t: Class<Lesson>? = null) : StdSerializer<Lesson>(t) {
 
-  override fun serialize(value: Lesson, gen: JsonGenerator, provider: SerializerProvider) = gen.run {
+  override fun serialize(value: Lesson, generator: JsonGenerator, provider: SerializerProvider) = generator.run {
     if (value.id != 0)
-      writeNumberField("id", value.id)
+      writeNumberField(ID_FIELD, value.id)
     if (!value.isUploaded) {
-      writeStringField("title", value.name)
-      writeArrayFieldStart("items")
+      writeStringField(TITLE_FIELD, value.name)
+      writeArrayFieldStart(ITEMS_FILED)
       value.taskList.forEach {
         writeObject(it)
       }
@@ -50,11 +50,11 @@ class LessonSerializer(t: Class<Lesson>? = null) : StdSerializer<Lesson>(t) {
     }
   }
 
-  override fun serializeWithType(value: Lesson, gen: JsonGenerator, serializers: SerializerProvider, typeSer: TypeSerializer) {
-    val typeId = typeSer.typeId(value, JsonToken.START_OBJECT)
-    typeSer.writeTypePrefix(gen, typeId)
-    serialize(value, gen, serializers)
-    typeSer.writeTypeSuffix(gen, typeId)
+  override fun serializeWithType(value: Lesson, generator: JsonGenerator, serializers: SerializerProvider, typeSerializer: TypeSerializer) {
+    val typeId = typeSerializer.typeId(value, JsonToken.START_OBJECT)
+    typeSerializer.writeTypePrefix(generator, typeId)
+    serialize(value, generator, serializers)
+    typeSerializer.writeTypeSuffix(generator, typeId)
   }
 
 }
@@ -62,24 +62,24 @@ class LessonSerializer(t: Class<Lesson>? = null) : StdSerializer<Lesson>(t) {
 
 class TaskSerializer(t: Class<Task>? = null) : StdSerializer<Task>(t) {
 
-  override fun serialize(value: Task, gen: JsonGenerator, provider: SerializerProvider) = gen.run {
+  override fun serialize(value: Task, generator: JsonGenerator, provider: SerializerProvider) = generator.run {
     if (value.id != 0)
-      writeNumberField("id", value.stepId)
+      writeNumberField(ID_FIELD, value.stepId)
     if (!value.isUploaded) {
-      writeStringField("title", value.name)
-      writeStringField("description", value.descriptionText)
-      writeObjectField("descriptionFormat", value.descriptionFormat)
-      writeObjectField("task_files", value.taskFiles)
-      writeObjectField("test_files", value.testsText)
+      writeStringField(TITLE_FIELD, value.name)
+      writeStringField(DESCRIPTION_TEXT_FIELD, value.descriptionText)
+      writeObjectField(DESCRIPTION_FORMAT_FIELD, value.descriptionFormat)
+      writeObjectField(TASK_FILES_FIELD, value.taskFiles)
+      writeObjectField(TEST_FILES_FIELD, value.testsText)
       // todo : handle this by standard serializer if possible
     }
   }
 
-  override fun serializeWithType(value: Task, gen: JsonGenerator, serializers: SerializerProvider, typeSer: TypeSerializer) {
-    val typeId = typeSer.typeId(value, JsonToken.START_OBJECT)
-    typeSer.writeTypePrefix(gen, typeId)
-    serialize(value, gen, serializers)
-    typeSer.writeTypeSuffix(gen, typeId)
+  override fun serializeWithType(value: Task, generator: JsonGenerator, serializers: SerializerProvider, typeSerializer: TypeSerializer) {
+    val typeId = typeSerializer.typeId(value, JsonToken.START_OBJECT)
+    typeSerializer.writeTypePrefix(generator, typeId)
+    serialize(value, generator, serializers)
+    typeSerializer.writeTypeSuffix(generator, typeId)
   }
 
 }

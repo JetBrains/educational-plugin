@@ -1,6 +1,6 @@
 {
   "type": "course",
-  "format": "1.9-2018.3-3301",
+  "format": "n/a",
   "title": "Sample course",
   "summary": "This is some course description",
   "language": "en",
@@ -39,7 +39,7 @@
               "type": "edu",
               "title": "PA #4.3",
               "description": "new task 1",
-              "descriptionFormat": "html",
+              "description_format": "html",
               "task_files": {},
               "test_files": {}
             },
@@ -47,7 +47,7 @@
               "type": "output",
               "title": "PA #4.4",
               "description": "new task 2",
-              "descriptionFormat": "html",
+              "description_format": "html",
               "task_files": {},
               "test_files": {}
             }
