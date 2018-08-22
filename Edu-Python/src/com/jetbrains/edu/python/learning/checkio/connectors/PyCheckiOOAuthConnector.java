@@ -8,6 +8,7 @@ import com.jetbrains.edu.python.learning.checkio.PyCheckiOSettings;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiOOAuthBundle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
@@ -19,14 +20,14 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
     super(CLIENT_ID, CLIENT_SECRET);
   }
 
-  @NotNull
+  @Nullable
   @Override
   public CheckiOAccount getAccount() {
     return PyCheckiOSettings.getInstance().getAccount();
   }
 
   @Override
-  public void setAccount(@NotNull CheckiOAccount account) {
+  public void setAccount(@Nullable CheckiOAccount account) {
     PyCheckiOSettings.getInstance().setAccount(account);
   }
 

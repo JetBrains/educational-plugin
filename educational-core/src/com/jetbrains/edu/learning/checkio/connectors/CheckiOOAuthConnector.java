@@ -41,18 +41,18 @@ public abstract class CheckiOOAuthConnector {
     myClientSecret = clientSecret;
   }
 
-  @NotNull
+  @Nullable
   public abstract CheckiOAccount getAccount();
 
-  public abstract void setAccount(@NotNull CheckiOAccount account);
+  public abstract void setAccount(@Nullable CheckiOAccount account);
 
 
   @NotNull
   public String getAccessToken() throws CheckiOLoginRequiredException, ApiException {
-    requireUserLoggedIn();
+    final CheckiOAccount currentAccount = requireUserLoggedIn();
     ensureTokensUpToDate();
 
-    return getAccount().getTokens().getAccessToken();
+    return currentAccount.getTokens().getAccessToken();
   }
 
   @NotNull
@@ -87,12 +87,12 @@ public abstract class CheckiOOAuthConnector {
   }
 
   private void ensureTokensUpToDate() throws CheckiOLoginRequiredException, ApiException {
-    requireUserLoggedIn();
+    final CheckiOAccount currentAccount = requireUserLoggedIn();
 
-    if (!getAccount().getTokens().isUpToDate()) {
-      final String refreshToken = getAccount().getTokens().getRefreshToken();
+    if (!currentAccount.getTokens().isUpToDate()) {
+      final String refreshToken = currentAccount.getTokens().getRefreshToken();
       final CheckiOTokens newTokens = refreshTokens(refreshToken);
-      getAccount().updateTokens(newTokens);
+      currentAccount.updateTokens(newTokens);
     }
   }
 
@@ -105,10 +105,13 @@ public abstract class CheckiOOAuthConnector {
     }
   }
 
-  private void requireUserLoggedIn() throws CheckiOLoginRequiredException {
-    if (!getAccount().isLoggedIn()) {
+  @NotNull
+  private CheckiOAccount requireUserLoggedIn() throws CheckiOLoginRequiredException {
+    final CheckiOAccount currentAccount = getAccount();
+    if (currentAccount == null) {
       throw new CheckiOLoginRequiredException();
     }
+    return currentAccount;
   }
 
   public void doAuthorize(@NotNull Runnable... postLoginActions) {
@@ -183,14 +186,14 @@ public abstract class CheckiOOAuthConnector {
   @Nullable
   public synchronized String codeHandler(@NotNull String code, @NotNull String handlingPath) {
     try {
-      if (getAccount().isLoggedIn()) {
+      if (getAccount() != null) {
         ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
         return "You're logged in already";
       }
 
       final CheckiOTokens tokens = getTokens(code, handlingPath);
       final CheckiOUserInfo userInfo = getUserInfo(tokens.getAccessToken());
-      getAccount().logIn(userInfo, tokens);
+      setAccount(new CheckiOAccount(userInfo, tokens));
       ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
       return null;
     }

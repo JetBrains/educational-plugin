@@ -76,7 +76,7 @@ sealed class ErrorState(
       if (selectedCourse is CheckiOCourse) {
         val checkiOConnectorProvider = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConnectorProvider
         val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
-        return !checkiOAccount.isLoggedIn
+        return checkiOAccount == null
       }
       return false
     }

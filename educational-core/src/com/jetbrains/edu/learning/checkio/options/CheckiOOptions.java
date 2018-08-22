@@ -22,7 +22,8 @@ public abstract class CheckiOOptions implements OptionsProvider {
   @NotNull private JPanel myPanel = new JPanel();
   @Nullable private HyperlinkAdapter myLoginListener;
 
-  @NotNull private CheckiOAccount myCurrentAccount;
+  @Nullable private CheckiOAccount myCurrentAccount;
+  @Nullable private CheckiOAccount myLastSavedAccount;
 
   private final String myTitle;
   private final CheckiOOAuthConnector myOAuthConnector;
@@ -65,24 +66,25 @@ public abstract class CheckiOOptions implements OptionsProvider {
   @Nullable
   @Override
   public JComponent createComponent() {
+    myLastSavedAccount = myOAuthConnector.getAccount();
     return myPanel;
   }
 
   @Override
   public boolean isModified() {
-    return !Objects.equals(myCurrentAccount, myOAuthConnector.getAccount());
+    return !Objects.equals(myCurrentAccount, myLastSavedAccount);
   }
 
   @Override
   public void reset() {
-    myCurrentAccount = myOAuthConnector.getAccount();
+    myCurrentAccount = myLastSavedAccount;
     updateLoginLabels();
   }
 
   @Override
   public void apply() {
     if (isModified()) {
-      myOAuthConnector.setAccount(myCurrentAccount);
+      myLastSavedAccount = myCurrentAccount;
     }
 
     reset();
@@ -93,7 +95,7 @@ public abstract class CheckiOOptions implements OptionsProvider {
       myLoginLink.removeHyperlinkListener(myLoginListener);
     }
 
-    if (!myCurrentAccount.isLoggedIn()) {
+    if (myCurrentAccount == null) {
       myLoginLabel.setText("You're not logged in");
       myLoginLink.setText("Log in to CheckiO");
 
@@ -115,13 +117,16 @@ public abstract class CheckiOOptions implements OptionsProvider {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent event) {
         myOAuthConnector.doAuthorize(() -> {
-          final CheckiOAccount newAccount = myOAuthConnector.getAccount();
-          myOAuthConnector.setAccount(myCurrentAccount);
-          myCurrentAccount = newAccount;
+          myCurrentAccount = myOAuthConnector.getAccount();
           updateLoginLabels();
         });
       }
     };
+  }
+
+  @Override
+  public void disposeUIResources() {
+    myOAuthConnector.setAccount(myLastSavedAccount);
   }
 
   @NotNull
@@ -129,7 +134,8 @@ public abstract class CheckiOOptions implements OptionsProvider {
     return new HyperlinkAdapter() {
       @Override
       protected void hyperlinkActivated(HyperlinkEvent event) {
-        myCurrentAccount.logOut();
+        myOAuthConnector.setAccount(null);
+        myCurrentAccount = null;
         updateLoginLabels();
       }
     };
