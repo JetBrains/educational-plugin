@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -18,7 +19,11 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
             return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
         }
 
-        ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
+        StudyTaskManager.getInstance(project).course?.let {
+            if (!it.isAdaptive) {
+                ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
+            }
+        }
         return CheckResult(CheckStatus.Solved, "")
     }
 
