@@ -6,7 +6,7 @@ import com.intellij.openapi.util.Ref;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
-import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler;
+import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -61,7 +61,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
 
       return doCheck(accessToken, taskId, code);
     } catch (Exception e) {
-      new DefaultErrorHandler(
+      new CheckiOErrorHandler(
         "Failed to check the task",
         PyCheckiOOAuthConnector.getInstance()
       ).handle(e);

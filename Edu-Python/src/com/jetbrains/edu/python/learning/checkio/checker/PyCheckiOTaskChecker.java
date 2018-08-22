@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
 import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
-import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.DefaultErrorHandler;
+import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
@@ -52,7 +52,7 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
       ).doUpdate();
     }
     catch (Exception e) {
-      new DefaultErrorHandler(
+      new CheckiOErrorHandler(
         "Failed to update the course",
         PyCheckiOOAuthConnector.getInstance()
       ).handle(e);
