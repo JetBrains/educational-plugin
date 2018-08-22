@@ -75,9 +75,8 @@ public abstract class CheckiOOAuthConnector {
     ).execute();
   }
 
-  @SuppressWarnings("MethodMayBeStatic")
   @NotNull
-  private CheckiOUserInfo getUserInfo(@NotNull String accessToken) throws ApiException {
+  private static CheckiOUserInfo getUserInfo(@NotNull String accessToken) throws ApiException {
     return CHECKIO_OAUTH_INTERFACE.getUserInfo(accessToken).execute();
   }
 
