@@ -49,7 +49,7 @@ public abstract class CheckiOOAuthConnector {
   public abstract void setAccount(@Nullable CheckiOAccount account);
 
   @NotNull
-  public abstract String getOAuthServicePath();
+  protected abstract String getOAuthServicePath();
 
   @NotNull
   protected abstract String getPlatformName();
@@ -166,7 +166,7 @@ public abstract class CheckiOOAuthConnector {
       .build();
   }
 
-  protected void createAuthorizationListener(@NotNull Runnable... postLoginActions) {
+  private void createAuthorizationListener(@NotNull Runnable... postLoginActions) {
     myAuthorizationBusConnection.disconnect();
     myAuthorizationBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
     myAuthorizationBusConnection.subscribe(myAuthorizationTopic, () -> {
@@ -177,12 +177,12 @@ public abstract class CheckiOOAuthConnector {
   }
 
   @NotNull
-  protected String buildRedirectUri(int port) {
+  private String buildRedirectUri(int port) {
     return CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST + ":" + port + getOAuthServicePath();
   }
 
   @NotNull
-  protected CustomAuthorizationServer getCustomServer() throws IOException {
+  private CustomAuthorizationServer getCustomServer() throws IOException {
     final CustomAuthorizationServer startedServer =
       CustomAuthorizationServer.getServerIfStarted(getPlatformName());
 
