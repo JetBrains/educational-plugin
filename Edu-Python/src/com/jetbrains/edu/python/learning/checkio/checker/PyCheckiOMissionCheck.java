@@ -61,6 +61,8 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
       final String code = getCodeFromTask();
 
       return doCheck(accessToken, taskId, code);
+    } catch (InterruptedException e) {
+      return new CheckResult(CheckStatus.Unchecked, "Checking was cancelled");
     } catch (Exception e) {
       new CheckiOErrorHandler(
         "Failed to check the task",
