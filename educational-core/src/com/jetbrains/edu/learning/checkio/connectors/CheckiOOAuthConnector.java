@@ -48,6 +48,11 @@ public abstract class CheckiOOAuthConnector {
 
   public abstract void setAccount(@Nullable CheckiOAccount account);
 
+  @NotNull
+  public abstract String getOAuthServicePath();
+
+  @NotNull
+  protected abstract String getPlatformName();
 
   @NotNull
   public String getAccessToken() throws CheckiOLoginRequiredException, ApiException {
@@ -173,10 +178,29 @@ public abstract class CheckiOOAuthConnector {
   }
 
   @NotNull
-  protected abstract String buildRedirectUri(int port);
+  protected String buildRedirectUri(int port) {
+    return CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST + ":" + port + getOAuthServicePath();
+  }
 
   @NotNull
-  protected abstract CustomAuthorizationServer getCustomServer() throws IOException;
+  protected CustomAuthorizationServer getCustomServer() throws IOException {
+    final CustomAuthorizationServer startedServer =
+      CustomAuthorizationServer.getServerIfStarted(getPlatformName());
+
+    if (startedServer != null) {
+      return startedServer;
+    }
+
+    return createCustomServer();
+  }
+
+  private CustomAuthorizationServer createCustomServer() throws IOException {
+    return CustomAuthorizationServer.create(
+      getPlatformName(),
+      getOAuthServicePath(),
+      this::codeHandler
+    );
+  }
 
   // In case of built-in server
   @Nullable
