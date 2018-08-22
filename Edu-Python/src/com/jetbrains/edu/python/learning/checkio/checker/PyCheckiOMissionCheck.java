@@ -1,14 +1,18 @@
 package com.jetbrains.edu.python.learning.checkio.checker;
 
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
@@ -19,11 +23,11 @@ import javafx.embed.swing.JFXPanel;
 import netscape.javascript.JSObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.w3c.dom.Document;
 import org.w3c.dom.html.HTMLFormElement;
 import org.w3c.dom.html.HTMLInputElement;
 import org.w3c.dom.html.HTMLTextAreaElement;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -49,15 +53,10 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
   @NotNull
   @Override
   public CheckResult call() {
-    final Editor selectedEditor = EduUtils.getSelectedEditor(myProject);
-    if (selectedEditor == null) {
-      return CheckResult.FAILED_TO_CHECK;
-    }
-
     try {
       final String accessToken = PyCheckiOOAuthConnector.getInstance().getAccessToken();
       final String taskId = String.valueOf(myTask.getId());
-      final String code = selectedEditor.getDocument().getText();
+      final String code = getCodeFromTask();
 
       return doCheck(accessToken, taskId, code);
     } catch (Exception e) {
@@ -67,6 +66,26 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
       ).handle(e);
       return CheckResult.FAILED_TO_CHECK;
     }
+  }
+
+  private String getCodeFromTask() throws IOException {
+    final TaskFile taskFile = ((CheckiOMission) myTask).getTaskFile();
+    final VirtualFile missionDir = myTask.getDir(myProject);
+    if (missionDir == null) {
+      throw new IOException("Directory is not found for mission: " + myTask.getStepId() + ", " + myTask.getName());
+    }
+
+    final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, missionDir);
+    if (virtualFile == null) {
+      throw new IOException("Virtual file is not found for mission: " + myTask.getStepId() + ", " + myTask.getName());
+    }
+
+    final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    if (document == null) {
+      throw new IOException("Document isn't provided for VirtualFile: " + virtualFile.getName());
+    }
+
+    return document.getText();
   }
 
   @NotNull
@@ -132,7 +151,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
       }
 
       if (newState == Worker.State.SUCCEEDED && myBrowserWindow.getEngine().getLocation().contains("checkioTestForm.html")) {
-        final Document documentWithForm = myBrowserWindow.getEngine().getDocument();
+        final org.w3c.dom.Document documentWithForm = myBrowserWindow.getEngine().getDocument();
         ((HTMLInputElement)documentWithForm.getElementById("access-token")).setValue(accessToken);
         ((HTMLInputElement)documentWithForm.getElementById("task-id")).setValue(taskId);
         ((HTMLInputElement)documentWithForm.getElementById("interpreter")).setValue(PyCheckiONames.PY_CHECKIO_INTERPRETER);
