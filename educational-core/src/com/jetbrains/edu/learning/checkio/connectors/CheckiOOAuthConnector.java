@@ -12,7 +12,8 @@ import com.jetbrains.edu.learning.authUtils.OAuthUtils;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
-import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthService;
+import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthInterface;
+import com.jetbrains.edu.learning.checkio.api.RetrofitUtils;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
 import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 
 public abstract class CheckiOOAuthConnector {
   private static final Logger LOG = Logger.getInstance(CheckiOOAuthConnector.class);
+  private static final CheckiOOAuthInterface CHECKIO_OAUTH_INTERFACE = RetrofitUtils.createRetrofitOAuthInterface();
 
   private final String myClientId;
   private final String myClientSecret;
@@ -59,31 +61,31 @@ public abstract class CheckiOOAuthConnector {
   private CheckiOTokens getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
     requireClientPropertiesExist();
 
-    return CheckiOOAuthService.getTokens(
+    return CHECKIO_OAUTH_INTERFACE.getTokens(
       OAuthUtils.GRANT_TYPE.AUTHORIZATION_CODE,
       myClientSecret,
       myClientId,
       code,
       redirectUri
-    ).get();
+    ).execute();
   }
 
   @SuppressWarnings("MethodMayBeStatic")
   @NotNull
   private CheckiOUserInfo getUserInfo(@NotNull String accessToken) throws ApiException {
-    return CheckiOOAuthService.getUserInfo(accessToken).get();
+    return CHECKIO_OAUTH_INTERFACE.getUserInfo(accessToken).execute();
   }
 
   @NotNull
   private CheckiOTokens refreshTokens(@NotNull String refreshToken) throws ApiException {
     requireClientPropertiesExist();
 
-    return CheckiOOAuthService.refreshTokens(
+    return CHECKIO_OAUTH_INTERFACE.refreshTokens(
       OAuthUtils.GRANT_TYPE.REFRESH_TOKEN,
       myClientSecret,
       myClientId,
       refreshToken
-    ).get();
+    ).execute();
   }
 
   private void ensureTokensUpToDate() throws CheckiOLoginRequiredException, ApiException {

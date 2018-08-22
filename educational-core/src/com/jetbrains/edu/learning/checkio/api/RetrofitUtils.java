@@ -4,31 +4,28 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOMissionListDeserializer;
+import com.jetbrains.edu.learning.checkio.call.CheckiOCallAdapterFactory;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.jetbrains.annotations.NotNull;
-import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
 public final class RetrofitUtils {
   private RetrofitUtils() {}
 
-  public static CheckiOApiInterface createRetrofitApiInterface(@NotNull String apiBaseUrl) {
-    final Gson gson = createGson();
-    return new Retrofit.Builder()
-      .baseUrl(apiBaseUrl)
-      .addConverterFactory(GsonConverterFactory.create(gson))
-      .build()
-      .create(CheckiOApiInterface.class);
+  public static CheckiOOAuthInterface createRetrofitOAuthInterface() {
+    return createRetrofitInterface(CheckiONames.CHECKIO_OAUTH_HOST, new Gson(), CheckiOOAuthInterface.class);
   }
 
-  private static Gson createGson() {
+  public static CheckiOApiInterface createRetrofitApiInterface(@NotNull String apiBaseUrl) {
+    return createRetrofitInterface(apiBaseUrl, createApiGson(), CheckiOApiInterface.class);
+  }
+
+  private static Gson createApiGson() {
     final GsonBuilder gsonBuilder = new GsonBuilder();
     final Type missionListType = new TypeToken<List<CheckiOMission>>() {}.getType();
 
@@ -37,31 +34,12 @@ public final class RetrofitUtils {
     return gsonBuilder.create();
   }
 
-  public static CheckiOOAuthInterface createRetrofitOAuthInterface() {
+  private static <T> T createRetrofitInterface(@NotNull String baseUrl, @NotNull Gson gson, @NotNull Class<T> apiInterfaceToken) {
     return new Retrofit.Builder()
-      .baseUrl(CheckiONames.CHECKIO_OAUTH_HOST)
-      .addConverterFactory(GsonConverterFactory.create())
+      .addCallAdapterFactory(new CheckiOCallAdapterFactory())
+      .addConverterFactory(GsonConverterFactory.create(gson))
+      .baseUrl(baseUrl)
       .build()
-      .create(CheckiOOAuthInterface.class);
-  }
-
-  @NotNull
-  public static <T> CheckiOResponse<T> getResponse(@NotNull Call<T> call) {
-    try {
-      final Response<T> response = call.execute();
-      if (!response.isSuccessful()) {
-        return CheckiOResponse.createUnsuccessful(response);
-      }
-
-      final T responseWrapperBody = response.body();
-      if (responseWrapperBody == null) {
-        return CheckiOResponse.createParseError(response);
-      }
-
-      return CheckiOResponse.createSuccessful(responseWrapperBody);
-    }
-    catch (IOException e) {
-      return CheckiOResponse.createNetworkError(e);
-    }
+      .create(apiInterfaceToken);
   }
 }

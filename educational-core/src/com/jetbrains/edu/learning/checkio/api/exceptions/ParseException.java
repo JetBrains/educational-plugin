@@ -1,16 +1,13 @@
 package com.jetbrains.edu.learning.checkio.api.exceptions;
 
-import com.jetbrains.edu.learning.checkio.api.CheckiOResponse;
-import com.jetbrains.edu.learning.checkio.api.RetrofitUtils;
+import com.jetbrains.edu.learning.checkio.call.CheckiOCall;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import retrofit2.Call;
 
 /**
  * It's thrown when error occurred parsing Json object to Java object
  *
- * @see CheckiOResponse#createParseError(retrofit2.Response)
- * @see RetrofitUtils#getResponse(Call)
+ * @see CheckiOCall#execute()
  * */
 public class ParseException extends ApiException {
   public ParseException(@NotNull Response rawResponse) {
