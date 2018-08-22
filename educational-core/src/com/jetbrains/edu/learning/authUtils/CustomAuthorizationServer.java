@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.authUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.Range;
+import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -96,10 +97,15 @@ public class CustomAuthorizationServer {
       .setTcpNoDelay(true)
       .build();
 
+    // In case of Stepik our redirect_uri is `http://localhost:port`
+    // but authorization code request is sent on `http://localhost:port/`
+    // So we have to add additional slash
+    final String slashIfNeeded = (platformName.equals(StepikNames.STEPIK) ? "/" : "");
+
     final HttpServer newServer = ServerBootstrap.bootstrap()
       .setListenerPort(port)
       .setServerInfo(platformName)
-      .registerHandler(handlerPath, createContextHandler(platformName, codeHandler))
+      .registerHandler(handlerPath + slashIfNeeded, createContextHandler(platformName, codeHandler))
       .setSocketConfig(socketConfig)
       .create();
 

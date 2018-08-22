@@ -901,7 +901,7 @@ public class StepikConnector {
       try {
         return CustomAuthorizationServer.create(
           StepikNames.STEPIK,
-          "/",
+          "",
           StepikConnector::codeHandler
         ).getHandlingUri();
       } catch (IOException e) {
