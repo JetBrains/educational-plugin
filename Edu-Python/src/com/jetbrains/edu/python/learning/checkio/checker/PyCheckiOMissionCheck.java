@@ -1,8 +1,10 @@
 package com.jetbrains.edu.python.learning.checkio.checker;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
@@ -80,7 +82,10 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
       throw new IOException("Virtual file is not found for mission: " + myTask.getStepId() + ", " + myTask.getName());
     }
 
-    final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+    final Document document = ApplicationManager.getApplication().runReadAction((Computable<Document>) () ->
+      FileDocumentManager.getInstance().getDocument(virtualFile)
+    );
+
     if (document == null) {
       throw new IOException("Document isn't provided for VirtualFile: " + virtualFile.getName());
     }

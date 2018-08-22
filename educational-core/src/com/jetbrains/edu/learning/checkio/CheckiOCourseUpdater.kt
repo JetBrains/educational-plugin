@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checkio
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notifications
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -97,8 +98,13 @@ class CheckiOCourseUpdater(
     val secondsFromLocalChange = (System.currentTimeMillis() - oldVirtualFile.timeStamp) / 1000
 
     if (secondsFromChangeOnServer < secondsFromLocalChange) {
-      val oldDocument = FileDocumentManager.getInstance().getDocument(oldVirtualFile)
-                        ?: return LOG.error("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
+      val oldDocument = runReadAction {
+        FileDocumentManager.getInstance().getDocument(oldVirtualFile)
+      }
+
+      if (oldDocument == null) {
+        return LOG.error("Document isn't provided for VirtualFile ${oldVirtualFile.name}")
+      }
 
       runWriteAction {
         RefreshTaskFileAction.resetDocument(oldDocument, newMission.taskFile)
