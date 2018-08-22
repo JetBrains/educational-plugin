@@ -3,13 +3,15 @@ package com.jetbrains.edu.learning.stepik;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.checker.CheckListener;
 import com.jetbrains.edu.learning.checker.CheckResult;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import org.jetbrains.annotations.NotNull;
 
 public class NextRecommendationCheckListener implements CheckListener {
@@ -27,14 +29,14 @@ public class NextRecommendationCheckListener implements CheckListener {
     if (!(course instanceof RemoteCourse && course.isAdaptive())) {
       return;
     }
-    if (myStatusBeforeCheck == CheckStatus.Solved) {
+    if (!(task instanceof TheoryTask) && myStatusBeforeCheck == CheckStatus.Solved) {
       return;
     }
     CheckStatus statusAfterCheck = task.getStatus();
     if (statusAfterCheck != CheckStatus.Solved) {
       return;
     }
-    ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Backgroundable(project, StepikAdaptiveConnector.LOADING_NEXT_RECOMMENDATION, false,
+    ProgressManager.getInstance().run(new Backgroundable(project, StepikAdaptiveConnector.LOADING_NEXT_RECOMMENDATION, false,
                                                                                             PerformInBackgroundOption.DEAF) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
