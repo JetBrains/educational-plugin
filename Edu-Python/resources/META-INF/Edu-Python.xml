@@ -28,11 +28,15 @@
     <configurator implementationClass="com.jetbrains.edu.python.learning.pycharm.PyConfigurator" language="Python"/>
 
     <!-- CheckiO -->
+    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOConfigurator" language="CheckiO-Python"/>
     <optionsProvider instance="com.jetbrains.edu.python.learning.checkio.settings.PyCheckiOOptions"/>
   </extensions>
 
   <extensions defaultExtensionNs="educational">
     <languageDecorator implementationClass="com.jetbrains.edu.python.learning.PyLanguageDecorator" language="Python" />
+
+    <!-- CheckiO -->
+    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOLanguageDecorator" language="CheckiO-Python" />
   </extensions>
 
   <actions>
