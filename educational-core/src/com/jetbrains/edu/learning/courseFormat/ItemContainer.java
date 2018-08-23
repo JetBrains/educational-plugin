@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.courseFormat;
 import com.google.gson.annotations.Expose;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,8 @@ public abstract class ItemContainer extends StudyItem {
   @AbstractCollection(elementTypes = {
     Section.class,
     Lesson.class,
-    FrameworkLesson.class
+    FrameworkLesson.class,
+    CheckiOStation.class
   })
   @Expose protected List<StudyItem> items = new ArrayList<>();
 
