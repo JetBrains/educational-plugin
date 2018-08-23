@@ -34,6 +34,7 @@ public class EduFileEditorManagerListener implements FileEditorManagerListener {
     } else {
       myToolWindow.setBottomComponent(null);
     }
+    myToolWindow.showPanelById(TaskDescriptionToolWindow.TASK_INFO_ID);
   }
 
   @Nullable

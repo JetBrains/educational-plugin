@@ -471,6 +471,11 @@ public class BrowserWindow extends JFrame {
     return progress;
   }
 
+  @NotNull
+  public WebEngine getEngine() {
+    return myWebComponent.getEngine();
+  }
+
   public JFXPanel getPanel() {
     return myPanel;
   }
