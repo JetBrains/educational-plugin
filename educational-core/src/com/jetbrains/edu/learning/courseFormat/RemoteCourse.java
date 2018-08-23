@@ -32,7 +32,6 @@ public class RemoteCourse extends Course {
   @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
   @Expose private boolean isAdaptive = false;
-  @Expose @SerializedName("is_public") boolean isPublic;
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses
 
   @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
@@ -117,14 +116,6 @@ public class RemoteCourse extends Course {
   public void setType(String type) {
     myType = type;
     myCompatibility = courseCompatibility(this);
-  }
-
-  public boolean isPublic() {
-    return isPublic;
-  }
-
-  public void setPublic(boolean isPublic) {
-    this.isPublic = isPublic;
   }
 
   public boolean isLoadSolutions() {
