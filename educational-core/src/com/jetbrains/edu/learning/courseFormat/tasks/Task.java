@@ -72,7 +72,6 @@ public abstract class Task extends StudyItem {
 
   public void init(@Nullable Course course, @Nullable final StudyItem parentItem, boolean isRestarted) {
     setLesson(parentItem instanceof Lesson ? (Lesson)parentItem : null);
-    if (!isRestarted) myStatus = CheckStatus.Unchecked;
     for (TaskFile taskFile : getTaskFileValues()) {
       taskFile.initTaskFile(this, isRestarted);
     }
