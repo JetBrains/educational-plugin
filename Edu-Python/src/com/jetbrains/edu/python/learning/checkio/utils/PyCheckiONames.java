@@ -10,4 +10,6 @@ public final class PyCheckiONames {
   public static final String PY_CHECKIO_API_HOST = "https://py.checkio.org";
   public static final String PY_CHECKIO_OAUTH_SERVICE_NAME = CHECKIO_OAUTH_SERVICE_NAME + "/py";
   public static final String PY_CHECKIO_OAUTH_SERVICE_PATH = CHECKIO_OAUTH_SERVICE_PATH + "/py";
+
+  public static final String PY_CHECKIO_LANGUAGE = "CheckiO-Python";
 }

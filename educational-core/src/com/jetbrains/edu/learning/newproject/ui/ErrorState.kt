@@ -5,11 +5,15 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.MessageType.ERROR
 import com.intellij.openapi.ui.MessageType.WARNING
 import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.getDisabledPlugins
-import com.jetbrains.edu.learning.stepik.StepikUtils.isLoggedIn
+import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikUtils
 import java.awt.Color
 
 sealed class ErrorState(
@@ -22,7 +26,9 @@ sealed class ErrorState(
   object NothingSelected : ErrorState(0, null, Color.BLACK, true)
   object None : ErrorState(1, null, Color.BLACK, true)
   object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
-  object LoginRequired : ErrorState(3, ErrorMessage("", "Log in", " to Stepik to start this course"), ERROR.titleForeground, false)
+  abstract class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)
+  object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
+  object CheckiOLoginRequired : LoginRequired(CheckiONames.CHECKIO)
   object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
     ErrorState(3, errorMessage(disabledPluginIds), ERROR.titleForeground, false)
@@ -39,7 +45,8 @@ sealed class ErrorState(
         course == null -> NothingSelected
         course.compatibility !== CourseCompatibility.COMPATIBLE -> IncompatibleVersion
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
-        !isLoggedIn() -> if (isLoginRequired(course)) LoginRequired else NotLoggedIn
+        isCheckiOLoginRequired(course) -> CheckiOLoginRequired
+        !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
       }
     }
@@ -59,8 +66,19 @@ sealed class ErrorState(
       return ErrorMessage(beforeLink, "Enable", "")
     }
 
-    private fun isLoginRequired(selectedCourse: Course): Boolean =
+    private fun isLoggedInToStepik(): Boolean = StepikUtils.isLoggedIn()
+
+    private fun isStepikLoginRequired(selectedCourse: Course): Boolean =
       selectedCourse.isAdaptive || selectedCourse is RemoteCourse && !selectedCourse.isCompatible
+
+    private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
+      if (selectedCourse is CheckiOCourse) {
+        val checkiOConnectorProvider = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConnectorProvider
+        val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
+        return checkiOAccount == null
+      }
+      return false
+    }
   }
 }
 

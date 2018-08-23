@@ -83,7 +83,6 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.StepicUser;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
@@ -1093,7 +1092,7 @@ public class EduUtils {
     try {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        List<Course> courses = execCancelable(() -> StepikConnector.getCourseInfos(EduSettings.getInstance().getUser()));
+        List<Course> courses = execCancelable(CoursesProvider::loadAllCourses);
         if (courses == null) return Lists.newArrayList();
         List<Course> bundledCourses = getBundledCourses();
         for (Course bundledCourse : bundledCourses) {
