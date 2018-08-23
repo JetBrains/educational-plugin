@@ -120,7 +120,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     }
   }
 
-  static void resetDocument(@NotNull final Document document,
+  public static void resetDocument(@NotNull final Document document,
                             @NotNull final TaskFile taskFile) {
     EduUtils.deleteGuardedBlocks(document);
     taskFile.setTrackChanges(false);
