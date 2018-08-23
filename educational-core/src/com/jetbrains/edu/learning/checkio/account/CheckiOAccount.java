@@ -39,6 +39,10 @@ public class CheckiOAccount {
     return myTokens;
   }
 
+  public void updateTokens(@NotNull CheckiOTokens newTokens) {
+    myTokens = newTokens;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

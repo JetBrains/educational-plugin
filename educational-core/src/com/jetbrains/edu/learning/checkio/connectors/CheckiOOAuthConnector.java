@@ -69,6 +69,28 @@ public abstract class CheckiOOAuthConnector {
     return CHECKIO_OAUTH_INTERFACE.getUserInfo(accessToken).execute();
   }
 
+  @NotNull
+  private CheckiOTokens refreshTokens(@NotNull String refreshToken) throws ApiException {
+    requireClientPropertiesExist();
+
+    return CHECKIO_OAUTH_INTERFACE.refreshTokens(
+      OAuthUtils.GRANT_TYPE.REFRESH_TOKEN,
+      myClientSecret,
+      myClientId,
+      refreshToken
+    ).execute();
+  }
+
+  private void ensureTokensUpToDate() throws ApiException {
+    final CheckiOAccount currentAccount = getAccount();
+
+    if (!currentAccount.getTokens().isUpToDate()) {
+      final String refreshToken = currentAccount.getTokens().getRefreshToken();
+      final CheckiOTokens newTokens = refreshTokens(refreshToken);
+      currentAccount.updateTokens(newTokens);
+    }
+  }
+
   private void requireClientPropertiesExist() {
     final Pattern spacesStringPattern = Pattern.compile("\\p{javaWhitespace}*");
     if (spacesStringPattern.matcher(myClientId).matches() || spacesStringPattern.matcher(myClientSecret).matches()) {
