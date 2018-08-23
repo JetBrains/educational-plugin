@@ -33,6 +33,12 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
     return PyCheckiONames.PY_CHECKIO_OAUTH_SERVICE_PATH;
   }
 
+  @NotNull
+  @Override
+  protected String getPlatformName() {
+    return PyCheckiONames.PY_CHECKIO;
+  }
+
   private static class Holder {
     private static final PyCheckiOOAuthConnector INSTANCE = new PyCheckiOOAuthConnector();
   }
