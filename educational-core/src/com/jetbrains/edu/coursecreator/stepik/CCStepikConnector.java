@@ -433,7 +433,7 @@ public class CCStepikConnector {
       final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
       final StatusLine line = response.getStatusLine();
       EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_OK) {
+      if (line.getStatusCode() != HttpStatus.SC_OK && line.getStatusCode() != HttpStatus.SC_CREATED) {
         LOG.error("Failed to update Unit" + responseString);
         final String detailString = getErrorDetail(responseString);
 
