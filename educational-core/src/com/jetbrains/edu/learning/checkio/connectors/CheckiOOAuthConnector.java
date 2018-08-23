@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checkio.connectors;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.MessageBusConnection;
@@ -15,6 +16,8 @@ import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthInterface;
 import com.jetbrains.edu.learning.checkio.api.RetrofitUtils;
 import com.jetbrains.edu.learning.checkio.api.exceptions.ApiException;
 import com.jetbrains.edu.learning.checkio.api.exceptions.NetworkException;
+import com.jetbrains.edu.learning.checkio.exceptions.CheckiOLoginRequiredException;
+import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import org.apache.http.client.utils.URIBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +55,14 @@ public abstract class CheckiOOAuthConnector {
   protected abstract String getPlatformName();
 
   @NotNull
+  public String getAccessToken() throws CheckiOLoginRequiredException, ApiException {
+    final CheckiOAccount currentAccount = requireUserLoggedIn();
+    ensureTokensUpToDate();
+
+    return currentAccount.getTokens().getAccessToken();
+  }
+
+  @NotNull
   private CheckiOTokens getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
     requireClientPropertiesExist();
 
@@ -81,8 +92,8 @@ public abstract class CheckiOOAuthConnector {
     ).execute();
   }
 
-  private void ensureTokensUpToDate() throws ApiException {
-    final CheckiOAccount currentAccount = getAccount();
+  private void ensureTokensUpToDate() throws CheckiOLoginRequiredException, ApiException {
+    final CheckiOAccount currentAccount = requireUserLoggedIn();
 
     if (!currentAccount.getTokens().isUpToDate()) {
       final String refreshToken = currentAccount.getTokens().getRefreshToken();
@@ -98,6 +109,15 @@ public abstract class CheckiOOAuthConnector {
       LOG.error(errorMessage);
       throw new IllegalStateException(errorMessage);
     }
+  }
+
+  @NotNull
+  private CheckiOAccount requireUserLoggedIn() throws CheckiOLoginRequiredException {
+    final CheckiOAccount currentAccount = getAccount();
+    if (currentAccount == null) {
+      throw new CheckiOLoginRequiredException();
+    }
+    return currentAccount;
   }
 
   public void doAuthorize(@NotNull Runnable... postLoginActions) {
