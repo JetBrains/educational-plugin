@@ -33,3 +33,7 @@ Edu-Java/classes/
 Edu-Kotlin/classes/
 Edu-Scala/classes/
 Edu-Python/classes/
+
+# oauth properties files
+Edu-Python/resources/checkio/checkio-oauth.properties
+Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties

@@ -81,6 +81,15 @@ static String studioPath(File studioFolder) {
     }
 }
 
+void createProperties(CharSequence propFilePath, Map<String, String> properties) {
+    def propFile = file("${propFilePath}")
+    propFile.getParentFile().mkdirs()
+    propFile.createNewFile()
+    def props = new Properties()
+    props.putAll(properties)
+    props.store(propFile.newWriter(), null)
+}
+
 task downloadJavaFx(type: Download) {
     overwrite true
     src javafx
@@ -158,6 +167,10 @@ allprojects {
             exclude module: 'kotlin-stdlib'
             exclude module: 'kotlin-reflect'
         }
+
+        compile 'com.squareup.retrofit2:retrofit:2.4.0'
+        implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
     }
 }
@@ -273,16 +286,29 @@ configure(project(':Edu-Kotlin')) {
 
 
     task createTwitterProperties() {
-        def twitterFile = file("${projectDir}/resources/twitter/kotlin_koans/oauth_twitter.properties")
-        Properties props = new Properties()
-        props.setProperty("consumerKey", consumerKey)
-        props.setProperty("consumerSecret", consumerSecret)
-        props.store(twitterFile.newWriter(), null)
+        createProperties(
+          "${projectDir}/resources/twitter/kotlin_koans/oauth_twitter.properties",
+          [
+            "consumerKey" : consumerKey,
+            "consumerSecret" : consumerSecret
+          ]
+        )
     }
     processResources.dependsOn(createTwitterProperties)
 }
 
 configure(project(':Edu-Python')) {
+    task createCheckiOOAuthProperties() {
+        createProperties(
+          "${projectDir}/resources/checkio/checkio-oauth.properties",
+          [
+            "checkioClientId" : checkioClientId,
+            "checkioClientSecret" : checkioClientSecret
+          ]
+        )
+    }
+    processResources.dependsOn(createCheckiOOAuthProperties)
+
     intellij.plugins "PythonCore:$pythonPluginVersion"
 }
 
