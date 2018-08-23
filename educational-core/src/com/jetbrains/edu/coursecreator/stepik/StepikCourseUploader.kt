@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.StepikNames
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -36,7 +37,6 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
     processSectionChanges(lastUpdateDate)
     processLessonChanges(lastUpdateDate)
     processTaskChanges()
-    updateAdditionalMaterials(project, course.id)
 
     if (isUpToDate()) {
       val notification = Notification("upload.course", "Nothing to upload", "All course items is up to date", NotificationType.INFORMATION)
@@ -62,6 +62,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
     updateSections()
     updateLessons()
     updateTasks()
+    updateAdditionalMaterials(project, course.id)
   }
 
   private fun updateTasks() {
@@ -110,7 +111,15 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       it.section!!.id
     }
     else {
-      getTopLevelSectionId(project, course)
+      val topLevelSectionId = getTopLevelSectionId(project, course)
+      if (topLevelSectionId == -1) {
+        val sectionId = postSectionForTopLevelLessons(project, course)
+        course.sectionIds.add(sectionId)
+        sectionId
+      }
+      else {
+        topLevelSectionId
+      }
     }
   }
 
@@ -128,8 +137,6 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
     sectionsInfoToUpdate.forEach {
       updateSectionInfo(project, it)
     }
-
-    updateAdditionalMaterials(project, course.id)
   }
 
   private fun processCourseChanges(lastUpdateDate: Date) {
@@ -287,6 +294,9 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
     val sections = StepikConnector.getSections(remoteSectionIds.map { it.toString() }.toTypedArray())
     val localSectionIds = course.sections.map { it.id }
     for (section in sections) {
+      if (section.name == StepikNames.PYCHARM_ADDITIONAL) {
+        continue
+      }
       if ((section.id !in localSectionIds && section.id !in course.sectionIds) && section.updateDate <= lastUpdateDate) {
         sectionsToDelete.add(section.id)
       }
