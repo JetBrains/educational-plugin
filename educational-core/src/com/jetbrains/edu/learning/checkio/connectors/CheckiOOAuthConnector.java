@@ -5,6 +5,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.authUtils.OAuthUtils;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
 import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
@@ -45,6 +47,9 @@ public abstract class CheckiOOAuthConnector {
 
   @NotNull
   protected abstract String getOAuthServicePath();
+
+  @NotNull
+  protected abstract String getPlatformName();
 
   @NotNull
   private CheckiOTokens getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
@@ -90,13 +95,18 @@ public abstract class CheckiOOAuthConnector {
 
   @NotNull
   private String getOAuthHandlerUri() throws IOException {
-    final int port = BuiltInServerManager.getInstance().getPort();
-
-    if (port < 63342 || port > 63362) {
-      throw new IOException("No ports available");
+    if (EduUtils.isAndroidStudio()) {
+      return getCustomServer().getHandlingUri();
     }
+    else {
+      final int port = BuiltInServerManager.getInstance().getPort();
 
-    return buildRedirectUri(port);
+      if (port < 63342 || port > 63362) {
+        throw new IOException("No ports available");
+      }
+
+      return buildRedirectUri(port);
+    }
   }
 
   @NotNull
@@ -123,11 +133,33 @@ public abstract class CheckiOOAuthConnector {
     return CheckiONames.CHECKIO_OAUTH_REDIRECT_HOST + ":" + port + getOAuthServicePath();
   }
 
+  @NotNull
+  private CustomAuthorizationServer getCustomServer() throws IOException {
+    final CustomAuthorizationServer startedServer =
+      CustomAuthorizationServer.getServerIfStarted(getPlatformName());
+
+    if (startedServer != null) {
+      return startedServer;
+    }
+
+    return createCustomServer();
+  }
+
+  private CustomAuthorizationServer createCustomServer() throws IOException {
+    return CustomAuthorizationServer.create(
+      getPlatformName(),
+      getOAuthServicePath(),
+      this::codeHandler
+    );
+  }
+
+  // In case of built-in server
   @Nullable
   public String codeHandler(@NotNull String code) {
     return codeHandler(code, buildRedirectUri(BuiltInServerManager.getInstance().getPort()));
   }
 
+  // In case of Android Studio
   @Nullable
   public synchronized String codeHandler(@NotNull String code, @NotNull String handlingPath) {
     try {
