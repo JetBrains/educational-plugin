@@ -51,7 +51,7 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
   }
 
   @Override
-  protected void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
+  public void afterProjectGenerated(@NotNull Project project, @NotNull PyNewProjectSettings settings) {
     super.afterProjectGenerated(project, settings);
     Sdk sdk = settings.getSdk();
 
