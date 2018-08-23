@@ -131,7 +131,13 @@ public abstract class CheckiOOAuthConnector {
       BrowserUtil.browse(oauthLink);
     }
     catch (URISyntaxException | IOException e) {
-      return;
+      // IOException is thrown when there're no available ports, in some cases restarting can fix this
+      Notifications.Bus.notify(new CheckiONotification.Error(
+        "Authorization failed",
+        null,
+        "Try to restart IDE and log in again",
+        null
+      ));
     }
   }
 
