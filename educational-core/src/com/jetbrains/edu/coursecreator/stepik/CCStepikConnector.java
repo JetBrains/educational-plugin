@@ -910,7 +910,9 @@ public class CCStepikConnector {
       EntityUtils.consume(responseEntity);
       final StatusLine line = response.getStatusLine();
       if (line.getStatusCode() != HttpStatus.SC_NO_CONTENT) {
-        LOG.error("Failed to delete item " + responseString);
+        // If parent item was deleted its children are deleted too, so
+        // it's ok to fail to delete item here
+        LOG.warn("Failed to delete item " + responseString);
       }
     }
     catch (IOException e) {
