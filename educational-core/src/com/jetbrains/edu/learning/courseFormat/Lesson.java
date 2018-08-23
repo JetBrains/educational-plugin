@@ -8,6 +8,7 @@ import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import kotlin.collections.CollectionsKt;
@@ -33,6 +34,7 @@ public class Lesson extends StudyItem {
   @Expose
   @SerializedName("task_list")
   @AbstractCollection(elementTypes = {
+    CheckiOMission.class,
     EduTask.class,
     ChoiceTask.class,
     TheoryTask.class,
