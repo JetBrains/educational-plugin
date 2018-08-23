@@ -29,10 +29,10 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.EduLanguageDecorator;
-import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
+import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
@@ -105,9 +105,11 @@ public class CoursesPanel extends JPanel {
     myCoursesList.setBackground(LIST_COLOR);
 
     myErrorLabel.addHyperlinkListener(e -> {
-      if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.LoginRequired.INSTANCE) {
+      if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.StepikLoginRequired.INSTANCE) {
         addLoginListener(this::updateCoursesList);
         StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
+      } else if (myErrorState == ErrorState.CheckiOLoginRequired.INSTANCE) {
+        addCheckiOLoginListener((CheckiOCourse) myCoursesList.getSelectedValue());
       } else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
         PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
       } else if (myErrorState instanceof ErrorState.RequiredPluginsDisabled) {
@@ -119,6 +121,19 @@ public class CoursesPanel extends JPanel {
     processSelectionChanged();
   }
 
+  private void addCheckiOLoginListener(@NotNull CheckiOCourse selectedCourse) {
+    final CheckiOConnectorProvider checkiOConnectorProvider =
+      (CheckiOConnectorProvider) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById());
+    assert checkiOConnectorProvider != null;
+
+    final CheckiOOAuthConnector checkiOOAuthConnector = checkiOConnectorProvider.getOAuthConnector();
+
+    checkiOOAuthConnector.doAuthorize(
+      () -> myErrorLabel.setVisible(false),
+      () -> notifyListeners(true)
+    );
+  }
+
   private void addLoginListener(Runnable... postLoginActions) {
     if (myBusConnection != null) {
       myBusConnection.disconnect();
@@ -126,15 +141,19 @@ public class CoursesPanel extends JPanel {
     myBusConnection = ApplicationManager.getApplication().getMessageBus().connect();
     myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, () -> {
       if (StepikUtils.isLoggedIn()) {
-        ApplicationManager.getApplication().invokeLater(() -> {
-          for (Runnable action : postLoginActions) {
-            action.run();
-          }
-          myBusConnection.disconnect();
-          myBusConnection = null;
-        }, ModalityState.any());
+        runPostLoginActions(postLoginActions);
       }
     });
+  }
+
+  private void runPostLoginActions(Runnable... postLoginActions) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      for (Runnable action : postLoginActions) {
+        action.run();
+      }
+      myBusConnection.disconnect();
+      myBusConnection = null;
+    }, ModalityState.any());
   }
 
   private void updateCoursesList() {
