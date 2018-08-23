@@ -29,6 +29,7 @@
 
     <!-- CheckiO -->
     <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOConfigurator" language="CheckiO-Python"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.pycharm.PyCheckiOConfigurator" language="CheckiO-Python"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProvider"/>
     <optionsProvider instance="com.jetbrains.edu.python.learning.checkio.settings.PyCheckiOOptions"/>
   </extensions>
