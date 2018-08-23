@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,7 +130,7 @@ public class CustomAuthorizationServer {
       LOG.info("Handling auth response");
 
       try {
-        final List<NameValuePair> parse = URLEncodedUtils.parse(new URI(request.getRequestLine().getUri()), Charset.forName("UTF-8"));
+        final List<NameValuePair> parse = URLEncodedUtils.parse(new URI(request.getRequestLine().getUri()), "UTF-8");
         for (NameValuePair pair : parse) {
           if (pair.getName().equals("code")) {
             final String code = pair.getValue();
