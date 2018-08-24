@@ -95,8 +95,11 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
       if (versionString == null || !versionString.contains(prefix)) {
         return null
       }
-      val name = "new virtual env " + versionString.substring(prefix.length)
+      val name = virtualEnvPrefix + versionString.substring(prefix.length)
       return ProjectJdkImpl(name, PyFakeSdkType)
     }
+
+    @JvmStatic
+    val virtualEnvPrefix = "new virtual env "
   }
 }
