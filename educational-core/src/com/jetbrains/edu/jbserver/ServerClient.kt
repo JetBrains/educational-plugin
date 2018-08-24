@@ -128,6 +128,7 @@ object ServerClient {
   /* Educator API */
 
   fun createCourse(course: EduCourse) {
+    course.globalSetChangeStatus(StepikChangeStatus.INFO_AND_CONTENT)
     val metaInfo = service.createCourse(course).safeExecute()
     course.addMetaInformation(metaInfo)
   }
