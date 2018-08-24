@@ -15,6 +15,7 @@ class CCUploadCourse : DumbAwareAction("&Upload Course to EduServer", "Upload Co
     val project = e.getData(CommonDataKeys.PROJECT) ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
     val eduCourse = if (course is EduCourse) course else EduCourse(course)
+    CourseSynchronizer(course, project)
     if (eduCourse.courseId == 0) {
       // First upload
       ServerConnector.createCourse(eduCourse)
