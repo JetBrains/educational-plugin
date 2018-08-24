@@ -18,7 +18,7 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -72,6 +72,30 @@ object StepikUtils {
     else {
       LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
                              info.name, courseType))
+    }
+  }
+
+  @JvmStatic
+  fun setStatusRecursively(course: Course,
+                                   status: StepikChangeStatus) {
+    for (item in course.items) {
+      item.stepikChangeStatus = status
+      if (item is Section) {
+        for (lesson in item.lessons) {
+          setLessonStatus(lesson, status)
+        }
+      }
+
+      if (item is Lesson) {
+        setLessonStatus(item, status)
+      }
+    }
+  }
+
+  private fun setLessonStatus(lesson: Lesson, status: StepikChangeStatus) {
+    lesson.stepikChangeStatus = status
+    for (task in lesson.taskList) {
+      task.stepikChangeStatus = status
     }
   }
 }

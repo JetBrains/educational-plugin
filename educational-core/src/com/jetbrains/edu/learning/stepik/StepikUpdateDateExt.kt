@@ -4,6 +4,7 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduSettings.isLoggedIn
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -12,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.StepikConnector.fillItems
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseInfo
-import com.jetbrains.edu.learning.stepik.StepikUtils.isLoggedIn
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 

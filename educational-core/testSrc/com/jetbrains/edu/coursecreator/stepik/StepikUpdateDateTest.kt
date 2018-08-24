@@ -1,15 +1,9 @@
 package com.jetbrains.edu.coursecreator.stepik
 
-import com.google.common.collect.Lists
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepicUser
 import com.jetbrains.edu.learning.stepik.isUpToDate
 import junit.framework.TestCase
@@ -545,38 +539,5 @@ class StepikUpdateDateTest : EduTestCase() {
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
 
-  }
-
-
-  private fun Course.asRemote(): RemoteCourse {
-    val remoteCourse = RemoteCourse()
-    remoteCourse.id = 1
-    remoteCourse.name = name
-    remoteCourse.courseMode = CCUtils.COURSE_MODE
-    remoteCourse.items = Lists.newArrayList(items)
-    remoteCourse.language = language
-
-    for (item in remoteCourse.items) {
-      if (item is Section) {
-        item.id = 1
-        for (lesson in item.lessons) {
-          lesson.id = 1
-          for (task in lesson.taskList) {
-            task.stepId = 1
-          }
-        }
-      }
-
-      if (item is Lesson) {
-        item.id = 1
-        for (task in item.taskList) {
-          task.stepId = 1
-        }
-      }
-    }
-
-    remoteCourse.init(null, null, true)
-    StudyTaskManager.getInstance(project).course = remoteCourse
-    return remoteCourse
   }
 }
