@@ -9,7 +9,7 @@ import com.jetbrains.python.newProject.steps.PythonSdkChooserCombo
 import com.jetbrains.python.sdk.PythonSdkAdditionalData
 import com.jetbrains.python.sdk.PythonSdkType
 
-internal class PyLanguageSettings : PyLanguageSettings() {
+internal open class PyLanguageSettings : PyLanguageSettings() {
 
   override fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
     val registeredSdks = PyConfigurableInterpreterList.getInstance(null).allPythonSdks
