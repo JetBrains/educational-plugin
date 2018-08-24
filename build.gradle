@@ -209,7 +209,7 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion"
+    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion", "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 }
 
 task configurePyCharm {
@@ -304,7 +304,7 @@ configure(project(':educational-core')) {
     }
 }
 
-configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android')]) {
+configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')]) {
     dependencies {
         compile project(':educational-core')
         testCompile project(':educational-core').sourceSets.test.output
@@ -334,10 +334,10 @@ configure(project(':Edu-Kotlin')) {
 configure(project(':Edu-Python')) {
     task createCheckiOOAuthProperties() {
         createProperties(
-          "${projectDir}/resources/checkio/checkio-oauth.properties",
+          "${projectDir}/resources/checkio/py-checkio-oauth.properties",
           [
-            "checkioClientId" : checkioClientId,
-            "checkioClientSecret" : checkioClientSecret
+            "pyCheckioClientId" : pyCheckioClientId,
+            "pyCheckioClientSecret" : pyCheckioClientSecret
           ]
         )
     }
@@ -361,11 +361,26 @@ configure(project(':Edu-Android')) {
     }
 }
 
+configure(project(':Edu-JavaScript')) {
+  task createCheckiOOAuthProperties() {
+    createProperties(
+      "${projectDir}/resources/checkio/js-checkio-oauth.properties",
+      [
+        "jsCheckioClientId" : jsCheckioClientId,
+        "jsCheckioClientSecret" : jsCheckioClientSecret
+      ]
+    )
+  }
+  processResources.dependsOn(createCheckiOOAuthProperties)
+
+  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
+}
+
 runIde.systemProperty("-Didea.is.internal", "true")
 runIde.systemProperty("-ea", "")
 
 dependencies {
-    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android')
+    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')
 }
 
 idea {
