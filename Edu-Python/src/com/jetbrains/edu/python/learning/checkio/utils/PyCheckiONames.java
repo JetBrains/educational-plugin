@@ -13,5 +13,5 @@ public final class PyCheckiONames {
 
   public static final String PY_CHECKIO_INTERPRETER = "python-3";
 
-  public static final String PY_CHECKIO_TEST_FORM_URL = "/checkio/checkioTestForm.html";
+  public static final String PY_CHECKIO_TEST_FORM_TARGET_URL = "https://py.checkio.org/mission/check-html-output/";
 }
