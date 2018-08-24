@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
-  private final static String CLIENT_ID = PyCheckiOOAuthBundle.messageOrDefault("checkioClientId", "");
-  private final static String CLIENT_SECRET = PyCheckiOOAuthBundle.messageOrDefault("checkioClientSecret", "");
+  private final static String CLIENT_ID = PyCheckiOOAuthBundle.messageOrDefault("pyCheckioClientId", "");
+  private final static String CLIENT_SECRET = PyCheckiOOAuthBundle.messageOrDefault("pyCheckioClientSecret", "");
 
   private PyCheckiOOAuthConnector() {
     super(CLIENT_ID, CLIENT_SECRET);

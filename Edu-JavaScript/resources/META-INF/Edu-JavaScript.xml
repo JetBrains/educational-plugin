@@ -2,4 +2,15 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
   <depends>NodeJS</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- CheckiO -->
+    <httpRequestHandler implementation="com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthRestService"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOSettings"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <!-- CheckiO -->
+    <optionsProvider instance="com.jetbrains.edu.javascript.learning.checkio.settings.JsCheckiOOptions"/>
+  </extensions>
 </idea-plugin>
