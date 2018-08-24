@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
@@ -67,7 +68,7 @@ public class SyncCourseAction extends DumbAwareAction {
       return;
     }
 
-    if (course.isAdaptive()) {
+    if (StepikCourseExt.isAdaptive(course)) {
       updateAdaptiveCourse(project, course);
     }
     else {

@@ -241,7 +241,7 @@
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
-    <checkListener implementation="com.jetbrains.edu.learning.stepik.NextRecommendationCheckListener"/>
+    <checkListener implementation="com.jetbrains.edu.learning.stepik.StepikNextRecommendationCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
     <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>

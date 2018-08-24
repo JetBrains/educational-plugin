@@ -70,7 +70,7 @@ class PySmartChecker {
         final ProcessOutput output = handler.runProcess();
         final Course course = StudyTaskManager.getInstance(project).getCourse();
         if (course != null) {
-          boolean res = TestsOutputParser.getTestsOutput(output, course.isAdaptive()).isSuccess();
+          boolean res = TestsOutputParser.getTestsOutput(output).isSuccess();
           userAnswerPlaceholder.setStatus(res ? CheckStatus.Solved : CheckStatus.Failed);
         }
       }

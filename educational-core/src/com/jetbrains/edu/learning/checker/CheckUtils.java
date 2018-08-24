@@ -157,13 +157,12 @@ public class CheckUtils {
   }
 
   public static TestsOutputParser.TestsOutput getTestOutput(@NotNull Process testProcess,
-                                                            @NotNull String commandLine,
-                                                            boolean isAdaptive) {
+                                                            @NotNull String commandLine) {
     final CapturingProcessHandler handler = new CapturingProcessHandler(testProcess, null, commandLine);
     final ProcessOutput output = ProgressManager.getInstance().hasProgressIndicator() ? handler
       .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) :
                                  handler.runProcess();
-    final TestsOutputParser.TestsOutput testsOutput = TestsOutputParser.getTestsOutput(output, isAdaptive);
+    final TestsOutputParser.TestsOutput testsOutput = TestsOutputParser.getTestsOutput(output);
     String stderr = output.getStderr();
     if (!stderr.isEmpty() && output.getStdout().isEmpty()) {
       LOG.info("#educational " + stderr);

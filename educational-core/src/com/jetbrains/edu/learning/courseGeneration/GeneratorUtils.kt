@@ -226,9 +226,8 @@ object GeneratorUtils {
   @JvmStatic
   fun initializeCourse(project: Project, course: Course) {
     course.init(null, null, false)
-
-    if (course.isAdaptive && !EduUtils.isCourseValid(course)) {
-      Messages.showWarningDialog("There is no recommended tasks for this adaptive course",
+    if (!EduUtils.isCourseValid(course)) {
+      Messages.showWarningDialog("Unfortunately, this course is not valid",
                                  "Error in Course Creation")
     }
     if (updateTaskFilesNeeded(course)) {

@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.AnswerPlaceholderHint;
@@ -98,7 +99,7 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
     if (project != null) {
       final Course course = StudyTaskManager.getInstance(project).getCourse();
       Presentation presentation = e.getPresentation();
-      if (course != null && course.isAdaptive()) {
+      if (course != null && StepikCourseExt.isAdaptive(course)) {
         presentation.setEnabled(false);
         return;
       }

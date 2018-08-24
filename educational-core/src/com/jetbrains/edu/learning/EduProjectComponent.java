@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
@@ -87,7 +88,7 @@ public class EduProjectComponent implements ProjectComponent {
           return;
         }
 
-        if (!course.isAdaptive() && course instanceof RemoteCourse) {
+        if (course instanceof RemoteCourse && !StepikCourseExt.isAdaptive(course)) {
           StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
         }
 
@@ -105,7 +106,7 @@ public class EduProjectComponent implements ProjectComponent {
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
             registerShortcuts();
-            EduUsagesCollector.projectTypeOpened(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
+            EduUsagesCollector.projectTypeOpened(course);
           }));
       }
     );

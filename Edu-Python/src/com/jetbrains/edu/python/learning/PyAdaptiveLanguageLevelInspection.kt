@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
 import com.jetbrains.python.psi.LanguageLevel
@@ -21,7 +21,7 @@ import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.sdk.PythonSdkType
 import org.jetbrains.annotations.Nls
 
-class PyEduLanguageLevelInspection : PyInspection() {
+class PyAdaptiveLanguageLevelInspection : PyInspection() {
   @Nls
   override fun getDisplayName(): String = "Unsupported language level for a course"
 
@@ -34,24 +34,23 @@ class PyEduLanguageLevelInspection : PyInspection() {
 
     override fun visitPyFile(node: PyFile) {
       super.visitPyFile(node)
+      val project = node.project
+      val course = StudyTaskManager.getInstance(project).course ?: return
+      if (!course.isAdaptive) return
       val module = ModuleUtilCore.findModuleForPsiElement(node)
       val virtualFile = PsiUtilCore.getVirtualFile(node)
       if (module != null && virtualFile != null) {
         val sdk = PythonSdkType.findPythonSdk(module)
         if (sdk != null) {
           val projectLanguageLevel = PythonSdkType.getLanguageLevelForSdk(sdk)
-          val project = node.project
-          val course = StudyTaskManager.getInstance(project).course ?: return
-          checkIfLanguageLevelSupported(course, projectLanguageLevel, node)
+          checkIfLanguageLevelSupported(projectLanguageLevel, node)
         }
       }
     }
 
-    private fun checkIfLanguageLevelSupported(course: Course, languageLevel: LanguageLevel, node: PyFile) {
-      if (course.isAdaptive) {
-        if(!languageLevel.isPy3K) {
-          registerProblem(node, "Adaptive courses support Python 3 only", ConfigureInterpreterFix())
-        }
+    private fun checkIfLanguageLevelSupported(languageLevel: LanguageLevel, node: PyFile) {
+      if(!languageLevel.isPy3K) {
+        registerProblem(node, "Adaptive courses support Python 3 only", ConfigureInterpreterFix())
       }
     }
   }

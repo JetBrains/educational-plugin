@@ -37,7 +37,6 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduCourseBuilder;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -188,7 +187,7 @@ public abstract class CourseProjectGenerator<S> {
           setStepikChangeStatuses(project);
         }
         createAdditionalFiles(project, baseDir);
-        EduUsagesCollector.projectTypeCreated(courseTypeId(myCourse));
+        EduUsagesCollector.projectTypeCreated(myCourse);
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
       }, "Generating Course Structure", false, project);
@@ -231,13 +230,4 @@ public abstract class CourseProjectGenerator<S> {
    * @throws IOException
    */
   protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) throws IOException {}
-
-  @NotNull
-  private static String courseTypeId(@NotNull Course course) {
-    if (course.isStudy()) {
-      return course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY;
-    } else {
-      return CCUtils.COURSE_MODE;
-    }
-  }
 }

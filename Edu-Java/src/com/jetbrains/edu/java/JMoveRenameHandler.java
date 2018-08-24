@@ -9,10 +9,11 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.rename.RenameHandler;
-import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
-import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +67,7 @@ public class JMoveRenameHandler extends EduMoveDelegate implements RenameHandler
 
   private static PsiElement getElementToMove(@NotNull PsiElement element, @NotNull Course course) {
     // prevent class renaming in adaptive courses
-    if (course.isAdaptive() && element instanceof PsiClass) {
+    if (StepikCourseExt.isAdaptive(course) && element instanceof PsiClass) {
       String fileName = element.getContainingFile().getName();
       int dotIndex = fileName.lastIndexOf('.');
       String fileNameWithoutExtension = dotIndex >= 0 ? fileName.substring(0, dotIndex) : fileName;

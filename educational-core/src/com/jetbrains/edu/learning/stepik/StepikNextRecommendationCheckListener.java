@@ -10,11 +10,13 @@ import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import org.jetbrains.annotations.NotNull;
 
-public class NextRecommendationCheckListener implements CheckListener {
+public class StepikNextRecommendationCheckListener implements CheckListener {
 
   private CheckStatus myStatusBeforeCheck;
 
@@ -26,7 +28,7 @@ public class NextRecommendationCheckListener implements CheckListener {
   @Override
   public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
     Course course = task.getLesson().getCourse();
-    if (!(course instanceof RemoteCourse && course.isAdaptive())) {
+    if (!(course instanceof RemoteCourse && StepikCourseExt.isAdaptive(course))) {
       return;
     }
     if (!(task instanceof TheoryTask) && myStatusBeforeCheck == CheckStatus.Solved) {

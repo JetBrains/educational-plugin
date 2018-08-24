@@ -10,6 +10,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import one.util.streamex.StreamEx;
@@ -24,7 +25,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Course extends ItemContainer {
-  RemoteInfo myRemoteInfo;
+  @NotNull RemoteInfo myRemoteInfo = new LocalInfo();
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
@@ -246,10 +247,6 @@ public class Course extends ItemContainer {
     return copy;
   }
 
-  public boolean isAdaptive() {
-    return false;
-  }
-
   public boolean isStudy() {
     return EduNames.STUDY.equals(courseMode);
   }
@@ -278,10 +275,8 @@ public class Course extends ItemContainer {
   public List<Tag> getTags() {
     List<Tag> tags = new ArrayList<>();
     tags.add(new ProgrammingLanguageTag(getLanguageById()));
-    if (isAdaptive()) {
-      tags.add(new Tag(EduNames.ADAPTIVE));
-    }
     tags.add(new HumanLanguageTag(getHumanLanguage()));
+    tags.addAll(myRemoteInfo.getTags());
     return tags;
   }
 
@@ -317,11 +312,12 @@ public class Course extends ItemContainer {
     items.add(index, item);
   }
 
+  @NotNull
   public RemoteInfo getRemoteInfo() {
     return myRemoteInfo;
   }
 
-  public void setRemoteInfo(RemoteInfo remoteInfo) {
+  public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
     myRemoteInfo = remoteInfo;
   }
 }

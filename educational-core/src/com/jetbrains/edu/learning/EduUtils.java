@@ -73,6 +73,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
@@ -724,13 +725,7 @@ public class EduUtils {
 
   public static boolean isCourseValid(@Nullable Course course) {
     if (course == null) return false;
-    if (course.isAdaptive()) {
-      final List<Lesson> lessons = course.getLessons();
-      if (lessons.size() == 1) {
-        return !lessons.get(0).getTaskList().isEmpty();
-      }
-    }
-    return true;
+    return course.getRemoteInfo().isCourseValid(course);
   }
 
   public static void createFromTemplate(@NotNull Project project,
@@ -810,7 +805,7 @@ public class EduUtils {
   }
 
   public static void navigateToStep(@NotNull Project project, @NotNull Course course, int stepId) {
-    if (stepId == 0 || course.isAdaptive()) {
+    if (stepId == 0 || StepikCourseExt.isAdaptive(course)) {
       return;
     }
     Task task = getTask(course, stepId);
@@ -1101,7 +1096,7 @@ public class EduUtils {
           }
           courses.add(bundledCourse);
         }
-        Collections.sort(courses, (c1, c2) -> Boolean.compare(c1.isAdaptive(), c2.isAdaptive()));
+        Collections.sort(courses, (c1, c2) -> Boolean.compare(StepikCourseExt.isAdaptive(c1), StepikCourseExt.isAdaptive(c2)));
         return courses;
       }, "Getting Available Courses", true, null);
     } catch (ProcessCanceledException e) {

@@ -58,8 +58,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
         latch.await();
         Process testProcess = testRunner.createCheckProcess(project, fileToCheck.getPath());
         TestsOutputParser.TestsOutput output =
-          CheckUtils
-            .getTestOutput(testProcess, testRunner.getCommandLine().getCommandLineString(), task.getLesson().getCourse().isAdaptive());
+          CheckUtils.getTestOutput(testProcess, testRunner.getCommandLine().getCommandLineString());
         return new CheckResult(output.isSuccess() ? CheckStatus.Solved : CheckStatus.Failed, output.getMessage());
       }
     }

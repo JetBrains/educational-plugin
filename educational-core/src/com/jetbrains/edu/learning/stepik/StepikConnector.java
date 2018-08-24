@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -302,14 +303,14 @@ public class StepikConnector {
                                   @NotNull List<Integer> featuredCourses) throws IOException {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse course : courses) {
-      if (!course.isAdaptive() && StringUtil.isEmptyOrSpaces(course.getType())) continue;
+      if (!StepikCourseExt.isAdaptive(course) && StringUtil.isEmptyOrSpaces(course.getType())) continue;
 
       CourseCompatibility compatibility = course.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
 
       setCourseAuthors(course);
 
-      if (course.isAdaptive()) {
+      if (StepikCourseExt.isAdaptive(course)) {
         course.setDescription("This is a Stepik Adaptive course.\n\n" + course.getDescription() + ADAPTIVE_NOTE);
       }
       final RemoteInfo remoteInfo = course.getRemoteInfo();
@@ -380,7 +381,7 @@ public class StepikConnector {
   public static boolean loadCourseStructure(@Nullable final Project project, @NotNull final RemoteCourse remoteCourse) {
     final List<StudyItem> items = remoteCourse.getItems();
     if (!items.isEmpty()) return true;
-    if (!remoteCourse.isAdaptive()) {
+    if (!StepikCourseExt.isAdaptive(remoteCourse)) {
       try {
         fillItems(remoteCourse);
         return true;
