@@ -11,6 +11,20 @@
 
   <extensions defaultExtensionNs="Educational">
     <!-- CheckiO -->
+    <configurator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOConfigurator" language="CheckiO-JavaScript"/>
+    <coursesProvider implementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOCourseProvider"/>
     <optionsProvider instance="com.jetbrains.edu.javascript.learning.checkio.settings.JsCheckiOOptions"/>
   </extensions>
+
+  <extensions defaultExtensionNs="educational">
+    <!-- CheckiO -->
+    <languageDecorator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOLanguageDecorator" language="CheckiO-JavaScript" />
+  </extensions>
+
+  <application-components>
+    <!-- CheckiO -->
+    <component>
+      <implementation-class>com.jetbrains.edu.javascript.learning.checkio.JsCheckiOApplicationComponent</implementation-class>
+    </component>
+  </application-components>
 </idea-plugin>
