@@ -4,11 +4,8 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.*
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 
 class StepikStatusesForImportedCourseTest : EduTestCase() {
   fun `test the same course`() {
@@ -234,7 +231,7 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as RemoteCourse
     val changedTask = localCourse.lessons.single().taskList[0]
-    changedTask.additionalFiles["file.txt"] = "additional file"
+    changedTask.additionalFiles["file.txt"] = AdditionalFile("additional file", false)
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
     checkStatus(changedTask, INFO_AND_CONTENT)

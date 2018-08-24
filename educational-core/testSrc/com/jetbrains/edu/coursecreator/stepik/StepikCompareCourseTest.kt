@@ -4,10 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 
 class StepikCompareCourseTest : EduTestCase() {
 
@@ -232,7 +229,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as RemoteCourse
     val changedTask = localCourse.lessons.single().taskList[0]
-    changedTask.additionalFiles["file.txt"] = "additional file"
+    changedTask.additionalFiles["file.txt"] = AdditionalFile("additional file", false)
 
     val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
     checkChangedItems(courseFromServer, expectedInfo)

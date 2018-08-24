@@ -17,7 +17,6 @@ import junit.framework.TestCase
 
 open class StepikIntegrationTest : StepikTestCase() {
 
-
   fun `test upload course`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -287,8 +286,6 @@ open class StepikIntegrationTest : StepikTestCase() {
     checkSections(courseFromStepik, localCourse)
   }
 
-
-
   private fun checkSections(courseFromStepik: Course?, localCourse: Course) {
     assertNotNull("Uploaded courses not found among courses available to instructor", courseFromStepik)
 
@@ -307,7 +304,6 @@ open class StepikIntegrationTest : StepikTestCase() {
       }
     }
   }
-
 
   private fun checkTopLevelLessons(courseFromStepik: Course?, localCourse: RemoteCourse) {
     assertNotNull("Uploaded courses not found among courses available to instructor", courseFromStepik)

@@ -160,8 +160,7 @@ public class CCPushLesson extends DumbAwareAction {
         Section section = lesson.getSection();
         assert section != null;
         int position = lessonPosition(section, lesson);
-        int lessonId = CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), section.getId());
-        lesson.unitId = CCStepikConnector.postUnit(lessonId, lesson.getIndex(), section.getId(), project);
+        CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), section.getId());
         if (lesson.getIndex() < section.getLessons().size()) {
           updateLessonsPositions(project, position + 1, section.getLessons());
         }
@@ -171,8 +170,7 @@ public class CCPushLesson extends DumbAwareAction {
         int sectionId;
         final List<Integer> sections = ((RemoteCourse)course).getSectionIds();
         sectionId = sections.get(sections.size() - 1);
-        final int lessonId = CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), sectionId);
-        lesson.unitId = CCStepikConnector.postUnit(lessonId, lesson.getIndex(), sectionId, project);
+        CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), sectionId);
         if (lesson.getIndex() < course.getLessons().size()) {
           List<Lesson> lessons = course.getLessons();
           updateLessonsPositions(project, position + 1, lessons);

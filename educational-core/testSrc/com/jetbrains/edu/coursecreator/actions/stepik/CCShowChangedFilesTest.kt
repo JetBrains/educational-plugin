@@ -52,7 +52,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
     changedSection.id = 0
     changedSection.lessons[0].id = 0
 
-    checkMessage(course,  "section2 $CONTENT\nsection2 new\nsection2/lesson1 new\n")
+    checkMessage(course,  "section2 $CONTENT\nsection2 New\nsection2/lesson1 New\n")
   }
 
   fun `test course lesson moved`() {
@@ -103,7 +103,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
     val changedSection = course.sections[0]
     changedSection.stepikChangeStatus = CONTENT
     changedSection.lessons[1].id = 0
-    checkMessage(course, "${changedSection.name} ${CONTENT}\nsection1/lesson2 new\n")
+    checkMessage(course, "${changedSection.name} ${CONTENT}\nsection1/lesson2 New\n")
   }
 
   fun `test lesson moved between sections`() {

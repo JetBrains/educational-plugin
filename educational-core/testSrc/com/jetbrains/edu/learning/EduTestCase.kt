@@ -20,13 +20,8 @@ import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.CCVirtualFileListener
-import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -212,5 +207,4 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     StudyTaskManager.getInstance(project).course = remoteCourse
     return remoteCourse
   }
-
 }
