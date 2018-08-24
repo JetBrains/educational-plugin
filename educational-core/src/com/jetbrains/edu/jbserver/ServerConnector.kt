@@ -149,7 +149,7 @@ object ServerConnector {
     service.getCourses().safeExecute().courses
 
   fun getCourseMaterials(id: Int)=
-    service.getCourseMaterials(id).safeExecute()
+    service.getCourseMaterials(id).safeExecute().apply { init(null, null, false) }
 
   fun getCourseUpdate(course: EduCourse): Unit = TODO()
 
