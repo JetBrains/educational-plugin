@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.learning.checkio.utils;
+package com.jetbrains.edu.javascript.learning.checkio.utils;
 
 import com.intellij.CommonBundle;
 import com.intellij.reference.SoftReference;
@@ -9,8 +9,8 @@ import org.jetbrains.annotations.PropertyKey;
 import java.lang.ref.Reference;
 import java.util.ResourceBundle;
 
-public class PyCheckiOOAuthBundle {
-  private PyCheckiOOAuthBundle() {}
+public class JsCheckiOOAuthBundle {
+  private JsCheckiOOAuthBundle() {}
 
   public static String messageOrDefault(@NotNull @PropertyKey(resourceBundle = BUNDLE) String key, @NotNull String defaultValue, @NotNull Object... params) {
     return CommonBundle.messageOrDefault(getBundle(), key, defaultValue, params);
@@ -19,7 +19,7 @@ public class PyCheckiOOAuthBundle {
   private static Reference<ResourceBundle> ourBundle;
 
   @NonNls
-  private static final String BUNDLE = "checkio.py-checkio-oauth";
+  private static final String BUNDLE = "checkio.js-checkio-oauth";
 
   @NotNull
   private static ResourceBundle getBundle() {
