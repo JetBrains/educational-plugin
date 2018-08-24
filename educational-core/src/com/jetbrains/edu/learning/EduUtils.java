@@ -9,6 +9,9 @@ import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageExtensionPoint;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -1224,4 +1227,13 @@ public class EduUtils {
     long diff = date.getTime() - date2.getTime();
     return diff > Time.MINUTE;
   }
+
+  /* Notifications */
+
+  public static void notify(@NotNull String title, @NotNull String msg, @NotNull NotificationType type) {
+    Notifications.Bus.notify(
+      new Notification("EduTools", title, msg, type)
+    );
+  }
+
 }

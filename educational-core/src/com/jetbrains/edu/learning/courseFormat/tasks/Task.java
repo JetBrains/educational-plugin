@@ -360,6 +360,7 @@ public abstract class Task extends StudyItem {
     return versionId;
   }
 
+  @SuppressWarnings("unused") //used for json serialization
   public void setVersionId(int versionId) {
     this.versionId = versionId;
   }
