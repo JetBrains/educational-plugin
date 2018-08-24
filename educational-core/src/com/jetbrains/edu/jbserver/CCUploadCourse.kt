@@ -15,7 +15,7 @@ class CCUploadCourse : DumbAwareAction("&Upload Course to EduServer", "Upload Co
     val eduCourse = if (course is EduCourse) course else EduCourse(course)
     if (eduCourse.courseId == 0) {
       // First upload
-      ServerClient.createCourse(eduCourse)
+      ServerConnector.createCourse(eduCourse)
       StudyTaskManager.getInstance(project).course = eduCourse
     } else {
       // Update upload

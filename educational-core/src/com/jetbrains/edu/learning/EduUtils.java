@@ -115,7 +115,7 @@ import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
-import com.jetbrains.edu.jbserver.ServerClient;
+import com.jetbrains.edu.jbserver.ServerConnector;
 
 public class EduUtils {
 
@@ -1108,7 +1108,7 @@ public class EduUtils {
           courses.add(bundledCourse);
         }
         // EduServer integration: start
-        List<EduCourse> eduCourses = ServerClient.INSTANCE.getAvailableCourses();
+        List<EduCourse> eduCourses = ServerConnector.INSTANCE.getAvailableCourses();
         courses.addAll(eduCourses);
         // EduServer end
         Collections.sort(courses, (c1, c2) -> Boolean.compare(c1.isAdaptive(), c2.isAdaptive()));

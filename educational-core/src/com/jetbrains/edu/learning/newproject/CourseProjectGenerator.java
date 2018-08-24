@@ -37,7 +37,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
-import com.jetbrains.edu.jbserver.ServerClient;
+import com.jetbrains.edu.jbserver.ServerConnector;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
@@ -97,7 +97,7 @@ public abstract class CourseProjectGenerator<S> {
       final EduCourse eduCourse = (EduCourse) this.myCourse;
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         try {
-          myCourse = ServerClient.INSTANCE.getCourseMaterials(eduCourse.getCourseId());
+          myCourse = ServerConnector.INSTANCE.getCourseMaterials(eduCourse.getCourseId());
           return true;
         } catch (Exception e) {
           return false;

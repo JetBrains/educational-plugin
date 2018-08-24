@@ -23,6 +23,9 @@ val baseUrl = "http://django-edu-server.herokuapp.com"
 val loggingLevel = HttpLoggingInterceptor.Level.NONE
 
 
+/* API client */
+
+
 fun ObjectMapper.setupMapper() = apply {
   addMixIn(StudyItem::class.java, StudyItemMixin::class.java)
   addMixIn(Course::class.java, CourseMixin::class.java)
@@ -45,7 +48,6 @@ fun ObjectMapper.setupMapper() = apply {
   disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
   setSerializationInclusion(JsonInclude.Include.NON_NULL)
   dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSSXXX")
-
   val updateModule = SimpleModule()
   updateModule.addSerializer(Section::class.java, SectionSerializer())
   updateModule.addSerializer(Lesson::class.java, LessonSerializer())
@@ -109,6 +111,7 @@ interface EduServerApi {
 
 /* Error handling */
 
+
 class ServerException(msg: String) : Exception("Internal server error: $msg")
 
 fun <R> Call<R>.safeExecute(): R {
@@ -119,13 +122,14 @@ fun <R> Call<R>.safeExecute(): R {
 }
 
 
-/* Server client */
+/* Server connector */
 
-object ServerClient {
+
+object ServerConnector {
 
   private val service = EduServerApi.create()
 
-  /* Educator API */
+  /* Educator actions */
 
   fun createCourse(course: EduCourse) {
     course.globalSetChangeStatus(StepikChangeStatus.INFO_AND_CONTENT)
@@ -139,12 +143,12 @@ object ServerClient {
   }
 
 
-  /* Learner API */
+  /* Learner actions */
 
   fun getAvailableCourses() =
     service.getCourses().safeExecute().courses
 
-  fun getCourseMaterials(id: Int): EduCourse =
+  fun getCourseMaterials(id: Int)=
     service.getCourseMaterials(id).safeExecute()
 
   fun getCourseUpdate(course: EduCourse): Unit = TODO()

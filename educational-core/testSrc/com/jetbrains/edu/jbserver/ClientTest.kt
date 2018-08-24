@@ -18,15 +18,15 @@ class ClientTest : EduTestCase() {
   @Test
   fun `test - create course`() {
     courseEducator = sampleCourse()
-    ServerClient.createCourse(courseEducator)
+    ServerConnector.createCourse(courseEducator)
   }
 
   @Test
   fun `test - get last course 1`() {
-    val courses = ServerClient.getAvailableCourses()
+    val courses = ServerConnector.getAvailableCourses()
     val courseId = courses.maxBy { it.courseId }
     courseId?.let {
-      courseLearner = ServerClient.getCourseMaterials(it.courseId)
+      courseLearner = ServerConnector.getCourseMaterials(it.courseId)
     }
     val sec1 = courseLearner.items[1] as Section
     val les2 = sec1.items[0] as Lesson
@@ -48,15 +48,15 @@ class ClientTest : EduTestCase() {
     les2.stepikChangeStatus = StepikChangeStatus.CONTENT
     task.stepikChangeStatus = StepikChangeStatus.INFO_AND_CONTENT
     task.name = "${task.name} updated"
-    ServerClient.updateCourse(courseEducator)
+    ServerConnector.updateCourse(courseEducator)
   }
 
   @Test
   fun `test - get last course 2`() {
-    val courses = ServerClient.getAvailableCourses()
+    val courses = ServerConnector.getAvailableCourses()
     val courseId = courses.maxBy { it.courseId }
     courseId?.let {
-      courseLearner = ServerClient.getCourseMaterials(it.courseId)
+      courseLearner = ServerConnector.getCourseMaterials(it.courseId)
     }
     val sec1 = courseLearner.items[1] as Section
     val les2 = sec1.items[0] as Lesson
