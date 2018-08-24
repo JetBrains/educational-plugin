@@ -11,6 +11,7 @@ public final class JsCheckiONames {
   public static final String JS_CHECKIO_OAUTH_SERVICE_NAME = CHECKIO_OAUTH_SERVICE_NAME + "/js";
   public static final String JS_CHECKIO_OAUTH_SERVICE_PATH = CHECKIO_OAUTH_SERVICE_PATH + "/js";
 
+  public static final String JS_CHECKIO_LANGUAGE = "CheckiO-JavaScript";
   public static final String JS_CHECKIO_INTERPRETER = "js-node";
 
   public static final String JS_CHECKIO_TEST_FORM_TARGET_URL = "https://js.checkio.org/mission/check-html-output/";
