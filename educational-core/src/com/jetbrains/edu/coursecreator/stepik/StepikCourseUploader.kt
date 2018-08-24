@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -315,6 +316,10 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
         && tasksToPush.isEmpty()
         && tasksToUpdate.isEmpty()
         && tasksToDelete.isEmpty()
+  }
+
+  companion object {
+    const val FEATURE_ID = "edu.course.creator.event.based.update"
   }
 }
 

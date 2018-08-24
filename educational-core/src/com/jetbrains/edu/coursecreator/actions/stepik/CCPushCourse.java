@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.application.Experiments;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
@@ -16,14 +18,18 @@ import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
 import org.jetbrains.annotations.NotNull;
 
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourseWithProgress;
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.wrapUnpushedLessonsIntoSections;
+import java.io.IOException;
+import java.util.Collections;
+
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
 public class CCPushCourse extends DumbAwareAction {
+  private static Logger LOG = Logger.getInstance(CCPushCourse.class);
 
   public CCPushCourse() {
     super("&Upload Course to Stepik", "Upload Course to Stepik", null);
@@ -65,7 +71,13 @@ public class CCPushCourse extends DumbAwareAction {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           indicator.setIndeterminate(false);
-          new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
+
+          if (Experiments.isFeatureEnabled(StepikCourseUploader.FEATURE_ID)) {
+            new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
+          }
+          else {
+            pushInOldWay(indicator, project, course);
+          }
         }
       });
     }
@@ -86,6 +98,22 @@ public class CCPushCourse extends DumbAwareAction {
     return false;
   }
 
+  private static void pushInOldWay(@NotNull ProgressIndicator indicator, Project project, Course course) {
+    if (updateCourseInfo(project, (RemoteCourse)course)) {
+      updateCourseContent(indicator, course, project);
+      StepikUtils.setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
+      try {
+        updateAdditionalMaterials(project, course.getId());
+      }
+      catch (IOException e1) {
+        LOG.warn(e1);
+      }
+
+      StepikUpdateDateExt.setUpdated((RemoteCourse)course);
+      showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId()));
+    }
+  }
+
   private static void askToWrapTopLevelLessons(Project project, Course course) {
     if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
       boolean hasUnpushedLessons = course.getLessons().stream().anyMatch(lesson -> lesson.getId() == 0);
@@ -100,26 +128,33 @@ public class CCPushCourse extends DumbAwareAction {
     }
   }
 
-  private static void setStatusRecursively(@NotNull Course course,
-                                           @SuppressWarnings("SameParameterValue") @NotNull StepikChangeStatus status) {
-    for (StudyItem item : course.getItems()) {
-      item.setStepikChangeStatus(status);
-      if (item instanceof Section) {
-        for (Lesson lesson : ((Section)item).getLessons()) {
-          setLessonStatus(lesson, status);
-        }
-      }
+  private static void updateCourseContent(@NotNull ProgressIndicator indicator, Course course, Project project) {
+    if (!((RemoteCourse)course).getSectionIds().isEmpty() && course.getLessons().isEmpty()) {
+      deleteSection(((RemoteCourse)course).getSectionIds().get(0));
+      ((RemoteCourse)course).setSectionIds(Collections.emptyList());
+    }
 
-      if (item instanceof Lesson) {
-        setLessonStatus((Lesson)item, status);
+    int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
+    for (Section section : course.getSections()) {
+      section.setPosition(position++);
+      if (section.getId() > 0) {
+        updateSection(project, section);
+      }
+      else {
+        postSection(project, section, indicator);
+        updateAdditionalSection(project);
       }
     }
-  }
 
-  private static void setLessonStatus(@NotNull Lesson lesson, @NotNull StepikChangeStatus status) {
-    lesson.setStepikChangeStatus(status);
-    for (Task task : lesson.taskList) {
-      task.setStepikChangeStatus(status);
+    for (Lesson lesson : course.getLessons()) {
+      Integer sectionId = ((RemoteCourse)course).getSectionIds().get(0);
+      if (lesson.getId() > 0) {
+        updateLesson(project, lesson, false, sectionId);
+      }
+      else {
+        int lessonId = postLesson(project, lesson, lesson.getIndex(), sectionId);
+        lesson.unitId = postUnit(lessonId, lesson.getIndex(), sectionId, project);
+      }
     }
   }
 }
