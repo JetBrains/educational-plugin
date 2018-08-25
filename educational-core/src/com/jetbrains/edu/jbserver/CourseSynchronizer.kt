@@ -2,9 +2,14 @@ package com.jetbrains.edu.jbserver
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+
+
+fun StudyItem.isChanged()
+  = stepikChangeStatus != StepikChangeStatus.UP_TO_DATE
 
 
 class CourseSynchronizer(val course: Course, val project: Project) {
@@ -12,9 +17,24 @@ class CourseSynchronizer(val course: Course, val project: Project) {
   init { sync(course) }
 
   private fun sync(studyItem: StudyItem): Unit = when (studyItem) {
-    is ItemContainer -> studyItem.items.forEach { sync(it) }
-    is Lesson -> studyItem.taskList.forEach { sync(it) }
-    is Task -> syncTask(studyItem)
+    is ItemContainer -> {
+      studyItem.items.forEach { sync(it) }
+      if (studyItem.items.filter { it.isChanged() }.isNotEmpty())
+      {
+        StepikCourseChangeHandler.contentChanged(studyItem)
+      } else {
+        StepikCourseChangeHandler.contentUnchanged(studyItem)
+      }
+    }
+    is Lesson -> {
+      val changedTasks = studyItem.taskList.filter { it.isChanged() }
+      if (changedTasks.isNotEmpty()) {
+        StepikCourseChangeHandler.contentChanged(studyItem)
+        changedTasks.forEach { syncTask(it) }
+      } else {
+        StepikCourseChangeHandler.contentUnchanged(studyItem)
+      }
+    }
     else -> {}
   }
 

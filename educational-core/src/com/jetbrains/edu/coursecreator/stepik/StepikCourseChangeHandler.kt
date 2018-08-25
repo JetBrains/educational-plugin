@@ -18,49 +18,49 @@ object StepikCourseChangeHandler {
 
   @JvmStatic
   fun changed(task: Task) {
-    if (task.id == 0) return
+    // if (task.id == 0) return
     task.stepikChangeStatus = INFO_AND_CONTENT
   }
 
   @JvmStatic
   fun notChanged(task: Task) {
-    if (task.id == 0) return
+    // if (task.id == 0) return
     task.stepikChangeStatus = UP_TO_DATE
   }
 
   @JvmStatic
   fun infoChanged(lesson: Lesson) {
-    if (lesson.id == 0) return
+    // if (lesson.id == 0) return
     lesson.stepikChangeStatus = if (lesson.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
   }
 
   @JvmStatic
   fun contentChanged(lesson: Lesson) {
-    if (lesson.id == 0) return
+    // if (lesson.id == 0) return
     lesson.stepikChangeStatus = if (lesson.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
   }
 
   @JvmStatic
   fun infoChanged(section: Section) {
-    if (section.id == 0) return
+    // if (section.id == 0) return
     section.stepikChangeStatus = if (section.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
   }
 
   @JvmStatic
   fun contentChanged(section: Section) {
-    if (section.id == 0) return
+    // if (section.id == 0) return
     section.stepikChangeStatus = if (section.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
   }
 
   @JvmStatic
   fun infoChanged(course: Course) {
-    if (course !is RemoteCourse) return
+    // if (course !is RemoteCourse) return
     course.stepikChangeStatus = if (course.stepikChangeStatus == CONTENT) INFO_AND_CONTENT else INFO
   }
 
   @JvmStatic
   fun contentChanged(course: Course) {
-    if (course !is RemoteCourse) return
+    // if (course !is RemoteCourse) return
     course.stepikChangeStatus = if (course.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
   }
 
@@ -81,4 +81,14 @@ object StepikCourseChangeHandler {
       is Task -> changed(item)
     }
   }
+
+  @JvmStatic
+  fun contentUnchanged(studyItem: StudyItem): Unit = when(studyItem.stepikChangeStatus) {
+    CONTENT -> studyItem.stepikChangeStatus = UP_TO_DATE
+    INFO_AND_CONTENT -> studyItem.stepikChangeStatus = INFO
+    else -> {}
+  }
+
 }
+
+// suggestion : rename to CourseChangeHandler
