@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.EDU_COURSE;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.REMOTE_COURSE;
 
 /**
@@ -117,22 +118,26 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     XmlSerializer.serializeInto(this, taskManagerElement);
 
     if (myCourse instanceof RemoteCourse) {
-      try {
-        Element course = new Element(REMOTE_COURSE);
-        //noinspection RedundantCast
-        XmlSerializer.serializeInto((RemoteCourse)myCourse, course);
-
-        final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
-        xmlCourse.removeContent();
-        xmlCourse.addContent(course);
-      }
-      catch (StudyUnrecognizedFormatException e) {
-        LOG.error("Failed to serialize remote course");
-      }
+      serializeCourse(taskManagerElement, REMOTE_COURSE, RemoteCourse.class);
+    } else if (myCourse instanceof EduCourse) {
+      serializeCourse(taskManagerElement, EDU_COURSE, EduCourse.class);
     }
 
     el.addContent(taskManagerElement);
     return el;
+  }
+
+  private void serializeCourse(@NotNull Element taskManagerElement, @NotNull String serializedName, @NotNull Class<? extends Course> courseClass) {
+    try {
+      final Element course = new Element(serializedName);
+      XmlSerializer.serializeInto(courseClass.cast(myCourse), course);
+      final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
+      xmlCourse.removeContent();
+      xmlCourse.addContent(course);
+    }
+    catch (StudyUnrecognizedFormatException e) {
+      LOG.error("Failed to serialize " + serializedName);
+    }
   }
 
   @Override
@@ -210,12 +215,19 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     }
     XmlSerializer.deserializeInto(this, taskManagerElement);
     final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
-    final Element remoteCourseElement = xmlCourse.getChild(REMOTE_COURSE);
-    if (remoteCourseElement != null) {
-      final RemoteCourse remoteCourse = new RemoteCourse();
-      XmlSerializer.deserializeInto(remoteCourse, remoteCourseElement);
-      myCourse = remoteCourse;
+
+    if (tryDeserializeCourse(xmlCourse, REMOTE_COURSE, new RemoteCourse())) {}
+    else if (tryDeserializeCourse(xmlCourse, EDU_COURSE, new EduCourse())) {}
+  }
+
+  private <T extends Course> boolean tryDeserializeCourse(@NotNull Element xmlCourse, @NotNull String serializedName, @NotNull T courseBean) {
+    final Element courseElement = xmlCourse.getChild(serializedName);
+    if (courseElement != null) {
+      XmlSerializer.deserializeInto(courseBean, courseElement);
+      myCourse = courseBean;
+      return true;
     }
+    return false;
   }
 
   public static StudyTaskManager getInstance(@NotNull final Project project) {
