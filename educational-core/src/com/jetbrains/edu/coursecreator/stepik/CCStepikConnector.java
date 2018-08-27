@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
@@ -153,12 +154,12 @@ public class CCStepikConnector {
         postTopLevelLessons(project, courseOnRemote);
       }
 
-      postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
+      postAdditionalFiles(course, project, StepikCourseExt.getId(courseOnRemote), sectionCount + 1);
       courseOnRemote.init(null, null, true);
       StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
       courseOnRemote.init(null, null, true);
       StepikUpdateDateExt.setUpdated(courseOnRemote);
-      showNotification(project, "Course is published", openOnStepikAction("/course/" + courseOnRemote.getId()));
+      showNotification(project, "Course is published", openOnStepikAction("/course/" + StepikCourseExt.getId(courseOnRemote)));
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
@@ -279,7 +280,7 @@ public class CCStepikConnector {
   public static int postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
     RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final int sectionId = postSectionInfo(project, copySection(section), course.getId());
+    final int sectionId = postSectionInfo(project, copySection(section), StepikCourseExt.getId(course));
     section.setId(sectionId);
     postLessons(project, indicator, course, sectionId, section.getLessons());
 
@@ -289,7 +290,7 @@ public class CCStepikConnector {
   public static boolean updateSection(@NotNull Project project, @NotNull Section section) {
     RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    section.setCourseId(course.getId());
+    section.setCourseId(StepikCourseExt.getId(course));
     boolean updated = updateSectionInfo(project, section);
     if (updated) {
       for (Lesson lesson : section.getLessons()) {
@@ -572,7 +573,7 @@ public class CCStepikConnector {
 
     // Course info parameters such as is_public and is_idea_compatible can be changed from Stepik site only
     // so we get actual info here
-    RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
+    RemoteCourse courseInfo = getCourseInfo(String.valueOf(StepikCourseExt.getId(course)));
     final RemoteInfo remoteInfo = course.getRemoteInfo();
     if (courseInfo != null && remoteInfo instanceof StepikRemoteInfo) {
       final RemoteInfo infoRemoteInfo = courseInfo.getRemoteInfo();
@@ -585,7 +586,7 @@ public class CCStepikConnector {
       LOG.warn("Failed to get current course info");
     }
 
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.COURSES + "/" + String.valueOf(course.getId()));
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.COURSES + "/" + String.valueOf(StepikCourseExt.getId(course)));
     String requestBody = getGson().toJson(new StepikWrappers.CourseWrapper(course));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
     try {
@@ -651,7 +652,7 @@ public class CCStepikConnector {
     RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
 
-    RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
+    RemoteCourse courseInfo = getCourseInfo(String.valueOf(StepikCourseExt.getId(course)));
     assert courseInfo != null;
 
     List<Integer> sectionIds = courseInfo.getSectionIds();

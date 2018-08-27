@@ -312,7 +312,6 @@ public abstract class Task extends StudyItem {
     return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskSolved : EducationalCoreIcons.TaskFailed;
   }
 
-  @Override
   public int getId() {
     return myStepId;
   }

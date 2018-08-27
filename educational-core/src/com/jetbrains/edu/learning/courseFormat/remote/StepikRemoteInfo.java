@@ -19,6 +19,7 @@ public class StepikRemoteInfo implements RemoteInfo {
   private boolean isPublic;
   private boolean isAdaptive = false;
   private boolean isIdeaCompatible = true;
+  private int id;
 
   @Override
   public boolean isCourseValid(@NotNull Course course) {
@@ -75,5 +76,13 @@ public class StepikRemoteInfo implements RemoteInfo {
 
   public void setIdeaCompatible(boolean compatible) {
     isIdeaCompatible = compatible;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 }

@@ -109,12 +109,6 @@ public class Course extends ItemContainer {
       filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
 
-  @Nullable
-  public Lesson getLesson(int lessonId) {
-    return (Lesson)items.stream().filter(Lesson.class::isInstance).
-      filter(item -> item.getId() == lessonId).findFirst().orElse(null);
-  }
-
   @NotNull
   public List<StepicUser> getAuthors() {
     return authors;
@@ -156,11 +150,6 @@ public class Course extends ItemContainer {
   @Override
   public void setName(String name) {
     this.name = name;
-  }
-
-  @Override
-  public int getId() {
-    return 0;
   }
 
   @Override

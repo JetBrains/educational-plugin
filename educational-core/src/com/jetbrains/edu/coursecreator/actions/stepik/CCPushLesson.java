@@ -17,6 +17,7 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -64,7 +65,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
 
-    if (course.getId() > 0) {
+    if (StepikCourseExt.getId(course) > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       if (lesson.getId() <= 0) {
         e.getPresentation().setText("Upload Lesson to Stepik");
@@ -220,7 +221,8 @@ public class CCPushLesson extends DumbAwareAction {
   private static int lessonPosition(@NotNull ItemContainer parent, @NotNull Lesson lesson) {
     int position = 1;
     for (StudyItem item : parent.getItems()) {
-      if (item.getId() == 0) {
+      if ((item instanceof Lesson && ((Lesson)item).getId() == 0
+           || item instanceof Section && ((Section)item).getId() == 0)) {
         continue;
       }
 

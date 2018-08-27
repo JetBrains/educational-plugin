@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
@@ -73,7 +74,7 @@ public class StepikAdaptiveConnector {
       }
 
       final URI uri = new URIBuilder(StepikNames.STEPIK_API_URL + StepikNames.RECOMMENDATIONS_URL)
-        .addParameter(EduNames.COURSE, String.valueOf(course.getId()))
+        .addParameter(EduNames.COURSE, String.valueOf(StepikCourseExt.getId(course)))
         .build();
       final HttpGet request = new HttpGet(uri);
       setTimeout(request);

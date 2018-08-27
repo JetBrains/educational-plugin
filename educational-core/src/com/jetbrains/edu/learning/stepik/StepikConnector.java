@@ -171,7 +171,7 @@ public class StepikConnector {
         if (info == null) continue;
         CourseCompatibility compatibility = info.getCompatibility();
         if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
-        CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId()));
+        CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(StepikCourseExt.getId(info)));
         info.setVisibility(visibility);
         setCourseAuthors(info);
 
@@ -184,7 +184,7 @@ public class StepikConnector {
   }
 
   public static void updateCourseIfNeeded(@NotNull Project project, @NotNull RemoteCourse course) {
-    int id = course.getId();
+    int id = StepikCourseExt.getId(course);
 
     if (id == 0) {
       return;
@@ -315,7 +315,7 @@ public class StepikConnector {
       }
       final RemoteInfo remoteInfo = course.getRemoteInfo();
       if (remoteInfo instanceof StepikRemoteInfo && ((StepikRemoteInfo)remoteInfo).isPublic()
-          && !featuredCourses.contains(course.getId())) {
+          && !featuredCourses.contains(StepikCourseExt.getId(course))) {
         course.setDescription(course.getDescription() + NOT_VERIFIED_NOTE);
       }
       course.setVisibility(getVisibility(course, featuredCourses));
@@ -338,8 +338,9 @@ public class StepikConnector {
     if (remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).isPublic()) {
       return CourseVisibility.PrivateVisibility.INSTANCE;
     }
-    if (featuredCourses.contains(course.getId())) {
-      return new CourseVisibility.FeaturedVisibility(featuredCourses.indexOf(course.getId()));
+    final int courseId = StepikCourseExt.getId(course);
+    if (featuredCourses.contains(courseId)) {
+      return new CourseVisibility.FeaturedVisibility(featuredCourses.indexOf(courseId));
     }
     if (featuredCourses.isEmpty()) {
       return CourseVisibility.LocalVisibility.INSTANCE;

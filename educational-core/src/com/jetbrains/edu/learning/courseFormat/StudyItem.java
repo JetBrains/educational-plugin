@@ -61,11 +61,6 @@ public abstract class StudyItem {
     this.myStepikChangeStatus = stepikChangeStatus;
   }
 
-  /**
-   * @return Stepik id
-   */
-  public abstract int getId();
-
   public abstract VirtualFile getDir(@NotNull Project project);
 
   @NotNull

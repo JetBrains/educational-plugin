@@ -29,7 +29,6 @@ public class RemoteCourse extends Course {
   // in CC mode is used to store top-level lessons section id
   @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
-  @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses
 
@@ -80,15 +79,6 @@ public class RemoteCourse extends Course {
 
   public Date getUpdateDate() {
     return myUpdateDate;
-  }
-
-  @Override
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 
   private void updateType(String language) {
