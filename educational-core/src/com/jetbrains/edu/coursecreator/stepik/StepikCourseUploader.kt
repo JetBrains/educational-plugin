@@ -115,7 +115,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       val topLevelSectionId = getTopLevelSectionId(project, course)
       if (topLevelSectionId == -1) {
         val sectionId = postSectionForTopLevelLessons(project, course)
-        course.sectionIds.add(sectionId)
+        course.sectionIds = arrayListOf(sectionId)
         sectionId
       }
       else {
