@@ -64,18 +64,18 @@ public class SyncCourseAction extends DumbAwareAction {
           }
         }
       });
-    }
 
-    if (CCUtils.isCourseCreator(project)) {
-      return;
-    }
+      if (CCUtils.isCourseCreator(project)) {
+        return;
+      }
 
-    if (StepikCourseExt.isAdaptive(course)) {
-      updateAdaptiveCourse(project, course);
-    }
-    else {
-      StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
-      courseSynchronizer.loadSolutionsInBackground();
+      if (StepikCourseExt.isAdaptive((RemoteCourse)course)) {
+        updateAdaptiveCourse(project, course);
+      }
+      else {
+        StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
+        courseSynchronizer.loadSolutionsInBackground();
+      }
     }
   }
 

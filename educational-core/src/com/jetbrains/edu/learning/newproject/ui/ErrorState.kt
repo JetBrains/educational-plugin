@@ -71,7 +71,7 @@ sealed class ErrorState(
     private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()
 
     private fun isStepikLoginRequired(selectedCourse: Course): Boolean =
-      selectedCourse.isAdaptive || selectedCourse is RemoteCourse && !selectedCourse.isCompatible
+      selectedCourse is RemoteCourse && (selectedCourse.isAdaptive || !selectedCourse.isCompatible)
 
     private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
       if (selectedCourse is CheckiOCourse) {

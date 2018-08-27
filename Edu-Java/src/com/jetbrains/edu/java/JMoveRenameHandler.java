@@ -12,6 +12,7 @@ import com.intellij.refactoring.rename.RenameHandler;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +68,7 @@ public class JMoveRenameHandler extends EduMoveDelegate implements RenameHandler
 
   private static PsiElement getElementToMove(@NotNull PsiElement element, @NotNull Course course) {
     // prevent class renaming in adaptive courses
-    if (StepikCourseExt.isAdaptive(course) && element instanceof PsiClass) {
+    if (course instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)course) && element instanceof PsiClass) {
       String fileName = element.getContainingFile().getName();
       int dotIndex = fileName.lastIndexOf('.');
       String fileNameWithoutExtension = dotIndex >= 0 ? fileName.substring(0, dotIndex) : fileName;

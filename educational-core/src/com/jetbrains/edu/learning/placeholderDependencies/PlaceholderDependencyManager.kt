@@ -11,7 +11,10 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.ext.*
+import com.jetbrains.edu.learning.courseFormat.ext.getDocument
+import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
+import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
+import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 
@@ -74,7 +77,7 @@ object PlaceholderDependencyManager {
   }
 
   private fun getReplacementText(project: Project, dependency: AnswerPlaceholderDependency): String {
-    val course = dependency.answerPlaceholder.taskFile.task.course!!
+    val course = dependency.answerPlaceholder.taskFile.task.course
     val dependencyPlaceholder = dependency.resolve(course)!!
     val dependencyTask = dependencyPlaceholder.taskFile.task
     val dependencyLesson = dependencyTask.lesson

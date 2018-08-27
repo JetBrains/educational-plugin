@@ -34,7 +34,7 @@ public class StepikUtils {
   private static final Logger LOG = Logger.getInstance(StepikUtils.class);
   private static final Pattern PYCHARM_COURSE_TYPE = Pattern.compile(String.format("%s(\\d*) (\\w+)", StepikNames.PYCHARM_PREFIX));
 
-  public static String wrapStepikTasks(Task task, @NotNull String text, @NotNull Course course) {
+  public static String wrapStepikTasks(Task task, @NotNull String text, @NotNull RemoteCourse course) {
     String finalText = text;
     boolean adaptive = StepikCourseExt.isAdaptive(course);
     if (task instanceof TheoryTask && adaptive) {

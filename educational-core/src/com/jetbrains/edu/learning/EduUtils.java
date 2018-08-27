@@ -804,7 +804,7 @@ public class EduUtils {
     return activeVirtualFile;
   }
 
-  public static void navigateToStep(@NotNull Project project, @NotNull Course course, int stepId) {
+  public static void navigateToStep(@NotNull Project project, @NotNull RemoteCourse course, int stepId) {
     if (stepId == 0 || StepikCourseExt.isAdaptive(course)) {
       return;
     }
@@ -1096,7 +1096,9 @@ public class EduUtils {
           }
           courses.add(bundledCourse);
         }
-        Collections.sort(courses, (c1, c2) -> Boolean.compare(StepikCourseExt.isAdaptive(c1), StepikCourseExt.isAdaptive(c2)));
+        Collections.sort(courses, (c1, c2) -> Boolean.compare(
+          c1 instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)c1),
+          c2 instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)c2)));
         return courses;
       }, "Getting Available Courses", true, null);
     } catch (ProcessCanceledException e) {

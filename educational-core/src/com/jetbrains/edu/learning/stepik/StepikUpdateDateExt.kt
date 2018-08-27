@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.ext.isCompatible
+import com.jetbrains.edu.learning.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.StepikConnector.fillItems
@@ -20,7 +21,7 @@ import java.util.*
 
 
 fun RemoteCourse.isUpToDate(): Boolean {
-  if (!isLoggedIn() || updateDate == null) {
+  if (!isLoggedIn()) {
     return true
   }
 
@@ -30,7 +31,7 @@ fun RemoteCourse.isUpToDate(): Boolean {
 
 @TestOnly
 fun RemoteCourse.isUpToDate(courseFromStepik: RemoteCourse): Boolean {
-  val dateFromServer = courseFromStepik.updateDate ?: return true
+  val dateFromServer = courseFromStepik.updateDate
 
   if (dateFromServer.isSignificantlyAfter(updateDate)) {
     return false

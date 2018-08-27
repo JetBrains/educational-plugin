@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Date;
 import java.util.List;
 
 public class StepikRemoteInfo implements RemoteInfo {
@@ -20,6 +22,7 @@ public class StepikRemoteInfo implements RemoteInfo {
   private boolean isPublic;
   private boolean isAdaptive = false;
   private boolean isIdeaCompatible = true;
+  private Date myUpdateDate = new Date(0);
   private int id;
 
   // do not publish to stepik
@@ -40,7 +43,7 @@ public class StepikRemoteInfo implements RemoteInfo {
   @Override
   public String wrapTaskText(@NotNull final String taskText, @NotNull final Task task) {
     final Course course = task.getLesson().getCourse();
-    return StepikUtils.wrapStepikTasks(task, taskText, course);
+    return course instanceof RemoteCourse ? StepikUtils.wrapStepikTasks(task, taskText, (RemoteCourse)course) : taskText;
   }
 
   @NotNull
@@ -90,6 +93,14 @@ public class StepikRemoteInfo implements RemoteInfo {
     this.id = id;
   }
 
+  public void setUpdateDate(Date date) {
+    myUpdateDate = date;
+  }
+
+  public Date getUpdateDate() {
+    return myUpdateDate;
+  }
+
   public boolean isLoadSolutions() {
     return myLoadSolutions;
   }
@@ -97,5 +108,4 @@ public class StepikRemoteInfo implements RemoteInfo {
   public void setLoadSolutions(boolean myLoadSolutions) {
     this.myLoadSolutions = myLoadSolutions;
   }
-
 }

@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor
@@ -36,7 +37,7 @@ class PyAdaptiveLanguageLevelInspection : PyInspection() {
       super.visitPyFile(node)
       val project = node.project
       val course = StudyTaskManager.getInstance(project).course ?: return
-      if (!course.isAdaptive) return
+      if (course is RemoteCourse && !course.isAdaptive) return
       val module = ModuleUtilCore.findModuleForPsiElement(node)
       val virtualFile = PsiUtilCore.getVirtualFile(node)
       if (module != null && virtualFile != null) {

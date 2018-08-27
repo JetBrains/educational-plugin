@@ -11,6 +11,7 @@ import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import org.jetbrains.annotations.TestOnly

@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.*;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -126,7 +127,9 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       if (eduEditor != null) {
         final Task task = eduEditor.getTaskFile().getTask();
         if (task instanceof TheoryTask) {
-          presentation.setText(StepikCourseExt.isAdaptive(task.getLesson().getCourse()) ? "Get Next Recommendation" : "Mark as read");
+          final Course course = task.getLesson().getCourse();
+          presentation.setText(course instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)course) ?
+                               "Get Next Recommendation" : "Mark as read");
         }
         else {
           presentation.setText(CHECK_TASK);

@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.courseFormat;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,7 +28,6 @@ public class RemoteCourse extends Course {
   // in CC mode is used to store top-level lessons section id
   @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
-  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
 
   @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
 
@@ -70,14 +68,6 @@ public class RemoteCourse extends Course {
       tags.add(new InProgressTag());
     }
     return tags;
-  }
-
-  public void setUpdateDate(Date date) {
-    myUpdateDate = date;
-  }
-
-  public Date getUpdateDate() {
-    return myUpdateDate;
   }
 
   private void updateType(String language) {

@@ -28,7 +28,7 @@ public class StepikNextRecommendationCheckListener implements CheckListener {
   @Override
   public void afterCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckResult result) {
     Course course = task.getLesson().getCourse();
-    if (!(course instanceof RemoteCourse && StepikCourseExt.isAdaptive(course))) {
+    if (!(course instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)course))) {
       return;
     }
     if (!(task instanceof TheoryTask) && myStatusBeforeCheck == CheckStatus.Solved) {
