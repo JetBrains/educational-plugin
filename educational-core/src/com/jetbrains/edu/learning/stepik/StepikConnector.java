@@ -447,6 +447,7 @@ public class StepikConnector {
           final List<Lesson> lessons = getLessons(remoteCourse);
           remoteCourse.addLessons(lessons);
           remoteCourse.setSectionIds(allSections.stream().map(s -> s.getId()).collect(Collectors.toList()));
+          lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
         }
       }
     }
