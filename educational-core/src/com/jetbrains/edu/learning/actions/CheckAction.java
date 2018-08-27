@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.actions;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.Extensions;
@@ -29,9 +28,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
-public class CheckAction extends DumbAwareActionWithShortcut implements CustomComponentAction {
+public class CheckAction extends DumbAwareActionWithShortcut {
   public static final String SHORTCUT = "ctrl alt pressed ENTER";
   public static final String ACTION_ID = "Educational.Check";
   private static final String CHECK_TASK = "Check";
@@ -116,13 +113,12 @@ public class CheckAction extends DumbAwareActionWithShortcut implements CustomCo
     //  presentation.setEnabledAndVisible(true);
     //}
   }
-
-  @NotNull
-  @Override
-  public JComponent createCustomComponent(@NotNull Presentation presentation) {
-    JButton button = new JButton("Check");
-    return button;
-  }
+  //
+  //@NotNull
+  //@Override
+  //public JComponent createCustomComponent(@NotNull Presentation presentation) {
+  //  return new ActionButtonWithText(this, presentation, ActionPlaces.UNKNOWN, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE);
+  //}
 
   private static void updateDescription(AnActionEvent e) {
     final Presentation presentation = e.getPresentation();

@@ -4,6 +4,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.RightAlignedToolbarAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
@@ -38,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
+public class RefreshTaskFileAction extends DumbAwareActionWithShortcut implements RightAlignedToolbarAction {
   public static final String ACTION_ID = "Educational.RefreshTaskFile";
   public static final String SHORTCUT = "ctrl shift pressed X";
   private static final Logger LOG = Logger.getInstance(RefreshTaskFileAction.class.getName());
