@@ -34,25 +34,15 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   fun updateCourse() {
     oldLessonDirectories.clear()
     oldSectionDirectories.clear()
-    courseFromServer(project, course)
-    addTopLevelLessons(course)
-    val (updatedLessons, newLessons) = doUpdate(course)
+
+    val courseFromServer = courseFromServer(project, course)
+    val (updatedLessons, newLessons) = doUpdate(courseFromServer)
+
     runInEdt {
       synchronize()
       ProjectView.getInstance(project).refresh()
       showNotification(newLessons, updatedLessons)
       course.configurator?.courseBuilder?.refreshProject(project)
-    }
-  }
-
-  // On Stepik top-level lessons section is named after a course
-  // In case it was renamed on stepik, its lessons  won't be parsed as top-level
-  // so we need to copy them manually
-  private fun addTopLevelLessons(courseFromServer: Course?) {
-    if (!courseFromServer!!.sections.isEmpty() && !course.sectionIds.isEmpty()) {
-      if (courseFromServer.sections[0].id == course.sectionIds[0]) {
-        courseFromServer.addLessons(courseFromServer.sections[0].lessons)
-      }
     }
   }
 
@@ -70,7 +60,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     val sectionsToUpdate = courseFromServer.sections.filter { section -> section.id in sectionIds }
     updateSections(sectionsToUpdate)
 
-    courseFromServer.items.withIndex().forEach({ (index, lesson) -> lesson.index = index + 1 })
+    courseFromServer.items.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
 
     //update top level lessons
     val newLessons = courseFromServer.lessons.filter { course.getLesson(it.id) == null }
@@ -364,17 +354,29 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     }
   }
 
-  private fun courseFromServer(project: Project, currentCourse: RemoteCourse): Boolean {
+  private fun courseFromServer(project: Project, currentCourse: RemoteCourse): RemoteCourse? {
     try {
       val remoteCourse = getCourseInfo(EduSettings.getInstance().user, currentCourse.id, true)
       if (remoteCourse != null && loadCourseStructure(project, remoteCourse)) {
-        return true
+        addTopLevelLessons(remoteCourse)
+        return remoteCourse
       }
     }
     catch (e: IOException) {
       LOG.warn(e.message)
     }
 
-    return false
+    return null
+  }
+
+  // On Stepik top-level lessons section is named after a course
+  // In case it was renamed on stepik, its lessons  won't be parsed as top-level
+  // so we need to copy them manually
+  private fun addTopLevelLessons(courseFromServer: Course?) {
+    if (!courseFromServer!!.sections.isEmpty() && !course.sectionIds.isEmpty()) {
+      if (courseFromServer.sections[0].id == course.sectionIds[0]) {
+        courseFromServer.addLessons(courseFromServer.sections[0].lessons)
+      }
+    }
   }
 }
