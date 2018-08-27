@@ -18,6 +18,7 @@ import java.util.List;
 public class StepikRemoteInfo implements RemoteInfo {
   private boolean isPublic;
   private boolean isAdaptive = false;
+  private boolean isIdeaCompatible = true;
 
   @Override
   public boolean isCourseValid(@NotNull Course course) {
@@ -68,4 +69,11 @@ public class StepikRemoteInfo implements RemoteInfo {
     isAdaptive = adaptive;
   }
 
+  public boolean isIdeaCompatible() {
+    return isIdeaCompatible;
+  }
+
+  public void setIdeaCompatible(boolean compatible) {
+    isIdeaCompatible = compatible;
+  }
 }

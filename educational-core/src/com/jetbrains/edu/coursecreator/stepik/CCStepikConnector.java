@@ -570,7 +570,7 @@ public class CCStepikConnector {
   public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final RemoteCourse course) {
     if (!checkIfAuthorized(project, "update course")) return false;
 
-    // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
+    // Course info parameters such as is_public and is_idea_compatible can be changed from Stepik site only
     // so we get actual info here
     RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
     final RemoteInfo remoteInfo = course.getRemoteInfo();
@@ -578,8 +578,8 @@ public class CCStepikConnector {
       final RemoteInfo infoRemoteInfo = courseInfo.getRemoteInfo();
       if (infoRemoteInfo instanceof StepikRemoteInfo) {
         ((StepikRemoteInfo)remoteInfo).setPublic(((StepikRemoteInfo)infoRemoteInfo).isPublic());
+        ((StepikRemoteInfo)remoteInfo).setIdeaCompatible(((StepikRemoteInfo)infoRemoteInfo).isIdeaCompatible());
       }
-      course.setCompatible(courseInfo.isCompatible());
     }
     else {
       LOG.warn("Failed to get current course info");

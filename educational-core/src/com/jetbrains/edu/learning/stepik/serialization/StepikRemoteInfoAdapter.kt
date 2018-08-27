@@ -11,6 +11,7 @@ import java.lang.reflect.Type
 class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course> {
   private val IS_PUBLIC = "is_public"
   private val IS_ADAPTIVE = "is_adaptive"
+  private val IS_IDEA_COMPATIBLE = "is_idea_compatible"
 
   override fun serialize(course: Course?, type: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = GsonBuilder()
@@ -22,6 +23,7 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
     val remoteInfo = course?.remoteInfo
     jsonObject.add(IS_PUBLIC, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isPublic ?: false))
     jsonObject.add(IS_ADAPTIVE, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isAdaptive ?: false))
+    jsonObject.add(IS_IDEA_COMPATIBLE, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isIdeaCompatible ?: false))
     return jsonObject
   }
 
@@ -44,8 +46,10 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
     val remoteInfo = StepikRemoteInfo()
     val isPublic = jsonObject.get(IS_PUBLIC).asBoolean
     val isAdaptive = jsonObject.get(IS_ADAPTIVE).asBoolean
+    val isCompatible = jsonObject.get(IS_IDEA_COMPATIBLE).asBoolean
     remoteInfo.isPublic = isPublic
     remoteInfo.isAdaptive = isAdaptive
+    remoteInfo.isIdeaCompatible = isCompatible
     course.remoteInfo = remoteInfo
   }
 }

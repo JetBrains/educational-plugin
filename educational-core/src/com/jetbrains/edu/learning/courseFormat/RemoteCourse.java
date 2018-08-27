@@ -25,7 +25,6 @@ public class RemoteCourse extends Course {
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
-  @SerializedName("is_idea_compatible") private boolean isCompatible = true;
 
   // in CC mode is used to store top-level lessons section id
   @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
@@ -116,14 +115,6 @@ public class RemoteCourse extends Course {
 
   public void setLoadSolutions(boolean myLoadSolutions) {
     this.myLoadSolutions = myLoadSolutions;
-  }
-
-  public boolean isCompatible() {
-    return isCompatible;
-  }
-
-  public void setCompatible(boolean compatible) {
-    isCompatible = compatible;
   }
 
   public Date getAdditionalMaterialsUpdateDate() {
