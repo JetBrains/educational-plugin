@@ -30,7 +30,6 @@ public class RemoteCourse extends Course {
   @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
-  @Expose private boolean myLoadSolutions = true; // disabled for reset courses
 
   @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
 
@@ -97,14 +96,6 @@ public class RemoteCourse extends Course {
   public void setType(String type) {
     myType = type;
     myCompatibility = courseCompatibility();
-  }
-
-  public boolean isLoadSolutions() {
-    return myLoadSolutions;
-  }
-
-  public void setLoadSolutions(boolean myLoadSolutions) {
-    this.myLoadSolutions = myLoadSolutions;
   }
 
   public Date getAdditionalMaterialsUpdateDate() {

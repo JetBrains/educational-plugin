@@ -38,6 +38,8 @@ import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
@@ -175,7 +177,10 @@ public class EduProjectComponent implements ProjectComponent {
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
-    if (!(course instanceof RemoteCourse) || !((RemoteCourse) course).isLoadSolutions()) return;
+    final RemoteInfo remoteInfo = course.getRemoteInfo();
+    if (!(course instanceof RemoteCourse) || remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).isLoadSolutions()) {
+      return;
+    }
     if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
       PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
       return;

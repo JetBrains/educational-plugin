@@ -16,10 +16,14 @@ import javax.swing.*;
 import java.util.List;
 
 public class StepikRemoteInfo implements RemoteInfo {
+  // publish to stepik
   private boolean isPublic;
   private boolean isAdaptive = false;
   private boolean isIdeaCompatible = true;
   private int id;
+
+  // do not publish to stepik
+  private boolean myLoadSolutions = true; // disabled for reset courses
 
   @Override
   public boolean isCourseValid(@NotNull Course course) {
@@ -85,4 +89,13 @@ public class StepikRemoteInfo implements RemoteInfo {
   public void setId(int id) {
     this.id = id;
   }
+
+  public boolean isLoadSolutions() {
+    return myLoadSolutions;
+  }
+
+  public void setLoadSolutions(boolean myLoadSolutions) {
+    this.myLoadSolutions = myLoadSolutions;
+  }
+
 }
