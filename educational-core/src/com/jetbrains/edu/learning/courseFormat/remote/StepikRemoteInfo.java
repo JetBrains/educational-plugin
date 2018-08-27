@@ -24,8 +24,9 @@ public class StepikRemoteInfo implements RemoteInfo {
   private boolean isAdaptive = false;
   private boolean isIdeaCompatible = true;
   private Date myUpdateDate = new Date(0);
-  private int id;
-  private List<Integer> sectionIds = new ArrayList<>(); // in CC mode is used to store top-level lessons section id
+  private int myId;
+  private List<Integer> mySectionIds = new ArrayList<>(); // in CC mode is used to store top-level lessons section id
+  private List<Integer> myInstructors = new ArrayList<>();
 
   // do not publish to stepik
   private boolean myLoadSolutions = true; // disabled for reset courses
@@ -88,11 +89,11 @@ public class StepikRemoteInfo implements RemoteInfo {
   }
 
   public int getId() {
-    return id;
+    return myId;
   }
 
   public void setId(int id) {
-    this.id = id;
+    myId = id;
   }
 
   public void setUpdateDate(Date date) {
@@ -104,11 +105,19 @@ public class StepikRemoteInfo implements RemoteInfo {
   }
 
   public List<Integer> getSectionIds() {
-    return sectionIds;
+    return mySectionIds;
   }
 
   public void setSectionIds(List<Integer> sectionIds) {
-    this.sectionIds = sectionIds;
+    this.mySectionIds = sectionIds;
+  }
+
+  public void setInstructors(List<Integer> instructors) {
+    myInstructors = instructors;
+  }
+
+  public List<Integer> getInstructors() {
+    return myInstructors;
   }
 
   public boolean isLoadSolutions() {

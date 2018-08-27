@@ -18,6 +18,7 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
   private val ID = "id"
   private val UPDATE_DATE = "update_date"
   private val SECTIONS = "sections"
+  private val INSTRUCTORS = "instructors"
 
   override fun serialize(course: Course?, type: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = GsonBuilder()
@@ -34,6 +35,7 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
     jsonObject.add(IS_IDEA_COMPATIBLE, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isIdeaCompatible ?: false))
     jsonObject.add(ID, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.id ?: 0))
     jsonObject.add(SECTIONS, gson.toJsonTree((remoteInfo as? StepikRemoteInfo)?.sectionIds ?: Lists.emptyList<Int>()))
+    jsonObject.add(INSTRUCTORS, gson.toJsonTree((remoteInfo as? StepikRemoteInfo)?.instructors ?: Lists.emptyList<Int>()))
 
     val updateDate = (remoteInfo as? StepikRemoteInfo)?.updateDate
     if (updateDate != null) {
@@ -67,6 +69,7 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
     val id = jsonObject.get(ID).asInt
 
     val sections = gson.fromJson<List<Int>>(jsonObject.get(SECTIONS), object: TypeToken<List<Int>>(){}.type)
+    val instructors = gson.fromJson<List<Int>>(jsonObject.get(INSTRUCTORS), object: TypeToken<List<Int>>(){}.type)
     val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
 
     remoteInfo.isPublic = isPublic
@@ -74,6 +77,7 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
     remoteInfo.isIdeaCompatible = isCompatible
     remoteInfo.id = id
     remoteInfo.sectionIds = sections
+    remoteInfo.instructors = instructors
     remoteInfo.updateDate = updateDate
 
     course.remoteInfo = remoteInfo

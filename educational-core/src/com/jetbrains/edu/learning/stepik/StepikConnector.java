@@ -323,14 +323,16 @@ public class StepikConnector {
     }
   }
 
-  private static void setCourseAuthors(@NotNull final RemoteCourse info) throws IOException {
+  private static void setCourseAuthors(@NotNull final RemoteCourse remoteCourse) throws IOException {
     final ArrayList<StepicUser> authors = new ArrayList<>();
-    for (Integer instructor : info.getInstructors()) {
+    final RemoteInfo remoteInfo = remoteCourse.getRemoteInfo();
+    assert remoteInfo instanceof StepikRemoteInfo;
+    for (Integer instructor : ((StepikRemoteInfo)remoteInfo).getInstructors()) {
       final StepicUser author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
                                                            AuthorWrapper.class).users.get(0);
       authors.add(author);
     }
-    info.setAuthors(authors);
+    remoteCourse.setAuthors(authors);
   }
 
   private static CourseVisibility getVisibility(@NotNull RemoteCourse course, @NotNull List<Integer> featuredCourses) {
