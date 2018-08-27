@@ -50,7 +50,7 @@ public class StepikRemoteInfo implements RemoteInfo {
   @Nullable
   @Override
   public JPanel getAdditionalDescriptionPanel(Project project) {
-    return new StepikAdaptiveReactionsPanel(project);
+    return isAdaptive ? new StepikAdaptiveReactionsPanel(project) : null;
   }
 
   public boolean isPublic() {
