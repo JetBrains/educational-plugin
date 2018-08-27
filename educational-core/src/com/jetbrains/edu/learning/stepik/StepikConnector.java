@@ -165,7 +165,6 @@ public class StepikConnector {
     for (Integer courseId : inProgressCourses) {
       try {
         final RemoteCourse info = getCourseInfo(user, courseId, false);
-        if (info == null) continue;
         CourseCompatibility compatibility = info.getCompatibility();
         if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
         CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId()));
@@ -174,7 +173,7 @@ public class StepikConnector {
 
         result.add(info);
       }
-      catch (IOException e) {
+      catch (IOException | URISyntaxException e) {
         LOG.warn("Cannot load course " + courseId + "  " + e.getMessage());
       }
     }
@@ -274,25 +273,20 @@ public class StepikConnector {
     return coursesContainer.meta.containsKey("has_next") && coursesContainer.meta.get("has_next") == Boolean.TRUE;
   }
 
-  @Nullable
-  public static RemoteCourse getCourseInfo(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) {
-    final URI url;
+  @NotNull
+  public static RemoteCourse getCourseInfo(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible)
+    throws IOException, URISyntaxException {
     final CoursesContainer coursesContainer;
-    try {
-      url = new URIBuilder(StepikNames.COURSES + "/" + courseId)
+    final URI url = new URIBuilder(StepikNames.COURSES + "/" + courseId)
         .addParameter("is_idea_compatible", String.valueOf(isIdeaCompatible))
         .build();
       coursesContainer = getCourseContainers(user, url);
-    }
-    catch (URISyntaxException | IOException e) {
-      LOG.error(e.getMessage());
-      return null;
-    }
 
     if (coursesContainer != null && !coursesContainer.courses.isEmpty()) {
       return coursesContainer.courses.get(0);
-    } else {
-      return null;
+    }
+    else {
+      throw new IOException(coursesContainer == null ? "Course container is null" : "Course container is empty");
     }
   }
 
@@ -341,7 +335,7 @@ public class StepikConnector {
     return CourseVisibility.PublicVisibility.INSTANCE;
   }
 
-  public static RemoteCourse getCourseInfoByLink(@NotNull StepicUser user, @NotNull String link) {
+  public static RemoteCourse getCourseInfoByLink(@NotNull StepicUser user, @NotNull String link) throws IOException, URISyntaxException {
     int courseId;
     try {
       courseId = Integer.parseInt(link);

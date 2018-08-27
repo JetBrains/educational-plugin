@@ -22,7 +22,7 @@ fun RemoteCourse.isUpToDate(): Boolean {
     return true
   }
 
-  val courseInfo = getCourseInfo(EduSettings.getInstance().user, id, isCompatible) ?: return true
+  val courseInfo = getCourseInfo(EduSettings.getInstance().user, id, isCompatible)
   return isUpToDate(courseInfo)
 }
 

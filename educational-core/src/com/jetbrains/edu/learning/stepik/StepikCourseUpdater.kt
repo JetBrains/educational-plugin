@@ -357,7 +357,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   private fun courseFromServer(project: Project, currentCourse: RemoteCourse): RemoteCourse? {
     try {
       val remoteCourse = getCourseInfo(EduSettings.getInstance().user, currentCourse.id, true)
-      if (remoteCourse != null && loadCourseStructure(project, remoteCourse)) {
+      if (loadCourseStructure(project, remoteCourse)) {
         addTopLevelLessons(remoteCourse)
         return remoteCourse
       }

@@ -246,12 +246,13 @@ public class CCStepikConnector {
     }
     else {
       Course course = StudyTaskManager.getInstance(project).getCourse();
-      assert  course != null;
-      RemoteCourse courseInfo = StepikConnector
-        .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
-      if (courseInfo != null) {
-        String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
-        try {
+      assert course != null;
+      try {
+        RemoteCourse courseInfo = StepikConnector
+          .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
+        if (courseInfo != null) {
+          String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
+
           List<Section> sections = StepikConnector.getSections(sectionIds);
           for (Section section : sections) {
             if (section.getName().equals(courseInfo.getName())) {
@@ -259,9 +260,9 @@ public class CCStepikConnector {
             }
           }
         }
-        catch (URISyntaxException | IOException e) {
-          LOG.warn(e.getMessage());
-        }
+      }
+      catch (URISyntaxException | IOException e) {
+        LOG.warn(e.getMessage());
       }
     }
 

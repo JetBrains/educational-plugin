@@ -52,6 +52,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.EnumSet;
 
 public abstract class CourseProjectGenerator<S> {
@@ -200,13 +201,13 @@ public abstract class CourseProjectGenerator<S> {
 
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
     StepicUser user = EduSettings.getInstance().getUser();
-    RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, myCourse.getId(), ((RemoteCourse)myCourse).isCompatible());
-    if (courseFromStepik != null) {
+    try {
+      RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, myCourse.getId(), ((RemoteCourse)myCourse).isCompatible());
       StepikConnector.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);
       new StepikChangeRetriever(project, courseFromStepik).setStepikChangeStatuses();
     }
-    else {
+    catch (URISyntaxException e) {
       LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
     }
   }

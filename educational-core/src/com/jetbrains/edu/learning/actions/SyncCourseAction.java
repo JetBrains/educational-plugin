@@ -48,8 +48,18 @@ public class SyncCourseAction extends DumbAwareAction {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+          boolean isUpToDate = false;
+          try {
+            isUpToDate = StepikUpdateDateExt.isUpToDate((RemoteCourse)course);
+          }
+          catch (Exception e) {
+            Notification notification = new Notification("Update.course", "Error updating course",
+                                                         "Cannot get update date for a course", NotificationType.ERROR);
+            notification.setDropDownText(e.getMessage());
+            notification.notify(project);
+          }
 
-          if (StepikUpdateDateExt.isUpToDate((RemoteCourse)course)) {
+          if (isUpToDate) {
             ApplicationManager.getApplication().invokeLater(() -> {
               Notification notification = new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
               notification.notify(project);

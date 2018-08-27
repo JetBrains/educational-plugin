@@ -47,6 +47,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
 
@@ -419,7 +421,15 @@ public class CoursesPanel extends JPanel {
         String courseLink = dialogWrapper.courseLink();
         StepicUser user = EduSettings.getInstance().getUser();
         assert user != null;
-        RemoteCourse course = StepikConnector.getCourseInfoByLink(user, courseLink);
+        RemoteCourse course = null;
+
+        try {
+          course = StepikConnector.getCourseInfoByLink(user, courseLink);
+        }
+        catch (IOException | URISyntaxException e) {
+          LOG.warn(e.getMessage());
+        }
+
         List<Language> languages = getLanguagesUnderProgress(course);
 
         if (languages == null || languages.isEmpty()) {
