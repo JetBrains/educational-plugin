@@ -25,8 +25,6 @@ public class RemoteCourse extends Course {
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
 
-  // in CC mode is used to store top-level lessons section id
-  @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
 
   @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
@@ -39,14 +37,6 @@ public class RemoteCourse extends Course {
   public void setLanguage(@NotNull final String language) {
     super.setLanguage(language);
     updateType(language);
-  }
-
-  public List<Integer> getSectionIds() {
-    return sectionIds;
-  }
-
-  public void setSectionIds(List<Integer> sectionIds) {
-    this.sectionIds = sectionIds;
   }
 
   public void setInstructors(List<Integer> instructors) {

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class StepikRemoteInfo implements RemoteInfo {
   private boolean isIdeaCompatible = true;
   private Date myUpdateDate = new Date(0);
   private int id;
+  private List<Integer> sectionIds = new ArrayList<>(); // in CC mode is used to store top-level lessons section id
 
   // do not publish to stepik
   private boolean myLoadSolutions = true; // disabled for reset courses
@@ -99,6 +101,14 @@ public class StepikRemoteInfo implements RemoteInfo {
 
   public Date getUpdateDate() {
     return myUpdateDate;
+  }
+
+  public List<Integer> getSectionIds() {
+    return sectionIds;
+  }
+
+  public void setSectionIds(List<Integer> sectionIds) {
+    this.sectionIds = sectionIds;
   }
 
   public boolean isLoadSolutions() {

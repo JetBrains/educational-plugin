@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.courseFormat.ext.id
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -152,11 +153,13 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   @Throws(URISyntaxException::class, IOException::class)
   private fun updateSections(sectionsFromServer: List<Section>) {
     val sectionsById = course.sections.associateBy { it.id }
+    val remoteInfo = course.remoteInfo
+
     for (sectionFromServer in sectionsFromServer) {
       sectionFromServer.lessons.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
 
-      if (!course.lessons.isEmpty()) {
-        val isTopLevelLessonsSection = sectionFromServer.id == course.sectionIds[0]
+      if (!course.lessons.isEmpty() && remoteInfo is StepikRemoteInfo) {
+        val isTopLevelLessonsSection = sectionFromServer.id == remoteInfo.sectionIds[0]
         if (isTopLevelLessonsSection) {
           return
         }

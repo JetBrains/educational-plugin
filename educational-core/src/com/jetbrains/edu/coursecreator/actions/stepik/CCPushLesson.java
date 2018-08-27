@@ -18,6 +18,8 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -108,7 +110,7 @@ public class CCPushLesson extends DumbAwareAction {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading lesson to " + StepikNames.STEPIK_URL);
-        doPush(lesson, project, course);
+        doPush(lesson, project, (RemoteCourse)course);
       }
     });
   }
@@ -132,7 +134,7 @@ public class CCPushLesson extends DumbAwareAction {
   }
 
   // public for tests
-  public static void doPush(Lesson lesson, Project project, Course course) {
+  public static void doPush(Lesson lesson, Project project, RemoteCourse course) {
     if (lesson.getId() > 0) {
       StepikWrappers.Unit unit = StepikConnector.getUnit(lesson.unitId);
 
@@ -169,7 +171,9 @@ public class CCPushLesson extends DumbAwareAction {
       else {
         int position = lessonPosition(course, lesson);
         int sectionId;
-        final List<Integer> sections = ((RemoteCourse)course).getSectionIds();
+        final RemoteInfo remoteInfo = course.getRemoteInfo();
+        assert remoteInfo instanceof StepikRemoteInfo;
+        final List<Integer> sections = ((StepikRemoteInfo)remoteInfo).getSectionIds();
         sectionId = sections.get(sections.size() - 1);
         CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), sectionId);
         if (lesson.getIndex() < course.getLessons().size()) {
