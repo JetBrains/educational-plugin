@@ -151,6 +151,10 @@ object ServerConnector {
   fun getCourseMaterials(id: Int)=
     service.getCourseMaterials(id).safeExecute().apply { init(null, null, false) }
 
+  // todo : replace this with head request when it's implemented on the server
+  fun isCourseUpdated(course: EduCourse) =
+    service.getCourseStructure(course.courseId).safeExecute().let { course.lastModified < it.lastModified  }
+
   fun getCourseUpdate(course: EduCourse): Unit = TODO()
 
 }
