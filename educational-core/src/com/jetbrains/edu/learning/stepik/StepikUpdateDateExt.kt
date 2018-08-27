@@ -130,11 +130,7 @@ private fun RemoteCourse.hasNewOrRemovedTopLevelLessons(courseFromStepik: Remote
     return false
   }
 
-  val hasAdditional = courseFromStepik.getLessons(true).any { it.isAdditional }
-
-  val remoteLessonsSize = courseFromStepik.lessons.size - if (hasAdditional) 1 else 0
-
-  return remoteLessonsSize != lessons.size
+  return courseFromStepik.lessons.size != lessons.size
 }
 
 private fun Section.setUpdated(sectionFromStepik: Section) {
