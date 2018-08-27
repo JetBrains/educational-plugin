@@ -9,6 +9,9 @@
     <component>
       <implementation-class>com.jetbrains.edu.coursecreator.CCProjectComponent</implementation-class>
     </component>
+    <component>
+      <implementation-class>com.jetbrains.edu.learning.stepik.StepikProjectComponent</implementation-class>
+    </component>
   </project-components>
 
   <application-components>

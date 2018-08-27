@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
@@ -17,8 +16,6 @@ import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefres
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.ex.KeymapManagerEx;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
@@ -26,27 +23,19 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
 import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
+import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
-import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
 public class EduProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(EduProjectComponent.class.getName());
@@ -72,13 +60,10 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void projectOpened() {
-    if (myProject.isDisposed()) {
+    if (myProject.isDisposed() || !isStudyProject(myProject)) {
       return;
     }
 
-    if (!isStudyProject(myProject)) {
-      return;
-    }
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       ToolWindowManager.getInstance(myProject).invokeLater(() -> selectProjectView());
     }
@@ -90,21 +75,9 @@ public class EduProjectComponent implements ProjectComponent {
           return;
         }
 
-        if (course instanceof RemoteCourse && !StepikCourseExt.isAdaptive(course)) {
-          StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
-        }
-
-        final StepicUser currentUser = EduSettings.getInstance().getUser();
-        if (currentUser != null && !course.getAuthors().contains(currentUser) && !CCUtils.isCourseCreator(myProject)) {
-          loadSolutionsFromStepik(course);
-        }
-
         if (EduGradleUtils.isConfiguredWithGradle(myProject)) {
           setupGradleProject();
         }
-
-        addStepikWidget();
-        selectStep(course);
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
             registerShortcuts();
@@ -173,39 +146,6 @@ public class EduProjectComponent implements ProjectComponent {
     }
     else {
       LOG.warn("Failed to select Project View");
-    }
-  }
-
-  private void loadSolutionsFromStepik(@NotNull Course course) {
-    final RemoteInfo remoteInfo = course.getRemoteInfo();
-    if (!(course instanceof RemoteCourse) || remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).isLoadSolutions()) {
-      return;
-    }
-    if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
-      PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
-      return;
-    }
-    try {
-      StepikSolutionsLoader.getInstance(myProject).loadSolutionsInBackground();
-    }
-    catch (Exception e) {
-      LOG.warn(e.getMessage());
-    }
-  }
-
-  private void addStepikWidget() {
-    StepikUserWidget widget = getStepikWidget();
-    StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
-    if (widget != null) {
-      statusBar.removeWidget(StepikUserWidget.ID);
-    }
-    statusBar.addWidget(new StepikUserWidget(myProject), "before Position");
-  }
-
-  private void selectStep(@NotNull Course course) {
-    int stepId = PropertiesComponent.getInstance().getInt(STEP_ID, 0);
-    if (stepId != 0) {
-      navigateToStep(myProject, course, stepId);
     }
   }
 
@@ -281,10 +221,5 @@ public class EduProjectComponent implements ProjectComponent {
   @Override
   public String getComponentName() {
     return "StudyTaskManager";
-  }
-
-  public static EduProjectComponent getInstance(@NotNull final Project project) {
-    final Module module = ModuleManager.getInstance(project).getModules()[0];
-    return module.getComponent(EduProjectComponent.class);
   }
 }
