@@ -38,9 +38,7 @@ fun RemoteCourse.isUpToDate(courseFromStepik: RemoteCourse): Boolean {
     fillItems(courseFromStepik)
   }
 
-  if (dateFromServer.isSignificantlyAfter(updateDate)
-      || hasNewOrRemovedSections(courseFromStepik)
-      || hasNewOrRemovedTopLevelLessons(courseFromStepik)) {
+  if (hasNewOrRemovedSections(courseFromStepik) || hasNewOrRemovedTopLevelLessons(courseFromStepik)) {
     return false
   }
 
