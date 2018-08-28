@@ -1,4 +1,4 @@
-package com.jetbrains.edu.python.learning
+package com.jetbrains.edu.python.learning.stepik
 
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.LocalQuickFix
@@ -28,7 +28,8 @@ class PyAdaptiveLanguageLevelInspection : PyInspection() {
 
   override fun buildVisitor(holder: ProblemsHolder,
                             isOnTheFly: Boolean,
-                            session: LocalInspectionToolSession): PsiElementVisitor = Visitor(holder, session)
+                            session: LocalInspectionToolSession): PsiElementVisitor = Visitor(
+    holder, session)
 
   class Visitor(holder: ProblemsHolder?,
                 session: LocalInspectionToolSession) : PyInspectionVisitor(holder, session) {
