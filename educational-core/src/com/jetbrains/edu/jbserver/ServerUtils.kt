@@ -9,7 +9,7 @@ fun StudyItem.isChanged()
 
 
 fun <T> MutableList<T>.mapInplace (mutator: (T) -> T) {
-  val iterator = this.listIterator()
+  val iterator = this.toMutableList().listIterator()
   while (iterator.hasNext()) {
     val oldValue = iterator.next()
     val newValue = mutator(oldValue)

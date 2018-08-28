@@ -153,9 +153,19 @@ object ServerConnector {
 
   // todo : replace this with head request when it's implemented on the server
   fun isCourseUpdated(course: EduCourse) =
-    service.getCourseStructure(course.courseId).safeExecute().let { course.lastModified < it.lastModified  }
+    service.getCourseStructure(course.courseId).safeExecute().let { course.lastModified < it.lastModified }
 
-  fun getCourseUpdate(course: EduCourse): Unit = TODO()
+  fun getCourseUpdate(course: EduCourse) =
+    CourseUpdater(course, service.getCourseStructure(course.courseId).safeExecute().apply { init(null, null, false) }).update
+
+  fun getSection(id: Int) =
+    service.getSections(id.toString()).safeExecute().sections[0]
+
+  fun getLesson(id: Int) =
+    service.getLessons(id.toString()).safeExecute().lessons[0]
+
+  fun getTask(id: Int) =
+    service.getTasks(id.toString()).safeExecute().tasks[0]
 
 }
 
