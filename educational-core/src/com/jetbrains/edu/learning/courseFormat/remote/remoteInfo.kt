@@ -7,6 +7,8 @@ import javax.swing.JPanel
 
 interface RemoteInfo
 
+class LocalInfo : RemoteInfo
+
 interface CourseRemoteInfo {
 
   fun getTags(): List<Tag> = listOf()
@@ -14,4 +16,4 @@ interface CourseRemoteInfo {
   fun getAdditionalDescriptionPanel(project: Project): JPanel? = null
 }
 
-class LocalInfo : CourseRemoteInfo
+class LocalCourseInfo : CourseRemoteInfo
