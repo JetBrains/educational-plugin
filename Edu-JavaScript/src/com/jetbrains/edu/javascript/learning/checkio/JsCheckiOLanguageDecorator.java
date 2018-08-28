@@ -22,6 +22,6 @@ public class JsCheckiOLanguageDecorator implements EduLanguageDecorator {
   @NotNull
   @Override
   public Icon getLogo() {
-    return EducationalCoreIcons.CheckiO; // TODO
+    return EducationalCoreIcons.CheckiO;
   }
 }
