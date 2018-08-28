@@ -8,6 +8,6 @@ public class PyCheckiOLanguageSettings extends PyLanguageSettings {
   @Nullable
   @Override
   public String validate() {
-    return PyCheckiOSdkValidator.validateSdk(getMySettings().getSdk());
+    return PyCheckiOSdkValidator.validateSdk(getSettings().getSdk());
   }
 }
