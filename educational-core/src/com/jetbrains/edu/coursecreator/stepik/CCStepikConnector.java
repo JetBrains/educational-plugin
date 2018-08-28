@@ -29,15 +29,14 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -260,7 +259,7 @@ public class CCStepikConnector {
     else {
       Course course = StudyTaskManager.getInstance(project).getCourse();
       assert  course != null;
-      RemoteCourse courseInfo = StepikConnector
+      StepikCourse courseInfo = StepikConnector
         .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
       if (courseInfo != null) {
         String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
@@ -579,9 +578,9 @@ public class CCStepikConnector {
     // Course info parameters such as is_public and is_idea_compatible can be changed from Stepik site only
     // so we get actual info here
     StepikCourse courseInfo = getCourseInfo(String.valueOf(StepikCourseExt.getId(course)));
-    final RemoteInfo remoteInfo = course.getRemoteInfo();
+    final CourseRemoteInfo remoteInfo = course.getRemoteInfo();
     if (courseInfo != null && remoteInfo instanceof StepikCourseRemoteInfo) {
-      final RemoteInfo infoRemoteInfo = courseInfo.getRemoteInfo();
+      final CourseRemoteInfo infoRemoteInfo = courseInfo.getRemoteInfo();
       if (infoRemoteInfo instanceof StepikCourseRemoteInfo) {
         ((StepikCourseRemoteInfo)remoteInfo).setPublic(((StepikCourseRemoteInfo)infoRemoteInfo).isPublic());
         ((StepikCourseRemoteInfo)remoteInfo).setIdeaCompatible(((StepikCourseRemoteInfo)infoRemoteInfo).isIdeaCompatible());
@@ -630,7 +629,7 @@ public class CCStepikConnector {
     StepikCourse courseInfo = getCourseInfo(String.valueOf(courseId));
     assert courseInfo != null;
 
-    final RemoteInfo remoteInfo = courseInfo.getRemoteInfo();
+    final CourseRemoteInfo remoteInfo = courseInfo.getRemoteInfo();
     assert remoteInfo instanceof StepikCourseRemoteInfo;
     List<Integer> sectionIds = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds();
     for (Integer sectionId : sectionIds) {
@@ -662,7 +661,7 @@ public class CCStepikConnector {
     StepikCourse courseInfo = getCourseInfo(String.valueOf(StepikCourseExt.getId(course)));
     assert courseInfo != null;
 
-    final RemoteInfo remoteInfo = courseInfo.getRemoteInfo();
+    final CourseRemoteInfo remoteInfo = courseInfo.getRemoteInfo();
     assert remoteInfo instanceof StepikCourseRemoteInfo;
     List<Integer> sectionIds = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds();
     for (Integer sectionId : sectionIds) {

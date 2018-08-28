@@ -11,6 +11,12 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.List;
 
-public interface RemoteInfo {
-}
+public interface CourseRemoteInfo {
+  default @NotNull
+  List<Tag> getTags() { return Lists.emptyList(); }
+  default boolean isCourseValid(@NotNull Course course) { return true; }
+  default @NotNull String wrapTaskText(@NotNull final String taskText, @NotNull final Task task) { return taskText; }
+  default @Nullable
+  JPanel getAdditionalDescriptionPanel(Project project) { return null; }
 
+}

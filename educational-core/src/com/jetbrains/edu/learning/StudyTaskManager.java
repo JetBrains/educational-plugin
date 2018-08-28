@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
@@ -150,9 +150,9 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   private void serializeRemoteInfo(@NotNull Element taskManagerElement, @NotNull String serializedName,
-                                   @NotNull Class<? extends RemoteInfo> remoteInfoClass) {
+                                   @NotNull Class<? extends CourseRemoteInfo> remoteInfoClass) {
     final Element element = new Element(serializedName);
-    final RemoteInfo info = myCourse.getRemoteInfo();
+    final CourseRemoteInfo info = myCourse.getRemoteInfo();
     XmlSerializer.serializeInto(remoteInfoClass.cast(info), element);
     taskManagerElement.addContent(element);
   }
@@ -251,8 +251,8 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     return false;
   }
 
-  private <T extends RemoteInfo> boolean tryDeserializeRemoteInfo(@NotNull Element taskManagerElement, @NotNull String serializedName,
-                                                              @NotNull T remoteInfo) {
+  private <T extends CourseRemoteInfo> boolean tryDeserializeRemoteInfo(@NotNull Element taskManagerElement, @NotNull String serializedName,
+                                                                        @NotNull T remoteInfo) {
     final Element courseElement = taskManagerElement.getChild(serializedName);
     if (courseElement != null) {
       XmlSerializer.deserializeInto(remoteInfo, courseElement);

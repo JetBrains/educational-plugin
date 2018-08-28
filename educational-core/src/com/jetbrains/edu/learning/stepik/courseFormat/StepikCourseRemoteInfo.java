@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Tag;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class StepikCourseRemoteInfo implements RemoteInfo {
+public class StepikCourseRemoteInfo implements CourseRemoteInfo {
   // publish to stepik
   private boolean isPublic;
   private boolean isAdaptive = false;
