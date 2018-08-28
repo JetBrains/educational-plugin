@@ -1,11 +1,15 @@
 package com.jetbrains.edu.jbserver
 
-import java.util.Date
 import java.io.File
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import java.text.SimpleDateFormat
+import java.util.Date
+
+
+val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSXXX")
 
 
 // Read file from testResources
@@ -24,7 +28,7 @@ fun StudyItem.info(indent: Int = 0, indentSize: Int = 2): String = when(this) {
     if (courseId != 0)
       appendln(" ".repeat(indent) + "- CourseID: $courseId ")
     if (lastModified != Date(0))
-      appendln(" ".repeat(indent) + "  Modified: $lastModified ")
+      appendln(" ".repeat(indent) + "  Modified: ${dateFormat.format(lastModified)}. ")
     appendln(" ".repeat(indent) + "  Format:   $format ")
     if (name != null)
       appendln(" ".repeat(indent) + "  Title:    $name ")
@@ -38,7 +42,7 @@ fun StudyItem.info(indent: Int = 0, indentSize: Int = 2): String = when(this) {
     if (id != 0)
       appendln(" ".repeat(indent) + "  ID:       $id ")
     if (updateDate != Date(0))
-      appendln(" ".repeat(indent) + "  Modified: $updateDate ")
+      appendln(" ".repeat(indent) + "  Modified: ${dateFormat.format(updateDate)} ")
     items.forEach { append(it.info(indent + indentSize)) }
   }
   is Lesson -> buildString {
@@ -46,7 +50,7 @@ fun StudyItem.info(indent: Int = 0, indentSize: Int = 2): String = when(this) {
     if (id != 0)
       appendln(" ".repeat(indent) + "  ID:       $id ")
     if (updateDate != Date(0))
-      appendln(" ".repeat(indent) + "  Modified: $updateDate ")
+      appendln(" ".repeat(indent) + "  Modified: ${dateFormat.format(updateDate)} ")
     taskList.forEach { append(it.info(indent + indentSize)) }
   }
   is Task -> buildString {
@@ -55,7 +59,7 @@ fun StudyItem.info(indent: Int = 0, indentSize: Int = 2): String = when(this) {
     if (name != null)
       appendln(" ".repeat(indent) + "  Name:     ${name ?: "n/a"}")
     if (updateDate != Date(0))
-      appendln(" ".repeat(indent) + "  Modified: $updateDate")
+      appendln(" ".repeat(indent) + "  Modified: ${dateFormat.format(updateDate)}")
     if (taskFiles.isNotEmpty())
       appendln(" ".repeat(indent) + "  Files:    ${taskFiles.size}")
   }

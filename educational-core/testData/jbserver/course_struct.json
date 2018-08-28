@@ -1,7 +1,7 @@
 {
   "type": "course",
   "id": 31,
-  "last_modified": "2018-08-01 13:57:11.175609+03:00",
+  "last_modified": "2018-08-01 13:57:11.124+03:00",
   "format": "1.9-2018.3-193",
   "language": "en",
   "programming_language": "rust",
@@ -11,7 +11,7 @@
     {
       "type": "section",
       "id": 3101,
-      "last_modified": "2018-08-01 13:57:11.175609+03:00",
+      "last_modified": "2018-08-01 13:57:11.131+03:00",
       "title": "item-1-1",
       "description": "item-1-1-desc",
       "description_format": "md",
@@ -19,7 +19,7 @@
         {
           "type": "lesson",
           "id": 3302,
-          "last_modified": "2018-08-01 13:57:11.175609+03:00",
+          "last_modified": "2018-08-01 13:57:11.138+03:00",
           "title": "item-1-1-1",
           "description": "item-1-1-1-desc",
           "description_format": "md",
@@ -28,7 +28,7 @@
         {
           "type": "lesson",
           "id": 3303,
-          "last_modified": "2018-08-01 13:57:11.175609+03:00",
+          "last_modified": "2018-08-01 13:57:11.143+03:00",
           "title": "item-1-1-2",
           "description": "item-1-1-2-desc",
           "description_format": "md",
@@ -39,7 +39,7 @@
     {
       "type": "lesson",
       "id": 3304,
-      "last_modified": "2018-08-01 13:57:11.175609+03:00",
+      "last_modified": "2018-08-01 13:57:11.147+03:00",
       "title": "item-1-2",
       "description": "item-1-2-desc",
       "description_format": "md",
@@ -48,7 +48,7 @@
           "type": "output",
           "id": 18654,
           "version_id": 96314,
-          "last_modified": "2018-08-06 17:49:27.486359+03:00",
+          "last_modified": "2018-08-06 17:49:27.151+03:00",
           "title": "item-1-2-1-name",
           "description": "item-1-2-1-decs",
           "description_format": "md",

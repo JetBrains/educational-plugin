@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import org.junit.Test
+import java.util.*
 import org.junit.Assert.assertTrue as check
 
 
@@ -27,6 +28,7 @@ class JacksonDeserializationTest : EduTestCase() {
     check(course.languageID == "rust")
     check(course.humanLanguage == "English")
     check(course.items.size == 0)
+    check(course.lastModified == Date(1532010325513))
   }
 
   @Test
@@ -35,6 +37,7 @@ class JacksonDeserializationTest : EduTestCase() {
     val section = mapper.readValue<Section>(json)
     check(section.name == "test-section-title")
     check(section.items.size == 0)
+    check(section.updateDate == Date(1532010325513))
   }
 
   @Test
@@ -43,6 +46,7 @@ class JacksonDeserializationTest : EduTestCase() {
     val lesson = mapper.readValue<Lesson>(json)
     check(lesson.name == "test-lesson-title")
     check(lesson.taskList.size == 0)
+    check(lesson.updateDate == Date(1532010325513))
   }
 
   @Test
@@ -53,12 +57,14 @@ class JacksonDeserializationTest : EduTestCase() {
     check(course.description == "test-course-summary")
     check(course.languageID == "rust")
     check(course.humanLanguage == "English")
+    check(course.lastModified == Date(1533121031124))
     check(course.items.size == 2)
     check(course.items[0] is Section)
     check(course.items[1] is Lesson)
     val section = course.items[0] as Section
     val lesson = course.items[1] as Lesson
     check(section.name == "item-1-1")
+    check(section.updateDate == Date(1533121031131))
     check(section.items.size == 2)
     check(section.items[0] is Lesson)
     check(section.items[1] is Lesson)
@@ -66,9 +72,12 @@ class JacksonDeserializationTest : EduTestCase() {
     val sl2 = section.items[1] as Lesson
     check(sl1.name == "item-1-1-1")
     check(sl1.taskList.size == 0)
+    check(sl1.updateDate == Date(1533121031138))
     check(sl2.name == "item-1-1-2")
     check(sl2.taskList.size == 0)
+    check(sl2.updateDate == Date(1533121031143))
     check(lesson.name == "item-1-2")
+    check(lesson.updateDate == Date(1533121031147))
     check(lesson.taskList.size == 1)
     check(lesson.taskList[0] is OutputTask)
     check(lesson.taskList[0].stepId == 18654)
@@ -77,6 +86,7 @@ class JacksonDeserializationTest : EduTestCase() {
     check(lesson.taskList[0].descriptionFormat == DescriptionFormat.MD)
     check(lesson.taskList[0].taskFiles.isEmpty())
     check(lesson.taskList[0].testsText.isEmpty())
+    check(lesson.taskList[0].updateDate == Date(1533566967151))
   }
 
   /* Test task file deserialization */
@@ -153,6 +163,7 @@ class JacksonDeserializationTest : EduTestCase() {
     check(task.descriptionFormat == DescriptionFormat.MD)
     check(task.taskFiles.isEmpty())
     check(task.testsText.isEmpty())
+    check(task.updateDate == Date(1533548147513))
   }
 
   @Test
@@ -164,6 +175,7 @@ class JacksonDeserializationTest : EduTestCase() {
     check(task.name == "task-name-94255")
     check(task.descriptionText == "test-task-edu-decs-15633")
     check(task.descriptionFormat == DescriptionFormat.HTML)
+    check(task.updateDate == Date(1533562753513))
     check(task.testsText.size == 3)
     check(task.testsText["test-1"] == "test-content-13658")
     check(task.testsText["test-2"] == "test-content-96584")

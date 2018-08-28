@@ -47,7 +47,7 @@ fun ObjectMapper.setupMapper() = apply {
   disable(MapperFeature.AUTO_DETECT_SETTERS)
   disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
   setSerializationInclusion(JsonInclude.Include.NON_NULL)
-  dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSSXXX")
+  dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSXXX")
   val updateModule = SimpleModule()
   updateModule.addSerializer(Section::class.java, SectionSerializer())
   updateModule.addSerializer(Lesson::class.java, LessonSerializer())
