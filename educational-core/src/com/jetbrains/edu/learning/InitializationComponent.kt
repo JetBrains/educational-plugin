@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
-import com.jetbrains.edu.learning.update.NewCoursesNotifier
+import com.jetbrains.edu.learning.stepik.update.NewCoursesNotifier
 import java.util.*
 
 class InitializationComponent : ApplicationComponent {

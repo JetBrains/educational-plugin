@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.update
+package com.jetbrains.edu.learning.stepik.update
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.AppLifecycleListener
@@ -10,9 +10,9 @@ import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
-import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
 import org.jetbrains.annotations.TestOnly
 import java.util.*

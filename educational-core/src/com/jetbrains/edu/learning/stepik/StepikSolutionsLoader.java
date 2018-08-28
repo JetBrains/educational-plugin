@@ -34,7 +34,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
-import com.jetbrains.edu.learning.update.UpdateNotification;
+import com.jetbrains.edu.learning.stepik.update.UpdateNotification;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
