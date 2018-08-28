@@ -1,15 +1,16 @@
 package com.jetbrains.edu.python.learning.checkio.checker;
 
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.learning.checkio.checker.CheckiOTaskCheckerProvider;
+import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector;
+import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 
-public class PyCheckiOTaskCheckerProvider implements TaskCheckerProvider {
-  @NotNull
-  @Override
-  public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project) {
-    return new PyCheckiOTaskChecker(task, project);
+public class PyCheckiOTaskCheckerProvider extends CheckiOTaskCheckerProvider {
+
+  public PyCheckiOTaskCheckerProvider() {
+    super(
+      PyCheckiOApiConnector.getInstance(),
+      PyCheckiONames.PY_CHECKIO_INTERPRETER,
+      PyCheckiONames.PY_CHECKIO_TEST_FORM_TARGET_URL
+    );
   }
 }
