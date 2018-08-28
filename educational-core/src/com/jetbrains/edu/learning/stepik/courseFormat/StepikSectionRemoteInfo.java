@@ -12,7 +12,6 @@ public class StepikSectionRemoteInfo implements RemoteInfo {
   private int position;
   private Date myUpdateDate = new Date(0);
 
-
   public int getId() {
     return myId;
   }

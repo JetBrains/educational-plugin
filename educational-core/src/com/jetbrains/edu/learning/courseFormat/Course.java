@@ -11,7 +11,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.LocalCourseInfo;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Course extends ItemContainer {
-  @NotNull CourseRemoteInfo myRemoteInfo = new LocalInfo();
+  @NotNull CourseRemoteInfo myRemoteInfo = new LocalCourseInfo();
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
