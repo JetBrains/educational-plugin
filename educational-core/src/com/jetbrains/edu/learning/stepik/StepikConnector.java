@@ -536,10 +536,7 @@ public class StepikConnector {
     for (int i = 0; i < lessons.size(); i++) {
       Lesson lesson = lessons.get(i);
       Unit unit = units.get(i);
-      if (StepikUpdateDateExt.isSignificantlyAfter(lesson.getUpdateDate(), unit.getUpdateDate())) {
-        lesson.setUpdateDate(lesson.getUpdateDate());
-      }
-      else {
+      if (!StepikUpdateDateExt.isSignificantlyAfter(lesson.getUpdateDate(), unit.getUpdateDate())) {
         lesson.setUpdateDate(unit.getUpdateDate());
       }
     }
