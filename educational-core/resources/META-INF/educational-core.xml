@@ -7,8 +7,8 @@
       <interface-class>com.jetbrains.edu.learning.EduProjectComponent</interface-class>
     </component>
     <component>
-      <implementation-class>com.jetbrains.edu.jbserver.UpdateProjectComponent</implementation-class>
-      <interface-class>com.jetbrains.edu.jbserver.UpdateProjectComponent</interface-class>
+      <implementation-class>com.jetbrains.edu.jbserver.CourseUpdateProjectComponent</implementation-class>
+      <interface-class>com.jetbrains.edu.jbserver.CourseUpdateProjectComponent</interface-class>
     </component>
     <component>
       <implementation-class>com.jetbrains.edu.coursecreator.CCProjectComponent</implementation-class>

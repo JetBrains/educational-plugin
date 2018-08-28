@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 
 
-class UpdateProjectComponent(val project: Project): ProjectComponent {
+class CourseUpdateProjectComponent(val project: Project): ProjectComponent {
 
   override fun projectOpened() {
 

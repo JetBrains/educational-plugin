@@ -8,10 +8,6 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 
-fun StudyItem.isChanged()
-  = stepikChangeStatus != StepikChangeStatus.UP_TO_DATE
-
-
 class CourseSynchronizer(val course: Course, val project: Project) {
 
   init { sync(course) }

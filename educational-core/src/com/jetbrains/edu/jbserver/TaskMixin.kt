@@ -76,7 +76,7 @@ abstract class CodeTaskMixIn
 @JsonTypeName("choice")
 abstract class ChoiceTaskMixIn {
 
-  @JsonProperty(CHOISES_FIELD)
+  @JsonProperty(CHOICES_FIELD)
   lateinit var myChoiceVariants: List<String>
 
   @JsonProperty(IS_MULTICHOICE_FIELD)
