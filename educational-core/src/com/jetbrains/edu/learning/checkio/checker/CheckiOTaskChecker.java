@@ -4,6 +4,8 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ex.ApplicationUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
@@ -101,12 +103,12 @@ public abstract class CheckiOTaskChecker extends TaskChecker<EduTask> {
   }
 
   private JComponent createBackButtonUI() {
-    final JLabel label = new JLabel("Back to task description", AllIcons.Vcs.Arrow_left, SwingConstants.LEFT);
+    final JLabel label = new JBLabel("Back to task description", AllIcons.Vcs.Arrow_left, SwingConstants.LEFT);
 
     final JPanel buttonPanel = new JPanel(new BorderLayout());
-    buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)), BorderLayout.PAGE_START);
+    buttonPanel.add(Box.createRigidArea(JBUI.size(0, 10)), BorderLayout.PAGE_START);
     buttonPanel.add(label, BorderLayout.WEST);
-    buttonPanel.add(Box.createRigidArea(new Dimension(0, 10)), BorderLayout.PAGE_END);
+    buttonPanel.add(Box.createRigidArea(JBUI.size(0, 10)), BorderLayout.PAGE_END);
 
     buttonPanel.addMouseListener(new MouseAdapter() {
       @Override
