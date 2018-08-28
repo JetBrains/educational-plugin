@@ -30,6 +30,7 @@ public class StepikRemoteInfo implements RemoteInfo {
 
   // do not publish to stepik
   private boolean myLoadSolutions = true; // disabled for reset courses
+  private Date myAdditionalMaterialsUpdateDate = new Date(0);
 
   @Override
   public boolean isCourseValid(@NotNull Course course) {
@@ -126,5 +127,13 @@ public class StepikRemoteInfo implements RemoteInfo {
 
   public void setLoadSolutions(boolean myLoadSolutions) {
     this.myLoadSolutions = myLoadSolutions;
+  }
+
+  public Date getAdditionalMaterialsUpdateDate() {
+    return myAdditionalMaterialsUpdateDate;
+  }
+
+  public void setAdditionalMaterialsUpdateDate(@NotNull Date additionalMaterialsUpdateDate) {
+    myAdditionalMaterialsUpdateDate = additionalMaterialsUpdateDate;
   }
 }

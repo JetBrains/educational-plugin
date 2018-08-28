@@ -373,7 +373,8 @@ public class CCStepikConnector {
 
       Lesson updatedLesson = updateLesson(project, postedLesson, false, section.getId());
       if (updatedLesson != null) {
-        ((RemoteCourse)course).setAdditionalMaterialsUpdateDate(updatedLesson.getUpdateDate());
+        final StepikRemoteInfo info = (StepikRemoteInfo)course.getRemoteInfo();
+        info.setAdditionalMaterialsUpdateDate(updatedLesson.getUpdateDate());
       }
     }
   }
