@@ -10,6 +10,9 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.unitId
 import org.intellij.lang.annotations.Language
 
 class ExportStepikIdsTest : EduTestCase() {
@@ -98,13 +101,14 @@ class ExportStepikIdsTest : EduTestCase() {
   }
 
   private fun StepikCourse.generateUniqueIds() {
-    id = 1
+    (remoteInfo as StepikCourseRemoteInfo).id = 1
     sections[0].id = 2
+    val lessons = mutableListOf<Int>()
     visitLessons { lesson ->
       val section = lesson.section
       val sectionId = section?.id ?: 1
       if (section == null) {
-        sectionIds.add(lesson.index)
+        lessons.add(lesson.index)
       }
       lesson.id = 10 * sectionId + lesson.index
       lesson.unitId = lesson.id
@@ -113,5 +117,6 @@ class ExportStepikIdsTest : EduTestCase() {
       }
       true
     }
+    (remoteInfo as StepikCourseRemoteInfo).sectionIds
   }
 }

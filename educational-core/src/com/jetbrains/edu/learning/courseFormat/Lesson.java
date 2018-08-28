@@ -9,6 +9,8 @@ import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
+import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import kotlin.collections.CollectionsKt;
@@ -17,16 +19,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Lesson extends StudyItem {
-  @Expose @SerializedName("id") private int myId;
-  @Transient public List<Integer> steps;
-  @Transient public List<String> tags;
-  @Transient boolean is_public;
-  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
-
+  @NotNull private RemoteInfo myRemoteInfo = new LocalInfo();
   @Expose
   @SerializedName("title")
   private String name;
@@ -46,10 +42,6 @@ public class Lesson extends StudyItem {
 
   @Transient
   private Course myCourse = null;
-
-  @Expose
-  @SerializedName("unit_id")
-  public int unitId = 0;
 
   @Transient
   private Section mySection = null;
@@ -134,32 +126,6 @@ public class Lesson extends StudyItem {
     return CheckStatus.Solved;
   }
 
-  public int getId() {
-    return myId;
-  }
-
-  public void setId(int id) {
-    this.myId = id;
-  }
-
-  public Date getUpdateDate() {
-    return myUpdateDate;
-  }
-
-  public void setUpdateDate(Date updateDate) {
-    myUpdateDate = updateDate;
-  }
-
-  @Transient
-  public boolean isPublic() {
-    return is_public;
-  }
-
-  @Transient
-  public void setPublic(boolean isPublic) {
-    this.is_public = isPublic;
-  }
-
   public boolean isAdditional() {
     // We still use `StepikNames.PYCHARM_ADDITIONAL` while Stepik interaction
     // so we need to check it here
@@ -205,5 +171,14 @@ public class Lesson extends StudyItem {
   @Nullable
   public VirtualFile getDir(@NotNull Project project) {
     return getLessonDir(project);
+  }
+
+  @NotNull
+  public RemoteInfo getRemoteInfo() {
+    return myRemoteInfo;
+  }
+
+  public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
+    myRemoteInfo = remoteInfo;
   }
 }

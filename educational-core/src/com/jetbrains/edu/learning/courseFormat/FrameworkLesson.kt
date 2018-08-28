@@ -10,11 +10,7 @@ import com.jetbrains.edu.learning.courseGeneration.*
 class FrameworkLesson() : Lesson() {
 
   constructor(lesson: Lesson): this() {
-    id = lesson.id
-    steps = lesson.steps
-    tags = lesson.tags
-    is_public = lesson.is_public
-    updateDate = lesson.updateDate
+    remoteInfo = lesson.remoteInfo
     name = lesson.name
     taskList = lesson.taskList
     section = lesson.section

@@ -13,9 +13,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.position
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.*
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
@@ -259,7 +257,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
     val stringIds = deleteCandidates.map { it.toString() }.toTypedArray()
     val stepSources = StepikConnector.getStepSources(stringIds, lesson.course.languageID)
     val tasksFromStep = StepikConnector.getTasks(course.languageById, stringIds, stepSources)
-    tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.stepId })
+    tasksToDelete.addAll(tasksFromStep.asSequence().filter { it.updateDate <= lastUpdateDate }.map{ it.stepId }.toList())
   }
 
   private fun processTaskChanges() {

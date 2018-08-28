@@ -4,6 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import junit.framework.TestCase
 
 class CCShowChangedFilesTest: EduActionTestCase() {

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CheckiOStation extends Lesson {
+  private int myId;
+
   public CheckiOStation() {}
 
   public void addMission(@NotNull CheckiOMission mission) {
@@ -42,5 +44,13 @@ public class CheckiOStation extends Lesson {
   @Override
   public String toString() {
     return "missions=[" + getMissions().stream().map(CheckiOMission::toString).collect(Collectors.joining("\n")) + "]";
+  }
+
+  public int getId() {
+    return myId;
+  }
+
+  public void setId(int id) {
+    myId = id;
   }
 }

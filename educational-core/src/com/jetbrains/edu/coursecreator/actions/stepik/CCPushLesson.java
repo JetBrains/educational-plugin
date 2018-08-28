@@ -25,6 +25,8 @@ import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import com.twelvemonkeys.lang.StringUtil;
@@ -73,7 +75,7 @@ public class CCPushLesson extends DumbAwareAction {
 
     if (StepikStudyItemExt.getId(course) > 0) {
       e.getPresentation().setEnabledAndVisible(true);
-      if (lesson.getId() <= 0) {
+      if (!isStepikLesson(lesson)) {
         e.getPresentation().setText("Upload Lesson to Stepik");
       }
     }
@@ -105,7 +107,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
 
-    if (CourseExt.getHasSections(course) && lesson.getSection() == null && lesson.getId() <= 0) {
+    if (CourseExt.getHasSections(course) && lesson.getSection() == null && !(isStepikLesson(lesson))) {
       wrapAndPost(project, course, lesson);
       return;
     }
@@ -139,8 +141,8 @@ public class CCPushLesson extends DumbAwareAction {
 
   // public for tests
   public static void doPush(Lesson lesson, Project project, StepikCourse course) {
-    if (lesson.getId() > 0) {
-      StepikWrappers.Unit unit = StepikConnector.getUnit(lesson.unitId);
+    if (StepikLessonExt.getId(lesson) > 0) {
+      StepikWrappers.Unit unit = StepikConnector.getUnit(StepikLessonExt.getUnitId(lesson));
 
       int sectionId;
       if (lesson.getSection() != null) {
@@ -150,7 +152,7 @@ public class CCPushLesson extends DumbAwareAction {
         sectionId = CCStepikConnector.getTopLevelSectionId(project, course);
       }
       Lesson updatedLesson = CCStepikConnector.updateLesson(project, lesson, true, sectionId);
-      int lessonId = updatedLesson == null ? -1 : updatedLesson.getId();
+      int lessonId = updatedLesson == null ? -1 : StepikLessonExt.getId(updatedLesson);
       lesson.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
       setUpdated(lesson);
       if (lessonId != -1) {
@@ -185,7 +187,8 @@ public class CCPushLesson extends DumbAwareAction {
           updateLessonsPositions(project, position + 1, lessons);
         }
       }
-      CCStepikConnector.showNotification(project, "Lesson uploaded", CCStepikConnector.openOnStepikAction("/lesson/" + lesson.getId()));
+      CCStepikConnector.showNotification(project, "Lesson uploaded",
+                                         CCStepikConnector.openOnStepikAction("/lesson/" + StepikLessonExt.getId(lesson)));
     }
   }
 
@@ -201,7 +204,7 @@ public class CCPushLesson extends DumbAwareAction {
     // update positions for posted lessons only
     for (Lesson lesson : lessons) {
       // skip unpushed lessons
-      if (lesson.getId() == 0) {
+      if (!(isStepikLesson(lesson))) {
         continue;
       }
 
@@ -229,7 +232,7 @@ public class CCPushLesson extends DumbAwareAction {
   private static int lessonPosition(@NotNull ItemContainer parent, @NotNull Lesson lesson) {
     int position = 1;
     for (StudyItem item : parent.getItems()) {
-      if (StepikStudyItemExt.getId(item) == 0) {
+      if (!isStepikLesson(lesson)) {
         continue;
       }
 
@@ -241,5 +244,9 @@ public class CCPushLesson extends DumbAwareAction {
     }
 
     return position;
+  }
+
+  private static boolean isStepikLesson(@NotNull Lesson lesson) {
+    return lesson.getRemoteInfo() instanceof StepikLessonRemoteInfo;
   }
 }

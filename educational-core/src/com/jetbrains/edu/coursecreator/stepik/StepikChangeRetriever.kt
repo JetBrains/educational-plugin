@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 
@@ -146,9 +147,11 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
       .filter { lesson -> serverLessonIds.contains(lesson.id) }
       .filter { updateCandidate ->
         val lessonFormServer = latestCourseFromServer.getLesson(updateCandidate.id)!!
+        val remoteInfo = lessonFormServer.remoteInfo as StepikLessonRemoteInfo
+        val updatedRemoteInfo = updateCandidate.remoteInfo as StepikLessonRemoteInfo
         lessonFormServer.index != updateCandidate.index ||
         lessonFormServer.name != updateCandidate.name ||
-        lessonFormServer.isPublic != updateCandidate.isPublic
+        remoteInfo.isPublic != updatedRemoteInfo.isPublic
       }
       .toList()
   }

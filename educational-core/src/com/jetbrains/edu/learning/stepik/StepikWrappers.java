@@ -16,7 +16,9 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -176,9 +178,11 @@ public class StepikWrappers {
     public LessonWrapper(Lesson lesson) {
       this.lesson = new Lesson();
       this.lesson.setName(lesson.getName());
-      this.lesson.setId(lesson.getId());
-      this.lesson.steps = new ArrayList<>();
-      this.lesson.setPublic(true);
+      final StepikLessonRemoteInfo info = new StepikLessonRemoteInfo();
+      info.setId(StepikLessonExt.getId(lesson));
+      info.setSteps(new ArrayList<>());
+      info.setPublic(true);
+      this.lesson.setRemoteInfo(info);
     }
   }
 

@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.unitId
 
 
 class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids as json", null) {
