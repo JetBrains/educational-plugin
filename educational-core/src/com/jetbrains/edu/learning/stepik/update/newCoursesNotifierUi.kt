@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.update
+package com.jetbrains.edu.learning.stepik.update
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -9,10 +9,10 @@ import com.intellij.openapi.util.ActionCallback
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import org.jetbrains.annotations.TestOnly
 import javax.swing.JComponent
 

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.update
+package com.jetbrains.edu.learning.stepik.update
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationListener
