@@ -4,6 +4,10 @@
   <depends>NodeJS</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="com.jetbrains.edu.javascript" percentOfUsers="0">
+      <description>Enables support of JavaScript courses</description>
+    </experimentalFeature>
+
     <!-- CheckiO -->
     <httpRequestHandler implementation="com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthRestService"/>
     <applicationService serviceImplementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOSettings"/>

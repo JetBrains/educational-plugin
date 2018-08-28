@@ -1,11 +1,13 @@
 package com.jetbrains.edu.javascript.learning.checkio;
 
+import com.intellij.openapi.application.Experiments;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings;
 import com.jetbrains.edu.javascript.learning.checkio.checker.JsCheckiOTaskCheckerProvider;
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
+import com.jetbrains.edu.learning.EduExperimentalFeatures;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
@@ -38,6 +40,10 @@ public class JsCheckiOConfigurator implements EduConfigurator<JsNewProjectSettin
 
   @Override
   public boolean isEnabled() {
+    return isCompatibleWithIde() && Experiments.isFeatureEnabled(EduExperimentalFeatures.JAVASCRIPT_COURSES);
+  }
+
+  public boolean isCompatibleWithIde() {
     return !(EduUtils.isAndroidStudio() || PlatformUtils.isCommunityEdition() || PlatformUtils.isPyCharmEducational());
   }
 
