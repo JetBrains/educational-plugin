@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -63,7 +64,7 @@ public class CCPushTask extends DumbAwareAction {
     if (lesson != null && StepikLessonExt.getId(lesson) > 0 && StepikStudyItemExt.getId(course) > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       final Task task = lesson.getTask(taskDir.getName());
-      if (task != null && task.getStepId() <= 0) {
+      if (task != null && StepikTaskExt.getStepId(task) <= 0) {
         e.getPresentation().setText("Upload Task to Stepik");
       }
     }
@@ -104,7 +105,7 @@ public class CCPushTask extends DumbAwareAction {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading task to " + StepikNames.STEPIK_URL);
-        boolean toPost = task.getStepId() <= 0;
+        boolean toPost = StepikTaskExt.getStepId(task) <= 0;
         if (toPost) {
           postNewTask(project, task, lesson);
         }
@@ -144,12 +145,12 @@ public class CCPushTask extends DumbAwareAction {
 
 
   private static List<Task> getPostedTasks(Lesson lesson) {
-    return lesson.taskList.stream().filter(t -> t.getId() > 0).collect(Collectors.toList());
+    return lesson.taskList.stream().filter(t -> StepikTaskExt.getStepId(t) > 0).collect(Collectors.toList());
   }
 
   private static void updateTask(Task task, Lesson lesson, Project project) {
     int position = stepikPosition(task, lesson);
-    int positionOnServer = StepikConnector.getTaskPosition(task.getId());
+    int positionOnServer = StepikConnector.getTaskPosition(StepikTaskExt.getStepId(task));
 
     boolean isPosted = updateTask(task, project, position);
     if (!isPosted) {
@@ -184,7 +185,7 @@ public class CCPushTask extends DumbAwareAction {
     taskCopy.setLesson(lesson);
     boolean isPosted = CCStepikConnector.postTask(project, taskCopy, StepikLessonExt.getId(lesson));
     if (isPosted) {
-      task.setStepId(taskCopy.getStepId());
+      StepikTaskExt.setStepId(task, StepikTaskExt.getStepId(taskCopy));
       return true;
     }
 
@@ -201,7 +202,7 @@ public class CCPushTask extends DumbAwareAction {
   private static void updateTasksPositions(@NotNull Project project, int initialPosition, List<Task> tasksToUpdate) {
     int position = initialPosition;
     for (Task task : tasksToUpdate) {
-      if (task.getId() == 0) continue;
+      if (StepikTaskExt.getStepId(task) == 0) continue;
       updateTask(task, project, position++);
     }
   }
@@ -216,7 +217,7 @@ public class CCPushTask extends DumbAwareAction {
         break;
       }
 
-      if (task.getId() > 0) {
+      if (StepikTaskExt.getStepId(task) > 0) {
         position++;
       }
     }

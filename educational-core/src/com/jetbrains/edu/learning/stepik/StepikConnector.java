@@ -37,6 +37,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -418,7 +419,7 @@ public class StepikConnector {
     try {
       final StepikCourseRemoteInfo stepikRemoteInfo = (StepikCourseRemoteInfo)remoteInfo;
       String[] sectionIds = stepikRemoteInfo.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
-      List<Section> allSections = getSections(sectionIds);
+      List<StepikSection> allSections = getSections(sectionIds);
 
       final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
       if (hasVisibleSections(allSections, stepikCourse.getName())) {
@@ -465,7 +466,7 @@ public class StepikConnector {
         if (unitIds.length > 0) {
           final List<Lesson> lessons = getLessons(stepikCourse);
           stepikCourse.addLessons(lessons);
-          stepikRemoteInfo.setSectionIds(allSections.stream().map(s -> StepikCourseExt.getId(s)).collect(Collectors.toList()));
+          stepikRemoteInfo.setSectionIds(allSections.stream().map(s -> StepikSectionExt.getId(s)).collect(Collectors.toList()));
           lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> stepikCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
         }
       }
@@ -475,7 +476,7 @@ public class StepikConnector {
     }
   }
 
-  public static List<Section> getSections(String[] sectionIds) throws URISyntaxException, IOException {
+  public static List<StepikSection> getSections(String[] sectionIds) throws URISyntaxException, IOException {
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     return containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream())
       .collect(Collectors.toList());
@@ -630,7 +631,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Task> getTasks(RemoteCourse remoteCourse, String[] stepIds, List<StepSource> allStepSources) {
+  public static List<Task> getTasks(StepikCourse remoteCourse, String[] stepIds, List<StepSource> allStepSources) {
     List<Task> tasks = new ArrayList<>();
     for (int i = 0; i < allStepSources.size(); i++) {
       StepSource step = allStepSources.get(i);
@@ -689,7 +690,7 @@ public class StepikConnector {
   }
 
   private static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
-    if (EduSettings.isLoggedIn()) {
+    if (StepikUtils.isLoggedIn()) {
       final StepicUser user = EduSettings.getInstance().getUser();
       assert user != null;
       return StepikAuthorizedClient.getFromStepik(link, container, user);
@@ -777,7 +778,7 @@ public class StepikConnector {
               .addParameter("order", "desc")
               .addParameter("page", "1")
               .addParameter("status", isSolved ? "correct" : "wrong")
-              .addParameter("step", String.valueOf(task.getStepId())).build();
+              .addParameter("step", String.valueOf(StepikTaskExt.getStepId(task))).build();
       Submission[] submissions = getFromStepik(url.toString(), SubmissionsWrapper.class).submissions;
       Language language = task.getLesson().getCourse().getLanguageById();
       String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
@@ -840,12 +841,12 @@ public class StepikConnector {
   }
 
   public static void postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
-    if (task.getStepId() <= 0) {
+    if (StepikTaskExt.getStepId(task) <= 0) {
       return;
     }
 
     try {
-      final String response = postAttempt(task.getStepId());
+      final String response = postAttempt(StepikTaskExt.getStepId(task));
       if (response.isEmpty()) return;
       final AttemptWrapper.Attempt attempt =
         new Gson().fromJson(response, AttemptContainer.class).attempts.get(0);
@@ -887,7 +888,7 @@ public class StepikConnector {
 
   static String postAttempt(int id) throws IOException {
     final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-    if (client == null || !EduSettings.isLoggedIn()) return "";
+    if (client == null || !StepikUtils.isLoggedIn()) return "";
     final HttpPost attemptRequest = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ATTEMPTS);
     String attemptRequestBody = new Gson().toJson(new AttemptWrapper(id));
     attemptRequest.setEntity(new StringEntity(attemptRequestBody, ContentType.APPLICATION_JSON));
@@ -1023,10 +1024,10 @@ public class StepikConnector {
   }
 
   public static void postTheory(Task task, final Project project) {
-    if (!EduSettings.isLoggedIn()) {
+    if (!StepikUtils.isLoggedIn()) {
       return;
     }
-    final int stepId = task.getStepId();
+    final int stepId = StepikTaskExt.getStepId(task);
     final Lesson lesson = task.getLesson();
     int lessonId = StepikLessonExt.getId(lesson);
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(

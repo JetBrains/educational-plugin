@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -362,7 +363,8 @@ public class StepikAdaptiveConnector {
 
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepicUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
-    final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
+    final int stepId = StepikTaskExt.getStepId(task);
+    final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = getAttemptForStep(stepId, user.getId());
 
     if (attempt != null) {
       final int attemptId = attempt.id;
@@ -375,10 +377,10 @@ public class StepikAdaptiveConnector {
       final CheckResult result = doAdaptiveCheck(wrapper, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
         try {
-          createNewAttempt(task.getStepId());
-          StepikWrappers.StepSource step = StepikConnector.getStep(task.getStepId());
+          createNewAttempt(stepId);
+          StepikWrappers.StepSource step = StepikConnector.getStep(stepId);
           StepikTaskBuilder taskBuilder = new StepikTaskBuilder((StepikCourse)task.getLesson().getCourse(), task.getName(),
-                                                                step, task.getStepId(), user.getId());
+                                                                step, stepId, user.getId());
           final Task updatedTask = taskBuilder.createTask(step.block.name);
           if (updatedTask instanceof ChoiceTask) {
             final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();
@@ -516,7 +518,7 @@ public class StepikAdaptiveConnector {
   }
 
   private static int getAttemptId(@NotNull Task task) throws IOException {
-    final StepikWrappers.AdaptiveAttemptWrapper attemptWrapper = new StepikWrappers.AdaptiveAttemptWrapper(task.getStepId());
+    final StepikWrappers.AdaptiveAttemptWrapper attemptWrapper = new StepikWrappers.AdaptiveAttemptWrapper(StepikTaskExt.getStepId(task));
 
     final HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ATTEMPTS);
     post.setEntity(new StringEntity(new Gson().toJson(attemptWrapper)));

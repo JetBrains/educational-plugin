@@ -4,6 +4,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 
 object StepikCourseChangeHandler {
   @JvmStatic

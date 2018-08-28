@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,9 +109,7 @@ public class StepikTaskBuilder {
   @NotNull
   private CodeTask codeTask() {
     CodeTask task = new CodeTask(myName);
-    task.setStepId(myStepId);
-    task.setIndex(myStepSource.position);
-    task.setUpdateDate(myStepSource.update_date);
+    initializeTask(task);
 
     task.setStatus(CheckStatus.Unchecked);
     final StringBuilder taskDescription = new StringBuilder(myStep.text);
@@ -167,9 +166,7 @@ public class StepikTaskBuilder {
   @NotNull
   private ChoiceTask choiceTask() {
     ChoiceTask task = new ChoiceTask(myName);
-    task.setStepId(myStepId);
-    task.setIndex(myStepSource.position);
-    task.setUpdateDate(myStepSource.update_date);
+    initializeTask(task);
     task.setDescriptionText(myStep.text);
 
     final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = StepikAdaptiveConnector.getAttemptForStep(myStepId, myUserId);
@@ -200,9 +197,7 @@ public class StepikTaskBuilder {
   @NotNull
   private TheoryTask theoryTask() {
     TheoryTask task = new TheoryTask(myName);
-    task.setStepId(myStepId);
-    task.setIndex(myStepSource.position);
-    task.setUpdateDate(myStepSource.update_date);
+    initializeTask(task);
     task.setDescriptionText(myStep.text);
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
     String taskFileName = getTaskFileName(myLanguage);
@@ -221,9 +216,7 @@ public class StepikTaskBuilder {
   @NotNull
   private Task unsupportedTask() {
     TheoryTask task = new TheoryTask(myName);
-    task.setStepId(myStepId);
-    task.setIndex(myStepSource.position);
-    task.setUpdateDate(myStepSource.update_date);
+    initializeTask(task);
     final String stepText = "This is " + myName.toLowerCase() + " task.";
     task.setDescriptionText(stepText);
     String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
@@ -240,6 +233,12 @@ public class StepikTaskBuilder {
     return task;
   }
 
+  private void initializeTask(Task task) {
+    task.setIndex(myStepSource.position);
+    StepikTaskExt.setStepId(task, myStepId);
+    StepikTaskExt.setUpdateDate(task, myStepSource.update_date);
+  }
+
   @Nullable
   private Task pycharmTask() {
     if (!myStep.name.startsWith(PYCHARM_PREFIX)) {
@@ -247,8 +246,7 @@ public class StepikTaskBuilder {
       return null;
     }
     Task task = createPluginTask();
-    task.setStepId(myStepId);
-    task.setUpdateDate(myStepSource.update_date);
+    initializeTask(task);
     StepikWrappers.StepOptions stepOptions = myStep.options;
     task.setName(stepOptions != null ? stepOptions.title : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 

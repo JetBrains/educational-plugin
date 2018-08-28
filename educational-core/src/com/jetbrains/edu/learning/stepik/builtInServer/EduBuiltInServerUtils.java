@@ -48,7 +48,7 @@ import java.util.List;
 
 import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
 import static com.jetbrains.edu.learning.EduUtils.execCancelable;
-import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
+import static com.jetbrains.edu.learning.stepik.StepikUtils.navigateToStep;
 
 public class EduBuiltInServerUtils {
 

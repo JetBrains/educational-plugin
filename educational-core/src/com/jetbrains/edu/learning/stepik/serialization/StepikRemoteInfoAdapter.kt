@@ -4,11 +4,9 @@ import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikWrappers
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikSectionRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.*
 import org.fest.util.Lists
 import java.lang.reflect.Type
 import java.util.*
@@ -171,9 +169,9 @@ class StepikLessonRemoteInfoAdapter : JsonDeserializer<Lesson>, JsonSerializer<L
       .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
       .create()
 
-    val section = gson.fromJson(json, Lesson::class.java)
-    deserializeRemoteInfo(gson, section, json)
-    return section
+    val lesson = gson.fromJson(json, Lesson::class.java)
+    deserializeRemoteInfo(gson, lesson, json)
+    return lesson
   }
 
   private fun deserializeRemoteInfo(gson: Gson, lesson: Lesson, json: JsonElement): Lesson? {
@@ -213,6 +211,63 @@ class StepikLessonRemoteInfoAdapter : JsonDeserializer<Lesson>, JsonSerializer<L
     jsonObject.add(UNIT_ID, JsonPrimitive(stepikRemoteInfo?.unitId ?: 0))
     jsonObject.add(IS_PUBLIC, JsonPrimitive(stepikRemoteInfo?.isPublic ?: false))
     jsonObject.add(STEPS, gson.toJsonTree(stepikRemoteInfo?.steps ?: Lists.emptyList<Int>()))
+
+    val updateDate = stepikRemoteInfo?.updateDate
+    if (updateDate != null) {
+      val date = gson.toJsonTree(updateDate)
+      jsonObject.add(UPDATE_DATE, date)
+    }
+
+    return jsonObject
+  }
+}
+
+class StepikTaskRemoteInfoAdapter : JsonDeserializer<Task>, JsonSerializer<Task> {
+  private val ID = "id"
+  private val UPDATE_DATE = "update_date"
+
+  override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): Task {
+    val gson = GsonBuilder()
+      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+      .registerTypeAdapter(StepikWrappers.StepOptions::class.java, StepikStepOptionsAdapter())
+      .registerTypeAdapter(Lesson::class.java, StepikLessonAdapter())
+      .registerTypeAdapter(StepikWrappers.Reply::class.java, StepikReplyAdapter())
+      .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+      .create()
+
+    val task = gson.fromJson(json, Task::class.java)
+    deserializeRemoteInfo(gson, task, json)
+    return task
+  }
+
+  private fun deserializeRemoteInfo(gson: Gson, task: Task, json: JsonElement): Task? {
+    val jsonObject = json.asJsonObject
+
+    val remoteInfo = StepikTaskRemoteInfo()
+
+    val id = jsonObject.get(ID).asInt
+    val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
+
+    remoteInfo.stepId = id
+    remoteInfo.updateDate = updateDate
+
+    task.remoteInfo = remoteInfo
+    return task
+  }
+
+  override fun serialize(task: Task?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+    val gson = GsonBuilder()
+      .setPrettyPrinting()
+      .excludeFieldsWithoutExposeAnnotation()
+      .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+      .create()
+    val tree = gson.toJsonTree(task)
+    val jsonObject = tree.asJsonObject
+    val remoteInfo = task?.remoteInfo
+
+    val stepikRemoteInfo = remoteInfo as? StepikTaskRemoteInfo
+
+    jsonObject.add(ID, JsonPrimitive(stepikRemoteInfo?.stepId ?: 0))
 
     val updateDate = stepikRemoteInfo?.updateDate
     if (updateDate != null) {

@@ -53,4 +53,13 @@ public class CheckiOStation extends Lesson {
   public void setId(int id) {
     myId = id;
   }
+
+
+  public Task getTask(int id) {
+    return taskList.stream()
+      .filter(task -> task instanceof CheckiOMission)
+      .filter(task -> ((CheckiOMission)task).getId() == id)
+      .findFirst()
+      .orElse(null);
+  }
 }

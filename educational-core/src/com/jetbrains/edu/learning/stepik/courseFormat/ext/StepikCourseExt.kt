@@ -2,6 +2,8 @@
 
 package com.jetbrains.edu.learning.stepik.courseFormat.ext
 
+import com.intellij.openapi.util.Ref
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import java.util.*
@@ -15,3 +17,16 @@ var StepikCourse.updateDate: Date get() = (remoteInfo as? StepikCourseRemoteInfo
     (remoteInfo as? StepikCourseRemoteInfo)?.updateDate = date
   }
 
+
+fun StepikCourse.getTask(stepId: Int): Task? {
+  val taskRef = Ref<Task>()
+  course.visitLessons { lesson ->
+    val task = lesson.getTask(stepId)
+    if (task != null) {
+      taskRef.set(task)
+      return@visitLessons false
+    }
+    true
+  }
+  return null
+}

@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,7 +91,7 @@ public class SyncCourseAction extends DumbAwareAction {
         Task lastRecommendationInCourse = adaptiveLesson.getTaskList().get(taskNumber - 1);
         Task lastRecommendationOnStepik = StepikAdaptiveConnector.getNextRecommendation(project, (StepikCourse) course);
 
-        if (lastRecommendationOnStepik != null && lastRecommendationOnStepik.getStepId() != lastRecommendationInCourse.getStepId()) {
+        if (lastRecommendationOnStepik != null && StepikTaskExt.getStepId(lastRecommendationOnStepik) != StepikTaskExt.getStepId(lastRecommendationInCourse)) {
           lastRecommendationOnStepik.init(course, adaptiveLesson, false);
           StepikAdaptiveConnector.replaceCurrentTask(project, lastRecommendationOnStepik, lastRecommendationInCourse.getName(), adaptiveLesson);
 

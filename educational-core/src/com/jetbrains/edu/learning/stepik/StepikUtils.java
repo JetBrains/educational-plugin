@@ -17,6 +17,7 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
@@ -31,6 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
 public class StepikUtils {
 
@@ -120,6 +123,16 @@ public class StepikUtils {
     lesson.setStepikChangeStatus(status);
     for (Task task : lesson.taskList) {
       task.setStepikChangeStatus(status);
+    }
+  }
+
+  public static void navigateToStep(@NotNull Project project, @NotNull StepikCourse course, int stepId) {
+    if (stepId == 0 || StepikCourseExt.isAdaptive(course)) {
+      return;
+    }
+    Task task = StepikCourseExt.getTask(course, stepId);
+    if (task != null) {
+      navigateToTask(project, task);
     }
   }
 }

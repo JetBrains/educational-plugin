@@ -27,10 +27,6 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
@@ -38,16 +34,18 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSectionRemoteInfoAdapter;
+import com.jetbrains.edu.learning.stepik.serialization.StepikTaskRemoteInfoAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -438,6 +436,7 @@ public class CCStepikConnector {
     return new GsonBuilder().registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter()).
       registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter()).
       registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter()).
+      registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter()).
       create();
   }
 
@@ -548,7 +547,7 @@ public class CCStepikConnector {
     if (taskDir == null) return false;
 
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES
-                                        + String.valueOf(task.getStepId()));
+                                        + String.valueOf(StepikTaskExt.getStepId(task)));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
 
     final Language language = lesson.getCourse().getLanguageById();
@@ -752,7 +751,7 @@ public class CCStepikConnector {
                                         @NotNull Lesson remoteLesson) {
     final Set<Integer> localTasksIds = localLesson.getTaskList()
       .stream()
-      .map(task -> task.getStepId())
+      .map(task -> StepikTaskExt.getStepId(task))
       .filter(id -> id > 0)
       .collect(Collectors.toSet());
 
@@ -767,7 +766,7 @@ public class CCStepikConnector {
 
     for (Task task : localLesson.getTaskList()) {
       checkCancelled();
-      if (task.getStepId() > 0) {
+      if (StepikTaskExt.getStepId(task) > 0) {
         updateTask(project, task);
       }
       else {
@@ -989,7 +988,7 @@ public class CCStepikConnector {
 
       final JsonObject postedTask = getGson().fromJson(responseString, JsonObject.class);
       final JsonObject stepSource = postedTask.getAsJsonArray("step-sources").get(0).getAsJsonObject();
-      task.setStepId(stepSource.getAsJsonPrimitive("id").getAsInt());
+      StepikTaskExt.setStepId(task, stepSource.getAsJsonPrimitive("id").getAsInt());
       return true;
     }
     catch (IOException e) {
@@ -999,7 +998,7 @@ public class CCStepikConnector {
     return false;
   }
 
-  public static int getTopLevelSectionId(@NotNull Project project, @NotNull RemoteCourse course) {
+  public static int getTopLevelSectionId(@NotNull Project project, @NotNull StepikCourse course) {
     if (!course.getSectionIds().isEmpty()) {
       return course.getSectionIds().get(0);
     }
@@ -1021,7 +1020,7 @@ public class CCStepikConnector {
   }
 
   @Nullable
-  private static Lesson getTopLevelLesson(RemoteCourse course) {
+  private static Lesson getTopLevelLesson(StepikCourse course) {
     for (Lesson lesson : course.getLessons()) {
       if (lesson.getStepikChangeStatus() == StepikChangeStatus.UP_TO_DATE) {
         return lesson;

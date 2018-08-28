@@ -12,6 +12,8 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
+import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import icons.EducationalCoreIcons;
@@ -36,12 +38,11 @@ import java.util.*;
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#stepikTaskTypes} otherwise
  */
 public abstract class Task extends StudyItem {
+  @NotNull private RemoteInfo myRemoteInfo = new LocalInfo();
+
   @Expose private String name;
 
   protected CheckStatus myStatus = CheckStatus.Unchecked;
-
-  @SerializedName("stepic_id")
-  @Expose private int myStepId;
 
   @SerializedName("task_files")
   @Expose public Map<String, TaskFile> taskFiles = new HashMap<>();
@@ -59,8 +60,6 @@ public abstract class Task extends StudyItem {
   @Expose protected Map<String, AdditionalFile> additionalFiles = new HashMap<>();
 
   @Transient private Lesson myLesson;
-  @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
-
   @Expose
   @SerializedName("feedback_link")
   @NotNull
@@ -240,14 +239,6 @@ public abstract class Task extends StudyItem {
     return result;
   }
 
-  public void setStepId(int stepId) {
-    myStepId = stepId;
-  }
-
-  public int getStepId() {
-    return myStepId;
-  }
-
   public CheckStatus getStatus() {
     return myStatus;
   }
@@ -266,14 +257,6 @@ public abstract class Task extends StudyItem {
     Task copy = XmlSerializer.deserialize(element, getClass());
     copy.init(null, null, true);
     return copy;
-  }
-
-  public void setUpdateDate(Date date) {
-    myUpdateDate = date;
-  }
-
-  public Date getUpdateDate() {
-    return myUpdateDate;
   }
 
   // used in json serialization/deserialization
@@ -310,10 +293,6 @@ public abstract class Task extends StudyItem {
       return EducationalCoreIcons.Task;
     }
     return myStatus == CheckStatus.Solved ? EducationalCoreIcons.TaskSolved : EducationalCoreIcons.TaskFailed;
-  }
-
-  public int getId() {
-    return myStepId;
   }
 
   @NotNull
@@ -354,5 +333,14 @@ public abstract class Task extends StudyItem {
   @Override
   public StudyItem getParent() {
     return myLesson;
+  }
+
+  @NotNull
+  public RemoteInfo getRemoteInfo() {
+    return myRemoteInfo;
+  }
+
+  public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
+    myRemoteInfo = remoteInfo;
   }
 }

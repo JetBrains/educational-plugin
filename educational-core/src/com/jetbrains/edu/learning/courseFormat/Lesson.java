@@ -104,15 +104,6 @@ public class Lesson extends StudyItem {
     return StreamEx.of(taskList).findFirst(task -> name.equals(task.getName())).orElse(null);
   }
 
-  public Task getTask(int id) {
-    for (Task task : taskList) {
-      if (task.getStepId() == id) {
-        return task;
-      }
-    }
-    return null;
-  }
-
   public void updateTaskList(List<Task> taskList) {
     this.taskList = taskList;
   }
