@@ -9,9 +9,7 @@ import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
-import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
@@ -23,52 +21,38 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public abstract class CheckiOTaskChecker extends TaskChecker<EduTask> {
+public class CheckiOTaskChecker extends TaskChecker<EduTask> {
   private static final String TEST_RESULTS_ID = "checkioTestResults";
 
-  private final CheckiOOAuthConnector myOAuthConnector;
+  private final CheckiOMissionCheck myMissionCheck;
 
-  protected CheckiOTaskChecker(@NotNull EduTask task, @NotNull Project project, @NotNull CheckiOOAuthConnector oAuthConnector) {
+  protected CheckiOTaskChecker(
+    @NotNull EduTask task,
+    @NotNull Project project,
+    @NotNull CheckiOOAuthConnector oAuthConnector,
+    @NotNull String interpreterName,
+    @NotNull String testFormTargetUrl
+  ) {
     super(task, project);
 
-    myOAuthConnector = oAuthConnector;
-  }
-
-  @NotNull
-  protected abstract CheckiOMissionCheck getMissionCheck();
-
-  @NotNull
-  protected abstract CheckiOCourseUpdater getCourseUpdater();
-
-  @Override
-  public void onTaskSolved(@NotNull String message) {
-    updateCourse();
-    super.onTaskSolved(message);
-  }
-
-  private void updateCourse() {
-    try {
-      getCourseUpdater().doUpdate();
-    }
-    catch (Exception e) {
-      new CheckiOErrorHandler(
-        "Failed to update the course",
-        myOAuthConnector
-      ).handle(e);
-    }
+    myMissionCheck = new CheckiOMissionCheck(
+      task,
+      project,
+      oAuthConnector,
+      interpreterName,
+      testFormTargetUrl
+    );
   }
 
   @NotNull
   @Override
   public CheckResult check() {
-    final CheckiOMissionCheck missionCheck = getMissionCheck();
-
     try {
       final CheckResult checkResult =
-        ApplicationUtil.runWithCheckCanceled(missionCheck, ProgressManager.getInstance().getProgressIndicator());
+        ApplicationUtil.runWithCheckCanceled(myMissionCheck, ProgressManager.getInstance().getProgressIndicator());
 
       if (checkResult.getStatus() != CheckStatus.Unchecked) {
-        showTestResultPanel(missionCheck.getBrowserPanel());
+        showTestResultPanel(myMissionCheck.getBrowserPanel());
       }
 
       return checkResult;
