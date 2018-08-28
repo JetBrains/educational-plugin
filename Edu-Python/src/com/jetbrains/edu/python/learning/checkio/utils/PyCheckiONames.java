@@ -7,11 +7,13 @@ public final class PyCheckiONames {
 
   public static final String PY_CHECKIO = "Py " + CHECKIO;
 
-  public static final String PY_CHECKIO_API_HOST = "https://py.checkio.org";
+  public static final String PY_CHECKIO_URL = "py." + CHECKIO_URL;
+
+  public static final String PY_CHECKIO_API_HOST = "https://" + PY_CHECKIO_URL;
   public static final String PY_CHECKIO_OAUTH_SERVICE_NAME = CHECKIO_OAUTH_SERVICE_NAME + "/py";
   public static final String PY_CHECKIO_OAUTH_SERVICE_PATH = CHECKIO_OAUTH_SERVICE_PATH + "/py";
 
   public static final String PY_CHECKIO_INTERPRETER = "python-3";
 
-  public static final String PY_CHECKIO_TEST_FORM_TARGET_URL = "https://py.checkio.org/mission/check-html-output/";
+  public static final String PY_CHECKIO_TEST_FORM_TARGET_URL = PY_CHECKIO_API_HOST + CHECKIO_TEST_FORM_TARGET_PATH + "/";
 }
