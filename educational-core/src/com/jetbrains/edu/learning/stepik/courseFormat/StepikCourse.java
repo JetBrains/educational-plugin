@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.format;
+package com.jetbrains.edu.learning.stepik.courseFormat;
 
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;

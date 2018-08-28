@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.PlatformUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.stepik.format.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
 import com.jetbrains.python.inspections.PyInspection
 import com.jetbrains.python.inspections.PyInspectionVisitor

@@ -11,9 +11,9 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.stepik.format.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.stepik.format.StepikChangeStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.StepikConnector

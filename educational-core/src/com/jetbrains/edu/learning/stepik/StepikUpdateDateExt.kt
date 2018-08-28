@@ -6,7 +6,7 @@ import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduSettings.isLoggedIn
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.format.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.ext.id

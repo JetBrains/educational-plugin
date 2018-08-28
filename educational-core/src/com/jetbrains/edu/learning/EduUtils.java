@@ -85,7 +85,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
-import com.jetbrains.edu.learning.stepik.format.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;

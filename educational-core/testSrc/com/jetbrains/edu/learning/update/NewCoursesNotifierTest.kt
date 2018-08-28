@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.format.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 

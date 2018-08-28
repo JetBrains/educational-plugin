@@ -27,7 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
 import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.format.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
 import java.util.*

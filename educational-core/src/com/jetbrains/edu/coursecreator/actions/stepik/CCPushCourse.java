@@ -26,8 +26,8 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
-import com.jetbrains.edu.learning.stepik.format.StepikChangeStatus;
-import com.jetbrains.edu.learning.stepik.format.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;

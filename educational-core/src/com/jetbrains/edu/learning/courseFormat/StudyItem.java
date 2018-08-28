@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.stepik.format.StepikChangeStatus;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
