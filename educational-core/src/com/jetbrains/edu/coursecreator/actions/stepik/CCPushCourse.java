@@ -16,20 +16,20 @@ import com.intellij.openapi.ui.Messages;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.Collections;
 
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourseWithProgress;
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.wrapUnpushedLessonsIntoSections;
 
 public class CCPushCourse extends DumbAwareAction {
   private static Logger LOG = Logger.getInstance(CCPushCourse.class);
@@ -45,7 +45,7 @@ public class CCPushCourse extends DumbAwareAction {
     presentation.setEnabledAndVisible(project != null && CCUtils.isCourseCreator(project));
     if (project != null) {
       final Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course instanceof RemoteCourse) {
+      if (course instanceof StepikCourse) {
         presentation.setText("Update Course on Stepik");
       }
     }
@@ -67,7 +67,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public static boolean doPush(Project project, Course course) {
-    if (course instanceof RemoteCourse) {
+    if (course instanceof StepikCourse) {
       askToWrapTopLevelLessons(project, course);
 
       ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
@@ -76,7 +76,7 @@ public class CCPushCourse extends DumbAwareAction {
           indicator.setIndeterminate(false);
 
           if (Experiments.isFeatureEnabled(StepikCourseUploader.FEATURE_ID)) {
-            new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
+            new StepikCourseUploader(project, (StepikCourse)course).updateCourse();
           }
           else {
             pushInOldWay(indicator, project, course);

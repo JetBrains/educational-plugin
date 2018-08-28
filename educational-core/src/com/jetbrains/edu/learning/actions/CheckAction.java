@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.*;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
@@ -128,7 +128,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
         final Task task = eduEditor.getTaskFile().getTask();
         if (task instanceof TheoryTask) {
           final Course course = task.getLesson().getCourse();
-          presentation.setText(course instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)course) ?
+          presentation.setText(course instanceof StepikCourse && StepikCourseExt.isAdaptive((StepikCourse)course) ?
                                "Get Next Recommendation" : "Mark as read");
         }
         else {
@@ -183,7 +183,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       indicator.setIndeterminate(true);
       myCheckInProgress.set(true);
 
-      boolean isRemote = myTask.getLesson().getCourse() instanceof RemoteCourse;
+      boolean isRemote = myTask.getLesson().getCourse() instanceof StepikCourse;
       if (myChecker == null) {
         myResult = new CheckResult(CheckStatus.Unchecked, "Check for " + myTask.getTaskType() + "task isn't available");
       }

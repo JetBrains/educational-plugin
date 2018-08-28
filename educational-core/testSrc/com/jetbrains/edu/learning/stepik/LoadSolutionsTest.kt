@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.stepik.StepikConnector.taskStatuses
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.PROGRESS_ID_PREFIX
@@ -57,9 +57,9 @@ class LoadSolutionsTest : StepikTestCase() {
     postCourse(project, StudyTaskManager.getInstance(project).course!!)
     solveFirstTask()
 
-    val course = StudyTaskManager.getInstance(project).course!! as RemoteCourse
+    val course = StudyTaskManager.getInstance(project).course!! as StepikCourse
     val task = firstTask(StudyTaskManager.getInstance(project).course)
-    val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as RemoteCourse
+    val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as StepikCourse
     StepikConnector.loadCourseStructure(project, remoteCourse)
 
     val tasksToUpdate = StepikSolutionsLoader.getInstance(project).tasksToUpdate(remoteCourse as Course)
@@ -70,7 +70,7 @@ class LoadSolutionsTest : StepikTestCase() {
   }
 
   private fun doCheck(check: (TaskFile, TaskFile) -> Unit = {_, _ -> }) {
-    val course = StudyTaskManager.getInstance(project).course!! as RemoteCourse
+    val course = StudyTaskManager.getInstance(project).course!! as StepikCourse
     val oldTask = firstTask(course)
     val oldTaskFile = oldTask.getTaskFile(getInitialFileName())
     val oldVirtualFile = EduUtils.findTaskFileInDir(oldTaskFile!!, oldTask.getTaskDir(project)!!)
@@ -88,8 +88,8 @@ class LoadSolutionsTest : StepikTestCase() {
 
   private fun firstTask(course: Course?) = course!!.lessons[0].taskList!![0]
 
-  private fun createCourseFromStepik(course: RemoteCourse): RemoteCourse? {
-    val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as RemoteCourse
+  private fun createCourseFromStepik(course: StepikCourse): StepikCourse? {
+    val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as StepikCourse
     StepikConnector.loadCourseStructure(project, remoteCourse)
     remoteCourse.init(null, null, false)
     remoteCourse.language = PlainTextLanguage.INSTANCE.id

@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
@@ -46,21 +46,21 @@ public class SyncCourseAction extends DumbAwareAction {
   public static void doUpdate(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    if (course instanceof RemoteCourse) {
+    if (course instanceof StepikCourse) {
       ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course", true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
 
-          if (StepikUpdateDateExt.isUpToDate((RemoteCourse)course)) {
+          if (StepikUpdateDateExt.isUpToDate((StepikCourse)course)) {
             ApplicationManager.getApplication().invokeLater(() -> {
               Notification notification = new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
               notification.notify(project);
             });
           }
           else {
-            new StepikCourseUpdater((RemoteCourse)course, project).updateCourse();
-            StepikUpdateDateExt.setUpdated((RemoteCourse)course);
+            new StepikCourseUpdater((StepikCourse)course, project).updateCourse();
+            StepikUpdateDateExt.setUpdated((StepikCourse)course);
           }
         }
       });
@@ -69,7 +69,7 @@ public class SyncCourseAction extends DumbAwareAction {
         return;
       }
 
-      if (StepikCourseExt.isAdaptive((RemoteCourse)course)) {
+      if (StepikCourseExt.isAdaptive((StepikCourse)course)) {
         updateAdaptiveCourse(project, course);
       }
       else {
@@ -88,7 +88,7 @@ public class SyncCourseAction extends DumbAwareAction {
 
         int taskNumber = adaptiveLesson.getTaskList().size();
         Task lastRecommendationInCourse = adaptiveLesson.getTaskList().get(taskNumber - 1);
-        Task lastRecommendationOnStepik = StepikAdaptiveConnector.getNextRecommendation(project, (RemoteCourse) course);
+        Task lastRecommendationOnStepik = StepikAdaptiveConnector.getNextRecommendation(project, (StepikCourse) course);
 
         if (lastRecommendationOnStepik != null && lastRecommendationOnStepik.getStepId() != lastRecommendationInCourse.getStepId()) {
           lastRecommendationOnStepik.init(course, adaptiveLesson, false);
@@ -118,7 +118,7 @@ public class SyncCourseAction extends DumbAwareAction {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course != null) {
       final RemoteInfo remoteInfo = course.getRemoteInfo();
-      if (!(course instanceof RemoteCourse) || remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).isLoadSolutions()) {
+      if (!(course instanceof StepikCourse) || remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).isLoadSolutions()) {
         return false;
       }
     }

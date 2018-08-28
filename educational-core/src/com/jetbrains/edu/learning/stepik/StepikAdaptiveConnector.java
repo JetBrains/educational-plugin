@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -59,7 +59,7 @@ public class StepikAdaptiveConnector {
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
   @Nullable
-  public static Task getNextRecommendation(@Nullable Project project, @NotNull RemoteCourse course) {
+  public static Task getNextRecommendation(@Nullable Project project, @NotNull StepikCourse course) {
     try {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
       if (client == null) {
@@ -136,7 +136,7 @@ public class StepikAdaptiveConnector {
     return null;
   }
 
-  private static Task skipRecommendation(@Nullable Project project, @NotNull RemoteCourse course, StepicUser user, String lessonId) {
+  private static Task skipRecommendation(@Nullable Project project, @NotNull StepikCourse course, StepicUser user, String lessonId) {
     postRecommendationReaction(lessonId, String.valueOf(user.getId()), TOO_HARD_RECOMMENDATION_REACTION);
     return getNextRecommendation(project, course);
   }
@@ -228,7 +228,7 @@ public class StepikAdaptiveConnector {
                                             @NotNull ProgressIndicator indicator,
                                             int reactionToPost) {
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof RemoteCourse)) {
+    if (!(course instanceof StepikCourse)) {
       LOG.warn("Course is in incorrect state");
       ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
                                                                                                "Can't get next recommendation: course is broken"));
@@ -253,7 +253,7 @@ public class StepikAdaptiveConnector {
 
     indicator.checkCanceled();
     String oldTaskName = lesson.getTaskList().get(lesson.getTaskList().size() - 1).getName();
-    final Task task = getNextRecommendation(project, (RemoteCourse)course);
+    final Task task = getNextRecommendation(project, (StepikCourse)course);
     if (task == null) {
       ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
                                                                                                "Couldn't load a new recommendation"));
@@ -375,7 +375,7 @@ public class StepikAdaptiveConnector {
         try {
           createNewAttempt(task.getStepId());
           StepikWrappers.StepSource step = StepikConnector.getStep(task.getStepId());
-          StepikTaskBuilder taskBuilder = new StepikTaskBuilder((RemoteCourse)task.getLesson().getCourse(), task.getName(),
+          StepikTaskBuilder taskBuilder = new StepikTaskBuilder((StepikCourse)task.getLesson().getCourse(), task.getName(),
                                                                 step, task.getStepId(), user.getId());
           final Task updatedTask = taskBuilder.createTask(step.block.name);
           if (updatedTask instanceof ChoiceTask) {

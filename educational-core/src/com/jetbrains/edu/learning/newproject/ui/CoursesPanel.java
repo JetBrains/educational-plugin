@@ -34,7 +34,7 @@ import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -419,7 +419,7 @@ public class CoursesPanel extends JPanel {
         String courseLink = dialogWrapper.courseLink();
         StepicUser user = EduSettings.getInstance().getUser();
         assert user != null;
-        RemoteCourse course = StepikConnector.getCourseInfoByLink(user, courseLink);
+        StepikCourse course = StepikConnector.getCourseInfoByLink(user, courseLink);
         List<Language> languages = getLanguagesUnderProgress(course);
 
         if (languages == null || languages.isEmpty()) {
@@ -450,7 +450,7 @@ public class CoursesPanel extends JPanel {
       }
     }
 
-    private List<Language> getLanguagesUnderProgress(RemoteCourse course) {
+    private List<Language> getLanguagesUnderProgress(StepikCourse course) {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
         return EduUtils.execCancelable(() -> StepikConnector.getSupportedLanguages(course));

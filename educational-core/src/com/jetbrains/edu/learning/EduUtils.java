@@ -804,7 +804,7 @@ public class EduUtils {
     return activeVirtualFile;
   }
 
-  public static void navigateToStep(@NotNull Project project, @NotNull RemoteCourse course, int stepId) {
+  public static void navigateToStep(@NotNull Project project, @NotNull StepikCourse course, int stepId) {
     if (stepId == 0 || StepikCourseExt.isAdaptive(course)) {
       return;
     }
@@ -1097,8 +1097,8 @@ public class EduUtils {
           courses.add(bundledCourse);
         }
         Collections.sort(courses, (c1, c2) -> Boolean.compare(
-          c1 instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)c1),
-          c2 instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)c2)));
+          c1 instanceof StepikCourse && StepikCourseExt.isAdaptive((StepikCourse)c1),
+          c2 instanceof StepikCourse && StepikCourseExt.isAdaptive((StepikCourse)c2)));
         return courses;
       }, "Getting Available Courses", true, null);
     } catch (ProcessCanceledException e) {
@@ -1146,7 +1146,7 @@ public class EduUtils {
       JsonObject object = parser.parse(jsonText).getAsJsonObject();
       JsonElement id = object.get("id");
       if (id != null && 0 != id.getAsInt()) {
-        return gson.fromJson(object, RemoteCourse.class);
+        return gson.fromJson(object, StepikCourse.class);
       }
       return gson.fromJson(object, Course.class);
     }

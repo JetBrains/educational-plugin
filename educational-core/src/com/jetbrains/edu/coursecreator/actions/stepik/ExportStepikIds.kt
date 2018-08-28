@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
@@ -47,7 +47,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
         jsonObject.addChildren("task_list", item.taskList, serializeStudyItem)
         jsonObject.addProperty("unit_id", item.unitId)
       }
-      if (item is RemoteCourse) {
+      if (item is StepikCourse) {
         val remoteInfo = item.remoteInfo
         if (remoteInfo is StepikRemoteInfo && remoteInfo.sectionIds.isNotEmpty()) {
           jsonObject.addChildren("sectionIds", remoteInfo.sectionIds) { id ->
@@ -75,7 +75,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
       return
     }
     val course = StudyTaskManager.getInstance(project).course ?: return
-    if (course !is RemoteCourse) {
+    if (course !is StepikCourse) {
       return
     }
     presentation.isEnabledAndVisible = true

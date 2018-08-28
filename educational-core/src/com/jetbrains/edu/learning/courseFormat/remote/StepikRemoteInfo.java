@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
@@ -47,7 +47,7 @@ public class StepikRemoteInfo implements RemoteInfo {
   @Override
   public String wrapTaskText(@NotNull final String taskText, @NotNull final Task task) {
     final Course course = task.getLesson().getCourse();
-    return course instanceof RemoteCourse ? StepikUtils.wrapStepikTasks(task, taskText, (RemoteCourse)course) : taskText;
+    return course instanceof StepikCourse ? StepikUtils.wrapStepikTasks(task, taskText, (StepikCourse)course) : taskText;
   }
 
   @NotNull

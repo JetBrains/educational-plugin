@@ -27,7 +27,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
@@ -58,11 +58,11 @@ public class EduBuiltInServerUtils {
         StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
         if (studyTaskManager != null) {
           Course course = studyTaskManager.getCourse();
-          RemoteCourse remoteCourse = course instanceof RemoteCourse ? (RemoteCourse)course : null;
-          if (remoteCourse != null && StepikCourseExt.getId(remoteCourse) == courseId) {
+          StepikCourse stepikCourse = course instanceof StepikCourse ? (StepikCourse)course : null;
+          if (stepikCourse != null && StepikCourseExt.getId(stepikCourse) == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
               requestFocus(project);
-              navigateToStep(project, (RemoteCourse)course, stepId);
+              navigateToStep(project, (StepikCourse)course, stepId);
             });
             return true;
           }
@@ -144,7 +144,7 @@ public class EduBuiltInServerUtils {
       studyTaskManager.loadState(component);
       Course course = studyTaskManager.getCourse();
 
-      if (course instanceof RemoteCourse) {
+      if (course instanceof StepikCourse) {
         return StepikCourseExt.getId(course);
       }
     }
@@ -158,7 +158,7 @@ public class EduBuiltInServerUtils {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       execCancelable(() -> {
         StepicUser user = StepikAuthorizedClient.getCurrentUser();
-        RemoteCourse course = StepikConnector.getCourseInfo(user, courseId, true);
+        StepikCourse course = StepikConnector.getCourseInfo(user, courseId, true);
         showDialog(course, stepId);
         return null;
       });

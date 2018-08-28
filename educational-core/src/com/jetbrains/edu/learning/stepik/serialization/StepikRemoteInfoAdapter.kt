@@ -4,7 +4,7 @@ import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import org.fest.util.Lists
@@ -55,12 +55,12 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
       .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
       .create()
 
-    val course = gson.fromJson(json, RemoteCourse::class.java)
+    val course = gson.fromJson(json, StepikCourse::class.java)
     deserializeRemoteInfo(json, course, gson)
     return course
   }
 
-  private fun deserializeRemoteInfo(json: JsonElement, course: RemoteCourse, gson: Gson) {
+  private fun deserializeRemoteInfo(json: JsonElement, course: StepikCourse, gson: Gson) {
     val jsonObject = json.asJsonObject
     val remoteInfo = StepikRemoteInfo()
     val isPublic = jsonObject.get(IS_PUBLIC).asBoolean

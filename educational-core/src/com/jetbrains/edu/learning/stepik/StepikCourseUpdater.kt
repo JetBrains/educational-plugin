@@ -28,7 +28,7 @@ import java.net.URISyntaxException
 import java.util.*
 import kotlin.collections.ArrayList
 
-class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
+class StepikCourseUpdater(val course: StepikCourse, val project: Project) {
   private val LOG = Logger.getInstance(this.javaClass)
 
   private val oldLessonDirectories = HashMap<Int, VirtualFile>()
@@ -360,7 +360,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     }
   }
 
-  private fun courseFromServer(project: Project, currentCourse: RemoteCourse): RemoteCourse? {
+  private fun courseFromServer(project: Project, currentCourse: StepikCourse): StepikCourse? {
     try {
       val remoteCourse = getCourseInfo(EduSettings.getInstance().user, currentCourse.id, true)
       if (remoteCourse != null && loadCourseStructure(project, remoteCourse)) {

@@ -2,7 +2,7 @@ package com.jetbrains.edu.java
 
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
 import junit.framework.TestCase
@@ -546,7 +546,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
     expectedFileTree.assertEquals(rootDir)
   }
 
-  private fun setTopLevelSection(course: RemoteCourse) {
+  private fun setTopLevelSection(course: StepikCourse) {
     if (!course.lessons.isEmpty()) {
       // it's a hack.Originally we need to put here and id of remote section for top-level lesson
       course.sectionIds = Collections.singletonList(1)

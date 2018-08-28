@@ -19,7 +19,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
@@ -124,8 +124,8 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     Element taskManagerElement = new Element(SerializationUtils.Xml.MAIN_ELEMENT);
     XmlSerializer.serializeInto(this, taskManagerElement);
 
-    if (myCourse instanceof RemoteCourse) {
-      serializeCourse(taskManagerElement, REMOTE_COURSE, RemoteCourse.class);
+    if (myCourse instanceof StepikCourse) {
+      serializeCourse(taskManagerElement, REMOTE_COURSE, StepikCourse.class);
     } else if (myCourse instanceof CheckiOCourse) {
       serializeCourse(taskManagerElement, CHECKIO_COURSE, CheckiOCourse.class);
     }
@@ -235,7 +235,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     XmlSerializer.deserializeInto(this, taskManagerElement);
     final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
 
-    if (!tryDeserializeCourse(xmlCourse, REMOTE_COURSE, new RemoteCourse())) {
+    if (!tryDeserializeCourse(xmlCourse, REMOTE_COURSE, new StepikCourse())) {
       tryDeserializeCourse(xmlCourse, CHECKIO_COURSE, new CheckiOCourse());
     }
     tryDeserializeRemoteInfo(taskManagerElement, STEPIK_REMOTE_INFO, new StepikRemoteInfo());

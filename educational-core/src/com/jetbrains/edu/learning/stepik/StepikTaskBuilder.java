@@ -75,14 +75,14 @@ public class StepikTaskBuilder {
     .build();
   private static final String EMPTY_NAME = "";
 
-  public StepikTaskBuilder(@NotNull RemoteCourse course,
+  public StepikTaskBuilder(@NotNull StepikCourse course,
                            @NotNull StepikWrappers.StepSource stepSource,
                            int stepId, int userId) {
     this(course, EMPTY_NAME, stepSource, stepId, userId);
   }
 
 
-  public StepikTaskBuilder(@NotNull RemoteCourse course,
+  public StepikTaskBuilder(@NotNull StepikCourse course,
                            @NotNull String name,
                            @NotNull StepikWrappers.StepSource stepSource,
                            int stepId, int userId) {

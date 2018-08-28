@@ -44,7 +44,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof RemoteCourse)) {
+    if (!(course instanceof StepikCourse)) {
       return;
     }
     if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;
@@ -83,7 +83,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof RemoteCourse)) {
+    if (!(course instanceof StepikCourse)) {
       return;
     }
     final PsiDirectory[] directories = view.getDirectories();
@@ -110,7 +110,7 @@ public class CCPushLesson extends DumbAwareAction {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Uploading lesson to " + StepikNames.STEPIK_URL);
-        doPush(lesson, project, (RemoteCourse)course);
+        doPush(lesson, project, (StepikCourse)course);
       }
     });
   }
@@ -122,7 +122,7 @@ public class CCPushLesson extends DumbAwareAction {
       if (result == Messages.YES) {
        Section section = CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
         if (section != null) {
-          CCPushSection.doPush(project, section, (RemoteCourse)course);
+          CCPushSection.doPush(project, section, (StepikCourse)course);
         }
       }
     });
@@ -134,7 +134,7 @@ public class CCPushLesson extends DumbAwareAction {
   }
 
   // public for tests
-  public static void doPush(Lesson lesson, Project project, RemoteCourse course) {
+  public static void doPush(Lesson lesson, Project project, StepikCourse course) {
     if (lesson.getId() > 0) {
       StepikWrappers.Unit unit = StepikConnector.getUnit(lesson.unitId);
 

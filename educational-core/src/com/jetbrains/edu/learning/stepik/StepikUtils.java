@@ -34,7 +34,7 @@ public class StepikUtils {
   private static final Logger LOG = Logger.getInstance(StepikUtils.class);
   private static final Pattern PYCHARM_COURSE_TYPE = Pattern.compile(String.format("%s(\\d*) (\\w+)", StepikNames.PYCHARM_PREFIX));
 
-  public static String wrapStepikTasks(Task task, @NotNull String text, @NotNull RemoteCourse course) {
+  public static String wrapStepikTasks(Task task, @NotNull String text, @NotNull StepikCourse course) {
     String finalText = text;
     boolean adaptive = StepikCourseExt.isAdaptive(course);
     if (task instanceof TheoryTask && adaptive) {
@@ -71,7 +71,7 @@ public class StepikUtils {
       case CUSTOM: return feedbackLink.getLink();
       case STEPIK: {
         Lesson lesson = task.getLesson();
-        if (lesson == null || !(lesson.getCourse() instanceof RemoteCourse)) {
+        if (lesson == null || !(lesson.getCourse() instanceof StepikCourse)) {
           return null;
         }
         return String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.getId(), stepNumber);
@@ -86,7 +86,7 @@ public class StepikUtils {
     return link == null ? null : link + "?adaptive=true";
   }
 
-  public static void setCourseLanguage(@NotNull RemoteCourse info) {
+  public static void setCourseLanguage(@NotNull StepikCourse info) {
     String courseType = info.getType();
     Matcher matcher = PYCHARM_COURSE_TYPE.matcher(courseType);
     if (matcher.matches()) {
