@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.getDisabledPlugins
 import java.awt.Color
@@ -19,9 +20,27 @@ sealed class ErrorState(
 
   object None : ErrorState(null, Color.BLACK, true)
   object NothingSelected : ErrorState(null, Color.BLACK, true)
-  object NotLoggedIn : ErrorState(ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
-  object LoginRequired : ErrorState(ErrorMessage("", "Log in", " to Stepik to start this course"), ERROR.titleForeground, false)
+
+  abstract class LoginOptional(platform: String, msg: String) : ErrorState(
+    message = ErrorMessage("", "Log in", " to $platform to $msg"),
+    foregroundColor = WARNING.titleForeground,
+    courseCanBeStarted = true
+  )
+
+  abstract class LoginRequired(platform: String) : ErrorState(
+    message = ErrorMessage("", "Log in", " to $platform to start this course"),
+    foregroundColor = ERROR.titleForeground,
+    courseCanBeStarted = false
+  )
+
+  object StepikLoginOptional : LoginOptional("Stepik", "see more courses")
+  object StepikLoginRequired : LoginRequired("Stepik")
+
+  object HubLoginOptional : LoginOptional("JB Hub", "have access to additional functionality")
+  object HubLoginRequired : LoginRequired("JB Hub")
+
   object IncompatibleVersion : ErrorState(ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
+
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
     ErrorState(errorMessage(disabledPluginIds), ERROR.titleForeground, false)
 
@@ -31,10 +50,11 @@ sealed class ErrorState(
       val pluginRequirements = course?.languageById?.let(EduConfiguratorManager::forLanguage)?.pluginRequirements().orEmpty()
       val disabledPlugins = getDisabledPlugins(pluginRequirements)
       return when {
+        course is EduCourse -> HubLoginOptional
         course == null -> NothingSelected
         course.compatibility !== CourseCompatibility.COMPATIBLE -> IncompatibleVersion
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
-        !isLoggedIn() -> if (isLoginRequired(course)) LoginRequired else NotLoggedIn
+        !isLoggedIn() -> if (isLoginRequired(course)) StepikLoginRequired else StepikLoginOptional
         else -> None
       }
     }
