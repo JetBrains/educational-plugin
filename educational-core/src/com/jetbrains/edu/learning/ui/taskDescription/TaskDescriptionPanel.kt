@@ -12,6 +12,7 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import java.awt.BorderLayout
@@ -134,7 +135,7 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     panel.add(bottomPanel, BorderLayout.SOUTH)
     panel.border = JBUI.Borders.empty(0, 15, 15, 15)
 
-//    UIUtil.setBackgroundRecursively(panel, defaultBackground)
+    UIUtil.setBackgroundRecursively(panel, defaultBackground)
 
     setContent(panel)
   }
