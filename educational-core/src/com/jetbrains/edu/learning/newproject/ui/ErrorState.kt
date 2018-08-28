@@ -30,7 +30,7 @@ sealed class ErrorState(
   object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
   abstract class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
-  class CheckiOLoginRequired(platformName: String) : LoginRequired(platformName)
+  class CheckiOLoginRequired(courseName: String) : LoginRequired(courseName) // Name of CheckiO course equals corresponding CheckiO platform name
   object HyperskillLoginRequired : LoginRequired("Hyperskill")
   object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
