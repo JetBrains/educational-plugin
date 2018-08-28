@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -9,13 +8,13 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import icons.EducationalCoreIcons
 
 class CCCreateFrameworkLesson :
-  CCCreateLessonBase<FrameworkLesson>(EduNames.FRAMEWORK_LESSON, EducationalCoreIcons.Lesson) {
+  CCCreateLessonBase<FrameworkLesson>(StudyItemType.FRAMEWORK_LESSON, EducationalCoreIcons.Lesson) {
 
-  override fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, name: String, index: Int): FrameworkLesson {
+  override fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): FrameworkLesson {
     return FrameworkLesson().apply {
-      this.name = name
+      this.name = info.name
       this.course = course
-      this.index = index
+      this.index = info.index
       if (parentItem is Section) {
         this.section = parentItem
       }

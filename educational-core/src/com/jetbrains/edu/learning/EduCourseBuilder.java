@@ -8,6 +8,10 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel;
+import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialog;
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -27,6 +31,23 @@ import java.io.IOException;
 public interface EduCourseBuilder<Settings> {
 
   Logger LOG = Logger.getInstance(EduCourseBuilder.class);
+
+  /**
+   * Shows UI for new study item creation
+   *
+   * @param model some parameters for UI extracted from context where creating action was called
+   * @param positionPanel additional panel to allow user to choose where new item should be located
+   *                      if creating action was called with sibling item context.
+   *                      {@code null} if the corresponding action was called with parent item context.
+   *
+   * @return properties for study item creation
+   */
+  @Nullable
+  default NewStudyItemInfo showNewStudyItemUi(@NotNull Project project,
+                                                     @NotNull NewStudyItemUiModel model,
+                                                     @Nullable CCItemPositionPanel positionPanel) {
+    return new CCCreateStudyItemDialog(project, model, positionPanel).showAndGetResult();
+  }
 
   /**
    * Creates content (including its directory or module) of new lesson in project
@@ -78,8 +99,8 @@ public interface EduCourseBuilder<Settings> {
 
   @Nullable
   default Lesson createInitialLesson(@NotNull Project project, @NotNull Course course) {
-    Lesson lesson = new CCCreateLesson().createAndInitItem(project, course, null, EduNames.LESSON + 1, 1);
-    Task task = new CCCreateTask().createAndInitItem(project, course, lesson, EduNames.TASK + 1, 1);
+    Lesson lesson = new CCCreateLesson().createAndInitItem(project, course, null, new NewStudyItemInfo(EduNames.LESSON + 1, 1));
+    Task task = new CCCreateTask().createAndInitItem(project, course, lesson, new NewStudyItemInfo(EduNames.TASK + 1, 1));
     if (task != null) {
       lesson.addTask(task);
     }
@@ -92,7 +113,7 @@ public interface EduCourseBuilder<Settings> {
    *
    * @param task initializing task
    */
-  default void initNewTask(@NotNull final Lesson lesson, @NotNull final Task task) {
+  default void initNewTask(@NotNull final Lesson lesson, @NotNull final Task task, @NotNull NewStudyItemInfo info) {
     if (task.getTaskFiles().isEmpty()) {
       TaskFile taskFile = new TaskFile();
       String taskTemplateName = getTaskTemplateName();

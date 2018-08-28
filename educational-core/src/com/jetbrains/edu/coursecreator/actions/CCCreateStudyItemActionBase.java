@@ -7,19 +7,18 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialog;
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
+import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.FeedbackSenderKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,11 +28,11 @@ import javax.swing.*;
 public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCCreateStudyItemActionBase.class);
 
-  private final String myItemName;
+  private final StudyItemType myItemType;
 
-  public CCCreateStudyItemActionBase(@NotNull String itemName, Icon icon) {
-    super(StringUtil.toTitleCase(itemName), "Create New " + StringUtil.toTitleCase(itemName), icon);
-    myItemName = itemName;
+  public CCCreateStudyItemActionBase(@NotNull StudyItemType itemType, Icon icon) {
+    super(StringUtil.toTitleCase(itemType.getPresentableName()), "Create New " + StringUtil.toTitleCase(itemType.getPresentableName()), icon);
+    myItemType = itemType;
   }
 
   @Override
@@ -135,55 +134,53 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
                          @NotNull final Project project,
                          @NotNull final Course course,
                          @Nullable StudyItem parentItem) {
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
+    if (configurator == null) return null;
 
-    String itemName;
-    int itemIndex;
+    NewStudyItemInfo info;
     if (isAddedAsLast(sourceDirectory, project, course)) {
-      itemIndex = getSiblingsSize(course, parentItem) + 1;
-      String suggestedName = getItemName() + itemIndex;
-      itemName = showInputDialog(sourceDirectory, suggestedName);
+      int itemIndex = getSiblingsSize(course, parentItem) + 1;
+      String suggestedName = getItemType().getPresentableName() + itemIndex;
+      NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, sourceDirectory, getItemType(), suggestedName, itemIndex);
+      info = configurator.getCourseBuilder()
+        .showNewStudyItemUi(project, model, null);
     } else {
       StudyItem thresholdItem = getThresholdItem(course, sourceDirectory);
       if (thresholdItem == null) {
         return null;
       }
-      final Pair<String, Integer> nameIndex = getItemNameIndex(thresholdItem, project, sourceDirectory);
-      if (nameIndex == null) return null;
-      itemName = nameIndex.first;
-      itemIndex = nameIndex.second;
+      info = showCreateStudyItemDialogWithPosition(project, parentItem, sourceDirectory, thresholdItem);
     }
-    if (itemName == null) {
+    if (info == null) {
       return null;
     }
-    return createAndInitItem(project, course, parentItem, itemName, itemIndex);
+    return createAndInitItem(project, course, parentItem, info);
   }
 
-  protected Pair<String, Integer> getItemNameIndex(@NotNull StudyItem thresholdItem, @NotNull Project project,
-                                                @NotNull VirtualFile sourceDirectory) {
+  @Nullable
+  protected NewStudyItemInfo showCreateStudyItemDialogWithPosition(@NotNull Project project,
+                                                                   @Nullable StudyItem parentItem,
+                                                                   @NotNull VirtualFile sourceDirectory,
+                                                                   @NotNull StudyItem thresholdItem) {
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(thresholdItem.getCourse());
+    if (configurator == null) {
+      return null;
+    }
+
     final int index = thresholdItem.getIndex();
-    CCCreateStudyItemDialog dialog = new CCCreateStudyItemDialog(project, getItemName(), thresholdItem.getName(),
-                                                                 index, sourceDirectory.getParent());
-    dialog.show();
-    if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-      return null;
-    }
-    return Pair.create(dialog.getName(), index + dialog.getIndexDelta());
-  }
-
-  private String showInputDialog(@NotNull VirtualFile sourceDirectory, @Nullable String suggestedName) {
-    return Messages.showInputDialog("Name:", getTitle(), null, suggestedName, new CCUtils.PathInputValidator(sourceDirectory));
+    String itemName = getItemType().getPresentableName();
+    String suggestedName = itemName + (index + 1);
+    NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, sourceDirectory, getItemType(), suggestedName, index);
+    CCItemPositionPanel positionPanel = new CCItemPositionPanel(itemName, thresholdItem.getName());
+    return configurator.getCourseBuilder()
+      .showNewStudyItemUi(project, model, positionPanel);
   }
 
   protected abstract int getSiblingsSize(@NotNull final Course course, @Nullable final StudyItem parentItem);
 
   @NotNull
-  protected String getItemName() {
-    return myItemName;
-  }
-
-  @NotNull
-  protected String getTitle() {
-    return "Create New " + StringUtil.toTitleCase(getItemName());
+  protected StudyItemType getItemType() {
+    return myItemType;
   }
 
   @Nullable
@@ -203,6 +200,5 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
   public abstract Item createAndInitItem(@NotNull Project project,
                                          @NotNull final Course course,
                                          @Nullable final StudyItem parentItem,
-                                         @NotNull String name,
-                                         int index);
+                                         @NotNull NewStudyItemInfo info);
 }

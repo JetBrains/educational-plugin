@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.jetbrains.edu.android.AndroidCourseBuilder.Type.*
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -34,7 +35,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override fun createInitialLesson(project: Project, course: Course): Lesson? = null
 
-  override fun initNewTask(lesson: Lesson, task: Task) {
+  override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     // TODO: show dialog and ask package name
     val itemName = if (lesson is FrameworkLesson) lesson.name else task.name
     val packageName = "com.edu.${FileUtil.sanitizeFileName(itemName)}"

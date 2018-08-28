@@ -14,8 +14,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import javax.swing.Icon
 
-abstract class CCCreateLessonBase<Item : Lesson>(itemName: String, icon: Icon) :
-  CCCreateStudyItemActionBase<Item>(itemName, icon) {
+abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: Icon) :
+  CCCreateStudyItemActionBase<Item>(itemType, icon) {
 
   override fun addItem(course: Course, item: Item) {
     val itemContainer = item.container
