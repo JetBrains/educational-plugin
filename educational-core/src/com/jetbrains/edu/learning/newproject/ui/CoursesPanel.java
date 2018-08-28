@@ -107,7 +107,7 @@ public class CoursesPanel extends JPanel {
         addLoginListener(this::updateCoursesList);
         StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
       }
-      else if (myErrorState == ErrorState.CheckiOLoginRequired.INSTANCE) {
+      else if (myErrorState instanceof ErrorState.CheckiOLoginRequired) {
         addCheckiOLoginListener((CheckiOCourse) myCoursesList.getSelectedValue());}
       else if (myErrorState == ErrorState.HyperskillLoginRequired.INSTANCE) {
         addHyperskillLoginListener();
