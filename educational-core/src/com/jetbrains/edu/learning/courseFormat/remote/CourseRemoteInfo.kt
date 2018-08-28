@@ -5,6 +5,8 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Tag
 import javax.swing.JPanel
 
+interface RemoteInfo
+
 interface CourseRemoteInfo {
 
   fun getTags(): List<Tag> = listOf()

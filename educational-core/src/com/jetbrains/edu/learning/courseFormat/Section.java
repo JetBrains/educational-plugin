@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 
 public class Section extends ItemContainer {
+  @NotNull RemoteInfo myRemoteInfo = new RemoteInfo() {};
+
   public List<Integer> units;
   @SerializedName("course")
   private int courseId;
@@ -22,8 +25,6 @@ public class Section extends ItemContainer {
   private String name;
 
   private int position;
-  @Expose
-  private int id;
   @Expose
   @SerializedName("update_date")
   private Date myUpdateDate = new Date(0);
@@ -45,14 +46,6 @@ public class Section extends ItemContainer {
         lesson.init(course, this, isRestarted);
       }
     }
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
   }
 
   public void setCourseId(int courseId) {
@@ -110,5 +103,14 @@ public class Section extends ItemContainer {
   @Override
   public StudyItem getParent() {
     return myCourse;
+  }
+
+  @NotNull
+  public RemoteInfo getRemoteInfo() {
+    return myRemoteInfo;
+  }
+
+  public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
+    myRemoteInfo = remoteInfo;
   }
 }

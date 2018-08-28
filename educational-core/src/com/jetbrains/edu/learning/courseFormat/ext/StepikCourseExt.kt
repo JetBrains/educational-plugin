@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikSectionRemoteInfo
 import java.util.*
 
 val StepikCourse.isAdaptive: Boolean get() = (remoteInfo as? StepikCourseRemoteInfo)?.isAdaptive ?: false
@@ -18,7 +19,16 @@ val StepikCourse.id: Int get() = (remoteInfo as? StepikCourseRemoteInfo)?.id ?: 
 var StepikCourse.updateDate: Date get() = (remoteInfo as? StepikCourseRemoteInfo)?.updateDate ?: Date(0)
   set(date) {
     (remoteInfo as? StepikCourseRemoteInfo)?.updateDate = date
-}
+  }
+
+var Section.id: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.id ?: 0
+  set(id) {
+    if (remoteInfo !is StepikSectionRemoteInfo) {
+      remoteInfo = StepikSectionRemoteInfo()
+    }
+    (remoteInfo as? StepikSectionRemoteInfo)?.id = id
+  }
+
 
 val StudyItem.id: Int get() = (this as? StepikCourse)?.id ?: (this as? Section)?.id ?: (this as? Lesson)?.id ?: (this as? Task)?.id ?: 0
 
