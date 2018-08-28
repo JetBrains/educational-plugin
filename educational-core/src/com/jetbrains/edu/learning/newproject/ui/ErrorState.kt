@@ -12,8 +12,8 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
-import com.jetbrains.edu.learning.courseFormat.ext.isCompatible
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.isAdaptive
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.isCompatible
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.stepik.StepikNames
 import java.awt.Color

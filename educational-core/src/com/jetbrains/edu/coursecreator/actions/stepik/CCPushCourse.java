@@ -23,13 +23,15 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -108,7 +110,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void pushInOldWay(@NotNull ProgressIndicator indicator, Project project, Course course) {
-    if (updateCourseInfo(project, (RemoteCourse)course)) {
+    if (updateCourseInfo(project, (StepikCourse)course)) {
       updateCourseContent(indicator, course, project);
       StepikUtils.setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
       try {
@@ -118,7 +120,7 @@ public class CCPushCourse extends DumbAwareAction {
         LOG.warn(e1);
       }
 
-      StepikUpdateDateExt.setUpdated((RemoteCourse)course);
+      StepikUpdateDateExt.setUpdated((StepikCourse)course);
       showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId()));
     }
   }
@@ -145,8 +147,8 @@ public class CCPushCourse extends DumbAwareAction {
 
     int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
     for (Section section : course.getSections()) {
-      section.setPosition(position++);
-      if (StepikCourseExt.getId(section) > 0) {
+      StepikSectionExt.setPosition(section, position++);
+      if (StepikSectionExt.getId(section) > 0) {
         updateSection(project, section);
       }
       else {

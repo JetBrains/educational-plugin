@@ -8,7 +8,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 
 
 class UpdateAdditionalMaterials: DumbAwareAction("Update Additional Materials") {

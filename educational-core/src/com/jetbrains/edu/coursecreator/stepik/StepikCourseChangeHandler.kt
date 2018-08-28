@@ -1,9 +1,9 @@
 package com.jetbrains.edu.coursecreator.stepik
 
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*
-import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 
 object StepikCourseChangeHandler {
   @JvmStatic

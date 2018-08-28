@@ -6,17 +6,18 @@ import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduSettings.isLoggedIn
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
-import com.jetbrains.edu.learning.courseFormat.ext.id
-import com.jetbrains.edu.learning.courseFormat.ext.isCompatible
-import com.jetbrains.edu.learning.courseFormat.ext.updateDate
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.StepikConnector.fillItems
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.StepikUtils.isLoggedIn
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.isCompatible
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 
@@ -58,7 +59,7 @@ fun Section.isUpToDate(sectionFromStepik: Section?): Boolean {
   if (sectionFromStepik == null) {
     return false
   }
-  if (id == 0 || !isLoggedIn() || sectionFromStepik.updateDate == null || updateDate == null) {
+  if (id == 0 || !isLoggedIn()) {
     return true
   }
 
