@@ -4,12 +4,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.actions.StudyItemType;
 import com.jetbrains.edu.coursecreator.actions.CCCreateStudyItemActionBase;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
 
   public CCCreateSection() {
-    super(EduNames.SECTION, EducationalCoreIcons.Section);
+    super(StudyItemType.SECTION, EducationalCoreIcons.Section);
   }
 
   @Override
@@ -81,11 +82,12 @@ public class CCCreateSection extends CCCreateStudyItemActionBase<Section> {
   }
 
   @Override
-  public Section createAndInitItem(@NotNull Project project, @NotNull Course course, @Nullable StudyItem parentItem, @NotNull String name, int index) {
+  public Section createAndInitItem(@NotNull Project project, @NotNull Course course,
+                                   @Nullable StudyItem parentItem, @NotNull NewStudyItemInfo info) {
     final Section section = new Section();
     section.setCourse(course);
-    section.setName(name);
-    section.setIndex(index);
+    section.setName(info.getName());
+    section.setIndex(info.getIndex());
     return section;
   }
 }

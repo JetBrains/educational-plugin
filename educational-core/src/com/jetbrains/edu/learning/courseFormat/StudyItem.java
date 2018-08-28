@@ -5,6 +5,18 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Base class for all items of course: section, lessons, tasks, etc.
+ *
+ * For each base type of study item ({@code Section}, {@code Lesson}, etc.)
+ * there is the corresponding element in {@code StudyItemType} enum.
+ *
+ * @see Section
+ * @see Lesson
+ * @see FrameworkLesson
+ * @see com.jetbrains.edu.learning.courseFormat.tasks.Task
+ * @see com.jetbrains.edu.coursecreator.actions.StudyItemType
+ */
 public abstract class StudyItem {
   // from 1 to number of items
   private int myIndex = -1;

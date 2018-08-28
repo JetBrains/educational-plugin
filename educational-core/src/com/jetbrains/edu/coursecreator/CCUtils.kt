@@ -310,12 +310,12 @@ object CCUtils {
 
     override fun checkInput(inputString: String): Boolean {
       if (myParentDir == null) {
-        myErrorText = "invalid parent directory"
+        myErrorText = "Invalid parent directory"
         return false
       }
       myErrorText = null
       if (!PathUtil.isValidFileName(inputString)) {
-        myErrorText = "invalid name"
+        myErrorText = "Invalid name"
         return false
       }
       if (myParentDir.findChild(inputString) != null && inputString != myName) {

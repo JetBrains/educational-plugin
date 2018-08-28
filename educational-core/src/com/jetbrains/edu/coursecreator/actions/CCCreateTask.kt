@@ -9,7 +9,6 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduConfiguratorManager
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
@@ -22,8 +21,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
-
-open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, EducationalCoreIcons.Task) {
+class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, EducationalCoreIcons.Task) {
 
   override fun addItem(course: Course, item: Task) {
     item.lesson.addTask(item)
@@ -62,17 +60,17 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
     }
   }
 
-  override fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, name: String, index: Int): Task? {
+  override fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Task? {
     if (parentItem !is Lesson) return null
-    val newTask = EduTask(name)
-    newTask.index = index
+    val newTask = EduTask(info.name)
+    newTask.index = info.index
     newTask.lesson = parentItem
     newTask.addDefaultTaskDescription()
     if (parentItem is FrameworkLesson) {
-      val prevTask = parentItem.getTaskList().getOrNull(index - 2)
+      val prevTask = parentItem.getTaskList().getOrNull(info.index - 2)
       val prevTaskDir = prevTask?.getTaskDir(project)
       if (prevTask == null || prevTaskDir == null) {
-        initTask(course, parentItem, newTask)
+        initTask(course, parentItem, newTask, info)
         return newTask
       }
       FileDocumentManager.getInstance().saveAllDocuments()
@@ -89,7 +87,7 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
       // If we insert new task between `task1` and `task2`
       // we should change target of all placeholder dependencies of `task2` from task file of `task1`
       // to the corresponding task file in new task
-      parentItem.getTaskList().getOrNull(index - 1)
+      parentItem.getTaskList().getOrNull(info.index - 1)
         ?.placeholderDependencies
         ?.forEach { dependency ->
           if (dependency.resolve(course)?.taskFile?.task == prevTask) {
@@ -98,14 +96,14 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
           }
         }
     } else {
-      initTask(course, parentItem, newTask)
+      initTask(course, parentItem, newTask, info)
     }
     return newTask
   }
 
-  private fun initTask(course: Course, lesson: Lesson, task: Task) {
+  private fun initTask(course: Course, lesson: Lesson, task: Task, info: NewStudyItemInfo) {
     if (!course.isStudy) {
-      course.configurator?.courseBuilder?.initNewTask(lesson, task)
+      course.configurator?.courseBuilder?.initNewTask(lesson, task, info)
     }
   }
 
