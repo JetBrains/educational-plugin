@@ -75,7 +75,6 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     val toolbar = ActionManager.getInstance().createButtonToolbar(ActionPlaces.UNKNOWN, DefaultActionGroup(action))
 
 
-
     val checkPanel = JPanel(BorderLayout())
     checkPanel.add(toolbar, BorderLayout.WEST)
 
@@ -85,12 +84,6 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     middlePanel.add(JPanel(), BorderLayout.CENTER)
     checkPanel.add(middlePanel, BorderLayout.CENTER)
 
-
-//    val actionsPanel = JPanel()
-//    actionsPanel.add(JBLabel("1"))
-//    actionsPanel.add(JBLabel("2"))
-//    actionsPanel.border = JBUI.Borders.empty(16 + 3, 0, 0, 0)
-//
     val commentAction = object : AnAction(AllIcons.Ide.Notifications), RightAlignedToolbarAction {
       override fun actionPerformed(e: AnActionEvent) {
 
@@ -102,9 +95,6 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
        commentAction), true)
     toolbar1.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY
     toolbar1.adjustTheSameSize(true)
-//    val component1 = ActionButton(refreshAction, refreshAction.templatePresentation.clone(), ActionPlaces.UNKNOWN, ActionToolbar.DEFAULT_MINIMUM_BUTTON_SIZE)
-    //TODO: compensate depending on OS
-//    component1.border = JBUI.Borders.empty(3, 0, 3, 0)
 
     val toolbar2 = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, DefaultActionGroup(
       refreshAction), true)
@@ -112,13 +102,9 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     toolbar2.adjustTheSameSize(true)
     val component2 = toolbar2.component
     component2.border = JBUI.Borders.empty(0, 0, 0, 0)
-//    component2.insets.set(5, 0, -5, 0)
-//    component2.minimumSize = JBUI.size(20, 20)
 
     val component1 = toolbar1.component
     component1.border = JBUI.Borders.empty(0, 0, 0, 0)
-//    component1.insets.set(5, 0, -5, 0)
-//    component1.minimumSize = JBUI.size(20, 20)
 
     val actionsPanel = JPanel(HorizontalLayout(0))
     actionsPanel.add(component1)
@@ -128,7 +114,6 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     checkPanel.add(actionsPanel, BorderLayout.EAST)
 
     checkPanel.border = JBUI.Borders.empty(16, 0, 0, 0)
-//    checkPanel.background = JBColor.RED
 
     bottomPanel.add(checkPanel, BorderLayout.CENTER)
 
