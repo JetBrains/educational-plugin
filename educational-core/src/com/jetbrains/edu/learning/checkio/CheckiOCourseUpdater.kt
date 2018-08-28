@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.checkio.notifications.infos.CheckiOStationsUnlockedNotification
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import java.io.IOException
 
 class CheckiOCourseUpdater(

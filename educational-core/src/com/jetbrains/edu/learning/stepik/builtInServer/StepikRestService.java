@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSectionRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -143,7 +144,7 @@ public class StepikRestService extends OAuthRestService {
         return log("Unrecognized the course id");
       }
       Lesson lesson = StepikConnector.getLesson(lessonId);
-      List<Integer> stepIds = lesson.steps;
+      List<Integer> stepIds = StepikLessonExt.getSteps(lesson);
 
       if (stepIds.isEmpty()) {
         return log("Unrecognized the step id");

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Section extends ItemContainer {
-  @NotNull RemoteInfo myRemoteInfo = new LocalInfo();
+  @NotNull private RemoteInfo myRemoteInfo = new LocalInfo();
 
   @Expose
   @SerializedName("title")

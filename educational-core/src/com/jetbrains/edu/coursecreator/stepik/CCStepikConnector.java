@@ -27,6 +27,10 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
@@ -35,10 +39,13 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.serialization.StepikLessonRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSectionRemoteInfoAdapter;
 import org.apache.http.HttpEntity;
@@ -209,7 +216,7 @@ public class CCStepikConnector {
     ApplicationManager.getApplication().invokeAndWait(() -> {
       List<Lesson> lessons = course.getLessons();
       for (Lesson lesson : lessons) {
-        if (lesson.getId() > 0) {
+        if (StepikLessonExt.getId(lesson) > 0) {
           continue;
         }
         CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), "Section. " + StringUtil.capitalize(lesson.getName()));
@@ -300,7 +307,7 @@ public class CCStepikConnector {
     boolean updated = updateSectionInfo(project, section);
     if (updated) {
       for (Lesson lesson : section.getLessons()) {
-        if (lesson.getId() > 0) {
+        if (StepikLessonExt.getId(lesson) > 0) {
           updateLesson(project, lesson, false, StepikSectionExt.getId(section));
         }
         else {
@@ -368,7 +375,7 @@ public class CCStepikConnector {
   public static void updateAdditionalFiles(@NotNull Course course, @NotNull final Project project, Lesson lesson) {
     final Lesson postedLesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
     if (postedLesson != null) {
-      postedLesson.setId(lesson.getId());
+      StepikLessonExt.setId(postedLesson, StepikLessonExt.getId(lesson));
       Section section = lesson.getSection();
       assert section != null;
       postedLesson.setSection(section);
@@ -380,7 +387,7 @@ public class CCStepikConnector {
       Lesson updatedLesson = updateLesson(project, postedLesson, false, section.getId());
       if (updatedLesson != null) {
         final StepikCourseRemoteInfo info = (StepikCourseRemoteInfo)course.getRemoteInfo();
-        info.setAdditionalMaterialsUpdateDate(updatedLesson.getUpdateDate());
+        info.setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(updatedLesson));
       }
     }
   }
@@ -430,6 +437,7 @@ public class CCStepikConnector {
   private static Gson getGson() {
     return new GsonBuilder().registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter()).
       registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter()).
+      registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter()).
       create();
   }
 
@@ -534,7 +542,7 @@ public class CCStepikConnector {
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
     if (!checkIfAuthorized(project, "update task")) return false;
     final Lesson lesson = task.getLesson();
-    final int lessonId = lesson.getId();
+    final int lessonId = StepikLessonExt.getId(lesson);
 
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) return false;
@@ -564,7 +572,7 @@ public class CCStepikConnector {
           return true;
         case HttpStatus.SC_NOT_FOUND:
           // TODO: support case when lesson was removed from Stepik too
-          return postTask(project, task, task.getLesson().getId());
+          return postTask(project, task, StepikLessonExt.getId(task.getLesson()));
         default:
           final String message = "Failed to update task ";
           LOG.error(message + responseString);
@@ -685,7 +693,7 @@ public class CCStepikConnector {
                                         boolean showNotification, int sectionId) {
     if (!checkIfAuthorized(project, "update lesson")) return null;
 
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + String.valueOf(lesson.getId()));
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + String.valueOf(StepikLessonExt.getId(lesson)));
 
     String requestBody = getGson().toJson(new StepikWrappers.LessonWrapper(lesson));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
@@ -715,7 +723,7 @@ public class CCStepikConnector {
       }
 
       if (!lesson.isAdditional()) {
-        updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
+        updateUnit(StepikLessonExt.getUnitId(lesson), StepikLessonExt.getId(lesson), lesson.getIndex(), sectionId, project);
       }
 
       return getGson().fromJson(responseString, StepikWrappers.LessonContainer.class).lessons.get(0);
@@ -748,7 +756,7 @@ public class CCStepikConnector {
       .filter(id -> id > 0)
       .collect(Collectors.toSet());
 
-    final List<Integer> taskIdsToDelete = remoteLesson.steps.stream()
+    final List<Integer> taskIdsToDelete = StepikLessonExt.getSteps(remoteLesson).stream()
       .filter(id -> !localTasksIds.contains(id))
       .collect(Collectors.toList());
 
@@ -763,7 +771,7 @@ public class CCStepikConnector {
         updateTask(project, task);
       }
       else {
-        postTask(project, task, localLesson.getId());
+        postTask(project, task, StepikLessonExt.getId(localLesson));
       }
     }
   }

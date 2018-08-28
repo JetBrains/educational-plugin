@@ -24,6 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -96,9 +97,10 @@ public class StepikAdaptiveConnector {
                                                                                                          StepikWrappers.LessonContainer.class);
           if (lessonContainer != null && lessonContainer.lessons.size() == 1) {
             final Lesson realLesson = lessonContainer.lessons.get(0);
-            course.getLessons().get(0).setId(Integer.parseInt(lessonId));
+            final Lesson firstLesson = course.getLessons().get(0);
+            StepikLessonExt.setId(firstLesson, Integer.parseInt(lessonId));
 
-            for (int stepId : realLesson.steps) {
+            for (int stepId : StepikLessonExt.getSteps(realLesson)) {
               StepikWrappers.StepSource step = StepikConnector.getStep(stepId);
               String stepType = step.block.name;
               StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course, realLesson.getName(), step, stepId, user.getId());
@@ -244,7 +246,7 @@ public class StepikAdaptiveConnector {
       return;
     }
 
-    final boolean reactionPosted = postRecommendationReaction(String.valueOf(lesson.getId()), String.valueOf(user.getId()), reactionToPost);
+    final boolean reactionPosted = postRecommendationReaction(String.valueOf(StepikLessonExt.getId(lesson)), String.valueOf(user.getId()), reactionToPost);
     if (!reactionPosted) {
       LOG.warn("Recommendation reaction wasn't posted");
       ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project, "Couldn't post your reactionToPost"));

@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,7 +77,7 @@ public class StepikUtils {
         if (lesson == null || !(lesson.getCourse() instanceof StepikCourse)) {
           return null;
         }
-        return String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.getId(), stepNumber);
+        return String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, StepikLessonExt.getId(lesson), stepNumber);
       }
     }
     return null;

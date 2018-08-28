@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Course extends ItemContainer {
-  @NotNull CourseRemoteInfo myRemoteInfo = new LocalCourseInfo();
+  @NotNull private CourseRemoteInfo myRemoteInfo = new LocalCourseInfo();
   transient private List<StepicUser> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;

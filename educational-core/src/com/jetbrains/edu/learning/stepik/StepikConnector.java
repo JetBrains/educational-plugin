@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
@@ -438,7 +439,7 @@ public class StepikConnector {
               final Lesson lesson = lessonsFromUnits.get(0);
               lesson.setIndex(itemIndex);
               stepikCourse.addLesson(lesson);
-              stepikRemoteInfo.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
+              stepikRemoteInfo.setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson));
             }
             else if (section.getName().equals(stepikCourse.getName())) {
               stepikCourse.addLessons(lessonsFromUnits);
@@ -557,8 +558,8 @@ public class StepikConnector {
     for (int i = 0; i < lessons.size(); i++) {
       Lesson lesson = lessons.get(i);
       Unit unit = units.get(i);
-      if (!StepikUpdateDateExt.isSignificantlyAfter(lesson.getUpdateDate(), unit.getUpdateDate())) {
-        lesson.setUpdateDate(unit.getUpdateDate());
+      if (!StepikUpdateDateExt.isSignificantlyAfter(StepikLessonExt.getUpdateDate(lesson), unit.getUpdateDate())) {
+        StepikLessonExt.setUpdateDate(lesson, unit.getUpdateDate());
       }
     }
 
@@ -574,7 +575,7 @@ public class StepikConnector {
     HashMap<Integer, Lesson> idToLesson = new HashMap<>();
     units.sort(Comparator.comparingInt(unit -> unit.section));
     for (Lesson lesson : lessons) {
-      idToLesson.put(lesson.getId(), lesson);
+      idToLesson.put(StepikLessonExt.getId(lesson), lesson);
     }
     List<Lesson> sorted = new ArrayList<>();
     for (Unit unit : units) {
@@ -594,14 +595,14 @@ public class StepikConnector {
       final int lessonCount = lessonsFromUnits.size();
       for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
         Lesson lesson = lessonsFromUnits.get(lessonIndex);
-        lesson.unitId = Integer.parseInt(unitIds[lessonIndex]);
+        StepikLessonExt.setUnitId(lesson, Integer.parseInt(unitIds[lessonIndex]));
         if (progressIndicator != null && updateIndicator) {
           final int readableIndex = lessonIndex + 1;
           progressIndicator.checkCanceled();
           progressIndicator.setText("Loading lesson " + readableIndex + " from " + lessonCount);
           progressIndicator.setFraction((double)readableIndex / lessonCount);
         }
-        String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
+        String[] stepIds = StepikLessonExt.getSteps(lesson).stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
         List<StepSource> allStepSources = getStepSources(stepIds);
 
         if (!allStepSources.isEmpty()) {
@@ -611,7 +612,7 @@ public class StepikConnector {
             lesson = new FrameworkLesson(lesson);
           }
         }
-        List<Task> tasks = getTasks(remoteCourse, stepIds, allStepSources);
+        List<Task> tasks = getTasks(stepikCourse, stepIds, allStepSources);
         lesson.taskList.addAll(tasks);
         lessons.add(lesson);
       }
@@ -670,7 +671,7 @@ public class StepikConnector {
     String[] unitsIds = getUnitsIds(stepikCourse);
     List<Lesson> lessons = getLessons(unitsIds);
     for (Lesson lesson : lessons) {
-      String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
+      String[] stepIds = StepikLessonExt.getSteps(lesson).stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
       List<StepSource> allStepSources = getStepSources(stepIds);
 
       for (StepSource stepSource : allStepSources) {
@@ -1026,7 +1027,8 @@ public class StepikConnector {
       return;
     }
     final int stepId = task.getStepId();
-    int lessonId = task.getLesson().getId();
+    final Lesson lesson = task.getLesson();
+    int lessonId = StepikLessonExt.getId(lesson);
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(
       new Backgroundable(project, "Posting Theory to Stepik", false) {
         @Override
