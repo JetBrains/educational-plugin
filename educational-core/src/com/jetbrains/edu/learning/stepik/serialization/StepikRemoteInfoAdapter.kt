@@ -4,7 +4,7 @@ import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.format.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import org.fest.util.Lists

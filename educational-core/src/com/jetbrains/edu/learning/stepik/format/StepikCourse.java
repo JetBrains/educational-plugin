@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.courseFormat;
+package com.jetbrains.edu.learning.stepik.format;
 
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.KeyedLazyInstance;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;

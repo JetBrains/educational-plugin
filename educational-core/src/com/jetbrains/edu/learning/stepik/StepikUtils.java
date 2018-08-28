@@ -23,6 +23,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.stepik.format.StepikChangeStatus;
+import com.jetbrains.edu.learning.stepik.format.StepikCourse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

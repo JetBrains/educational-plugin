@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.stepik.format.StepikCourse;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

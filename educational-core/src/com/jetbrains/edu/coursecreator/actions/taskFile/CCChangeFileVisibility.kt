@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.format.StepikChangeStatus
 
 class CCMakeVisibleToStudent : CCChangeFileVisibility("Make Visible to Student", true)
 class CCHideFromStudent : CCChangeFileVisibility("Hide from Student", false)

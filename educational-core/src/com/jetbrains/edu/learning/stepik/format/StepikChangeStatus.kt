@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.courseFormat
+package com.jetbrains.edu.learning.stepik.format
 
 /**
  * Stepik item status, that indicates whether it needs an update

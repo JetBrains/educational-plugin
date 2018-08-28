@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.stepik
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.format.StepikCourse
 import org.apache.http.Consts
 import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity

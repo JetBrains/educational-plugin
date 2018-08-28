@@ -9,7 +9,7 @@ import com.intellij.openapi.util.ActionCallback
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.format.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel
