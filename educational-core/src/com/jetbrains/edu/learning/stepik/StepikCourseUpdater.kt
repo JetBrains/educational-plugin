@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
 import java.io.IOException
 import java.net.URISyntaxException

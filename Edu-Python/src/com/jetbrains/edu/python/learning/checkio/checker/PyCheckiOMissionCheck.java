@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOE
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
 import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
@@ -36,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PyCheckiOMissionCheck implements Callable<CheckResult> {
   private final Project myProject;
-  private final Task myTask;
+  private final CheckiOMission myTask;
 
   private final BrowserWindow myBrowserWindow;
   private final CheckiOTestResultHandler myResultHandler;
@@ -44,7 +43,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
   @Nullable private CheckResult myCheckResult;
   @NotNull private final CountDownLatch myLatch = new CountDownLatch(1);
 
-  public PyCheckiOMissionCheck(@NotNull Project project, @NotNull Task task) {
+  public PyCheckiOMissionCheck(@NotNull Project project, @NotNull CheckiOMission task) {
     myProject = project;
     myTask = task;
 
@@ -73,15 +72,15 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
   }
 
   private String getCodeFromTask() throws IOException {
-    final TaskFile taskFile = ((CheckiOMission) myTask).getTaskFile();
+    final TaskFile taskFile = myTask.getTaskFile();
     final VirtualFile missionDir = myTask.getDir(myProject);
     if (missionDir == null) {
-      throw new IOException("Directory is not found for mission: " + myTask.getStepId() + ", " + myTask.getName());
+      throw new IOException("Directory is not found for mission: " + myTask.getId() + ", " + myTask.getName());
     }
 
     final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, missionDir);
     if (virtualFile == null) {
-      throw new IOException("Virtual file is not found for mission: " + myTask.getStepId() + ", " + myTask.getName());
+      throw new IOException("Virtual file is not found for mission: " + myTask.getId() + ", " + myTask.getName());
     }
 
     final Document document = ApplicationManager.getApplication().runReadAction((Computable<Document>) () ->

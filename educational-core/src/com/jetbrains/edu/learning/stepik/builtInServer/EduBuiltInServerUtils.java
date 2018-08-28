@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
+import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
@@ -51,7 +52,6 @@ import java.util.List;
 
 import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
 import static com.jetbrains.edu.learning.EduUtils.execCancelable;
-import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
 
 public class EduBuiltInServerUtils {
 
@@ -66,7 +66,7 @@ public class EduBuiltInServerUtils {
           if (stepikCourse != null && StepikCourseExt.getId(stepikCourse) == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
               requestFocus(project);
-              navigateToStep(project, (StepikCourse)course, stepId);
+              StepikUtils.navigateToStep(project, (StepikCourse)course, stepId);
             });
             return true;
           }

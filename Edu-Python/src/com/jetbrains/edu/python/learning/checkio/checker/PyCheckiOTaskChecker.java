@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
 import com.jetbrains.edu.learning.checkio.CheckiOCourseUpdater;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
@@ -60,7 +61,8 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
   @NotNull
   @Override
   public CheckResult check(@NotNull ProgressIndicator indicator) {
-    final PyCheckiOMissionCheck missionCheck = new PyCheckiOMissionCheck(project, task);
+    assert task instanceof CheckiOMission;
+    final PyCheckiOMissionCheck missionCheck = new PyCheckiOMissionCheck(project, (CheckiOMission)task);
 
     try {
       final CheckResult checkResult =

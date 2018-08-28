@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class CheckiOMission extends EduTask {
+  private int myId;
   @NotNull
   @Transient
   private CheckiOStation myStation;
@@ -80,12 +81,12 @@ public class CheckiOMission extends EduTask {
     if (o == null || getClass() != o.getClass()) return false;
 
     CheckiOMission other = (CheckiOMission)o;
-    return getStepId() == other.getStepId();
+    return getId() == other.getId();
   }
 
   @Override
   public int hashCode() {
-    return getStepId();
+    return getId();
   }
 
   @Override
@@ -98,4 +99,14 @@ public class CheckiOMission extends EduTask {
            ", secondsPast=" + getSecondsFromLastChangeOnServer() +
            '}';
   }
+
+  public void setId(int id) {
+    myId = id;
+  }
+
+
+  public int getId() {
+    return myId;
+  }
+
 }

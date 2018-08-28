@@ -40,6 +40,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikSectionRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -831,7 +832,7 @@ public class StepikConnector {
               .addParameter("order", "desc")
               .addParameter("page", "1")
               .addParameter("status", isSolved ? "correct" : "wrong")
-              .addParameter("step", String.valueOf(task.getStepId())).build();
+              .addParameter("step", String.valueOf(StepikTaskExt.getStepId(task))).build();
       Submission[] submissions = getFromStepik(url.toString(), SubmissionsWrapper.class).submissions;
       Language language = task.getLesson().getCourse().getLanguageById();
       String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
@@ -900,12 +901,12 @@ public class StepikConnector {
   }
 
   public static void postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {
-    if (task.getStepId() <= 0) {
+    if (StepikTaskExt.getStepId(task) <= 0) {
       return;
     }
 
     try {
-      final String response = postAttempt(task.getStepId());
+      final String response = postAttempt(StepikTaskExt.getStepId(task));
       if (response.isEmpty()) return;
       final Gson gson = new GsonBuilder().addDeserializationExclusionStrategy(ourExclusionStrategy).create();
       final AttemptWrapper.Attempt attempt = gson.fromJson(response, AttemptContainer.class).attempts.get(0);
@@ -1085,7 +1086,7 @@ public class StepikConnector {
     if (!EduSettings.isLoggedIn()) {
       return;
     }
-    final int stepId = task.getStepId();
+    final int stepId = StepikTaskExt.getStepId(task);
     final Lesson lesson = task.getLesson();
     int lessonId = StepikLessonExt.getId(lesson);
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(

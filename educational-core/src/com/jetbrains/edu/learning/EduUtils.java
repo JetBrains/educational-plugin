@@ -43,7 +43,6 @@ import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
@@ -96,8 +95,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
-import static com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask;
 
 public class EduUtils {
 
@@ -691,30 +688,6 @@ public class EduUtils {
       }
     }
     return activeVirtualFile;
-  }
-
-  public static void navigateToStep(@NotNull Project project, @NotNull StepikCourse course, int stepId) {
-    if (stepId == 0) {
-      return;
-    }
-    Task task = getTask(course, stepId);
-    if (task != null) {
-      navigateToTask(project, task);
-    }
-  }
-
-  @Nullable
-  private static Task getTask(@NotNull Course course, int stepId) {
-    Ref<Task> taskRef = new Ref<>();
-    course.visitLessons((lesson) -> {
-      Task task = lesson.getTask(stepId);
-      if (task != null) {
-        taskRef.set(task);
-        return false;
-      }
-      return true;
-    });
-    return null;
   }
 
   @Nullable

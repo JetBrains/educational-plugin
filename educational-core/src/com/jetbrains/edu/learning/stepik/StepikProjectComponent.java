@@ -81,7 +81,7 @@ public class StepikProjectComponent implements ProjectComponent {
   private void selectStep(@NotNull StepikCourse course) {
     int stepId = PropertiesComponent.getInstance().getInt(STEP_ID, 0);
     if (stepId != 0) {
-      navigateToStep(myProject, course, stepId);
+      StepikUtils.navigateToStep(myProject, course, stepId);
     }
   }
 

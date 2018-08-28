@@ -3,6 +3,7 @@
 package com.jetbrains.edu.learning.stepik.courseFormat.ext
 
 import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo
 import java.util.*
 
@@ -31,3 +32,12 @@ var Lesson.updateDate: Date get() = (remoteInfo as? StepikLessonRemoteInfo)?.upd
   }
 
 val Lesson.steps: List<Int> get() = (remoteInfo as? StepikLessonRemoteInfo)?.steps ?: listOf()
+
+fun Lesson.getTask(id: Int): Task? {
+  for (task in taskList) {
+    if (task.stepId == id) {
+      return task
+    }
+  }
+  return null
+}

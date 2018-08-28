@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
@@ -129,7 +130,7 @@ public class StepikSolutionsLoader implements Disposable {
             countDownLatch.countDown();
           }
         });
-        myFutures.put(task.getStepId(), future);
+        myFutures.put(StepikTaskExt.getStepId(task), future);
       }
       else {
         countDownLatch.countDown();
@@ -141,7 +142,7 @@ public class StepikSolutionsLoader implements Disposable {
         EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(myProject);
         if (selectedEduEditor != null) {
           selectedEduEditor.showLoadingPanel();
-          enableEditorWhenFutureDone(myFutures.get(mySelectedTask.getStepId()));
+          enableEditorWhenFutureDone(myFutures.get(StepikTaskExt.getStepId(mySelectedTask)));
         }
       }
     });
@@ -191,7 +192,7 @@ public class StepikSolutionsLoader implements Disposable {
     Stream<Lesson> allLessons = Stream.concat(lessonsFromSection, course.getLessons().stream());
     Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
-    String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
+    String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(StepikTaskExt.getStepId(task))).toArray(String[]::new);
     Boolean[] taskStatuses = taskStatuses(progresses);
     if (taskStatuses == null) return tasksToUpdate;
     for (int j = 0; j < allTasks.length; j++) {
@@ -199,7 +200,7 @@ public class StepikSolutionsLoader implements Disposable {
       Task task = allTasks[j];
       boolean toUpdate = false;
       if (isSolved != null && !(task instanceof TheoryTask)) {
-        toUpdate = isToUpdate(task, isSolved, task.getStatus(), task.getStepId());
+        toUpdate = isToUpdate(task, isSolved, task.getStatus(), StepikTaskExt.getStepId(task));
       }
       if (toUpdate) {
         task.setStatus(checkStatus(isSolved));
@@ -223,9 +224,10 @@ public class StepikSolutionsLoader implements Disposable {
         if (eduEditor != null && taskFile != null) {
           mySelectedTask = taskFile.getTask();
           Task task = taskFile.getTask();
-          if (myFutures.containsKey(task.getStepId())) {
+          final int stepId = StepikTaskExt.getStepId(task);
+          if (myFutures.containsKey(stepId)) {
             eduEditor.showLoadingPanel();
-            Future future = myFutures.get(task.getStepId());
+            Future future = myFutures.get(stepId);
             if (!future.isDone() || !future.isCancelled()) {
               enableEditorWhenFutureDone(future);
             }
@@ -323,7 +325,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
     String language = task.getCourse().getLanguageID();
-    StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved, language);
+    StepikWrappers.Reply reply = getLastSubmission(String.valueOf(StepikTaskExt.getStepId(task)), isSolved, language);
     if (reply == null || reply.solution == null || reply.solution.isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.solution == null) {

@@ -18,13 +18,16 @@
 package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.getTask
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.isAdaptive
 import java.util.regex.Pattern
 
@@ -61,6 +64,17 @@ object StepikUtils {
     lesson.stepikChangeStatus = status
     for (task in lesson.taskList) {
       task.stepikChangeStatus = status
+    }
+  }
+
+  @JvmStatic
+  fun navigateToStep(project: Project, course: StepikCourse, stepId: Int) {
+    if (stepId == 0 || course.isAdaptive) {
+      return
+    }
+    val task = course.getTask(stepId)
+    if (task != null) {
+      navigateToTask(project, task)
     }
   }
 }

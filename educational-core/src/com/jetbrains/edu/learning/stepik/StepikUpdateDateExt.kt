@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.isCompatible
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
 import org.jetbrains.annotations.TestOnly
 import java.util.*
@@ -74,7 +75,7 @@ fun Lesson.isUpToDate(lessonFromStepik: Lesson?): Boolean {
     return false
   }
 
-  if (id == 0 || !isLoggedIn() || lessonFromStepik.updateDate == null || updateDate == null) {
+  if (id == 0 || !isLoggedIn()) {
     return true
   }
 
@@ -89,7 +90,7 @@ fun Task.isUpToDate(tasksFromServer: Task?): Boolean {
   if (tasksFromServer == null) {
     return false
   }
-  if (id == 0 || !isLoggedIn() || tasksFromServer.updateDate == null || updateDate == null) {
+  if (id == 0 || !isLoggedIn()) {
     return true
   }
 
