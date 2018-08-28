@@ -33,7 +33,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public abstract class CheckiOMissionCheck implements Callable<CheckResult> {
+public class CheckiOMissionCheck implements Callable<CheckResult> {
   private final Project myProject;
   private final Task myTask;
 
@@ -43,11 +43,21 @@ public abstract class CheckiOMissionCheck implements Callable<CheckResult> {
   @Nullable private CheckResult myCheckResult;
   private final CountDownLatch myLatch = new CountDownLatch(1);
   private final CheckiOOAuthConnector myOAuthConnector;
+  private final String myInterpreterName;
+  private final String myTestFormTargetUrl;
 
-  protected CheckiOMissionCheck(@NotNull Project project, @NotNull Task task, @NotNull CheckiOOAuthConnector oAuthConnector) {
+  protected CheckiOMissionCheck(
+    @NotNull Task task,
+    @NotNull Project project,
+    @NotNull CheckiOOAuthConnector oAuthConnector,
+    @NotNull String interpreterName,
+    @NotNull String testFormTargetUrl
+  ) {
     myProject = project;
     myTask = task;
     myOAuthConnector = oAuthConnector;
+    myInterpreterName = interpreterName;
+    myTestFormTargetUrl = testFormTargetUrl;
 
     myResultHandler = new CheckiOTestResultHandler();
     myBrowserWindow = new BrowserWindow(myProject, false, false);
@@ -149,9 +159,6 @@ public abstract class CheckiOMissionCheck implements Callable<CheckResult> {
     });
   }
 
-  protected abstract String getInterpreter();
-  protected abstract String getTestFormTargetUrl();
-
   private void setTestFormLoadedListener(@NotNull String accessToken,
                                          @NotNull String taskId,
                                          @NotNull String code) {
@@ -165,11 +172,11 @@ public abstract class CheckiOMissionCheck implements Callable<CheckResult> {
         final org.w3c.dom.Document documentWithForm = myBrowserWindow.getEngine().getDocument();
         ((HTMLInputElement)documentWithForm.getElementById("access-token")).setValue(accessToken);
         ((HTMLInputElement)documentWithForm.getElementById("task-id")).setValue(taskId);
-        ((HTMLInputElement)documentWithForm.getElementById("interpreter")).setValue(getInterpreter());
+        ((HTMLInputElement)documentWithForm.getElementById("interpreter")).setValue(myInterpreterName);
         ((HTMLTextAreaElement)documentWithForm.getElementById("code")).setValue(code);
 
         final HTMLFormElement testForm = (HTMLFormElement) documentWithForm.getElementById("test-form");
-        testForm.setAction(getTestFormTargetUrl());
+        testForm.setAction(myTestFormTargetUrl);
         testForm.submit();
       }
     }));

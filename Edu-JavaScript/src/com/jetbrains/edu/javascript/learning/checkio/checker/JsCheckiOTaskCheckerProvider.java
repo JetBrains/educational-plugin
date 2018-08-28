@@ -1,15 +1,15 @@
 package com.jetbrains.edu.javascript.learning.checkio.checker;
 
-import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.checker.TaskChecker;
-import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import org.jetbrains.annotations.NotNull;
+import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOApiConnector;
+import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
+import com.jetbrains.edu.learning.checkio.checker.CheckiOTaskCheckerProvider;
 
-public class JsCheckiOTaskCheckerProvider implements TaskCheckerProvider {
-  @NotNull
-  @Override
-  public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project) {
-    return new JsCheckiOTaskChecker(task, project);
+public class JsCheckiOTaskCheckerProvider extends CheckiOTaskCheckerProvider {
+  public JsCheckiOTaskCheckerProvider() {
+    super(
+      JsCheckiOApiConnector.getInstance(),
+      JsCheckiONames.JS_CHECKIO_INTERPRETER,
+      JsCheckiONames.JS_CHECKIO_TEST_FORM_TARGET_URL
+    );
   }
 }

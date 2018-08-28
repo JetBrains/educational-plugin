@@ -14,6 +14,7 @@
     <configurator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOConfigurator" language="CheckiO-JavaScript"/>
     <coursesProvider implementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOCourseProvider"/>
     <optionsProvider instance="com.jetbrains.edu.javascript.learning.checkio.settings.JsCheckiOOptions"/>
+    <checkListener implementation="com.jetbrains.edu.javascript.learning.checkio.checker.JsCheckiOCheckListener"/>
   </extensions>
 
   <extensions defaultExtensionNs="educational">
