@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckListener
@@ -24,7 +25,9 @@ class TaskDescriptionCheckListener: CheckListener {
     toolWindow!!.icon.isVisible = false
     if (result.status == CheckStatus.Solved) {
       toolWindow.middlePanel.removeAll()
-      toolWindow.middlePanel.add(JBLabel("Correct"), BorderLayout.WEST)
+      val label = JBLabel("Correct")
+      label.foreground = JBColor(0x368746, 0x368746)
+      toolWindow.middlePanel.add(label, BorderLayout.WEST)
       toolWindow.middlePanel.add(JPanel(), BorderLayout.CENTER)
       UIUtil.setBackgroundRecursively(toolWindow.middlePanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
 
