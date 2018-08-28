@@ -79,7 +79,7 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     checkPanel.add(toolbar, BorderLayout.WEST)
 
 
-    val middlePanel = JPanel()
+    val middlePanel = JPanel(BorderLayout())
     middlePanel.add(icon, BorderLayout.WEST)
     middlePanel.add(JPanel(), BorderLayout.CENTER)
     checkPanel.add(middlePanel, BorderLayout.CENTER)
