@@ -2,7 +2,6 @@ package com.jetbrains.edu.python.learning.checkio.utils;
 
 import com.intellij.openapi.projectRoots.Sdk;
 import com.jetbrains.edu.python.learning.newproject.PyFakeSdkType;
-import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings;
 import com.jetbrains.python.psi.LanguageLevel;
 import com.jetbrains.python.sdk.PythonSdkType;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +16,7 @@ public final class PyCheckiOSdkValidator {
 
     final LanguageLevel languageLevel = getLanguageLevel(sdk);
     if (!languageLevel.isPy3K()) {
-      return "Python 3 or later is required to start this course";
+      return "Python 3 is required to start this course";
     }
     return null;
   }
@@ -25,9 +24,8 @@ public final class PyCheckiOSdkValidator {
   @NotNull
   private static LanguageLevel getLanguageLevel(@NotNull Sdk sdk) {
     if (sdk.getSdkType() == PyFakeSdkType.INSTANCE) {
-      // see PyLanguageSettings#Companion#createFakeSdk
-      final String pythonVersion = sdk.getName().substring(PyLanguageSettings.getVirtualEnvPrefix().length());
-      return LanguageLevel.fromPythonVersion(pythonVersion);
+      final String pythonVersion = sdk.getVersionString();
+      return pythonVersion == null ? LanguageLevel.getDefault() : LanguageLevel.fromPythonVersion(pythonVersion);
     } else {
       return PythonSdkType.getLanguageLevelForSdk(sdk);
     }
