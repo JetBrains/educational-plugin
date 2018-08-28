@@ -17,15 +17,15 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,7 +65,8 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
 
-    if (lesson.getSection() != null && lesson.getSection().getId() <= 0) {
+    final Section section = lesson.getSection();
+    if (section != null && StepikCourseExt.getId(section) <= 0) {
       return;
     }
 
@@ -214,7 +215,7 @@ public class CCPushLesson extends DumbAwareAction {
         sectionId = lesson.getSection().getId();
       }
       else {
-        RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+        StepikCourse course = (StepikCourse)StudyTaskManager.getInstance(project).getCourse();
         assert  course != null;
         sectionId = CCStepikConnector.getTopLevelSectionId(project, course);
       }
@@ -227,8 +228,7 @@ public class CCPushLesson extends DumbAwareAction {
   private static int lessonPosition(@NotNull ItemContainer parent, @NotNull Lesson lesson) {
     int position = 1;
     for (StudyItem item : parent.getItems()) {
-      if ((item instanceof Lesson && ((Lesson)item).getId() == 0
-           || item instanceof Section && ((Section)item).getId() == 0)) {
+      if (StepikCourseExt.getId(item) == 0) {
         continue;
       }
 

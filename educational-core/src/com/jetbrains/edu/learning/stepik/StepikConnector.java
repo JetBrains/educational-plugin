@@ -28,12 +28,10 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -439,7 +437,7 @@ public class StepikConnector {
             }
             else if (section.getName().equals(stepikCourse.getName())) {
               stepikCourse.addLessons(lessonsFromUnits);
-              ((StepikCourseRemoteInfo)remoteInfo).setSectionIds(Collections.singletonList(section.getId()));
+              ((StepikCourseRemoteInfo)remoteInfo).setSectionIds(Collections.singletonList(StepikCourseExt.getId(section)));
             }
             else {
               section.setIndex(itemIndex);
@@ -460,8 +458,8 @@ public class StepikConnector {
         if (unitIds.length > 0) {
           final List<Lesson> lessons = getLessons(stepikCourse);
           stepikCourse.addLessons(lessons);
-          ((StepikCourseRemoteInfo)remoteInfo).setSectionIds(allSections.stream().map(s -> s.getId()).collect(Collectors.toList()));
-          lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
+          ((StepikCourseRemoteInfo)remoteInfo).setSectionIds(allSections.stream().map(s -> StepikCourseExt.getId(s)).collect(Collectors.toList()));
+          lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> stepikCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
         }
       }
     }

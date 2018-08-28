@@ -146,7 +146,7 @@ public class CCPushCourse extends DumbAwareAction {
     int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
     for (Section section : course.getSections()) {
       section.setPosition(position++);
-      if (section.getId() > 0) {
+      if (StepikCourseExt.getId(section) > 0) {
         updateSection(project, section);
       }
       else {

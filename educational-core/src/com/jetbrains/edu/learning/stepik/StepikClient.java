@@ -11,11 +11,9 @@ import com.intellij.util.net.ssl.ConfirmingTrustManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
+import com.jetbrains.edu.learning.stepik.serialization.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -100,6 +98,7 @@ public class StepikClient {
         .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
         .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter())
         .registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter())
+        .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter())
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   }
