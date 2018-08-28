@@ -10,9 +10,6 @@ public abstract class StudyItem {
   // from 1 to number of items
   private int myIndex = -1;
 
-  // for EduServer upload control
-  public Boolean isUploaded = false;
-
   private StepikChangeStatus myStepikChangeStatus = StepikChangeStatus.UP_TO_DATE;
 
   // Non unique lesson/task/section names can be received from stepik. In this case unique directory name is generated,
@@ -75,11 +72,4 @@ public abstract class StudyItem {
   @NotNull
   public abstract Course getCourse();
 
-  public Boolean getUploaded() {
-    return isUploaded;
-  }
-
-  public void setUploaded(Boolean uploaded) {
-    isUploaded = uploaded;
-  }
 }

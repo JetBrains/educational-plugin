@@ -31,6 +31,7 @@ fun course(
   builder.buildCourse()
   val course = builder.course
   course.language = language.id
+  course.stepikChangeStatus = StepikChangeStatus.INFO_AND_CONTENT
   return course
 }
 
@@ -60,6 +61,7 @@ abstract class LessonOwnerBuilder(val course: Course) {
   protected fun lesson(name: String? = null, isFramework: Boolean = false, buildLesson: LessonBuilder.() -> Unit) {
     val lessonBuilder = LessonBuilder(course, null, if (isFramework) FrameworkLesson() else Lesson())
     val lesson = lessonBuilder.lesson
+    lesson.stepikChangeStatus = StepikChangeStatus.INFO_AND_CONTENT
     lesson.index = nextLessonIndex
     lessonBuilder.withName(name ?: EduNames.LESSON + nextLessonIndex)
     addLesson(lesson)
@@ -90,6 +92,7 @@ class CourseBuilder : LessonOwnerBuilder(Course()) {
   fun section(name: String? = null, buildSection: SectionBuilder.() -> Unit = {}) {
     val sectionBuilder = SectionBuilder(course, Section())
     val section = sectionBuilder.section
+    section.stepikChangeStatus = StepikChangeStatus.INFO_AND_CONTENT
     section.index = course.lessons.size + 1
     val nextSectionIndex = course.items.size + 1
     sectionBuilder.withName(name ?: EduNames.SECTION + nextSectionIndex)
@@ -112,7 +115,7 @@ class SectionBuilder(course: Course, val section: Section = Section()) : LessonO
 
   fun withId(id: Int) {
     section.id = id
-    section.isUploaded = true
+    section.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
   }
 }
 
@@ -129,7 +132,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
 
   fun withId(id: Int) {
     lesson.id = id
-    lesson.isUploaded = true
+    lesson.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
   }
 
   private fun task(
@@ -141,6 +144,7 @@ class LessonBuilder(val course: Course, section: Section?, val lesson: Lesson = 
   ) {
     // we want to know task files order in tests
     task.taskFiles = LinkedHashMap()
+    task.stepikChangeStatus = StepikChangeStatus.INFO_AND_CONTENT
     val taskBuilder = TaskBuilder(lesson, task)
     taskBuilder.task.index = lesson.taskList.size + 1
     val nextTaskIndex = lesson.taskList.size + 1
@@ -187,7 +191,7 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
 
   fun withId(id: Int) {
     task.stepId = id
-    task.isUploaded = true
+    task.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
   }
 
   /**
