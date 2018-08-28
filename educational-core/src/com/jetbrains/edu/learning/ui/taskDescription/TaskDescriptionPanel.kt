@@ -32,6 +32,8 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     }
   }
 
+  val middlePanel: JPanel = JPanel(BorderLayout())
+
   init {
     val defaultBackground = EditorColorsManager.getInstance().globalScheme.defaultBackground
     icon.isVisible = false
@@ -79,9 +81,7 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     checkPanel.add(toolbar, BorderLayout.WEST)
 
 
-    val middlePanel = JPanel(BorderLayout())
-    middlePanel.add(icon, BorderLayout.WEST)
-    middlePanel.add(JPanel(), BorderLayout.CENTER)
+    setDefaultStateForMiddlePanel()
     checkPanel.add(middlePanel, BorderLayout.CENTER)
 
     val commentAction = object : AnAction(AllIcons.Ide.Notifications), RightAlignedToolbarAction {
@@ -123,6 +123,13 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     UIUtil.setBackgroundRecursively(panel, defaultBackground)
 
     setContent(panel)
+  }
+
+  fun setDefaultStateForMiddlePanel() {
+    middlePanel.removeAll()
+    middlePanel.add(icon, BorderLayout.WEST)
+    middlePanel.add(JPanel(), BorderLayout.CENTER)
+    UIUtil.setBackgroundRecursively(middlePanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
   }
 
   companion object {
