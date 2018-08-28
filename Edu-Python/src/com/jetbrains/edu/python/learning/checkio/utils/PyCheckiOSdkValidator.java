@@ -16,7 +16,7 @@ public final class PyCheckiOSdkValidator {
 
     final LanguageLevel languageLevel = getLanguageLevel(sdk);
     if (!languageLevel.isPy3K()) {
-      return "Python 3 is required to start this course";
+      return "The course supports only Python 3";
     }
     return null;
   }
