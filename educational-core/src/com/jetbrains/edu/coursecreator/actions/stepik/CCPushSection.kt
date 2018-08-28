@@ -11,13 +11,14 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
-import com.jetbrains.edu.learning.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.position
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 
 class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Section on Stepik", null) {
 
@@ -71,9 +72,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
 
   companion object {
     @JvmStatic
-    fun doPush(project: Project,
-                       section: Section,
-                       course: StepikCourse) {
+    fun doPush(project: Project, section: Section, course: StepikCourse) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Uploading Section", true) {
         override fun run(indicator: ProgressIndicator) {
           indicator.text = "Uploading section to " + StepikNames.STEPIK_URL

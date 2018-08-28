@@ -87,6 +87,11 @@ class StepikRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikCo
 
 class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<Section>, JsonSerializer<Section> {
   private val ID = "id"
+  private val COURSE_ID = "course"
+  private val POSITION = "position"
+  private val UNITS = "units"
+  private val UPDATE_DATE = "update_date"
+
 
   override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): Section {
     val gson = GsonBuilder()
@@ -107,8 +112,16 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
 
     val remoteInfo = StepikSectionRemoteInfo()
     val id = jsonObject.get(ID).asInt
+    val courseId = jsonObject.get(COURSE_ID).asInt
+    val position = jsonObject.get(POSITION).asInt
+    val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
+    val units = gson.fromJson<List<Int>>(jsonObject.get(UNITS), object: TypeToken<List<Int>>(){}.type)
 
     remoteInfo.id = id
+    remoteInfo.courseId = courseId
+    remoteInfo.position = position
+    remoteInfo.updateDate = updateDate
+    remoteInfo.units = units
 
     section.remoteInfo = remoteInfo
     return section
@@ -125,7 +138,15 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
     val remoteInfo = section?.remoteInfo
 
     jsonObject.add(ID, JsonPrimitive((remoteInfo as? StepikSectionRemoteInfo)?.id ?: 0))
+    jsonObject.add(COURSE_ID, JsonPrimitive((remoteInfo as? StepikSectionRemoteInfo)?.courseId ?: 0))
+    jsonObject.add(POSITION, JsonPrimitive((remoteInfo as? StepikSectionRemoteInfo)?.position ?: 0))
+    jsonObject.add(UNITS, gson.toJsonTree((remoteInfo as? StepikSectionRemoteInfo)?.units ?: Lists.emptyList<Int>()))
 
+    val updateDate = (remoteInfo as? StepikSectionRemoteInfo)?.updateDate
+    if (updateDate != null) {
+      val date = gson.toJsonTree(updateDate)
+      jsonObject.add(UPDATE_DATE, date)
+    }
     return jsonObject
   }
 }

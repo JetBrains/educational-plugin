@@ -28,14 +28,16 @@ import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -147,7 +149,7 @@ public class EduBuiltInServerUtils {
       Course course = studyTaskManager.getCourse();
 
       if (course instanceof StepikCourse) {
-        return StepikCourseExt.getId(course);
+        return StepikStudyItemExt.getId(course);
       }
     }
     catch (IllegalStateException | XmlSerializationException ignored) {

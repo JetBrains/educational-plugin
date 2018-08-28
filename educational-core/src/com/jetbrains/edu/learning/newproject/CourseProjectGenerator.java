@@ -44,11 +44,11 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
-import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import org.jdom.Element;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -202,6 +202,7 @@ public abstract class CourseProjectGenerator<S> {
 
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
     StepikUser user = EduSettings.getInstance().getUser();
+    assert myCourse instanceof StepikCourse;
     final int id = StepikCourseExt.getId(myCourse);
     final boolean isCompatible = myCourse instanceof StepikCourse && StepikCourseExt.isCompatible((StepikCourse)myCourse);
     StepikCourse courseFromStepik = StepikConnector.getCourseInfo(user, id, isCompatible);
