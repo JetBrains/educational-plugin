@@ -7,7 +7,6 @@ import com.intellij.openapi.ui.MessageType.WARNING
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
-import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
@@ -31,7 +30,7 @@ sealed class ErrorState(
   object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
   abstract class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
-  object CheckiOLoginRequired : LoginRequired(CheckiONames.CHECKIO)
+  class CheckiOLoginRequired(platformName: String) : LoginRequired(platformName)
   object HyperskillLoginRequired : LoginRequired("Hyperskill")
   object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
@@ -50,7 +49,7 @@ sealed class ErrorState(
         course.compatibility !== CourseCompatibility.COMPATIBLE -> IncompatibleVersion
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
         course.courseType == CourseraNames.COURSE_TYPE -> None
-        isCheckiOLoginRequired(course) -> CheckiOLoginRequired
+        isCheckiOLoginRequired(course) -> CheckiOLoginRequired(course.name)
         course is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
         !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
