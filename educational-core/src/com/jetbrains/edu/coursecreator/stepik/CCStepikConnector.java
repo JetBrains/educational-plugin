@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -377,7 +377,7 @@ public class CCStepikConnector {
 
       Lesson updatedLesson = updateLesson(project, postedLesson, false, section.getId());
       if (updatedLesson != null) {
-        final StepikRemoteInfo info = (StepikRemoteInfo)course.getRemoteInfo();
+        final StepikCourseRemoteInfo info = (StepikCourseRemoteInfo)course.getRemoteInfo();
         info.setAdditionalMaterialsUpdateDate(updatedLesson.getUpdateDate());
       }
     }
@@ -580,11 +580,11 @@ public class CCStepikConnector {
     // so we get actual info here
     StepikCourse courseInfo = getCourseInfo(String.valueOf(StepikCourseExt.getId(course)));
     final RemoteInfo remoteInfo = course.getRemoteInfo();
-    if (courseInfo != null && remoteInfo instanceof StepikRemoteInfo) {
+    if (courseInfo != null && remoteInfo instanceof StepikCourseRemoteInfo) {
       final RemoteInfo infoRemoteInfo = courseInfo.getRemoteInfo();
-      if (infoRemoteInfo instanceof StepikRemoteInfo) {
-        ((StepikRemoteInfo)remoteInfo).setPublic(((StepikRemoteInfo)infoRemoteInfo).isPublic());
-        ((StepikRemoteInfo)remoteInfo).setIdeaCompatible(((StepikRemoteInfo)infoRemoteInfo).isIdeaCompatible());
+      if (infoRemoteInfo instanceof StepikCourseRemoteInfo) {
+        ((StepikCourseRemoteInfo)remoteInfo).setPublic(((StepikCourseRemoteInfo)infoRemoteInfo).isPublic());
+        ((StepikCourseRemoteInfo)remoteInfo).setIdeaCompatible(((StepikCourseRemoteInfo)infoRemoteInfo).isIdeaCompatible());
       }
     }
     else {
@@ -631,8 +631,8 @@ public class CCStepikConnector {
     assert courseInfo != null;
 
     final RemoteInfo remoteInfo = courseInfo.getRemoteInfo();
-    assert remoteInfo instanceof StepikRemoteInfo;
-    List<Integer> sectionIds = ((StepikRemoteInfo)remoteInfo).getSectionIds();
+    assert remoteInfo instanceof StepikCourseRemoteInfo;
+    List<Integer> sectionIds = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds();
     for (Integer sectionId : sectionIds) {
       final Section section = StepikConnector.getSection(sectionId);
       if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
@@ -663,8 +663,8 @@ public class CCStepikConnector {
     assert courseInfo != null;
 
     final RemoteInfo remoteInfo = courseInfo.getRemoteInfo();
-    assert remoteInfo instanceof StepikRemoteInfo;
-    List<Integer> sectionIds = ((StepikRemoteInfo)remoteInfo).getSectionIds();
+    assert remoteInfo instanceof StepikCourseRemoteInfo;
+    List<Integer> sectionIds = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds();
     for (Integer sectionId : sectionIds) {
       final Section section = StepikConnector.getSection(sectionId);
       if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {

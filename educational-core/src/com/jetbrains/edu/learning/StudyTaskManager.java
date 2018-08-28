@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
@@ -146,7 +146,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     catch (StudyUnrecognizedFormatException e) {
       LOG.error("Failed to serialize " + serializedName);
     }
-    serializeRemoteInfo(taskManagerElement, STEPIK_REMOTE_INFO, StepikRemoteInfo.class);
+    serializeRemoteInfo(taskManagerElement, STEPIK_REMOTE_INFO, StepikCourseRemoteInfo.class);
   }
 
   private void serializeRemoteInfo(@NotNull Element taskManagerElement, @NotNull String serializedName,
@@ -238,7 +238,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     if (!tryDeserializeCourse(xmlCourse, REMOTE_COURSE, new StepikCourse())) {
       tryDeserializeCourse(xmlCourse, CHECKIO_COURSE, new CheckiOCourse());
     }
-    tryDeserializeRemoteInfo(taskManagerElement, STEPIK_REMOTE_INFO, new StepikRemoteInfo());
+    tryDeserializeRemoteInfo(taskManagerElement, STEPIK_REMOTE_INFO, new StepikCourseRemoteInfo());
   }
 
   private <T extends Course> boolean tryDeserializeCourse(@NotNull Element xmlCourse, @NotNull String serializedName, @NotNull T courseBean) {

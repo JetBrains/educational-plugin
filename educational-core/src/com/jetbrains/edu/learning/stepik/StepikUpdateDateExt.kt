@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.ext.isCompatible
 import com.jetbrains.edu.learning.courseFormat.ext.updateDate
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.StepikConnector.fillItems
@@ -122,7 +122,7 @@ fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
 
 private fun StepikCourse.isAdditionalMaterialsUpToDate(courseFromStepik: StepikCourse): Boolean {
   val additionalLesson = courseFromStepik.getLessons(true).singleOrNull { it.isAdditional } ?: return true
-  return !additionalLesson.updateDate.isSignificantlyAfter((courseFromStepik.remoteInfo as StepikRemoteInfo).additionalMaterialsUpdateDate)
+  return !additionalLesson.updateDate.isSignificantlyAfter((courseFromStepik.remoteInfo as StepikCourseRemoteInfo).additionalMaterialsUpdateDate)
 }
 
 private fun StepikCourse.hasNewOrRemovedSections(courseFromStepik: StepikCourse): Boolean {

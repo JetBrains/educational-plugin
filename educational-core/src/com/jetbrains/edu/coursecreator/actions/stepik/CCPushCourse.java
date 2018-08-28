@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
@@ -136,9 +136,9 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void updateCourseContent(@NotNull ProgressIndicator indicator, Course course, Project project) {
-    if (!((RemoteCourse)course).getSectionIds().isEmpty() && course.getLessons().isEmpty()) {
-      deleteSection(((RemoteCourse)course).getSectionIds().get(0));
-      ((RemoteCourse)course).setSectionIds(Collections.emptyList());
+    if (!((StepikCourse)course).getSectionIds().isEmpty() && course.getLessons().isEmpty()) {
+      deleteSection(((StepikCourse)course).getSectionIds().get(0));
+      ((StepikCourse)course).setSectionIds(Collections.emptyList());
     }
 
     int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);

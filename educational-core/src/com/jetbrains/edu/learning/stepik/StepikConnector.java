@@ -30,10 +30,9 @@ import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -316,7 +315,7 @@ public class StepikConnector {
         course.setDescription("This is a Stepik Adaptive course.\n\n" + course.getDescription() + ADAPTIVE_NOTE);
       }
       final RemoteInfo remoteInfo = course.getRemoteInfo();
-      if (remoteInfo instanceof StepikRemoteInfo && ((StepikRemoteInfo)remoteInfo).isPublic()
+      if (remoteInfo instanceof StepikCourseRemoteInfo && ((StepikCourseRemoteInfo)remoteInfo).isPublic()
           && !featuredCourses.contains(StepikCourseExt.getId(course))) {
         course.setDescription(course.getDescription() + NOT_VERIFIED_NOTE);
       }
@@ -328,8 +327,8 @@ public class StepikConnector {
   private static void setCourseAuthors(@NotNull final StepikCourse stepikCourse) throws IOException {
     final ArrayList<StepicUser> authors = new ArrayList<>();
     final RemoteInfo remoteInfo = stepikCourse.getRemoteInfo();
-    assert remoteInfo instanceof StepikRemoteInfo;
-    for (Integer instructor : ((StepikRemoteInfo)remoteInfo).getInstructors()) {
+    assert remoteInfo instanceof StepikCourseRemoteInfo;
+    for (Integer instructor : ((StepikCourseRemoteInfo)remoteInfo).getInstructors()) {
       final StepicUser author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
                                                            AuthorWrapper.class).users.get(0);
       authors.add(author);
@@ -339,7 +338,7 @@ public class StepikConnector {
 
   private static CourseVisibility getVisibility(@NotNull StepikCourse course, @NotNull List<Integer> featuredCourses) {
     final RemoteInfo remoteInfo = course.getRemoteInfo();
-    if (remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).isPublic()) {
+    if (remoteInfo instanceof StepikCourseRemoteInfo && !((StepikCourseRemoteInfo)remoteInfo).isPublic()) {
       return CourseVisibility.PrivateVisibility.INSTANCE;
     }
     final int courseId = StepikCourseExt.getId(course);
@@ -411,14 +410,14 @@ public class StepikConnector {
 
   public static void fillItems(@NotNull StepikCourse stepikCourse) throws IOException {
     final RemoteInfo remoteInfo = stepikCourse.getRemoteInfo();
-    assert remoteInfo instanceof StepikRemoteInfo;
+    assert remoteInfo instanceof StepikCourseRemoteInfo;
     try {
-      String[] sectionIds = ((StepikRemoteInfo)remoteInfo).getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
+      String[] sectionIds = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
       List<Section> allSections = getSections(sectionIds);
 
       final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
       if (hasVisibleSections(allSections, stepikCourse.getName())) {
-        ((StepikRemoteInfo)remoteInfo).setSectionIds(Collections.emptyList());
+        ((StepikCourseRemoteInfo)remoteInfo).setSectionIds(Collections.emptyList());
         int itemIndex = 1;
         for (Section section : allSections) {
           if (progressIndicator != null) {
@@ -434,11 +433,11 @@ public class StepikConnector {
               final Lesson lesson = lessonsFromUnits.get(0);
               lesson.setIndex(itemIndex);
               stepikCourse.addLesson(lesson);
-              ((StepikRemoteInfo)remoteInfo).setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
+              ((StepikCourseRemoteInfo)remoteInfo).setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
             }
             else if (section.getName().equals(stepikCourse.getName())) {
               stepikCourse.addLessons(lessonsFromUnits);
-              ((StepikRemoteInfo)remoteInfo).setSectionIds(Collections.singletonList(section.getId()));
+              ((StepikCourseRemoteInfo)remoteInfo).setSectionIds(Collections.singletonList(section.getId()));
             }
             else {
               section.setIndex(itemIndex);
@@ -459,7 +458,7 @@ public class StepikConnector {
         if (unitIds.length > 0) {
           final List<Lesson> lessons = getLessons(stepikCourse);
           stepikCourse.addLessons(lessons);
-          ((StepikRemoteInfo)remoteInfo).setSectionIds(allSections.stream().map(s -> s.getId()).collect(Collectors.toList()));
+          ((StepikCourseRemoteInfo)remoteInfo).setSectionIds(allSections.stream().map(s -> s.getId()).collect(Collectors.toList()));
           lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
         }
       }
@@ -509,8 +508,8 @@ public class StepikConnector {
 
   private static String[] getUnitsIds(StepikCourse stepikCourse) throws IOException, URISyntaxException {
     final RemoteInfo remoteInfo = stepikCourse.getRemoteInfo();
-    assert remoteInfo instanceof StepikRemoteInfo;
-    String[] sectionIds = ((StepikRemoteInfo)remoteInfo).getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
+    assert remoteInfo instanceof StepikCourseRemoteInfo;
+    String[] sectionIds = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
     return allSections

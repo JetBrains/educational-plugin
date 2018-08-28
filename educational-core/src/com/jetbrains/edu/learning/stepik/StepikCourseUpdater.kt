@@ -17,7 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.courseFormat.ext.id
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -81,7 +81,7 @@ class StepikCourseUpdater(val course: StepikCourse, val project: Project) {
   }
 
   private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
-    val stepikRemoteInfo = course.remoteInfo as StepikRemoteInfo
+    val stepikRemoteInfo = course.remoteInfo as StepikCourseRemoteInfo
     for (lesson in courseFromServer.items.filterIsInstance(Lesson::class.java)) {
       if (lesson.isAdditional) {
         if (!lesson.updateDate.isSignificantlyAfter(stepikRemoteInfo.additionalMaterialsUpdateDate)) {
@@ -160,7 +160,7 @@ class StepikCourseUpdater(val course: StepikCourse, val project: Project) {
     for (sectionFromServer in sectionsFromServer) {
       sectionFromServer.lessons.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
 
-      if (!course.lessons.isEmpty() && remoteInfo is StepikRemoteInfo) {
+      if (!course.lessons.isEmpty() && remoteInfo is StepikCourseRemoteInfo) {
         val isTopLevelLessonsSection = sectionFromServer.id == remoteInfo.sectionIds[0]
         if (isTopLevelLessonsSection) {
           return

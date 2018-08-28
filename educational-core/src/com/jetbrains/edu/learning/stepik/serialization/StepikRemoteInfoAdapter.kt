@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import org.fest.util.Lists
 import java.lang.reflect.Type
@@ -30,14 +30,14 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
     val jsonObject = tree.asJsonObject
     val remoteInfo = course?.remoteInfo
 
-    jsonObject.add(IS_PUBLIC, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isPublic ?: false))
-    jsonObject.add(IS_ADAPTIVE, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isAdaptive ?: false))
-    jsonObject.add(IS_IDEA_COMPATIBLE, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isIdeaCompatible ?: false))
-    jsonObject.add(ID, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.id ?: 0))
-    jsonObject.add(SECTIONS, gson.toJsonTree((remoteInfo as? StepikRemoteInfo)?.sectionIds ?: Lists.emptyList<Int>()))
-    jsonObject.add(INSTRUCTORS, gson.toJsonTree((remoteInfo as? StepikRemoteInfo)?.instructors ?: Lists.emptyList<Int>()))
+    jsonObject.add(IS_PUBLIC, JsonPrimitive((remoteInfo as? StepikCourseRemoteInfo)?.isPublic ?: false))
+    jsonObject.add(IS_ADAPTIVE, JsonPrimitive((remoteInfo as? StepikCourseRemoteInfo)?.isAdaptive ?: false))
+    jsonObject.add(IS_IDEA_COMPATIBLE, JsonPrimitive((remoteInfo as? StepikCourseRemoteInfo)?.isIdeaCompatible ?: false))
+    jsonObject.add(ID, JsonPrimitive((remoteInfo as? StepikCourseRemoteInfo)?.id ?: 0))
+    jsonObject.add(SECTIONS, gson.toJsonTree((remoteInfo as? StepikCourseRemoteInfo)?.sectionIds ?: Lists.emptyList<Int>()))
+    jsonObject.add(INSTRUCTORS, gson.toJsonTree((remoteInfo as? StepikCourseRemoteInfo)?.instructors ?: Lists.emptyList<Int>()))
 
-    val updateDate = (remoteInfo as? StepikRemoteInfo)?.updateDate
+    val updateDate = (remoteInfo as? StepikCourseRemoteInfo)?.updateDate
     if (updateDate != null) {
       val date = gson.toJsonTree(updateDate)
       jsonObject.add(UPDATE_DATE, date)
@@ -62,7 +62,7 @@ class StepikRemoteInfoAdapter : JsonDeserializer<Course>, JsonSerializer<Course>
 
   private fun deserializeRemoteInfo(json: JsonElement, course: StepikCourse, gson: Gson) {
     val jsonObject = json.asJsonObject
-    val remoteInfo = StepikRemoteInfo()
+    val remoteInfo = StepikCourseRemoteInfo()
     val isPublic = jsonObject.get(IS_PUBLIC).asBoolean
     val isAdaptive = jsonObject.get(IS_ADAPTIVE).asBoolean
     val isCompatible = jsonObject.get(IS_IDEA_COMPATIBLE).asBoolean
