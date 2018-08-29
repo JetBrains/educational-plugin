@@ -29,6 +29,6 @@ public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNe
 
   @Override
   protected boolean beforeProjectGenerated() {
-    return CheckiOCourseGenerationUtils.generateCourseFromServerUnderProgress(myContentGenerator, (CheckiOCourse) myCourse);
+    return CheckiOCourseGenerationUtils.getCourseFromServerUnderProgress(myContentGenerator, (CheckiOCourse) myCourse);
   }
 }
