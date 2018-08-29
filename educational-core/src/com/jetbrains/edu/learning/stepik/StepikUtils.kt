@@ -17,6 +17,7 @@
 
 package com.jetbrains.edu.learning.stepik
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
@@ -50,10 +51,23 @@ object StepikUtils {
     return """<div class="footer"><a href=$link>Leave a comment</a></div>"""
   }
 
+  @VisibleForTesting
   fun getLink(task: Task?, stepNumber: Int): String? {
-    val lesson = task?.lesson
-    val course = lesson?.course
-    return if (course is RemoteCourse) "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${stepNumber}" else null
+    val feedbackLink = task?.feedbackLink
+    return when (feedbackLink?.type) {
+      FeedbackLink.LinkType.NONE -> null
+      FeedbackLink.LinkType.CUSTOM -> feedbackLink.link
+      FeedbackLink.LinkType.STEPIK -> {
+        val lesson = task.lesson
+        if (lesson == null || lesson.course !is RemoteCourse) {
+          null
+        }
+        else String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.id, stepNumber)
+      }
+      else -> {
+        null
+      }
+    }
   }
 
   private fun getAdaptiveLink(task: Task?): String? {
@@ -76,19 +90,13 @@ object StepikUtils {
   }
 
   @JvmStatic
-  fun setStatusRecursively(course: Course,
-                                   status: StepikChangeStatus) {
-    for (item in course.items) {
-      item.stepikChangeStatus = status
-      if (item is Section) {
-        for (lesson in item.lessons) {
-          setLessonStatus(lesson, status)
-        }
-      }
-
-      if (item is Lesson) {
-        setLessonStatus(item, status)
-      }
+  fun setStatusRecursively(course: Course, status: StepikChangeStatus) {
+    course.visitLessons { lesson ->
+      setLessonStatus(lesson, status)
+      true
+    }
+    for (section in course.sections) {
+      section.stepikChangeStatus = status
     }
   }
 
