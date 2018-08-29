@@ -172,9 +172,11 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
             state = SerializationUtils.Xml.convertToEighthVersion(myProject, state);
           case 8:
             state = SerializationUtils.Xml.convertToNinthVersion(myProject, state);
+          case 9:
+            state = SerializationUtils.Xml.convertToTenthVersion(myProject, state);
             // uncomment for future versions
-            //case 9:
-            // state = SerializationUtils.Xml.convertToTenthVersion(myProject, state);
+            //case 10:
+            // state = SerializationUtils.Xml.convertToEleventhVersion(myProject, state);
         }
       }
       deserialize(state);

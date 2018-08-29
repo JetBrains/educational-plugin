@@ -78,6 +78,67 @@
                     </option>
                     <option name="unitId" value="0" />
                   </Lesson>
+                  <FrameworkLesson>
+                    <option name="currentTaskIndex" value="0" />
+                    <option name="customPresentableName" />
+                    <option name="id" value="0" />
+                    <option name="index" value="2" />
+                    <option name="name" value="framework lesson2" />
+                    <option name="stepikChangeStatus" value="Content changed" />
+                    <option name="updateDate" value="0" />
+                    <option name="taskList">
+                      <list>
+                        <EduTask>
+                          <option name="additionalFiles">
+                            <map>
+                              <entry key="additional_file.txt" value="some text" />
+                            </map>
+                          </option>
+                          <option name="customPresentableName" />
+                          <option name="descriptionFormat" value="HTML" />
+                          <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;/html&gt;" />
+                          <option name="feedbackLink">
+                            <FeedbackLink>
+                              <option name="link" />
+                              <option name="type" value="STEPIK" />
+                            </FeedbackLink>
+                          </option>
+                          <option name="index" value="1" />
+                          <option name="name" value="task1" />
+                          <option name="status" value="Unchecked" />
+                          <option name="stepId" value="0" />
+                          <option name="stepikChangeStatus" value="Up to date" />
+                          <option name="testsText">
+                            <map>
+                              <entry key="Tests.kt" value="import org.junit.Assert&#10;import org.junit.Test&#10;&#10;class Test {&#10;    @Test fun testSolution() {&#10;        //TODO: implement your test here&#10;        Assert.assertTrue(&quot;Tests not implemented for the task&quot;, false)&#10;    }&#10;}" />
+                            </map>
+                          </option>
+                          <option name="updateDate" value="0" />
+                          <option name="taskFiles">
+                            <map>
+                              <entry key="Task.kt">
+                                <value>
+                                  <TaskFile>
+                                    <option name="answerPlaceholders">
+                                      <list />
+                                    </option>
+                                    <option name="highlightErrors" value="false" />
+                                    <option name="text" value="// type your solution here" />
+                                    <option name="trackChanges" value="true" />
+                                    <option name="trackLengths" value="true" />
+                                    <option name="userCreated" value="false" />
+                                    <option name="visible" value="true" />
+                                    <option name="name" value="Task.kt" />
+                                  </TaskFile>
+                                </value>
+                              </entry>
+                            </map>
+                          </option>
+                        </EduTask>
+                      </list>
+                    </option>
+                    <option name="unitId" value="0" />
+                  </FrameworkLesson>
                 </list>
               </option>
             </Section>
