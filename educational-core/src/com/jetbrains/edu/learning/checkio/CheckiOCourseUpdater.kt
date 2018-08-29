@@ -110,7 +110,7 @@ class CheckiOCourseUpdater(
         RefreshTaskFileAction.resetDocument(oldDocument, newMission.taskFile)
       }
     } else {
-      newMission.taskFile.text = oldTaskFile.text
+      newMission.taskFile.setText(oldTaskFile.getText())
     }
   }
 

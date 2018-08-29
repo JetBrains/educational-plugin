@@ -111,12 +111,13 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
     val newTaskFile = TaskFile()
     newTaskFile.task = newTask
     newTaskFile.name = name
-    newTaskFile.text = try {
+    val text = try {
       EduUtils.findTaskFileInDir(this, taskDir)?.let(CCUtils::loadText) ?: ""
     } catch (e: IOException) {
       LOG.error("Can't load text for `$name` task file", e)
       ""
     }
+    newTaskFile.setText(text)
     newTaskFile.answerPlaceholders = answerPlaceholders.map { it.copyForNewTaskFile(newTaskFile) }
     return newTaskFile
   }

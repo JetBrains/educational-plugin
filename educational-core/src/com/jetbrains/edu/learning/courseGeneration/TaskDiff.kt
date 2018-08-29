@@ -131,10 +131,10 @@ private class FileChanged(
 }
 
 private class TaskFileAdded(path: String, nextTaskFile: TaskFile) :
-  TaskFileDiff(FileAdded(path, nextTaskFile.text), null, nextTaskFile)
+  TaskFileDiff(FileAdded(path, nextTaskFile.getText()), null, nextTaskFile)
 
 private class TaskFileRemoved(path: String, prevTaskFile: TaskFile) :
-  TaskFileDiff(FileRemoved(path, prevTaskFile.text), prevTaskFile, null)
+  TaskFileDiff(FileRemoved(path, prevTaskFile.getText()), prevTaskFile, null)
 
 private class TaskFileChanged(path: String, prevTaskFile: TaskFile, nextTaskFile: TaskFile) :
-  TaskFileDiff(FileChanged(path, prevTaskFile.text, nextTaskFile.text), prevTaskFile, nextTaskFile)
+  TaskFileDiff(FileChanged(path, prevTaskFile.getText(), nextTaskFile.getText()), prevTaskFile, nextTaskFile)

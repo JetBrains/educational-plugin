@@ -265,7 +265,7 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as RemoteCourse
     val changedTask = localCourse.lessons.single().taskList.single()
-    changedTask.taskFiles.values.single().text = "text"
+    changedTask.taskFiles.values.single().setText("text")
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
     checkStatus(changedTask, INFO_AND_CONTENT)

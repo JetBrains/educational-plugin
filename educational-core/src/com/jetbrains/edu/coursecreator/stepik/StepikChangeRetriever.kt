@@ -104,7 +104,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
         course.lessons
           .flatMap { it.taskList }
           .flatMap { it.taskFiles.values }
-          .forEach { it.text = EduUtils.createStudentFile(project, it.getVirtualFile(project)!!, it.task)!!.text }
+          .forEach { it.setText(EduUtils.createStudentFile(project, it.getVirtualFile(project)!!, it.task)!!.getText()) }
       }
     }
   }
@@ -188,7 +188,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     if (this === otherTaskFile) return true
 
     return name == otherTaskFile.name
-           && text == otherTaskFile.text
+           && getText() == otherTaskFile.getText()
            && answerPlaceholders.size == otherTaskFile.answerPlaceholders.size
            && answerPlaceholders.zip(otherTaskFile.answerPlaceholders).all { it.first.isEqualTo(it.second) }
   }
