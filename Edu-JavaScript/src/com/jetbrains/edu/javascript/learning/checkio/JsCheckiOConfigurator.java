@@ -1,17 +1,21 @@
 package com.jetbrains.edu.javascript.learning.checkio;
 
 import com.intellij.openapi.application.Experiments;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings;
-import com.jetbrains.edu.javascript.learning.checkio.checker.JsCheckiOTaskCheckerProvider;
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
+import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduExperimentalFeatures;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
+import com.jetbrains.edu.learning.checkio.checker.CheckiOTaskChecker;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -35,7 +39,19 @@ public class JsCheckiOConfigurator implements EduConfigurator<JsNewProjectSettin
   @NotNull
   @Override
   public TaskCheckerProvider getTaskCheckerProvider() {
-    return new JsCheckiOTaskCheckerProvider();
+    return new TaskCheckerProvider() {
+      @NotNull
+      @Override
+      public TaskChecker<EduTask> getEduTaskChecker(@NotNull EduTask task, @NotNull Project project) {
+        return new CheckiOTaskChecker(
+          task,
+          project,
+          JsCheckiOOAuthConnector.getInstance(),
+          JsCheckiONames.JS_CHECKIO_INTERPRETER,
+          JsCheckiONames.JS_CHECKIO_TEST_FORM_TARGET_URL
+        );
+      }
+    };
   }
 
   @Override
