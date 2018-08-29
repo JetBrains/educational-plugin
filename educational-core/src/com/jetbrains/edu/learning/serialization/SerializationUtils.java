@@ -52,6 +52,7 @@ public class SerializationUtils {
     public static final String CHECKIO_COURSE = "CheckiOCourse";
     public static final String SECTION = "Section";
     public static final String LESSON = "Lesson";
+    public static final String FRAMEWORK_LESSON = "FrameworkLesson";
     public static final String MAP = "map";
     public static final String KEY = "key";
     public static final String VALUE = "value";
