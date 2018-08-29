@@ -82,6 +82,7 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
 
 
     setDefaultStateForMiddlePanel()
+    middlePanel.border = JBUI.Borders.empty(0, 16, 0, 0)
     checkPanel.add(middlePanel, BorderLayout.CENTER)
 
     val commentAction = object : AnAction(AllIcons.Ide.Notifications), RightAlignedToolbarAction {

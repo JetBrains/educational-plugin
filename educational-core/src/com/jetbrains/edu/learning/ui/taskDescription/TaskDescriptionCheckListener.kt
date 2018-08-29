@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.checker.CheckListener
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -33,6 +35,8 @@ class TaskDescriptionCheckListener: CheckListener {
     } else if (result.status == CheckStatus.Failed) {
       toolWindow.middlePanel.removeAll()
       val label = JBLabel("Incorrect")
+      label.icon = AllIcons.General.BalloonError
+      label.iconTextGap = JBUI.scale(4)
       label.foreground = JBColor(0xC7222D, 0xC7222D)
       toolWindow.middlePanel.add(label, BorderLayout.WEST)
       toolWindow.middlePanel.add(JPanel(), BorderLayout.CENTER)
