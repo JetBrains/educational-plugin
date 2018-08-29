@@ -110,7 +110,7 @@ object GeneratorUtils {
       createTaskFile(taskDir, taskFileContent)
     }
     createFiles(taskDir, task.testTextMap)
-    createFiles(taskDir, task.additionalFiles.mapValues { (_, file) -> file.text })
+    createFiles(taskDir, task.additionalFiles.mapValues { (_, file) -> file.getText() })
     val course = task.course
     if (CCUtils.COURSE_MODE == course.courseMode) {
       createDescriptionFile(taskDir, task)
@@ -120,7 +120,7 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createTaskFile(taskDir: VirtualFile, taskFile: TaskFile) {
-    createChildFile(taskDir, taskFile.pathInTask, taskFile.text)
+    createChildFile(taskDir, taskFile.pathInTask, taskFile.getText())
   }
 
   @Throws(IOException::class)
@@ -161,8 +161,8 @@ object GeneratorUtils {
 
     val task = lesson.taskList.singleOrNull() ?: return emptyMap()
     val filesToCreate = HashMap(task.testsText)
-    task.getTaskFiles().mapValuesTo(filesToCreate) { entry -> entry.value.text }
-    filesToCreate.putAll(task.additionalFiles.mapValues { (_, file) -> file.text })
+    task.getTaskFiles().mapValuesTo(filesToCreate) { entry -> entry.value.getText() }
+    filesToCreate.putAll(task.additionalFiles.mapValues { (_, file) -> file.getText() })
     return filesToCreate
   }
 
@@ -268,7 +268,7 @@ object GeneratorUtils {
 
   private fun publicClassName(project: Project, taskFile: TaskFile, fileType: LanguageFileType): String {
     var fileName = "Main"
-    val file = PsiFileFactory.getInstance(project).createFileFromText(taskFile.name, fileType, taskFile.text)
+    val file = PsiFileFactory.getInstance(project).createFileFromText(taskFile.name, fileType, taskFile.getText())
     if (file is PsiClassOwner) {
       val classes = file.classes
       for (aClass in classes) {

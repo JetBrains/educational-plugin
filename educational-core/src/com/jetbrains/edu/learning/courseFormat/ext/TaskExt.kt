@@ -71,7 +71,7 @@ fun Task.getDependentTasks(): Set<Task> {
 fun Task.hasChangedFiles(project: Project): Boolean {
   for (taskFile in taskFiles.values) {
     val document = taskFile.getDocument(project) ?: continue
-    if (taskFile.text != null && document.text != taskFile.text) {
+    if (document.text != taskFile.getText()) {
       return true
     }
   }

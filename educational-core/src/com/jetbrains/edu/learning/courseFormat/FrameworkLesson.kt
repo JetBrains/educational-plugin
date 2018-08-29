@@ -85,8 +85,8 @@ class FrameworkLesson() : Lesson() {
       change = ::changeFile
     )
     diffs += calculateDiffs(
-      prevTask.additionalFiles.mapValues { (_, file) -> file.text },
-      nextTask.additionalFiles.mapValues { (_, file) -> file.text },
+      prevTask.additionalFiles.mapValues { (_, file) -> file.getText() },
+      nextTask.additionalFiles.mapValues { (_, file) -> file.getText() },
       add = ::addFile,
       remove = ::removeFile,
       change = ::changeFile

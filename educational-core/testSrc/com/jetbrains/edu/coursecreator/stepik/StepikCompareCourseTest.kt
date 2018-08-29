@@ -263,7 +263,7 @@ class StepikCompareCourseTest : EduTestCase() {
 
     val courseFromServer = localCourse.copy() as RemoteCourse
     val changedTask = localCourse.lessons.single().taskList.single()
-    changedTask.taskFiles.values.single().text = "text"
+    changedTask.taskFiles.values.single().setText("text")
 
     val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
     checkChangedItems(courseFromServer, expectedInfo)

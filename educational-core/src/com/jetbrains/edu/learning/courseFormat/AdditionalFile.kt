@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.courseFormat
 class AdditionalFile() : StudyFile() {
 
   constructor(text: String, isVisible: Boolean) : this() {
-    this.text = text
+    this.setText(text)
     this.isVisible = isVisible
   }
 }

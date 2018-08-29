@@ -99,7 +99,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
 
     val fileName = "lesson" + lessonIndex + "/" + task.name + "/" + taskFilePath
     val file = myFixture.findFileInTempDir(fileName)
-    taskFile.text = VfsUtilCore.loadText(file)
+    taskFile.setText(VfsUtilCore.loadText(file))
 
     FileEditorManager.getInstance(myFixture.project).openFile(file, true)
     val document = FileDocumentManager.getInstance().getDocument(file)

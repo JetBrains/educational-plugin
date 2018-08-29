@@ -52,7 +52,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
         TASK_FILE -> {
           val taskFile = TaskFile()
           taskFile.name = fileInfo.path
-          taskFile.text = text
+          taskFile.setText(text)
           task.addTaskFile(taskFile)
         }
         TEST_FILE -> task.addTestsTexts(fileInfo.path, text)

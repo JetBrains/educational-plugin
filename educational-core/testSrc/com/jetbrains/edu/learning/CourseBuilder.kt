@@ -300,7 +300,7 @@ class TaskFileBuilder(val task: Task) {
   }
 
   fun withText(text: String) {
-    taskFile.text = text
+    taskFile.setText(text)
   }
 
   fun withPlaceholders(placeholders: List<AnswerPlaceholder>) {

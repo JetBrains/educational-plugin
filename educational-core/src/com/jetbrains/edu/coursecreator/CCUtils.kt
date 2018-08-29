@@ -196,7 +196,7 @@ object CCUtils {
     addToTask(baseDir, file, ThrowableConsumer { path ->
       val utilTaskFile = TaskFile()
       utilTaskFile.name = path
-      utilTaskFile.text = loadText(file)
+      utilTaskFile.setText(loadText(file))
       task.addTaskFile(utilTaskFile)
     })
   }
