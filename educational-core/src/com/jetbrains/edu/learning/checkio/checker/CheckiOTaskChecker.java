@@ -26,7 +26,7 @@ public class CheckiOTaskChecker extends TaskChecker<EduTask> {
 
   private final CheckiOMissionCheck myMissionCheck;
 
-  protected CheckiOTaskChecker(
+  public CheckiOTaskChecker(
     @NotNull EduTask task,
     @NotNull Project project,
     @NotNull CheckiOOAuthConnector oAuthConnector,
