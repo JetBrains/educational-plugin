@@ -30,7 +30,13 @@ class TaskDescriptionCheckListener: CheckListener {
       toolWindow.middlePanel.add(label, BorderLayout.WEST)
       toolWindow.middlePanel.add(JPanel(), BorderLayout.CENTER)
       UIUtil.setBackgroundRecursively(toolWindow.middlePanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
-
+    } else if (result.status == CheckStatus.Failed) {
+      toolWindow.middlePanel.removeAll()
+      val label = JBLabel("Incorrect")
+      label.foreground = JBColor(0xC7222D, 0xC7222D)
+      toolWindow.middlePanel.add(label, BorderLayout.WEST)
+      toolWindow.middlePanel.add(JPanel(), BorderLayout.CENTER)
+      UIUtil.setBackgroundRecursively(toolWindow.middlePanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
     }
   }
 }
