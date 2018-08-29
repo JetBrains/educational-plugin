@@ -206,23 +206,27 @@ public class CCStepikConnector {
     });
   }
 
+  /**
+   * This method should be used for courses with sections only
+   */
   private static int postSections(@NotNull Project project, @NotNull RemoteCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     course.sortItems();
-    final List<StudyItem> items = course.getItems();
+    final List<Section> sections = course.getSections();
+    assert course.getLessons().isEmpty() : "postSections method should be used for courses with sections only";
     int i = 1;
-    for (StudyItem item : items) {
+    for (Section item : sections) {
       Section section = new Section();
       section.setPosition(i++);
       section.setName(item.getName());
-      List<Lesson> lessons = ((Section)item).getLessons();
+      List<Lesson> lessons = item.getLessons();
 
       final int sectionId = postSectionInfo(project, section, course.getId());
-      ((Section)item).setId(sectionId);
+      item.setId(sectionId);
 
       postLessons(project, indicator, course, sectionId, lessons);
     }
-    return items.size();
+    return sections.size();
   }
 
   private static void postTopLevelLessons(@NotNull Project project, @NotNull RemoteCourse course) {
