@@ -11,7 +11,7 @@ import java.util.List;
 public final class CheckiOCourseGenerationUtils {
   private static final Logger LOG = Logger.getInstance(CheckiOCourseGenerationUtils.class);
 
-  public static boolean generateCourseFromServerUnderProgress(
+  public static boolean getCourseFromServerUnderProgress(
     @NotNull CheckiOCourseContentGenerator contentGenerator,
     @NotNull CheckiOCourse course
   ) {
