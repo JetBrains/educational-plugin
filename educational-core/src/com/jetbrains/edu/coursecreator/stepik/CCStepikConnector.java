@@ -14,6 +14,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -787,7 +788,7 @@ public class CCStepikConnector {
                                              @NotNull NotificationType notificationType, @NotNull String failedActionName) {
     String text = "Log in to Stepik to " + failedActionName;
     Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, notificationType);
-    notification.addAction(new AnAction("Log in") {
+    notification.addAction(new DumbAwareAction("Log in") {
 
       @Override
       public void actionPerformed(AnActionEvent e) {
