@@ -8,7 +8,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
@@ -148,15 +147,6 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     return new String[]{SHORTCUT};
   }
 
-  private static PerformInBackgroundOption getBackgroundOption(Task task) {
-    if (task instanceof TheoryTask) {
-      return PerformInBackgroundOption.ALWAYS_BACKGROUND;
-    }
-    else {
-      return PerformInBackgroundOption.DEAF;
-    }
-  }
-
   private class StudyCheckTask extends com.intellij.openapi.progress.Task.Backgroundable {
     private final Project myProject;
     private final Task myTask;
@@ -164,7 +154,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     private CheckResult myResult;
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
-      super(project, "Checking Task", true, getBackgroundOption(task));
+      super(project, "Checking Task", true);
       myProject = project;
       myTask = task;
       EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(task.getLesson().getCourse().getLanguageById());
