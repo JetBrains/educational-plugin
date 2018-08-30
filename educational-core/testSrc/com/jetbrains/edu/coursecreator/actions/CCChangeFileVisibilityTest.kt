@@ -14,9 +14,12 @@ import com.jetbrains.edu.coursecreator.actions.taskFile.CCHideFromStudent
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCMakeVisibleToStudent
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.StudyFile
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
 

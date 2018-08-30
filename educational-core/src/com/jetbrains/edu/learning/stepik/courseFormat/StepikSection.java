@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.courseFormat;
 
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
 public class StepikSection extends Section {

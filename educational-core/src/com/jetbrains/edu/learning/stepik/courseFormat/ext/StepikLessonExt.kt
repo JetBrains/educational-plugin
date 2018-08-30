@@ -4,7 +4,7 @@ package com.jetbrains.edu.learning.stepik.courseFormat.ext
 
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
 import java.util.*
 
 var Lesson.unitId: Int get() = (remoteInfo as? StepikLessonRemoteInfo)?.unitId ?: 0

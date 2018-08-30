@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.courseFormat;
+package com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo;
 
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduNames;
@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import org.fest.util.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

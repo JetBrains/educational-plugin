@@ -2,9 +2,9 @@ package com.jetbrains.edu.java
 
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import junit.framework.TestCase
 import java.util.*
 
@@ -548,8 +548,8 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
   private fun setTopLevelSection(course: StepikCourse) {
     if (!course.lessons.isEmpty()) {
-      // it's a hack.Originally we need to put here and id of remote section for top-level lesson
-      course.sectionIds = Collections.singletonList(1)
+      // it's a hack.Originally we need to put here an id of remote section for top-level lesson
+      course.stepikRemoteInfo.sectionIds = Collections.singletonList(1)
     }
   }
 

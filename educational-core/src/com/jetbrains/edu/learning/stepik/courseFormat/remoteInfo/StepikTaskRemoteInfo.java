@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.courseFormat;
+package com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo;
 
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 

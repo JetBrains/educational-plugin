@@ -7,8 +7,10 @@ import com.intellij.util.KeyedLazyInstance;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -22,6 +24,10 @@ public class StepikCourse extends Course {
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
+
+  public StepikCourse() {
+    setRemoteInfo(new StepikCourseRemoteInfo());
+  }
 
   public String getType() {
     return myType;
@@ -113,5 +119,12 @@ public class StepikCourse extends Course {
       LOG.info("Wrong version format", e);
       return CourseCompatibility.UNSUPPORTED;
     }
+  }
+
+  @NotNull
+  public StepikCourseRemoteInfo getStepikRemoteInfo() {
+    final CourseRemoteInfo remoteInfo = super.getRemoteInfo();
+    assert remoteInfo instanceof StepikCourseRemoteInfo;
+    return (StepikCourseRemoteInfo)remoteInfo;
   }
 }

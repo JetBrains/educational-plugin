@@ -36,6 +36,7 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
@@ -248,20 +249,21 @@ public class CCStepikConnector {
   private static void postTopLevelLessons(@NotNull Project project, @NotNull StepikCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     final int sectionId = postSectionForTopLevelLessons(project, course);
-    course.setSectionIds(Collections.singletonList(sectionId));
+    StepikCourseRemoteInfo remoteInfo = course.getStepikRemoteInfo();
+    remoteInfo.setSectionIds(Collections.singletonList(sectionId));
     postLessons(project, indicator, course, sectionId, course.getLessons());
   }
 
-  public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull RemoteCourse course) {
+  public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull StepikCourse course) {
     Section section = new Section();
     section.setName(course.getName());
-    section.setPosition(1);
-    return postSectionInfo(project, section, course.getId());
+    StepikSectionExt.setPosition(section, 1);
+    return postSectionInfo(project, section, StepikCourseExt.getId(course));
   }
 
   public static int findTopLevelLessonsSection(@NotNull Project project, @Nullable Lesson topLevelLesson) {
     if (topLevelLesson != null) {
-      StepikWrappers.Unit unit = StepikConnector.getUnit(topLevelLesson.unitId);
+      StepikWrappers.Unit unit = StepikConnector.getUnit(StepikLessonExt.getUnitId(topLevelLesson));
       return unit.getSection();
     }
     else {
@@ -270,12 +272,13 @@ public class CCStepikConnector {
       StepikCourse courseInfo = StepikConnector
         .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
       if (courseInfo != null) {
-        String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
+        StepikCourseRemoteInfo remoteInfo = courseInfo.getStepikRemoteInfo();
+        String[] sectionIds = remoteInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
         try {
-          List<Section> sections = StepikConnector.getSections(sectionIds);
+          List<StepikSection> sections = StepikConnector.getSections(sectionIds);
           for (Section section : sections) {
             if (section.getName().equals(courseInfo.getName())) {
-              return section.getId();
+              return StepikSectionExt.getId(section);
             }
           }
         }
@@ -348,7 +351,7 @@ public class CCStepikConnector {
   }
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
-    if (!EduSettings.isLoggedIn()) {
+    if (!StepikUtils.isLoggedIn()) {
       showStepikNotification(project, NotificationType.ERROR, failedActionName);
       return false;
     }
@@ -382,7 +385,7 @@ public class CCStepikConnector {
         indicator.setText2("Publishing additional files");
       }
 
-      Lesson updatedLesson = updateLesson(project, postedLesson, false, section.getId());
+      Lesson updatedLesson = updateLesson(project, postedLesson, false, StepikSectionExt.getId(section));
       if (updatedLesson != null) {
         final StepikCourseRemoteInfo info = (StepikCourseRemoteInfo)course.getRemoteInfo();
         info.setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(updatedLesson));
@@ -433,7 +436,8 @@ public class CCStepikConnector {
 
   @NotNull
   private static Gson getGson() {
-    return new GsonBuilder().registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter()).
+    return new GsonBuilder().
+      registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter()).
       registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter()).
       registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter()).
       registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter()).
@@ -839,17 +843,18 @@ public class CCStepikConnector {
     if (postedLesson == null) {
       return -1;
     }
-    lesson.setId(postedLesson.getId());
-    lesson.unitId = postedLesson.unitId;
+    int postedLessonId = StepikLessonExt.getId(postedLesson);
+    StepikLessonExt.setId(lesson, postedLessonId);
+    StepikLessonExt.setUnitId(lesson, StepikLessonExt.getUnitId(postedLesson));
     for (Task task : lesson.getTaskList()) {
       final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (indicator != null) {
         indicator.checkCanceled();
       }
-      postTask(project, task, postedLesson.getId());
+      postTask(project, task, postedLessonId);
     }
 
-    return postedLesson.getId();
+    return postedLessonId;
   }
 
   public static Lesson postLessonInfo(@NotNull Project project, @NotNull Lesson lesson, int sectionId, int position) {
@@ -884,7 +889,7 @@ public class CCStepikConnector {
 
       postedLesson = getLessonFromString(responseString);
       if (postedLesson != null) {
-        postedLesson.unitId = postUnit(postedLesson.getId(), position, sectionId, project);
+        StepikLessonExt.setUnitId(postedLesson, postUnit(StepikLessonExt.getId(postedLesson), position, sectionId, project));
       }
     }
     catch (IOException e) {
@@ -999,13 +1004,13 @@ public class CCStepikConnector {
   }
 
   public static int getTopLevelSectionId(@NotNull Project project, @NotNull StepikCourse course) {
-    if (!course.getSectionIds().isEmpty()) {
-      return course.getSectionIds().get(0);
+    if (!course.getStepikRemoteInfo().getSectionIds().isEmpty()) {
+      return course.getStepikRemoteInfo().getSectionIds().get(0);
     }
     else {
       Lesson topLevelLesson = getTopLevelLesson(course);
       if (topLevelLesson == null) {
-        LOG.warn("Failed to find top-level lesson for a course: " + course.getId());
+        LOG.warn("Failed to find top-level lesson for a course: " + course.getStepikRemoteInfo().getId());
         return -1;
       }
 

@@ -119,7 +119,7 @@ public class StepikFormatTest {
     final StepikWrappers.SectionContainer sectionContainer = gson.fromJson(jsonText, StepikWrappers.SectionContainer.class);
     assertNotNull(sectionContainer);
     assertEquals(1, sectionContainer.sections.size());
-    List<Integer> unitIds = sectionContainer.sections.get(0).units;
+    List<Integer> unitIds = sectionContainer.sections.get(0).getStepikRemoteInfo().getUnits();
     assertEquals(10, unitIds.size());
   }
 

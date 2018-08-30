@@ -38,6 +38,9 @@ import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -404,6 +407,7 @@ public class StepikConnector {
       final Lesson lesson = new Lesson();
       lesson.setName(EduNames.ADAPTIVE);
       stepikCourse.addLesson(lesson);
+      lesson.setRemoteInfo(new StepikLessonRemoteInfo());
       //TODO: more specific name?
       final Task recommendation = StepikAdaptiveConnector.getNextRecommendation(project, stepikCourse);
       if (recommendation != null) {

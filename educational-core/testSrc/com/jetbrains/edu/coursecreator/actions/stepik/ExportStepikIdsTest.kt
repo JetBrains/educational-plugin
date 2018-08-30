@@ -10,6 +10,9 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.unitId
 import org.intellij.lang.annotations.Language
 
 class ExportStepikIdsTest : EduTestCase() {
@@ -97,21 +100,23 @@ class ExportStepikIdsTest : EduTestCase() {
     return remoteCourse
   }
 
-  private fun StepikCourse.generateUniqueIds() {
-    id = 1
+}
+
+fun StepikCourse.generateUniqueIds() {
+  stepikRemoteInfo.id = 1
+  if (!sections.isEmpty())
     sections[0].id = 2
-    visitLessons { lesson ->
-      val section = lesson.section
-      val sectionId = section?.id ?: 1
-      if (section == null) {
-        sectionIds.add(lesson.index)
-      }
-      lesson.id = 10 * sectionId + lesson.index
-      lesson.unitId = lesson.id
-      for (task in lesson.taskList) {
-        task.stepId = 10 * lesson.id + task.index
-      }
-      true
+  visitLessons { lesson ->
+    val section = lesson.section
+    val sectionId = section?.id ?: 1
+    if (section == null) {
+      stepikRemoteInfo.sectionIds.add(lesson.index)
     }
+    lesson.id = 10 * sectionId + lesson.index
+    lesson.unitId = lesson.id
+    for (task in lesson.taskList) {
+      task.stepId = 10 * lesson.id + task.index
+    }
+    true
   }
 }

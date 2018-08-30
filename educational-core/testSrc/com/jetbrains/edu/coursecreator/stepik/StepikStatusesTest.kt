@@ -13,9 +13,14 @@ import com.jetbrains.edu.coursecreator.actions.create.CCTestCreateSection
 import com.jetbrains.edu.coursecreator.actions.delete.CCDeleteActionTest
 import com.jetbrains.edu.coursecreator.handlers.*
 import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import junit.framework.TestCase
 
 class StepikStatusesTest: EduActionTestCase() {

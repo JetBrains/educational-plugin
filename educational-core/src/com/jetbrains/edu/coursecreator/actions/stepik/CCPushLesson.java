@@ -24,10 +24,10 @@ import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
@@ -148,13 +148,13 @@ public class CCPushLesson extends DumbAwareAction {
 
       int sectionId;
       if (lesson.getSection() != null) {
-        sectionId = lesson.getSection().getId();
+        sectionId = StepikSectionExt.getId(lesson.getSection());
       }
       else {
-        sectionId = CCStepikConnector.getTopLevelSectionId(project, (StepikCourse)course);
+        sectionId = CCStepikConnector.getTopLevelSectionId(project, course);
       }
       Lesson updatedLesson = CCStepikConnector.updateLesson(project, lesson, true, sectionId);
-      int lessonId = updatedLesson == null ? -1 : updatedLesson.getId();
+      int lessonId = updatedLesson == null ? -1 : StepikLessonExt.getId(updatedLesson);
       lesson.setStepikChangeStatus(StepikChangeStatus.UP_TO_DATE);
       setUpdated(lesson);
       if (lessonId != -1) {
@@ -218,7 +218,7 @@ public class CCPushLesson extends DumbAwareAction {
       lesson.setIndex(position++);
       int sectionId;
       if (lesson.getSection() != null) {
-        sectionId = lesson.getSection().getId();
+        sectionId = StepikSectionExt.getId(lesson.getSection());
       }
       else {
         StepikCourse course = (StepikCourse)StudyTaskManager.getInstance(project).getCourse();

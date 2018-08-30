@@ -3,7 +3,7 @@
 package com.jetbrains.edu.learning.stepik.courseFormat.ext
 
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikTaskRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikTaskRemoteInfo
 import java.util.*
 
 var Task.stepId: Int get() = (remoteInfo as? StepikTaskRemoteInfo)?.stepId ?: 0

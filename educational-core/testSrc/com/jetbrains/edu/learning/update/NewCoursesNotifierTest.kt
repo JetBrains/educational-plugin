@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.stepik.update.NewCoursesNotifier
 import com.jetbrains.edu.learning.stepik.update.NewCoursesNotifierUi
 import com.jetbrains.edu.learning.stepik.update.withMockNewCoursesNotifierUi
@@ -66,7 +67,7 @@ class NewCoursesNotifierTest : EduTestCase() {
 
   private fun createCourse(courseId: Int, isNew: Boolean = true): StepikCourse = StepikCourse().apply {
     name = "Test Course $courseId"
-    id = courseId
+    stepikRemoteInfo.id = courseId
     language = PlainTextLanguage.INSTANCE.id
     updateDate = Date(System.currentTimeMillis() + if (isNew) DateFormatUtil.DAY else -DateFormatUtil.DAY)
   }

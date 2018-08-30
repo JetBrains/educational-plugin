@@ -3,7 +3,7 @@
 package com.jetbrains.edu.learning.stepik.courseFormat.ext
 
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikSectionRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
 import java.util.*
 
 var Section.id: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.id ?: 0
