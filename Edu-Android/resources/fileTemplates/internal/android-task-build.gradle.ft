@@ -3,13 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-  compileSdkVersion 27
-  buildToolsVersion '27.0.3'
+  compileSdkVersion ${COMPILE_ANDROID_SDK}
 
   defaultConfig {
     applicationId "${PACKAGE_NAME}"
-    minSdkVersion 21
-    targetSdkVersion 27
+    minSdkVersion ${MIN_ANDROID_SDK}
+    targetSdkVersion ${TARGET_ANDROID_SDK}
     versionCode 1
     versionName "1.0"
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -24,7 +23,6 @@ android {
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-  implementation 'com.android.support:appcompat-v7:27.1.1'
   testImplementation 'junit:junit:4.12'
   testImplementation 'org.robolectric:robolectric:3.8'
   androidTestImplementation 'com.android.support.test:runner:1.0.2'

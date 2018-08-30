@@ -4,10 +4,13 @@ import com.android.tools.idea.sdk.IdeSdks
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.jetbrains.edu.android.AndroidCourseBuilder.Type.*
+import com.jetbrains.edu.coursecreator.actions.StudyItemType
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -33,14 +36,31 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
                                                     "SDK_PATH" to (IdeSdks.getInstance().androidSdkPath?.absolutePath ?: ""))
   }
 
+  override fun showNewStudyItemUi(
+    project: Project,
+    model: NewStudyItemUiModel,
+    positionPanel: CCItemPositionPanel?
+  ): NewStudyItemInfo? {
+    val parentItem = model.parent
+    return if (model.itemType != StudyItemType.TASK || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
+      super.showNewStudyItemUi(project, model, positionPanel)
+    } else {
+      AndroidNewTaskDialog(project, model, positionPanel).showAndGetResult()
+    }
+  }
+
   override fun createInitialLesson(project: Project, course: Course): Lesson? = null
 
   override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
-    // TODO: show dialog and ask package name
-    val itemName = if (lesson is FrameworkLesson) lesson.name else task.name
-    val packageName = "com.edu.${FileUtil.sanitizeFileName(itemName)}"
-    val attributes = mapOf("PACKAGE_NAME" to packageName)
-
+    val packageName = info.getUserData(PACKAGE_NAME) ?: return
+    val minAndroidSdk = info.getUserData(MIN_ANDROID_SDK) ?: return
+    val compileAndroidSdk = info.getUserData(COMPILE_ANDROID_SDK) ?: return
+    val attributes = mapOf(
+      "PACKAGE_NAME" to packageName,
+      "MIN_ANDROID_SDK" to minAndroidSdk.toString(),
+      "COMPILE_ANDROID_SDK" to compileAndroidSdk.toString(),
+      "TARGET_ANDROID_SDK" to compileAndroidSdk.toString()
+    )
 
     for ((templateName, fileInfo) in defaultAndroidCourseFiles(packageName)) {
       val template = FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName)
@@ -65,6 +85,10 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
   override fun getLanguageSettings(): LanguageSettings<JdkProjectSettings> = AndroidLanguageSettings()
 
   companion object {
+
+    val PACKAGE_NAME: Key<String> = Key("PACKAGE_NAME")
+    val MIN_ANDROID_SDK: Key<Int> = Key("MIN_ANDROID_SDK")
+    val COMPILE_ANDROID_SDK: Key<Int> = Key("COMPILE_ANDROID_SDK")
 
     private val LOG: Logger = Logger.getInstance(AndroidCourseBuilder::class.java)
 
