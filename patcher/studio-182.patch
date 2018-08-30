@@ -1,0 +1,69 @@
+diff --git a/build.gradle b/build.gradle
+index cd3686a2b..5b8490736 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -121,10 +121,10 @@ allprojects {
+     }
+ 
+     intellij {
+-        if (project.hasProperty("ideaVersion")) {
+-            version ideaVersion
+-        } else if (project.hasProperty("ideaPath")) {
+-            localPath ideaPath
++        if (project.hasProperty("androidStudioPath")) {
++            localPath androidStudioPath
++        } else {
++            localPath downloadStudioIfNeededAndGetPath()
+         }
+     }
+ 
+@@ -177,10 +177,10 @@ allprojects {
+ 
+ 
+ intellij {
+-    if (project.hasProperty("ideaVersion")) {
+-        version ideaVersion
+-    } else if (project.hasProperty("ideaPath")) {
+-        localPath ideaPath
++    if (project.hasProperty("androidStudioPath")) {
++        localPath androidStudioPath
++    } else {
++        localPath downloadStudioIfNeededAndGetPath()
+     }
+     if (project.hasProperty("customSinceBuild")) {
+         patchPluginXml.sinceBuild = customSinceBuild
+@@ -278,11 +278,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
+ }
+ 
+ configure([project(':educational-core'), project(':Edu-Java')]) {
+-    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
++    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy', 'smali'
+ }
+ 
+ configure(project(':Edu-Kotlin')) {
+-    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
++    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy', 'smali'
+ 
+ 
+     task createTwitterProperties() {
+@@ -313,7 +313,7 @@ configure(project(':Edu-Python')) {
+ }
+ 
+ configure(project(':Edu-Scala')) {
+-    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
++    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy', 'smali'
+ }
+ 
+ configure(project(':Edu-Android')) {
+diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
+index 93c39393d..aae26383e 100644
+--- a/resources/META-INF/plugin.xml
++++ b/resources/META-INF/plugin.xml
+@@ -8,6 +8,7 @@
+     <!--update changes in changes.html file instead-->
+     <change-notes/>
+     <depends>com.intellij.modules.lang</depends>
++    <depends>com.intellij.modules.androidstudio</depends>
+ 
+     <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+     <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
