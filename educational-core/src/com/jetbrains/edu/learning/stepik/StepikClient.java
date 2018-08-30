@@ -96,7 +96,6 @@ public class StepikClient {
   public static Gson createGson() {
     return new GsonBuilder()
         .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter())
-        .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
         .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter())
         .registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter())
         .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter())
