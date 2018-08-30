@@ -9,11 +9,13 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateLesson
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
-import com.jetbrains.edu.coursecreator.actions.create.CCTestCreateSection
+import com.jetbrains.edu.coursecreator.actions.create.MockNewStudyItemUi
 import com.jetbrains.edu.coursecreator.actions.delete.CCDeleteActionTest
+import com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection
 import com.jetbrains.edu.coursecreator.handlers.*
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import junit.framework.TestCase
 
 class StepikStatusesTest: EduActionTestCase() {
@@ -59,7 +61,9 @@ class StepikStatusesTest: EduActionTestCase() {
     }.asRemote()
 
     val section2 = findFile("section1")
-    testAction(dataContext(section2), CCTestCreateSection("section2", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("section2", 2)) {
+      testAction(dataContext(section2), CCCreateSection())
+    }
 
     checkStatus(StudyTaskManager.getInstance(project).course!!, StepikChangeStatus.CONTENT)
     checkOtherItemsUpToDate(course, course)
@@ -104,7 +108,7 @@ class StepikStatusesTest: EduActionTestCase() {
     }.asRemote()
 
     val projectDir = EduUtils.getCourseDir(project)
-    withTestDialog(EduTestInputDialog("lesson2")) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson2")) {
       testAction(dataContext(projectDir), CCCreateLesson())
     }
 
@@ -277,9 +281,11 @@ class StepikStatusesTest: EduActionTestCase() {
       }
     }.asRemote()
 
-    Messages.setTestInputDialog { "lesson3" }
     val sectionDir = EduUtils.getCourseDir(project).findChild(course.sections[0].name)
-    testAction(dataContext(sectionDir!!), CCCreateLesson())
+
+    withMockCreateStudyItemUi(MockNewStudyItemUi("lesson3")) {
+      testAction(dataContext(sectionDir!!), CCCreateLesson())
+    }
 
     val changedSection = course.sections[0]
     checkStatus(changedSection, StepikChangeStatus.CONTENT)
@@ -344,7 +350,7 @@ class StepikStatusesTest: EduActionTestCase() {
     }.asRemote()
 
     val lessonDir = findFile("section1/lesson1")
-    withTestDialog(EduTestInputDialog("task2")) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
       testAction(dataContext(lessonDir), CCCreateTask())
     }
 

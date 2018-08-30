@@ -5,8 +5,7 @@ import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
-import com.jetbrains.edu.learning.EduTestInputDialog
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import junit.framework.TestCase
 
 class CCCreateTaskTest : EduActionTestCase() {
@@ -21,7 +20,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
     val lessonFile = findFile("lesson1")
 
-    withTestDialog(EduTestInputDialog("task2")) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
     TestCase.assertEquals(2, course.lessons[0].taskList.size)
@@ -39,7 +38,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
     val lessonFile = findFile("section1/lesson1")
 
-    withTestDialog(EduTestInputDialog("task2")) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task2")) {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
     TestCase.assertEquals(2, course.sections[0].lessons[0].taskList.size)
@@ -51,7 +50,7 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
     val lessonFile = findFile("lesson1")
 
-    withTestDialog(EduTestInputDialog("task1")) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task1")) {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
     TestCase.assertEquals(1, course.lessons[0].taskList.size)
@@ -70,7 +69,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
     val taskFile = findFile("lesson1/task1")
 
-    testAction(dataContext(taskFile), CCTestCreateTask("task01", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task01", 2)) {
+      testAction(dataContext(taskFile), CCCreateTask())
+    }
+
     val lesson = course.lessons[0]
     TestCase.assertEquals(3, lesson.taskList.size)
     TestCase.assertEquals(1, lesson.getTask("task1")!!.index)
@@ -91,7 +93,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
     val taskFile = findFile("lesson1/task2")
 
-    testAction(dataContext(taskFile), CCTestCreateTask("task01", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task01", 2)) {
+      testAction(dataContext(taskFile), CCCreateTask())
+    }
+
     val lesson = course.lessons[0]
     TestCase.assertEquals(3, lesson.taskList.size)
     TestCase.assertEquals(1, lesson.getTask("task1")!!.index)
@@ -113,7 +118,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
     val taskFile = findFile("lesson1/$customTaskName")
 
-    testAction(dataContext(taskFile), CCTestCreateTask("task01", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task01", 2)) {
+      testAction(dataContext(taskFile), CCCreateTask())
+    }
+
     val lesson = course.lessons[0]
     TestCase.assertEquals(3, lesson.taskList.size)
     TestCase.assertEquals(1, lesson.getTask("task1")!!.index)
@@ -136,7 +144,10 @@ class CCCreateTaskTest : EduActionTestCase() {
     }
     val taskFile = findFile("section1/lesson1/task1")
 
-    testAction(dataContext(taskFile), CCTestCreateTask("task01", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task01", 2)) {
+      testAction(dataContext(taskFile), CCCreateTask())
+    }
+
     val lesson = course.sections[0].lessons[0]
     TestCase.assertEquals(3, lesson.taskList.size)
     TestCase.assertEquals(1, lesson.getTask("task1")!!.index)

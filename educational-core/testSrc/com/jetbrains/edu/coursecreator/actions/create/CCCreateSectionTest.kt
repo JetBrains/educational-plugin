@@ -3,10 +3,9 @@ package com.jetbrains.edu.coursecreator.actions.create
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.TestActionEvent
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.actions.sections.CCCreateSection
-import com.jetbrains.edu.learning.EduTestInputDialog
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.learning.EduActionTestCase
+import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import junit.framework.TestCase
 
 class CCCreateSectionTest : EduActionTestCase() {
@@ -19,7 +18,7 @@ class CCCreateSectionTest : EduActionTestCase() {
         }
       }
     }
-    withTestDialog(EduTestInputDialog("section1")) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi("section1")) {
       testAction(dataContext(LightPlatformTestCase.getSourceRoot()), CCCreateSection())
     }
 
@@ -50,7 +49,9 @@ class CCCreateSectionTest : EduActionTestCase() {
       }
     }
     val lessonFile = findFile("lesson1")
-    testAction(dataContext(lessonFile), CCTestCreateSection("section2", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("section2", 2)) {
+      testAction(dataContext(lessonFile), CCCreateSection())
+    }
     TestCase.assertEquals(4, course.items.size)
     TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
     TestCase.assertEquals(2, course.getSection("section2")!!.index)
@@ -79,7 +80,9 @@ class CCCreateSectionTest : EduActionTestCase() {
       }
     }
     val lessonFile = findFile("lesson2")
-    testAction(dataContext(lessonFile), CCTestCreateSection("section2", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("section2", 2)) {
+      testAction(dataContext(lessonFile), CCCreateSection())
+    }
     TestCase.assertEquals(4, course.items.size)
     TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
     TestCase.assertEquals(2, course.getSection("section2")!!.index)
@@ -108,7 +111,9 @@ class CCCreateSectionTest : EduActionTestCase() {
       }
     }
     val sectionFile = findFile("section2")
-    testAction(dataContext(sectionFile), CCTestCreateSection("section1", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("section1", 2)) {
+      testAction(dataContext(sectionFile), CCCreateSection())
+    }
     TestCase.assertEquals(4, course.items.size)
     TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
     TestCase.assertEquals(2, course.getSection("section1")!!.index)
@@ -152,7 +157,9 @@ class CCCreateSectionTest : EduActionTestCase() {
       }
     }
     val sectionFile = findFile("section2")
-    testAction(dataContext(sectionFile), CCTestCreateSection("section1", 3))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("section1", 3)) {
+      testAction(dataContext(sectionFile), CCCreateSection())
+    }
     TestCase.assertEquals(4, course.items.size)
     TestCase.assertEquals(1, course.getLesson("lesson1")!!.index)
     TestCase.assertEquals(2, course.getSection("section2")!!.index)
