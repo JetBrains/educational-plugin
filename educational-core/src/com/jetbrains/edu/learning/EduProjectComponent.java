@@ -38,8 +38,8 @@ import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
+import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -188,7 +188,7 @@ public class EduProjectComponent implements ProjectComponent {
   }
 
   private void addStepikWidget() {
-    StepikUserWidget widget = getStepikWidget();
+    StepikUserWidget widget = getVisibleWidget(myProject);
     StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
     if (widget != null) {
       statusBar.removeWidget(StepikUserWidget.ID);

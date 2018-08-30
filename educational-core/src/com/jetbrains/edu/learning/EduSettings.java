@@ -5,12 +5,19 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
 public class EduSettings implements PersistentStateComponent<EduSettings> {
@@ -54,7 +61,10 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
   public void setUser(@Nullable final StepicUser user) {
     myUser = user;
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).settingsChanged();
-    updateStepikUserWidget();
+
+    for (StepikUserWidget widget : getStepikWidgets()) {
+      widget.update();
+    }
   }
 
   public boolean shouldUseJavaFx() {
@@ -69,13 +79,6 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
     return getInstance().myUser != null;
   }
 
-  private static void updateStepikUserWidget() {
-    StepikUserWidget widget = EduUtils.getStepikWidget();
-    if (widget != null) {
-      widget.update();
-    }
-  }
-
   public boolean isEnableTestingFromSamples() {
     return myEnableTestingFromSamples;
   }
@@ -83,6 +86,17 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
   public void setEnableTestingFromSamples(boolean enableTestingFromSamples) {
     myEnableTestingFromSamples = enableTestingFromSamples;
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).settingsChanged();
+  }
+
+  @NotNull
+  private static List<StepikUserWidget> getStepikWidgets() {
+    IdeFrame[] frames = WindowManager.getInstance().getAllProjectFrames();
+    return Arrays.stream(frames)
+      .filter(frame -> frame instanceof IdeFrameImpl)
+      .map(frame -> frame.getStatusBar().getWidget(StepikUserWidget.ID))
+      .filter(widget -> widget != null)
+      .map(widget -> (StepikUserWidget)widget)
+      .collect(Collectors.toList());
   }
 
   @FunctionalInterface
