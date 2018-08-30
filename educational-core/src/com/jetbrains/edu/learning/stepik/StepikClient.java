@@ -110,9 +110,7 @@ public class StepikClient {
   public static Gson createGson(@Nullable Map<Key, Object> params) {
     String language = StepikConnector.COURSE_LANGUAGE.get(params);
     return new GsonBuilder()
-        .registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter(language))
         .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter(language))
-        .registerTypeAdapter(Lesson.class, new StepikLessonAdapter(language))
         .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter(language))
         .registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter(language))
         .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter(language))
