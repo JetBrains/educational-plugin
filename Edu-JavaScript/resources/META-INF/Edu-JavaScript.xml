@@ -4,7 +4,7 @@
   <depends>NodeJS</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <experimentalFeature id="com.jetbrains.edu.javascript.learning.checkio" percentOfUsers="0">
+    <experimentalFeature id="edu.checkio.js" percentOfUsers="0">
       <description>Enables support for CheckiO JavaScript</description>
     </experimentalFeature>
 
