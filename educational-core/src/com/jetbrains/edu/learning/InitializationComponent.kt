@@ -8,6 +8,7 @@ import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.jbserver.CourseUpdateNotifier
 import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 import com.jetbrains.edu.learning.update.NewCoursesNotifier
 import java.util.*
@@ -15,6 +16,7 @@ import java.util.*
 class InitializationComponent : ApplicationComponent {
 
     private val newCoursesNotifier = NewCoursesNotifier(ApplicationManager.getApplication())
+    private val coursesUpdateNotifier = CourseUpdateNotifier(ApplicationManager.getApplication())
 
     override fun initComponent() {
         //Register placeholder size listener
@@ -23,6 +25,7 @@ class InitializationComponent : ApplicationComponent {
         if (isUnitTestMode) return
         if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED)) {
             newCoursesNotifier.scheduleNotification()
+            coursesUpdateNotifier.scheduleNotification()
             return
         }
 
@@ -40,6 +43,7 @@ class InitializationComponent : ApplicationComponent {
         } else {
             PropertiesComponent.getInstance().setValue(CONFLICTING_PLUGINS_DISABLED, "true")
             newCoursesNotifier.scheduleNotification()
+            coursesUpdateNotifier.scheduleNotification()
         }
     }
 
