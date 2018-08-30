@@ -517,6 +517,65 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
     doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_in_section_renamed")
   }
 
+  fun `test task removed`() {
+    val expectedFileTree = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.java",  "class Task {\n  // put your task here\n}")
+          }
+          dir("test") {
+            file("Test.java")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+
+    doTest(expectedFileTree, "testData/stepik/updateCourse/task_removed")
+  }
+
+  fun `test lesson removed`() {
+    val expectedFileTree = fileTree {
+      dir("lesson1") {
+        dir("task1") {
+          dir("src") {
+            file("Task.java",  "class Task {\n  // put your task here\n}")
+          }
+          dir("test") {
+            file("Test.java")
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+
+    doTest(expectedFileTree, "testData/stepik/updateCourse/lesson_removed")
+  }
+
+  fun `test section removed`() {
+    val expectedFileTree = fileTree {
+      dir("section1") {
+        dir("lesson1") {
+          dir("task1") {
+            dir("src") {
+              file("Task.java",  "class Task {\n  // put your task here\n}")
+            }
+            dir("test") {
+              file("Test.java")
+            }
+          }
+        }
+      }
+      file("build.gradle")
+      file("settings.gradle")
+    }
+
+    doTest(expectedFileTree, "testData/stepik/updateCourse/section_removed")
+  }
+
   private fun doTest(expectedFileTree: FileTree, testPath: String) {
     val course = createRemoteCourseFromJson("$testPath/course.json", CourseType.STUDENT)
     setTopLevelSection(course)

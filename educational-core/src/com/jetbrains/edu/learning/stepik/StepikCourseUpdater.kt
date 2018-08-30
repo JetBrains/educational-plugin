@@ -7,9 +7,11 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils.synchronize
@@ -20,10 +22,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseInfo
 import com.jetbrains.edu.learning.stepik.StepikConnector.loadCourseStructure
+import org.fest.util.VisibleForTesting
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
-import kotlin.collections.ArrayList
 
 class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   private val LOG = Logger.getInstance(this.javaClass)
@@ -36,88 +38,65 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     oldSectionDirectories.clear()
 
     val courseFromServer = courseFromServer(project, course)
-    val (updatedLessons, newLessons) = doUpdate(courseFromServer)
+    if (courseFromServer == null) {
+      LOG.warn("Course ${course.id} not found on Stepik")
+      return
+    }
+
+    doUpdate(courseFromServer)
 
     runInEdt {
       synchronize()
       ProjectView.getInstance(project).refresh()
-      showNotification(newLessons, updatedLessons)
+      showNotification()
       course.configurator?.courseBuilder?.refreshProject(project)
     }
   }
 
-  fun doUpdate(courseFromServer: Course?): Pair<Int, Int> {
-    if (courseFromServer == null) {
-      LOG.warn("Course ${course.id} not found on Stepik")
-      return Pair(0, 0)
-    }
+  @VisibleForTesting
+  fun doUpdate(courseFromServer: RemoteCourse) {
+    courseFromServer.items.withIndex().forEach { (index, item) -> item.index = index + 1 }
 
-    val sectionIds = course.sections.map { it.id }
-    val newSections = courseFromServer.sections.filter { section -> section.id !in sectionIds }
-    if (!newSections.isEmpty()) {
-      createNewSections(project, newSections)
-    }
-    val sectionsToUpdate = courseFromServer.sections.filter { section -> section.id in sectionIds }
-    updateSections(sectionsToUpdate)
+    setCourseInfo(courseFromServer)
+    updateSections(courseFromServer)
+    updateLessons(courseFromServer)
+    updateAdditionalMaterialsFiles(courseFromServer)
 
-    courseFromServer.items.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
+    course.items = Lists.newArrayList(courseFromServer.items)
+  }
 
-    //update top level lessons
+  private fun updateLessons(courseFromServer: Course) {
+    processNewLessons(courseFromServer)
+    processDeletedLessons(courseFromServer)
+    processModifiedLessons(courseFromServer.lessons.filter { course.getLesson(it.id) != null }, course)
+  }
+
+  private fun processNewLessons(courseFromServer: Course) {
     val newLessons = courseFromServer.lessons.filter { course.getLesson(it.id) == null }
     if (!newLessons.isEmpty()) {
       createNewLessons(newLessons, project.baseDir)
     }
-    val lessonsUpdated = updateLessons(courseFromServer.lessons.filter { course.getLesson(it.id) != null }, course)
-    course.items = Lists.newArrayList(courseFromServer.items)
-    setCourseInfo(courseFromServer)
-
-    updateAdditionalMaterialsFiles(courseFromServer)
-
-    return Pair(lessonsUpdated, newLessons.size)
   }
 
-  private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
-    for (lesson in courseFromServer.items.filterIsInstance(Lesson::class.java)) {
-      if (lesson.isAdditional) {
-        if (!lesson.updateDate.isSignificantlyAfter(course.additionalMaterialsUpdateDate)) {
-          return
-        }
-        course.additionalMaterialsUpdateDate = lesson.updateDate
-
-        val filesToCreate = GeneratorUtils.additionalFilesToCreate(lesson)
-        val baseDir = project.baseDir
-        for ((name, value) in filesToCreate) {
-          GeneratorUtils.createChildFile(baseDir, name, value)
+  private fun processDeletedLessons(courseFromServer: Course) {
+    val lessonsFromServerId = courseFromServer.lessons.map { it.id }
+    val lessonsToDelete = course.lessons.filter { it.id !in lessonsFromServerId }
+    if (!lessonsToDelete.isEmpty()) {
+      runInEdt {
+        runWriteAction {
+          for (lesson in lessonsToDelete) {
+            val virtualFile = lesson.getDir(project)
+            CommandProcessor.getInstance().executeCommand(project, {
+              virtualFile?.delete(CCStudyItemDeleteProvider::class.java)
+            }, "", this.javaClass)
+          }
         }
       }
     }
-  }
-
-  private fun setCourseInfo(courseFromServer: Course) {
-    course.name = courseFromServer.name
-    course.description = courseFromServer.description
-  }
-
-  private fun showNotification(newLessons: Int,
-                               updateLessonsNumber: Int) {
-    val message = buildString {
-      if (newLessons > 0) {
-        append(if (newLessons > 1) "Loaded ${newLessons} new lessons" else "Loaded one new lesson")
-        append("\n")
-      }
-
-      if (updateLessonsNumber > 0) {
-        append(if (updateLessonsNumber == 1) "Updated one lesson" else "Updated $updateLessonsNumber lessons")
-        append("\n")
-      }
-    }
-
-    val updateNotification = Notification("Update.course", "Course updated", message, NotificationType.INFORMATION)
-    updateNotification.notify(project)
   }
 
   @Throws(URISyntaxException::class, IOException::class)
-  private fun updateLessons(lessonsFromServer: List<Lesson>, parent: ItemContainer): Int {
+  private fun processModifiedLessons(lessonsFromServer: List<Lesson>, parent: ItemContainer): Int {
     var lessonsUpdated = 0
     for (lessonFromServer in lessonsFromServer) {
 
@@ -125,30 +104,74 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
       val currentLesson = parent.getLesson(lessonFromServer.id)
 
       val taskIdsToUpdate = taskIdsToUpdate(lessonFromServer, currentLesson!!)
+      val tasksToDelete = tasksToDelete(lessonFromServer, currentLesson)
 
-      val updatedTasks = ArrayList(upToDateTasks(currentLesson, taskIdsToUpdate))
+      if (!tasksToDelete.isEmpty()) {
+        runInEdt {
+          runWriteAction {
+            tasksToDelete.forEach {
+              val virtualFile = it.getTaskDir(project)
+              CommandProcessor.getInstance().executeCommand(project, {
+                virtualFile?.delete(CCStudyItemDeleteProvider::class.java)
+              }, "", this.javaClass)
+            }
+          }
+        }
+      }
 
       if (lessonContentChanged(taskIdsToUpdate)) {
         lessonsUpdated++
         val lessonDir = constructDir(lessonFromServer, currentLesson)
-        updateTasks(taskIdsToUpdate, lessonFromServer, currentLesson, updatedTasks, lessonDir)
+        updateTasks(taskIdsToUpdate, lessonFromServer, currentLesson, lessonDir)
       }
 
       if (!lessonContentChanged(taskIdsToUpdate) && renamed(lessonFromServer, currentLesson)) {
         constructDir(lessonFromServer, currentLesson)
       }
 
-      updatedTasks.sortBy { task -> task.index }
-      lessonFromServer.taskList = updatedTasks
       lessonFromServer.init(course, lessonFromServer.section, false)
     }
     return lessonsUpdated
   }
 
-  private fun lessonContentChanged(taskIdsToUpdate: List<Int>) = !taskIdsToUpdate.isEmpty()
+  private fun updateSections(courseFromServer: RemoteCourse) {
+    val sectionIds = course.sections.map { it.id }
+
+    processNewSections(courseFromServer, sectionIds)
+    processDeletedSections(courseFromServer)
+    processModifiedSections(courseFromServer, sectionIds)
+  }
+
+  private fun processNewSections(courseFromServer: Course,
+                                 sectionIds: List<Int>): List<Section> {
+    val newSections = courseFromServer.sections.filter { section -> section.id !in sectionIds }
+
+    if (!newSections.isEmpty()) {
+      createNewSections(project, newSections)
+    }
+    return newSections
+  }
+
+  private fun processDeletedSections(courseFromServer: RemoteCourse) {
+    val sectionsFromServerIds = courseFromServer.sections.map { it.id }
+    val sectionsToDelete = course.sections.filter { it.id !in sectionsFromServerIds }
+    if (!sectionsToDelete.isEmpty()) {
+      runInEdt {
+        runWriteAction {
+          for (section in sectionsToDelete) {
+            val virtualFile = section.getDir(project)
+            CommandProcessor.getInstance().executeCommand(project, {
+              virtualFile?.delete(CCStudyItemDeleteProvider::class.java)
+            }, "", this.javaClass)
+          }
+        }
+      }
+    }
+  }
 
   @Throws(URISyntaxException::class, IOException::class)
-  private fun updateSections(sectionsFromServer: List<Section>) {
+  private fun processModifiedSections(courseFromServer: RemoteCourse, sectionIds: List<Int>) {
+    val sectionsFromServer = courseFromServer.sections.filter { section -> section.id in sectionIds }
     val sectionsById = course.sections.associateBy { it.id }
     for (sectionFromServer in sectionsFromServer) {
       sectionFromServer.lessons.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
@@ -174,15 +197,43 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
       }
 
       val lessonsToUpdate = sectionFromServer.lessons.filter { it.id in currentLessons }
-      updateLessons(lessonsToUpdate, currentSection)
+      processModifiedLessons(lessonsToUpdate, currentSection)
       sectionFromServer.init(course, course, false)
     }
   }
 
+  private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
+    for (lesson in courseFromServer.items.filterIsInstance(Lesson::class.java)) {
+      if (lesson.isAdditional) {
+        if (!lesson.updateDate.isSignificantlyAfter(course.additionalMaterialsUpdateDate)) {
+          return
+        }
+        course.additionalMaterialsUpdateDate = lesson.updateDate
+
+        val filesToCreate = GeneratorUtils.additionalFilesToCreate(lesson)
+        val baseDir = project.baseDir
+        for ((name, value) in filesToCreate) {
+          GeneratorUtils.createChildFile(baseDir, name, value)
+        }
+      }
+    }
+  }
+
+  private fun setCourseInfo(courseFromServer: Course) {
+    course.name = courseFromServer.name
+    course.description = courseFromServer.description
+  }
+
+  private fun showNotification() {
+    val updateNotification = Notification("Update.course", "Course updated", "", NotificationType.INFORMATION)
+    updateNotification.notify(project)
+  }
+
+  private fun lessonContentChanged(taskIdsToUpdate: List<Int>) = !taskIdsToUpdate.isEmpty()
+
   private fun updateTasks(taskIdsToUpdate: List<Int>,
                           lessonFromServer: Lesson,
                           currentLesson: Lesson,
-                          updatedTasks: ArrayList<Task>,
                           lessonDir: VirtualFile?) {
     val serverTasksById = lessonFromServer.taskList.associateBy({ it.stepId }, { it })
     val tasksById = currentLesson.taskList.associateBy { it.stepId }
@@ -192,7 +243,6 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
       if (tasksById.containsKey(taskId)) {
         val currentTask = tasksById[taskId]
         if ((isSolved(currentTask!!) && !isTheory(currentTask)) && course.isStudy) {
-          updatedTasks.add(currentTask)
           currentTask.index = taskIndex
           currentTask.descriptionText = taskFromServer.descriptionText
           continue
@@ -202,17 +252,11 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
 
       taskFromServer.init(course, currentLesson, false)
 
-
       createTaskDirectories(lessonDir!!, taskFromServer)
-      updatedTasks.add(taskFromServer)
     }
   }
 
   private fun isTheory(currentTask: Task) = currentTask.taskType == TheoryTask().taskType
-
-  private fun upToDateTasks(currentLesson: Lesson,
-                            taskIdsToUpdate: List<Int>) =
-    currentLesson.taskList.filter { task -> !taskIdsToUpdate.contains(task.stepId) }
 
   @Throws(IOException::class)
   private fun removeExistingDir(studentTask: Task,
@@ -253,6 +297,11 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
       .map { (_, taskId) -> Integer.parseInt(taskId) }
   }
 
+  private fun tasksToDelete(lessonFromServer: Lesson, currentLesson: Lesson): List<Task> {
+    val tasksFromServerIds = lessonFromServer.getTaskList().map { task -> task.stepId }
+
+    return currentLesson.taskList.filter { it.stepId !in tasksFromServerIds }
+  }
 
   private fun createNewLessons(newLessons: List<Lesson>, parentDir: VirtualFile) {
     for (lesson in newLessons) {
