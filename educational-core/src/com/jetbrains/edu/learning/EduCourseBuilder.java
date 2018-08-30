@@ -10,8 +10,8 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel;
-import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialog;
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
+import com.jetbrains.edu.coursecreator.ui.NewStudyItemUiUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
@@ -44,9 +44,9 @@ public interface EduCourseBuilder<Settings> {
    */
   @Nullable
   default NewStudyItemInfo showNewStudyItemUi(@NotNull Project project,
-                                                     @NotNull NewStudyItemUiModel model,
-                                                     @Nullable CCItemPositionPanel positionPanel) {
-    return new CCCreateStudyItemDialog(project, model, positionPanel).showAndGetResult();
+                                              @NotNull NewStudyItemUiModel model,
+                                              @Nullable CCItemPositionPanel positionPanel) {
+    return NewStudyItemUiUtils.showNewStudyItemDialog(project, model, positionPanel);
   }
 
   /**

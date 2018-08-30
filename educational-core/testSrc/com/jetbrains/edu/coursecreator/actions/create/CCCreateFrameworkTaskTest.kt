@@ -4,11 +4,10 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
-import com.jetbrains.edu.learning.EduTestInputDialog
+import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.fileTree
-import com.jetbrains.edu.learning.withTestDialog
+import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import org.junit.Assert.assertArrayEquals
 
 class CCCreateFrameworkTaskTest : EduActionTestCase() {
@@ -26,7 +25,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
     val lessonFile = findFile(lessonName)
 
-    withTestDialog(EduTestInputDialog(taskName)) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi(taskName)) {
       withVirtualFileListener(course) {
         testAction(dataContext(lessonFile), CCCreateTask())
       }
@@ -61,7 +60,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     val newTaskName = "task2"
     val lessonFile = findFile(lessonName)
 
-    withTestDialog(EduTestInputDialog(newTaskName)) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
       withVirtualFileListener(course) {
         testAction(dataContext(lessonFile), CCCreateTask())
       }
@@ -122,8 +121,8 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     val task2 = course.lessons[0].getTask("task2") ?: error("Can't find `task2`")
 
     val firstTaskFile = findFile("lesson1/task1")
-    withVirtualFileListener(course) {
-      testAction(dataContext(firstTaskFile), CCTestCreateTask("task1.5", 2))
+    withMockCreateStudyItemUi(MockNewStudyItemUi("task1.5", 2)) {
+      testAction(dataContext(firstTaskFile), CCCreateTask())
     }
 
     val insertedTask = course.lessons[0].getTask("task1.5") ?: error("Can't find `task1.5`")
@@ -152,7 +151,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     val newTaskName = "task2"
     val lessonFile = findFile(lessonName)
 
-    withTestDialog(EduTestInputDialog(newTaskName)) {
+    withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
       withVirtualFileListener(course) {
         testAction(dataContext(lessonFile), CCCreateTask())
       }
@@ -190,7 +189,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     val lessonFile = findFile(lessonName)
 
     withVirtualFileListener(course) {
-      withTestDialog(EduTestInputDialog(newTaskName)) {
+      withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
         testAction(dataContext(lessonFile), CCCreateTask())
       }
     }
@@ -236,7 +235,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     val lessonFile = findFile(lessonName)
 
     withVirtualFileListener(course) {
-      withTestDialog(EduTestInputDialog(newTaskName)) {
+      withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
         testAction(dataContext(lessonFile), CCCreateTask())
       }
     }
