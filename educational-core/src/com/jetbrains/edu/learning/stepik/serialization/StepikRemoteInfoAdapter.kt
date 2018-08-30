@@ -12,7 +12,7 @@ import org.fest.util.Lists
 import java.lang.reflect.Type
 import java.util.*
 
-class StepikRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikCourse>, JsonSerializer<StepikCourse> {
+class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikCourse>, JsonSerializer<StepikCourse> {
   private val IS_PUBLIC = "is_public"
   private val IS_ADAPTIVE = "is_adaptive"
   private val IS_IDEA_COMPATIBLE = "is_idea_compatible"
