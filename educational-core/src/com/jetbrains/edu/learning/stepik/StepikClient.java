@@ -113,9 +113,6 @@ public class StepikClient {
         .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter(language))
         .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter(language))
         .registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter(language))
-        .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter(language))
-        .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter(language))
-        .registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter(language))
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   }

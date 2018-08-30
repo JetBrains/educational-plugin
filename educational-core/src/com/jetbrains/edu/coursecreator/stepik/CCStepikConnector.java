@@ -448,7 +448,7 @@ public class CCStepikConnector {
       .registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter(language))
       .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter(language))
       .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter(language))
-      .registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter(language))
+      .registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter())
       .create();
   }
 
