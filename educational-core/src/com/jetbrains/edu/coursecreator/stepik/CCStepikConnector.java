@@ -45,10 +45,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
-import com.jetbrains.edu.learning.stepik.serialization.StepikLessonRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikCourseRemoteInfoAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikSectionRemoteInfoAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikTaskRemoteInfoAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -440,15 +437,13 @@ public class CCStepikConnector {
     return -1;
   }
 
-  public static Gson getGson(Project project) {
+  @NotNull
+  private static Gson getGson(Project project) {
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final String language = course.getLanguageID();
     return new GsonBuilder()
       .registerTypeAdapter(StepikCourse.class, new StepikCourseRemoteInfoAdapter(language))
-      .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter(language))
-      .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter(language))
-      .registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter())
       .create();
   }
 
