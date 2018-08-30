@@ -18,9 +18,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import junit.framework.TestCase
 
 class StepikStatusesTest: EduActionTestCase() {
@@ -49,7 +46,7 @@ class StepikStatusesTest: EduActionTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     checkStatus(course, StepikChangeStatus.UP_TO_DATE)
   }
@@ -63,7 +60,7 @@ class StepikStatusesTest: EduActionTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val section2 = findFile("section1")
     testAction(dataContext(section2), CCTestCreateSection("section2", 2))
@@ -88,7 +85,7 @@ class StepikStatusesTest: EduActionTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val section2 = findFile("section2")
     withTestDialog(EduTestDialog()) {
@@ -108,7 +105,7 @@ class StepikStatusesTest: EduActionTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val projectDir = EduUtils.getCourseDir(project)
     withTestDialog(EduTestInputDialog("lesson2")) {
@@ -132,7 +129,7 @@ class StepikStatusesTest: EduActionTestCase() {
           taskFile("fizz.kt")
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val lesson = findFile("lesson1")
     withTestDialog(EduTestDialog()) {
@@ -149,7 +146,7 @@ class StepikStatusesTest: EduActionTestCase() {
       section {
         lesson("lesson2")
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val sourceVFile = findFile("lesson1")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -180,7 +177,7 @@ class StepikStatusesTest: EduActionTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val section = findFile("section1")
 
@@ -200,7 +197,7 @@ class StepikStatusesTest: EduActionTestCase() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section()
       section()
-    }.asRemote()
+    }.asStepikCourse()
 
     val sourceVFile = findFile("section2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -228,7 +225,7 @@ class StepikStatusesTest: EduActionTestCase() {
       section()
       section()
       section()
-    }.asRemote()
+    }.asStepikCourse()
 
     val sourceVFile = findFile("section6")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -252,7 +249,7 @@ class StepikStatusesTest: EduActionTestCase() {
       section()
       section()
       section()
-    }.asRemote()
+    }.asStepikCourse()
 
     val sourceVFile = findFile("section4")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -282,7 +279,7 @@ class StepikStatusesTest: EduActionTestCase() {
           eduTask()
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     Messages.setTestInputDialog { "lesson3" }
     val sectionDir = EduUtils.getCourseDir(project).findChild(course.sections[0].name)
@@ -300,7 +297,7 @@ class StepikStatusesTest: EduActionTestCase() {
         lesson("lesson1")
         lesson("lesson2")
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val lessonToDelete = findFile("section1/lesson2")
     withTestDialog(EduTestDialog()) {
@@ -322,7 +319,7 @@ class StepikStatusesTest: EduActionTestCase() {
         lesson("lesson1")
         lesson("lesson2")
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val sourceVFile = findFile("section2/lesson2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -348,7 +345,7 @@ class StepikStatusesTest: EduActionTestCase() {
           eduTask()
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val lessonDir = findFile("section1/lesson1")
     withTestDialog(EduTestInputDialog("task2")) {
@@ -368,7 +365,7 @@ class StepikStatusesTest: EduActionTestCase() {
           eduTask()
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val lessonDir = findFile("section1/lesson1/task1")
     val testDialog = CCDeleteActionTest.TestDeleteDialog()
@@ -392,7 +389,7 @@ class StepikStatusesTest: EduActionTestCase() {
         eduTask("task1")
         eduTask("task3")
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val sourceVFile = findFile("lesson2/task3")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)
@@ -417,7 +414,7 @@ class StepikStatusesTest: EduActionTestCase() {
         eduTask("task2")
         eduTask("task3")
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val sourceVFile = findFile("lesson1/task2")
     val sourceDir = PsiManager.getInstance(project).findDirectory(sourceVFile)

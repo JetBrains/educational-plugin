@@ -4,13 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepicUser
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.stepik.isUpToDate
 import junit.framework.TestCase
@@ -39,7 +33,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = course(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -59,7 +53,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(true, course.isUpToDate(courseFromServer))
   }
@@ -80,7 +74,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = course(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -100,7 +94,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
     courseFromServer.updateDate = Date()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
@@ -122,7 +116,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = course(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -142,7 +136,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     courseFromServer.getLessons(true).single { it.isAdditional }.updateDate = Date()
 
@@ -165,7 +159,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -192,7 +186,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
@@ -213,7 +207,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -226,7 +220,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
@@ -247,7 +241,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -267,7 +261,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
@@ -284,7 +278,7 @@ class StepikUpdateDateTest : EduTestCase() {
           taskFile("fizz.kt")
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -296,7 +290,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
@@ -313,7 +307,7 @@ class StepikUpdateDateTest : EduTestCase() {
           taskFile("fizz.kt")
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -327,7 +321,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
@@ -341,7 +335,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -355,7 +349,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     courseFromServer.sections.single().updateDate = Date()
 
@@ -369,7 +363,7 @@ class StepikUpdateDateTest : EduTestCase() {
           taskFile("fizz.kt")
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -381,7 +375,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     courseFromServer.lessons.single().updateDate = Date()
 
@@ -397,7 +391,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -411,7 +405,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     courseFromServer.sections.single().lessons.single().updateDate = Date()
 
@@ -427,7 +421,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -446,7 +440,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     courseFromServer.sections.single().updateDate = Date()
 
@@ -467,7 +461,7 @@ class StepikUpdateDateTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       section("section1") {
@@ -481,7 +475,7 @@ class StepikUpdateDateTest : EduTestCase() {
       lesson("PyCharm additional materials") {
         eduTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
@@ -493,7 +487,7 @@ class StepikUpdateDateTest : EduTestCase() {
             taskFile("fizz.kt")
           }
         }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -502,7 +496,7 @@ class StepikUpdateDateTest : EduTestCase() {
         eduTask {
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
@@ -515,14 +509,14 @@ class StepikUpdateDateTest : EduTestCase() {
         eduTask {
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     TestCase.assertEquals(false, course.isUpToDate(courseFromServer))
   }
@@ -533,14 +527,14 @@ class StepikUpdateDateTest : EduTestCase() {
         eduTask {
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val courseFromServer = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     courseFromServer.lessons.single().taskList.single().updateDate = Date()
 

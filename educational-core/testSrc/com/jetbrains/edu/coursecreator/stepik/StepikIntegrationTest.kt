@@ -310,7 +310,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
   }
 
-  private fun checkTopLevelLessons(courseFromStepik: Course?, localCourse: RemoteCourse) {
+  private fun checkTopLevelLessons(courseFromStepik: Course?, localCourse: StepikCourse) {
     assertNotNull("Uploaded courses not found among courses available to instructor", courseFromStepik)
     TestCase.assertTrue("Course with top-level lessons should have only one section, but has: ${localCourse.stepikRemoteInfo.sectionIds.size}",
                         localCourse.stepikRemoteInfo.sectionIds.size == 1)

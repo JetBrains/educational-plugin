@@ -4,8 +4,12 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.courseFormat.AdditionalFile
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
+import com.jetbrains.edu.learning.courseFormat.TaskFile
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 
 class StepikStatusesForImportedCourseTest : EduTestCase() {
   fun `test the same course`() {
@@ -21,7 +25,7 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           eduTask { }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     StepikChangeRetriever(project, localCourse).setStepikChangeStatuses()
     checkOtherItemsUpToDate(localCourse)
@@ -34,10 +38,10 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     addNewLesson("lesson2", 2, localCourse, localCourse, EduUtils.getCourseDir(project))
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
     checkStatus(localCourse, CONTENT)
@@ -50,10 +54,10 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     addNewSection("section1", 2, localCourse, EduUtils.getCourseDir(project))
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
@@ -67,10 +71,10 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     localCourse.lessons.single().name = "renamed"
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
@@ -84,10 +88,10 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     localCourse.lessons.single().index = 2
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
@@ -103,10 +107,10 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           theoryTask { }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     localCourse.sections.single().name = "renamed"
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
@@ -122,10 +126,10 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           theoryTask { }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     localCourse.sections.single().index = 2
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
@@ -138,7 +142,7 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         eduTask { }
         outputTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -146,7 +150,7 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
     checkStatus(localCourse.lessons.single(), CONTENT)
@@ -159,9 +163,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.name = "renamed"
 
@@ -176,9 +180,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.index = 2
 
@@ -193,9 +197,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.taskFiles["new.txt"] = TaskFile()
 
@@ -210,9 +214,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.descriptionText = "new text"
 
@@ -227,9 +231,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
         outputTask { }
         theoryTask { }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList[0]
     changedTask.additionalFiles["file.txt"] = AdditionalFile("additional file", false)
 
@@ -244,9 +248,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           taskFile("taskFile.txt")
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().name = "renamed.txt"
 
@@ -261,9 +265,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           taskFile("taskFile.txt")
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().setText("text")
 
@@ -278,9 +282,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           taskFile("taskFile.txt")
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     changedTask.taskFiles.values.single().answerPlaceholders.add(0, AnswerPlaceholder())
 
@@ -297,9 +301,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.offset = 10
@@ -317,9 +321,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.possibleAnswer = "new answer"
@@ -337,9 +341,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.length = 1
@@ -357,9 +361,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.index = 2
@@ -377,9 +381,9 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
-    val courseFromServer = localCourse.copy() as RemoteCourse
+    val courseFromServer = localCourse.copy() as StepikCourse
     val changedTask = localCourse.lessons.single().taskList.single()
     val changedPlaceholder = changedTask.taskFiles.values.single().answerPlaceholders.single()
     changedPlaceholder.placeholderDependency = AnswerPlaceholderDependency()

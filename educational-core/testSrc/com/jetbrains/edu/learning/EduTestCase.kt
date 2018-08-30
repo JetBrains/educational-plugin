@@ -26,6 +26,9 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import java.io.IOException
 
 abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
@@ -176,9 +179,9 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     }
   }
 
-  protected fun Course.asRemote(): RemoteCourse {
-    val remoteCourse = RemoteCourse()
-    remoteCourse.id = 1
+  protected fun Course.asStepikCourse(): StepikCourse {
+    val remoteCourse = StepikCourse()
+    remoteCourse.stepikRemoteInfo.id = 1
     remoteCourse.name = name
     remoteCourse.courseMode = CCUtils.COURSE_MODE
     remoteCourse.items = Lists.newArrayList(items)

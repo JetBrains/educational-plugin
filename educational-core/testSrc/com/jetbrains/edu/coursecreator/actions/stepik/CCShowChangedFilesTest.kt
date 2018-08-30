@@ -4,6 +4,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import junit.framework.TestCase
 
 class CCShowChangedFilesTest: EduActionTestCase() {
@@ -24,7 +25,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     checkMessage(course, "No changes")
   }
@@ -45,7 +46,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val changedSection = course.getSection("section2")!!
     changedSection.stepikChangeStatus = CONTENT
@@ -60,7 +61,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
       lesson()
       lesson("lesson2")
       section()
-    }.asRemote()
+    }.asStepikCourse()
 
     course.stepikChangeStatus = CONTENT
     course.sections[0].stepikChangeStatus = INFO_AND_CONTENT
@@ -81,7 +82,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
           }
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val changedSection = course.sections[0]
     changedSection.stepikChangeStatus = INFO
@@ -98,7 +99,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
           eduTask()
         }
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val changedSection = course.sections[0]
     changedSection.stepikChangeStatus = CONTENT
@@ -115,7 +116,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
         lesson("lesson1")
         lesson("lesson2")
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     course.sections.forEach {
       it.stepikChangeStatus = CONTENT
@@ -136,7 +137,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
         eduTask("task1")
         eduTask("task3")
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     course.lessons.forEach {
       it.stepikChangeStatus = CONTENT
@@ -152,7 +153,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
         eduTask("task2")
         eduTask("task3")
       }
-    }.asRemote()
+    }.asStepikCourse()
 
     val changedTask2 = course.lessons[0].getTask("task2")!!
     changedTask2.stepikChangeStatus = INFO_AND_CONTENT
