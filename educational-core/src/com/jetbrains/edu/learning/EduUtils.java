@@ -51,11 +51,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.*;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -834,10 +830,10 @@ public class EduUtils {
   }
 
   @Nullable
-  public static StepikUserWidget getStepikWidget() {
-    JFrame frame = WindowManager.getInstance().findVisibleFrame();
-    if (frame instanceof IdeFrameImpl) {
-      return (StepikUserWidget)((IdeFrameImpl)frame).getStatusBar().getWidget(StepikUserWidget.ID);
+  public static StepikUserWidget getVisibleWidget(Project project) {
+    IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
+    if (frame != null) {
+      return (StepikUserWidget)frame.getStatusBar().getWidget(StepikUserWidget.ID);
     }
     return null;
   }
