@@ -40,7 +40,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.newProject.ChooseStepikCourseLanguageDialog;
 import com.jetbrains.edu.learning.stepik.newProject.ImportStepikCourseDialog;
 import kotlin.collections.SetsKt;

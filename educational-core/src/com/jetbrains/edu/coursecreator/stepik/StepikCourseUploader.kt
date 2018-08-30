@@ -5,17 +5,18 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.*
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
 
-class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
+class StepikCourseUploader(val project: Project, val course: StepikCourse) {
   private var courseInfoToUpdate = false
 
   private var sectionsToPush: MutableList<Section> = ArrayList()
@@ -115,7 +116,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       val topLevelSectionId = getTopLevelSectionId(project, course)
       if (topLevelSectionId == -1) {
         val sectionId = postSectionForTopLevelLessons(project, course)
-        course.sectionIds = arrayListOf(sectionId)
+        course.stepikRemoteInfo.sectionIds = arrayListOf(sectionId)
         sectionId
       }
       else {
@@ -269,7 +270,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       lessonsToPush.addAll(course.lessons.filter { it.id == 0 })
       // process lessons moved to top-level
 
-      val section = StepikConnector.getSection(courseInfo.sectionIds[0])
+      val section = StepikConnector.getSection(courseInfo.stepikRemoteInfo.sectionIds[0])
       val lessonsFromSection = StepikConnector.getLessonsFromUnits(courseInfo, section.units.map { it.toString() }.toTypedArray(), false)
       val topLevelLessonsIds = course.lessons.map { it.id }
       for (lesson in lessonsFromSection) {
@@ -282,7 +283,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       }
     }
     else {
-      course.sectionIds = emptyList()
+      course.stepikRemoteInfo.sectionIds = emptyList()
     }
     sectionsToPush.addAll(course.sections.filter { it.id == 0 })
 
@@ -291,14 +292,14 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       lessonsToPush.addAll(sectionToPush.lessons.filter { it.id == 0 })
     }
 
-    val remoteSectionIds = courseInfo.sectionIds.subList(0, courseInfo.sectionIds.size - 1)
+    val remoteSectionIds = courseInfo.stepikRemoteInfo.sectionIds.subList(0, courseInfo.stepikRemoteInfo.sectionIds.size - 1)
     val sections = StepikConnector.getSections(remoteSectionIds.map { it.toString() }.toTypedArray())
     val localSectionIds = course.sections.map { it.id }
     for (section in sections) {
       if (section.name == StepikNames.PYCHARM_ADDITIONAL) {
         continue
       }
-      if ((section.id !in localSectionIds && section.id !in course.sectionIds) && section.updateDate <= lastUpdateDate) {
+      if ((section.id !in localSectionIds && section.id !in course.stepikRemoteInfo.sectionIds) && section.updateDate <= lastUpdateDate) {
         sectionsToDelete.add(section.id)
       }
     }
@@ -324,7 +325,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
 }
 
 
-private fun RemoteCourse.lastUpdateDate(): Date {
+private fun StepikCourse.lastUpdateDate(): Date {
   var lastUpdateDate = updateDate
   allLessons().filter { it.id > 0 }.forEach { lesson ->
     if (lastUpdateDate < lesson.updateDate) {
@@ -347,9 +348,9 @@ private fun RemoteCourse.lastUpdateDate(): Date {
   return lastUpdateDate
 }
 
-private fun RemoteCourse.allLessons() = lessons.plus(sections.flatMap { it.lessons })
+private fun StepikCourse.allLessons() = lessons.plus(sections.flatMap { it.lessons })
 
-private fun RemoteCourse.setStatusRecursively(status: StepikChangeStatus) {
+private fun StepikCourse.setStatusRecursively(status: StepikChangeStatus) {
   stepikChangeStatus = status
   for (item in items) {
     item.stepikChangeStatus = status

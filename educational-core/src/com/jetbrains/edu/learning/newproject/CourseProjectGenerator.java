@@ -185,7 +185,7 @@ public abstract class CourseProjectGenerator<S> {
         if (CCUtils.isCourseCreator(project)) {
           CCUtils.initializeCCPlaceholders(project,myCourse);
         }
-        if (myCourse instanceof RemoteCourse && myCourse.isFromZip()) {
+        if (myCourse instanceof StepikCourse && myCourse.isFromZip()) {
           setStepikChangeStatuses(project);
         }
         createAdditionalFiles(project, baseDir);
@@ -201,14 +201,14 @@ public abstract class CourseProjectGenerator<S> {
 
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
     StepicUser user = EduSettings.getInstance().getUser();
-    RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, myCourse.getId(), ((RemoteCourse)myCourse).isCompatible());
+    StepikCourse courseFromStepik = StepikConnector.getCourseInfo(user, StepikCourseExt.getId((StepikCourse)myCourse), StepikCourseExt.isCompatible((StepikCourse)myCourse));
     if (courseFromStepik != null) {
       StepikConnector.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);
       new StepikChangeRetriever(project, courseFromStepik).setStepikChangeStatuses();
     }
     else {
-      LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
+      LOG.warn("Failed to get stepik course for imported from zip course with id: " + StepikCourseExt.getId((StepikCourse)myCourse));
     }
   }
 

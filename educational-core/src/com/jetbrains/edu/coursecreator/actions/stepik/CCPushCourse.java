@@ -26,16 +26,16 @@ import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Collections;
 
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourseWithProgress;
-import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.wrapUnpushedLessonsIntoSections;
+import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
 public class CCPushCourse extends DumbAwareAction {
   private static Logger LOG = Logger.getInstance(CCPushCourse.class);
@@ -85,7 +85,7 @@ public class CCPushCourse extends DumbAwareAction {
             new StepikCourseUploader(project, (StepikCourse)course).updateCourse();
           }
           else {
-            pushInOldWay(indicator, project, course);
+            pushInOldWay(indicator, project, (StepikCourse)course);
           }
         }
       });
@@ -107,25 +107,25 @@ public class CCPushCourse extends DumbAwareAction {
     return false;
   }
 
-  private static void pushInOldWay(@NotNull ProgressIndicator indicator, Project project, Course course) {
-    if (updateCourseInfo(project, (StepikCourse)course)) {
+  private static void pushInOldWay(@NotNull ProgressIndicator indicator, Project project, StepikCourse course) {
+    if (updateCourseInfo(project, course)) {
       updateCourseContent(indicator, course, project);
       StepikUtils.setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
       try {
-        updateAdditionalMaterials(project, course.getId());
+        updateAdditionalMaterials(project, StepikCourseExt.getId(course));
       }
       catch (IOException e1) {
         LOG.warn(e1);
       }
 
-      StepikUpdateDateExt.setUpdated((StepikCourse)course);
-      showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId()));
+      StepikUpdateDateExt.setUpdated(course);
+      showNotification(project, "Course is updated", openOnStepikAction("/course/" + StepikCourseExt.getId(course)));
     }
   }
 
   private static void askToWrapTopLevelLessons(Project project, Course course) {
     if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
-      boolean hasUnpushedLessons = course.getLessons().stream().anyMatch(lesson -> lesson.getId() == 0);
+      boolean hasUnpushedLessons = course.getLessons().stream().anyMatch(lesson -> StepikLessonExt.getId(lesson) == 0);
       if (hasUnpushedLessons) {
         int result = Messages
           .showYesNoDialog(project, "Top-level lessons will be wrapped with sections as it's not allowed to have both top-level lessons and sections",
@@ -161,7 +161,7 @@ public class CCPushCourse extends DumbAwareAction {
 
     for (Lesson lesson : course.getLessons()) {
       Integer sectionId = stepikRemoteInfo.getSectionIds().get(0);
-      if (lesson.getId() > 0) {
+      if (StepikLessonExt.getId(lesson) > 0) {
         updateLesson(project, lesson, false, sectionId);
       }
       else {

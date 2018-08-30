@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.helper.StringUtil;
 
@@ -103,7 +104,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
    * we don't have "New" StepikChangeStatus
    */
   private static boolean isNew(@NotNull StudyItem item) {
-    return item.getId() == 0;
+    return StepikStudyItemExt.getId(item) == 0;
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {

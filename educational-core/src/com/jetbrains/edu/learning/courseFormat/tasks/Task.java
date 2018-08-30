@@ -16,6 +16,8 @@ import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import icons.EducationalCoreIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +25,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of task which contains task files, tests, input file for tests
@@ -197,7 +202,7 @@ public abstract class Task extends StudyItem {
         taskText = EduUtils.convertToHtml(taskText, taskDir);
       }
     }
-    if (getLesson().getCourse() instanceof RemoteCourse && taskText != null) {
+    if (getLesson().getCourse() instanceof StepikCourse && taskText != null) {
       taskText = StepikUtils.wrapStepikTasks(this, taskText);
     }
     return taskText;

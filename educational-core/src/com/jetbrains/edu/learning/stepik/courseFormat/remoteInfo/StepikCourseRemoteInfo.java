@@ -6,10 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import org.fest.util.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,13 +39,6 @@ public class StepikCourseRemoteInfo implements CourseRemoteInfo {
       }
     }
     return true;
-  }
-
-  @NotNull
-  @Override
-  public String wrapTaskText(@NotNull final String taskText, @NotNull final Task task) {
-    final Course course = task.getLesson().getCourse();
-    return course instanceof StepikCourse ? StepikUtils.wrapStepikTasks(task, taskText, (StepikCourse)course) : taskText;
   }
 
   @NotNull

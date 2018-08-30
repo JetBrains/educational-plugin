@@ -27,11 +27,8 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.StepicUser;
-import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import com.jetbrains.edu.learning.stepik.newproject.CreateNewStepikCourseDialog;
@@ -48,7 +45,6 @@ import java.util.List;
 
 import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
 import static com.jetbrains.edu.learning.EduUtils.execCancelable;
-import static com.jetbrains.edu.learning.stepik.StepikUtils.navigateToStep;
 
 public class EduBuiltInServerUtils {
 
@@ -63,7 +59,7 @@ public class EduBuiltInServerUtils {
           if (stepikCourse != null && StepikCourseExt.getId(stepikCourse) == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
               requestFocus(project);
-              navigateToStep(project, (StepikCourse)course, stepId);
+              StepikUtils.navigateToStep(project, (StepikCourse)course, stepId);
             });
             return true;
           }

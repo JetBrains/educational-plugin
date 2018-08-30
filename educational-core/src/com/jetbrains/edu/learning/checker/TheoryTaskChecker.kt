@@ -8,24 +8,26 @@ import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 
 open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<TheoryTask>(task, project) {
-    override fun onTaskSolved(message: String) {}
+  override fun onTaskSolved(message: String) {}
 
-    override fun check(): CheckResult {
-        val configuration = createDefaultRunConfiguration(project)
-        @Suppress("FoldInitializerAndIfToElvis")
-        if (configuration == null) {
-            return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
-        }
-
-        StudyTaskManager.getInstance(project).course?.let {
-            if (!it.isAdaptive) {
-                ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
-            }
-        }
-        return CheckResult(CheckStatus.Solved, "")
+  override fun check(): CheckResult {
+    val configuration = createDefaultRunConfiguration(project)
+    @Suppress("FoldInitializerAndIfToElvis")
+    if (configuration == null) {
+      return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     }
 
-    override fun checkOnRemote() = check()
+    StudyTaskManager.getInstance(project).course?.let {
+      val remoteInfo = it.remoteInfo
+      if (remoteInfo is StepikCourseRemoteInfo && !remoteInfo.isAdaptive) {
+        ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
+      }
+    }
+    return CheckResult(CheckStatus.Solved, "")
+  }
+
+  override fun checkOnRemote() = check()
 }

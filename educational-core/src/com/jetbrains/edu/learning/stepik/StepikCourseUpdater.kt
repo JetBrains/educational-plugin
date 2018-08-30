@@ -382,8 +382,8 @@ class StepikCourseUpdater(val course: StepikCourse, val project: Project) {
   // In case it was renamed on stepik, its lessons  won't be parsed as top-level
   // so we need to copy them manually
   private fun addTopLevelLessons(courseFromServer: Course?) {
-    if (!courseFromServer!!.sections.isEmpty() && !course.sectionIds.isEmpty()) {
-      if (courseFromServer.sections[0].id == course.sectionIds[0]) {
+    if (!courseFromServer!!.sections.isEmpty() && !course.stepikRemoteInfo.sectionIds.isEmpty()) {
+      if (courseFromServer.sections[0].id == course.stepikRemoteInfo.sectionIds[0]) {
         courseFromServer.addLessons(courseFromServer.sections[0].lessons)
       }
     }

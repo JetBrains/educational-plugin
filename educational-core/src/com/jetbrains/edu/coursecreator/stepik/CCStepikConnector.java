@@ -42,7 +42,6 @@ import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSectionRemoteInfoAdapter;
@@ -70,6 +69,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static com.jetbrains.edu.learning.EduSettings.isLoggedIn;
 import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
 
 public class CCStepikConnector {
@@ -261,16 +261,15 @@ public class CCStepikConnector {
     return postSectionInfo(project, section, StepikCourseExt.getId(course));
   }
 
-  public static int findTopLevelLessonsSection(@NotNull Project project, @Nullable Lesson topLevelLesson) {
+  public static int findTopLevelLessonsSection(@Nullable Lesson topLevelLesson,
+                                               @NotNull StepikCourse course) {
     if (topLevelLesson != null) {
       StepikWrappers.Unit unit = StepikConnector.getUnit(StepikLessonExt.getUnitId(topLevelLesson));
       return unit.getSection();
     }
     else {
-      Course course = StudyTaskManager.getInstance(project).getCourse();
-      assert  course != null;
       StepikCourse courseInfo = StepikConnector
-        .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
+        .getCourseInfo(EduSettings.getInstance().getUser(), StepikCourseExt.getId(course), true);
       if (courseInfo != null) {
         StepikCourseRemoteInfo remoteInfo = courseInfo.getStepikRemoteInfo();
         String[] sectionIds = remoteInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
@@ -351,7 +350,7 @@ public class CCStepikConnector {
   }
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
-    if (!StepikUtils.isLoggedIn()) {
+    if (!isLoggedIn()) {
       showStepikNotification(project, NotificationType.ERROR, failedActionName);
       return false;
     }
@@ -1014,7 +1013,7 @@ public class CCStepikConnector {
         return -1;
       }
 
-      int id = findTopLevelLessonsSection(project, topLevelLesson);
+      int id = findTopLevelLessonsSection(topLevelLesson, course);
       if (id != -1) {
         return id;
       }

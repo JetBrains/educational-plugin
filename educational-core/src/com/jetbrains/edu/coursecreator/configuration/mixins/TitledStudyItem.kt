@@ -23,10 +23,6 @@ class TitledStudyItem(val title: String): StudyItem() {
     throw NotImplementedError()
   }
 
-  override fun getId(): Int {
-    throw NotImplementedError()
-  }
-
   override fun getDir(project: Project): VirtualFile {
     throw NotImplementedError()
   }

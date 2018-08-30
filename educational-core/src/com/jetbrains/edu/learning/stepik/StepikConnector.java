@@ -35,8 +35,6 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo;
@@ -72,6 +70,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.jetbrains.edu.learning.EduSettings.isLoggedIn;
 import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 
 public class StepikConnector {
@@ -471,7 +470,8 @@ public class StepikConnector {
           final List<Lesson> lessons = getLessons(stepikCourse);
           stepikCourse.addLessons(lessons);
           stepikRemoteInfo.setSectionIds(allSections.stream().map(s -> StepikSectionExt.getId(s)).collect(Collectors.toList()));
-          lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> stepikCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
+          lessons.stream().filter(lesson -> lesson.isAdditional())
+            .forEach(lesson -> stepikCourse.getStepikRemoteInfo().setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson)));
         }
       }
     }
@@ -694,7 +694,7 @@ public class StepikConnector {
   }
 
   private static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
-    if (StepikUtils.isLoggedIn()) {
+    if (isLoggedIn()) {
       final StepicUser user = EduSettings.getInstance().getUser();
       assert user != null;
       return StepikAuthorizedClient.getFromStepik(link, container, user);
@@ -892,7 +892,7 @@ public class StepikConnector {
 
   static String postAttempt(int id) throws IOException {
     final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-    if (client == null || !StepikUtils.isLoggedIn()) return "";
+    if (client == null || !isLoggedIn()) return "";
     final HttpPost attemptRequest = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ATTEMPTS);
     String attemptRequestBody = new Gson().toJson(new AttemptWrapper(id));
     attemptRequest.setEntity(new StringEntity(attemptRequestBody, ContentType.APPLICATION_JSON));
@@ -1028,7 +1028,7 @@ public class StepikConnector {
   }
 
   public static void postTheory(Task task, final Project project) {
-    if (!StepikUtils.isLoggedIn()) {
+    if (!isLoggedIn()) {
       return;
     }
     final int stepId = StepikTaskExt.getStepId(task);

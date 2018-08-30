@@ -10,6 +10,11 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.getLesson
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
 
 @VisibleForTesting
 data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
@@ -20,10 +25,10 @@ data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
                              var tasksToUpdateByLessonIndex: Map<Int, List<Task>> = HashMap(),
                              var tasksToPostByLessonIndex: Map<Int, List<Task>> = HashMap())
 
-class StepikChangeRetriever(val project: Project, private val courseFromServer: RemoteCourse) {
+class StepikChangeRetriever(val project: Project, private val courseFromServer: StepikCourse) {
 
   fun getChangedItems(): StepikChangesInfo {
-    val course = StudyTaskManager.getInstance(project).course as RemoteCourse
+    val course = StudyTaskManager.getInstance(project).course as StepikCourse
     if (!isUnitTestMode) {
       setTaskFileTextFromDocuments()
     }
@@ -56,10 +61,10 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     return stepikChanges
   }
 
-  private fun allLessons(course: RemoteCourse) = course.lessons.plus(course.sections.flatMap { it.lessons })
+  private fun allLessons(course: StepikCourse) = course.lessons.plus(course.sections.flatMap { it.lessons })
 
   fun setStepikChangeStatuses() {
-    val course = StudyTaskManager.getInstance(project).course as RemoteCourse
+    val course = StudyTaskManager.getInstance(project).course as StepikCourse
     val stepikChanges = getChangedItems()
 
     if (stepikChanges.isCourseInfoChanged) {
@@ -98,7 +103,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
 
 
   private fun setTaskFileTextFromDocuments() {
-    val course = StudyTaskManager.getInstance(project).course as RemoteCourse
+    val course = StudyTaskManager.getInstance(project).course as StepikCourse
     runInEdtAndWait {
       runReadAction {
         course.lessons
@@ -116,11 +121,11 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     return updateCandidate.taskList.filter { task -> !onServerTaskIds.contains(task.stepId) }
   }
 
-  private fun lessonIds(latestCourseFromServer: RemoteCourse) = latestCourseFromServer.lessons
+  private fun lessonIds(latestCourseFromServer: StepikCourse) = latestCourseFromServer.lessons
     .plus(latestCourseFromServer.sections.flatMap { it.lessons })
     .map { lesson -> lesson.id }
 
-  private fun courseInfoChanged(course: RemoteCourse, latestCourseFromServer: RemoteCourse): Boolean {
+  private fun courseInfoChanged(course: StepikCourse, latestCourseFromServer: StepikCourse): Boolean {
     return course.name != latestCourseFromServer.name ||
            course.description != latestCourseFromServer.description ||
            course.humanLanguage != latestCourseFromServer.humanLanguage ||
@@ -137,20 +142,21 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
 
   private fun lessonsInfoToUpdate(course: Course,
                                   serverLessonIds: List<Int>,
-                                  latestCourseFromServer: RemoteCourse): List<Lesson> {
+                                  latestCourseFromServer: StepikCourse): List<Lesson> {
     return course.lessons
       .filter { lesson -> serverLessonIds.contains(lesson.id) }
       .filter { updateCandidate ->
         val lessonFormServer = latestCourseFromServer.getLesson(updateCandidate.id)!!
+        val remoteInfo = lessonFormServer.remoteInfo
         lessonFormServer.index != updateCandidate.index ||
         lessonFormServer.name != updateCandidate.name ||
-        lessonFormServer.isPublic != updateCandidate.isPublic
+        (remoteInfo is StepikLessonRemoteInfo && remoteInfo.isPublic != remoteInfo.isPublic)
       }
   }
 
-  private fun sectionsInfoToUpdate(course: RemoteCourse,
+  private fun sectionsInfoToUpdate(course: StepikCourse,
                                    sectionIdsFromServer: List<Int>,
-                                   latestCourseFromServer: RemoteCourse): List<Section> {
+                                   latestCourseFromServer: StepikCourse): List<Section> {
     val sectionsById = latestCourseFromServer.sections.associateBy({ it.id }, { it })
     return course.sections
       .filter { sectionIdsFromServer.contains(it.id) }

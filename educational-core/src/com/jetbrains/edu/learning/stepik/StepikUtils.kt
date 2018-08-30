@@ -19,10 +19,19 @@ package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.courseFormat.*
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
+import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.getTask
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.isAdaptive
 import java.util.regex.Pattern
 
 object StepikUtils {
@@ -32,7 +41,7 @@ object StepikUtils {
   @JvmStatic
   fun wrapStepikTasks(task: Task, text: String): String {
     var finalText = text
-    val course = task.course
+    val course = task.course as StepikCourse
     if (course.isAdaptive) {
       when (task) {
         is TheoryTask -> finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. "
@@ -59,7 +68,7 @@ object StepikUtils {
       FeedbackLink.LinkType.CUSTOM -> feedbackLink.link
       FeedbackLink.LinkType.STEPIK -> {
         val lesson = task.lesson
-        if (lesson == null || lesson.course !is RemoteCourse) {
+        if (lesson == null || lesson.course !is StepikCourse) {
           null
         }
         else String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.id, stepNumber)
@@ -76,7 +85,7 @@ object StepikUtils {
   }
 
   @JvmStatic
-  fun setCourseLanguage(info: RemoteCourse) {
+  fun setCourseLanguage(info: StepikCourse) {
     val courseType = info.type
     val matcher = PYCHARM_COURSE_TYPE.matcher(courseType)
     if (matcher.matches()) {
@@ -100,10 +109,22 @@ object StepikUtils {
     }
   }
 
+  @JvmStatic
   private fun setLessonStatus(lesson: Lesson, status: StepikChangeStatus) {
     lesson.stepikChangeStatus = status
     for (task in lesson.taskList) {
       task.stepikChangeStatus = status
+    }
+  }
+
+  @JvmStatic
+  fun navigateToStep(project: Project, course: StepikCourse, stepId: Int) {
+    if (stepId == 0 || course.isAdaptive) {
+      return
+    }
+    val task = course.getTask(stepId)
+    if (task != null) {
+      navigateToTask(project, task)
     }
   }
 }
