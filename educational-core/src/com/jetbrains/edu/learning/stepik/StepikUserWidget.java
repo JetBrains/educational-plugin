@@ -77,7 +77,7 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
     return user == null ? EducationalCoreIcons.StepikOff : EducationalCoreIcons.Stepik;
   }
 
-  private ListPopup createPopup(@Nullable StepicUser user, @NotNull Project project) {
+  private static ListPopup createPopup(@Nullable StepicUser user, @NotNull Project project) {
     String loginText = "Log in ";
     String logOutText = "Log out";
     String syncCourseStep = "Synchronize course";
