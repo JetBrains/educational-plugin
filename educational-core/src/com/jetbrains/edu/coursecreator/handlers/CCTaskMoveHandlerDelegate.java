@@ -126,7 +126,9 @@ public class CCTaskMoveHandlerDelegate extends MoveHandlerDelegate {
         return;
       }
       final int delta = getDelta(project, targetTask);
-
+      if (delta == -1) {
+        return;
+      }
       StepikCourseChangeHandler.changed(taskToMove);
       moveTask(sourceDirectory, taskToMove, targetTask, delta, lessonDir, targetTask.getLesson());
       YamlFormatSynchronizer.saveItem(sourceLesson);
