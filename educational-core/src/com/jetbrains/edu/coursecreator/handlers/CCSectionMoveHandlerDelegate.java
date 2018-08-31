@@ -86,6 +86,9 @@ public class CCSectionMoveHandlerDelegate extends MoveHandlerDelegate {
     }
 
     final int delta = getDelta(project, targetItem);
+    if (delta == -1) {
+      return;
+    }
 
     int sourceSectionIndex = sourceSection.getIndex();
     sourceSection.setIndex(-1);

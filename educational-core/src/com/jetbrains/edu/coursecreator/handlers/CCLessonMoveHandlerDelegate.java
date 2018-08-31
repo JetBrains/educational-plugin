@@ -111,6 +111,9 @@ public class CCLessonMoveHandlerDelegate extends MoveHandlerDelegate {
     if (!(targetItem instanceof ItemContainer)) {
       delta = getDelta(project, targetItem);
     }
+    if (delta == -1) {
+      return;
+    }
 
     final ItemContainer sourceContainer = sourceLesson.getContainer();
 
