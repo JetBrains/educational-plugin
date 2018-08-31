@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
-import com.intellij.icons.AllIcons
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.editor.colors.EditorColorsManager
@@ -14,6 +13,7 @@ import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.CheckAction
+import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import java.awt.BorderLayout
 import javax.swing.JButton
@@ -85,12 +85,7 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     middlePanel.border = JBUI.Borders.empty(0, 16, 0, 0)
     checkPanel.add(middlePanel, BorderLayout.CENTER)
 
-    val commentAction = object : AnAction(AllIcons.Ide.Notifications), RightAlignedToolbarAction {
-      override fun actionPerformed(e: AnActionEvent) {
-
-      }
-
-    }
+    val commentAction = ActionManager.getInstance().getAction(LeaveFeedbackAction.ACTION_ID)
     val refreshAction = ActionManager.getInstance().getAction(RefreshTaskFileAction.ACTION_ID)
     val toolbar1 = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, DefaultActionGroup(
        commentAction), true)
@@ -108,8 +103,8 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     component1.border = JBUI.Borders.empty(0, 0, 0, 0)
 
     val actionsPanel = JPanel(HorizontalLayout(0))
-    actionsPanel.add(component1)
     actionsPanel.add(component2)
+    actionsPanel.add(component1)
 
 
     checkPanel.add(actionsPanel, BorderLayout.EAST)
