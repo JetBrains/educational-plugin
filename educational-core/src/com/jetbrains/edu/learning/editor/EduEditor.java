@@ -17,10 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Implementation of StudyEditor which has panel with special buttons and task text
- * also @see {@link EduFileEditorProvider}
- */
 public class EduEditor extends PsiAwareTextEditorImpl {
   public static final String BROKEN_SOLUTION_ERROR_TEXT_START = "Solution can't be loaded.";
   public static final String BROKEN_SOLUTION_ERROR_TEXT_END = " to solve it again";
