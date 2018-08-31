@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -34,6 +33,7 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +47,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut implement
   private static final String RESET_TASK = "Reset Task";
 
   public RefreshTaskFileAction() {
-    super(TEXT, "Refresh current task", AllIcons.Actions.Rollback);
+    super(TEXT, "Refresh current task", EducationalCoreIcons.ResetTask);
   }
 
   public static void refresh(@NotNull final Project project) {
