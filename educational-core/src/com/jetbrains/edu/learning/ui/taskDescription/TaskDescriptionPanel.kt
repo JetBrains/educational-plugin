@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.ui.SeparatorComponent
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.panels.HorizontalLayout
@@ -16,9 +17,10 @@ import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import java.awt.BorderLayout
+import java.awt.Component
+import javax.swing.BoxLayout
 import javax.swing.JButton
 import javax.swing.JPanel
-import javax.swing.JSeparator
 
 
 class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
@@ -62,14 +64,19 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
                         "sample text\n" + "sample text\n" + "sample text\n" +
                         "sample text\n" +
                         "sample text\n" + "sample text\n</html>")
-    val panel = JPanel(BorderLayout())
+    val panel = JPanel()
+    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
 
 
-    panel.add(JBScrollPane(label), BorderLayout.CENTER)
+    val jbScrollPane = JBScrollPane(label)
+    panel.add(jbScrollPane)
+    jbScrollPane.alignmentX = Component.LEFT_ALIGNMENT
+
+    val jSeparator = SeparatorComponent()
+    jSeparator.alignmentX = Component.LEFT_ALIGNMENT
+    panel.add(jSeparator)
 
     val bottomPanel = JPanel(BorderLayout())
-    bottomPanel.border = JBUI.Borders.empty(10, 0, 0, 0)
-    bottomPanel.add(JSeparator(), BorderLayout.NORTH)
 
 
     val action = ActionManager.getInstance().getAction(CheckAction.ACTION_ID)
@@ -105,16 +112,12 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
     val actionsPanel = JPanel(HorizontalLayout(0))
     actionsPanel.add(component2)
     actionsPanel.add(component1)
-
-
     checkPanel.add(actionsPanel, BorderLayout.EAST)
 
-    checkPanel.border = JBUI.Borders.empty(16, 0, 0, 0)
+    bottomPanel.add(checkPanel, BorderLayout.NORTH)
+    bottomPanel.alignmentX = Component.LEFT_ALIGNMENT
 
-    bottomPanel.add(checkPanel, BorderLayout.CENTER)
-
-    panel.add(bottomPanel, BorderLayout.SOUTH)
-    panel.border = JBUI.Borders.empty(0, 15, 15, 15)
+    panel.add(bottomPanel)
 
     UIUtil.setBackgroundRecursively(panel, defaultBackground)
 
