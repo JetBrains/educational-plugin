@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 private const val CONTENT = "content"
+
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
