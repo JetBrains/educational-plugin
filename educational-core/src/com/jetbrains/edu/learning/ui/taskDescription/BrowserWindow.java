@@ -90,6 +90,7 @@ public class BrowserWindow extends JFrame {
   private final Project myProject;
   private boolean myLinkInNewBrowser;
   private boolean myShowProgress;
+  private String myCurrentContent;
 
   public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow, final boolean showProgress) {
     myProject = project;
@@ -179,10 +180,11 @@ public class BrowserWindow extends JFrame {
   }
 
   public void reloadContent() {
-    Platform.runLater(() -> myEngine.reload());
+    loadContent(myCurrentContent);
   }
 
   public void loadContent(@NotNull final String content) {
+    myCurrentContent = content;
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
     if (course == null) {
       return;
