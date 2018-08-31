@@ -40,4 +40,5 @@ public class EducationalCoreIcons {
   public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 
   public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); //16x16
+  public static final Icon CommentTask = load("/icons/com/jetbrains/edu/learning/commentTask.svg"); //16x16
 }

@@ -70,6 +70,7 @@
     <action id="Educational.WatchInput" class="com.jetbrains.edu.learning.actions.EditInputAction"
             text="Watch Test Input"
             description="Watch test input "/>
+    <action id="Educational.LeaveFeedback" class="com.jetbrains.edu.learning.actions.LeaveFeedbackAction"/>
     <action id="Educational.ShowHint" class="com.jetbrains.edu.learning.actions.ShowHintAction"
             text="Show Hint for Answer Placeholder"
             description="Show hint for answer placeholder"/>
