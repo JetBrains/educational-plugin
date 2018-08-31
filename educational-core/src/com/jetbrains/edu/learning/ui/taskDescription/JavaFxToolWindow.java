@@ -15,7 +15,6 @@
  */
 package com.jetbrains.edu.learning.ui.taskDescription;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.EduUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -39,10 +38,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
 
   @Override
   public void updateFonts(@NotNull Project project) {
-    final String text = EduUtils.getTaskText(project);
-    if (text != null) {
-      setText(text);
-    }
+    myBrowserWindow.reloadContent();
   }
 
   @Override

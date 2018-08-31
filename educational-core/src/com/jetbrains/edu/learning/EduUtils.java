@@ -435,21 +435,8 @@ public class EduUtils {
   }
 
   @Nullable
-  public static String getTaskText(@NotNull final Project project) {
-    Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-    if (editor == null) {
-      return TaskDescriptionToolWindow.EMPTY_TASK_TEXT;
-    }
-    Document document = editor.getDocument();
-    VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-    if (virtualFile == null) {
-      return TaskDescriptionToolWindow.EMPTY_TASK_TEXT;
-    }
-    final Task task = getTaskForFile(project, virtualFile);
-    if (task != null) {
-      return getTaskTextFromTask(task.getTaskDir(project), task);
-    }
-    return null;
+  public static String getTaskText(@NotNull final Project project, @Nullable final Task task) {
+    return task != null ? getTaskTextFromTask(task.getTaskDir(project), task) : null;
   }
 
   @Nullable

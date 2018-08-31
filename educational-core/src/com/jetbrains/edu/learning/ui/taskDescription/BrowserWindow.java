@@ -178,6 +178,10 @@ public class BrowserWindow extends JFrame {
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
   }
 
+  public void reloadContent() {
+    Platform.runLater(() -> myEngine.reload());
+  }
+
   public void loadContent(@NotNull final String content) {
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
     if (course == null) {
