@@ -1,8 +1,9 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -20,21 +21,20 @@ abstract class TaskNavigationAction(
   }
 
   override fun update(e: AnActionEvent) {
-    EduUtils.updateAction(e)
+    e.presentation.isEnabled = false
     val project = e.project ?: return
-    val eduEditor = EduUtils.getSelectedEduEditor(project)
-    val eduState = EduState(eduEditor)
-    if (!eduState.isValid) return
-    if (getTargetTask(eduState.task) == null) {
-      e.presentation.isEnabled = false
+    val editor = FileEditorManager.getInstance(project).selectedEditor ?: return
+    val virtualFile = FileEditorManagerEx.getInstanceEx(project).getFile(editor) ?: return
+    val task = EduUtils.getTaskForFile(project, virtualFile) ?: return
+    if (getTargetTask(task) != null) {
+      e.presentation.isEnabled = true
     }
   }
 
   private fun navigateTask(project: Project) {
-    val eduEditor = EduUtils.getSelectedEduEditor(project)
-    val eduState = EduState(eduEditor)
-    if (!eduState.isValid) return
-    val currentTask = eduState.task
+    val editor = FileEditorManager.getInstance(project).selectedEditor ?: return
+    val virtualFile = FileEditorManagerEx.getInstanceEx(project).getFile(editor) ?: return
+    val currentTask = EduUtils.getTaskForFile(project, virtualFile) ?: return
     val targetTask = getTargetTask(currentTask) ?: return
 
     NavigationUtils.navigateToTask(project, targetTask, currentTask)
