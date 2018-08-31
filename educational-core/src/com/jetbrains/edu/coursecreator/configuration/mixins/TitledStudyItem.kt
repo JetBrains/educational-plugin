@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem
 /**
  * Placeholder for any StudyItem, should be filled with actual content later
  */
-class TitledStudyItem(val title: String): StudyItem() {
+class TitledStudyItem(val title: String) : StudyItem() {
   override fun getParent(): StudyItem {
     throw NotImplementedError()
   }

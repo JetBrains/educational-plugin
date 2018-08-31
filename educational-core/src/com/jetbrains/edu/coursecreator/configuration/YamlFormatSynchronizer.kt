@@ -95,7 +95,8 @@ object YamlFormatSynchronizer {
       ApplicationManager.getApplication().invokeLater {
         saveConfigDocument(dir, fileName, item)
       }
-    } else {
+    }
+    else {
       saveConfigDocument(dir, fileName, item)
     }
   }

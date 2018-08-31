@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.jetbrains.edu.coursecreator.configuration.InvalidYamlFormatException
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
+
 private const val CONTENT = "content"
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for yaml serialization
