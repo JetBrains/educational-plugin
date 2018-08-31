@@ -175,7 +175,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
   private void setTaskText(@NotNull Project project, @Nullable Task task) {
     if (task != null) {
-      String taskText = EduUtils.getTaskText(project);
+      String taskText = EduUtils.getTaskText(project, task);
       if (taskText != null) {
         setText(taskText);
       }
