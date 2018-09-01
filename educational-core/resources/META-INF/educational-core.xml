@@ -55,7 +55,7 @@
     <action id="Educational.PreviousTask" class="com.jetbrains.edu.learning.actions.PreviousTaskAction"
             text="Previous Task"
             description="Navigate to the previous task"/>
-    <action id="Educational.NextTask" class="com.jetbrains.edu.learning.actions.NextTaskAction" text="Next Task"
+    <action id="Educational.NextTask" class="com.jetbrains.edu.learning.actions.NextTaskAction" text="Next"
             description="Navigate to the next task"/>
     <action id="Educational.RefreshTaskFile" class="com.jetbrains.edu.learning.actions.RefreshTaskFileAction"
             text="Reset Task File"

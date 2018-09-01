@@ -11,21 +11,22 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
+import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import java.awt.BorderLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 class CheckPanel: JPanel(BorderLayout()) {
   val middlePanel: JPanel = JPanel(BorderLayout())
-  val icon = AsyncProcessIcon("Сheck in progress")
+  val icon = AsyncProcessIcon("Check in progress")
 
   init {
     icon.isVisible = false
-    val action = ActionManager.getInstance().getAction(CheckAction.ACTION_ID)
-    val toolbar = ActionManager.getInstance().createButtonToolbar(ActionPlaces.UNKNOWN, DefaultActionGroup(action))
 
-    add(toolbar, BorderLayout.WEST)
+    add(createButtonToolbar(CheckAction.ACTION_ID), BorderLayout.WEST)
     setDefaultStateForMiddlePanel()
 
     middlePanel.border = JBUI.Borders.empty(0, 16, 0, 0)
@@ -54,6 +55,11 @@ class CheckPanel: JPanel(BorderLayout()) {
     add(actionsPanel, BorderLayout.EAST)
   }
 
+  private fun createButtonToolbar(actionId: String): JComponent {
+    val action = ActionManager.getInstance().getAction(actionId)
+    return ActionManager.getInstance().createButtonToolbar(ActionPlaces.UNKNOWN, DefaultActionGroup(action))
+  }
+
   fun setDefaultStateForMiddlePanel() {
     middlePanel.removeAll()
     middlePanel.add(icon, BorderLayout.WEST)
@@ -69,8 +75,20 @@ class CheckPanel: JPanel(BorderLayout()) {
   fun checkFinished(result: CheckResult) {
     icon.isVisible = false
     middlePanel.removeAll()
-    middlePanel.add(CheckResultLabel(result), BorderLayout.WEST)
+    val resultPanel = getResultPanel(result)
+    middlePanel.add(resultPanel, BorderLayout.WEST)
     middlePanel.add(JPanel(), BorderLayout.CENTER)
     UIUtil.setBackgroundRecursively(middlePanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
+  }
+
+  private fun getResultPanel(result: CheckResult): JComponent {
+    val resultLabel = CheckResultLabel(result)
+    if (result.status != CheckStatus.Solved) {
+      return resultLabel
+    }
+    val panel = JPanel(BorderLayout())
+    panel.add(createButtonToolbar(NextTaskAction.ACTION_ID), BorderLayout.WEST)
+    panel.add(resultLabel, BorderLayout.CENTER)
+    return panel
   }
 }

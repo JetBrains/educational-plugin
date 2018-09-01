@@ -4,7 +4,7 @@ import com.intellij.icons.AllIcons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 
-class NextTaskAction : TaskNavigationAction("Next Task", "Navigate to the next task", AllIcons.Actions.Forward) {
+class NextTaskAction : TaskNavigationAction("Next", "Navigate to the next task", AllIcons.Actions.Forward) {
 
   override fun getTargetTask(sourceTask: Task): Task? = NavigationUtils.nextTask(sourceTask)
   override fun getActionId(): String = ACTION_ID
