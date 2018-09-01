@@ -26,10 +26,13 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
   private lateinit var checkPanel: CheckPanel
   private lateinit var taskTextTW : TaskDescriptionToolWindow
   private lateinit var taskTextPanel : JComponent
+  private lateinit var separator: SeparatorComponent
   var currentTask: Task? = null
     set(value) {
       if (currentTask !== null && currentTask === value) return
       setTaskText(value)
+      separator.isVisible = value != null
+      checkPanel.isVisible = value != null
       field = value
     }
 
@@ -40,7 +43,9 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
     taskTextTW = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
     taskTextPanel = taskTextTW.createTaskInfoPanel(project)
     panel.addWithLeftAlignment(taskTextPanel)
-    panel.addWithLeftAlignment(SeparatorComponent(10, 15))
+
+    separator = object : SeparatorComponent(10, 15) {}
+    panel.addWithLeftAlignment(separator)
 
     val bottomPanel = JPanel(BorderLayout())
     bottomPanel.border = JBUI.Borders.empty(0, 15, 15, 15)
@@ -74,7 +79,7 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
 
   }
 
-  fun setTaskText(task: Task?) {
+  private fun setTaskText(task: Task?) {
     taskTextTW.setTaskText(project, task)
   }
 
