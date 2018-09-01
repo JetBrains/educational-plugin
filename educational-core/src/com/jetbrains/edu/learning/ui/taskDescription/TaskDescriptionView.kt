@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.ui.SeparatorComponent
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -16,6 +17,7 @@ import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.BoxLayout
+import javax.swing.JComponent
 import javax.swing.JPanel
 
 
@@ -24,54 +26,22 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
 
   }
 
-
-  lateinit var checkPanel: CheckPanel
+  private lateinit var checkPanel: CheckPanel
 
   fun init() {
-    checkPanel = CheckPanel()
-    val defaultBackground = EditorColorsManager.getInstance().globalScheme.defaultBackground
-
-    val label = JBLabel("<html>sample text<br><br><br>" +
-                        "sample text<br><br><br>\n" +
-                        "sample text\n" +
-                        "sample text<br><br><br>\n" +
-                        "sample text\n <br><br><br>" +
-                        "<br><br><br>" +
-                        "<br><br><br>" +
-                        "<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "" +
-                        "sample text\n" +
-                        "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" + "sample text<br><br><br>\n" + "sample text\n" +
-                        "sample text<br><br><br>\n" +
-                        "sample text\n" +
-                        "sample text\n" + "sample text\n" + "sample text\n" +
-                        "sample text\n" +
-                        "sample text\n" + "sample text\n</html>")
     val panel = JPanel()
     panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
 
-
-    val jbScrollPane = JBScrollPane(label)
-    panel.add(jbScrollPane)
-    jbScrollPane.alignmentX = Component.LEFT_ALIGNMENT
-
-    val jSeparator = SeparatorComponent()
-    jSeparator.alignmentX = Component.LEFT_ALIGNMENT
-    panel.add(jSeparator)
+    panel.addWithLeftAlignment(JBScrollPane(JBLabel("text placeholder")))
+    panel.addWithLeftAlignment(SeparatorComponent(10, 15))
 
     val bottomPanel = JPanel(BorderLayout())
-
+    bottomPanel.border = JBUI.Borders.empty(0, 15, 15, 15)
+    checkPanel = CheckPanel()
     bottomPanel.add(checkPanel, BorderLayout.NORTH)
-    bottomPanel.alignmentX = Component.LEFT_ALIGNMENT
+    panel.addWithLeftAlignment(bottomPanel)
 
-    panel.add(bottomPanel)
-
-    UIUtil.setBackgroundRecursively(panel, defaultBackground)
+    UIUtil.setBackgroundRecursively(panel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
 
     setContent(panel)
   }
@@ -82,6 +52,11 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
 
   fun checkFinished(checkResult: CheckResult) {
     checkPanel.checkFinished(checkResult)
+  }
+
+  private fun JPanel.addWithLeftAlignment(component: JComponent) {
+    add(component)
+    component.alignmentX = Component.LEFT_ALIGNMENT
   }
 
   companion object {
