@@ -19,13 +19,6 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
       return
     }
     toolWindow.icon = EducationalCoreIcons.CourseToolWindow
-//    val taskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) {
-//      JavaFxToolWindow()
-//    }
-//    else {
-//      SwingToolWindow()
-//    }
-//    taskDescriptionToolWindow.init(project)
     val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
     toolWindow.initTitleActions()
     taskDescriptionToolWindow.init()

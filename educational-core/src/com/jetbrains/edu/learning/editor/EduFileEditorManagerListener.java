@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +28,7 @@ public class EduFileEditorManagerListener implements FileEditorManagerListener {
     if (file != null) {
       task = getTask(file);
     }
+    TaskDescriptionView.getInstance(myProject).setTaskText(task);
     myToolWindow.setCurrentTask(myProject, task);
     if (task instanceof ChoiceTask) {
       final ChoiceVariantsPanel choicePanel = new ChoiceVariantsPanel((ChoiceTask) task);
