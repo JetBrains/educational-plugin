@@ -26,8 +26,9 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
 //      SwingToolWindow()
 //    }
 //    taskDescriptionToolWindow.init(project)
-    val taskDescriptionToolWindow = TaskDescriptionPanel()
+    val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
     toolWindow.initTitleActions()
+    taskDescriptionToolWindow.init()
     val contentManager = toolWindow.contentManager
     val content = contentManager.factory.createContent(taskDescriptionToolWindow, null, false)
     content.isCloseable = false

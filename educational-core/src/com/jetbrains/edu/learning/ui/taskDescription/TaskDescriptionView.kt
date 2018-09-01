@@ -2,14 +2,15 @@ package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
-import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.SeparatorComponent
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
@@ -18,14 +19,16 @@ import javax.swing.BoxLayout
 import javax.swing.JPanel
 
 
-class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
+class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
   override fun dispose() {
 
   }
 
-  val checkPanel: CheckPanel = CheckPanel()
 
-  init {
+  lateinit var checkPanel: CheckPanel
+
+  fun init() {
+    checkPanel = CheckPanel()
     val defaultBackground = EditorColorsManager.getInstance().globalScheme.defaultBackground
 
     val label = JBLabel("<html>sample text<br><br><br>" +
@@ -82,20 +85,13 @@ class TaskDescriptionPanel : SimpleToolWindowPanel(true, true), DataProvider, Di
   }
 
   companion object {
-    fun getToolWindow(project: Project): TaskDescriptionPanel? {
-      if (project.isDisposed) return null
 
-      val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
-      if (toolWindow != null) {
-        val contents = toolWindow.contentManager.contents
-        for (content in contents) {
-          val component = content.component
-          if (component is TaskDescriptionPanel) {
-            return component
-          }
-        }
+    @JvmStatic
+    fun getInstance(project: Project): TaskDescriptionView {
+      if (!EduUtils.isStudyProject(project)) {
+        error("Attempt to get TaskDescriptionView for non-edu project")
       }
-      return null
+      return ServiceManager.getService(project, TaskDescriptionView::class.java)
     }
   }
 }

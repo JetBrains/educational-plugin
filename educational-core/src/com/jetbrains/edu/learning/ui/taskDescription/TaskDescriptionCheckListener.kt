@@ -8,12 +8,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class TaskDescriptionCheckListener: CheckListener {
   override fun beforeCheck(project: Project, task: Task) {
-    val toolWindow = TaskDescriptionPanel.getToolWindow(project)!!
-    toolWindow.checkStarted()
+    TaskDescriptionView.getInstance(project).checkStarted()
   }
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    val toolWindow = TaskDescriptionPanel.getToolWindow(project)
-    toolWindow!!.checkFinished(result)
+    TaskDescriptionView.getInstance(project).checkFinished(result)
   }
 }
