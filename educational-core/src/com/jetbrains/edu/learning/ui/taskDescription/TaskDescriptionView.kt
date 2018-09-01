@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.editor.EduFileEditorManagerListener
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
 import java.awt.Component
@@ -28,6 +27,11 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
   private lateinit var taskTextTW : TaskDescriptionToolWindow
   private lateinit var taskTextPanel : JComponent
   var currentTask: Task? = null
+    set(value) {
+      if (currentTask !== null && currentTask === value) return
+      setTaskText(value)
+      field = value
+    }
 
   fun init() {
     val panel = JPanel()
@@ -49,9 +53,8 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
     setContent(panel)
 
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                                           EduFileEditorManagerListener(taskTextTW, project))
-//    val task = EduUtils.getCurrentTask(project)
-//    setCurrentTask(project, task)
+                                           EduFileEditorManagerListener(project))
+    currentTask = EduUtils.getCurrentTask(project)
   }
 
   fun checkStarted() {
