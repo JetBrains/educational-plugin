@@ -20,14 +20,14 @@ abstract class TaskNavigationAction(
   }
 
   override fun update(e: AnActionEvent) {
-//    EduUtils.updateAction(e)
-//    val project = e.project ?: return
-//    val eduEditor = EduUtils.getSelectedEduEditor(project)
-//    val eduState = EduState(eduEditor)
-//    if (!eduState.isValid) return
-//    if (getTargetTask(eduState.task) == null) {
-//      e.presentation.isEnabled = false
-//    }
+    EduUtils.updateAction(e)
+    val project = e.project ?: return
+    val eduEditor = EduUtils.getSelectedEduEditor(project)
+    val eduState = EduState(eduEditor)
+    if (!eduState.isValid) return
+    if (getTargetTask(eduState.task) == null) {
+      e.presentation.isEnabled = false
+    }
   }
 
   private fun navigateTask(project: Project) {

@@ -33,6 +33,10 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
       setTaskText(value)
       separator.isVisible = value != null
       checkPanel.isVisible = value != null
+      if (value != null) {
+        checkPanel.readyToCheck()
+      }
+      UIUtil.setBackgroundRecursively(checkPanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
       field = value
     }
 
@@ -44,7 +48,7 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
     taskTextPanel = taskTextTW.createTaskInfoPanel(project)
     panel.addWithLeftAlignment(taskTextPanel)
 
-    separator = object : SeparatorComponent(10, 15) {}
+    separator = SeparatorComponent(10, 15)
     panel.addWithLeftAlignment(separator)
 
     val bottomPanel = JPanel(BorderLayout())
