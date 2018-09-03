@@ -59,7 +59,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   private final JPanel myContentPanel;
   private final OnePixelSplitter mySplitPane;
 
-  private Task myCurrentTask = null;
+  protected Task myCurrentTask = null;
 
   public TaskDescriptionToolWindow() {
     super(true, true);
@@ -154,9 +154,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
   public abstract void setText(@NotNull String text);
   
-  public void updateFonts(@NotNull Project project) {
-    
-  }
+  public void updateFonts(@NotNull Project project) {}
 
   public void updateTask(@NotNull Project project, @Nullable Task task) {
     if (myCurrentTask != task) {
@@ -168,12 +166,11 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
   public void setCurrentTask(@NotNull Project project, @Nullable Task task) {
     if (myCurrentTask != null && myCurrentTask == task) return;
-
     setTaskText(project, task);
     myCurrentTask = task;
   }
 
-  private void setTaskText(@NotNull Project project, @Nullable Task task) {
+  protected void setTaskText(@NotNull Project project, @Nullable Task task) {
     if (task != null) {
       String taskText = EduUtils.getTaskText(project, task);
       if (taskText != null) {
