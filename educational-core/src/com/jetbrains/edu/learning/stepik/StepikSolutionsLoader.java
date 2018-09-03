@@ -482,14 +482,8 @@ public class StepikSolutionsLoader implements Disposable {
   private static void updateUI(@NotNull Project project, @NotNull Task task) {
     ProjectView.getInstance(project).refresh();
     TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
-    VirtualFile taskDir = task.getTaskDir(project);
     if (toolWindow != null) {
-      String text = EduUtils.getTaskTextFromTask(taskDir, task);
-      if (text == null) {
-        toolWindow.setEmptyText();
-        return;
-      }
-      toolWindow.setText(text);
+      toolWindow.setCurrentTask(project, task);
     }
     NavigationUtils.navigateToTask(project, task);
   }

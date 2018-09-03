@@ -185,10 +185,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     }
   }
 
-  public void setEmptyText() {
-    setText(EMPTY_TASK_TEXT);
-  }
-
   @Nullable
   @Override
   public Object getData(String dataId) {
