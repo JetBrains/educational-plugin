@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -22,18 +21,14 @@ abstract class TaskNavigationAction(
   override fun update(e: AnActionEvent) {
     e.presentation.isEnabled = false
     val project = e.project ?: return
-    val selectedFiles = FileEditorManager.getInstance(project).selectedFiles
-    if (selectedFiles.isEmpty()) return
-    val task = EduUtils.getTaskForFile(project, selectedFiles[0]) ?: return
-    if (getTargetTask(task) != null) {
+    val currentTask = EduUtils.getCurrentTask(project) ?: return
+    if (getTargetTask(currentTask) != null) {
       e.presentation.isEnabled = true
     }
   }
 
   private fun navigateTask(project: Project) {
-    val selectedFiles = FileEditorManager.getInstance(project).selectedFiles
-    if (selectedFiles.isEmpty()) return
-    val currentTask = EduUtils.getTaskForFile(project, selectedFiles[0]) ?: return
+    val currentTask = EduUtils.getCurrentTask(project) ?: return
     val targetTask = getTargetTask(currentTask) ?: return
 
     NavigationUtils.navigateToTask(project, targetTask, currentTask)
