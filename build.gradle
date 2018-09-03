@@ -206,11 +206,10 @@ task configurePyCharm {
 
 task configureAndroidStudio {
     doLast {
-        if (!project.hasProperty("androidStudioPath")) {
-            throw new InvalidUserDataException("Path to Android Studio installed locally is needed\nDefine \"androidStudioPath\" property")
+        if (project.hasProperty("androidStudioPath")) {
+            intellij.alternativeIdePath androidStudioPath
         }
         intellij.sandboxDirectory studioSandbox
-        intellij.alternativeIdePath androidStudioPath
     }
 }
 
