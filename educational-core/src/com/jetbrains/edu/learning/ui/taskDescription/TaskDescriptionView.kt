@@ -34,11 +34,15 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
       separator.isVisible = value != null
       checkPanel.isVisible = value != null
       if (value != null) {
-        checkPanel.readyToCheck()
+        readyToCheck()
       }
       UIUtil.setBackgroundRecursively(checkPanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
       field = value
     }
+
+  fun readyToCheck() {
+    checkPanel.readyToCheck()
+  }
 
   fun init() {
     val panel = JPanel()

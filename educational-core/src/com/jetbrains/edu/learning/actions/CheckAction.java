@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
 import org.jetbrains.annotations.NotNull;
 
@@ -221,6 +222,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     public void onCancel() {
       myChecker.clearState();
       myCheckInProgress.set(false);
+      TaskDescriptionView.getInstance(myProject).readyToCheck();
     }
   }
 }
