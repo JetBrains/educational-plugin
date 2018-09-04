@@ -48,6 +48,9 @@ object StepikUtils {
 
   private fun getFooterWithLink(task: Task, adaptive: Boolean): String {
     val link = if (adaptive) getAdaptiveLink(task) else getLink(task, task.index)
+    if (link == null) {
+      return ""
+    }
     return """<div class="footer"><a href=$link>Leave a comment</a></div>"""
   }
 
