@@ -186,7 +186,7 @@ public class BrowserWindow extends JFrame {
 
     Task task = EduUtils.getCurrentTask(myProject);
     if (task == null) {
-      Platform.runLater(() -> myEngine.loadContent(content));
+      Platform.runLater(() -> myEngine.loadContent(createHtmlWithCodeHighlighting(content, course)));
       return;
     }
 
@@ -194,7 +194,7 @@ public class BrowserWindow extends JFrame {
     if (taskDir == null) {
       Platform.runLater(() -> {
         updateLookWithProgressBarIfNeeded();
-        myEngine.loadContent(content);
+        myEngine.loadContent(createHtmlWithCodeHighlighting(content, course));
       });
       return;
     }
@@ -216,11 +216,7 @@ public class BrowserWindow extends JFrame {
       return content;
     }
 
-    String text = content;
-    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(course.getLanguageById());
-    if (decorator != null) {
-      text = createHtmlWithCodeHighlighting(content, decorator.getLanguageScriptUrl(), decorator.getDefaultHighlightingMode());
-    }
+    String text = createHtmlWithCodeHighlighting(content, course);
 
     return absolutizeImgPaths(text, taskDir);
   }
@@ -239,10 +235,12 @@ public class BrowserWindow extends JFrame {
     }
     return document.outerHtml();
   }
+
   @NotNull
-  private static String createHtmlWithCodeHighlighting(@NotNull final String content,
-                                                @NotNull String languageScriptUrl,
-                                                @NotNull String defaultHighlightingMode) {
+  private static String createHtmlWithCodeHighlighting(@NotNull final String content, @NotNull Course course) {
+    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(course.getLanguageById());
+    if (decorator == null) return content;
+
     String template = null;
     ClassLoader classLoader = BrowserWindow.class.getClassLoader();
     InputStream stream = classLoader.getResourceAsStream("/code-mirror/template.html");
@@ -278,8 +276,8 @@ public class BrowserWindow extends JFrame {
     template = template.replace("${body_line_height}", String.valueOf(bodyLineHeight));
     template = template.replace("${code_line_height}", String.valueOf(codeLineHeight));
     template = template.replace("${codemirror}", classLoader.getResource("/code-mirror/codemirror.js").toExternalForm());
-    template = template.replace("${language_script}", languageScriptUrl);
-    template = template.replace("${default_mode}", defaultHighlightingMode);
+    template = template.replace("${language_script}", decorator.getLanguageScriptUrl());
+    template = template.replace("${default_mode}", decorator.getDefaultHighlightingMode());
     template = template.replace("${runmode}", classLoader.getResource("/code-mirror/runmode.js").toExternalForm());
     template = template.replace("${colorize}", classLoader.getResource("/code-mirror/colorize.js").toExternalForm());
     template = template.replace("${javascript}", classLoader.getResource("/code-mirror/javascript.js").toExternalForm());
