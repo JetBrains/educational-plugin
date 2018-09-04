@@ -1,9 +1,9 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.RightAlignedToolbarAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -28,19 +28,20 @@ import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public class RevertTaskAction extends DumbAwareActionWithShortcut {
-  public static final String ACTION_ID = "Educational.RefreshTask";
+public class RevertTaskAction extends DumbAwareActionWithShortcut implements RightAlignedToolbarAction {
+  public static final String ACTION_ID = "Educational.RefreshTaskFile";
   public static final String SHORTCUT = "ctrl shift pressed X";
   private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
   private static final String RESET_TASK = "Reset Task";
 
   public RevertTaskAction() {
-    super(RESET_TASK, "Revert current task to the initial state", AllIcons.Actions.Rollback);
+    super(RESET_TASK, "Revert current task to the initial state", EducationalCoreIcons.ResetTask);
   }
 
   public static void revert(@NotNull final Project project) {
