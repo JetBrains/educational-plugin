@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduConfigurator
@@ -21,7 +22,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   abstract override fun getCourseBuilder(): GradleCourseBuilderBase
 
   override fun excludeFromArchive(project: Project, path: String): Boolean {
-    val pathSegments = FileUtil.splitPath(path)
+    val pathSegments = path.split(VfsUtilCore.VFS_SEPARATOR_CHAR)
     val name = pathSegments.last()
     if (GradleConstants.SETTINGS_FILE_NAME == name) {
       try {
