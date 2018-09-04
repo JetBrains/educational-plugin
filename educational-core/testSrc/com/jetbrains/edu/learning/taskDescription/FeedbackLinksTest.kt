@@ -1,19 +1,19 @@
 package com.jetbrains.edu.learning.taskDescription
 
 import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikUtils
 
 
 class FeedbackLinksTest : EduTestCase() {
 
   fun testStepikLink() {
     val task = getRemoteEduTask()
-    assertEquals("Incorrect link", "https://stepik.org/lesson/0/step/1", StepikUtils.getLink(task, 1))
+    assertEquals("Incorrect link", "https://stepik.org/lesson/0/step/1", LeaveFeedbackAction.getLink(task))
   }
 
   fun testNoneLink() {
@@ -21,7 +21,13 @@ class FeedbackLinksTest : EduTestCase() {
     val feedbackLink = FeedbackLink()
     feedbackLink.type = FeedbackLink.LinkType.NONE
     task.feedbackLink = feedbackLink
-    assertEquals("Incorrect link", null, StepikUtils.getLink(task, 1))
+    try {
+      println("link = ${LeaveFeedbackAction.getLink(task)}")
+     fail("Exception expected to be thrown")
+    }
+    catch (e: IllegalStateException) {
+      //exception thrown
+    }
   }
 
   fun testCustomLink() {
@@ -30,7 +36,7 @@ class FeedbackLinksTest : EduTestCase() {
     feedbackLink.type = FeedbackLink.LinkType.CUSTOM
     feedbackLink.link = "https://www.jetbrains.com/"
     task.feedbackLink = feedbackLink
-    assertEquals("Incorrect link", "https://www.jetbrains.com/", StepikUtils.getLink(task, 1))
+    assertEquals("Incorrect link", "https://www.jetbrains.com/", LeaveFeedbackAction.getLink(task))
   }
 
   private fun getRemoteEduTask(): Task {
