@@ -23,7 +23,6 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.psi.NavigatablePsiElement;
@@ -38,7 +37,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.EduFileEditorManagerListener;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,8 +85,8 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
     setContent(mySplitPane);
 
-    project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                                                new EduFileEditorManagerListener(this, project));
+    //project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
+    //                                            new EduFileEditorManagerListener(this, project));
     Task task = EduUtils.getCurrentTask(project);
     setCurrentTask(project, task);
   }

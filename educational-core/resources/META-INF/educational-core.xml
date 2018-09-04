@@ -183,6 +183,8 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceInterface="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView"
+                    serviceImplementation="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView"/>
     <projectService serviceInterface="com.intellij.codeInsight.documentation.DocumentationManager"
                     serviceImplementation="com.jetbrains.edu.learning.EduDocumentationManager" overrides="true"/>
     <projectConfigurable groupId="tools" instance="com.jetbrains.edu.learning.settings.EduConfigurable"
