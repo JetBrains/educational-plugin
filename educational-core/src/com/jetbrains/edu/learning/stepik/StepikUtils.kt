@@ -17,9 +17,11 @@
 
 package com.jetbrains.edu.learning.stepik
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
@@ -39,43 +41,7 @@ object StepikUtils {
         is CodeTask ->  finalText += "<br/><br/><b>Note</b>: Use standard input to obtain input for the task."
       }
     }
-    if (course.isStudy) {
-      finalText += getFooterWithLink(task, course.isAdaptive)
-    }
-
     return finalText
-  }
-
-  private fun getFooterWithLink(task: Task, adaptive: Boolean): String {
-    val link = if (adaptive) getAdaptiveLink(task) else getLink(task, task.index)
-    if (link == null) {
-      return ""
-    }
-    return """<div class="footer"><a href=$link>Leave a comment</a></div>"""
-  }
-
-  @VisibleForTesting
-  fun getLink(task: Task?, stepNumber: Int): String? {
-    val feedbackLink = task?.feedbackLink
-    return when (feedbackLink?.type) {
-      FeedbackLink.LinkType.NONE -> null
-      FeedbackLink.LinkType.CUSTOM -> feedbackLink.link
-      FeedbackLink.LinkType.STEPIK -> {
-        val lesson = task.lesson
-        if (lesson == null || lesson.course !is RemoteCourse) {
-          null
-        }
-        else String.format("%s/lesson/%d/step/%d", StepikNames.STEPIK_URL, lesson.id, stepNumber)
-      }
-      else -> {
-        null
-      }
-    }
-  }
-
-  private fun getAdaptiveLink(task: Task?): String? {
-    val link = getLink(task, 1)
-    return link?.let { "$link?adaptive=true" }
   }
 
   @JvmStatic
