@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.handlers
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.jetbrains.edu.coursecreator.CCUtils
@@ -66,12 +67,8 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
 
   protected fun VirtualFileEvent.fileInfo(project: Project): FileInfo? {
     if (project.isDisposed) return null
-    if (file.path.contains(CCUtils.GENERATED_FILES_FOLDER)) return null
-    if (YamlFormatSynchronizer.isConfigFile(file)) return null
-    val courseDir = EduUtils.getCourseDir(project)
-    if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return null
     val course = StudyTaskManager.getInstance(project).course ?: return null
-    if (course.configurator?.excludeFromArchive(project, file.path) == true) return null
+    if (shouldIgnore(file, project)) return null
 
     if (file.isDirectory) {
       EduUtils.getSection(file, course)?.let { return FileInfo.SectionDirectory(it) }
@@ -102,6 +99,17 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
       if (VfsUtilCore.isAncestor(sourceDir, file, true)) return FileInfo.FileInTask(task, taskRelativePath, FileKind.TASK_FILE)
     }
     return FileInfo.FileInTask(task, taskRelativePath, FileKind.ADDITIONAL_FILE)
+  }
+
+  private fun shouldIgnore(file: VirtualFile, project: Project): Boolean {
+    if (file.path.contains(CCUtils.GENERATED_FILES_FOLDER) ||
+        file.path.contains(CCUtils.DS_STORE)) return true
+    if (YamlFormatSynchronizer.isConfigFile(file)) return true
+    val courseDir = EduUtils.getCourseDir(project)
+    if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return true
+    val course = StudyTaskManager.getInstance(project).course ?: return true
+    if (course.configurator?.excludeFromArchive(project, file.path) == true) return true
+    return false
   }
 
   protected sealed class FileInfo {

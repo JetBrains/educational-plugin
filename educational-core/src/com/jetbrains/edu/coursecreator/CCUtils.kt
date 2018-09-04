@@ -39,6 +39,7 @@ object CCUtils {
 
   const val ANSWER_EXTENSION_DOTTED = ".answer."
   const val GENERATED_FILES_FOLDER = ".coursecreator"
+  const val DS_STORE = ".DS_Store"
   const val COURSE_MODE = "Course Creator"
 
   /**
