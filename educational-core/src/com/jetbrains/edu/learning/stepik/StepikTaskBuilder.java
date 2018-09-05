@@ -148,7 +148,7 @@ public class StepikTaskBuilder {
     task.taskFiles = new HashMap<>();
     if (myStep.options.files != null) {
       for (TaskFile taskFile : myStep.options.files) {
-        task.taskFiles.put(taskFile.name, taskFile);
+        task.taskFiles.put(taskFile.getName(), taskFile);
       }
     }
     else {
@@ -271,7 +271,7 @@ public class StepikTaskBuilder {
     if (stepOptions.files != null) {
       for (TaskFile taskFile : stepOptions.files) {
         addPlaceholdersTexts(taskFile);
-        task.taskFiles.put(taskFile.name, taskFile);
+        task.taskFiles.put(taskFile.getName(), taskFile);
       }
     }
     return task;
@@ -313,8 +313,8 @@ public class StepikTaskBuilder {
   private static void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
     final TaskFile taskFile = new TaskFile();
     taskFile.setText(editorText);
-    taskFile.name = taskFileName;
-    task.taskFiles.put(taskFile.name, taskFile);
+    taskFile.setName(taskFileName);
+    task.taskFiles.put(taskFile.getName(), taskFile);
   }
 
   @Nullable

@@ -762,10 +762,10 @@ public class StepikConnector {
       for (Submission submission : submissions) {
         Reply reply = submission.reply;
         if (stepikLanguage != null && stepikLanguage.equals(reply.language)) {
-          Collection<TaskFile> values = task.taskFiles.values();
-          assert values.size() == 1;
-          for (TaskFile value : values) {
-            taskFileToText.put(value.name, reply.code);
+          Collection<TaskFile> taskFiles = task.taskFiles.values();
+          assert taskFiles.size() == 1;
+          for (TaskFile taskFile : taskFiles) {
+            taskFileToText.put(taskFile.getName(), reply.code);
           }
         }
       }
@@ -835,7 +835,7 @@ public class StepikConnector {
         return;
       }
       for (TaskFile taskFile : taskFiles.values()) {
-        final String fileName = taskFile.name;
+        final String fileName = taskFile.getName();
         final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
         if (virtualFile != null) {
           ApplicationManager.getApplication().runReadAction(() -> {

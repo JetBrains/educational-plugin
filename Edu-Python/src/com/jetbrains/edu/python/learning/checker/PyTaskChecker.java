@@ -109,7 +109,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
       TaskFile taskFile = entry.getValue();
       VirtualFile file = EduUtils.findTaskFileInDir(taskFile, taskDir);
       if (file == null) {
-        LOG.warn(String.format("Can't find virtual file for `%s` task file in `%s` task", taskFile.name, task.getName()));
+        LOG.warn(String.format("Can't find virtual file for `%s` task file in `%s` task", taskFile.getName(), task.getName()));
         continue;
       }
       if (firstFile == null) {

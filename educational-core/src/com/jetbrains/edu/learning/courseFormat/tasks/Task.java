@@ -151,14 +151,14 @@ public abstract class Task extends StudyItem {
   public TaskFile addTaskFile(@NotNull final String name) {
     TaskFile taskFile = new TaskFile();
     taskFile.setTask(this);
-    taskFile.name = name;
+    taskFile.setName(name);
     taskFiles.put(name, taskFile);
     return taskFile;
   }
 
   public void addTaskFile(@NotNull final TaskFile taskFile) {
     taskFile.setTask(this);
-    taskFiles.put(taskFile.name, taskFile);
+    taskFiles.put(taskFile.getName(), taskFile);
   }
 
   @Nullable
@@ -348,7 +348,7 @@ public abstract class Task extends StudyItem {
   private void setTaskFileValues(List<TaskFile> taskFiles) {
     this.taskFiles.clear();
     for (TaskFile taskFile : taskFiles) {
-      this.taskFiles.put(taskFile.name, taskFile);
+      this.taskFiles.put(taskFile.getName(), taskFile);
     }
   }
 

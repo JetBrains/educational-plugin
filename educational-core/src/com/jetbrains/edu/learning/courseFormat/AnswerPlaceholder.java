@@ -279,7 +279,7 @@ public class AnswerPlaceholder {
       .append("#")
       .append(task.getName())
       .append("#")
-      .append(myTaskFile.name)
+      .append(myTaskFile.getName())
       .append("[")
       .append(myOffset)
       .append(", ")

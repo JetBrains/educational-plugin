@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
 abstract class TaskFileYamlMixin {
   @JsonProperty("name")
-  private lateinit var name: String
+  private lateinit var myName: String
 
   @JsonProperty("placeholders")
   private lateinit var myAnswerPlaceholders: List<AnswerPlaceholder>
