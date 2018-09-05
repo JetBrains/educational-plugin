@@ -20,6 +20,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +29,16 @@ import javax.swing.*;
 
 public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   private BrowserWindow myBrowserWindow;
+  private static final String HINT_BLOCK_TEMPLATE = "<label class='header icon-angle-right'>Hint %d</label>" +
+                                                    "  <div class='content'>" +
+                                                    " %s" +
+                                                    "  </div>";
+  private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "<label class='header icon-angle-right checked'>Hint %d</label>" +
+                                                             "  <div class='content'>" +
+                                                             " %s" +
+                                                             "  </div>";
+
+  private Project myProject;
   private JFXPanel taskSpecificPanel;
 
   public JavaFxToolWindow() {
@@ -34,7 +46,8 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
-  public JComponent createTaskInfoPanel(Project project) {
+  public JComponent createTaskInfoPanel(@NotNull Project project) {
+    myProject = project;
     myBrowserWindow = new BrowserWindow(project, true);
     return myBrowserWindow.getPanel();
   }
@@ -53,7 +66,29 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
+  protected String wrapHint(@NotNull String hintText, int hintNumber) {
+    Course course = StudyTaskManager.getInstance(myProject).getCourse();
+    if (course == null) {
+      return String.format(HINT_BLOCK_TEMPLATE, hintNumber, hintText);
+    }
+
+    boolean study = course.isStudy();
+    if (study) {
+      return String.format(HINT_BLOCK_TEMPLATE, hintNumber, hintText);
+    }
+    else {
+      return String.format(HINT_EXPANDED_BLOCK_TEMPLATE, hintNumber, hintText);
+    }
+  }
+
+  @Override
+  protected void updateLaf(boolean isDarcula) {
+    myBrowserWindow.updateLaf(isDarcula);
+  }
+
+  @Override
   public void setText(@NotNull String text) {
-    myBrowserWindow.loadContent(text);
+    String wrappedText = wrapHints(text);
+    myBrowserWindow.loadContent(wrappedText);
   }
 }

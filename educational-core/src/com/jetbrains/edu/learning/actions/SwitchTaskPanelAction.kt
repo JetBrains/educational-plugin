@@ -1,8 +1,8 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.ActionPlaces.ACTION_SEARCH
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.wm.ToolWindowManager
@@ -15,8 +15,8 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 
 
-class SwitchTaskPanelAction : AnAction() {
-  
+class SwitchTaskPanelAction : DumbAwareAction() {
+
   override fun actionPerformed(e: AnActionEvent?) {
     val project = e?.project
     val result = createDialog().showAndGet()
@@ -27,7 +27,7 @@ class SwitchTaskPanelAction : AnAction() {
       TaskDescriptionView.getInstance(project).updateTaskDescription()
     }
   }
-  
+
   private fun createDialog(): DialogWrapper = MyDialog(false)
 
   class MyDialog(canBeParent: Boolean) : DialogWrapper(null, canBeParent) {

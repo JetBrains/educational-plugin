@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.ui.taskDescription;
 
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.ui.LafManager;
-import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -84,12 +83,10 @@ public class BrowserWindow {
   public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow) {
     myProject = project;
     myLinkInNewBrowser = linkInNewWindow;
-    setPanel(new JFXPanel());
-    LafManager.getInstance().addLafManagerListener(new StudyLafManagerListener());
-    initComponents();
+    setPanel(new JFXPanel());initComponents();
   }
 
-  private void updateLaf(boolean isDarcula) {
+  void updateLaf(boolean isDarcula) {
     if (isDarcula) {
       updateLafDarcula();
     }
@@ -212,7 +209,7 @@ public class BrowserWindow {
 
     String template = null;
     ClassLoader classLoader = BrowserWindow.class.getClassLoader();
-    InputStream stream = classLoader.getResourceAsStream("/code-mirror/template.html");
+    InputStream stream = classLoader.getResourceAsStream("/style/template.html");
     try {
       template = StreamUtil.readText(stream, "utf-8");
     }
@@ -244,22 +241,37 @@ public class BrowserWindow {
     template = template.replace("${code_font_size}", String.valueOf(codeFontSize));
     template = template.replace("${body_line_height}", String.valueOf(bodyLineHeight));
     template = template.replace("${code_line_height}", String.valueOf(codeLineHeight));
-    template = template.replace("${codemirror}", classLoader.getResource("/code-mirror/codemirror.js").toExternalForm());
+    template = setResourcePath(template, "${codemirror}", "/code-mirror/codemirror.js");
+    template = setResourcePath(template, "${jquery}", "/style/hint/jquery-1.9.1.js");
     template = template.replace("${language_script}", decorator.getLanguageScriptUrl());
     template = template.replace("${default_mode}", decorator.getDefaultHighlightingMode());
-    template = template.replace("${runmode}", classLoader.getResource("/code-mirror/runmode.js").toExternalForm());
-    template = template.replace("${colorize}", classLoader.getResource("/code-mirror/colorize.js").toExternalForm());
-    template = template.replace("${javascript}", classLoader.getResource("/code-mirror/javascript.js").toExternalForm());
+    template = setResourcePath(template, "${runmode}", "/code-mirror/runmode.js");
+    template = setResourcePath(template, "${colorize}", "/code-mirror/colorize.js");
+    template = setResourcePath(template, "${javascript}", "/code-mirror/javascript.js");
     if (LafManager.getInstance().getCurrentLookAndFeel() instanceof DarculaLookAndFeelInfo) {
-      template = template.replace("${css_oldcodemirror}", classLoader.getResource("/code-mirror/codemirror-old-darcula.css").toExternalForm());
-      template = template.replace("${css_codemirror}", classLoader.getResource("/code-mirror/codemirror-darcula.css").toExternalForm());
+      template = setResourcePath(template, "${css_oldcodemirror}", "/code-mirror/codemirror-old-darcula.css");
+      template = setResourcePath(template, "${css_codemirror}", "/code-mirror/codemirror-darcula.css");
+      template = setResourcePath(template, "${hint_base}", "/style/hint/base_darcula.css");
     }
     else {
-      template = template.replace("${css_oldcodemirror}", classLoader.getResource("/code-mirror/codemirror-old.css").toExternalForm());
-      template = template.replace("${css_codemirror}", classLoader.getResource("/code-mirror/codemirror.css").toExternalForm());
+      template = setResourcePath(template, "${hint_base}", "/style/hint/base.css");
+      template = setResourcePath(template, "${css_oldcodemirror}", "/code-mirror/codemirror-old.css");
+      template = setResourcePath(template, "${css_codemirror}", "/code-mirror/codemirror.css");
     }
     template = template.replace("${code}", content);
 
+    return template;
+  }
+
+  private static String setResourcePath(@NotNull String template, @NotNull String name, @NotNull String recoursePath) {
+    ClassLoader classLoader = BrowserWindow.class.getClassLoader();
+    URL codemirrorScript = classLoader.getResource(recoursePath);
+    if (codemirrorScript != null) {
+      template = template.replace(name, codemirrorScript.toExternalForm());
+    }
+    else {
+      LOG.warn("Resource not found: " + recoursePath);
+    }
     return template;
   }
 
@@ -376,12 +388,5 @@ public class BrowserWindow {
 
   private void setPanel(JFXPanel panel) {
     myPanel = panel;
-  }
-
-  private class StudyLafManagerListener implements LafManagerListener {
-    @Override
-    public void lookAndFeelChanged(LafManager manager) {
-      updateLaf(manager.getCurrentLookAndFeel() instanceof DarculaLookAndFeelInfo);
-    }
   }
 }
