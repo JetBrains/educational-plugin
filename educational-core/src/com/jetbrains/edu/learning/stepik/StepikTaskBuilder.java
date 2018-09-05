@@ -12,13 +12,15 @@ import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -145,10 +147,9 @@ public class StepikTaskBuilder {
       }
     }
 
-    task.taskFiles = new HashMap<>();
     if (myStep.options.files != null) {
       for (TaskFile taskFile : myStep.options.files) {
-        task.taskFiles.put(taskFile.getName(), taskFile);
+        task.addTaskFile(taskFile);
       }
     }
     else {
@@ -251,27 +252,28 @@ public class StepikTaskBuilder {
     StepikWrappers.StepOptions stepOptions = myStep.options;
     task.setName(stepOptions != null ? stepOptions.title : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 
-    for (StepikWrappers.FileWrapper wrapper : stepOptions.test) {
-      task.addTestsTexts(wrapper.name, wrapper.text);
-    }
-    if (stepOptions.additionalFiles != null) {
-      task.setAdditionalFiles(stepOptions.additionalFiles);
-    }
-    if (stepOptions.descriptionText != null) {
-      task.setDescriptionText(stepOptions.descriptionText);
-    } else {
-      task.setDescriptionText(myStep.text);
-    }
-    if (stepOptions.descriptionFormat != null) {
-      task.setDescriptionFormat(stepOptions.descriptionFormat);
-    }
+    if (stepOptions != null) {
+      for (StepikWrappers.FileWrapper wrapper : stepOptions.test) {
+        task.addTestsTexts(wrapper.name, wrapper.text);
+      }
+      if (stepOptions.additionalFiles != null) {
+        task.setAdditionalFiles(stepOptions.additionalFiles);
+      }
+      if (stepOptions.descriptionText != null) {
+        task.setDescriptionText(stepOptions.descriptionText);
+      } else {
+        task.setDescriptionText(myStep.text);
+      }
+      if (stepOptions.descriptionFormat != null) {
+        task.setDescriptionFormat(stepOptions.descriptionFormat);
+      }
 
-    task.setFeedbackLink(stepOptions.myFeedbackLink);
-    task.taskFiles = new HashMap<>();      // TODO: it looks like we don't need taskFiles as map anymore
-    if (stepOptions.files != null) {
-      for (TaskFile taskFile : stepOptions.files) {
-        addPlaceholdersTexts(taskFile);
-        task.taskFiles.put(taskFile.getName(), taskFile);
+      task.setFeedbackLink(stepOptions.myFeedbackLink);
+      if (stepOptions.files != null) {
+        for (TaskFile taskFile : stepOptions.files) {
+          addPlaceholdersTexts(taskFile);
+          task.addTaskFile(taskFile);
+        }
       }
     }
     return task;
@@ -314,7 +316,7 @@ public class StepikTaskBuilder {
     final TaskFile taskFile = new TaskFile();
     taskFile.setText(editorText);
     taskFile.setName(taskFileName);
-    task.taskFiles.put(taskFile.getName(), taskFile);
+    task.addTaskFile(taskFile);
   }
 
   @Nullable

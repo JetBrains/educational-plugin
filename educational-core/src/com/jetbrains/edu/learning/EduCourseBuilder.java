@@ -93,7 +93,7 @@ public interface EduCourseBuilder<Settings> {
    * @param task initializing task
    */
   default void initNewTask(@NotNull final Lesson lesson, @NotNull final Task task) {
-    if (task.taskFiles.isEmpty()) {
+    if (task.getTaskFiles().isEmpty()) {
       TaskFile taskFile = new TaskFile();
       String taskTemplateName = getTaskTemplateName();
       if (taskTemplateName != null) {

@@ -45,7 +45,7 @@ public abstract class Task extends StudyItem {
   @Expose private int myStepId;
 
   @SerializedName("task_files")
-  @Expose public Map<String, TaskFile> taskFiles = new HashMap<>();
+  @Expose private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
 
   @SerializedName("test_files")
   @Expose protected Map<String, String> testsText = new HashMap<>();
@@ -81,7 +81,12 @@ public abstract class Task extends StudyItem {
   }
 
   public Map<String, TaskFile> getTaskFiles() {
-    return taskFiles;
+    return myTaskFiles;
+  }
+
+  // Use carefully. taskFiles is supposed to be ordered so use LinkedHashMap
+  public void setTaskFiles(Map<String, TaskFile> taskFiles) {
+    this.myTaskFiles = taskFiles;
   }
 
   @Override
@@ -145,25 +150,25 @@ public abstract class Task extends StudyItem {
 
   @Nullable
   public TaskFile getTaskFile(final String name) {
-    return name != null ? taskFiles.get(name) : null;
+    return name != null ? myTaskFiles.get(name) : null;
   }
 
   public TaskFile addTaskFile(@NotNull final String name) {
     TaskFile taskFile = new TaskFile();
     taskFile.setTask(this);
     taskFile.setName(name);
-    taskFiles.put(name, taskFile);
+    myTaskFiles.put(name, taskFile);
     return taskFile;
   }
 
   public void addTaskFile(@NotNull final TaskFile taskFile) {
     taskFile.setTask(this);
-    taskFiles.put(taskFile.getName(), taskFile);
+    myTaskFiles.put(taskFile.getName(), taskFile);
   }
 
   @Nullable
   public TaskFile getFile(@NotNull final String fileName) {
-    return taskFiles.get(fileName);
+    return myTaskFiles.get(fileName);
   }
 
   @Transient
@@ -222,7 +227,7 @@ public abstract class Task extends StudyItem {
 
     if (getIndex() != task.getIndex()) return false;
     if (name != null ? !name.equals(task.name) : task.name != null) return false;
-    if (taskFiles != null ? !taskFiles.equals(task.taskFiles) : task.taskFiles != null) return false;
+    if (myTaskFiles != null ? !myTaskFiles.equals(task.myTaskFiles) : task.myTaskFiles != null) return false;
     if (descriptionText != null ? !descriptionText.equals(task.descriptionText) : task.descriptionText != null) return false;
     if (descriptionFormat != null ? !descriptionFormat.equals(task.descriptionFormat) : task.descriptionFormat != null) return false;
     if (testsText != null ? !testsText.equals(task.testsText) : task.testsText != null) return false;
@@ -234,7 +239,7 @@ public abstract class Task extends StudyItem {
   public int hashCode() {
     int result = name != null ? name.hashCode() : 0;
     result = 31 * result + getIndex();
-    result = 31 * result + (taskFiles != null ? taskFiles.hashCode() : 0);
+    result = 31 * result + (myTaskFiles != null ? myTaskFiles.hashCode() : 0);
     result = 31 * result + (descriptionText != null ? descriptionText.hashCode() : 0);
     result = 31 * result + (descriptionFormat != null ? descriptionFormat.hashCode() : 0);
     result = 31 * result + (testsText != null ? testsText.hashCode() : 0);
@@ -254,7 +259,7 @@ public abstract class Task extends StudyItem {
   }
 
   public void setStatus(CheckStatus status) {
-    for (TaskFile taskFile : taskFiles.values()) {
+    for (TaskFile taskFile : myTaskFiles.values()) {
       for (AnswerPlaceholder placeholder : taskFile.getAnswerPlaceholders()) {
         placeholder.setStatus(status);
       }
@@ -346,9 +351,9 @@ public abstract class Task extends StudyItem {
 
   @SuppressWarnings("unused") //used for yaml deserialization
   private void setTaskFileValues(List<TaskFile> taskFiles) {
-    this.taskFiles.clear();
+    this.myTaskFiles.clear();
     for (TaskFile taskFile : taskFiles) {
-      this.taskFiles.put(taskFile.getName(), taskFile);
+      this.myTaskFiles.put(taskFile.getName(), taskFile);
     }
   }
 

@@ -261,7 +261,7 @@ object GeneratorUtils {
       LOG.warn("Cannot rename task file. Unable to find associated file type for language: " + language.id)
       return
     }
-    task.getTaskFiles().remove(taskFile.name)
+    task.taskFiles.remove(taskFile.name)
     taskFile.name = publicClassName(project, taskFile, fileType) + "." + fileType.defaultExtension
     task.taskFiles[taskFile.name] = taskFile
   }

@@ -94,7 +94,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   private fun createTaskFile(lessonIndex: Int, task: Task, taskFilePath: String) {
     val taskFile = TaskFile()
     taskFile.task = task
-    task.getTaskFiles().put(taskFilePath, taskFile)
+    task.taskFiles[taskFilePath] = taskFile
     taskFile.name = taskFilePath
 
     val fileName = "lesson" + lessonIndex + "/" + task.name + "/" + taskFilePath

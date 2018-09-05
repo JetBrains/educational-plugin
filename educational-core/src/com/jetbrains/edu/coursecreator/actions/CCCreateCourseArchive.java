@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.io.ZipUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
@@ -40,6 +39,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
@@ -152,7 +152,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       }
 
       private void convertToStudentTaskFiles(Task task, VirtualFile taskDir) {
-        final HashMap<String, TaskFile> studentTaskFiles = new HashMap<>();
+        final LinkedHashMap<String, TaskFile> studentTaskFiles = new LinkedHashMap<>();
         for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
           VirtualFile answerFile = EduUtils.findTaskFileInDir(entry.getValue(), taskDir);
           if (answerFile == null) {
@@ -163,7 +163,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
             studentTaskFiles.put(entry.getKey(), studentFile);
           }
         }
-        task.taskFiles = studentTaskFiles;
+        task.setTaskFiles(studentTaskFiles);
       }
 
       private void addDescriptions(@NotNull final Task task) {

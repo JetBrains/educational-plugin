@@ -762,7 +762,7 @@ public class StepikConnector {
       for (Submission submission : submissions) {
         Reply reply = submission.reply;
         if (stepikLanguage != null && stepikLanguage.equals(reply.language)) {
-          Collection<TaskFile> taskFiles = task.taskFiles.values();
+          Collection<TaskFile> taskFiles = task.getTaskFiles().values();
           assert taskFiles.size() == 1;
           for (TaskFile taskFile : taskFiles) {
             taskFileToText.put(taskFile.getName(), reply.code);
@@ -827,14 +827,13 @@ public class StepikConnector {
       if (response.isEmpty()) return;
       final AttemptWrapper.Attempt attempt =
         new Gson().fromJson(response, AttemptContainer.class).attempts.get(0);
-      final Map<String, TaskFile> taskFiles = task.getTaskFiles();
       final ArrayList<SolutionFile> files = new ArrayList<>();
       final VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir == null) {
         LOG.error("Failed to find task directory " + task.getName());
         return;
       }
-      for (TaskFile taskFile : taskFiles.values()) {
+      for (TaskFile taskFile : task.getTaskFiles().values()) {
         final String fileName = taskFile.getName();
         final VirtualFile virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir);
         if (virtualFile != null) {
