@@ -1,0 +1,60 @@
+@font-face {
+    font-family: "intellij-icon-font-darcula";
+    src:url("fonts/intellij-icon-font-darcula.eot");
+    src:url("fonts/intellij-icon-font-darcula.eot?#iefix") format("embedded-opentype"),
+    url("fonts/intellij-icon-font-darcula.woff") format("woff"),
+    url("fonts/intellij-icon-font-darcula.ttf") format("truetype"),
+    url("fonts/intellij-icon-font-darcula.svg#hint-icon-font") format("svg");
+}
+.hint + .hint {
+    margin-top: 5px;
+}
+
+:not(.hint) + .hint {
+    margin-bottom: 0;
+}
+
+.hint {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    vertical-align: bottom;
+}
+
+.header {
+    color: #589df6;
+    font-size: inherit;
+    vertical-align: bottom;
+}
+
+.header:hover {
+    cursor: pointer;
+}
+
+.hint .header:before {
+    font-family: "intellij-icon-font-darcula";
+    content: "\e000";
+    margin-right: 3px;
+}
+.header:after {
+    font-family: "intellij-icon-font-darcula";
+    content: "\e001";
+    margin-left: 3px;
+    transform: rotate(270deg);
+    display: inline-block;
+    color: #bababa;
+}
+
+.header.checked:after {
+    font-family: "intellij-icon-font-darcula";
+    content: "\e001";
+    transform: rotate(0deg);
+    color: #bababa;
+}
+
+.content ~ header {
+    display: none;
+}
+
+.content ~ header.checked {
+    display: inline;
+}

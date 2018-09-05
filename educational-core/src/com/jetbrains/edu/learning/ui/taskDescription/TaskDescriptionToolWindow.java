@@ -17,6 +17,9 @@ package com.jetbrains.edu.learning.ui.taskDescription;
 
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.ide.actions.QualifiedNameProvider;
+import com.intellij.ide.ui.LafManager;
+import com.intellij.ide.ui.LafManagerListener;
+import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.Application;
@@ -40,6 +43,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import javax.swing.*;
 import java.awt.*;
@@ -85,6 +92,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
     setContent(mySplitPane);
 
+    LafManager.getInstance().addLafManagerListener(new StudyLafManagerListener());
     Task task = EduUtils.getCurrentTask(project);
     setCurrentTask(project, task);
   }
@@ -126,7 +134,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   }
 
 
-  public abstract JComponent createTaskInfoPanel(Project project);
+  public abstract JComponent createTaskInfoPanel(@NotNull Project project);
 
   public abstract JComponent createTaskSpecificPanel(Task currentTask);
 
@@ -151,6 +159,19 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   }
 
   public abstract void setText(@NotNull String text);
+
+  protected String wrapHints(@NotNull String text) {
+    Document document = Jsoup.parse(text);
+    Elements hints = document.getElementsByClass("hint");
+    for (int i = 0; i < hints.size(); i++) {
+      Element hint = hints.get(i);
+      String hintText = wrapHint(hint.html(), i + 1);
+      hint.html(hintText);
+    }
+    return document.html();
+  }
+
+  protected abstract String wrapHint(@NotNull String hintText, int hintNumber);
 
   public void updateTaskSpecificPanel(@Nullable Task task) {
   }
@@ -182,6 +203,8 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     return super.getData(dataId);
   }
 
+  protected abstract void updateLaf(boolean isDarcula);
+
   public static void navigateToPsiElement(@NotNull Project project, @NotNull String url) {
     String qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "");
 
@@ -198,5 +221,12 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
         }
       }
     }));
+  }
+
+  private class StudyLafManagerListener implements LafManagerListener {
+    @Override
+    public void lookAndFeelChanged(LafManager manager) {
+      updateLaf(manager.getCurrentLookAndFeel() instanceof DarculaLookAndFeelInfo);
+    }
   }
 }

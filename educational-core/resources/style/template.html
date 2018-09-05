@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+  <script type="text/javascript" src="${jquery}"></script>
+
   <script type="text/x-mathjax-config">
                 MathJax.Hub.Config({
                 tex2jax: {
@@ -14,9 +17,27 @@
                     linebreaks: { automatic: true }
                 }
             });
+
   </script>
 
-  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+  <!--script for expand/collapse hint label-->
+  <script>
+    $(window).load(function () {
+
+      $(".header").click(function () {
+        $header = $(this);
+        $content = $header.next();
+
+        $content.slideToggle(200, function () {
+          // hack to change arrow icon by adding/removing fake class. See style/basebase.css
+          $header.toggleClass('checked');
+        });
+      });
+    });
+
+  </script>
+
+  <link rel="stylesheet" href="${hint_base}">
 
   <!--all elements like "${}" is replaced by real values while loading page in StudyBrowser-->
 

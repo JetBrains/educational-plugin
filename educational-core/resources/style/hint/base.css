@@ -1,0 +1,59 @@
+@font-face {
+    font-family: "intellij-icon-font";
+    src:url("fonts/intellij-icon-font.eot");
+    src:url("fonts/intellij-icon-font.eot?#iefix") format("embedded-opentype"),
+    url("fonts/intellij-icon-font.woff") format("woff"),
+    url("fonts/intellij-icon-font.ttf") format("truetype"),
+    url("fonts/intellij-icon-font.svg#hint-icon-font") format("svg");
+}
+.hint + .hint {
+    margin-top: 5px;
+}
+
+.hint {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    vertical-align: bottom;
+}
+
+.header {
+    color: #2470B3;
+    font-size: inherit;
+    vertical-align: bottom;
+}
+
+.header:hover {
+    cursor: pointer;
+}
+
+.hint .header:before {
+    font-family: "intellij-icon-font";
+    content: "\e000";
+    margin-right: 3px;
+}
+.header:after {
+    font-family: "intellij-icon-font";
+    -webkit-transform: rotate(-90deg);
+    content: "\e001";
+    margin-left: 3px;
+    transform: rotate(270deg);
+    display: inline-block;
+    color: #7F8B91;
+    opacity: 0.9;
+}
+
+.header.checked:after {
+    font-family: "intellij-icon-font";
+    content: "\e001";
+    transform: rotate(0deg);
+    color: #7F8B91;
+    opacity: 0.9;
+}
+
+.content ~ header {
+    display: none;
+}
+
+.content ~ header.checked {
+    display: inline;
+}
