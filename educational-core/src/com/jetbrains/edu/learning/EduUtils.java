@@ -890,7 +890,7 @@ public class EduUtils {
       if (taskFile == null) {
         return null;
       }
-      if (isImage(taskFile.name)) {
+      if (isImage(taskFile.getName())) {
         taskFile.setText(Base64.encodeBase64String(answerFile.contentsToByteArray()));
         return taskFile;
       }

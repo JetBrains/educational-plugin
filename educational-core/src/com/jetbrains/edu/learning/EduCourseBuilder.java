@@ -97,12 +97,12 @@ public interface EduCourseBuilder<Settings> {
       TaskFile taskFile = new TaskFile();
       String taskTemplateName = getTaskTemplateName();
       if (taskTemplateName != null) {
-        taskFile.name = taskTemplateName;
+        taskFile.setName(taskTemplateName);
         taskFile.setText(StringUtil.notNullize(EduUtils.getTextFromInternalTemplate(taskTemplateName)));
       } else {
         GeneratorUtils.DefaultFileProperties taskFileProperties =
           GeneratorUtils.createDefaultFile(task.getLesson().getCourse(), "Task", "type task text here");
-        taskFile.name = taskFileProperties.getName();
+        taskFile.setName(taskFileProperties.getName());
         taskFile.setText(taskFileProperties.getText());
       }
       task.addTaskFile(taskFile);

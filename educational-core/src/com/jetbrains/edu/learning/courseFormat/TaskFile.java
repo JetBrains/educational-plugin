@@ -25,7 +25,7 @@ import java.util.List;
  */
 
 public class TaskFile extends StudyFile {
-  @Expose public String name;
+  @Expose @SerializedName("name") private String myName;
   private boolean myUserCreated = false;
   private boolean myTrackChanges = true;
   private boolean myTrackLengths = true;
@@ -105,7 +105,7 @@ public class TaskFile extends StudyFile {
       }
       answerPlaceholdersCopy.add(answerPlaceholderCopy);
     }
-    target.name = source.name;
+    target.setName(source.getName());
     target.setAnswerPlaceholders(answerPlaceholdersCopy);
   }
 
@@ -131,6 +131,14 @@ public class TaskFile extends StudyFile {
 
   public void setHighlightErrors(boolean highlightErrors) {
     myHighlightErrors = highlightErrors;
+  }
+
+  public String getName() {
+    return myName;
+  }
+
+  public void setName(String name) {
+    myName = name;
   }
 
   public void sortAnswerPlaceholders() {
@@ -161,14 +169,14 @@ public class TaskFile extends StudyFile {
   @SystemIndependent
   @NotNull
   public String getPathInTask() {
-    if (myTask == null) return name;
+    if (myTask == null) return myName;
     Course course = TaskExt.getCourse(myTask);
-    if (course == null) return name;
+    if (course == null) return myName;
     String sourceDir = CourseExt.getSourceDir(course);
     if (StringUtil.isEmpty(sourceDir)) {
-      return name;
+      return myName;
     } else {
-      return sourceDir + VfsUtilCore.VFS_SEPARATOR_CHAR + name;
+      return sourceDir + VfsUtilCore.VFS_SEPARATOR_CHAR + myName;
     }
   }
 }

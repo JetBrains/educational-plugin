@@ -63,7 +63,7 @@ public class CheckiOCourseContentGenerator {
 
   private void generateTaskFile(@NotNull CheckiOMission mission) {
     final TaskFile taskFile = new TaskFile();
-    taskFile.name = DEFAULT_TASK_FILE_NAME + "." + myFileType.getDefaultExtension();
+    taskFile.setName(DEFAULT_TASK_FILE_NAME + "." + myFileType.getDefaultExtension());
     setTaskFileText(taskFile, mission.getCode());
     taskFile.setHighlightErrors(true);
     mission.addTaskFile(taskFile);

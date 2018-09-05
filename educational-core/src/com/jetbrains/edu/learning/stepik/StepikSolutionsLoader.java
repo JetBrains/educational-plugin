@@ -266,7 +266,7 @@ public class StepikSolutionsLoader implements Disposable {
         future.get();
         ApplicationManager.getApplication().invokeLater(() -> {
           EduEditor selectedEditor = EduUtils.getSelectedEduEditor(myProject);
-          if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().name)) {
+          if (selectedEditor != null && mySelectedTask.getTaskFiles().containsKey(selectedEditor.getTaskFile().getName())) {
             JBLoadingPanel component = selectedEditor.getComponent();
             component.stopLoading();
             ((EditorImpl)selectedEditor.getEditor()).setViewer(false);
@@ -456,7 +456,7 @@ public class StepikSolutionsLoader implements Disposable {
         if (vFile != null) {
           try {
             taskFile.setTrackChanges(false);
-            VfsUtil.saveText(vFile, solutionText.get(taskFile.name));
+            VfsUtil.saveText(vFile, solutionText.get(taskFile.getName()));
             SaveAndSyncHandler.getInstance().refreshOpenFiles();
             taskFile.setTrackChanges(true);
           }

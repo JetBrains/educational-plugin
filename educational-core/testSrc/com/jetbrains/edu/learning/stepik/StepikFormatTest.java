@@ -226,7 +226,7 @@ public class StepikFormatTest {
     final List<TaskFile> files = options.files;
     assertEquals(1, files.size());
     final TaskFile taskFile = files.get(0);
-    assertEquals("hello_world.py", taskFile.name);
+    assertEquals("hello_world.py", taskFile.getName());
     assertEquals("print(\"Hello, world! My name is type your name\")\n", taskFile.getText());
   }
 

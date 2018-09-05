@@ -141,7 +141,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     task.getTaskFiles().put(name, taskFile);
     VirtualFile file = copyFileToTask(name);
 
-    taskFile.name = name;
+    taskFile.setName(name);
     myFixture.configureFromExistingVirtualFile(file);
     Document document = FileDocumentManager.getInstance().getDocument(file);
     for (AnswerPlaceholder placeholder : getPlaceholders(document, false)) {
