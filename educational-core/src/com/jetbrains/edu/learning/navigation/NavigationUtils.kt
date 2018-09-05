@@ -163,7 +163,7 @@ object NavigationUtils {
     for (file in FileEditorManager.getInstance(project).openFiles) {
       FileEditorManager.getInstance(project).closeFile(file)
     }
-    val taskFiles = task.getTaskFiles()
+    val taskFiles = task.taskFiles
 
     val lesson = task.lesson
 

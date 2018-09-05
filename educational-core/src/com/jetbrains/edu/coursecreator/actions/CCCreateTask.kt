@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import icons.EducationalCoreIcons
 import java.io.IOException
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 
 open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, EducationalCoreIcons.Task) {
@@ -78,7 +79,8 @@ open class CCCreateTask : CCCreateStudyItemActionBase<Task>(EduNames.TASK, Educa
       // We can't just copy text from course objects because they can contain outdated text
       // in reason that we don't synchronize them with files system
       // So we need to load actual files text from filesystem
-      newTask.taskFiles = prevTask.taskFiles.mapValuesTo(HashMap()) { (_, taskFile) -> taskFile.copyForNewTask(prevTaskDir, newTask) }
+      newTask.setTaskFiles(
+        prevTask.taskFiles.mapValuesTo(LinkedHashMap()) { (_, taskFile) -> taskFile.copyForNewTask(prevTaskDir, newTask) })
       newTask.additionalFiles = prevTask.additionalFiles.mapValuesTo(HashMap()) { (path, oldAdditionalFile) ->
         val file = prevTaskDir.findFileByRelativePath(path) ?: return@mapValuesTo oldAdditionalFile
         AdditionalFile(CCUtils.loadText(file), oldAdditionalFile.isVisible)

@@ -68,7 +68,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
         for (lesson in myCourse.lessons) {
             for (task in lesson.getTaskList()) {
                 try {
-                    val taskFile = task.getTaskFiles().values.first()
+                    val taskFile = task.taskFiles.values.first()
                     val virtualFile = taskFile.getVirtualFile(myProject)
                                       ?: error("Can't find virtual file for `${taskFile.name}` task file in `${task.name} task`")
                     FileEditorManager.getInstance(myProject).openFile(virtualFile, true)
