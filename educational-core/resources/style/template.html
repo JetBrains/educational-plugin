@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
   <script type="text/x-mathjax-config">
                 MathJax.Hub.Config({
                 tex2jax: {
@@ -15,12 +14,10 @@
                     linebreaks: { automatic: true }
                 }
             });
-</script>
+  </script>
 
-<script
-        type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 
-</script>
   <!--all elements like "${}" is replaced by real values while loading page in StudyBrowser-->
 
   <!--suppress HtmlUnknownTarget -->
@@ -47,8 +44,8 @@
     }
 
     pre code {
-      font-size: ${code_font_size}px !important;
-      line-height: ${code_line_height}px !important;
+      font-size: ${code_font_size} px !important;
+      line-height: ${code_line_height} px !important;
     }
 
     .wrapper {
@@ -69,7 +66,7 @@
 </head>
 <body>
 <div class=wrapper>
-${code}
+  ${code}
 </div>
 <script>
   var nodeList = document.body.getElementsByTagName("code");
