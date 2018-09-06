@@ -49,7 +49,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.*;
 import com.intellij.psi.PsiDirectory;
@@ -69,9 +68,7 @@ import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
@@ -83,7 +80,6 @@ import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
-import kotlin.text.StringsKt;
 import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
@@ -271,15 +267,9 @@ public class EduUtils {
       return Collections.emptyList();
     }
 
-    final VirtualFile testDir = TaskExt.findTestDir(task, taskDir);
-    if (testDir == null) {
-      LOG.warn(String.format("Can't find test dir for `%s` task", task.getName()));
-      return Collections.emptyList();
-    }
-
     List<VirtualFile> testFiles = new ArrayList<>();
     for (String testFilePath : task.getTestsText().keySet()) {
-      VirtualFile testFile = testDir.findFileByRelativePath(testFilePath);
+      VirtualFile testFile = taskDir.findFileByRelativePath(testFilePath);
       if (testFile == null) {
         LOG.warn(String.format("Can't find test file by `%s` path", testFilePath));
       } else {
@@ -611,7 +601,7 @@ public class EduUtils {
 
   @Nullable
   public static VirtualFile findTaskFileInDir(@NotNull TaskFile taskFile, @NotNull VirtualFile taskDir) {
-    return taskDir.findFileByRelativePath(taskFile.getPathInTask());
+    return taskDir.findFileByRelativePath(taskFile.getName());
   }
 
   @NotNull
@@ -623,17 +613,9 @@ public class EduUtils {
   public static Document getDocument(@NotNull Project project, int lessonIndex, int taskIndex, String fileName) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) return null;
-    String sourceDir = CourseExt.getSourceDir(course);
     Lesson lesson = course.getLessons().get(lessonIndex - 1);
     Task task = lesson.getTaskList().get(taskIndex - 1);
-    String taskPath = FileUtil.join(project.getBasePath(), lesson.getName(), task.getName());
-    String filePath;
-    if (StringUtil.isNotEmpty(sourceDir)) {
-      filePath = FileUtil.join(taskPath, sourceDir, fileName);
-    }
-    else {
-      filePath = FileUtil.join(taskPath, fileName);
-    }
+    String filePath = FileUtil.join(project.getBasePath(), lesson.getName(), task.getName(), fileName);
 
     VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     return taskFile == null ? null : FileDocumentManager.getInstance().getDocument(taskFile);
@@ -676,25 +658,11 @@ public class EduUtils {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course == null) return file.getName();
 
-    String sourceDir = CourseExt.getSourceDir(course);
-    String testDir = CourseExt.getTestDir(course);
-    List<String> prefixToRemove = new ArrayList<>(2);
-    if (StringUtil.isNotEmpty(sourceDir)) {
-      prefixToRemove.add(sourceDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
-    }
-    if (StringUtil.isNotEmpty(testDir)) {
-      prefixToRemove.add(testDir + VfsUtilCore.VFS_SEPARATOR_CHAR);
-    }
-
     VirtualFile taskDir = getTaskDir(course, file);
     if (taskDir == null) return file.getName();
 
     String fullRelativePath = FileUtil.getRelativePath(taskDir.getPath(), file.getPath(), VfsUtilCore.VFS_SEPARATOR_CHAR);
     if (fullRelativePath == null) return file.getName();
-
-    for (String prefix : prefixToRemove) {
-      if (fullRelativePath.startsWith(prefix)) return StringsKt.removePrefix(fullRelativePath, prefix);
-    }
     return fullRelativePath;
   }
 
@@ -714,21 +682,6 @@ public class EduUtils {
       }
     }
     return true;
-  }
-
-  public static void createFromTemplate(@NotNull Project project,
-                                        @NotNull VirtualFile taskDirectory,
-                                        @NotNull String name) {
-    FileTemplate template = FileTemplateManager.getInstance(project).getInternalTemplate(name);
-    if (template == null) {
-      LOG.info("Template " + name + " wasn't found");
-      return;
-    }
-    try {
-      GeneratorUtils.createChildFile(taskDirectory, name, template.getText());
-    } catch (IOException e) {
-      LOG.error(e);
-    }
   }
 
   public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {

@@ -19,12 +19,6 @@ val Task.project: Project? get() = course.project
 val Task.sourceDir: String? get() = course.sourceDir
 val Task.testDir: String? get() = course.testDir
 
-val Task.testTextMap: Map<String, String> get() {
-  val course = course
-  val testDir = course.testDir ?: return emptyMap()
-  return if (testDir.isEmpty()) testsText else testsText.mapKeys { (path, _) -> "$testDir/$path" }
-}
-
 val Task.isFrameworkTask: Boolean get() = lesson is FrameworkLesson
 
 val Task.dirName: String get() = if (isFrameworkTask && course.isStudy) EduNames.TASK else name

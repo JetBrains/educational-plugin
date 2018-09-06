@@ -2,17 +2,12 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.SystemIndependent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,19 +159,5 @@ public class TaskFile extends StudyFile {
       if (!placeholder.isValid(length)) return false;
     }
     return true;
-  }
-
-  @SystemIndependent
-  @NotNull
-  public String getPathInTask() {
-    if (myTask == null) return myName;
-    Course course = TaskExt.getCourse(myTask);
-    if (course == null) return myName;
-    String sourceDir = CourseExt.getSourceDir(course);
-    if (StringUtil.isEmpty(sourceDir)) {
-      return myName;
-    } else {
-      return sourceDir + VfsUtilCore.VFS_SEPARATOR_CHAR + myName;
-    }
   }
 }

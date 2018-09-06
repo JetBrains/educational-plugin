@@ -21,7 +21,6 @@ import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
@@ -131,9 +130,6 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
   @NotNull
   private static List<VirtualFile> getAllAnswerTaskFiles(@NotNull Course course, @NotNull Project project) {
-    String sourceDir = CourseExt.getSourceDir(course);
-    if (sourceDir == null) return Collections.emptyList();
-
     List<VirtualFile> result = new ArrayList<>();
     for (Lesson lesson : course.getLessons()) {
       for (Task task : lesson.getTaskList()) {
@@ -142,10 +138,6 @@ public class CCProjectComponent extends AbstractProjectComponent {
           String answerName = FileUtil.getNameWithoutExtension(name) + CCUtils.ANSWER_EXTENSION_DOTTED + FileUtilRt.getExtension(name);
 
           String taskPath = FileUtil.join(project.getBasePath(), lesson.getName(), task.getName());
-          if (!sourceDir.isEmpty()) {
-            taskPath = FileUtil.join(taskPath, sourceDir);
-          }
-
           VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.join(taskPath, answerName));
           if (taskFile != null) {
             result.add(taskFile);

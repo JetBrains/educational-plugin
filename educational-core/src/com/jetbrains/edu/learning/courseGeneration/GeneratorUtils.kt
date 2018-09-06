@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiFileFactory
@@ -24,7 +25,6 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.HTML
 import com.jetbrains.edu.learning.courseFormat.DescriptionFormat.MD
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
-import com.jetbrains.edu.learning.courseFormat.ext.testTextMap
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.codec.binary.Base64
@@ -109,7 +109,7 @@ object GeneratorUtils {
     for ((_, taskFileContent) in task.getTaskFiles()) {
       createTaskFile(taskDir, taskFileContent)
     }
-    createFiles(taskDir, task.testTextMap)
+    createFiles(taskDir, task.testsText)
     createFiles(taskDir, task.additionalFiles.mapValues { (_, file) -> file.getText() })
     val course = task.course
     if (CCUtils.COURSE_MODE == course.courseMode) {
@@ -120,7 +120,7 @@ object GeneratorUtils {
   @Throws(IOException::class)
   @JvmStatic
   fun createTaskFile(taskDir: VirtualFile, taskFile: TaskFile) {
-    createChildFile(taskDir, taskFile.pathInTask, taskFile.getText())
+    createChildFile(taskDir, taskFile.name, taskFile.getText())
   }
 
   @Throws(IOException::class)
@@ -192,13 +192,6 @@ object GeneratorUtils {
       } else {
         null
       }
-    })
-  }
-
-  @Throws(IOException::class)
-  private fun runInWriteActionAndWait(action: ThrowableRunnable<IOException>) {
-    runInWriteActionAndWait(ThrowableComputable {
-      action.run()
     })
   }
 
@@ -331,6 +324,11 @@ object GeneratorUtils {
       ""
     }
     return DefaultFileProperties("$baseName$extensionSuffix", "$lineCommentPrefix$baseText")
+  }
+
+  @JvmStatic
+  fun joinPaths(prefix: String?, suffix: String): String {
+    return if (prefix.isNullOrEmpty()) suffix else "$prefix${VfsUtilCore.VFS_SEPARATOR_CHAR}$suffix"
   }
 
   data class DefaultFileProperties(val name: String, val text: String)

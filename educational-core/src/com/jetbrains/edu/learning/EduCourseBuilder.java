@@ -15,6 +15,7 @@ import com.jetbrains.edu.coursecreator.ui.NewStudyItemUiUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
@@ -115,24 +116,26 @@ public interface EduCourseBuilder<Settings> {
    */
   default void initNewTask(@NotNull final Lesson lesson, @NotNull final Task task, @NotNull NewStudyItemInfo info) {
     if (task.getTaskFiles().isEmpty()) {
+      String sourceDir = TaskExt.getSourceDir(task);
       TaskFile taskFile = new TaskFile();
       String taskTemplateName = getTaskTemplateName();
       if (taskTemplateName != null) {
-        taskFile.setName(taskTemplateName);
+        taskFile.setName(GeneratorUtils.joinPaths(sourceDir, taskTemplateName));
         taskFile.setText(StringUtil.notNullize(EduUtils.getTextFromInternalTemplate(taskTemplateName)));
       } else {
         GeneratorUtils.DefaultFileProperties taskFileProperties =
           GeneratorUtils.createDefaultFile(task.getLesson().getCourse(), "Task", "type task text here");
-        taskFile.setName(taskFileProperties.getName());
+        taskFile.setName(GeneratorUtils.joinPaths(sourceDir, taskFileProperties.getName()));
         taskFile.setText(taskFileProperties.getText());
       }
       task.addTaskFile(taskFile);
     }
 
     if (task.getTestsText().isEmpty()) {
+      String testDir = TaskExt.getTestDir(task);
       String testTemplateName = getTestTemplateName();
       if (testTemplateName != null) {
-        task.getTestsText().put(testTemplateName, EduUtils.getTextFromInternalTemplate(testTemplateName));
+        task.getTestsText().put(GeneratorUtils.joinPaths(testDir, testTemplateName), EduUtils.getTextFromInternalTemplate(testTemplateName));
       }
     }
   }

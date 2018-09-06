@@ -25,9 +25,6 @@ import com.intellij.util.ThrowableConsumer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
-import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
-import com.jetbrains.edu.learning.courseFormat.ext.testDir
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.codec.binary.Base64
@@ -141,19 +138,6 @@ object CCUtils {
     val sanitizedName = FileUtil.sanitizeFileName(course.name)
     val archiveName = String.format("%s.zip", if (sanitizedName.startsWith("_")) EduNames.COURSE else sanitizedName)
 
-    val utilDir = baseDir.findChild(EduNames.UTIL)
-    val sourceDirName = course.sourceDir
-    val testDirName = course.testDir
-    val utilSourceDir: VirtualFile?
-    val utilTestDir: VirtualFile?
-    if (utilDir != null && sourceDirName != null && testDirName != null) {
-      utilSourceDir = utilDir.findChild(sourceDirName)
-      utilTestDir = utilDir.findChild(testDirName)
-    } else {
-      utilSourceDir = null
-      utilTestDir = null
-    }
-
     VfsUtilCore.visitChildrenRecursively(baseDir, object : VirtualFileVisitor<Any>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
       override fun visitFile(file: VirtualFile): Boolean {
         @Suppress("NAME_SHADOWING")
@@ -172,13 +156,7 @@ object CCUtils {
 
         val taskFile = EduUtils.getTaskFile(project, file)
         if (taskFile == null) {
-          if (utilSourceDir != null && VfsUtilCore.isAncestor(utilSourceDir, file, true)) {
-            addTaskFile(task, baseDir, file)
-          } else if (utilTestDir != null && VfsUtilCore.isAncestor(utilTestDir, file, true)) {
-            addTestFile(task, baseDir, file)
-          } else {
-            addAdditionalFile(task, baseDir, file)
-          }
+          addFileInAdditionalTask(task, baseDir, file)
         }
         return true
       }
@@ -193,21 +171,13 @@ object CCUtils {
                                                  task.testsText.isEmpty() &&
                                                  task.additionalFiles.isEmpty()
 
-  private fun addTaskFile(task: Task, baseDir: VirtualFile, file: VirtualFile) {
-    addToTask(baseDir, file, ThrowableConsumer { path ->
-      val utilTaskFile = TaskFile()
-      utilTaskFile.name = path
-      utilTaskFile.setText(loadText(file))
-      task.addTaskFile(utilTaskFile)
-    })
-  }
-
-  private fun addTestFile(task: Task, baseDir: VirtualFile, file: VirtualFile) {
-    addToTask(baseDir, file, ThrowableConsumer { path -> task.addTestsTexts(path, loadText(file)) })
-  }
-
-  private fun addAdditionalFile(task: Task, baseDir: VirtualFile, file: VirtualFile) {
-    addToTask(baseDir, file, ThrowableConsumer { path -> task.addAdditionalFile(path, AdditionalFile(loadText(file), false)) })
+  private fun addFileInAdditionalTask(additionalTask: Task, baseDir: VirtualFile, file: VirtualFile) {
+    val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return
+    try {
+      additionalTask.addAdditionalFile(path, AdditionalFile(loadText(file), false))
+    } catch (e: IOException) {
+      LOG.error(e)
+    }
   }
 
   @JvmStatic
@@ -217,15 +187,6 @@ object CCUtils {
       Base64.encodeBase64URLSafeString(VfsUtilCore.loadBytes(file))
     } else {
       VfsUtilCore.loadText(file)
-    }
-  }
-
-  private fun addToTask(baseDir: VirtualFile, file: VirtualFile, action: ThrowableConsumer<String, IOException>) {
-    val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return
-    try {
-      action.consume(path)
-    } catch (e: IOException) {
-      LOG.error(e)
     }
   }
 
@@ -409,14 +370,8 @@ object CCUtils {
 
   @JvmStatic
   fun loadTestTextsToTask(task: Task, taskDir: VirtualFile) {
-    val testDir = task.findTestDir(taskDir)
-    if (testDir == null) {
-      LOG.warn("Can't find test dir for `${task.name}` task")
-      return
-    }
-
     for ((path, _) in task.testsText) {
-      val file = testDir.findFileByRelativePath(path)
+      val file = taskDir.findFileByRelativePath(path)
       if (file != null) {
         try {
           task.addTestsTexts(path, loadText(file))
