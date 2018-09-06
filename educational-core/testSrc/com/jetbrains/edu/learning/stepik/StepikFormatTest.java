@@ -1,44 +1,53 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.google.gson.*;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
+import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
+import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
+import kotlin.collections.CollectionsKt;
+import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
-public class StepikFormatTest {
-  @Rule
-  public TestName name = new TestName();
+public class StepikFormatTest extends EduTestCase {
 
-  @Test
-  public void fromFirstVersion() throws IOException {
+  @NotNull
+  @Override
+  protected String getTestDataPath() {
+    return "testData/stepik";
+  }
+
+  public void testFirstVersion() throws IOException {
     doStepOptionsCreationTest();
   }
 
-  @Test
-  public void fromSecondVersion() throws IOException {
+  public void testSecondVersion() throws IOException {
     doStepOptionsCreationTest();
   }
 
-  @Test
-  public void fromThirdVersion() throws IOException {
+  public void testThirdVersion() throws IOException {
     doStepOptionsCreationTest();
   }
 
-  @Test
-  public void fromFifthVersion() throws IOException {
+  public void testFifthVersion() throws IOException {
     StepikWrappers.StepOptions options = getStepOptions();
     assertEquals(1, options.additionalFiles.size());
     AdditionalFile file = options.additionalFiles.get("additional_file.txt");
@@ -47,32 +56,55 @@ public class StepikFormatTest {
     assertEquals(true, file.isVisible());
   }
 
-  @Test
+  public void testSixthVersion() throws IOException {
+    for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
+      checkSixthVersion(entry.getKey(), startsWith(entry.getValue().getTaskFilesRoot()), startsWith(entry.getValue().getTestFilesRoot()));
+    }
+    Matcher<String> pathMatcher = not(containsString("/"));
+    checkSixthVersion(EduNames.PYTHON, pathMatcher, pathMatcher);
+  }
+
+  private void checkSixthVersion(@NotNull String language,
+                                 @NotNull Matcher<String> srcPathMatcher,
+                                 @NotNull Matcher<String> testPathMatcher) throws IOException {
+    StepikWrappers.StepOptions options = getStepOptions(language);
+    assertEquals(3, options.files.size());
+    TaskFile taskFile = options.files.get(0);
+    assertThat(taskFile.getName(), srcPathMatcher);
+    assertEquals(1, taskFile.getAnswerPlaceholders().size());
+    AnswerPlaceholderDependency dependency = taskFile.getAnswerPlaceholders().get(0).getPlaceholderDependency();
+    assertThat(dependency.getFileName(), srcPathMatcher);
+    assertEquals(1, options.test.size());
+    assertThat(options.test.get(0).name, testPathMatcher);
+  }
+
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
     Lesson lesson =
-        StepikClient.deserializeStepikResponse(StepikWrappers.LessonContainer.class, responseString).lessons.get(0);
+        StepikClient.deserializeStepikResponse(StepikWrappers.LessonContainer.class, responseString, null).lessons.get(0);
     assertEquals(EduNames.ADDITIONAL_MATERIALS, lesson.getName());
   }
 
-  @Test
   public void testAdditionalMaterialsStep() throws IOException {
     String responseString = loadJsonText();
-    StepikWrappers.StepSource step =
-        StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class, responseString).steps.get(0);
-    assertEquals(EduNames.ADDITIONAL_MATERIALS, step.block.options.title);
+    for (String language : Arrays.asList(EduNames.KOTLIN, EduNames.PYTHON)) {
+      StepikWrappers.StepSource step = StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class,
+                                                                              responseString,
+                                                                              createParams(language)).steps.get(0);
+      assertEquals(EduNames.ADDITIONAL_MATERIALS, step.block.options.title);
+      assertEquals("task_file.py", step.block.options.files.get(0).getName());
+      assertEquals("test_helperq.py", step.block.options.test.get(0).name);
+    }
   }
 
-  @Test
   public void testAvailableCourses() throws IOException {
     String responseString = loadJsonText();
     StepikWrappers.CoursesContainer container =
-      StepikClient.deserializeStepikResponse(StepikWrappers.CoursesContainer.class, responseString);
+      StepikClient.deserializeStepikResponse(StepikWrappers.CoursesContainer.class, responseString, null);
     assertNotNull(container.courses);
     assertEquals("Incorrect number of courses", 4, container.courses.size());
   }
 
-  @Test
   public void testPlaceholderSerialization() throws IOException {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
     AnswerPlaceholder answerPlaceholder = new AnswerPlaceholder();
@@ -88,7 +120,6 @@ public class StepikFormatTest {
 
   }
 
-  @Test
   public void testTokenUptoDate() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -100,7 +131,6 @@ public class StepikFormatTest {
     assertFalse(user.isGuest());
   }
 
-  @Test
   public void testCourseAuthor() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -112,7 +142,6 @@ public class StepikFormatTest {
     assertFalse(user.isGuest());
   }
 
-  @Test
   public void testSections() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -123,7 +152,6 @@ public class StepikFormatTest {
     assertEquals(10, unitIds.size());
   }
 
-  @Test
   public void testUnit() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -134,7 +162,6 @@ public class StepikFormatTest {
     assertEquals(13416, lesson);
   }
 
-  @Test
   public void testLesson() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -145,7 +172,6 @@ public class StepikFormatTest {
     assertNotNull(lesson);
   }
 
-  @Test
   public void testStep() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -155,7 +181,6 @@ public class StepikFormatTest {
     assertNotNull(step);
   }
 
-  @Test
   public void testStepBlock() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -167,13 +192,11 @@ public class StepikFormatTest {
     assertTrue(block.name.startsWith(PYCHARM_PREFIX));
   }
 
-  @Test
   public void testStepBlockOptions() throws IOException {
     final StepikWrappers.StepOptions options = getStepOptions();
     assertNotNull(options);
   }
 
-  @Test
   public void testUpdateDate() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -182,13 +205,11 @@ public class StepikFormatTest {
     assertNotNull(step.update_date);
   }
 
-  @Test
   public void testOptionsTitle() throws IOException {
     final StepikWrappers.StepOptions options = getStepOptions();
     assertEquals("Our first program", options.title);
   }
 
-  @Test
   public void testOptionsTest() throws IOException {
     final StepikWrappers.StepOptions options = getStepOptions();
     final List<StepikWrappers.FileWrapper> testWrapper = options.test;
@@ -198,7 +219,6 @@ public class StepikFormatTest {
     assertNotNull(testWrapper.get(0).text);
   }
 
-  @Test
   public void testOptionsDescription() throws IOException {
     final StepikWrappers.StepOptions options = getStepOptions();
 
@@ -213,13 +233,11 @@ public class StepikFormatTest {
         "<br>\n", options.descriptionText);
   }
 
-  @Test
   public void testOptionsFeedbackLinks() throws IOException {
     StepikWrappers.StepOptions stepOptions = getStepOptions();
     assertEquals(FeedbackLink.LinkType.CUSTOM, stepOptions.myFeedbackLink.getType());
   }
 
-  @Test
   public void testOptionsFiles() throws IOException {
     final StepikWrappers.StepOptions options = getStepOptions();
 
@@ -231,7 +249,11 @@ public class StepikFormatTest {
   }
 
   private StepikWrappers.StepOptions getStepOptions() throws IOException {
-    Gson gson = getGson();
+    return getStepOptions(null);
+  }
+
+  private StepikWrappers.StepOptions getStepOptions(@Nullable String language) throws IOException {
+    Gson gson = getGson(createParams(language));
     String jsonText = loadJsonText();
     final StepikWrappers.StepContainer stepContainer = gson.fromJson(jsonText, StepikWrappers.StepContainer.class);
     final StepikWrappers.StepSource step = stepContainer.steps.get(0);
@@ -239,7 +261,6 @@ public class StepikFormatTest {
     return block.options;
   }
 
-  @Test
   public void testOptionsPlaceholder() throws IOException {
     final StepikWrappers.StepOptions options = getStepOptions();
     final List<TaskFile> files = options.files;
@@ -254,7 +275,6 @@ public class StepikFormatTest {
     assertEquals("type your name", taskFile.getText().substring(offset, offset + length));
   }
 
-  @Test
   public void testTaskStatuses() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -267,7 +287,6 @@ public class StepikFormatTest {
     assertEquals(50, statuses.length);
   }
 
-  @Test
   public void testLastSubmission() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -283,7 +302,36 @@ public class StepikFormatTest {
     assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).text);
   }
 
-  @Test
+  public void testReplyMigration() throws IOException {
+    String jsonText = loadJsonText();
+    for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
+      Matcher<String> pathMatcher = startsWith(entry.getValue().getTaskFilesRoot());
+      checkReply(jsonText, entry.getKey(), pathMatcher);
+    }
+
+    checkReply(jsonText, EduNames.PYTHON, not(containsString("/")));
+  }
+
+  private static void checkReply(@NotNull String jsonText, @NotNull String language, @NotNull Matcher<String> pathMatcher) {
+    Gson gson = getGson(createParams(language));
+    StepikWrappers.Reply reply = gson.fromJson(jsonText, StepikWrappers.Reply.class);
+    assertEquals(1, reply.solution.size());
+    assertThat(reply.solution.get(0).name, pathMatcher);
+
+    Gson taskGson = new GsonBuilder()
+      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.version, language))
+      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+      .create();
+
+    StepikWrappers.TaskWrapper taskWrapper = taskGson.fromJson(reply.edu_task, StepikWrappers.TaskWrapper.class);
+    Map.Entry<String, TaskFile> taskFileEntry = CollectionsKt.first(taskWrapper.task.getTaskFiles().entrySet());
+    assertThat(taskFileEntry.getKey(), pathMatcher);
+    TaskFile taskFile = taskFileEntry.getValue();
+    assertThat(taskFile.getName(), pathMatcher);
+    AnswerPlaceholderDependency dependency = taskFile.getAnswerPlaceholders().get(0).getPlaceholderDependency();
+    assertThat(dependency.getFileName(), pathMatcher);
+  }
+
   public void testNonEduTasks() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -295,7 +343,12 @@ public class StepikFormatTest {
 
   @NotNull
   private static Gson getGson() {
-    return StepikClient.createGson();
+    return getGson(null);
+  }
+
+  @NotNull
+  private static Gson getGson(@Nullable Map<Key, Object> params) {
+    return StepikClient.createGson(params);
   }
 
   @NotNull
@@ -303,15 +356,10 @@ public class StepikFormatTest {
     return FileUtil.loadFile(new File(getTestDataPath(), getTestFile()));
   }
 
-  @NotNull
-  private static String getTestDataPath() {
-    return FileUtil.join("testData/stepik");
-  }
-
   private StepikWrappers.StepOptions doStepOptionsCreationTest() throws IOException {
     String responseString = loadJsonText();
     StepikWrappers.StepSource stepSource =
-        StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class, responseString).steps.get(0);
+        StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class, responseString, null).steps.get(0);
     StepikWrappers.StepOptions options = stepSource.block.options;
     List<TaskFile> files = options.files;
     assertEquals("Wrong number of task files", 1, files.size());
@@ -326,9 +374,10 @@ public class StepikFormatTest {
 
   @NotNull
   private String getTestFile() {
-    final String methodName = name.getMethodName();
-    String fileName = methodName.substring("test".length());
-    fileName = Character.toLowerCase(fileName.charAt(0)) + fileName.substring(1);
-    return fileName + ".json";
+    return getTestName(true) + ".json";
+  }
+
+  private static Map<Key, Object> createParams(@Nullable String language) {
+    return language == null ? null : Collections.singletonMap(StepikConnector.COURSE_LANGUAGE, language);
   }
 }

@@ -287,7 +287,8 @@ public class StepikSolutionsLoader implements Disposable {
     else if (!isSolved) {
       try {
         if (task instanceof EduTask) {
-          StepikWrappers.Reply reply = getLastSubmission(String.valueOf(stepId), isSolved);
+          String language = task.getCourse().getLanguageID();
+          StepikWrappers.Reply reply = getLastSubmission(String.valueOf(stepId), isSolved, language);
           if (reply != null && !reply.solution.isEmpty()) {
             return true;
           }
@@ -346,7 +347,8 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
-    StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved);
+    String language = task.getCourse().getLanguageID();
+    StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved, language);
     if (reply == null || reply.solution == null || reply.solution.isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.solution == null) {
@@ -370,7 +372,7 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     StepikWrappers.TaskWrapper updatedTask = new GsonBuilder()
-      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.version))
+      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.version, language))
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .create()
       .fromJson(serializedTask, StepikWrappers.TaskWrapper.class);

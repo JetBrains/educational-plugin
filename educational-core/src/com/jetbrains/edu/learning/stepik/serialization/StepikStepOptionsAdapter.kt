@@ -4,11 +4,11 @@ import com.google.gson.*
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FORMAT_VERSION
 import com.jetbrains.edu.learning.serialization.converter.json.*
-import com.jetbrains.edu.learning.serialization.converter.xml.ToSixthVersionXmlConverter
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.lang.reflect.Type
 
-class StepikStepOptionsAdapter : JsonDeserializer<StepikWrappers.StepOptions> {
+class StepikStepOptionsAdapter(val language: String?) : JsonDeserializer<StepikWrappers.StepOptions> {
+
   @Throws(JsonParseException::class)
   override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): StepikWrappers.StepOptions {
     var stepOptionsJson = json.asJsonObject
@@ -24,6 +24,7 @@ class StepikStepOptionsAdapter : JsonDeserializer<StepikWrappers.StepOptions> {
         3 -> stepOptionsJson = convertToFourthVersion(stepOptionsJson)
         4 -> stepOptionsJson = convertToFifthVersion(stepOptionsJson)
         5 -> stepOptionsJson = convertToSixthVersion(stepOptionsJson)
+        6 -> stepOptionsJson = convertToSeventhVersion(stepOptionsJson)
       }
       version++
     }
@@ -51,5 +52,9 @@ class StepikStepOptionsAdapter : JsonDeserializer<StepikWrappers.StepOptions> {
 
   private fun convertToSixthVersion(stepOptionsJson: JsonObject): JsonObject {
     return ToSixthVersionJsonStepOptionConverter().convert(stepOptionsJson)
+  }
+
+  private fun convertToSeventhVersion(stepOptionsJson: JsonObject): JsonObject {
+    return ToSeventhVersionJsonStepOptionConverter(language).convert(stepOptionsJson)
   }
 }

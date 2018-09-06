@@ -27,12 +27,12 @@ class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
     private val LOG: Logger = Logger.getInstance(ToFifthVersionJsonStepOptionsConverter::class.java)
 
     @JvmStatic
-    fun removeSubtaskInfo(placeholderObject: JsonObject): JsonObject {
+    fun removeSubtaskInfo(placeholderObject: JsonObject) {
       val subtaskInfos = placeholderObject.get(SUBTASK_INFOS)
       val info = when (subtaskInfos.size) {
         0 -> {
           LOG.warn("Can't find subtask info object")
-          return placeholderObject
+          return
         }
         1 -> subtaskInfos.firstValue
         else -> {
@@ -52,7 +52,6 @@ class ToFifthVersionJsonStepOptionsConverter : JsonStepOptionsConverter {
         placeholderObject.addProperty(STATUS, status.asString)
       }
       placeholderObject.remove(SUBTASK_INFOS)
-      return placeholderObject
     }
 
     private fun migrateDescription(stepOptions: JsonObject) {

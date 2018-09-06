@@ -414,6 +414,9 @@ public class SerializationUtils {
     public static final String ADDITIONAL_FILES = "additional_files";
     public static final String TEXT = "text";
     public static final String IS_VISIBLE = "is_visible";
+    public static final String DEPENDENCY = "dependency";
+    public static final String DEPENDENCY_FILE = "file";
+    public static final String TEST_FILES = "test_files";
 
     private Json() {
     }

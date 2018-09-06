@@ -8,25 +8,58 @@ import com.jetbrains.edu.learning.courseFormat.DescriptionFormat
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.STATUS
+import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
+import com.jetbrains.edu.learning.serialization.converter.TaskRoots
 import com.jetbrains.edu.learning.serialization.converter.json.ToFifthVersionJsonStepOptionsConverter
+import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionJsonStepOptionConverter
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.lang.reflect.Type
 
-class StepikReplyAdapter : JsonDeserializer<StepikWrappers.Reply> {
+class StepikReplyAdapter(private val language: String?) : JsonDeserializer<StepikWrappers.Reply> {
 
   @Throws(JsonParseException::class)
   override fun deserialize(json: JsonElement, type: Type, context: JsonDeserializationContext): StepikWrappers.Reply {
     val jsonObject = json.asJsonObject
+    val version = jsonObject.getAsJsonPrimitive("version")?.asInt ?: 1
+    jsonObject.migrate(version, language)
+
     val gson = GsonBuilder().setPrettyPrinting().create()
     return gson.fromJson<StepikWrappers.Reply>(jsonObject).apply {
-      version = jsonObject.getAsJsonPrimitive("version")?.asInt ?: 1
+      // We need to save original version of reply object
+      // to correct deserialize StepikWrappers.Reply#edu_task
+      this.version = version
+    }
+  }
+
+  companion object {
+    private fun JsonObject.migrate(version: Int, language: String?) {
+      @Suppress("NAME_SHADOWING")
+      var version = version
+      while (version < JSON_FORMAT_VERSION) {
+        when (version) {
+          6 -> toSeventhVersion(language)
+        }
+        version++
+      }
+    }
+
+    private fun JsonObject.toSeventhVersion(language: String?) {
+      val taskFilesRoot = getTaskRoots(language)?.taskFilesRoot
+      if (taskFilesRoot != null) {
+        for (solutionFile in getAsJsonArray("solution")) {
+          solutionFile.asJsonObject.changeStringProperty(NAME) { "$taskFilesRoot/$it" }
+        }
+      }
     }
   }
 }
 
-class StepikSubmissionTaskAdapter(private val replyVersion: Int = JSON_FORMAT_VERSION) : JsonSerializer<Task>, JsonDeserializer<Task> {
+class StepikSubmissionTaskAdapter @JvmOverloads constructor(
+  private val replyVersion: Int = JSON_FORMAT_VERSION,
+  private val language: String? = null
+) : JsonSerializer<Task>, JsonDeserializer<Task> {
 
-  private val placeholderAdapter = StepikSubmissionAnswerPlaceholderAdapter(replyVersion)
+  private val placeholderAdapter = StepikSubmissionAnswerPlaceholderAdapter(replyVersion, language)
 
   override fun serialize(src: Task, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
     val gson = GsonBuilder()
@@ -44,33 +77,63 @@ class StepikSubmissionTaskAdapter(private val replyVersion: Int = JSON_FORMAT_VE
       .registerTypeAdapter(AnswerPlaceholder::class.java, placeholderAdapter)
       .create()
 
-    val jsonObject = json.asJsonObject.migrate(replyVersion)
-    return doDeserialize(jsonObject, gson)
+    json.asJsonObject.migrate(replyVersion, language)
+    return doDeserialize(json, gson)
   }
 
-  private fun JsonObject.migrate(version: Int): JsonObject {
-    @Suppress("NAME_SHADOWING")
-    var version = version
-    while (version < JSON_FORMAT_VERSION) {
-      when (version) {
-        1 -> {
-          val taskTexts = getAsJsonObject(TASK_TEXTS)
-          if (taskTexts != null && taskTexts.size() > 0) {
-            val description = taskTexts.entrySet().firstOrNull()?.value?.asString
-            addProperty(DESCRIPTION_TEXT, description)
-          }
-          addProperty(DESCRIPTION_FORMAT, DescriptionFormat.HTML.toString().toLowerCase())
-          remove(TASK_TEXTS)
+  companion object {
+
+    private fun JsonObject.migrate(version: Int, language: String?) {
+      @Suppress("NAME_SHADOWING")
+      var version = version
+      while (version < JSON_FORMAT_VERSION) {
+        when (version) {
+          1 -> toFifthVersion()
+          6 -> toSeventhVersion(language)
         }
+        version++
       }
-      version++
     }
 
-    return this
+    private fun JsonObject.toFifthVersion() {
+      val taskTexts = getAsJsonObject(TASK_TEXTS)
+      if (taskTexts != null && taskTexts.size() > 0) {
+        val description = taskTexts.entrySet().firstOrNull()?.value?.asString
+        addProperty(DESCRIPTION_TEXT, description)
+      }
+      addProperty(DESCRIPTION_FORMAT, DescriptionFormat.HTML.toString().toLowerCase())
+      remove(TASK_TEXTS)
+    }
+
+    private fun JsonObject.toSeventhVersion(language: String?) {
+      val taskRoots = getTaskRoots(language)
+      if (taskRoots != null) {
+        val taskFiles = getAsJsonObject(TASK_FILES)
+        val convertedTaskFiles = JsonObject()
+        for ((path, taskFile) in taskFiles.entrySet()) {
+          val convertedPath = "${taskRoots.taskFilesRoot}/$path"
+          taskFile.asJsonObject.addProperty(NAME, convertedPath)
+          convertedTaskFiles.add(convertedPath, taskFile)
+        }
+
+        add(TASK_FILES, convertedTaskFiles)
+
+        val testFiles = getAsJsonObject(TEST_FILES)
+        val convertedTestFiles = JsonObject()
+        for ((path, testFile) in testFiles.entrySet()) {
+          convertedTestFiles.add("${taskRoots.taskFilesRoot}/$path", testFile)
+        }
+
+        add(TEST_FILES, convertedTestFiles)
+      }
+    }
   }
 }
 
-private class StepikSubmissionAnswerPlaceholderAdapter(private val replyVersion: Int) : JsonSerializer<AnswerPlaceholder>, JsonDeserializer<AnswerPlaceholder> {
+private class StepikSubmissionAnswerPlaceholderAdapter(
+  private val replyVersion: Int,
+  private val language: String?
+) : JsonSerializer<AnswerPlaceholder>, JsonDeserializer<AnswerPlaceholder> {
 
   override fun serialize(src: AnswerPlaceholder, type: Type, jsonSerializationContext: JsonSerializationContext): JsonElement {
     val gson = GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create()
@@ -87,7 +150,8 @@ private class StepikSubmissionAnswerPlaceholderAdapter(private val replyVersion:
                            type: Type,
                            jsonDeserializationContext: JsonDeserializationContext): AnswerPlaceholder {
     val gson = GsonBuilder().setPrettyPrinting().create()
-    val placeholderObject = jsonElement.asJsonObject.migrate(replyVersion)
+    val placeholderObject = jsonElement.asJsonObject
+    placeholderObject.migrate(replyVersion, language)
     val placeholder = gson.fromJson<AnswerPlaceholder>(placeholderObject)
 
     if (placeholderObject.has(SELECTED)) {
@@ -101,19 +165,35 @@ private class StepikSubmissionAnswerPlaceholderAdapter(private val replyVersion:
     return placeholder
   }
 
-  private fun JsonObject.migrate(version: Int): JsonObject {
-    var jsonObject = this
-    @Suppress("NAME_SHADOWING")
-    var version = version
-    while (version < JSON_FORMAT_VERSION) {
-      when (version) {
-        1 -> jsonObject = ToFifthVersionJsonStepOptionsConverter.removeSubtaskInfo(jsonObject)
+  companion object {
+    private fun JsonObject.migrate(version: Int, language: String?) {
+      @Suppress("NAME_SHADOWING")
+      var version = version
+      while (version < JSON_FORMAT_VERSION) {
+        when (version) {
+          1 -> ToFifthVersionJsonStepOptionsConverter.removeSubtaskInfo(this)
+          6 -> {
+            val taskFilesRoot = getTaskRoots(language)?.taskFilesRoot
+            if (taskFilesRoot != null) {
+              ToSeventhVersionJsonStepOptionConverter.convertPlaceholder(this, taskFilesRoot)
+            }
+          }
+        }
+        version++
       }
-      version++
     }
-
-    return jsonObject
   }
 }
 
 private inline fun <reified T> Gson.fromJson(element: JsonElement): T = fromJson(element, T::class.java)
+
+private fun getTaskRoots(language: String?): TaskRoots? {
+  if (language == null) return null
+  return LANGUAGE_TASK_ROOTS[language]
+}
+
+// TODO: move it into SerializationUtils after conversion into kotlin
+private inline fun JsonObject.changeStringProperty(propertyName: String, action: (String) -> String) {
+  val value = getAsJsonPrimitive(propertyName)?.asString ?: return
+  addProperty(propertyName, action(value))
+}
