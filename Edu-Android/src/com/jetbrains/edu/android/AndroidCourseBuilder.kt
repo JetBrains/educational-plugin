@@ -98,13 +98,13 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       val packagePath = packageName.replace('.', VfsUtilCore.VFS_SEPARATOR_CHAR)
       return mapOf(
         "android-task-build.gradle" to FileInfo(GradleConstants.DEFAULT_SCRIPT_NAME, ADDITIONAL_FILE),
-        "android-MainActivity.kt" to FileInfo("java/$packagePath/MainActivity.kt", TASK_FILE),
-        "android-AndroidManifest.xml" to FileInfo("AndroidManifest.xml", TASK_FILE),
-        "android-activity_main.xml" to FileInfo("res/layout/activity_main.xml", TASK_FILE),
-        "android-styles.xml" to FileInfo("res/values/styles.xml", TASK_FILE),
-        "android-strings.xml" to FileInfo("res/values/strings.xml", TASK_FILE),
-        "android-colors.xml" to FileInfo("res/values/colors.xml", TASK_FILE),
-        "android-ExampleUnitTest.kt" to FileInfo("java/$packagePath/ExampleUnitTest.kt", TEST_FILE)
+        "android-MainActivity.kt" to FileInfo("src/main/java/$packagePath/MainActivity.kt", TASK_FILE),
+        "android-AndroidManifest.xml" to FileInfo("src/main/AndroidManifest.xml", TASK_FILE),
+        "android-activity_main.xml" to FileInfo("src/main/res/layout/activity_main.xml", TASK_FILE),
+        "android-styles.xml" to FileInfo("src/main/res/values/styles.xml", TASK_FILE),
+        "android-strings.xml" to FileInfo("src/main/res/values/strings.xml", TASK_FILE),
+        "android-colors.xml" to FileInfo("src/main/res/values/colors.xml", TASK_FILE),
+        "android-ExampleUnitTest.kt" to FileInfo("src/test/java/$packagePath/ExampleUnitTest.kt", TEST_FILE)
       )
     }
   }
