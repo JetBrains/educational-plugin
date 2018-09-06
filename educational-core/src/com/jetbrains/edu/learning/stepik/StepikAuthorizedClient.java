@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.learning.EduSettings;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class StepikAuthorizedClient {
   private static final Logger LOG = Logger.getInstance(StepikAuthorizedClient.class.getName());
@@ -52,9 +54,17 @@ public class StepikAuthorizedClient {
   }
 
   @Nullable
-  public static <T> T getFromStepik(@NotNull String link, @NotNull final Class<T> container) throws IOException {
+  public static <T> T getFromStepik(@NotNull String link,
+                                    @NotNull final Class<T> container) throws IOException {
+    return getFromStepik(link, container, (Map<Key, Object>) null);
+  }
+
+  @Nullable
+  public static <T> T getFromStepik(@NotNull String link,
+                                    @NotNull final Class<T> container,
+                                    @Nullable Map<Key, Object> params) throws IOException {
     final CloseableHttpClient client = getHttpClient();
-    return client == null ? null : StepikClient.getFromStepik(link, container, client);
+    return client == null ? null : StepikClient.getFromStepik(link, container, client, params);
   }
 
   /*
@@ -91,6 +101,12 @@ public class StepikAuthorizedClient {
    */
   public static <T> T getFromStepik(String link, final Class<T> container, @NotNull final StepicUser stepicUser) throws IOException {
     return StepikClient.getFromStepik(link, container, getHttpClient(stepicUser));
+  }
+
+  public static <T> T getFromStepik(String link, final Class<T> container,
+                                    @NotNull final StepicUser stepicUser,
+                                    @Nullable Map<Key, Object> params) throws IOException {
+    return StepikClient.getFromStepik(link, container, getHttpClient(stepicUser), params);
   }
 
   @NotNull

@@ -19,6 +19,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
@@ -78,6 +79,8 @@ public class StepikConnector {
   public static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
   private static final int THREAD_NUMBER = Runtime.getRuntime().availableProcessors();
   private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER);
+
+  public static final Key<String> COURSE_LANGUAGE = Key.create("COURSE_LANGUAGE");
 
   private StepikConnector() {
   }
@@ -592,7 +595,7 @@ public class StepikConnector {
           progressIndicator.setFraction((double)readableIndex / lessonCount);
         }
         String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
-        List<StepSource> allStepSources = getStepSources(stepIds);
+        List<StepSource> allStepSources = getStepSources(stepIds, remoteCourse.getLanguageID());
 
         if (!allStepSources.isEmpty()) {
           final StepOptions options = allStepSources.get(0).block.options;
@@ -613,8 +616,9 @@ public class StepikConnector {
     return lessons;
   }
 
-  public static List<StepSource> getStepSources(String[] stepIds) throws URISyntaxException, IOException {
-    List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class);
+  public static List<StepSource> getStepSources(String[] stepIds, String language) throws URISyntaxException, IOException {
+    Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
+    List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class, params);
     return stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
   }
 
@@ -661,7 +665,7 @@ public class StepikConnector {
     List<Lesson> lessons = getLessons(unitsIds);
     for (Lesson lesson : lessons) {
       String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
-      List<StepSource> allStepSources = getStepSources(stepIds);
+      List<StepSource> allStepSources = getStepSources(stepIds, remoteCourse.getLanguageID());
 
       for (StepSource stepSource : allStepSources) {
         Step step = stepSource.block;
@@ -678,12 +682,16 @@ public class StepikConnector {
   }
 
   private static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
+    return getFromStepik(link, container, null);
+  }
+
+  private static <T> T getFromStepik(String link, final Class<T> container, @Nullable Map<Key, Object> params) throws IOException {
     if (EduSettings.isLoggedIn()) {
       final StepicUser user = EduSettings.getInstance().getUser();
       assert user != null;
-      return StepikAuthorizedClient.getFromStepik(link, container, user);
+      return StepikAuthorizedClient.getFromStepik(link, container, user, params);
     }
-    return StepikClient.getFromStepik(link, container);
+    return StepikClient.getFromStepik(link, container, params);
   }
 
   /**
@@ -740,14 +748,15 @@ public class StepikConnector {
   }
 
   @Nullable
-  static Reply getLastSubmission(@NotNull String stepId, boolean isSolved) throws IOException {
+  static Reply getLastSubmission(@NotNull String stepId, boolean isSolved, String language) throws IOException {
     try {
       URI url = new URIBuilder(StepikNames.SUBMISSIONS)
         .addParameter("order", "desc")
         .addParameter("page", "1")
         .addParameter("status", isSolved ? "correct" : "wrong")
         .addParameter("step", stepId).build();
-      Submission[] submissions = getFromStepik(url.toString(), SubmissionsWrapper.class).submissions;
+      Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
+      Submission[] submissions = getFromStepik(url.toString(), SubmissionsWrapper.class, params).submissions;
       if (submissions.length > 0) {
         return submissions[0].reply;
       }
@@ -812,6 +821,12 @@ public class StepikConnector {
   }
 
   private static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
+    return multipleRequestToStepik(apiUrl, ids, container, null);
+  }
+
+  private static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids,
+                                                     final Class<T> container,
+                                                     @Nullable Map<Key, Object> params) throws URISyntaxException, IOException {
     List<T> result = new ArrayList<>();
 
     int length = ids.length;
@@ -822,7 +837,7 @@ public class StepikConnector {
         builder.addParameter("ids[]", id);
       }
       String link = builder.build().toString();
-      result.add(getFromStepik(link, container));
+      result.add(getFromStepik(link, container, params));
     }
 
     return result;

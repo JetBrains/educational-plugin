@@ -4,6 +4,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Key;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.net.ssl.CertificateManager;
@@ -28,6 +29,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -40,6 +42,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class StepikClient {
   private static final Logger LOG = Logger.getInstance(StepikClient.class.getName());
@@ -58,10 +61,21 @@ public class StepikClient {
   }
 
   public static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
-    return getFromStepik(link, container, getHttpClient());
+    return getFromStepik(link, container, (Map<Key, Object>) null);
+  }
+
+  public static <T> T getFromStepik(String link, final Class<T> container, @Nullable Map<Key, Object> params) throws IOException {
+    return getFromStepik(link, container, getHttpClient(), params);
   }
 
   static <T> T getFromStepik(String link, final Class<T> container, @NotNull final CloseableHttpClient client) throws IOException {
+    return getFromStepik(link, container, client, null);
+  }
+
+  static <T> T getFromStepik(String link,
+                             final Class<T> container,
+                             @NotNull final CloseableHttpClient client,
+                             @Nullable Map<Key, Object> params) throws IOException {
     if (!link.startsWith("/")) link = "/" + link;
     final HttpGet request = new HttpGet(StepikNames.STEPIK_API_URL + link);
     addTimeout(request);
@@ -74,7 +88,7 @@ public class StepikClient {
     if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
       throw new IOException("Stepik returned non 200 status code " + responseString);
     }
-    return deserializeStepikResponse(container, responseString);
+    return deserializeStepikResponse(container, responseString, params);
   }
 
   private static void addTimeout(@NotNull HttpGet request) {
@@ -87,16 +101,17 @@ public class StepikClient {
     request.setConfig(requestConfig);
   }
 
-  static <T> T deserializeStepikResponse(Class<T> container, String responseString) {
-    Gson gson = createGson();
+  static <T> T deserializeStepikResponse(Class<T> container, String responseString, @Nullable Map<Key, Object> params) {
+    Gson gson = createGson(params);
     return gson.fromJson(responseString, container);
   }
 
-  public static Gson createGson() {
+  public static Gson createGson(@Nullable Map<Key, Object> params) {
+    String language = StepikConnector.COURSE_LANGUAGE.get(params);
     return new GsonBuilder()
-        .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter())
-        .registerTypeAdapter(Lesson.class, new StepikLessonAdapter())
-        .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter())
+        .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter(language))
+        .registerTypeAdapter(Lesson.class, new StepikLessonAdapter(language))
+        .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter(language))
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   }

@@ -17,7 +17,13 @@
         "animation": null,
         "options": {
           "format_version": 3,
-          "files": [],
+          "files": [
+            {
+              "name": "task_file.py",
+              "text": "",
+              "placeholders": []
+            }
+          ],
           "test": [
             {
               "name": "test_helperq.py",

@@ -323,3 +323,60 @@
     }
     ```
  
+ 7. Make all paths relative to task folder
+    
+    Before:
+    ```json
+    {
+      // other properties
+      "files": [
+        {
+          "name": "Task.kt",
+          "text": "some text",
+          "placeholders": [
+            {
+              // other properties
+              "dependency": {
+                // other properties
+                "file": "Task.kt"
+              }
+            }
+          ]
+        }
+      ],
+      "test": [
+        {
+          "name": "Tests.kt",
+          "text": "some text"
+        }
+      ]
+    }
+    ```
+    
+    After:
+    ```json
+    {
+      // other properties
+      "files": [
+        {
+          "name": "src/Task.kt",
+          "text": "some text",
+          "placeholders": [
+            {
+              // other properties
+              "dependency": {
+                // other properties
+                "file": "src/Task.kt"
+              }
+            }
+          ]
+        }
+      ],
+      "test": [
+        {
+          "name": "test/Tests.kt",
+          "text": "some text"
+        }
+      ]
+    }
+    ```
