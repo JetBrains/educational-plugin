@@ -14,10 +14,10 @@ class KtCheckersTest : KtCheckersTestBase() {
   override fun createCourse(): Course = course(language = KotlinLanguage.INSTANCE) {
     lesson {
       eduTask("EduTask") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun foo() = 42
         """)
-        kotlinTestFile("Tests.kt", """
+        kotlinTestFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -30,7 +30,7 @@ class KtCheckersTest : KtCheckersTestBase() {
         """)
       }
       theoryTask("TheoryTask") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {
               val a = 1
               println(a)
@@ -38,31 +38,31 @@ class KtCheckersTest : KtCheckersTestBase() {
         """)
       }
       outputTask("OutputTask") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {
               println("OK")
           }
         """)
-        testFile("output.txt", "OK")
+        testFile("test/output.txt", "OK")
       }
       outputTask("OutputTaskWithSeveralFiles") {
-        kotlinTaskFile("utils.kt", """
+        kotlinTaskFile("src/utils.kt", """
           fun ok(): String = "OK"
         """)
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {
               println(ok())
           }
         """)
-        testFile("output.txt", "OK")
+        testFile("test/output.txt", "OK")
       }
       outputTask("OutputTask:With;Special&Symbols?") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {
               println("OK")
           }
         """)
-        testFile("output.txt", "OK")
+        testFile("test/output.txt", "OK")
       }
     }
   }

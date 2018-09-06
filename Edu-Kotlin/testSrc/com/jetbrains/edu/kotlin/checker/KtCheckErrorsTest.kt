@@ -17,8 +17,8 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
   override fun createCourse(): Course = course(language = KotlinLanguage.INSTANCE) {
     lesson {
       eduTask("kotlinCompilationError") {
-        kotlinTaskFile("Task.kt", "fun foo(): Int = aaa")
-        kotlinTestFile("Tests.kt", """
+        kotlinTaskFile("src/Task.kt", "fun foo(): Int = aaa")
+        kotlinTestFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -31,15 +31,15 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         """)
       }
       eduTask("javaCompilationError") {
-        javaTaskFile("JavaClass.java", """
+        javaTaskFile("src/JavaClass.java", """
           public class JavaClass {
               public static int i = aaa;
           }
         """)
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun foo() = JavaClass.i
         """)
-        kotlinTestFile("Tests.kt", """
+        kotlinTestFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -52,10 +52,10 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         """)
       }
       eduTask("testFail") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun foo(): Int = 43
         """)
-        kotlinTestFile("Tests.kt", """
+        kotlinTestFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -68,10 +68,10 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         """)
       }
       eduTask("comparisonTestFail") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun foo(): Int = 43
         """)
-        kotlinTestFile("Tests.kt", """
+        kotlinTestFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -84,10 +84,10 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         """)
       }
       eduTask("comparisonTestWithMessageFail") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun foo(): Int = 43
         """)
-        kotlinTestFile("Tests.kt", """
+        kotlinTestFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -100,10 +100,10 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         """)
       }
       eduTask("comparisonMultilineTestFail") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun foo(): String = "Hello\nWorld!"
         """)
-        kotlinTestFile("Tests.kt", """
+        kotlinTestFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -116,7 +116,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         """)
       }
       eduTask("objectComparisonTestFail") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           data class Foo(val x: Int, val y: Int) {
               override fun toString(): String = "(${'$'}x, ${'$'}y)"
           }
@@ -125,7 +125,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
               override fun toString(): String = "(${'$'}x, ${'$'}y)"
           }
         """)
-        kotlinTestFile("Tests.kt", """
+        kotlinTestFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -137,21 +137,21 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         """)
       }
       outputTask("outputTaskFail") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {
               println("OK")
           }
         """)
-        testFile("output.txt", "OK!")
+        testFile("test/output.txt", "OK!")
       }
       outputTask("multilineOutputTaskFail") {
-        kotlinTaskFile("Task.kt", """
+        kotlinTaskFile("src/Task.kt", """
           fun main(args: Array<String>) {
               println("Hello")
               println("World")
           }
         """)
-        testFile("output.txt", "Hello,\nWorld!")
+        testFile("test/output.txt", "Hello,\nWorld!")
       }
     }
   }

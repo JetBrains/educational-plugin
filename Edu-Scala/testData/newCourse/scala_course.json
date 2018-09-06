@@ -12,14 +12,14 @@
           "name": "my task 1",
           "stepic_id": 0,
           "task_files": {
-            "Task.scala": {
-              "name": "Task.scala",
+            "src/Task.scala": {
+              "name": "src/Task.scala",
               "text": "class Task {\n  // here task 1\n}",
               "placeholders": []
             }
           },
           "test_files": {
-            "Test.scala": "import org.junit.runner.RunWith\nimport org.scalatest.junit.JUnitRunner\nimport org.scalatest.FunSuite\n\n@RunWith(classOf[JUnitRunner])\nclass Test extends FunSuite {\n\n}"
+            "test/Test.scala": "import org.junit.runner.RunWith\nimport org.scalatest.junit.JUnitRunner\nimport org.scalatest.FunSuite\n\n@RunWith(classOf[JUnitRunner])\nclass Test extends FunSuite {\n\n}"
           },
           "description_text": "\u003chtml\u003e\nWrite your task text here.\n\u003cbr\u003e\n\u003c/html\u003e",
           "description_format": "html",
@@ -30,14 +30,14 @@
           "name": "my task 2",
           "stepic_id": 0,
           "task_files": {
-            "Task.scala": {
-              "name": "Task.scala",
+            "src/Task.scala": {
+              "name": "src/Task.scala",
               "text": "class Task {\n  //put your task here\n}",
               "placeholders": []
             }
           },
           "test_files": {
-            "Test.scala": "import org.junit.runner.RunWith\nimport org.scalatest.junit.JUnitRunner\nimport org.scalatest.FunSuite\n\n@RunWith(classOf[JUnitRunner])\nclass Test extends FunSuite {\n\n}"
+            "test/Test.scala": "import org.junit.runner.RunWith\nimport org.scalatest.junit.JUnitRunner\nimport org.scalatest.FunSuite\n\n@RunWith(classOf[JUnitRunner])\nclass Test extends FunSuite {\n\n}"
           },
           "description_text": "\u003chtml\u003e\nWrite your task text here.\n\u003cbr\u003e\n\u003c/html\u003e",
           "description_format": "html",

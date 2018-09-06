@@ -11,24 +11,24 @@ class JCheckErrorsTest : JCheckersTestBase() {
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {
     lesson {
       eduTask("javaCompilationError") {
-        javaTaskFile("Task.java", """
+        javaTaskFile("src/Task.java", """
           public class Task {
             public static final String STRING;
           }
         """)
-        javaTestFile("Test.java", """
+        javaTestFile("test/Test.java", """
             class Test {}
         """)
       }
       eduTask("testFail") {
-        javaTaskFile("Task.java", """
+        javaTaskFile("src/Task.java", """
           public class Task {
             public static int foo() {
               return 0;
             }
           }
         """)
-        javaTestFile("Test.java", """
+        javaTestFile("test/Test.java", """
           import org.junit.Assert;
 
           public class Test {
