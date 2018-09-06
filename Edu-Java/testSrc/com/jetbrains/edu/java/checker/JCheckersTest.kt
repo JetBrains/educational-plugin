@@ -14,14 +14,14 @@ class JCheckersTest : JCheckersTestBase() {
   override fun createCourse(): Course = course(language = JavaLanguage.INSTANCE) {
     lesson {
       eduTask("EduTask") {
-        javaTaskFile("Task.java", """
+        javaTaskFile("src/Task.java", """
           public class Task {
             public static int foo() {
               return 42;
             }
           }
         """)
-        javaTestFile("Test.java", """
+        javaTestFile("test/Test.java", """
           import org.junit.Assert;
 
           public class Test {
@@ -33,7 +33,7 @@ class JCheckersTest : JCheckersTestBase() {
         """)
       }
       theoryTask("TheoryTask") {
-        javaTaskFile("Task.java", """
+        javaTaskFile("src/Task.java", """
           public class Task {
             public static void main(String[] args) {
               System.out.println("OK");
@@ -42,31 +42,31 @@ class JCheckersTest : JCheckersTestBase() {
         """)
       }
       outputTask("OutputTask") {
-        javaTaskFile("Task.java", """
+        javaTaskFile("src/Task.java", """
           public class Task {
             public static void main(String[] args) {
               System.out.println("OK");
             }
           }
         """)
-        testFile("output.txt", "OK")
+        testFile("test/output.txt", "OK")
       }
       outputTask("OutputTaskWithSeveralFiles") {
-        javaTaskFile("Utils.java", """
+        javaTaskFile("src/Utils.java", """
           public class Utils {
             public static String ok() {
               return "OK";
             }
           }
         """)
-        javaTaskFile("Task.java", """
+        javaTaskFile("src/Task.java", """
           public class Task {
             public static void main(String[] args) {
               System.out.println(Utils.ok());
             }
           }
         """)
-        testFile("output.txt", "OK")
+        testFile("test/output.txt", "OK")
       }
     }
   }

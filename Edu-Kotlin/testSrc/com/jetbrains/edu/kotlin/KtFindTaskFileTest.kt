@@ -22,5 +22,5 @@ class KtFindTaskFileTest : FindTaskFileTestBase<JdkProjectSettings>() {
   fun `test get task file`() = doTestGetTaskFile(
           pathToCourseJson = "testData/newCourse/kotlin_course.json",
           filePath = "./Introduction/Hello, world!/src/Task.kt"
-  ) { it.lessons[0].taskList[0].taskFiles["Task.kt"]!! }
+  ) { it.lessons[0].taskList[0].taskFiles["src/Task.kt"]!! }
 }

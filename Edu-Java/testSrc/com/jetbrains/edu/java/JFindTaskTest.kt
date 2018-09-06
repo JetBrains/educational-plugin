@@ -22,5 +22,5 @@ class JFindTaskTest : FindTaskFileTestBase<JdkProjectSettings>() {
   fun `test get task file`() = doTestGetTaskFile(
           pathToCourseJson = "testData/newCourse/java_course.json",
           filePath = "./lesson1/task1/src/Task.java"
-  ) { it.lessons[0].taskList[0].taskFiles["Task.java"]!! }
+  ) { it.lessons[0].taskList[0].taskFiles["src/Task.java"]!! }
 }
