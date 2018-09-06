@@ -107,6 +107,10 @@ public class SerializationUtils {
     public static final String ADDITIONAL_FILES = "additionalFiles";
     public static final String TEXT = "text";
     public static final String VISIBLE = "visible";
+    public static final String TEST_FILES = "testsText";
+    public static final String LANGUAGE = "language";
+    public static final String PLACEHOLDER_DEPENDENCY = "placeholderDependency";
+    public static final String DEPENDENCY_FILE_NAME = "fileName";
 
     private Xml() {
     }
@@ -178,6 +182,12 @@ public class SerializationUtils {
     public static Element convertToTenthVersion(@NotNull Project project,
                                                 @NotNull Element element) throws StudyUnrecognizedFormatException {
       return new ToTenthVersionXmlConverter().convert(project, element);
+    }
+
+    @NotNull
+    public static Element convertToEleventhVersion(@NotNull Project project,
+                                                   @NotNull Element element) throws StudyUnrecognizedFormatException {
+      return new ToEleventhVersionXmlConverter().convert(project, element);
     }
 
     @Nullable

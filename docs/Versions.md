@@ -125,6 +125,82 @@
     </EduTask>
     ```
 
+11. Make all paths relative to task folder
+
+    Before:
+    ```xml
+    <EduTask>
+      <option name="testsText">
+        <map>
+          <entry key="Tests.kt" value="some code" />
+        </map>
+      </option>
+      <option name="taskFiles">
+        <map>
+          <entry key="Task.kt">
+            <value>
+              <TaskFile>
+                <option name="name" value="Task.kt" />
+                <option name="answerPlaceholders">
+                  <list>
+                    <AnswerPlaceholder>
+                      <option name="placeholderDependency">
+                        <AnswerPlaceholderDependency>
+                          <option name="fileName" value="Task.kt" />
+                          <!-- other fields -->
+                        </AnswerPlaceholderDependency>
+                      </option>
+                      <!-- other fields -->
+                    </AnswerPlaceholder>
+                  </list>
+                </option>
+                <!-- other fields -->
+              </TaskFile>
+            </value>
+          </entry>
+        </map>
+      </option>
+      <!-- other fields -->
+    </EduTask>
+    ```
+
+    After:
+    ```xml
+    <EduTask>
+      <option name="testsText">
+        <map>
+          <entry key="test/Tests.kt" value="some code" />
+        </map>
+      </option>
+      <option name="taskFiles">
+        <map>
+          <entry key="src/Task.kt">
+            <value>
+              <TaskFile>
+                <option name="name" value="src/Task.kt" />
+                <option name="answerPlaceholders">
+                  <list>
+                    <AnswerPlaceholder>
+                      <option name="placeholderDependency">
+                        <AnswerPlaceholderDependency>
+                          <option name="fileName" value="src/Task.kt" />
+                          <!-- other fields -->
+                        </AnswerPlaceholderDependency>
+                      </option>
+                      <!-- other fields -->
+                    </AnswerPlaceholder>
+                  </list>
+                </option>            
+                <!-- other fields -->
+              </TaskFile>
+            </value>
+          </entry>
+        </map>
+      </option>
+      <!-- other fields -->
+    </EduTask>
+    ```
+
 ### JSON format version
 
 4.  Skipped. 

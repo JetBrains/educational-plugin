@@ -1,0 +1,186 @@
+<component name="StudySettings">
+  <StudyTaskManager>
+    <option name="course">
+      <Course>
+        <option name="authors">
+          <list>
+            <StepicUser>
+              <option name="accessToken" value="" />
+              <option name="firstName" value="warrior" />
+              <option name="guest" value="false" />
+              <option name="id" value="-1" />
+              <option name="lastName" value="" />
+              <option name="refreshToken" value="" />
+            </StepicUser>
+          </list>
+        </option>
+        <option name="courseMode" value="Course Creator" />
+        <option name="courseType" value="PyCharm" />
+        <option name="customPresentableName" />
+        <option name="description" value="Test Course format 10" />
+        <option name="fromZip" value="false" />
+        <option name="index" value="-1" />
+        <option name="language" value="Python" />
+        <option name="languageCode" value="en" />
+        <option name="name" value="Test Course format 10" />
+        <option name="stepikChangeStatus" value="Up to date" />
+        <option name="items">
+          <list>
+            <Lesson>
+              <option name="customPresentableName" />
+              <option name="id" value="0" />
+              <option name="index" value="1" />
+              <option name="name" value="lesson1" />
+              <option name="stepikChangeStatus" value="Content changed" />
+              <option name="updateDate" value="0" />
+              <option name="taskList">
+                <list>
+                  <EduTask>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="MD" />
+                    <option name="descriptionText" value="This is the markdown document.&#10;&#10;Write your task text here" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="1" />
+                    <option name="name" value="task1" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="0" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="testsText">
+                      <map>
+                        <entry key="tests.py" value="from test_helper import run_common_tests, failed, passed, get_answer_placeholders&#10;&#10;&#10;def test_answer_placeholders():&#10;    placeholders = get_answer_placeholders()&#10;    placeholder = placeholders[0]&#10;    if placeholder == &quot;&quot;:       # TODO: your condition here&#10;        passed()&#10;    else:&#10;        failed()&#10;&#10;&#10;if __name__ == '__main__':&#10;    run_common_tests()&#10;    # test_answer_placeholders()       # TODO: uncomment test call&#10;&#10;&#10;" />
+                      </map>
+                    </option>
+                    <option name="updateDate" value="0" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="task.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list>
+                                  <AnswerPlaceholder>
+                                    <option name="hints">
+                                      <list />
+                                    </option>
+                                    <option name="index" value="0" />
+                                    <option name="initialState" />
+                                    <option name="initializedFromDependency" value="false" />
+                                    <option name="length" value="9" />
+                                    <option name="offset" value="21" />
+                                    <option name="placeholderDependency" />
+                                    <option name="placeholderText" value="type here" />
+                                    <option name="possibleAnswer" value="&quot;Foo&quot;" />
+                                    <option name="selected" value="false" />
+                                    <option name="status" value="Unchecked" />
+                                    <option name="studentAnswer" />
+                                    <option name="useLength" value="false" />
+                                  </AnswerPlaceholder>
+                                </list>
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="text" value="# TODO: type solution here&#10;" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                              <option name="name" value="task.py" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                  </EduTask>
+                  <EduTask>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="MD" />
+                    <option name="descriptionText" value="This is the markdown document.&#10;&#10;Write your task text here" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="2" />
+                    <option name="name" value="task2" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="0" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="testsText">
+                      <map>
+                        <entry key="tests.py" value="from test_helper import run_common_tests, failed, passed, get_answer_placeholders&#10;&#10;&#10;def test_answer_placeholders():&#10;    placeholders = get_answer_placeholders()&#10;    placeholder = placeholders[0]&#10;    if placeholder == &quot;&quot;:       # TODO: your condition here&#10;        passed()&#10;    else:&#10;        failed()&#10;&#10;&#10;if __name__ == '__main__':&#10;    run_common_tests()&#10;    # test_answer_placeholders()       # TODO: uncomment test call&#10;&#10;&#10;" />
+                      </map>
+                    </option>
+                    <option name="updateDate" value="0" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="task.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list>
+                                  <AnswerPlaceholder>
+                                    <option name="hints">
+                                      <list />
+                                    </option>
+                                    <option name="index" value="0" />
+                                    <option name="initialState" />
+                                    <option name="initializedFromDependency" value="false" />
+                                    <option name="length" value="9" />
+                                    <option name="offset" value="21" />
+                                    <option name="placeholderDependency">
+                                      <AnswerPlaceholderDependency>
+                                        <option name="fileName" value="task.py" />
+                                        <option name="lessonName" value="lesson1" />
+                                        <option name="placeholderIndex" value="0" />
+                                        <option name="sectionName" />
+                                        <option name="taskName" value="task1" />
+                                        <option name="visible" value="false" />
+                                      </AnswerPlaceholderDependency>
+                                    </option>
+                                    <option name="placeholderText" value="type here" />
+                                    <option name="possibleAnswer" value="&quot;Foo&quot;" />
+                                    <option name="selected" value="false" />
+                                    <option name="status" value="Unchecked" />
+                                    <option name="studentAnswer" />
+                                    <option name="useLength" value="false" />
+                                  </AnswerPlaceholder>
+                                </list>
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="text" value="# TODO: type solution here&#10;" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                              <option name="name" value="task.py" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                  </EduTask>
+                </list>
+              </option>
+              <option name="unitId" value="0" />
+            </Lesson>
+          </list>
+        </option>
+      </Course>
+    </option>
+    <option name="VERSION" value="10" />
+    <option name="myUserTests">
+      <map />
+    </option>
+  </StudyTaskManager>
+</component>
