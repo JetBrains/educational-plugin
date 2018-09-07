@@ -6,8 +6,8 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import javax.swing.JComponent
 
 abstract class CCCreateStudyItemDialogBase(
@@ -36,10 +36,7 @@ abstract class CCCreateStudyItemDialogBase(
     return panel {
       row("Name:") { nameField() }
       createAdditionalFields(this)
-      val panel = positionPanel
-      if (panel != null) {
-        row { panel() }
-      }
+      positionPanel?.attach(this)
     }
   }
 

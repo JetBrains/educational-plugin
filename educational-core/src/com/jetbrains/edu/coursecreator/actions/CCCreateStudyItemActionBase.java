@@ -171,7 +171,7 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     String itemName = getItemType().getPresentableName();
     String suggestedName = itemName + (index + 1);
     NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, sourceDirectory, getItemType(), suggestedName, index);
-    CCItemPositionPanel positionPanel = new CCItemPositionPanel(itemName, thresholdItem.getName());
+    CCItemPositionPanel positionPanel = new CCItemPositionPanel(thresholdItem.getName());
     return configurator.getCourseBuilder()
       .showNewStudyItemUi(project, model, positionPanel);
   }
