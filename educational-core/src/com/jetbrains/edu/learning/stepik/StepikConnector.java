@@ -403,42 +403,48 @@ public class StepikConnector {
       String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
       List<Section> allSections = getSections(sectionIds);
 
-      final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
       if (hasVisibleSections(allSections, remoteCourse.getName())) {
         remoteCourse.setSectionIds(Collections.emptyList());
-        int itemIndex = 1;
-        for (Section section : allSections) {
-          if (progressIndicator != null) {
-            progressIndicator.checkCanceled();
-            progressIndicator.setText("Loading section " + itemIndex + " from " + allSections.size());
-            progressIndicator.setFraction((double)itemIndex / allSections.size());
-          }
-          final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
-          if (unitIds.length > 0) {
-            final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
-            final String sectionName = section.getName();
-            if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
-              final Lesson lesson = lessonsFromUnits.get(0);
-              lesson.setIndex(itemIndex);
-              remoteCourse.addLesson(lesson);
-              remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
-            }
-            else if (section.getName().equals(remoteCourse.getName())) {
-              remoteCourse.addLessons(lessonsFromUnits);
-              remoteCourse.setSectionIds(Collections.singletonList(section.getId()));
-            }
-            else {
-              section.setIndex(itemIndex);
-              for (int i = 0; i < lessonsFromUnits.size(); i++) {
-                Lesson lesson = lessonsFromUnits.get(i);
-                lesson.setIndex(i + 1);
+        List<Callable<Void>> tasks = ContainerUtil.newArrayList();
+        for (int index = 0; index < allSections.size(); index++) {
+          Section section = allSections.get(index);
+          int finalIndex = index + 1;
+          tasks.add(() -> {
+            final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
+            if (unitIds.length > 0) {
+              final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
+              final String sectionName = section.getName();
+              if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
+                final Lesson lesson = lessonsFromUnits.get(0);
+                lesson.setIndex(finalIndex);
+                remoteCourse.addLesson(lesson);
+                remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
               }
-              section.addLessons(lessonsFromUnits);
-              remoteCourse.addSection(section);
+              else if (section.getName().equals(remoteCourse.getName())) {
+                remoteCourse.addLessons(lessonsFromUnits);
+                remoteCourse.setSectionIds(Collections.singletonList(section.getId()));
+              }
+              else {
+                section.setIndex(finalIndex);
+                for (int i = 0; i < lessonsFromUnits.size(); i++) {
+                  Lesson lesson = lessonsFromUnits.get(i);
+                  lesson.setIndex(i + 1);
+                }
+                section.addLessons(lessonsFromUnits);
+                remoteCourse.addSection(section);
+              }
             }
-            itemIndex += 1;
-          }
+            return null;
+          });
         }
+        try {
+          ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE);
+        }
+        catch (Throwable e) {
+          LOG.warn("Cannot load course " + e.getMessage());
+        }
+
+        remoteCourse.sortItems();
       }
       else {
         final String[] unitIds = allSections.stream().map(section -> section.units).flatMap(unitList -> unitList.stream())
