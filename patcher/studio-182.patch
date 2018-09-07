@@ -1,5 +1,18 @@
+diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
+index 0c1f1cd..38e0487 100644
+--- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
++++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
+@@ -3,7 +3,7 @@ package com.jetbrains.edu.android
+ import com.android.tools.idea.npw.FormFactor
+ import com.android.tools.idea.npw.module.FormFactorApiComboBox
+ import com.android.tools.idea.npw.platform.AndroidVersionsInfo
+-import com.android.tools.idea.npw.project.NewProjectModel
++import com.android.tools.idea.npw.model.NewProjectModel
+ import com.intellij.openapi.project.Project
+ import com.intellij.ui.components.JBTextField
+ import com.intellij.ui.layout.*
 diff --git a/build.gradle b/build.gradle
-index cd3686a2b..5b8490736 100644
+index 4642977..ba1a091 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -121,10 +121,10 @@ allprojects {
@@ -32,7 +45,7 @@ index cd3686a2b..5b8490736 100644
      }
      if (project.hasProperty("customSinceBuild")) {
          patchPluginXml.sinceBuild = customSinceBuild
-@@ -278,11 +278,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
+@@ -277,11 +277,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
  }
  
  configure([project(':educational-core'), project(':Edu-Java')]) {
@@ -46,7 +59,7 @@ index cd3686a2b..5b8490736 100644
  
  
      task createTwitterProperties() {
-@@ -313,7 +313,7 @@ configure(project(':Edu-Python')) {
+@@ -312,7 +312,7 @@ configure(project(':Edu-Python')) {
  }
  
  configure(project(':Edu-Scala')) {
@@ -56,7 +69,7 @@ index cd3686a2b..5b8490736 100644
  
  configure(project(':Edu-Android')) {
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
-index 93c39393d..aae26383e 100644
+index 93c3939..aae2638 100644
 --- a/resources/META-INF/plugin.xml
 +++ b/resources/META-INF/plugin.xml
 @@ -8,6 +8,7 @@
