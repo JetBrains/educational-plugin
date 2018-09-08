@@ -91,7 +91,7 @@ abstract class StepikTestCase : EduTestCase() {
 
   fun checkCourseUploaded(course: RemoteCourse) {
     val uploadedCourse = StepikConnector.getCourseInfo(user, course.id, true)
-    assertNotNull("Uploaded courses not found among courses available to instructor", uploadedCourse)
+    assertNotNull("Uploaded course not found among courses available to instructor", uploadedCourse)
     println("Course with id ${(uploadedCourse as RemoteCourse).id} was uploaded successfully")
   }
 
