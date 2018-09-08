@@ -411,26 +411,29 @@ public class StepikConnector {
           int finalIndex = index + 1;
           tasks.add(() -> {
             final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
-            if (unitIds.length > 0) {
-              final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
-              final String sectionName = section.getName();
-              if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
-                final Lesson lesson = lessonsFromUnits.get(0);
-                lesson.setIndex(finalIndex);
-                remoteCourse.addLesson(lesson);
-                remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
+            if (unitIds.length <= 0) {
+              return null;
+            }
+            final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
+            final String sectionName = section.getName();
+            if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
+              final Lesson lesson = lessonsFromUnits.get(0);
+              lesson.setIndex(finalIndex);
+              remoteCourse.addLesson(lesson);
+              remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
+            }
+            else {
+              for (int i = 0; i < lessonsFromUnits.size(); i++) {
+                Lesson lesson = lessonsFromUnits.get(i);
+                lesson.setIndex(i + 1);
               }
-              else if (section.getName().equals(remoteCourse.getName())) {
-                remoteCourse.addLessons(lessonsFromUnits);
+              section.addLessons(lessonsFromUnits);
+
+              if (section.getName().equals(remoteCourse.getName())) {
                 remoteCourse.setSectionIds(Collections.singletonList(section.getId()));
               }
               else {
                 section.setIndex(finalIndex);
-                for (int i = 0; i < lessonsFromUnits.size(); i++) {
-                  Lesson lesson = lessonsFromUnits.get(i);
-                  lesson.setIndex(i + 1);
-                }
-                section.addLessons(lessonsFromUnits);
                 remoteCourse.addSection(section);
               }
             }
@@ -441,7 +444,7 @@ public class StepikConnector {
           ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE);
         }
         catch (Throwable e) {
-          LOG.warn("Cannot load course " + e.getMessage());
+          LOG.warn("Cannot load sections for course " + remoteCourse.getId() + e.getMessage());
         }
 
         remoteCourse.sortItems();

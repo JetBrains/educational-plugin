@@ -20,7 +20,7 @@ public abstract class ItemContainer extends StudyItem {
     FrameworkLesson.class,
     CheckiOStation.class
   })
-  @Expose protected List<StudyItem> items = new ArrayList<>();
+  @Expose protected List<StudyItem> items = Collections.synchronizedList(new ArrayList<>());
 
   @Nullable
   public Lesson getLesson(@NotNull final String name) {
@@ -31,7 +31,7 @@ public abstract class ItemContainer extends StudyItem {
   @Nullable
   public Lesson getLesson(int id) {
     return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
-      .findFirst(item -> id == ((Lesson)item).getId()).orElse(null);
+      .findFirst(item -> id == item.getId()).orElse(null);
   }
 
   @Nullable
