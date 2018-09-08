@@ -19,7 +19,6 @@ class FrameworkLesson() : Lesson() {
     updateDate = lesson.updateDate
     name = lesson.name
     taskList = lesson.taskList
-    course = lesson.course
     section = lesson.section
     index = lesson.index
     customPresentableName = lesson.customPresentableName

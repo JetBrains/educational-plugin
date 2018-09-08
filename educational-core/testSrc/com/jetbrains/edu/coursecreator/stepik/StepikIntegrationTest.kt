@@ -38,6 +38,17 @@ open class StepikIntegrationTest : StepikTestCase() {
     checkTopLevelLessons(localCourse)
   }
 
+  fun `test upload course with framework lesson`() {
+    val localCourse = initCourse {
+      frameworkLesson("lesson1") {
+        eduTask {
+          taskFile("fizz.kt")
+        }
+      }
+    }
+    checkTopLevelLessons(localCourse)
+  }
+
   fun `test upload course with top level lessons`() {
     val localCourse = initCourse {
       lesson("lesson1") {
