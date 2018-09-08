@@ -5,6 +5,7 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection
+import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
@@ -12,44 +13,33 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikTestCase
-import junit.framework.TestCase
-
 
 open class StepikIntegrationTest : StepikTestCase() {
 
   fun `test upload course`() {
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val course = initCourse {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = course
-
-    CCStepikConnector.postCourseWithProgress(project, StudyTaskManager.getInstance(project).course!!)
-    checkCourseUploaded(StudyTaskManager.getInstance(project).course as RemoteCourse)
+    checkCourseUploaded(course)
   }
 
   fun `test upload course with top level lesson`() {
-    val courseToPost = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = initCourse {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = courseToPost
-
-    CCPushCourse.doPush(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkTopLevelLessons(courseFromStepik, localCourse)
+    checkTopLevelLessons(localCourse)
   }
 
   fun `test upload course with top level lessons`() {
-    val courseToPost = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = initCourse {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -61,17 +51,12 @@ open class StepikIntegrationTest : StepikTestCase() {
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCPushCourse.doPush(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkTopLevelLessons(courseFromStepik, localCourse)
+    checkTopLevelLessons(localCourse)
   }
 
   fun `test post top level lesson`() {
-    val courseToPost = courseWithFiles {
+    val localCourse = initCourse {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -83,20 +68,15 @@ open class StepikIntegrationTest : StepikTestCase() {
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCStepikConnector.postCourseWithProgress(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
     val newLesson = addNewLesson("lesson3", 3, localCourse, localCourse, EduUtils.getCourseDir(project))
     CCPushLesson.doPush(newLesson, project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkTopLevelLessons(courseFromStepik, localCourse)
+    checkTopLevelLessons(localCourse)
   }
 
   fun `test rearrange lessons`() {
-    val courseToPost = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+    val localCourse = initCourse {
       lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
@@ -108,11 +88,7 @@ open class StepikIntegrationTest : StepikTestCase() {
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCPushCourse.doPush(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
     val lesson1 = localCourse.getLesson("lesson1")!!
     val lesson2 = localCourse.getLesson("lesson2")!!
     lesson1.index = 2
@@ -121,12 +97,11 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushLesson.doPush(lesson1, project, localCourse)
     CCPushLesson.doPush(lesson2, project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkTopLevelLessons(courseFromStepik, localCourse)
+    checkTopLevelLessons(localCourse)
   }
 
   fun `test upload course with section`() {
-    val courseToPost = courseWithFiles {
+    val localCourse = initCourse {
       section("section1") {
         lesson("lesson1")
         {
@@ -136,17 +111,12 @@ open class StepikIntegrationTest : StepikTestCase() {
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCPushCourse.doPush(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkSections(courseFromStepik, localCourse)
+    checkSections(localCourse)
   }
 
   fun `test rearrange sections`() {
-    val courseToPost = courseWithFiles {
+    val localCourse = initCourse {
       section("section1") {
         lesson("lesson1")
         {
@@ -164,11 +134,7 @@ open class StepikIntegrationTest : StepikTestCase() {
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCPushCourse.doPush(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
     val section1 = localCourse.getSection("section1")
     val section2 = localCourse.getSection("section2")
     section1!!.index = 2
@@ -177,12 +143,11 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushSection.doPush(project, section1, localCourse)
     CCPushSection.doPush(project, section2, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkSections(courseFromStepik, localCourse)
+    checkSections(localCourse)
   }
 
   fun `test post lesson into section`() {
-    val courseToPost = courseWithFiles {
+    val localCourse = initCourse {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -196,23 +161,16 @@ open class StepikIntegrationTest : StepikTestCase() {
         }
       }
     }
-    courseToPost.init(null, null, false)
-    StudyTaskManager.getInstance(project).course = courseToPost
-
-    CCStepikConnector.postCourseWithProgress(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course!! as RemoteCourse
 
     val section = localCourse.getSection("section1")
     val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, EduUtils.getCourseDir(project))
     CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkSections(courseFromStepik, localCourse)
+    checkSections(localCourse)
   }
 
   fun `test rearrange lessons inside section`() {
-    val courseToPost = courseWithFiles {
+    val localCourse = initCourse {
       section("section1") {
         lesson("lesson1") {
           eduTask {
@@ -226,104 +184,88 @@ open class StepikIntegrationTest : StepikTestCase() {
         }
       }
     }
-    courseToPost.init(null, null, false)
-    StudyTaskManager.getInstance(project).course = courseToPost
-
-    CCStepikConnector.postCourseWithProgress(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course!! as RemoteCourse
 
     val section = localCourse.getSection("section1")
     val newLesson = addNewLesson("lesson3", 3, localCourse, section!!, EduUtils.getCourseDir(project))
 
     CCPushLesson.doPush(newLesson, project, StudyTaskManager.getInstance(project).course)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkSections(courseFromStepik, localCourse)
+    checkSections(localCourse)
   }
 
   fun `test post new section`() {
-    val courseToPost = courseWithFiles {
+    val localCourse = initCourse {
       section("section1") {
-        lesson("lesson1")
-        {
+        lesson("lesson1") {
           eduTask {
             taskFile("fizz.kt")
           }
         }
       }
     }
-    StudyTaskManager.getInstance(project).course = courseToPost
-    CCPushCourse.doPush(project, courseToPost)
-
-    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
 
     val newSection = addNewSection("section2", 2, localCourse, EduUtils.getCourseDir(project))
     CCPushSection.doPush(project, newSection, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(user, localCourse.id, true)
-    checkSections(courseFromStepik, localCourse)
+    checkSections(localCourse)
   }
 
   fun `test top-level lessons wrapped into section`() {
-    val courseToPost = courseWithFiles {
-      lesson("lesson1")
-      {
+    val localCourse = initCourse {
+      lesson("lesson1") {
         eduTask {
           taskFile("fizz.kt")
         }
       }
     }
 
-    StudyTaskManager.getInstance(project).course = courseToPost
-    courseToPost.init(null, null, false)
-    CCPushCourse.doPush(project, courseToPost)
-    val localCourse = StudyTaskManager.getInstance(project).course
-    CCUtils.wrapIntoSection(project, localCourse!!, localCourse.lessons, "section1")
+    CCUtils.wrapIntoSection(project, localCourse, localCourse.lessons, "section1")
     CCPushCourse.doPush(project, localCourse)
 
-    val courseFromStepik = StepikConnector.getCourseInfo(user, (localCourse as RemoteCourse).id, true)
-    checkSections(courseFromStepik, localCourse)
+    checkSections(localCourse)
   }
 
-  private fun checkSections(courseFromStepik: Course?, localCourse: Course) {
-    assertNotNull("Uploaded courses not found among courses available to instructor", courseFromStepik)
+  private fun checkSections(localCourse: Course) {
+    val courseFromStepik = getCourseFromStepik(localCourse.id)
 
-    StepikConnector.fillItems(courseFromStepik as RemoteCourse)
-    TestCase.assertTrue("Sections number mismatch. Expected: ${localCourse.sections.size}. Actual: ${courseFromStepik.sections.size}",
-                        localCourse.sections.size == courseFromStepik.sections.size)
-    localCourse.sections.forEachIndexed{ index, section ->
+    StepikConnector.fillItems(courseFromStepik)
+    assertEquals("Sections number mismatch", localCourse.sections.size, courseFromStepik.sections.size)
+    localCourse.sections.forEachIndexed { index, section ->
       val sectionFromStepik = courseFromStepik.sections[index]
-      TestCase.assertTrue("Sections name mismatch. Expected: ${section.name}. Actual: ${sectionFromStepik.name}",
-                          section.name == sectionFromStepik.name)
-      TestCase.assertTrue("Lessons number mismatch. Expected: ${section.lessons.size}. Actual: ${sectionFromStepik.lessons.size}",
-                          section.lessons.size == sectionFromStepik.lessons.size)
+      assertEquals("Sections name mismatch", section.name, sectionFromStepik.name)
+      assertEquals("Lessons number mismatch", section.lessons.size, sectionFromStepik.lessons.size)
       section.lessons.forEachIndexed { lessonIndex, lesson ->
-        TestCase.assertTrue("Lessons name mismatch. Expected: ${lesson.name}. Actual: ${sectionFromStepik.lessons[lessonIndex].name}",
-                            lesson.name == sectionFromStepik.lessons[lessonIndex].name)
+        assertEquals("Lessons name mismatch", lesson.name, sectionFromStepik.lessons[lessonIndex].name)
       }
     }
   }
 
-  private fun checkTopLevelLessons(courseFromStepik: Course?, localCourse: RemoteCourse) {
-    assertNotNull("Uploaded courses not found among courses available to instructor", courseFromStepik)
-    TestCase.assertTrue("Course with top-level lessons should have only one section, but has: ${localCourse.sectionIds.size}",
-                        localCourse.sectionIds.size == 1)
-    TestCase.assertTrue("Top-level lessons section id mismatch", localCourse.sectionIds[0] == (courseFromStepik as RemoteCourse).sectionIds[0])
+  private fun checkTopLevelLessons(localCourse: RemoteCourse) {
+    val courseFromStepik = getCourseFromStepik(localCourse.id)
+
+    assertEquals("Course with top-level lessons should have only one section", 1, localCourse.sectionIds.size)
+
+    assertEquals("Top-level lessons section id mismatch", localCourse.sectionIds[0], courseFromStepik.sectionIds[0])
     val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])
-    TestCase.assertTrue("Section name mismatch. Expected: ${localCourse.name}.\n Actual: ${section.name}",
-                        section.name == localCourse.name)
+    assertEquals("Section name mismatch", localCourse.name, section.name)
 
     val unitIds = section.units.map { unit -> unit.toString() }
     val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
 
-    TestCase.assertTrue("Lessons number mismatch. Expected: ${localCourse.lessons.size}. Actual: ${lessonsFromUnits.size}",
-                        lessonsFromUnits.size == localCourse.lessons.size)
+    assertEquals("Lessons number mismatch", localCourse.lessons.size, lessonsFromUnits.size)
     localCourse.lessons.forEachIndexed { index, lesson ->
-      TestCase.assertTrue("Lessons name mismatch. Expected: ${lesson.name}. Actual: ${lessonsFromUnits[index].name}",
-                          lesson.name == lessonsFromUnits[index].name)
+      assertEquals("Lessons name mismatch", lesson.name, lessonsFromUnits[index].name)
     }
   }
+
+  private fun initCourse(builder: CourseBuilder.() -> Unit): RemoteCourse {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, buildCourse = builder)
+    CCPushCourse.doPush(project, course)
+    return StudyTaskManager.getInstance(project).course as RemoteCourse
+  }
+
+  private fun getCourseFromStepik(courseId: Int): RemoteCourse =
+    StepikConnector.getCourseInfo(user, courseId, true) ?: error("Uploaded courses not found among courses available to instructor")
 }
 
 internal fun addNewLesson(name: String,
