@@ -11,7 +11,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +27,7 @@ public class RemoteCourse extends Course {
   @SerializedName("is_idea_compatible") private boolean isCompatible = true;
 
   // in CC mode is used to store top-level lessons section id
-  @SerializedName("sections") List<Integer> sectionIds = Collections.synchronizedList(new ArrayList<>());
+  @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
   @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
