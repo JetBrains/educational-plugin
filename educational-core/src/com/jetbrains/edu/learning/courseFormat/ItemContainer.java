@@ -20,7 +20,7 @@ public abstract class ItemContainer extends StudyItem {
     FrameworkLesson.class,
     CheckiOStation.class
   })
-  @Expose protected List<StudyItem> items = Collections.synchronizedList(new ArrayList<>());
+  @Expose protected List<StudyItem> items = new ArrayList<>();
 
   @Nullable
   public Lesson getLesson(@NotNull final String name) {

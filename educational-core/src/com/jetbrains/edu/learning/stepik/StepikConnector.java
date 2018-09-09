@@ -405,7 +405,7 @@ public class StepikConnector {
 
       if (hasVisibleSections(allSections, remoteCourse.getName())) {
         remoteCourse.setSectionIds(Collections.emptyList());
-        List<Callable<Void>> tasks = ContainerUtil.newArrayList();
+        List<Callable<StudyItem>> tasks = ContainerUtil.newArrayList();
         for (int index = 0; index < allSections.size(); index++) {
           Section section = allSections.get(index);
           int finalIndex = index + 1;
@@ -419,8 +419,8 @@ public class StepikConnector {
             if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
               final Lesson lesson = lessonsFromUnits.get(0);
               lesson.setIndex(finalIndex);
-              remoteCourse.addLesson(lesson);
               remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
+              return lesson;
             }
             else {
               for (int i = 0; i < lessonsFromUnits.size(); i++) {
@@ -434,20 +434,24 @@ public class StepikConnector {
               }
               else {
                 section.setIndex(finalIndex);
-                remoteCourse.addSection(section);
               }
+              return section;
             }
-            return null;
           });
         }
         try {
-          ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE);
+          for (Future<StudyItem> future : ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
+            if (!future.isCancelled()) {
+              final StudyItem item = future.get();
+              if (item != null) {
+                remoteCourse.addItem(item, item.getIndex()-1);
+              }
+            }
+          }
         }
         catch (Throwable e) {
           LOG.warn("Cannot load sections for course " + remoteCourse.getId() + e.getMessage());
         }
-
-        remoteCourse.sortItems();
       }
       else {
         final String[] unitIds = allSections.stream().map(section -> section.units).flatMap(unitList -> unitList.stream())
