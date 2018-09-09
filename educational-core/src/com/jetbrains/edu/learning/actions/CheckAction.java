@@ -23,8 +23,9 @@ import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.*;
+import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
+import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -179,21 +180,13 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       indicator.setIndeterminate(true);
       myCheckInProgress.set(true);
 
-      boolean isRemote = myTask.getLesson().getCourse() instanceof RemoteCourse;
-      if (myChecker == null) {
-        myResult = new CheckResult(CheckStatus.Unchecked, "Check for " + myTask.getTaskType() + "task isn't available");
+      CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check();
+      if (localCheckResult.getStatus() == CheckStatus.Failed) {
+        myResult = localCheckResult;
+        return;
       }
-      else {
-        myResult = isRemote ? checkRemoteCourse() : myChecker.check();
-      }
-    }
-
-    private CheckResult checkRemoteCourse() {
-      CheckResult remoteCheckResult = myChecker.checkOnRemote();
-      if (remoteCheckResult != CheckResult.USE_LOCAL_CHECK) {
-        return remoteCheckResult;
-      }
-      return myChecker.check();
+      RemoteTaskChecker remoteChecker = RemoteTaskCheckerManager.remoteCheckerForTask(myProject, myTask);
+      myResult = remoteChecker == null ? localCheckResult : remoteChecker.check(myProject, myTask);
     }
 
     @Override

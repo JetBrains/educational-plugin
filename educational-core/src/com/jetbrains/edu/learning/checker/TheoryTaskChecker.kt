@@ -32,6 +32,4 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
       CheckUtils.showTestResultsToolWindow(project, details)
     }
   }
-
-  override fun checkOnRemote() = check()
 }
