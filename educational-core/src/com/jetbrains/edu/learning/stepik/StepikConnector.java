@@ -432,9 +432,7 @@ public class StepikConnector {
               if (section.getName().equals(remoteCourse.getName())) {
                 remoteCourse.setSectionIds(Collections.singletonList(section.getId()));
               }
-              else {
-                section.setIndex(finalIndex);
-              }
+              section.setIndex(finalIndex);
               return section;
             }
           });
