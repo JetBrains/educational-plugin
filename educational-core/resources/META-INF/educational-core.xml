@@ -247,6 +247,7 @@
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
     <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>
     <remoteTaskChecker implementation="com.jetbrains.edu.learning.stepik.checker.StepikRemoteTaskChecker"/>
+    <remoteTaskChecker implementation="com.jetbrains.edu.learning.coursera.CourseraTaskChecker"/>
     <!--educator-->
     <optionsProvider instance="com.jetbrains.edu.coursecreator.settings.CCOptions"/>
   </extensions>
