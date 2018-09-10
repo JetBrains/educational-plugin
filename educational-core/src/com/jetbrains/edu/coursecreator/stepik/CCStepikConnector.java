@@ -268,6 +268,9 @@ public class CCStepikConnector {
           LOG.warn(e.getMessage());
         }
       }
+      else {
+        LOG.error(String.format("Course with id %s not found on Stepik", course.getId()));
+      }
     }
 
     return -1;

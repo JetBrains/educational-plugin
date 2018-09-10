@@ -288,7 +288,7 @@ public class StepikConnector {
       coursesContainer = getCourseContainers(user, url);
     }
     catch (URISyntaxException | IOException e) {
-      LOG.error(e.getMessage());
+      LOG.warn(e.getMessage());
       return null;
     }
 
