@@ -11,6 +11,7 @@ import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
+import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
@@ -45,7 +46,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     return if (model.itemType != StudyItemType.TASK || parentItem is FrameworkLesson && parentItem.taskList.isNotEmpty()) {
       super.showNewStudyItemUi(project, model, positionPanel)
     } else {
-      AndroidNewTaskDialog(project, model, positionPanel).showAndGetResult()
+      showNewStudyItemDialog(project, model, positionPanel, ::AndroidNewTaskDialog)
     }
   }
 

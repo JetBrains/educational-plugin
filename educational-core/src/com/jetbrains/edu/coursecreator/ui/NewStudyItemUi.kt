@@ -10,15 +10,17 @@ import org.jetbrains.annotations.TestOnly
 
 private var MOCK: NewStudyItemUi? = null
 
+@JvmOverloads
 fun showNewStudyItemDialog(
   project: Project,
   model: NewStudyItemUiModel,
-  positionPanel: CCItemPositionPanel?
+  positionPanel: CCItemPositionPanel?,
+  dialogGenerator: (Project, NewStudyItemUiModel, CCItemPositionPanel?) -> CCCreateStudyItemDialogBase = ::CCCreateStudyItemDialog
 ): NewStudyItemInfo? {
   val ui = if (isUnitTestMode) {
     MOCK ?: error("You should set mock ui via `withMockCreateStudyItemUi`")
   } else {
-    NewStudyItemDialogUi()
+    NewStudyItemDialogUi(dialogGenerator)
   }
   return ui.showDialog(project, model, positionPanel)
 }
@@ -37,10 +39,12 @@ interface NewStudyItemUi {
   fun showDialog(project: Project, model: NewStudyItemUiModel, positionPanel: CCItemPositionPanel?): NewStudyItemInfo?
 }
 
-class NewStudyItemDialogUi : NewStudyItemUi {
+class NewStudyItemDialogUi(
+  private val dialogGenerator: (Project, NewStudyItemUiModel, CCItemPositionPanel?) -> CCCreateStudyItemDialogBase
+) : NewStudyItemUi {
   override fun showDialog(
     project: Project,
     model: NewStudyItemUiModel,
     positionPanel: CCItemPositionPanel?
-  ): NewStudyItemInfo? = CCCreateStudyItemDialog(project, model, positionPanel).showAndGetResult()
+  ): NewStudyItemInfo? = dialogGenerator(project, model, positionPanel).showAndGetResult()
 }

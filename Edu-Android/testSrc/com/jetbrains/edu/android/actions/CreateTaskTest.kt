@@ -4,11 +4,10 @@ import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.android.Android
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask
+import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
 import com.jetbrains.edu.learning.EduActionTestCase
-import com.jetbrains.edu.learning.EduTestInputDialog
 import com.jetbrains.edu.learning.fileTree
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
-import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 
 class CreateTaskTest : EduActionTestCase() {
@@ -19,7 +18,7 @@ class CreateTaskTest : EduActionTestCase() {
     }
     val lessonFile = findFile("lesson1")
 
-    withTestDialog(EduTestInputDialog("task1")) {
+    withMockCreateStudyItemUi(MockAndroidNewStudyUi("task1", "com.edu.task1")) {
       testAction(dataContext(lessonFile), CCCreateTask())
     }
     TestCase.assertEquals(1, course.lessons[0].taskList.size)
