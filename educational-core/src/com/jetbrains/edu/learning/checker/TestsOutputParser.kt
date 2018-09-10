@@ -1,61 +1,49 @@
 package com.jetbrains.edu.learning.checker
 
-import com.intellij.execution.process.ProcessOutput
-import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.checker.CheckUtils.COMPILATION_FAILED_MESSAGE
-import com.jetbrains.edu.learning.checker.CheckUtils.STUDY_PREFIX
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import java.util.regex.Pattern
 
 
 object TestsOutputParser {
-    const val TEST_OK = "test OK"
-    const val TEST_FAILED = "FAILED + "
-    const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
-    const val CONGRATULATIONS = "Congratulations!"
+  const val CONGRATULATIONS = "Congratulations!"
+  private const val TEST_OK = "test OK"
+  private const val TEST_FAILED = "FAILED + "
+  private const val CONGRATS_MESSAGE = "CONGRATS_MESSAGE "
+  private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected: ?(.*) but was: ?(.*)",
+                                                             Pattern.MULTILINE or Pattern.DOTALL)
 
-    private val LOG = Logger.getInstance(TestsOutputParser.javaClass)
-
-    class TestsOutput(val isSuccess: Boolean, val message: String)
-
-    @JvmStatic
-    fun getTestsOutput(processOutput: ProcessOutput, isAdaptive: Boolean): TestsOutput {
-        //gradle prints compilation failures to error stream
-        if (CheckUtils.hasCompilationErrors(processOutput)) {
-            LOG.info(processOutput.stderr)
-            return TestsOutput(false, COMPILATION_FAILED_MESSAGE)
+  @JvmStatic
+  fun getCheckResult(messages: List<String>): CheckResult {
+    var congratulations = TestsOutputParser.CONGRATULATIONS
+    loop@for (message in messages) {
+      when {
+        TestsOutputParser.TEST_OK in message -> continue@loop
+        TestsOutputParser.CONGRATS_MESSAGE in message -> {
+          congratulations = message.substringAfter(TestsOutputParser.CONGRATS_MESSAGE)
         }
-
-        val lines = processOutput.stdoutLines.filter { it.startsWith(STUDY_PREFIX) }
-        var congratulations = CONGRATULATIONS
-        for ((i, line) in lines.withIndex()) {
-            if (line.contains(TEST_OK)) {
-                continue
-            }
-
-            if (line.contains(CONGRATS_MESSAGE)) {
-                congratulations = line.substringAfter(CONGRATS_MESSAGE)
-            }
-
-            if (line.contains(TEST_FAILED)) {
-                if (!isAdaptive) {
-                    return TestsOutput(false, line.substringAfter(TEST_FAILED))
-                }
-                else {
-                    val builder = StringBuilder(line.substringAfter(TEST_FAILED) + "\n")
-                    for (j in i + 1 until lines.size) {
-                        val failedTextLine = lines[j]
-                        if (!failedTextLine.contains(STUDY_PREFIX) || !failedTextLine.contains(CONGRATS_MESSAGE)) {
-                            builder.append(failedTextLine)
-                            builder.append("\n")
-                        }
-                        else {
-                            break
-                        }
-                    }
-                    return TestsOutput(false, builder.toString())
-                }
-            }
+        TestsOutputParser.TEST_FAILED in message -> {
+          return CheckResult(CheckStatus.Failed, message.substringAfter(TestsOutputParser.TEST_FAILED).prettify())
         }
-
-        return TestsOutput(true, congratulations)
+      }
     }
+
+    return CheckResult(CheckStatus.Solved, congratulations)
+  }
+
+  private fun String.prettify(): String {
+    val matcher = TEST_FAILED_PATTERN.matcher(this)
+    return if (matcher.find()) {
+      val errorMessage = matcher.group(2)
+      val expectedText = matcher.group(3)
+      val actualText = matcher.group(4)
+      if (errorMessage != null) {
+        "$errorMessage\nExpected:\n$expectedText\nActual:\n$actualText"
+      } else {
+        "Expected:\n$expectedText\nActual:\n$actualText"
+      }
+    } else {
+      this
+    }
+  }
+
 }

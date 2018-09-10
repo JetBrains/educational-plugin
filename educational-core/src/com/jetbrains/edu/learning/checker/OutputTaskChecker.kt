@@ -22,12 +22,12 @@ import java.util.concurrent.CountDownLatch
 
 open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<OutputTask>(task, project) {
   companion object {
-    val OUTPUT_PATTERN_NAME = "output.txt"
+    const val OUTPUT_PATTERN_NAME = "output.txt"
   }
 
-  override fun onTaskFailed(message: String) {
-    super.onTaskFailed("Incorrect output")
-    CheckUtils.showTestResultsToolWindow(project, message)
+  override fun onTaskFailed(message: String, details: String?) {
+    super.onTaskFailed("Incorrect output", details)
+    CheckUtils.showTestResultsToolWindow(project, details?: message)
   }
 
   override fun check(): CheckResult {

@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.checker;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.impl.ConsoleViewImpl;
-import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.ide.DataManager;
@@ -13,7 +12,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.BalloonBuilder;
@@ -154,22 +152,6 @@ public class CheckUtils {
         }
       }
     });
-  }
-
-  public static TestsOutputParser.TestsOutput getTestOutput(@NotNull Process testProcess,
-                                                            @NotNull String commandLine,
-                                                            boolean isAdaptive) {
-    final CapturingProcessHandler handler = new CapturingProcessHandler(testProcess, null, commandLine);
-    final ProcessOutput output = ProgressManager.getInstance().hasProgressIndicator() ? handler
-      .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) :
-                                 handler.runProcess();
-    final TestsOutputParser.TestsOutput testsOutput = TestsOutputParser.getTestsOutput(output, isAdaptive);
-    String stderr = output.getStderr();
-    if (!stderr.isEmpty() && output.getStdout().isEmpty()) {
-      LOG.info("#educational " + stderr);
-      return new TestsOutputParser.TestsOutput(false, stderr);
-    }
-    return testsOutput;
   }
 
   public static void hideTestResultsToolWindow(@NotNull Project project) {

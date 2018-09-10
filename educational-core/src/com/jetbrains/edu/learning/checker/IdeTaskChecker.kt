@@ -9,6 +9,6 @@ class IdeTaskChecker(task: IdeTask, project: Project): TaskChecker<IdeTask>(task
     return CheckResult(CheckStatus.Solved, "Task marked as completed")
   }
 
-  override fun onTaskFailed(message: String) {
+  override fun onTaskFailed(message: String, details: String?) {
   }
 }
