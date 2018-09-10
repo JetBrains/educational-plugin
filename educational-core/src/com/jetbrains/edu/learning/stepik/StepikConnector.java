@@ -442,7 +442,7 @@ public class StepikConnector {
             if (!future.isCancelled()) {
               final StudyItem item = future.get();
               if (item != null) {
-                remoteCourse.addItem(item, item.getIndex()-1);
+                remoteCourse.addItem(item, item.getIndex() - 1);
               }
             }
           }
