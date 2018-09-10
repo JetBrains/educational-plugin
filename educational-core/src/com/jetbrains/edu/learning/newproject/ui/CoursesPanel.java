@@ -3,15 +3,11 @@ package com.jetbrains.edu.learning.newproject.ui;
 import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
-import com.intellij.openapi.actionSystem.ActionToolbarPosition;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.OnePixelDivider;
@@ -21,7 +17,6 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser;
 import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
@@ -37,6 +32,8 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.coursera.StartCourseraProgrammingAssignment;
+import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
@@ -47,8 +44,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static com.jetbrains.edu.learning.PluginUtilsKt.enablePlugins;
 
@@ -93,7 +90,8 @@ public class CoursesPanel extends JPanel {
 
     ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(myCoursesList).
       disableAddAction().disableRemoveAction().disableUpDownActions().setToolbarPosition(ActionToolbarPosition.BOTTOM);
-    DefaultActionGroup group = new DefaultActionGroup(new ImportCourseAction());
+    DefaultActionGroup group =
+      new DefaultActionGroup(new ImportCourseAction(), ActionManager.getInstance().getAction(StartCourseraProgrammingAssignment.ACTION_ID));
     toolbarDecorator.setActionGroup(group);
 
     JPanel toolbarDecoratorPanel = toolbarDecorator.createPanel();
@@ -387,32 +385,20 @@ public class CoursesPanel extends JPanel {
     }
 
     private void importLocalCourse() {
-      final FileChooserDescriptor fileChooser = new FileChooserDescriptor(true, false, false, true, false, false) {
-        @Override
-        public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
-          return file.isDirectory() || EduUtils.isZip(file.getName());
-        }
-
-        @Override
-        public boolean isFileSelectable(VirtualFile file) {
-          return EduUtils.isZip(file.getName());
-        }
-
-      };
-      FileChooser.chooseFile(fileChooser, null, VfsUtil.getUserHomeDir(),
-              file -> {
-                String fileName = file.getPath();
-                Course course = EduUtils.getLocalCourse(fileName);
-                if (course != null) {
-                  course.setFromZip(true);
-                  EduUsagesCollector.courseArchiveImported();
-                  myCourses.add(course);
-                  updateModel(myCourses, course.getName(), true);
-                }
-                else {
-                  Messages.showErrorDialog("Selected archive doesn't contain a valid course", "Failed to Add Local Course");
-                }
-              });
+      FileChooser.chooseFile(LocalCourseFileChooser.INSTANCE, null, VfsUtil.getUserHomeDir(),
+                             file -> {
+                               String fileName = file.getPath();
+                               Course course = EduUtils.getLocalCourse(fileName);
+                               if (course != null) {
+                                 course.setFromZip(true);
+                                 EduUsagesCollector.courseArchiveImported();
+                                 myCourses.add(course);
+                                 updateModel(myCourses, course.getName(), true);
+                               }
+                               else {
+                                 Messages.showErrorDialog("Selected archive doesn't contain a valid course", "Failed to Add Local Course");
+                               }
+                             });
     }
 
     private void importStepikCourse() {
