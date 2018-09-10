@@ -42,7 +42,6 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
     val taskDir = task.getDir(project) ?: error("No directory for task ${task.name}")
 
-    //TODO: add to format
     val assignmentKey = taskDir.getValueFromChildFile("assignmentKey")
     val partId = taskDir.getValueFromChildFile("partId")
 
