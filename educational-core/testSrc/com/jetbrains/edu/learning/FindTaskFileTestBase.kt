@@ -18,13 +18,17 @@ abstract class FindTaskFileTestBase<Settings> : CourseGenerationTestBase<Setting
     val course = generateCourseStructure(pathToCourseJson)
     val file = findFile(filePath)
     val task = expectedTask(course)
-    assertEquals(task, EduUtils.getTaskForFile(project, file))
+    val taskFromUtils = EduUtils.getTaskForFile(project, file)
+    assertEquals(course, StudyTaskManager.getInstance(project).course)
+    assertEquals("tasks: " + task.name + " " + taskFromUtils!!.name, task, taskFromUtils)
   }
 
   protected fun doTestGetTaskFile(pathToCourseJson: String, filePath: String, expectedTaskFile: (Course) -> TaskFile) {
     val course = generateCourseStructure(pathToCourseJson)
     val file = findFile(filePath)
     val taskFile = expectedTaskFile(course)
-    assertEquals(taskFile, EduUtils.getTaskFile(project, file))
+    val taskFileFromUtils = EduUtils.getTaskFile(project, file)
+    assertEquals(course, StudyTaskManager.getInstance(project).course)
+    assertEquals("task files: " + taskFile.name + " " + taskFileFromUtils!!.name, taskFile, taskFileFromUtils)
   }
 }
