@@ -33,6 +33,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.PlatformProjectOpenProcessor;
 import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PathUtil;
+import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
@@ -47,6 +48,7 @@ import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -208,7 +210,17 @@ public abstract class CourseProjectGenerator<S> {
     }
     else {
       LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
+      LOG.info("Converting course to local. Course id: " + myCourse.getId());
+      myCourse = copyAsLocalCourse(myCourse);
     }
+  }
+
+  @NotNull
+  private static Course copyAsLocalCourse(@NotNull Course remoteCourse) {
+    Element element = XmlSerializer.serialize(remoteCourse);
+    Course copy = XmlSerializer.deserialize(element, Course.class);
+    copy.init(null, null, true);
+    return copy;
   }
 
   protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
