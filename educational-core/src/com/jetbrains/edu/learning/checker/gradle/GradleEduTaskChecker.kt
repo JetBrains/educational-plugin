@@ -29,9 +29,9 @@ open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<E
 
   protected open fun getGradleTask() = GradleTask("${getGradleProjectName(task)}:$TEST_TASK_NAME")
 
-  override fun onTaskFailed(message: String) {
-    super.onTaskFailed("Wrong solution")
-    CheckUtils.showTestResultsToolWindow(project, message)
+  override fun onTaskFailed(message: String, details: String?) {
+    super.onTaskFailed("Wrong solution", details)
+    CheckUtils.showTestResultsToolWindow(project, details?: message)
   }
 
   protected data class GradleTask(val taskName: String, val params: List<String> = emptyList())

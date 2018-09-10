@@ -10,10 +10,16 @@ public class CheckResult {
 
   private CheckStatus myStatus;
   private String myMessage;
+  private String myDetails;
 
   public CheckResult(CheckStatus status, String message) {
+    this(status, message, null);
+  }
+
+  public CheckResult(CheckStatus status, String message, String details) {
     myStatus = status;
     myMessage = message;
+    myDetails = details;
   }
 
   public CheckStatus getStatus() {
@@ -22,5 +28,9 @@ public class CheckResult {
 
   public String getMessage() {
     return myMessage;
+  }
+
+  public String getDetails() {
+    return myDetails;
   }
 }

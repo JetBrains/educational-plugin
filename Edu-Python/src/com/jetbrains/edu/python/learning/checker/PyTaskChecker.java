@@ -1,9 +1,12 @@
 package com.jetbrains.edu.python.learning.checker;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.process.CapturingProcessHandler;
+import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduState;
@@ -57,10 +60,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
         //otherwise answer placeholders might have been not flushed yet
         latch.await();
         Process testProcess = testRunner.createCheckProcess(project, fileToCheck.getPath());
-        TestsOutputParser.TestsOutput output =
-          CheckUtils
-            .getTestOutput(testProcess, testRunner.getCommandLine().getCommandLineString(), task.getLesson().getCourse().isAdaptive());
-        return new CheckResult(output.isSuccess() ? CheckStatus.Solved : CheckStatus.Failed, output.getMessage());
+        return getCheckResult(testProcess, testRunner.getCommandLine().getCommandLineString());
       }
     }
     catch (ExecutionException | InterruptedException e) {
@@ -80,8 +80,8 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
   }
 
   @Override
-  public void onTaskFailed(@NotNull String message) {
-    super.onTaskFailed(message);
+  public void onTaskFailed(@NotNull String message, @Nullable String details) {
+    super.onTaskFailed(message, details);
     ApplicationManager.getApplication().invokeLater(() -> {
       VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir == null) return;
@@ -91,7 +91,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
           continue;
         }
         final Course course = task.getLesson().getCourse();
-        if (course != null && course.isStudy()) {
+        if (course.isStudy()) {
           CommandProcessor.getInstance().runUndoTransparentAction(
             () -> ApplicationManager.getApplication().runWriteAction(
               () -> PySmartChecker.runSmartTestProcess(taskDir, new PyTestRunner(taskDir), taskFile, project)));
@@ -123,5 +123,17 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
       if (hasNewPlaceholder) return file;
     }
     return firstFile;
+  }
+
+  public static CheckResult getCheckResult(@NotNull Process testProcess, @NotNull String commandLine) {
+    final CapturingProcessHandler handler = new CapturingProcessHandler(testProcess, null, commandLine);
+    final ProcessOutput output = ProgressManager.getInstance().hasProgressIndicator() ? handler
+      .runProcessWithProgressIndicator(ProgressManager.getInstance().getProgressIndicator()) : handler.runProcess();
+    String stderr = output.getStderr();
+    if (!stderr.isEmpty() && output.getStdout().isEmpty()) {
+      LOG.info("#educational " + stderr);
+      return new CheckResult(CheckStatus.Failed, stderr);
+    }
+    return TestsOutputParser.getCheckResult(output.getStdoutLines());
   }
 }
