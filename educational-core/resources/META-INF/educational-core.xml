@@ -197,6 +197,7 @@
     <statistics.usagesCollector implementation="com.jetbrains.edu.learning.statistics.LegacyEduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
     <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.builtInServer.StepikRestService"/>
     <projectService serviceImplementation="com.jetbrains.edu.learning.stepik.StepikSolutionsLoader"/>
@@ -242,6 +243,7 @@
 
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
+    <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.NextRecommendationCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.coursera
 
 object CourseraNames {
-  const val COURSE_TYPE = "Coursera"
+  const val COURSERA = "Coursera"
+  const val COURSE_TYPE = COURSERA
 }
