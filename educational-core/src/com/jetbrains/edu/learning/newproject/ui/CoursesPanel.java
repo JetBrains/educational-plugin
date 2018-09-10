@@ -84,7 +84,7 @@ public class CoursesPanel extends JPanel {
     mySplitPane.setResizeWeight(0.5);
     myCoursesList = new JBList<>();
     myCoursesList.setEmptyText(NO_COURSES);
-    updateModel(myCourses, null);
+    updateModel(myCourses, null, false);
     myErrorLabel.setVisible(false);
 
     ColoredListCellRenderer<Course> renderer = getCourseRenderer();
@@ -159,7 +159,7 @@ public class CoursesPanel extends JPanel {
     Course selectedCourse = myCoursesList.getSelectedValue();
     List<Course> courses = EduUtils.getCourseInfosUnderProgress();
     myCourses = courses != null ? courses : Lists.newArrayList();
-    updateModel(myCourses, selectedCourse.getName());
+    updateModel(myCourses, selectedCourse.getName(), selectedCourse.isFromZip());
     myErrorLabel.setVisible(false);
     notifyListeners(true);
   }
@@ -220,7 +220,7 @@ public class CoursesPanel extends JPanel {
     });
   }
 
-  private void updateModel(List<Course> courses, @Nullable String courseToSelect) {
+  private void updateModel(List<Course> courses, @Nullable String courseToSelect, boolean isFromZip) {
     DefaultListModel<Course> listModel = new DefaultListModel<>();
     courses = sortCourses(courses);
     for (Course course : courses) {
@@ -236,7 +236,7 @@ public class CoursesPanel extends JPanel {
       return;
     }
     myCourses.stream()
-        .filter(course -> course.getName().equals(courseToSelect))
+        .filter(course -> course.getName().equals(courseToSelect) && course.isFromZip() == isFromZip)
         .findFirst()
         .ifPresent(newCourseToSelect -> myCoursesList.setSelectedValue(newCourseToSelect, true));
   }
@@ -258,7 +258,9 @@ public class CoursesPanel extends JPanel {
             filtered.add(course);
           }
         }
-        updateModel(filtered, selectedCourse != null ? selectedCourse.getName() : null);
+        String courseName = selectedCourse != null ? selectedCourse.getName() : null;
+        boolean isFromZip = selectedCourse != null && selectedCourse.isFromZip();
+        updateModel(filtered, courseName, isFromZip);
       }
     };
     myCoursePanel.bindSearchField(mySearchField);
@@ -405,7 +407,7 @@ public class CoursesPanel extends JPanel {
                   course.setFromZip(true);
                   EduUsagesCollector.courseArchiveImported();
                   myCourses.add(course);
-                  updateModel(myCourses, course.getName());
+                  updateModel(myCourses, course.getName(), true);
                 }
                 else {
                   Messages.showErrorDialog("Selected archive doesn't contain a valid course", "Failed to Add Local Course");
@@ -446,7 +448,7 @@ public class CoursesPanel extends JPanel {
         course.setType("pycharm2 " + language.getID());
         course.setLanguage(language.getID());
         myCourses.add(course);
-        updateModel(myCourses, course.getName());
+        updateModel(myCourses, course.getName(), false);
       }
     }
 
