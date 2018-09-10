@@ -200,10 +200,11 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     public void onSuccess() {
       String message = myResult.getMessage();
       CheckStatus status = myResult.getStatus();
+      final String details = myResult.getDetails();
       myTask.setStatus(status);
       switch (status) {
         case Failed:
-          myChecker.onTaskFailed(message);
+          myChecker.onTaskFailed(message, details);
           break;
         case Solved:
           myChecker.onTaskSolved(message);

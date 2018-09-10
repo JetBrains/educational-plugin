@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.checker;
 
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import org.jetbrains.annotations.Nullable;
 
 public class CheckResult {
   public static final CheckResult USE_LOCAL_CHECK = new CheckResult(CheckStatus.Unchecked, "Always use local check");
@@ -10,10 +11,16 @@ public class CheckResult {
 
   private CheckStatus myStatus;
   private String myMessage;
+  @Nullable private String myDetails;
 
   public CheckResult(CheckStatus status, String message) {
+    this(status, message, null);
+  }
+
+  public CheckResult(CheckStatus status, String message, @Nullable String details) {
     myStatus = status;
     myMessage = message;
+    myDetails = details;
   }
 
   public CheckStatus getStatus() {
@@ -22,5 +29,10 @@ public class CheckResult {
 
   public String getMessage() {
     return myMessage;
+  }
+
+  @Nullable
+  public String getDetails() {
+    return myDetails;
   }
 }

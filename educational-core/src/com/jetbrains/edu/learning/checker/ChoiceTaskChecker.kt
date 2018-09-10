@@ -14,8 +14,8 @@ class ChoiceTaskChecker(task: ChoiceTask, project: Project) : TaskChecker<Choice
         return StepikAdaptiveConnector.checkChoiceTask(task, user)
     }
 
-    override fun onTaskFailed(message: String) {
-        super.onTaskFailed(message)
+    override fun onTaskFailed(message: String, details: String?) {
+        super.onTaskFailed(message, details)
         repaintChoicePanel(project, task)
     }
 

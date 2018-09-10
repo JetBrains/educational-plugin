@@ -19,15 +19,12 @@ import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
-import java.util.regex.Pattern
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 
 const val TEST_TASK_NAME = "test"
 
 const val TESTS_ARG = "--tests"
-
-private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected: ?(.*) but was: ?(.*)", Pattern.MULTILINE or Pattern.DOTALL)
 
 fun getGradleProjectName(task: Task) =
   if (task.lesson.section != null)
@@ -74,7 +71,7 @@ fun getProcessOutput(process: Process, commandLine: String, taskName: String): G
 
   //gradle prints compilation failures to error stream
   if (hasCompilationErrors(output)) {
-    return GradleOutput(false, listOf(COMPILATION_FAILED_MESSAGE))
+    return GradleOutput(false, listOf(COMPILATION_FAILED_MESSAGE, output.stderr))
   }
 
   if (!output.stdout.contains(taskName)) {
@@ -114,39 +111,9 @@ fun String.postProcessOutput() = replace(System.getProperty("line.separator"), "
 
 fun parseTestsOutput(process: Process, commandLine: String, taskName: String): CheckResult {
   val output = getProcessOutput(process, commandLine, taskName)
-  if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage)
+  if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage, output.messages.joinToString("\n"))
 
-  var congratulations = TestsOutputParser.CONGRATULATIONS
-
-  loop@for (message in output.messages) {
-    when {
-      TestsOutputParser.TEST_OK in message -> continue@loop
-      TestsOutputParser.CONGRATS_MESSAGE in message -> {
-        congratulations = message.substringAfter(TestsOutputParser.CONGRATS_MESSAGE)
-      }
-      TestsOutputParser.TEST_FAILED in message -> {
-        return CheckResult(CheckStatus.Failed, message.substringAfter(TestsOutputParser.TEST_FAILED).prettify())
-      }
-    }
-  }
-
-  return CheckResult(CheckStatus.Solved, congratulations)
-}
-
-private fun String.prettify(): String {
-  val matcher = TEST_FAILED_PATTERN.matcher(this)
-  return if (matcher.find()) {
-    val errorMessage = matcher.group(2)
-    val expectedText = matcher.group(3)
-    val actualText = matcher.group(4)
-    if (errorMessage != null) {
-      "$errorMessage\nExpected:\n$expectedText\nActual:\n$actualText"
-    } else {
-      "Expected:\n$expectedText\nActual:\n$actualText"
-    }
-  } else {
-    this
-  }
+  return TestsOutputParser.getCheckResult(output.messages)
 }
 
 /**
@@ -166,7 +133,7 @@ fun runGradleRunTask(project: Project, task: Task,
 
   val gradleOutput = getProcessOutput(cmd.createProcess(), cmd.commandLineString, taskName)
   if (!gradleOutput.isSuccess) {
-    return Err(CheckResult(CheckStatus.Failed, gradleOutput.firstMessage))
+    return Err(CheckResult(CheckStatus.Failed, gradleOutput.firstMessage, gradleOutput.messages.joinToString("\n")))
   }
 
   return Ok(gradleOutput.firstMessage)
