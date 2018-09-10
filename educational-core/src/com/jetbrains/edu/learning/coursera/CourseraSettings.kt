@@ -8,8 +8,8 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 
 @State(name = "CourseraSettings", storages = arrayOf(Storage("other.xml")))
 class CourseraSettings : PersistentStateComponent<CourseraSettings> {
-  var email: String? = null
-  var token: String? = null
+  var email: String = ""
+  var token: String = ""
 
   override fun getState(): CourseraSettings? = this
 
