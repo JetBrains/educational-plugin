@@ -44,6 +44,7 @@
   </extensionPoints>
 
   <actions>
+    <action id="Educational.StartCourseraAssignment" class="com.jetbrains.edu.learning.coursera.StartCourseraProgrammingAssignment"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
     <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
             text="Previous Answer Placeholder"
