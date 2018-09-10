@@ -178,15 +178,15 @@ public class CoursePanel extends JPanel {
   }
 
   private void updateAdvancedSettings(@NotNull Course course) {
-    if (myLocationField != null) {
-      myLocationField.getComponent().setText(nameToLocation(course));
-    }
     EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
     if (configurator == null) {
       return;
     }
     myLanguageSettings = configurator.getCourseBuilder().getLanguageSettings();
 
+    if (myLocationField != null) {
+      myLocationField.getComponent().setText(nameToLocation(course));
+    }
     List<LabeledComponent> settingsComponents = new ArrayList<>();
     if (myLocationField != null) {
       settingsComponents.add(myLocationField);
