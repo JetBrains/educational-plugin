@@ -5,9 +5,10 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.editor.impl.event.DocumentEventImpl;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -58,23 +59,17 @@ public class EduDocumentListener implements DocumentListener {
       int placeholderStart = placeholder.getOffset();
       int placeholderEnd = placeholder.getEndOffset();
 
-      int changeForPlaceholder = getChangeForPlaceholder(offset, change, placeholder);
+      final Pair<Integer, Integer> changes = getChangeForOffsets(offset, change, placeholder);
+      int changeForStartOffset = changes.getFirst();
+      int changeForEndOffset = changes.getSecond();
+
+      placeholderStart += changeForStartOffset;
+      placeholderEnd += changeForEndOffset;
 
       if (placeholderStart - 1 == offset && fragment.toString().isEmpty() && oldFragment.toString().startsWith("\n")) {
         placeholderStart -= 1;
       }
 
-      if (placeholderStart > offset) {
-        placeholderStart += changeForPlaceholder;
-      }
-      if (placeholderEnd == offset) {
-        if (e.getOldLength() != 1 && e.getNewLength() != 0) {
-          placeholderEnd += changeForPlaceholder;
-        }
-      }
-      else if (placeholderEnd > offset) {
-        placeholderEnd += placeholderStart >= offset ? change : changeForPlaceholder;
-      }
       if (placeholderStart == offset && oldFragment.toString().isEmpty() && fragment.toString().startsWith("\n")) {
         placeholderStart += 1;
       }
@@ -86,19 +81,28 @@ public class EduDocumentListener implements DocumentListener {
     }
   }
 
-  private static int getChangeForPlaceholder(int offset, int change, @NotNull final AnswerPlaceholder placeholder) {
+  private static Pair<Integer, Integer> getChangeForOffsets(int offset, int change, @NotNull final AnswerPlaceholder placeholder) {
     int placeholderStart = placeholder.getOffset();
     int placeholderEnd = placeholder.getEndOffset();
-    int changeForPlaceholder = change;
-    if (change < 0) {
-      if (offset - change > placeholderEnd && offset < placeholderEnd) {
-        changeForPlaceholder = offset - placeholderEnd;
-      }
-      else if (offset - change > placeholderStart && offset < placeholderStart) {
-        changeForPlaceholder = offset - placeholderStart;
+    int start = 0;
+    int end = change;
+    if (offset > placeholderEnd) {
+      return Pair.create(0, 0);
+    }
+
+    if (offset < placeholderStart) {
+      start = change;
+
+      if (change < 0 && offset - change > placeholderStart) {  // delete part of placeholder start
+        start = offset - placeholderStart;
       }
     }
-    return changeForPlaceholder;
+
+    if (change < 0 && offset - change > placeholderEnd) {   // delete part of placeholder end
+      end = offset - placeholderEnd;
+    }
+
+    return Pair.create(start, end);
   }
 
   protected void updatePlaceholder(@NotNull AnswerPlaceholder answerPlaceholder,
