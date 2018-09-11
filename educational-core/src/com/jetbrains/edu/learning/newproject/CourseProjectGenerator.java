@@ -184,7 +184,7 @@ public abstract class CourseProjectGenerator<S> {
         if (CCUtils.isCourseCreator(project)) {
           CCUtils.initializeCCPlaceholders(project,myCourse);
         }
-        if (myCourse instanceof RemoteCourse && myCourse.isFromZip()) {
+        if (myCourse instanceof RemoteCourse && myCourse.isFromZip() && CCUtils.isCourseCreator(project)) {
           setStepikChangeStatuses(project);
         }
         createAdditionalFiles(project, baseDir);
