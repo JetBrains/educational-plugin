@@ -48,6 +48,20 @@ class EduTypedHandlerTest : EduTestCase() {
                                    "  print(1)", myFixture.editor.document.text)
   }
 
+  fun `test cut selection in placeholder`() {
+    configureByTaskFile(1, 1, "Task.kt")
+    myFixture.editor.caretModel.caretsAndSelections = listOf(
+      CaretState(
+      LogicalPosition(1, 4),
+      LogicalPosition(1, 4),
+      LogicalPosition(1, 6)
+    ))
+    myFixture.performEditorAction("EditorCut")
+    myFixture.editor.selectionModel.removeSelection()
+    TestCase.assertEquals("def f():\n" +
+                                   "  prt(1)", myFixture.editor.document.text)
+  }
+
   fun `test delete symbol`() {
     configureByTaskFile(1, 2, "Task.kt")
     myFixture.editor.caretModel.moveToOffset(11)

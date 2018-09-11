@@ -218,18 +218,18 @@
     <editorTabTitleProvider implementation="com.jetbrains.edu.coursecreator.CCTestsTabTitleProvider"/>
 
     <projectViewPane implementation="com.jetbrains.edu.learning.projectView.CourseViewPane"/>
-    <editorActionHandler action="EditorBackSpace" implementationClass="com.jetbrains.edu.learning.EduTypedHandler"
+    <editorActionHandler action="EditorBackSpace" implementationClass="com.jetbrains.edu.learning.editor.EduTypedHandler"
                          order="first"/>
-    <editorActionHandler action="EditorDelete" implementationClass="com.jetbrains.edu.learning.EduTypedHandler"
+    <editorActionHandler action="EditorDelete" implementationClass="com.jetbrains.edu.learning.editor.EduTypedHandler"
                          order="first"/>
 
-    <editorActionHandler action="EditorCut" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"
+    <editorActionHandler action="EditorCut" implementationClass="com.jetbrains.edu.learning.editor.EduCutTypedHandler"
                          order="first"/>
-    <editorActionHandler action="EditorCutLineEnd" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
-    <editorActionHandler action="EditorCutLineBackward" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
-    <editorActionHandler action="EditorDeleteToLineEnd" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
-    <editorActionHandler action="EditorDeleteToLineStart" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
-    <editorActionHandler action="EditorDeleteLine" implementationClass="com.jetbrains.edu.learning.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorCutLineEnd" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorCutLineBackward" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorDeleteToLineEnd" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorDeleteToLineStart" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
+    <editorActionHandler action="EditorDeleteLine" implementationClass="com.jetbrains.edu.learning.editor.EduTypedLineHandler"/>
     <experimentalFeature id="edu.course.creator.yaml" percentOfUsers="0">
       <description>Enables yaml config files in course creation projects</description>
     </experimentalFeature>
