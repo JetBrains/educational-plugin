@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.editor;
 
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
@@ -12,8 +12,8 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.jetbrains.edu.learning.EduTypedHandler.getAnswerPlaceholder;
-import static com.jetbrains.edu.learning.EduTypedHandler.getTaskFile;
+import static com.jetbrains.edu.learning.editor.EduTypedHandler.getAnswerPlaceholder;
+import static com.jetbrains.edu.learning.editor.EduTypedHandler.getTaskFile;
 
 /**
  * Used to forbid placeholder deletion while executing line actions
