@@ -7,6 +7,7 @@ import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.learning.EduUtils
@@ -17,6 +18,8 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.codec.binary.Base64
 import org.apache.http.HttpStatus
+import org.apache.http.StatusLine
+import org.apache.http.client.methods.CloseableHttpResponse
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.ContentType
 import org.apache.http.entity.StringEntity
@@ -30,14 +33,38 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
   override fun check(project: Project, task: Task): CheckResult {
     val courseraSettings = CourseraSettings.getInstance()
+    var askedForCredentials = false
     if (!courseraSettings.haveFullCredentials()) {
       askToEnterCredentials()
+      askedForCredentials = true
 
       if (!courseraSettings.haveFullCredentials()) {
         return checkWithoutCredentials
       }
     }
 
+    val json = createSubmissionJson(project, task, courseraSettings)
+
+    val response = postSubmission(json)
+
+    var statusLine = response.statusLine
+    if (statusLine.statusCode == HttpStatus.SC_UNAUTHORIZED && !askedForCredentials) {
+      askToEnterCredentials(true)
+      statusLine = postSubmission(json).statusLine
+    }
+    return statusLine.toCheckResult()
+  }
+
+  private fun StatusLine.toCheckResult(): CheckResult {
+    return when (statusCode) {
+      HttpStatus.SC_CREATED -> CheckResult(CheckStatus.Unchecked, SUCCESS)
+      HttpStatus.SC_UNAUTHORIZED -> CheckResult(CheckStatus.Unchecked, "Invalid token or email")
+      HttpStatus.SC_BAD_REQUEST -> CheckResult(CheckStatus.Unchecked, "Token is for a different assignment")
+      else -> CheckResult(CheckStatus.Unchecked, "Failed to create new submission: $statusCode error received")
+    }
+  }
+
+  private fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
     val taskDir = task.getDir(project) ?: error("No directory for task ${task.name}")
 
     val assignmentKey = taskDir.getValueFromChildFile("assignmentKey")
@@ -49,31 +76,32 @@ class CourseraTaskChecker : RemoteTaskChecker {
     }
     val submission = Submission(assignmentKey, courseraSettings.email, courseraSettings.token,
                                 mapOf(Pair(partId, Part(ObjectMapper().writeValueAsString(output)))))
-    val json = ObjectMapper().writeValueAsString(submission)
-
-    val client = HttpClientBuilder.create().build()
-    val post = HttpPost("https://www.coursera.org/api/onDemandProgrammingScriptSubmissions.v1")
-    post.entity = StringEntity(json, ContentType.APPLICATION_JSON)
-    val response = client.execute(post)
-    if (response.statusLine.statusCode == HttpStatus.SC_CREATED) {
-      return CheckResult(CheckStatus.Unchecked, "Submission successful, please check on the coursera grader page for the status");
-    }
-    return CheckResult.FAILED_TO_CHECK
+    return ObjectMapper().writeValueAsString(submission)
   }
 
-  private fun askToEnterCredentials() {
+  private fun postSubmission(json: String): CloseableHttpResponse {
+    val client = HttpClientBuilder.create().build()
+    val post = HttpPost(ON_DEMAND_SUBMIT)
+    post.entity = StringEntity(json, ContentType.APPLICATION_JSON)
+    return client.execute(post)
+  }
+
+  private fun askToEnterCredentials(showWarningMessage: Boolean = false) {
     val courseraSettings = CourseraSettings.getInstance()
 
     val emailField = JBTextField(courseraSettings.email)
     val tokenField = JBTextField(courseraSettings.token)
     val credentialsPanel = panel {
+      if (showWarningMessage) {
+        row { JBLabel("Token might have expired")() }
+      }
       row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
       row("Token:") { tokenField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
     }
     var refusedToProvidedCredentials = false
 
     ApplicationManager.getApplication().invokeAndWait {
-      refusedToProvidedCredentials = !DialogBuilder().centerPanel(credentialsPanel).showAndGet()
+      refusedToProvidedCredentials = !DialogBuilder().centerPanel(credentialsPanel).title(NEED_CREDENTIALS).showAndGet()
     }
 
     if (!refusedToProvidedCredentials) {
@@ -88,4 +116,10 @@ class CourseraTaskChecker : RemoteTaskChecker {
   }
 
   private fun CourseraSettings.haveFullCredentials() = email.isNotEmpty() && token.isNotEmpty()
+
+  companion object {
+    private const val ON_DEMAND_SUBMIT = "https://www.coursera.org/api/onDemandProgrammingScriptSubmissions.v1"
+    private const val NEED_CREDENTIALS = "${CourseraNames.COURSERA} Credentials"
+    private const val SUCCESS = "Submission successful, please check the status on Coursera"
+  }
 }
