@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.common.collect.Lists
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.notification.Notification
@@ -22,7 +23,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseInfo
 import com.jetbrains.edu.learning.stepik.StepikConnector.loadCourseStructure
-import org.fest.util.VisibleForTesting
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
