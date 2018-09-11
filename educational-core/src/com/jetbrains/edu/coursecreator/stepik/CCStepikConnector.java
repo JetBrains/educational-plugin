@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -531,10 +532,12 @@ public class CCStepikConnector {
     final Language language = lesson.getCourse().getLanguageById();
     final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
     if (configurator == null) return false;
-    CCUtils.loadTestTextsToTask(task, taskDir);
     final String[] requestBody = new String[1];
-      ApplicationManager.getApplication().invokeAndWait(() -> requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId)));
-      request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
+    ApplicationManager.getApplication().invokeAndWait(() -> {
+      FileDocumentManager.getInstance().saveAllDocuments();
+      requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
+    });
+    request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
 
     try {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
@@ -935,7 +938,10 @@ public class CCStepikConnector {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/step-sources");
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
     final String[] requestBody = new String[1];
-    ApplicationManager.getApplication().invokeAndWait(() -> requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId)));
+    ApplicationManager.getApplication().invokeAndWait(() -> {
+      FileDocumentManager.getInstance().saveAllDocuments();
+      requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
+    });
 
     request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
 

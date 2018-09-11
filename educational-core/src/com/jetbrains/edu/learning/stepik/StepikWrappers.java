@@ -5,10 +5,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -17,7 +16,6 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.*;
 
 public class StepikWrappers {
@@ -72,9 +70,11 @@ public class StepikWrappers {
       source.title = task.getName();
       source.descriptionText = task.getDescriptionText();
       source.descriptionFormat = task.getDescriptionFormat();
-      setTests(task, source, project);
+
+      setTests(project, task, source);
       setTaskFiles(project, task, source);
-      setAdditionalFiles(task, source);
+      setAdditionalFiles(project, task, source);
+
       source.taskType = task.getTaskType();
       source.lessonType = task.getLesson() instanceof FrameworkLesson ? "framework" : null;
       source.myFeedbackLink = task.getFeedbackLink();
@@ -102,31 +102,34 @@ public class StepikWrappers {
       }
     }
 
-    private static void setTests(@NotNull Task task, @NotNull StepOptions source, @NotNull Project project) {
-      FileDocumentManager.getInstance().saveAllDocuments();
+    private static void setTests(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
       source.test = new ArrayList<>();
       if (task.getLesson().isAdditional()) {
         return;
       }
 
-      List<VirtualFile> testFiles = EduUtils.getTestFiles(project, task);
-      for (VirtualFile testFile : testFiles) {
-        addFileWrapper(testFile, source.test);
+      final VirtualFile taskDir = task.getTaskDir(project);
+      if (taskDir == null) {
+        LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
+      } else {
+        CCUtils.loadTestTextsToTask(task, taskDir);
+      }
+
+      for (Map.Entry<String, String> entry : task.getTestsText().entrySet()) {
+        source.test.add(new FileWrapper(entry.getKey(), entry.getValue()));
       }
     }
   }
 
-  private static void setAdditionalFiles(@NotNull Task task, @NotNull StepOptions stepOptions) {
-    stepOptions.additionalFiles = new HashMap<>(task.getAdditionalFiles());
-  }
+  private static void setAdditionalFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
+    final VirtualFile taskDir = task.getTaskDir(project);
+    if (taskDir == null) {
+      LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
+    } else {
+      CCUtils.loadAdditionalFileTextsToTask(task, taskDir);
+    }
 
-  private static void addFileWrapper(@NotNull VirtualFile file, List<FileWrapper> wrappers) {
-    try {
-      wrappers.add(new FileWrapper(file.getName(), VfsUtilCore.loadText(file)));
-    }
-    catch (IOException e) {
-      LOG.error(e);
-    }
+    source.additionalFiles = new HashMap<>(task.getAdditionalFiles());
   }
 
   public static class CoursesContainer {

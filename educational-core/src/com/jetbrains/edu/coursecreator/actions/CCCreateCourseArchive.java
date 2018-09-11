@@ -114,7 +114,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
       public void run() {
         archiveFolder.refresh(false, true);
         Course courseCopy = course.copy();
-        replaceAnswerFilesWithTaskFiles(courseCopy);
+        loadActualTexts(courseCopy);
         courseCopy.sortItems();
         createAdditionalFiles(courseCopy);
         try {
@@ -136,7 +136,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
         }
       }
 
-      private void replaceAnswerFilesWithTaskFiles(@NotNull Course courseCopy) {
+      private void loadActualTexts(@NotNull Course courseCopy) {
         courseCopy.visitLessons((lesson) -> {
           final VirtualFile lessonDir = lesson.getLessonDir(project);
           if (lessonDir == null) return true;
@@ -145,6 +145,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
             if (taskDir == null) continue;
             convertToStudentTaskFiles(task, taskDir);
             CCUtils.loadTestTextsToTask(task, taskDir);
+            CCUtils.loadAdditionalFileTextsToTask(task, taskDir);
             addDescriptions(task);
           }
           return true;
