@@ -8,8 +8,4 @@ class StartCourseraProgrammingAssignment : ImportLocalCourseAction("Start Course
     super.initCourse(course)
     course.courseType = CourseraNames.COURSE_TYPE
   }
-
-  companion object {
-    const val ACTION_ID = "Educational.StartCourseraAssignment"
-  }
 }
