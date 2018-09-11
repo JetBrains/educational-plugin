@@ -139,8 +139,8 @@ class EduDocumentListenerTest : EduTestCase() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
 
-    CommandProcessor.getInstance().runUndoTransparentAction({ runWriteAction {
-      myFixture.getDocument(myFixture.file).deleteString(5, 11) } })
+    CommandProcessor.getInstance().runUndoTransparentAction { runWriteAction {
+      myFixture.getDocument(myFixture.file).deleteString(5, 11) } }
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
@@ -157,8 +157,8 @@ class EduDocumentListenerTest : EduTestCase() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
 
-    CommandProcessor.getInstance().runUndoTransparentAction({ runWriteAction {
-      myFixture.getDocument(myFixture.file).deleteString(33, 39) } })
+    CommandProcessor.getInstance().runUndoTransparentAction { runWriteAction {
+      myFixture.getDocument(myFixture.file).deleteString(33, 39) } }
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
@@ -175,8 +175,8 @@ class EduDocumentListenerTest : EduTestCase() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
 
-    CommandProcessor.getInstance().runUndoTransparentAction({ runWriteAction {
-      myFixture.getDocument(myFixture.file).deleteString(55, 58) } })
+    CommandProcessor.getInstance().runUndoTransparentAction { runWriteAction {
+      myFixture.getDocument(myFixture.file).deleteString(55, 58) } }
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
@@ -193,8 +193,8 @@ class EduDocumentListenerTest : EduTestCase() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
 
-    CommandProcessor.getInstance().runUndoTransparentAction({ runWriteAction {
-      myFixture.getDocument(myFixture.file).deleteString(11, 13) } })
+    CommandProcessor.getInstance().runUndoTransparentAction { runWriteAction {
+      myFixture.getDocument(myFixture.file).deleteString(11, 13) } }
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
@@ -211,8 +211,8 @@ class EduDocumentListenerTest : EduTestCase() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
 
-    CommandProcessor.getInstance().runUndoTransparentAction({ runWriteAction {
-      myFixture.getDocument(myFixture.file).deleteString(13, 15) } })
+    CommandProcessor.getInstance().runUndoTransparentAction { runWriteAction {
+      myFixture.getDocument(myFixture.file).deleteString(13, 15) } }
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
@@ -225,12 +225,44 @@ class EduDocumentListenerTest : EduTestCase() {
     assertEquals(10, answerPlaceholders[1].length)
   }
 
+  fun `test delete from start beyond end`() {
+    val taskFileName = "taskFile1.txt"
+    configureByTaskFile(1, 1, taskFileName)
+    myFixture.editor.caretModel.moveToOffset(12)
+    myFixture.editor.selectionModel.setSelection(12, 15)
+    myFixture.type("test")
+
+    val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
+    val task = lesson!!.getTask("task1")
+    val taskFile = task!!.getTaskFile(taskFileName)
+    val answerPlaceholders = taskFile!!.answerPlaceholders
+    assertEquals(1, answerPlaceholders.size)
+    assertEquals(12, answerPlaceholders[0].offset)
+    assertEquals(4, answerPlaceholders[0].length)
+  }
+
+  fun `test delete before start beyond end`() {
+    val taskFileName = "taskFile1.txt"
+    configureByTaskFile(1, 1, taskFileName)
+    myFixture.editor.caretModel.moveToOffset(12)
+    myFixture.editor.selectionModel.setSelection(10, 15)
+    myFixture.type("test")
+
+    val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
+    val task = lesson!!.getTask("task1")
+    val taskFile = task!!.getTaskFile(taskFileName)
+    val answerPlaceholders = taskFile!!.answerPlaceholders
+    assertEquals(1, answerPlaceholders.size)
+    assertEquals(10, answerPlaceholders[0].offset)
+    assertEquals(4, answerPlaceholders[0].length)
+  }
+
   fun testDeleteSecondPlaceholderStart() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
 
-    CommandProcessor.getInstance().runUndoTransparentAction({ runWriteAction {
-      myFixture.getDocument(myFixture.file).deleteString(39, 41) } })
+    CommandProcessor.getInstance().runUndoTransparentAction { runWriteAction {
+      myFixture.getDocument(myFixture.file).deleteString(39, 41) } }
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
@@ -247,8 +279,8 @@ class EduDocumentListenerTest : EduTestCase() {
     val taskFileName = "taskFile2.txt"
     configureByTaskFile(1, 2, taskFileName)
 
-    CommandProcessor.getInstance().runUndoTransparentAction({ runWriteAction {
-      myFixture.getDocument(myFixture.file).deleteString(49, 51) } })
+    CommandProcessor.getInstance().runUndoTransparentAction { runWriteAction {
+      myFixture.getDocument(myFixture.file).deleteString(49, 51) } }
 
     val lesson = StudyTaskManager.getInstance(myFixture.project).course!!.getLesson("lesson1")
     val task = lesson!!.getTask("task2")
