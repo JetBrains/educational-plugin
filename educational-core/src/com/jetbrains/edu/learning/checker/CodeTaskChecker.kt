@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector
 class CodeTaskChecker(task: CodeTask, project: Project) : TaskChecker<CodeTask>(task, project) {
     override fun onTaskFailed(message: String, details: String?) {
         super.onTaskFailed("Wrong solution", details)
-        CheckUtils.showTestResultsToolWindow(project, details?: message)
+        CheckUtils.showTestResultsToolWindow(project, message)
     }
 
     override fun checkOnRemote(): CheckResult {
