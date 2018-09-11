@@ -68,7 +68,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
       is FileInfo.SectionDirectory -> deleteSection(fileInfo, removedFile)
       is FileInfo.LessonDirectory -> deleteLesson(fileInfo, removedFile)
       is FileInfo.TaskDirectory -> deleteTask(fileInfo, removedFile)
-      is FileInfo.FileInTask -> deleteFileInTask(fileInfo)
+      is FileInfo.FileInTask -> deleteFileInTask(fileInfo, removedFile)
     }
   }
 
@@ -116,12 +116,26 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
   }
 
-  private fun deleteFileInTask(info: FileInfo.FileInTask) {
+  private fun deleteFileInTask(info: FileInfo.FileInTask, removedFile: VirtualFile) {
     val (task, pathInTask, kind) = info
-    when (kind) {
-      TASK_FILE -> task.getTaskFiles().remove(pathInTask)
-      TEST_FILE -> task.testsText.remove(pathInTask)
-      ADDITIONAL_FILE -> task.additionalFiles.remove(pathInTask)
+
+    fun <T> remove(data: MutableMap<String, T>) {
+      val toRemove = data.keys.filter { it.startsWith(pathInTask) }
+      for (path in toRemove) {
+        data.remove(path)
+      }
+    }
+
+    if (removedFile.isDirectory) {
+      remove(task.taskFiles)
+      remove(task.testsText)
+      remove(task.additionalFiles)
+    } else {
+      when (kind) {
+        TASK_FILE -> task.taskFiles.remove(pathInTask)
+        TEST_FILE -> task.testsText.remove(pathInTask)
+        ADDITIONAL_FILE -> task.additionalFiles.remove(pathInTask)
+      }
     }
     YamlFormatSynchronizer.saveItem(task)
     StepikCourseChangeHandler.changed(task)
