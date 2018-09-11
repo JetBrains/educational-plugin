@@ -167,6 +167,36 @@ class CCVirtualFileListenerTest : EduTestCase() {
     }
   }
 
+  fun `test remove src folder`() {
+    doRemoveFileTest("lesson1/task1/src/packageName") { course ->
+      val task = course.findTask("lesson1", "task1")
+      listOf(
+        "src/packageName/TaskFile2.kt" to TASK_FILES notIn task,
+        "src/packageName/TaskFile3.kt" to TASK_FILES notIn task
+      )
+    }
+  }
+
+  fun `test remove test folder`() {
+    doRemoveFileTest("lesson1/task1/test/packageName") { course ->
+      val task = course.findTask("lesson1", "task1")
+      listOf(
+        "test/packageName/Tests2.kt" to TEST_FILES notIn task,
+        "test/packageName/Tests3.kt" to TEST_FILES notIn task
+      )
+    }
+  }
+
+  fun `test remove additional folder`() {
+    doRemoveFileTest("lesson1/task1/additional_files") { course ->
+      val task = course.findTask("lesson1", "task1")
+      listOf(
+        "additional_files/additional_file2.txt" to ADDITIONAL_FILES notIn task,
+        "additional_files/additional_file2.txt" to ADDITIONAL_FILES notIn task
+      )
+    }
+  }
+
   fun `test rename task file`() {
     doRenameFileTest("lesson1/task1/src/packageName/Task1.kt", "Task3.kt") { course ->
       val task = course.findTask("lesson1", "task1")
@@ -264,6 +294,18 @@ class CCVirtualFileListenerTest : EduTestCase() {
           taskFile("src/TaskFile.kt")
           additionalFile("additionalFile.txt")
           testFile("test/${FakeGradleConfigurator.TEST_FILE_NAME}")
+          dir("src/packageName") {
+            taskFile("TaskFile2.kt")
+            taskFile("TaskFile3.kt")
+          }
+          dir("additional_files") {
+            additionalFile("additional_file2.txt")
+            additionalFile("additional_file3.txt")
+          }
+          dir("test/packageName") {
+            testFile("Tests2.kt")
+            testFile("Tests3.kt")
+          }
         }
       }
       section("section1") {
