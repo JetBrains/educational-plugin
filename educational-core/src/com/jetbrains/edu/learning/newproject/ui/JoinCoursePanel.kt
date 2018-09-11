@@ -11,7 +11,7 @@ import java.io.File
 import javax.swing.JPanel
 import javax.swing.event.DocumentEvent
 
-class CreateNewStepikCoursePanel : JPanel(BorderLayout()) {
+class JoinCoursePanel : JPanel(BorderLayout()) {
 
   private val myCoursePanel: CoursePanel = CoursePanel(true, true)
   private val myErrorLabel: JBLabel = JBLabel()

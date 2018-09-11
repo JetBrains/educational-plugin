@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.newproject.ui.CreateNewStepikCourseDialog;
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -170,7 +170,7 @@ public class EduBuiltInServerUtils {
     ApplicationManager.getApplication().invokeLater(() -> {
       if (course != null) {
         PropertiesComponent.getInstance().setValue(StepikNames.STEP_ID, stepId, 0);
-        new CreateNewStepikCourseDialog(course).show();
+        new JoinCourseDialog(course).show();
       } else {
         Messages.showErrorDialog("Can not get course info from Stepik", "Failed to Create Course");
       }

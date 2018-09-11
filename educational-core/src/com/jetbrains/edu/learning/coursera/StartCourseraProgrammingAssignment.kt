@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
-import com.jetbrains.edu.learning.newproject.ui.CreateNewStepikCourseDialog
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 
 class StartCourseraProgrammingAssignment : DumbAwareAction("Start Coursera Programming Assignment") {
   override fun actionPerformed(e: AnActionEvent?) {
@@ -19,7 +19,7 @@ class StartCourseraProgrammingAssignment : DumbAwareAction("Start Coursera Progr
         course.isFromZip = true
         course.courseType = CourseraNames.COURSE_TYPE
         EduUsagesCollector.courseArchiveImported()
-        CreateNewStepikCourseDialog(course).show()
+        JoinCourseDialog(course).show()
       }
       else {
         Messages.showErrorDialog("Selected archive doesn't contain a valid course", "Failed to Add Local Course")
