@@ -3,7 +3,10 @@ package com.jetbrains.edu.learning.newproject.ui;
 import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionToolbarPosition;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -32,7 +35,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.coursera.StartCourseraProgrammingAssignment;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepicUser;
@@ -91,7 +93,7 @@ public class CoursesPanel extends JPanel {
     ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(myCoursesList).
       disableAddAction().disableRemoveAction().disableUpDownActions().setToolbarPosition(ActionToolbarPosition.BOTTOM);
     DefaultActionGroup group =
-      new DefaultActionGroup(new ImportCourseAction(), ActionManager.getInstance().getAction(StartCourseraProgrammingAssignment.ACTION_ID));
+      new DefaultActionGroup(new ImportCourseAction());
     toolbarDecorator.setActionGroup(group);
 
     JPanel toolbarDecoratorPanel = toolbarDecorator.createPanel();
