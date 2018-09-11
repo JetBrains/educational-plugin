@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
-import com.jetbrains.edu.learning.stepik.newproject.CreateNewStepikCourseDialog
+import com.jetbrains.edu.learning.newproject.ui.CreateNewStepikCourseDialog
 
 class StartCourseraProgrammingAssignment : DumbAwareAction("Start Coursera Programming Assignment") {
   override fun actionPerformed(e: AnActionEvent?) {

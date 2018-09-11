@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.newproject.CreateNewStepikCourseDialog;
+import com.jetbrains.edu.learning.newproject.ui.CreateNewStepikCourseDialog;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;

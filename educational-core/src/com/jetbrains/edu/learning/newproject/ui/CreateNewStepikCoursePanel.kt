@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.newproject
+package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.util.io.FileUtil
@@ -6,7 +6,6 @@ import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.newproject.ui.CoursePanel
 import java.awt.BorderLayout
 import java.io.File
 import javax.swing.JPanel
@@ -20,8 +19,10 @@ class CreateNewStepikCoursePanel : JPanel(BorderLayout()) {
   private var myValidationListener: ValidationListener? = null
 
   init {
-    preferredSize = JBUI.size(WIDTH, HEIGHT)
-    minimumSize = JBUI.size(WIDTH, HEIGHT)
+    preferredSize = JBUI.size(WIDTH,
+                              HEIGHT)
+    minimumSize = JBUI.size(WIDTH,
+                            HEIGHT)
 
     myErrorLabel.border = JBUI.Borders.emptyTop(8)
     myErrorLabel.foreground = MessageType.ERROR.titleForeground
