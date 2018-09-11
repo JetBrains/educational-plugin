@@ -371,16 +371,30 @@ object CCUtils {
   @JvmStatic
   fun loadTestTextsToTask(task: Task, taskDir: VirtualFile) {
     for ((path, _) in task.testsText) {
-      val file = taskDir.findFileByRelativePath(path)
-      if (file != null) {
-        try {
-          task.addTestsTexts(path, loadText(file))
-        } catch (e: IOException) {
-          LOG.warn("Failed to load text for `$file`")
-        }
-      } else {
-        LOG.warn("Can't find file by `$path` path")
-      }
+      val text = loadTextByPath(taskDir, path) ?: continue
+      task.addTestsTexts(path, text)
     }
+  }
+
+  @JvmStatic
+  fun loadAdditionalFileTextsToTask(task: Task, taskDir: VirtualFile) {
+    for ((path, additionalFile) in task.additionalFiles) {
+      val text = loadTextByPath(taskDir, path) ?: continue
+      additionalFile.setText(text)
+    }
+  }
+
+  private fun loadTextByPath(dir: VirtualFile, relativePath: String): String? {
+    val file = dir.findFileByRelativePath(relativePath)
+    if (file != null) {
+      try {
+        return loadText(file)
+      } catch (e: IOException) {
+        LOG.warn("Failed to load text for `$file`")
+      }
+    } else {
+      LOG.warn("Can't find file by `$relativePath` path")
+    }
+    return null
   }
 }

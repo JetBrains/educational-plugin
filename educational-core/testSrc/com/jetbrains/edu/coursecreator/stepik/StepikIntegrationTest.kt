@@ -1,5 +1,7 @@
 package com.jetbrains.edu.coursecreator.stepik
 
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
@@ -234,6 +236,43 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushCourse.doPush(project, localCourse)
 
     checkSections(localCourse)
+  }
+
+  fun `test file texts in task`() {
+    val localCourse = courseWithFiles {
+      lesson("lesson1") {
+        eduTask("task1") {
+          taskFile("Task.kt")
+          testFile("Tests.kt")
+          additionalFile("additional_file.txt")
+        }
+      }
+    }
+
+    val taskText = "// task text"
+    val testText = "// test text"
+    val additionalText = "// additional text"
+
+    setText("lesson1/task1/Task.kt", taskText)
+    setText("lesson1/task1/Tests.kt", testText)
+    setText("lesson1/task1/additional_file.txt", additionalText)
+
+    CCPushCourse.doPush(project, localCourse)
+
+    val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
+    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])
+    val unitIds = section.units.map { unit -> unit.toString() }
+    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
+
+    val taskFromStepik = lessonsFromUnits[0].getTask("task1") ?: error("Can't find `task1`")
+    assertEquals(taskText, taskFromStepik.getTaskFile("Task.kt")?.getText())
+    assertEquals(testText, taskFromStepik.testsText["Tests.kt"])
+    assertEquals(additionalText, taskFromStepik.additionalFiles["additional_file.txt"]?.getText())
+  }
+
+  private fun setText(path: String, text: String) {
+    val file = findFile(path)
+    runWriteAction { VfsUtil.saveText(file, text) }
   }
 
   private fun checkSections(localCourse: Course) {
