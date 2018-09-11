@@ -30,10 +30,10 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
   override fun check(project: Project, task: Task): CheckResult {
     val courseraSettings = CourseraSettings.getInstance()
-    if (!courseraSettings.hasFullCredentials()) {
+    if (!courseraSettings.haveFullCredentials()) {
       askToEnterCredentials()
 
-      if (!courseraSettings.hasFullCredentials()) {
+      if (!courseraSettings.haveFullCredentials()) {
         return checkWithoutCredentials
       }
     }
@@ -87,5 +87,5 @@ class CourseraTaskChecker : RemoteTaskChecker {
     return VfsUtil.loadText(file)
   }
 
-  private fun CourseraSettings.hasFullCredentials() = email.isNotEmpty() && token.isNotEmpty()
+  private fun CourseraSettings.haveFullCredentials() = email.isNotEmpty() && token.isNotEmpty()
 }
