@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomePopupAction
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
+import com.jetbrains.edu.learning.coursera.ImportLocalCourseAction
 import com.jetbrains.edu.learning.coursera.StartCourseraProgrammingAssignment
 import icons.EducationalCoreIcons
 
@@ -14,7 +15,7 @@ class LearnAndTeachAction : WelcomePopupAction() {
   override fun isSilentlyChooseSingleOption() = true
 
   override fun fillActions(group: DefaultActionGroup) {
-    group.addAll(BrowseCoursesAction(), StartCourseraProgrammingAssignment(), CCNewCourseAction())
+    group.addAll(BrowseCoursesAction(), ImportLocalCourseAction(), StartCourseraProgrammingAssignment(), CCNewCourseAction())
   }
 
   override fun getTextForEmpty(): String {
