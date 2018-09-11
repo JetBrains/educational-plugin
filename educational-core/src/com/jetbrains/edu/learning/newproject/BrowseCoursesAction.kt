@@ -4,9 +4,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
-import icons.EducationalCoreIcons
 
-class BrowseCoursesAction : DumbAwareAction("Browse Courses", "Browse list of available courses", EducationalCoreIcons.CourseAction) {
+class BrowseCoursesAction : DumbAwareAction("Browse Courses", "Browse list of available courses", null) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val courses = EduUtils.getCourseInfosUnderProgress() ?: return
