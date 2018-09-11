@@ -47,7 +47,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
       val file = it.value.getVirtualFile(project) ?: error("VirtualFile for ${it.key} not found")
       Base64.encodeBase64String(VfsUtilCore.loadBytes(file))
     }
-    val submission = Submission(assignmentKey, courseraSettings.email!!, courseraSettings.token!!,
+    val submission = Submission(assignmentKey, courseraSettings.email, courseraSettings.token,
                                 mapOf(Pair(partId, Part(ObjectMapper().writeValueAsString(output)))))
     val json = ObjectMapper().writeValueAsString(submission)
 
