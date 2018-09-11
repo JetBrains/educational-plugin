@@ -7,11 +7,15 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.checker.TaskChecker
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 
 open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
   override fun check(): CheckResult {
     val (taskName, params) = getGradleTask()
+    if (params.isEmpty()) {
+      return CheckResult(CheckStatus.Solved, "Task marked as completed")
+    }
     val cmd = generateGradleCommandLine(
       project,
       taskName,
