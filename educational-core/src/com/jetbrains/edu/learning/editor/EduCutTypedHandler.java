@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.editor;
 
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
@@ -30,7 +31,11 @@ public class EduCutTypedHandler extends EduTypedHandler {
     if (placeholder != null && editor.getSelectionModel().hasSelection()) {
       throw new ReadOnlyFragmentModificationException(null, null);
     }
-    placeholder = taskFile.getAnswerPlaceholder(currentCaret.getOffset());
+    final Document document = editor.getDocument();
+    final int lineNumber = document.getLineNumber(currentCaret.getOffset());
+    int lineEndOffset = document.getLineEndOffset(lineNumber);
+    int lineStartOffset = document.getLineStartOffset(lineNumber);
+    placeholder = getAnswerPlaceholder(lineStartOffset, lineEndOffset, taskFile.getAnswerPlaceholders());
     if (placeholder != null && start == end) {
       throw new ReadOnlyFragmentModificationException(null, null);
     }

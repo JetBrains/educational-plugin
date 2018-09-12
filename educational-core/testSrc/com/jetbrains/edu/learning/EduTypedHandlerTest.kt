@@ -107,6 +107,15 @@ class EduTypedHandlerTest : EduTestCase() {
                                    "  print()", myFixture.editor.document.text)
   }
 
+  fun `test cut line in placeholder`() {
+    configureByTaskFile(1, 4, "Task.kt")
+    myFixture.editor.caretModel.moveToOffset(12)
+    myFixture.editor.selectionModel.removeSelection()
+    myFixture.performEditorAction("EditorCut")
+    TestCase.assertEquals("def f():\n" +
+                                   "  print()", myFixture.editor.document.text)
+  }
+
   fun `test cut line end`() {
     configureByTaskFile(1, 2, "Task.kt")
     myFixture.editor.caretModel.moveToOffset(10)
@@ -172,6 +181,13 @@ class EduTypedHandlerTest : EduTestCase() {
           taskFile("Task.kt", """
           |def f():
           |  <p></p>print()
+        """.trimMargin("|"))
+        }
+        eduTask {
+          taskFile("Task.kt", """
+          |def f():
+          |  <p>print()
+          |  print()</p>
         """.trimMargin("|"))
         }
       }
