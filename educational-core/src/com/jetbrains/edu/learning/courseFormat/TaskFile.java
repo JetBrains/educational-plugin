@@ -32,6 +32,11 @@ public class TaskFile extends StudyFile {
   public TaskFile() {
   }
 
+  public TaskFile(@NotNull String name, @NotNull String text) {
+    myName = name;
+    setText(text);
+  }
+
   public void initTaskFile(final Task task, boolean isRestarted) {
     setTask(task);
     final List<AnswerPlaceholder> answerPlaceholders = getAnswerPlaceholders();

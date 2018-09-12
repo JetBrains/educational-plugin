@@ -1,22 +1,109 @@
 package com.jetbrains.edu.coursecreator.handlers
 
 import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.*
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
+import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.AdditionalFile
+import com.jetbrains.edu.learning.courseFormat.StudyFile
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
+import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener.FileKind.*
 
 class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) {
 
+  override fun beforeFileMovement(event: VirtualFileMoveEvent) {
+    val (task, oldPath) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val (oldParentTask, oldParentPath) = event.oldParent.directoryFileInfo(project) ?: return
+    val (newParentTask, newParentPath, newParentKind) = event.newParent.directoryFileInfo(project) ?: return
+
+    if (oldParentTask != newParentTask) {
+      LOG.warn("Unsupported case. `EduMoveDelegate` should forbid file moving between different tasks")
+      return
+    }
+
+    val affectedFiles = mutableListOf<Pair<String, Any>>()
+
+    fun <T> collectAffectedFiles(data: MutableMap<String, T>) {
+      val oldPaths = data.keys.filter { it.startsWith(oldPath) }
+
+      for (path in oldPaths) {
+        val fileObject = data.remove(path) as? Any ?: continue
+        affectedFiles += path to fileObject
+      }
+    }
+
+    collectAffectedFiles(task.taskFiles)
+    collectAffectedFiles(task.testsText)
+    collectAffectedFiles(task.additionalFiles)
+
+    for ((oldFilePath, fileObject) in affectedFiles) {
+      var newPath = oldFilePath.removePrefix("$oldParentPath/")
+      if (newParentPath.isNotEmpty()) {
+        newPath = "$newParentPath/$newPath"
+      }
+      when (newParentKind) {
+        TASK_FILE -> task.addTaskFile(fileObject.toTaskFile(newPath))
+        TEST_FILE -> task.testsText[newPath] = fileObject.toTestText()
+        ADDITIONAL_FILE -> task.additionalFiles[newPath] = fileObject.toAdditionalFile()
+      }
+    }
+
+    StepikCourseChangeHandler.changed(task)
+    YamlFormatSynchronizer.saveItem(task)
+  }
+
+  private fun VirtualFile.directoryFileInfo(project: Project): FileInfo.FileInTask? {
+    val course = StudyTaskManager.getInstance(project).course ?: return null
+    val sourceDir = course.sourceDir ?: return null
+    val taskDirectoryKind = if (sourceDir.isEmpty()) TASK_FILE else ADDITIONAL_FILE
+
+    val info = fileInfo(project) ?: return null
+    return when (info) {
+      is FileInfo.TaskDirectory -> FileInfo.FileInTask(info.task, "", taskDirectoryKind)
+      is FileInfo.FileInTask -> FileInfo.FileInTask(info.task, info.pathInTask, info.kind)
+      else -> null
+    }
+  }
+
+  private fun Any.toTaskFile(newPath: String): TaskFile = when (this) {
+    is TaskFile -> {
+      name = newPath
+      this
+    }
+    is AdditionalFile -> {
+      val taskFile = TaskFile(newPath, getText())
+      taskFile.isVisible = isVisible
+      taskFile
+    }
+    is String -> TaskFile(newPath, this)
+    else -> error("Unexpected object type: `${javaClass}`")
+  }
+
+  private fun Any.toTestText(): String = when (this) {
+    is StudyFile -> getText()
+    is String -> this
+    else -> error("Unexpected object type: `${javaClass}`")
+  }
+
+  private fun Any.toAdditionalFile(): AdditionalFile = when (this) {
+    is TaskFile -> AdditionalFile(getText(), isVisible)
+    is AdditionalFile -> this
+    is String -> AdditionalFile(this, true)
+    else -> error("Unexpected object type: `${javaClass}`")
+  }
+
   override fun beforePropertyChange(event: VirtualFilePropertyEvent) {
     if (event.propertyName != VirtualFile.PROP_NAME) return
     val newName = event.newValue as? String ?: return
-    val (task, oldPath, kind) = event.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val (task, oldPath, kind) = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
     val newPath = oldPath.replaceAfterLast(VfsUtilCore.VFS_SEPARATOR_CHAR, newName, newName)
 
     fun <T> rename(container: MutableMap<String, T>, add: (String, T) -> Unit) {
@@ -61,7 +148,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
   }
 
   override fun fileDeleted(event: VirtualFileEvent) {
-    val fileInfo = event.fileInfo(project) ?: return
+    val fileInfo = event.file.fileInfo(project) ?: return
     val removedFile = event.file
 
     when (fileInfo) {
@@ -139,5 +226,9 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     }
     YamlFormatSynchronizer.saveItem(task)
     StepikCourseChangeHandler.changed(task)
+  }
+
+  companion object {
+    private val LOG: Logger = Logger.getInstance(CCVirtualFileListener::class.java)
   }
 }
