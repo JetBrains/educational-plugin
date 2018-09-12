@@ -9,6 +9,7 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.ext.hasTaskFilesNotInsideSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
@@ -28,7 +29,7 @@ object CourseViewUtils {
         val dirName = value.name
         if (dirName == EduNames.BUILD || dirName == EduNames.OUT) return null
         val sourceDir = task.sourceDir
-        if (dirName != sourceDir) directoryNodeFactory(value) else null
+        if (dirName != sourceDir || task.hasTaskFilesNotInsideSourceDir(project)) directoryNodeFactory(value) else null
       }
       is PsiElement -> {
         val psiFile = value.containingFile ?: return null
@@ -44,15 +45,20 @@ object CourseViewUtils {
   @JvmStatic
   fun findTaskDirectory(project: Project, baseDir: PsiDirectory, task: Task): PsiDirectory? {
     val sourceDirName = task.sourceDir
-    if (!sourceDirName.isNullOrEmpty()) {
-      val isCourseCreatorGradleProject = EduGradleUtils.isConfiguredWithGradle(project) && CCUtils.isCourseCreator(project)
-      if (!isCourseCreatorGradleProject) {
-        val vFile = baseDir.virtualFile
-        val sourceVFile = vFile.findFileByRelativePath(sourceDirName!!) ?: return baseDir
-        return PsiManager.getInstance(project).findDirectory(sourceVFile)
-      }
+    if (sourceDirName.isNullOrEmpty()) {
+      return baseDir;
     }
-    return baseDir
+    val isCourseCreatorGradleProject = EduGradleUtils.isConfiguredWithGradle(project) && CCUtils.isCourseCreator(project)
+    if (isCourseCreatorGradleProject) {
+      return baseDir
+    }
+    val vFile = baseDir.virtualFile
+    val sourceVFile = vFile.findFileByRelativePath(sourceDirName!!) ?: return baseDir
+
+    if (task.hasTaskFilesNotInsideSourceDir(project)) {
+      return baseDir
+    }
+    return PsiManager.getInstance(project).findDirectory(sourceVFile)
   }
 
   @JvmStatic

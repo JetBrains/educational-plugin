@@ -6,6 +6,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -98,4 +99,12 @@ fun Task.addDefaultTaskDescription() {
 fun Task.getDescriptionFile(project: Project): VirtualFile? {
   val taskDir = getTaskDir(project) ?: return null
   return taskDir.findChild(descriptionFormat.descriptionFileName)
+}
+
+fun Task.hasTaskFilesNotInsideSourceDir(project: Project): Boolean {
+  val taskDir = getDir(project) ?: error("Directory for task $name not found")
+  val sourceDir = findSourceDir(taskDir) ?: return false
+  return taskFiles.values.find {
+    !VfsUtil.isAncestor(sourceDir, it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found"), true)
+  } != null
 }
