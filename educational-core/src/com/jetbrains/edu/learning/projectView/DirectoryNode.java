@@ -61,7 +61,7 @@ public class DirectoryNode extends EduNode {
         return;
       }
 
-      if (name.equals(CourseExt.getSourceDir(course)) || name.equals(CourseExt.getTestDir(course))) {
+      if (name.equals(CourseExt.getSourceDir(course)) || CourseExt.getTestDirs(course).contains(name)) {
         data.setPresentableText(name);
         return;
       }

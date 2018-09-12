@@ -14,12 +14,10 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
-val Task.course: Course? get() = lesson?.course
-
 val Task.project: Project? get() = course.project
 
 val Task.sourceDir: String? get() = course.sourceDir
-val Task.testDir: String? get() = course.testDir
+val Task.testDirs: List<String> get() = course.testDirs
 
 val Task.isFrameworkTask: Boolean get() = lesson is FrameworkLesson
 
@@ -30,15 +28,11 @@ fun Task.findSourceDir(taskDir: VirtualFile): VirtualFile? {
   return taskDir.findFileByRelativePath(sourceDir)
 }
 
-fun Task.findTestDir(taskDir: VirtualFile): VirtualFile? {
-  val testDir = testDir ?: return null
-  return taskDir.findFileByRelativePath(testDir)
-}
+fun Task.findTestDirs(taskDir: VirtualFile): List<VirtualFile> = testDirs.mapNotNull { taskDir.findFileByRelativePath(it) }
 
-fun Task.findTestDir(): VirtualFile? {
-  val project = this.course.project ?: return null
-  val taskDir = getDir(project) ?: return null
-  return findTestDir(taskDir)
+fun Task.findTestDirs(project: Project): List<VirtualFile> {
+  val taskDir = getDir(project) ?: return emptyList()
+  return findTestDirs(taskDir)
 }
 
 val Task.placeholderDependencies: List<AnswerPlaceholderDependency>

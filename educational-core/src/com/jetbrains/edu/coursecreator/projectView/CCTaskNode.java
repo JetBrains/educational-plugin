@@ -39,7 +39,7 @@ public class CCTaskNode extends TaskNode {
         return null;
       }
 
-      if (name.equals(TaskExt.getSourceDir(myTask)) || name.equals(TaskExt.getTestDir(myTask))) {
+      if (name.equals(TaskExt.getSourceDir(myTask)) || TaskExt.getTestDirs(myTask).contains(name)) {
         return createChildDirectoryNode((PsiDirectory) value);
       }
     }

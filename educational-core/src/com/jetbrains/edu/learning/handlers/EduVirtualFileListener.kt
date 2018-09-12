@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.findSourceDir
-import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
+import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 abstract class EduVirtualFileListener(protected val project: Project) : VirtualFileListener {
@@ -78,7 +78,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
 
     val task = EduUtils.getTaskForFile(project, this) ?: return null
     val taskDir = task.getTaskDir(project) ?: return null
-    val testDir = task.findTestDir(taskDir) ?: taskDir
+    val testDirs = task.findTestDirs(taskDir)
 
     val taskRelativePath = EduUtils.pathRelativeToTask(project, this)
 
@@ -89,9 +89,9 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
       return null
     }
 
-    // We consider that directory has `FileKind.TEST_FILE` kind if it's child of `testDir` (if it exists).
+    // We consider that directory has `FileKind.TEST_FILE` kind if it's child of any `testDir` (if it exists).
     // So single `EduUtils.isTestsFile` check is not enough because it doesn't work with directories at all
-    if (EduUtils.isTestsFile(project, this) || taskDir != testDir && VfsUtilCore.isAncestor(testDir, this, false)) {
+    if (EduUtils.isTestsFile(project, this) || testDirs.any { testDir -> VfsUtilCore.isAncestor(testDir, this, true) }) {
       return FileInfo.FileInTask(task, taskRelativePath, FileKind.TEST_FILE)
     }
     val sourceDir = task.findSourceDir(taskDir)
