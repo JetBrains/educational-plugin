@@ -4,9 +4,7 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.command.undo.BasicUndoableAction
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
@@ -15,9 +13,11 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.NewPlaceholderPainter
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.AdditionalFile
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
+import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -169,29 +169,9 @@ private class TaskFileState(
   private fun onVisibilityChange(project: Project, taskFile: TaskFile, file: VirtualFile, visibility: Boolean) {
     if (taskFile.answerPlaceholders.isEmpty() || !FileEditorManager.getInstance(project).isFileOpen(file)) return
     if (visibility) {
-      showPlaceholders(project, taskFile, file)
+      CCUtils.showPlaceholders(project, taskFile, file)
     } else {
-      hidePlaceholders(project, taskFile, file)
+      CCUtils.hidePlaceholders(project, taskFile, file)
     }
-  }
-
-  private fun showPlaceholders(project: Project, taskFile: TaskFile, file: VirtualFile) {
-    for (editor in file.editors(project)) {
-      EduUtils.drawAllAnswerPlaceholders(editor, taskFile)
-    }
-  }
-
-  private fun hidePlaceholders(project: Project, taskFile: TaskFile, file: VirtualFile) {
-    for (editor in file.editors(project)) {
-      for (placeholder in taskFile.answerPlaceholders) {
-        NewPlaceholderPainter.removePainter(editor, placeholder)
-      }
-    }
-  }
-
-  private fun VirtualFile.editors(project: Project): List<Editor> {
-    return FileEditorManager.getInstance(project).getEditors(this)
-      .filterIsInstance<TextEditor>()
-      .map { it.editor }
   }
 }
