@@ -1,11 +1,17 @@
 package com.jetbrains.edu.learning.projectView;
 
+import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,5 +46,26 @@ public class DirectoryNode extends EduNode {
 
   public PsiDirectoryNode createChildDirectoryNode(PsiDirectory value) {
     return new DirectoryNode(myProject, value, myViewSettings, myTask);
+  }
+
+  @Override
+  protected void updateImpl(PresentationData data) {
+    Project project = getProject();
+    if (project != null && EduGradleUtils.isConfiguredWithGradle(project)) {
+      PsiDirectory dir = getValue();
+      VirtualFile directoryFile = dir.getVirtualFile();
+      String name = directoryFile.getName();
+
+      Course course = StudyTaskManager.getInstance(myProject).getCourse();
+      // course is not null because of `CCUtils.isCourseCreator(project)` check above
+      assert course != null;
+
+      if (name.equals(CourseExt.getSourceDir(course)) || name.equals(CourseExt.getTestDir(course))) {
+        data.setPresentableText(name);
+        return;
+      }
+    }
+
+    super.updateImpl(data);
   }
 }
