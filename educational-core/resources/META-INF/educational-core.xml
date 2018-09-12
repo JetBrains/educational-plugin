@@ -46,6 +46,7 @@
   <actions>
     <action id="Educational.StartCourseraAssignment" class="com.jetbrains.edu.learning.coursera.StartCourseraProgrammingAssignment"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.coursera.ImportLocalCourseAction"/>
+    <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
     <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
             text="Previous Answer Placeholder"

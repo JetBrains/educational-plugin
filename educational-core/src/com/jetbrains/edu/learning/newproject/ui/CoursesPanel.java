@@ -11,7 +11,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooser;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.OnePixelDivider;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -32,13 +31,12 @@ import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
+import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -404,51 +402,12 @@ public class CoursesPanel extends JPanel {
     }
 
     private void importStepikCourse() {
-      ImportStepikCourseDialog dialogWrapper = new ImportStepikCourseDialog();
-      if (dialogWrapper.showAndGet()) {
-        String courseLink = dialogWrapper.courseLink();
-        StepicUser user = EduSettings.getInstance().getUser();
-        assert user != null;
-        RemoteCourse course = StepikConnector.getCourseInfoByLink(user, courseLink);
-        List<Language> languages = getLanguagesUnderProgress(course);
-
-        if (languages == null || languages.isEmpty()) {
-          Messages.showErrorDialog("No supported languages available for the course", "Failed to Import Course");
-          return;
-        }
-        if (course == null) {
-          showFailedToAddCourseNotification();
-          return;
-        }
-        Language language;
-        if (languages.size() == 1) {
-          language = languages.get(0);
-        }
-        else {
-          ChooseStepikCourseLanguageDialog chooseLanguageDialog = new ChooseStepikCourseLanguageDialog(languages, course.getName());
-          if (chooseLanguageDialog.showAndGet()) {
-            language = chooseLanguageDialog.selectedLanguage();
-          }
-          else {
-            return;
-          }
-        }
-        course.setType("pycharm2 " + language.getID());
-        course.setLanguage(language.getID());
-        myCourses.add(course);
-        updateModel(myCourses, course.getName(), false);
+      Course course = new StartStepikCourseAction().importStepikCourse();
+      if (course == null) {
+        return;
       }
-    }
-
-    private List<Language> getLanguagesUnderProgress(RemoteCourse course) {
-      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        return EduUtils.execCancelable(() -> StepikConnector.getSupportedLanguages(course));
-      }, "Getting Available Languages", true, null);
-    }
-
-    private void showFailedToAddCourseNotification() {
-      Messages.showErrorDialog("Cannot add course from Stepik, please check if link is correct", "Failed to Add Stepik Course");
+      myCourses.add(course);
+      updateModel(myCourses, course.getName(), false);
     }
   }
 }

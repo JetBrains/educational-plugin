@@ -7,6 +7,7 @@ import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.coursera.ImportLocalCourseAction
 import com.jetbrains.edu.learning.coursera.StartCourseraProgrammingAssignment
+import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction
 import icons.EducationalCoreIcons
 
 class LearnAndTeachAction : WelcomePopupAction() {
@@ -15,7 +16,9 @@ class LearnAndTeachAction : WelcomePopupAction() {
   override fun isSilentlyChooseSingleOption() = true
 
   override fun fillActions(group: DefaultActionGroup) {
-    group.addAll(BrowseCoursesAction(), ImportLocalCourseAction(), StartCourseraProgrammingAssignment(), CCNewCourseAction())
+    group.addAll(BrowseCoursesAction(), ImportLocalCourseAction(),
+                 StartCourseraProgrammingAssignment(), StartStepikCourseAction(),
+                 CCNewCourseAction())
   }
 
   override fun getTextForEmpty(): String {
