@@ -98,13 +98,13 @@ class CourseraTaskChecker : RemoteTaskChecker {
       row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
       row("Token:") { tokenField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
     }
-    var refusedToProvidedCredentials = false
+    var refusedToProvideCredentials = false
 
     ApplicationManager.getApplication().invokeAndWait {
-      refusedToProvidedCredentials = !DialogBuilder().centerPanel(credentialsPanel).title(NEED_CREDENTIALS).showAndGet()
+      refusedToProvideCredentials = !DialogBuilder().centerPanel(credentialsPanel).title(NEED_CREDENTIALS).showAndGet()
     }
 
-    if (!refusedToProvidedCredentials) {
+    if (!refusedToProvideCredentials) {
       CourseraSettings.getInstance().email = emailField.text
       CourseraSettings.getInstance().token = tokenField.text
     }
