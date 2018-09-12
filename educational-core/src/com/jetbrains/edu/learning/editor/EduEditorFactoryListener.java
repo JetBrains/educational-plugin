@@ -99,7 +99,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
 
         boolean isStudyProject = course.isStudy();
         if (!myTaskFile.getAnswerPlaceholders().isEmpty() && myTaskFile.isValid(editor.getDocument().getText())) {
-          PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
+          PlaceholderDependencyManager.updateDependentPlaceholders(project, task, true);
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, myTaskFile);
           EduUtils.drawAllAnswerPlaceholders(editor, myTaskFile);
           if (isStudyProject) {

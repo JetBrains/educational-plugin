@@ -20,7 +20,7 @@ import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 
 object PlaceholderDependencyManager {
   @JvmStatic
-  fun updateDependentPlaceholders(project: Project, task: Task) {
+  fun updateDependentPlaceholders(project: Project, task: Task, checkChangedFiles: Boolean = true) {
     if (CCUtils.isCourseCreator(project)) {
       return
     }
@@ -37,7 +37,7 @@ object PlaceholderDependencyManager {
       return
     }
 
-    if (task.hasChangedFiles(project)) {
+    if (checkChangedFiles && task.hasChangedFiles(project)) {
       return
     }
 

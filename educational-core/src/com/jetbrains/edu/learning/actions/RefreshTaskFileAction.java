@@ -84,7 +84,7 @@ public class RefreshTaskFileAction extends DumbAwareActionWithShortcut {
     ApplicationManager.getApplication().invokeLater(
       () -> IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true));
 
-    PlaceholderDependencyManager.updateDependentPlaceholders(project, eduState.getTask());
+    PlaceholderDependencyManager.updateDependentPlaceholders(project, eduState.getTask(), false);
     NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
     showBalloon(project, MessageType.INFO);
   }
