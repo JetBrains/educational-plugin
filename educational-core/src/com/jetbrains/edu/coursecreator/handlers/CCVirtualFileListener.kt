@@ -36,6 +36,9 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
 
       for (path in oldPaths) {
         val fileObject = data.remove(path) as? Any ?: continue
+        if (fileObject is TaskFile && newParentKind != TASK_FILE) {
+          CCUtils.hidePlaceholders(project, fileObject)
+        }
         affectedFiles += path to fileObject
       }
     }
