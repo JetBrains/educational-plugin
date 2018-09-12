@@ -13,7 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<EduTask>(task, project) {
   override fun check(): CheckResult {
     val (taskName, params) = getGradleTask()
-    if (params.isEmpty()) {
+    if (task.testsText.isEmpty()) {
       return CheckResult(CheckStatus.Solved, "Task marked as completed")
     }
     val cmd = generateGradleCommandLine(
