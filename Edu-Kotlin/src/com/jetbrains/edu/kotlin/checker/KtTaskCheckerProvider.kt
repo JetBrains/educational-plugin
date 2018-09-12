@@ -7,7 +7,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.jetbrains.edu.learning.checker.gradle.*
-import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
+import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import org.jetbrains.kotlin.idea.run.KotlinJUnitRunConfigurationProducer
 import org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer
@@ -22,19 +22,26 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
         if (task.hasSeparateModule(project)) {
           return super.getGradleTask()
         }
-        val testDir = task.findTestDir() ?: error("Failed to find test dir for task ${task.name}")
 
-        var testClasses: List<String>? = null
+        val testDirs = task.findTestDirs(project)
+        check(testDirs.isNotEmpty()) {
+          error("Failed to find test dirs for task ${task.name}")
+        }
 
-        ApplicationManager.getApplication().invokeAndWait {
-          testClasses = runReadAction {
-            testDir.children.mapNotNull {
-              val psiFile = PsiManager.getInstance(project).findFile(it) ?: return@mapNotNull null
-              KotlinJUnitRunConfigurationProducer.getTestClass(psiFile)?.qualifiedName
+        val testClasses: List<String> = testDirs.flatMap { testDir ->
+          var tests: List<String>? = null
+          ApplicationManager.getApplication().invokeAndWait {
+             tests = runReadAction {
+              testDir.children.mapNotNull {
+                val psiFile = PsiManager.getInstance(project).findFile(it) ?: return@mapNotNull null
+                KotlinJUnitRunConfigurationProducer.getTestClass(psiFile)?.qualifiedName
+              }
             }
           }
+          tests ?: emptyList()
         }
-        return GradleTask(TEST_TASK_NAME, testClasses?.flatMap { listOf(TESTS_ARG, it) } ?: emptyList())
+
+        return GradleTask(TEST_TASK_NAME, testClasses.flatMap { listOf(TESTS_ARG, it) })
       }
     }
   }

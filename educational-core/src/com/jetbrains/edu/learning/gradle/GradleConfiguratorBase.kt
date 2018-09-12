@@ -11,7 +11,7 @@ import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.ext.findTestDir
+import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -39,14 +39,13 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
   }
 
   override fun getSourceDir(): String = EduNames.SRC
-  override fun getTestDir(): String = EduNames.TEST
+  override fun getTestDirs(): List<String> = listOf(EduNames.TEST)
 
   override fun isTestFile(project: Project, file: VirtualFile): Boolean {
     if (file.isDirectory) return false
     val task = EduUtils.getTaskForFile(project, file) ?: return false
     val taskDir = task.getTaskDir(project) ?: return false
-    val testDir = task.findTestDir(taskDir) ?: return false
-    return VfsUtil.isAncestor(testDir, file, true)
+    return task.findTestDirs(taskDir).any { testDir -> VfsUtil.isAncestor(testDir, file, true) }
   }
 
   override fun pluginRequirements(): List<String> = listOf("org.jetbrains.plugins.gradle", "JUnit")

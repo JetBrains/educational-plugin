@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * The main interface provides courses creation for some language.
@@ -132,7 +133,11 @@ public interface EduCourseBuilder<Settings> {
     }
 
     if (task.getTestsText().isEmpty()) {
-      String testDir = TaskExt.getTestDir(task);
+      List<String> testDirs = TaskExt.getTestDirs(task);
+      String testDir = "";
+      if (!testDirs.isEmpty()) {
+        testDir = testDirs.get(0);
+      }
       String testTemplateName = getTestTemplateName();
       if (testTemplateName != null) {
         task.getTestsText().put(GeneratorUtils.joinPaths(testDir, testTemplateName), EduUtils.getTextFromInternalTemplate(testTemplateName));

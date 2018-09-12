@@ -69,17 +69,17 @@ public interface EduConfigurator<Settings> {
   }
 
   /**
-   * Provides directory path where test files should be placed in task folder.
+   * Provides list of directories where test files should be placed in task folder.
    * Can be empty.
    *
    * See {@link EduConfigurator#getSourceDir()} javadoc for example.
    *
-   * @return test files directory path
+   * @return list of test files directories paths
    */
   @SystemIndependent
   @NotNull
-  default String getTestDir() {
-    return "";
+  default List<String> getTestDirs() {
+    return Collections.emptyList();
   }
 
   /**

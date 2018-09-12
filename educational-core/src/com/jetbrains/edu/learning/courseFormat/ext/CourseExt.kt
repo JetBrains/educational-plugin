@@ -20,7 +20,7 @@ val Course.configurator: EduConfigurator<*>? get() {
 }
 
 val Course.sourceDir: String? get() = configurator?.sourceDir
-val Course.testDir: String? get() = configurator?.testDir
+val Course.testDirs: List<String> get() = configurator?.testDirs.orEmpty()
 
 val Course.project: Project? get() {
   for (project in ProjectManager.getInstance().openProjects) {

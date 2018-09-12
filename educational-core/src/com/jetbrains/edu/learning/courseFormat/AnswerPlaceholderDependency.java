@@ -110,10 +110,7 @@ public class AnswerPlaceholderDependency {
       return null;
     }
     Task task = answerPlaceholder.getTaskFile().getTask();
-    Course course = TaskExt.getCourse(task);
-    if (course == null) {
-      throw new InvalidDependencyException(text, "unable to retrieve course from source placeholder");
-    }
+    Course course = task.getCourse();
     Matcher matcher = DEPENDENCY_PATTERN.matcher(text);
     if (!matcher.matches()) {
       throw new InvalidDependencyException(text);
