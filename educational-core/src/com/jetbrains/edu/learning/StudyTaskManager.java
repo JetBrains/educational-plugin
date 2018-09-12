@@ -23,6 +23,8 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
@@ -48,6 +50,7 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware {
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
+  private static final String STEPIK_REMOTE_INFO = "stepikRemoteInfo";
 
   @Transient
   private Course myCourse;
@@ -138,6 +141,14 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     final Element courseElement = new Element(serializedName);
     XmlSerializer.serializeInto(courseClass.cast(myCourse), courseElement);
     return courseElement;
+  }
+
+  private void serializeRemoteInfo(@NotNull Element taskManagerElement, @NotNull String serializedName,
+                                   @NotNull Class<? extends RemoteInfo> remoteInfoClass) {
+    final Element element = new Element(serializedName);
+    final RemoteInfo info = myCourse.getRemoteInfo();
+    XmlSerializer.serializeInto(remoteInfoClass.cast(info), element);
+    taskManagerElement.addContent(element);
   }
 
   @Override
@@ -241,6 +252,17 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       }
     }
     return null;
+  }
+
+  private <T extends RemoteInfo> boolean tryDeserializeRemoteInfo(@NotNull Element taskManagerElement, @NotNull String serializedName,
+                                                                  @NotNull T remoteInfo) {
+    final Element courseElement = taskManagerElement.getChild(serializedName);
+    if (courseElement != null) {
+      XmlSerializer.deserializeInto(remoteInfo, courseElement);
+      myCourse.setRemoteInfo(remoteInfo);
+      return true;
+    }
+    return false;
   }
 
   public static StudyTaskManager getInstance(@NotNull final Project project) {

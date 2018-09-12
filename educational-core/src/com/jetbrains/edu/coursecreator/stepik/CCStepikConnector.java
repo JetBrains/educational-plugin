@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -110,7 +111,7 @@ public class CCStepikConnector {
       course.setAuthors(Collections.singletonList(currentUser));
     }
 
-    String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
+    String requestBody = getGson(project).toJson(new StepikWrappers.CourseWrapper(course));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
@@ -132,7 +133,7 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
         return;
       }
-      final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
+      final RemoteCourse courseOnRemote = getGson(project).fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
       courseOnRemote.setItems(Lists.newArrayList(course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
         !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).collect(Collectors.toList())));
       courseOnRemote.setAuthors(course.getAuthors());
@@ -389,7 +390,7 @@ public class CCStepikConnector {
     unit.setSection(sectionId);
     unitWrapper.setUnit(unit);
 
-    String requestBody = new Gson().toJson(unitWrapper);
+    String requestBody = getGson(project).toJson(unitWrapper);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
@@ -407,7 +408,7 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
       }
       else {
-        StepikWrappers.UnitContainer unitContainer = new Gson().fromJson(responseString, StepikWrappers.UnitContainer.class);
+        StepikWrappers.UnitContainer unitContainer = getGson(project).fromJson(responseString, StepikWrappers.UnitContainer.class);
         if (!unitContainer.units.isEmpty()) {
           return unitContainer.units.get(0).getId();
         }
@@ -417,6 +418,13 @@ public class CCStepikConnector {
       LOG.error(e.getMessage());
     }
     return -1;
+  }
+
+  public static Gson getGson(Project project) {
+    final Course course = StudyTaskManager.getInstance(project).getCourse();
+    assert course != null;
+    final String language = course.getLanguageID();
+    return new GsonBuilder().registerTypeAdapter(RemoteCourse.class, new StepikRemoteInfoAdapter(language)).create();
   }
 
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
@@ -431,7 +439,7 @@ public class CCStepikConnector {
     unit.setId(unitId);
     unitWrapper.setUnit(unit);
 
-    String requestBody = new Gson().toJson(unitWrapper);
+    String requestBody = getGson(project).toJson(unitWrapper);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
@@ -459,7 +467,7 @@ public class CCStepikConnector {
     section.setCourseId(courseId);
     final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
     sectionContainer.setSection(section);
-    String requestBody = new Gson().toJson(sectionContainer);
+    String requestBody = getGson(project).toJson(sectionContainer);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
@@ -477,7 +485,7 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
         return -1;
       }
-      final Section postedSection = new Gson().fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
+      final Section postedSection = getGson(project).fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
       section.setId(postedSection.getId());
       return postedSection.getId();
     }
@@ -492,7 +500,7 @@ public class CCStepikConnector {
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS + "/" + section.getId());
     final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
     sectionContainer.setSection(sectionCopy);
-    String requestBody = new Gson().toJson(sectionContainer);
+    String requestBody = getGson(project).toJson(sectionContainer);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
@@ -568,7 +576,7 @@ public class CCStepikConnector {
   public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final RemoteCourse course) {
     if (!checkIfAuthorized(project, "update course")) return false;
 
-    // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
+    // Course info parameters such as is_public and is_idea_compatible can be changed from Stepik site only
     // so we get actual info here
     RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
     if (courseInfo != null) {
@@ -576,15 +584,15 @@ public class CCStepikConnector {
       final RemoteInfo remoteInfo = courseInfo.getRemoteInfo();
       if (localRemoteInfo instanceof StepikRemoteInfo && remoteInfo instanceof StepikRemoteInfo) {
         ((StepikRemoteInfo)localRemoteInfo).setPublic(((StepikRemoteInfo)remoteInfo).isPublic());
+        ((StepikRemoteInfo)localRemoteInfo).setIdeaCompatible(((StepikRemoteInfo)remoteInfo).isIdeaCompatible());
       }
-      course.setCompatible(courseInfo.isCompatible());
     }
     else {
       LOG.warn("Failed to get current course info");
     }
 
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.COURSES + "/" + String.valueOf(course.getId()));
-    String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
+    String requestBody = getGson(project).toJson(new StepikWrappers.CourseWrapper(course));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
     try {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
@@ -671,7 +679,7 @@ public class CCStepikConnector {
 
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + String.valueOf(lesson.getId()));
 
-    String requestBody = new Gson().toJson(new StepikWrappers.LessonWrapper(lesson));
+    String requestBody = getGson(project).toJson(new StepikWrappers.LessonWrapper(lesson));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     try {
@@ -693,7 +701,7 @@ public class CCStepikConnector {
         }
       }
 
-      final Lesson postedLesson = getLessonFromString(responseString);
+      final Lesson postedLesson = getLessonFromString(responseString, project);
       if (postedLesson == null) {
         return null;
       }
@@ -702,7 +710,7 @@ public class CCStepikConnector {
         updateUnit(lesson.unitId, lesson.getId(), lesson.getIndex(), sectionId, project);
       }
 
-      return new Gson().fromJson(responseString, StepikWrappers.LessonContainer.class).lessons.get(0);
+      return getGson(project).fromJson(responseString, StepikWrappers.LessonContainer.class).lessons.get(0);
     }
     catch (IOException e) {
       LOG.error(e.getMessage());
@@ -843,7 +851,7 @@ public class CCStepikConnector {
 
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + "/lessons");
 
-    String requestBody = new Gson().toJson(new StepikWrappers.LessonWrapper(lesson));
+    String requestBody = getGson(project).toJson(new StepikWrappers.LessonWrapper(lesson));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
     Lesson postedLesson = null;
@@ -866,7 +874,7 @@ public class CCStepikConnector {
         return null;
       }
 
-      postedLesson = getLessonFromString(responseString);
+      postedLesson = getLessonFromString(responseString, project);
       if (postedLesson != null) {
         postedLesson.unitId = postUnit(postedLesson.getId(), position, sectionId, project);
       }
@@ -891,12 +899,12 @@ public class CCStepikConnector {
   }
 
   @Nullable
-  public static Lesson getLessonFromString(@NotNull String responseString) {
-    final JsonObject jsonTree = new Gson().fromJson(responseString, JsonObject.class);
+  public static Lesson getLessonFromString(@NotNull String responseString, Project project) {
+    final JsonObject jsonTree = getGson(project).fromJson(responseString, JsonObject.class);
     if (jsonTree.has(SerializationUtils.LESSONS)) {
       final JsonArray lessons = jsonTree.get(SerializationUtils.LESSONS).getAsJsonArray();
       if (lessons.size() == 1) {
-        return new Gson().fromJson(lessons.get(0), Lesson.class);
+        return getGson(project).fromJson(lessons.get(0), Lesson.class);
       }
     }
     return null;

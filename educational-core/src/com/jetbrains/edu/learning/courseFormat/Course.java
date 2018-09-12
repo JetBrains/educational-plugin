@@ -315,10 +315,12 @@ public class Course extends ItemContainer {
   }
 
   @NotNull
+  @Transient
   public RemoteInfo getRemoteInfo() {
     return myRemoteInfo;
   }
 
+  @Transient
   public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
     myRemoteInfo = remoteInfo;
   }

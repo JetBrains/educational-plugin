@@ -19,6 +19,7 @@ class LocalInfo : RemoteInfo
 class StepikRemoteInfo : RemoteInfo {
   var isPublic: Boolean = false
   var isAdaptive = false
+  var isIdeaCompatible = true
 
   override fun isCourseValid(course: Course): Boolean {
     if (!isAdaptive) return true
@@ -35,5 +36,5 @@ class StepikRemoteInfo : RemoteInfo {
     }
     else listOf()
 
-  override fun getAdditionalDescriptionPanel(project: Project): JPanel? = StepikAdaptiveReactionsPanel(project)
+  override fun getAdditionalDescriptionPanel(project: Project): JPanel? = if (isAdaptive) StepikAdaptiveReactionsPanel(project) else null
 }
