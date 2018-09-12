@@ -31,6 +31,8 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -312,19 +314,21 @@ public class StepikConnector {
   private static void addAvailableCourses(List<Course> result, CoursesContainer coursesContainer,
                                   @NotNull List<Integer> featuredCourses) throws IOException {
     final List<RemoteCourse> courses = coursesContainer.courses;
-    for (RemoteCourse info : courses) {
-      if (StringUtil.isEmptyOrSpaces(info.getType())) continue;
+    for (RemoteCourse course : courses) {
+      if (StringUtil.isEmptyOrSpaces(course.getType())) continue;
 
-      CourseCompatibility compatibility = info.getCompatibility();
+      CourseCompatibility compatibility = course.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
 
-      setCourseAuthors(info);
+      setCourseAuthors(course);
 
-      if (info.isPublic() && !featuredCourses.contains(info.getId())) {
-        info.setDescription(info.getDescription() + NOT_VERIFIED_NOTE);
+      final RemoteInfo remoteInfo = course.getRemoteInfo();
+      if (remoteInfo instanceof StepikRemoteInfo && ((StepikRemoteInfo)remoteInfo).isPublic()
+          && !featuredCourses.contains(course.getId())) {
+        course.setDescription(course.getDescription() + NOT_VERIFIED_NOTE);
       }
-      info.setVisibility(getVisibility(info, featuredCourses));
-      result.add(info);
+      course.setVisibility(getVisibility(course, featuredCourses));
+      result.add(course);
     }
   }
 
@@ -339,7 +343,8 @@ public class StepikConnector {
   }
 
   private static CourseVisibility getVisibility(@NotNull RemoteCourse course, @NotNull List<Integer> featuredCourses) {
-    if (!course.isPublic()) {
+    final RemoteInfo remoteInfo = course.getRemoteInfo();
+    if (remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).isPublic()) {
       return CourseVisibility.PrivateVisibility.INSTANCE;
     }
     if (featuredCourses.contains(course.getId())) {

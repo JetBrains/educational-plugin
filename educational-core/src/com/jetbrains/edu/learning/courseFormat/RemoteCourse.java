@@ -109,14 +109,6 @@ public class RemoteCourse extends Course {
     myCompatibility = courseCompatibility(this);
   }
 
-  public boolean isPublic() {
-    return isPublic;
-  }
-
-  public void setPublic(boolean isPublic) {
-    this.isPublic = isPublic;
-  }
-
   public boolean isLoadSolutions() {
     return myLoadSolutions;
   }

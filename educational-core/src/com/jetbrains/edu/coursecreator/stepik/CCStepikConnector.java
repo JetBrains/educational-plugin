@@ -24,6 +24,8 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -570,7 +572,11 @@ public class CCStepikConnector {
     // so we get actual info here
     RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
     if (courseInfo != null) {
-      course.setPublic(courseInfo.isPublic());
+      final RemoteInfo localRemoteInfo = course.getRemoteInfo();
+      final RemoteInfo remoteInfo = courseInfo.getRemoteInfo();
+      if (localRemoteInfo instanceof StepikRemoteInfo && remoteInfo instanceof StepikRemoteInfo) {
+        ((StepikRemoteInfo)localRemoteInfo).setPublic(((StepikRemoteInfo)remoteInfo).isPublic());
+      }
       course.setCompatible(courseInfo.isCompatible());
     }
     else {
