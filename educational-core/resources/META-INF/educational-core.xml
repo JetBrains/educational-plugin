@@ -176,7 +176,7 @@
       <reference id="Educational.StartCourseraAssignment"/>
       <reference id="Educational.StartStepikCourse"/>
       <reference id="Educational.Educator.NewCourse"/>
-      <add-to-group group-id="FileMenu" anchor="first"/>
+      <add-to-group group-id="FileOpenGroup" relative-to-action="OpenFile" anchor="after"/>
     </group>
   </actions>
 
