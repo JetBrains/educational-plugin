@@ -22,7 +22,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
 
   override fun fileCreated(event: VirtualFileEvent) {
     if (event.file.isDirectory) return
-    val fileInfo = event.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val fileInfo = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
     fileInTaskCreated(event, fileInfo)
   }
 
@@ -65,24 +65,24 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
     }
   }
 
-  protected fun VirtualFileEvent.fileInfo(project: Project): FileInfo? {
+  protected fun VirtualFile.fileInfo(project: Project): FileInfo? {
     if (project.isDisposed) return null
     val course = StudyTaskManager.getInstance(project).course ?: return null
-    if (shouldIgnore(file, project)) return null
+    if (shouldIgnore(this, project)) return null
 
-    if (file.isDirectory) {
-      EduUtils.getSection(file, course)?.let { return FileInfo.SectionDirectory(it) }
-      EduUtils.getLesson(file, course)?.let { return FileInfo.LessonDirectory(it) }
-      EduUtils.getTask(file, course)?.let { return FileInfo.TaskDirectory(it) }
+    if (isDirectory) {
+      EduUtils.getSection(this, course)?.let { return FileInfo.SectionDirectory(it) }
+      EduUtils.getLesson(this, course)?.let { return FileInfo.LessonDirectory(it) }
+      EduUtils.getTask(this, course)?.let { return FileInfo.TaskDirectory(it) }
     }
 
-    val task = EduUtils.getTaskForFile(project, file) ?: return null
+    val task = EduUtils.getTaskForFile(project, this) ?: return null
     val taskDir = task.getTaskDir(project) ?: return null
     val testDir = task.findTestDir(taskDir) ?: taskDir
 
-    val taskRelativePath = EduUtils.pathRelativeToTask(project, file)
+    val taskRelativePath = EduUtils.pathRelativeToTask(project, this)
 
-    if (EduUtils.isTaskDescriptionFile(file.name)
+    if (EduUtils.isTaskDescriptionFile(name)
         || taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
         || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)
         || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
@@ -91,12 +91,12 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
 
     // We consider that directory has `FileKind.TEST_FILE` kind if it's child of `testDir` (if it exists).
     // So single `EduUtils.isTestsFile` check is not enough because it doesn't work with directories at all
-    if (EduUtils.isTestsFile(project, file) || taskDir != testDir && VfsUtilCore.isAncestor(testDir, file, true)) {
+    if (EduUtils.isTestsFile(project, this) || taskDir != testDir && VfsUtilCore.isAncestor(testDir, this, false)) {
       return FileInfo.FileInTask(task, taskRelativePath, FileKind.TEST_FILE)
     }
     val sourceDir = task.findSourceDir(taskDir)
     if (sourceDir != null) {
-      if (VfsUtilCore.isAncestor(sourceDir, file, true)) return FileInfo.FileInTask(task, taskRelativePath, FileKind.TASK_FILE)
+      if (VfsUtilCore.isAncestor(sourceDir, this, false)) return FileInfo.FileInTask(task, taskRelativePath, FileKind.TASK_FILE)
     }
     return FileInfo.FileInTask(task, taskRelativePath, FileKind.ADDITIONAL_FILE)
   }

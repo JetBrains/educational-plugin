@@ -265,6 +265,89 @@ class CCVirtualFileListenerTest : EduTestCase() {
     }
   }
 
+  fun `test move task file`() = doMoveTest("lesson1/task1/src/Task1.kt", "lesson1/task1/src/foo") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "src/Task1.kt" to TASK_FILES notIn task,
+      "src/foo/Task1.kt" to TASK_FILES `in` task
+    )
+  }
+
+  fun `test move dir with task files`() = doMoveTest("lesson1/task1/src/foo", "lesson1/task1/src/bar") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "src/foo/Task2.kt" to TASK_FILES notIn task,
+      "src/foo/Task3.kt" to TASK_FILES notIn task,
+      "src/bar/foo/Task2.kt" to TASK_FILES `in` task,
+      "src/bar/foo/Task3.kt" to TASK_FILES `in` task,
+      "src/bar/Task4.kt" to TASK_FILES `in` task
+    )
+  }
+
+  fun `test move test file`() = doMoveTest("lesson1/task1/test/Tests1.kt", "lesson1/task1/test/foo") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "test/Tests1.kt" to TEST_FILES notIn task,
+      "test/foo/Tests1.kt" to TEST_FILES `in` task
+    )
+  }
+
+  fun `test move dir with tests`() = doMoveTest("lesson1/task1/test/foo", "lesson1/task1/test/bar") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "test/foo/Tests2.kt" to TEST_FILES notIn task,
+      "test/foo/Tests3.kt" to TEST_FILES notIn task,
+      "test/bar/foo/Tests2.kt" to TEST_FILES `in` task,
+      "test/bar/foo/Tests3.kt" to TEST_FILES `in` task,
+      "test/bar/Tests4.kt" to TEST_FILES `in` task
+    )
+  }
+
+  fun `test move additional file 1`() = doMoveTest("lesson1/task1/additional_file1.txt", "lesson1/task1/foo") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "additional_file1.txt" to ADDITIONAL_FILES notIn task,
+      "foo/additional_file1.txt" to ADDITIONAL_FILES `in` task
+    )
+  }
+
+  fun `test move additional file 2`() = doMoveTest("lesson1/task1/foo/additional_file2.txt", "lesson1/task1") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "foo/additional_file2.txt" to ADDITIONAL_FILES notIn task,
+      "additional_file2.txt" to ADDITIONAL_FILES `in` task
+    )
+  }
+
+  fun `test move dir with additional files`() = doMoveTest("lesson1/task1/foo", "lesson1/task1/bar") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "foo/additional_file2.txt" to ADDITIONAL_FILES notIn task,
+      "foo/additional_file3.txt" to ADDITIONAL_FILES notIn task,
+      "bar/foo/additional_file2.txt" to ADDITIONAL_FILES `in` task,
+      "bar/foo/additional_file3.txt" to ADDITIONAL_FILES `in` task,
+      "bar/additional_file4.txt" to ADDITIONAL_FILES `in` task
+    )
+  }
+
+  fun `test move additional file into test folder`() = doMoveTest("lesson1/task1/additional_file1.txt", "lesson1/task1/test") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "additional_file1.txt" to ADDITIONAL_FILES notIn task,
+      "test/additional_file1.txt" to TEST_FILES `in` task
+    )
+  }
+
+  fun `test move test package into src folder`() = doMoveTest("lesson1/task1/test/bar", "lesson1/task1/src/foo") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "test/bar/Tests4.kt" to TEST_FILES notIn task,
+      "src/foo/bar/Tests4.kt" to TASK_FILES `in` task,
+      "src/foo/Task2.kt" to TASK_FILES `in` task,
+      "src/foo/Task3.kt" to TASK_FILES `in` task
+    )
+  }
+
   private fun doAddFileTest(filePathInTask: String, checksProducer: (Task) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
@@ -368,6 +451,49 @@ class CCVirtualFileListenerTest : EduTestCase() {
       UndoManager.getInstance(project).redo(null)
     }
     checks.forEach(FileCheck::check)
+  }
+
+  private fun doMoveTest(filePath: String, newParentPath: String, checksProducer: (Course) -> List<FileCheck>) {
+    val course = courseWithFiles(
+      courseMode = CCUtils.COURSE_MODE,
+      language = FakeGradleBasedLanguage,
+      settings = JdkProjectSettings.emptySettings()
+    ) {
+      lesson("lesson1") {
+        eduTask("task1") {
+          dir("src") {
+            taskFile("Task1.kt")
+            dir("foo") {
+              taskFile("Task2.kt")
+              taskFile("Task3.kt")
+            }
+            taskFile("bar/Task4.kt")
+          }
+
+          additionalFile("additional_file1.txt")
+          dir("foo") {
+            additionalFile("additional_file2.txt")
+            additionalFile("additional_file3.txt")
+          }
+          additionalFile("bar/additional_file4.txt")
+
+          dir("test") {
+            testFile("Tests1.kt")
+            dir("foo") {
+              testFile("Tests2.kt")
+              testFile("Tests3.kt")
+            }
+            testFile("bar/Tests4.kt")
+          }
+        }
+      }
+    }
+
+    val file = findFile(filePath)
+    val newParent  = findFile(newParentPath)
+    runWriteAction { file.move(CCVirtualFileListenerTest::class.java, newParent) }
+
+    checksProducer(course).forEach(FileCheck::check)
   }
   
   private enum class FileSetKind(val fileSetName: String) {

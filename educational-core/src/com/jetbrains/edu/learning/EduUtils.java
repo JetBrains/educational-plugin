@@ -65,7 +65,6 @@ import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
@@ -95,8 +94,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -909,13 +908,6 @@ public class EduUtils {
 
   @Nullable
   public static Task getTask(@NotNull VirtualFile taskDir, @NotNull final Course course) {
-    String sourceDir = CourseExt.getSourceDir(course);
-    if (taskDir.getName().equals(sourceDir)) {
-      taskDir = taskDir.getParent();
-      if (taskDir == null) {
-        return null;
-      }
-    }
     VirtualFile lessonDir = taskDir.getParent();
     if (lessonDir == null) {
       return null;
