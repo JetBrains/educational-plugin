@@ -19,10 +19,8 @@ class JoinCoursePanel : JPanel(BorderLayout()) {
   private var myValidationListener: ValidationListener? = null
 
   init {
-    preferredSize = JBUI.size(WIDTH,
-                              HEIGHT)
-    minimumSize = JBUI.size(WIDTH,
-                            HEIGHT)
+    preferredSize = JBUI.size(WIDTH, HEIGHT)
+    minimumSize = JBUI.size(WIDTH, HEIGHT)
 
     myErrorLabel.border = JBUI.Borders.emptyTop(8)
     myErrorLabel.foreground = MessageType.ERROR.titleForeground
