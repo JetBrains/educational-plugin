@@ -278,6 +278,7 @@ public class Course extends ItemContainer {
     List<Tag> tags = new ArrayList<>();
     tags.add(new ProgrammingLanguageTag(getLanguageById()));
     tags.add(new HumanLanguageTag(getHumanLanguage()));
+    tags.addAll(myRemoteInfo.getTags());
     return tags;
   }
 

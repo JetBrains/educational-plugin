@@ -30,7 +30,6 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
@@ -39,6 +38,8 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,8 +82,8 @@ public class EduProjectComponent implements ProjectComponent {
           return;
         }
 
-        if (course instanceof RemoteCourse) {
-          StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
+        if (course instanceof StepikCourse) {
+          StepikConnector.updateCourseIfNeeded(myProject, (StepikCourse)course);
         }
 
         final StepikUser currentUser = EduSettings.getInstance().getUser();

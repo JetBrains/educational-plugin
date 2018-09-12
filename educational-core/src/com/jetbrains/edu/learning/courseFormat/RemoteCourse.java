@@ -7,6 +7,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.KeyedLazyInstance;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +32,6 @@ public class RemoteCourse extends Course {
   List<Integer> instructors = new ArrayList<>();
   @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
-  @Expose @SerializedName("is_public") boolean isPublic;
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses
 
   @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
@@ -106,7 +106,7 @@ public class RemoteCourse extends Course {
 
   public void setType(String type) {
     myType = type;
-    myCompatibility = courseCompatibility(this);
+    myCompatibility = courseCompatibility();
   }
 
   public boolean isLoadSolutions() {
@@ -148,13 +148,13 @@ public class RemoteCourse extends Course {
   }
 
   @NotNull
-  private static CourseCompatibility courseCompatibility(@NotNull RemoteCourse courseInfo) {
+  private CourseCompatibility courseCompatibility() {
     final List<String> supportedLanguages = getSupportedLanguages();
 
     String courseType = courseInfo.getType();
     final List<String> typeLanguage = StringUtil.split(courseType, " ");
     String prefix = typeLanguage.get(0);
-    if (!supportedLanguages.contains(courseInfo.getLanguageID())) return CourseCompatibility.UNSUPPORTED;
+    if (!supportedLanguages.contains(getLanguageID())) return CourseCompatibility.UNSUPPORTED;
     if (typeLanguage.size() < 2 || !prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {
       return CourseCompatibility.UNSUPPORTED;
     }

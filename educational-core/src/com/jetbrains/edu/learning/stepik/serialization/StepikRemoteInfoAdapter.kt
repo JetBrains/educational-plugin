@@ -10,6 +10,7 @@ import java.lang.reflect.Type
 
 class StepikRemoteInfoAdapter(val language: String?) : JsonDeserializer<Course>, JsonSerializer<Course> {
   private val IS_PUBLIC = "is_public"
+  private val IS_ADAPTIVE = "is_adaptive"
 
   override fun serialize(course: Course?, type: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = GsonBuilder()
@@ -20,6 +21,7 @@ class StepikRemoteInfoAdapter(val language: String?) : JsonDeserializer<Course>,
     val jsonObject = tree.asJsonObject
     val remoteInfo = course?.remoteInfo
     jsonObject.add(IS_PUBLIC, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isPublic ?: false))
+    jsonObject.add(IS_ADAPTIVE, JsonPrimitive((remoteInfo as? StepikRemoteInfo)?.isAdaptive ?: false))
     return jsonObject
   }
 
@@ -41,7 +43,9 @@ class StepikRemoteInfoAdapter(val language: String?) : JsonDeserializer<Course>,
     val jsonObject = json.asJsonObject
     val remoteInfo = StepikRemoteInfo()
     val isPublic = jsonObject.get(IS_PUBLIC).asBoolean
+    val isAdaptive = jsonObject.get(IS_ADAPTIVE).asBoolean
     remoteInfo.isPublic = isPublic
+    remoteInfo.isAdaptive = isAdaptive
     course.remoteInfo = remoteInfo
   }
 }

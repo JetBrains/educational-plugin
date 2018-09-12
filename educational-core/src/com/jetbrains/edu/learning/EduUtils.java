@@ -56,13 +56,13 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.PlatformUtils;
-import com.intellij.util.Time;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
@@ -1000,10 +1000,5 @@ public class EduUtils {
   public static Section getSection(@NotNull VirtualFile sectionDir, @NotNull final Course course) {
     if (!sectionDir.isDirectory()) return null;
     return course.getSection(sectionDir.getName());
-  }
-
-  public static boolean isAfter(Date date, Date date2) {
-    long diff = date.getTime() - date2.getTime();
-    return diff > Time.MINUTE;
   }
 }
