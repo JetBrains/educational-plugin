@@ -89,17 +89,13 @@
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
 
-    <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction">
-      <add-to-group group-id="FileMenu" anchor="first"/>
-    </action>
+    <action id="Educational.BrowseCourses" class="com.jetbrains.edu.learning.newproject.BrowseCoursesAction"/>
 
     <action id="Educational.LearnAndTeach" class="com.jetbrains.edu.learning.newproject.LearnAndTeachAction">
       <add-to-group group-id="WelcomeScreen.QuickStart" anchor="first"/>
     </action>
     <!--educator actions-->
-    <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction">
-      <add-to-group group-id="FileMenu" anchor="after" relative-to-action="Educational.BrowseCourses"/>
-    </action>
+    <action id="Educational.Educator.NewCourse" class="com.jetbrains.edu.coursecreator.actions.CCNewCourseAction"/>
 
     <group id="Educational.Educator.NewFile">
       <action id="Educational.Educator.CreateTask" class="com.jetbrains.edu.coursecreator.actions.CCCreateTask"/>
@@ -173,6 +169,15 @@
     <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
     <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepik"/>
     <action id="Educational.Educator.CCShowChangedFiles" class="com.jetbrains.edu.coursecreator.actions.stepik.CCShowChangedFiles"/>
+
+    <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
+      <reference id="Educational.BrowseCourses"/>
+      <reference id="Educational.ImportLocalCourse"/>
+      <reference id="Educational.StartCourseraAssignment"/>
+      <reference id="Educational.StartStepikCourse"/>
+      <reference id="Educational.Educator.NewCourse"/>
+      <add-to-group group-id="FileMenu" anchor="first"/>
+    </group>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">

@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.wm.impl.welcomeScreen.WelcomePopupAction
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
@@ -27,9 +28,15 @@ class LearnAndTeachAction : WelcomePopupAction() {
 
   override fun update(e: AnActionEvent) {
     e.presentation.icon = EducationalCoreIcons.CourseAction
-    e.presentation.text = "Learn"
-    if (CCPluginToggleAction.isCourseCreatorFeaturesEnabled) {
-      e.presentation.text += " and Teach"
+    updatePresentationText(e.presentation)
+  }
+
+  companion object {
+    fun updatePresentationText(presentation: Presentation) {
+      presentation.text = "Learn"
+      if (CCPluginToggleAction.isCourseCreatorFeaturesEnabled) {
+        presentation.text += " and Teach"
+      }
     }
   }
 }
