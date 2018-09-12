@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.coursera
 
 import com.jetbrains.edu.learning.courseFormat.Course
 
-class StartCourseraProgrammingAssignment : ImportLocalCourseAction("Start Coursera Programming Assignment") {
+class StartCourseraAssignment : ImportLocalCourseAction("Start Coursera Assignment") {
 
   override fun initCourse(course: Course) {
     super.initCourse(course)

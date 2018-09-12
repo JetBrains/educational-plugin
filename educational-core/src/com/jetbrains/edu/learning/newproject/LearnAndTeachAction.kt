@@ -7,7 +7,7 @@ import com.intellij.openapi.wm.impl.welcomeScreen.WelcomePopupAction
 import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.coursera.ImportLocalCourseAction
-import com.jetbrains.edu.learning.coursera.StartCourseraProgrammingAssignment
+import com.jetbrains.edu.learning.coursera.StartCourseraAssignment
 import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction
 import icons.EducationalCoreIcons
 
@@ -18,7 +18,7 @@ class LearnAndTeachAction : WelcomePopupAction() {
 
   override fun fillActions(group: DefaultActionGroup) {
     group.addAll(BrowseCoursesAction(), ImportLocalCourseAction(),
-                 StartCourseraProgrammingAssignment(), StartStepikCourseAction(),
+                 StartCourseraAssignment(), StartStepikCourseAction(),
                  CCNewCourseAction())
   }
 
