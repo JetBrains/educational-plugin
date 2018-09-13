@@ -10,7 +10,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.EduUtils.synchronize
-import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
+import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
@@ -107,7 +107,7 @@ class CheckiOCourseUpdater(
       }
 
       runWriteAction {
-        RefreshTaskFileAction.resetDocument(oldDocument, newMission.taskFile)
+        RevertTaskAction.resetDocument(oldDocument, newMission.taskFile)
       }
     } else {
       newMission.taskFile.setText(oldTaskFile.getText())

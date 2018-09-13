@@ -98,7 +98,7 @@ public interface EduConfigurator<Settings> {
     String[] ids = new String[]{
       PreviousTaskAction.ACTION_ID,
       NextTaskAction.ACTION_ID,
-      RefreshTaskFileAction.ACTION_ID,
+      RevertTaskAction.ACTION_ID,
       ShowHintAction.ACTION_ID,
       CompareWithAnswerAction.ACTION_ID
     };

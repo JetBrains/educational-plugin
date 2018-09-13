@@ -23,10 +23,8 @@ import com.intellij.openapi.command.undo.UndoableAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
-import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -320,16 +318,6 @@ public class EduUtils {
       return eduEditor.getEditor();
     }
     return null;
-  }
-
-  public static void deleteGuardedBlocks(@NotNull final Document document) {
-    if (document instanceof DocumentImpl) {
-      final DocumentImpl documentImpl = (DocumentImpl)document;
-      List<RangeMarker> blocks = documentImpl.getGuardedBlocks();
-      for (final RangeMarker block : blocks) {
-        ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> document.removeGuardedBlock(block)));
-      }
-    }
   }
 
   public static boolean isRenameAndMoveForbidden(@NotNull final Project project, @NotNull final Course course, @NotNull final PsiElement element) {

@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.actions.CheckAction
-import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
+import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import junit.framework.TestCase
@@ -101,7 +101,7 @@ class CourseViewTest : CourseViewTestBase() {
     waitWhileBusy(pane.tree)
     PlatformTestUtil.assertTreeEqual(pane.tree, structure)
 
-    val refreshTaskFileAction = RefreshTaskFileAction()
+    val refreshTaskFileAction = RevertTaskAction()
     launchAction(taskFile, refreshTaskFileAction)
   }
 

@@ -61,9 +61,9 @@
             description="Navigate to the previous task"/>
     <action id="Educational.NextTask" class="com.jetbrains.edu.learning.actions.NextTaskAction" text="Next Task"
             description="Navigate to the next task"/>
-    <action id="Educational.RefreshTaskFile" class="com.jetbrains.edu.learning.actions.RefreshTaskFileAction"
-            text="Reset Task File"
-            description="Refresh current task"/>
+    <action id="Educational.RefreshTask" class="com.jetbrains.edu.learning.actions.RevertTaskAction"
+            text="Reset Task"
+            description="Revert current task to the initial state"/>
     <action id="Educational.CompareWithAnswer" class="com.jetbrains.edu.learning.actions.CompareWithAnswerAction"
             text="Compare with Answer"
             description="Compare your solution with answer"/>
