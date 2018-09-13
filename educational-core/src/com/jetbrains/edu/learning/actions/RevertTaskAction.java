@@ -7,6 +7,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -53,9 +55,19 @@ public class RevertTaskAction extends DumbAwareActionWithShortcut {
       }
     });
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
+    validateEditors(project);
     showBalloon(project);
     ProjectView.getInstance(project).refresh();
     EduUtils.updateToolWindows(project);
+  }
+
+  private static void validateEditors(@NotNull Project project) {
+    final FileEditor[] editors = FileEditorManagerEx.getInstanceEx(project).getAllEditors();
+    for (FileEditor editor : editors) {
+      if (editor instanceof EduEditor) {
+        ((EduEditor)editor).validateTaskFile();
+      }
+    }
   }
 
   private static void revertTaskFile(@NotNull final TaskFile taskFile, @NotNull final Project project) {
