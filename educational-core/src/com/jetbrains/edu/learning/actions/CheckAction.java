@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,6 +81,12 @@ public class CheckAction extends DumbAwareActionWithShortcut {
 
   @Override
   public void update(AnActionEvent e) {
+    if (CheckPanel.ACTION_PLACE.equals(e.getPlace())) {
+      //action is being added only in valid context
+      //no project in event in this case, so just enable it
+      return;
+    }
+
     final Presentation presentation = e.getPresentation();
     EduUtils.updateAction(e);
 
