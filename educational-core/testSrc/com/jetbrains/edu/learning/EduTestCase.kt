@@ -25,6 +25,9 @@ import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
+import com.jetbrains.edu.learning.configurators.PlainTextConfigurator
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
