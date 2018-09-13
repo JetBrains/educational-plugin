@@ -40,7 +40,7 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
       field = value
     }
 
-  private fun readyToCheck() {
+  fun readyToCheck() {
     checkPanel.readyToCheck()
   }
 
