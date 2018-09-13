@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.actions;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -31,19 +30,18 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
-import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
 public class CheckAction extends DumbAwareActionWithShortcut {
   public static final String SHORTCUT = "ctrl alt pressed ENTER";
   public static final String ACTION_ID = "Educational.Check";
-  private static final String CHECK_TASK = "Check Task";
-  private static final String RUN_TASK = "Run Task";
+  private static final String CHECK_TASK = "Check";
+  private static final String RUN_TASK = "Run";
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
-    super(CHECK_TASK,"Check current task", EducationalCoreIcons.CheckTask);
+    super(CHECK_TASK,"Check current task", null);
   }
 
   @Override
@@ -98,12 +96,10 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     if (studyEditor != null) {
       final Task task = studyEditor.getTaskFile().getTask();
       if (task instanceof TheoryTask) {
-        presentation.setIcon(AllIcons.Actions.Execute);
         presentation.setText(RUN_TASK);
         presentation.setDescription("Run current task");
       }
       else {
-        presentation.setIcon(EducationalCoreIcons.CheckTask);
         presentation.setText(CHECK_TASK);
         presentation.setDescription("Check current task");
       }
