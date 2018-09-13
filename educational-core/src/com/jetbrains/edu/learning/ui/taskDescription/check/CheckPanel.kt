@@ -57,6 +57,7 @@ class CheckPanel: JPanel(BorderLayout()) {
   }
 
   fun checkStarted() {
+    checkFinishedPanel.removeAll()
     checkFinishedPanel.add(AsyncProcessIcon("Check in progress"), BorderLayout.WEST)
   }
 
