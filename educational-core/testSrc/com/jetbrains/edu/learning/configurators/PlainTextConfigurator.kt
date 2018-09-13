@@ -1,7 +1,10 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.configurators
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduConfigurator
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -27,7 +30,8 @@ class PlainTextCourseBuilder : EduCourseBuilder<Unit> {
   override fun getLanguageSettings(): LanguageSettings<Unit> = object : LanguageSettings<Unit>() {
     override fun getSettings() {}
   }
-  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Unit> = PlainTextCourseGenerator(this, course)
+  override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<Unit> = PlainTextCourseGenerator(
+    this, course)
   override fun getTaskTemplateName(): String? = "Task.txt"
   override fun getTestTemplateName(): String? = "Tests.txt"
 }

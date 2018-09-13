@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.configurators
 
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
@@ -35,7 +35,8 @@ class FakeGradleConfigurator : GradleConfiguratorBase() {
 
 class FakeGradleCourseBuilder : GradleCourseBuilderBase() {
   override val buildGradleTemplateName: String = "fake-language-build.gradle"
-  override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(this, course)
+  override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = FakeGradleCourseProjectGenerator(
+    this, course)
   override fun refreshProject(project: Project) {}
 }
 
