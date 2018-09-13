@@ -312,7 +312,9 @@ public class StepikTaskBuilder {
     }
   }
 
-  private static void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
+  private void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
+    final List<TaskFile> taskFiles = myStep.options.files;
+    if (taskFiles != null && !taskFiles.isEmpty()) return;
     final TaskFile taskFile = new TaskFile();
     taskFile.setText(editorText);
     taskFile.setName(taskFileName);
