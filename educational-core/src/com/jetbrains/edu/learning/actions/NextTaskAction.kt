@@ -6,7 +6,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 
-class NextTaskAction : TaskNavigationAction("Next Task", "Navigate to the next task", AllIcons.Actions.Forward) {
+class NextTaskAction : TaskNavigationAction("Next", "Navigate to the next task", AllIcons.Actions.Forward) {
 
   override fun getTargetTask(sourceTask: Task): Task? = NavigationUtils.nextTask(sourceTask)
   override fun getActionId(): String = ACTION_ID
@@ -18,6 +18,7 @@ class NextTaskAction : TaskNavigationAction("Next Task", "Navigate to the next t
       //no project in event in this case, so just enable it
       return
     }
+    e.presentation.text = "Next Task"
     super.update(e)
   }
 
