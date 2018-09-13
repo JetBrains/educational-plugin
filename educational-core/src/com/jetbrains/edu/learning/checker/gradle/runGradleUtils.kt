@@ -1,8 +1,11 @@
 package com.jetbrains.edu.learning.checker.gradle
 
+import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
+import com.intellij.execution.process.ProcessOutput
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.progress.ProgressManager
@@ -32,20 +35,95 @@ fun getGradleProjectName(task: Task) =
   else
     ":${EduGradleUtils.sanitizeName(task.lesson.name)}-${EduGradleUtils.sanitizeName(task.dirName)}"
 
+class GradleCommandLine private constructor(
+  private val cmd: GeneralCommandLine,
+  val taskName: String
+) {
 
-fun generateGradleCommandLine(project: Project, command: String, vararg additionalParams: String): GeneralCommandLine? {
-  val cmd = GeneralCommandLine()
-  val basePath = project.basePath ?: return null
-  val projectJdkPath = ProjectRootManager.getInstance(project).projectSdk?.homePath ?: return null
-  cmd.withEnvironment("JAVA_HOME", projectJdkPath)
-  val projectPath = FileUtil.toSystemDependentName(basePath)
-  cmd.withWorkDirectory(projectPath)
-  val executablePath = if (SystemInfo.isWindows) FileUtil.join(projectPath, "gradlew.bat") else "./gradlew"
-  cmd.exePath = executablePath
-  cmd.addParameter(command)
-  cmd.addParameters(*additionalParams)
+  fun launchAndCheck(): CheckResult {
+    val output = launch() ?: return CheckResult.FAILED_TO_CHECK
+    if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage, output.messages.joinToString("\n"))
 
-  return cmd
+    return TestsOutputParser.getCheckResult(output.messages)
+  }
+
+  fun launch(): GradleOutput? {
+    val output = try {
+      val handler = CapturingProcessHandler(cmd)
+      if (ProgressManager.getInstance().hasProgressIndicator()) {
+        handler.runProcessWithProgressIndicator(ProgressManager.getInstance().progressIndicator)
+      } else {
+        handler.runProcess()
+      }
+    } catch (e: ExecutionException) {
+      LOG.info(CheckUtils.FAILED_TO_CHECK_MESSAGE, e)
+      return null
+    }
+
+    val stderr = output.stderr
+    if (!stderr.isEmpty() && output.stdout.isEmpty()) {
+      return GradleOutput(false, listOf(stderr))
+    }
+
+    //gradle prints compilation failures to error stream
+    if (hasCompilationErrors(output)) {
+      return GradleOutput(false, listOf(COMPILATION_FAILED_MESSAGE, output.stderr))
+    }
+
+    if (!output.stdout.contains(taskName)) {
+      LOG.warn("#educational: executing $taskName fails: \n" + output.stdout)
+      return GradleOutput(false, listOf("$FAILED_TO_CHECK_MESSAGE. See idea.log for more details."))
+    }
+
+    return GradleOutput(true, collectMessages(output))
+  }
+
+  private fun collectMessages(output: ProcessOutput): List<String> {
+    var currentMessage: StringBuilder? = null
+    val allMessages = mutableListOf<String>()
+
+    fun addCurrentMessageIfNeeded() {
+      if (currentMessage != null) {
+        allMessages += currentMessage.toString()
+      }
+    }
+
+    for (line in output.stdoutLines) {
+      if (line.startsWith(STUDY_PREFIX)) {
+        val messageLine = line.removePrefix(STUDY_PREFIX)
+        if (currentMessage != null) {
+          currentMessage.appendln(messageLine)
+        } else {
+          currentMessage = StringBuilder(messageLine).append("\n")
+        }
+      } else {
+        addCurrentMessageIfNeeded()
+        currentMessage = null
+      }
+    }
+
+    addCurrentMessageIfNeeded()
+    return allMessages
+  }
+
+  companion object {
+
+    private val LOG: Logger = Logger.getInstance(GradleCommandLine::class.java  )
+
+    fun create(project: Project, command: String, vararg additionalParams: String): GradleCommandLine? {
+      val basePath = project.basePath ?: return null
+      val projectJdkPath = ProjectRootManager.getInstance(project).projectSdk?.homePath ?: return null
+      val projectPath = FileUtil.toSystemDependentName(basePath)
+      val cmd = GeneralCommandLine()
+        .withEnvironment("JAVA_HOME", projectJdkPath)
+        .withWorkDirectory(FileUtil.toSystemDependentName(basePath))
+        .withExePath(if (SystemInfo.isWindows) FileUtil.join(projectPath, "gradlew.bat") else "./gradlew")
+        .withParameters(command)
+        .withParameters(*additionalParams)
+
+      return GradleCommandLine(cmd, command)
+    }
+  }
 }
 
 class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
@@ -54,84 +132,25 @@ class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
   val firstMessage: String get() = messages.firstOrNull { it.isNotBlank() } ?: "<no output>"
 }
 
-fun getProcessOutput(process: Process, commandLine: String, taskName: String): GradleOutput {
-  val handler = CapturingProcessHandler(process, null, commandLine)
-  val output =
-    if (ProgressManager.getInstance().hasProgressIndicator()) {
-      handler.runProcessWithProgressIndicator(ProgressManager.getInstance().progressIndicator)
-    }
-    else {
-      handler.runProcess()
-    }
-
-  val stderr = output.stderr
-  if (!stderr.isEmpty() && output.stdout.isEmpty()) {
-    return GradleOutput(false, listOf(stderr))
-  }
-
-  //gradle prints compilation failures to error stream
-  if (hasCompilationErrors(output)) {
-    return GradleOutput(false, listOf(COMPILATION_FAILED_MESSAGE, output.stderr))
-  }
-
-  if (!output.stdout.contains(taskName)) {
-    TaskChecker.LOG.warn("#educational: executing $taskName fails: \n" + output.stdout)
-    return GradleOutput(false, listOf("$FAILED_TO_CHECK_MESSAGE. See idea.log for more details."))
-  }
-
-  var currentMessage: StringBuilder? = null
-  val allMessages = mutableListOf<String>()
-
-  fun addCurrentMessageIfNeeded() {
-    if (currentMessage != null) {
-      allMessages += currentMessage.toString()
-    }
-  }
-
-  for (line in output.stdoutLines) {
-    if (line.startsWith(STUDY_PREFIX)) {
-      val messageLine = line.removePrefix(STUDY_PREFIX)
-      if (currentMessage != null) {
-        currentMessage.appendln(messageLine)
-      } else {
-        currentMessage = StringBuilder(messageLine).append("\n")
-      }
-    } else {
-      addCurrentMessageIfNeeded()
-      currentMessage = null
-    }
-  }
-
-  addCurrentMessageIfNeeded()
-
-  return GradleOutput(true, allMessages)
-}
-
 fun String.postProcessOutput() = replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
-
-fun parseTestsOutput(process: Process, commandLine: String, taskName: String): CheckResult {
-  val output = getProcessOutput(process, commandLine, taskName)
-  if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage, output.messages.joinToString("\n"))
-
-  return TestsOutputParser.getCheckResult(output.messages)
-}
 
 /**
  * Run gradle 'run' task.
  * Returns gradle output if task was successfully executed, otherwise returns CheckResult.
  */
-fun runGradleRunTask(project: Project, task: Task,
-                     mainClassForFile: (Project, VirtualFile) -> String?): ExecutionResult<String, CheckResult> {
+fun runGradleRunTask(
+  project: Project,
+  task: Task,
+  mainClassForFile: (Project, VirtualFile) -> String?
+): ExecutionResult<String, CheckResult> {
   val mainClassName = findMainClass(project, task, mainClassForFile)
-          ?: return Err(CheckResult(CheckStatus.Unchecked, "Unable to execute task ${task.name}"))
+                      ?: return Err(CheckResult(CheckStatus.Unchecked, "Unable to execute task ${task.name}"))
   val taskName = if (task.hasSeparateModule(project)) "${getGradleProjectName(task)}:run" else "run"
-  val cmd = generateGradleCommandLine(
-    project,
-    taskName,
-    "${MAIN_CLASS_PROPERTY_PREFIX}$mainClassName"
-  ) ?: return Err(CheckResult.FAILED_TO_CHECK)
 
-  val gradleOutput = getProcessOutput(cmd.createProcess(), cmd.commandLineString, taskName)
+  val gradleOutput = GradleCommandLine.create(project, taskName, "${MAIN_CLASS_PROPERTY_PREFIX}$mainClassName")
+    ?.launch()
+    ?: return Err(CheckResult.FAILED_TO_CHECK)
+
   if (!gradleOutput.isSuccess) {
     return Err(CheckResult(CheckStatus.Failed, gradleOutput.firstMessage, gradleOutput.messages.joinToString("\n")))
   }

@@ -1,7 +1,5 @@
 package com.jetbrains.edu.learning.checker.gradle
 
-import com.intellij.execution.ExecutionException
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckResult.FAILED_TO_CHECK
@@ -16,19 +14,10 @@ open class GradleEduTaskChecker(task: EduTask, project: Project) : TaskChecker<E
     if (task.testsText.isEmpty()) {
       return CheckResult(CheckStatus.Solved, "Task marked as completed")
     }
-    val cmd = generateGradleCommandLine(
-      project,
-      taskName,
-      *params.toTypedArray()
-    ) ?: return FAILED_TO_CHECK
 
-    return try {
-      return parseTestsOutput(cmd.createProcess(), cmd.commandLineString, taskName)
-    }
-    catch (e: ExecutionException) {
-      Logger.getInstance(GradleEduTaskChecker::class.java).info(CheckUtils.FAILED_TO_CHECK_MESSAGE, e)
-      FAILED_TO_CHECK
-    }
+    return GradleCommandLine.create(project, taskName, *params.toTypedArray())
+             ?.launchAndCheck()
+             ?: FAILED_TO_CHECK
   }
 
   protected open fun getGradleTask() = GradleTask("${getGradleProjectName(task)}:$TEST_TASK_NAME")
