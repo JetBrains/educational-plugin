@@ -1,12 +1,7 @@
 package com.jetbrains.edu.learning
 
-import com.intellij.lang.LanguageExtensionPoint
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -38,10 +33,3 @@ class PlainTextCourseBuilder : EduCourseBuilder<Unit> {
 }
 
 class PlainTextCourseGenerator(builder: EduCourseBuilder<Unit>, course: Course) : CourseProjectGenerator<Unit>(builder, course)
-
-fun registerPlainTextConfigurator(disposable: Disposable) {
-  val extension = LanguageExtensionPoint<EduConfigurator<*>>()
-  extension.language = PlainTextLanguage.INSTANCE.id
-  extension.implementationClass = PlainTextConfigurator::class.java.name
-  PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)
-}

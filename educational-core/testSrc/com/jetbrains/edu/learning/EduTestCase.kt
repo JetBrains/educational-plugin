@@ -2,7 +2,10 @@ package com.jetbrains.edu.learning
 
 import com.google.common.collect.Lists
 import com.intellij.lang.Language
+import com.intellij.lang.LanguageExtensionPoint
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.impl.ComponentManagerImpl
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
@@ -15,6 +18,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
@@ -36,8 +40,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   @Throws(Exception::class)
   override fun setUp() {
     super.setUp()
-    registerPlainTextConfigurator(myFixture.testRootDisposable)
-    registerFakeGradleConfigurator(myFixture.testRootDisposable)
+    registerConfigurator(PlainTextLanguage.INSTANCE, PlainTextConfigurator::class.java, myFixture.testRootDisposable)
+    registerConfigurator(FakeGradleBasedLanguage, FakeGradleConfigurator::class.java, myFixture.testRootDisposable)
     createCourse()
 
     val dockManager = DockManager.getInstance(myFixture.project)
@@ -206,5 +210,12 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     remoteCourse.init(null, null, true)
     StudyTaskManager.getInstance(project).course = remoteCourse
     return remoteCourse
+  }
+
+  private fun registerConfigurator(language: Language, configuratorClass: Class<*>, disposable: Disposable) {
+    val extension = LanguageExtensionPoint<EduConfigurator<*>>()
+    extension.language = language.id
+    extension.implementationClass = configuratorClass.name
+    PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)
   }
 }
