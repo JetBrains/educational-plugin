@@ -47,19 +47,18 @@ public class ResetCourseAction extends DumbAwareAction {
             if (taskFileVF != null) {
               Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
               if (document != null) {
-                RefreshTaskFileAction.resetDocument(document, taskFile);
+                RevertTaskAction.resetDocument(document, taskFile);
                 task.setStatus(CheckStatus.Unchecked);
                 if (task instanceof ChoiceTask) {
                   ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
                 }
-                RefreshTaskFileAction.resetAnswerPlaceholders(taskFile);
+                RevertTaskAction.resetAnswerPlaceholders(taskFile);
               }
             }
           }
         }
         return true;
       });
-      RefreshTaskFileAction.refresh(project);
     });
   }
 

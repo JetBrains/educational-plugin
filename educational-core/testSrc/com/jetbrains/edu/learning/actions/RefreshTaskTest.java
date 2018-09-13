@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ public class RefreshTaskTest extends EduTestCase {
   public void testRefreshTask() {
     configureByTaskFile(1, 1, "taskFile1.txt");
     myFixture.type("test");
-    myFixture.testAction(new RefreshTaskFileAction());
+    myFixture.testAction(new RevertTaskAction());
 
     assertEquals("Look! There <placeholder hint=\"my hint\">i<caret>s</placeholder> placeholder.",
         myFixture.getDocument(myFixture.getFile()).getText());
@@ -22,7 +23,7 @@ public class RefreshTaskTest extends EduTestCase {
   public void testCaretOutside() {
     configureByTaskFile(1, 2, "taskFile2.txt");
     myFixture.type("test");
-    myFixture.testAction(new RefreshTaskFileAction());
+    myFixture.testAction(new RevertTaskAction());
 
     assertEquals("Look!<caret> There <placeholder hint=\"my hint\">is</placeholder> placeholder.",
         myFixture.getDocument(myFixture.getFile()).getText());
@@ -41,6 +42,7 @@ public class RefreshTaskTest extends EduTestCase {
     course.init(null, null, false);
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return super.getTestDataPath() + "/actions/refresh";

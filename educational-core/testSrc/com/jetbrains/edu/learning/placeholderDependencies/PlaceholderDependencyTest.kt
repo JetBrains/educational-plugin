@@ -5,7 +5,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
-import com.jetbrains.edu.learning.actions.RefreshTaskFileAction
+import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.getDocument
@@ -153,7 +153,7 @@ class PlaceholderDependencyTest : EduTestCase() {
     val virtualFile = findFileInTask(1, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
 
-    RefreshTaskFileAction.refresh(project)
+    RevertTaskAction.revert(project)
 
     checkPlaceholderContent("placeholder", findPlaceholder(1, 0, "task.txt", 0))
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "task.txt", 1))
