@@ -57,8 +57,9 @@ public class DirectoryNode extends EduNode {
       String name = directoryFile.getName();
 
       Course course = StudyTaskManager.getInstance(myProject).getCourse();
-      // course is not null because of `CCUtils.isCourseCreator(project)` check above
-      assert course != null;
+      if (course == null) {
+        return;
+      }
 
       if (name.equals(CourseExt.getSourceDir(course)) || name.equals(CourseExt.getTestDir(course))) {
         data.setPresentableText(name);
