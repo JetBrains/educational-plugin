@@ -13,4 +13,8 @@ class IdeTask: Task() {
     }
     return if (myStatus == CheckStatus.Solved) EducationalCoreIcons.IdeTaskSolved else EducationalCoreIcons.TaskFailed
   }
+
+  override fun isToSubmitToStepik(): Boolean {
+    return myStatus != CheckStatus.Unchecked
+  }
 }
