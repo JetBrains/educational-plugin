@@ -26,9 +26,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
@@ -326,7 +324,7 @@ public class StepikSolutionsLoader implements Disposable {
   }
 
   private static TaskSolutions loadSolutionTexts(@NotNull Task task, boolean isSolved) throws IOException {
-    if (task instanceof EduTask) {
+    if (task.isToSubmitToStepik()) {
       return getEduTaskSolution(task, isSolved);
     }
     else {
