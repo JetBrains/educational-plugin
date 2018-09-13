@@ -3,8 +3,42 @@ package com.jetbrains.edu.learning.courseView
 
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 
 class NodesTest: CourseViewTestBase() {
+
+  fun testOutsideScrDir() {
+    courseWithFiles(language = FakeGradleBasedLanguage, settings = JdkProjectSettings.emptySettings()) {
+      lesson {
+        eduTask {
+          taskFile("src/file.txt")
+          taskFile("test/file.txt")
+        }
+
+        eduTask {
+          taskFile("src/file.txt")
+          taskFile("test/file.txt")
+        }
+      }
+    }
+
+    assertCourseView("""
+    |-Project
+    | -CourseNode Test Course  0/2
+    |  -LessonNode lesson1
+    |   -TaskNode task1
+    |    -DirectoryNode src
+    |     file.txt
+    |    -DirectoryNode test
+    |     file.txt
+    |   -TaskNode task2
+    |    -DirectoryNode src
+    |     file.txt
+    |    -DirectoryNode test
+    |     file.txt
+    """.trimMargin("|"))
+  }
 
   fun testSections() {
     courseWithFiles {
