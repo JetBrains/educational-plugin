@@ -3,6 +3,7 @@
 package com.jetbrains.edu.learning.courseFormat.ext
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -104,7 +105,12 @@ fun Task.getDescriptionFile(project: Project): VirtualFile? {
 fun Task.hasTaskFilesNotInsideSourceDir(project: Project): Boolean {
   val taskDir = getDir(project) ?: error("Directory for task $name not found")
   val sourceDir = findSourceDir(taskDir) ?: return false
-  return taskFiles.values.find {
-    !VfsUtil.isAncestor(sourceDir, it.getVirtualFile(project) ?: error("VirtualFile for ${it.name} not found"), true)
-  } != null
+  return taskFiles.values.any {
+    val virtualFile = it.getVirtualFile(project)
+    if (virtualFile == null) {
+      Logger.getInstance(Task::class.java).error("VirtualFile for ${it.name} not found")
+      return@any false
+    }
+    !VfsUtil.isAncestor(sourceDir, virtualFile, true)
+  }
 }
