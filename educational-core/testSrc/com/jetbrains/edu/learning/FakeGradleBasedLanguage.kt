@@ -1,11 +1,7 @@
 package com.jetbrains.edu.learning
 
 import com.intellij.lang.Language
-import com.intellij.lang.LanguageExtensionPoint
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.PlatformTestUtil
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
@@ -48,11 +44,4 @@ class FakeGradleCourseProjectGenerator(
   course: Course
 ) : GradleCourseProjectGenerator(builder, course) {
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {}
-}
-
-fun registerFakeGradleConfigurator(disposable: Disposable) {
-  val extension = LanguageExtensionPoint<EduConfigurator<*>>()
-  extension.language = FakeGradleBasedLanguage.id
-  extension.implementationClass = FakeGradleConfigurator::class.java.name
-  PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)
 }
