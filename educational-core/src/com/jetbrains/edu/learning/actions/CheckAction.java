@@ -30,6 +30,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -179,6 +180,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     public void run(@NotNull ProgressIndicator indicator) {
       indicator.setIndeterminate(true);
       myCheckInProgress.set(true);
+      TaskDescriptionView.getInstance(myProject).checkStarted();
 
       CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check();
       if (localCheckResult.getStatus() == CheckStatus.Failed) {
@@ -205,6 +207,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
         default:
           CheckUtils.showTestResultPopUp(message, MessageType.WARNING.getPopupBackground(), myProject);
       }
+      TaskDescriptionView.getInstance(myProject).checkFinished(myResult);
       ApplicationManager.getApplication().invokeLater(() -> {
         EduUtils.updateToolWindows(myProject);
         ProjectView.getInstance(myProject).refresh();
