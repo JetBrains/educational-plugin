@@ -16,7 +16,6 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
-import com.intellij.openapi.progress.Task.WithResult;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,7 +25,9 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
@@ -88,30 +89,6 @@ public class StepikSolutionsLoader implements Disposable {
         if (course != null) {
           loadSolutions(progressIndicator, course);
         }
-      }
-    });
-  }
-
-  @NotNull
-  public List<Task> tasksToUpdateUnderProgress() throws Exception {
-    return ProgressManager.getInstance().run(new WithResult<List<Task>, Exception>(myProject, "Updating Task Statuses", true) {
-      @Override
-      protected List<Task> compute(@NotNull ProgressIndicator progressIndicator) {
-        progressIndicator.setIndeterminate(true);
-        Course course = StudyTaskManager.getInstance(myProject).getCourse();
-        if (course != null) {
-          return EduUtils.execCancelable(() -> tasksToUpdate(course));
-        }
-        return Collections.emptyList();
-      }
-    });
-  }
-
-  public void loadSolutionsInBackground(@NotNull List<Task> tasksToUpdate) {
-    ProgressManager.getInstance().run(new Backgroundable(myProject, "Updating Solutions") {
-      @Override
-      public void run(@NotNull ProgressIndicator progressIndicator) {
-        updateTasks(tasksToUpdate, progressIndicator);
       }
     });
   }
@@ -309,7 +286,7 @@ public class StepikSolutionsLoader implements Disposable {
   /**
    * @return true if solutions for given task are incompatible with current plugin version, false otherwise
    */
-  private boolean loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
+  private static boolean loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
     try {
       TaskSolutions taskSolutions = loadSolutionTexts(task, isSolved);
       if (!taskSolutions.hasIncompatibleSolutions && !taskSolutions.solutions.isEmpty()) {
@@ -445,7 +422,7 @@ public class StepikSolutionsLoader implements Disposable {
     return solution;
   }
 
-  private void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionText) {
+  private static void updateFiles(@NotNull Project project, @NotNull Task task, Map<String, String> solutionText) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       return;
