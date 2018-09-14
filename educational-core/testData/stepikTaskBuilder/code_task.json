@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "id": 294225,
+      "lesson": 77872,
+      "position": 2,
+      "status": "ready",
+      "block": {
+        "name": "code",
+        "text": "<h1>Practice</h1>\n<p>Write a simple program that includes the main method.</p>\n<p><strong>Note</strong>: Your class must be named Main if it is public, otherwise, it may have any name. It's a\n    restriction of the platform, not Java.</p>\n<p>The program should print the following text: Hello, Java!</p>\n<h3>IDE tips &amp; tricks</h3>\n<p>Smart autocompletion is an essential feature of a professional code editor, which helps you to save time and avoid\n    misprints. It is equally powerful for learning because you can use it to find the right variable, function,\n    parameter, or code construct. Start typing or simply press Ctrl + Space to get a list of suggested options:</p>\n<p><img src=\"https://i.imgur.com/eEmXP2r.png\" width=\"400\"></p>\n<p>Code snippets, or live templates, can also be a handy tool. They not only speed up your coding, but help you learn\n    new language syntax as well. Use Cmd + J to see the full list of code snippets available. Start typing to find the\n    one you want to add, and then use Tab to fill in the blanks:</p>\n<p><img src=\"https://i.imgur.com/NfO8x22.png\" width=\"400\"></p>\n<p><img src=\"https://i.imgur.com/B272J1i.png\" width=\"400\"></p>",
+        "video": null,
+        "animation": null,
+        "options": {
+          "execution_time_limit": 5,
+          "execution_memory_limit": 256,
+          "limits": {
+            "java8": {
+              "time": 8,
+              "memory": 256
+            }
+          },
+          "code_templates": {
+            "java8": ""
+          },
+          "code_templates_options": {},
+          "samples": [],
+          "is_run_user_code_allowed": true
+        },
+        "subtitle_files": []
+      },
+      "actions": {
+        "submit": "#"
+      },
+      "progress": "77-294225",
+      "subscriptions": [
+        "31-77-294225",
+        "30-77-294225"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 719,
+      "passed_by": 961,
+      "correct_ratio": 0.25821146008151524,
+      "worth": 1,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-03-17T08:24:25Z",
+      "update_date": "2018-03-27T22:29:43Z",
+      "discussions_count": 1,
+      "discussion_proxy": "77-294225-1",
+      "discussion_threads": [
+        "77-294225-1"
+      ]
+    }
+  ]
+}
