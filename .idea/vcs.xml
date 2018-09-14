@@ -5,7 +5,7 @@
       <list>
         <IssueNavigationLink>
           <option name="issueRegexp" value="[A-Z]+\-\d+" />
-          <option name="linkRegexp" value="https://youtrack.jetbrains.com/issue/issue/$0" />
+          <option name="linkRegexp" value="https://youtrack.jetbrains.com/issue/$0" />
         </IssueNavigationLink>
       </list>
     </option>
