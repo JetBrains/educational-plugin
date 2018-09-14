@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.configurators
 
 import com.intellij.lang.Language
+import com.intellij.openapi.fileTypes.FileTypeConsumer
+import com.intellij.openapi.fileTypes.FileTypeFactory
+import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.TaskChecker
@@ -12,8 +15,22 @@ import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
+import javax.swing.Icon
 
 object FakeGradleBasedLanguage : Language("FakeGradleBasedLanguage")
+
+object FakeGradleFileType : LanguageFileType(FakeGradleBasedLanguage) {
+  override fun getIcon(): Icon? = null
+  override fun getName(): String = FakeGradleBasedLanguage.displayName
+  override fun getDefaultExtension(): String = "kt"
+  override fun getDescription(): String = "File type for fake gradle based language"
+}
+
+class FakeGradleTypeFactory : FileTypeFactory() {
+  override fun createFileTypes(consumer: FileTypeConsumer) {
+    consumer.consume(FakeGradleFileType)
+  }
+}
 
 class FakeGradleConfigurator : GradleConfiguratorBase() {
 

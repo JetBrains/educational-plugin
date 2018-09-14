@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": false,
+    "has_previous": false
+  },
+  "steps": [
+    {
+      "id": 294229,
+      "lesson": 77872,
+      "position": 3,
+      "status": "ready",
+      "block": {
+        "name": "choice",
+        "text": "<h1>Quiz</h1>\n<p>What will be printed if compile and run the class below?</p>\n<pre><code class=\"java\">\npublic class Main {\n\n  public static void main(String args) throws Exception {\n    System.out.printf(\"No! I'm still the main!\");\n  }\n\n  public void main(String[] args) throws Exception {\n    System.out.printf(\"I'm the main\");\n  }\n}\n</code></pre>",
+        "video": null,
+        "animation": null,
+        "options": {
+          "is_multiple_choice": false
+        },
+        "subtitle_files": []
+      },
+      "actions": {
+        "submit": "#"
+      },
+      "progress": "77-294229",
+      "subscriptions": [
+        "31-77-294229",
+        "30-77-294229"
+      ],
+      "instruction": null,
+      "session": null,
+      "instruction_type": null,
+      "viewed_by": 625,
+      "passed_by": 1108,
+      "correct_ratio": 0.476878612716763,
+      "worth": 1,
+      "is_solutions_unlocked": false,
+      "solutions_unlocked_attempts": 3,
+      "has_submissions_restrictions": false,
+      "max_submissions_count": 3,
+      "variation": 1,
+      "variations_count": 1,
+      "create_date": "2018-03-17T08:24:26Z",
+      "update_date": "2018-03-29T01:27:43Z",
+      "discussions_count": 0,
+      "discussion_proxy": "77-294229-1",
+      "discussion_threads": [
+        "77-294229-1"
+      ]
+    }
+  ]
+}
