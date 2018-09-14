@@ -2,8 +2,10 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.GsonBuilder;
+import com.intellij.lang.Commenter;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.Computable;
@@ -17,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,6 +37,8 @@ public class StepikTaskBuilder {
   private int myUserId;
   @NonNls private String myName;
   private final Language myLanguage;
+  @Nullable
+  private final EduConfigurator<?> myConfigurator;
   private StepikWrappers.Step myStep;
   private final Map<String, Computable<Task>> stepikTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
     .put("code", this::codeTask)
@@ -94,6 +99,10 @@ public class StepikTaskBuilder {
     myStepId = stepId;
     myUserId = userId;
     myLanguage = course.getLanguageById();
+    myConfigurator = EduConfiguratorManager.forLanguage(myLanguage);
+    if (myConfigurator == null) {
+      LOG.warn("Cannot get configurator for a language: " + myLanguage);
+    }
   }
 
   @Nullable
@@ -136,31 +145,12 @@ public class StepikTaskBuilder {
     }
     task.setDescriptionText(taskDescription.toString());
 
-    if (myStep.options.test != null) {
-      for (StepikWrappers.FileWrapper wrapper : myStep.options.test) {
-        task.addTestsTexts(wrapper.name, wrapper.text);
-      }
-    }
-    else {
-      if (myLanguage.isKindOf(EduNames.PYTHON) && myStep.options.samples != null) {
-        createTestFileFromSamples(task, myStep.options.samples);
-      }
+    if (myLanguage.isKindOf(EduNames.PYTHON) && myStep.options.samples != null) {
+      createTestFileFromSamples(task, myStep.options.samples);
     }
 
-    if (myStep.options.files != null) {
-      for (TaskFile taskFile : myStep.options.files) {
-        task.addTaskFile(taskFile);
-      }
-    }
-    else {
-      final String templateForTask = getCodeTemplateForTask(myLanguage, myStep.options.codeTemplates);
-      String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
-      String editorText = templateForTask == null ? (commentPrefix + " write your answer here \n") : templateForTask;
-      String taskFileName = getTaskFileName(myLanguage);
-      if (taskFileName != null) {
-        createMockTaskFile(task, editorText, taskFileName);
-      }
-    }
+    final String templateForTask = getCodeTemplateForTask(myLanguage, myStep.options.codeTemplates);
+    createMockTaskFile(task, "write your answer here \n", templateForTask);
     return task;
   }
 
@@ -172,28 +162,21 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.update_date);
     task.setDescriptionText(myStep.text);
 
-    final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = StepikAdaptiveConnector.getAttemptForStep(myStepId, myUserId);
-    if (attempt != null) {
-      final StepikWrappers.AdaptiveAttemptWrapper.Dataset dataset = attempt.dataset;
-      if (dataset != null) {
-        task.setChoiceVariants(dataset.options);
-        task.setMultipleChoice(dataset.is_multiple_choice);
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = StepikAdaptiveConnector.getAttemptForStep(myStepId, myUserId);
+      if (attempt != null) {
+        final StepikWrappers.AdaptiveAttemptWrapper.Dataset dataset = attempt.dataset;
+        if (dataset != null) {
+          task.setChoiceVariants(dataset.options);
+          task.setMultipleChoice(dataset.is_multiple_choice);
+        }
+        else {
+          LOG.warn("Dataset for step " + myStepId + " is null");
+        }
       }
-      else {
-        LOG.warn("Dataset for step " + myStepId + " is null");
-      }
-    }
-    String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
-    String taskFileName = getTaskFileName(myLanguage);
-    if (taskFileName != null) {
-      String editorText = commentPrefix + " you can experiment here, it won't be checked\n";
-      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
-      if (configurator != null) {
-        editorText += "\n" + configurator.getMockTemplate();
-      }
-      createMockTaskFile(task, editorText, taskFileName);
     }
 
+    createMockTaskFile(task, "you can experiment here, it won't be checked\n");
     return task;
   }
 
@@ -204,17 +187,8 @@ public class StepikTaskBuilder {
     task.setIndex(myStepSource.position);
     task.setUpdateDate(myStepSource.update_date);
     task.setDescriptionText(myStep.text);
-    String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
-    String taskFileName = getTaskFileName(myLanguage);
 
-    if (taskFileName != null) {
-      String editorText = commentPrefix + " you can experiment here, it won’t be checked\n";
-      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
-      if (configurator != null) {
-        editorText += "\n" + configurator.getMockTemplate();
-      }
-      createMockTaskFile(task, editorText, taskFileName);
-    }
+    createMockTaskFile(task, "you can experiment here, it won’t be checked\n");
     return task;
   }
 
@@ -226,17 +200,8 @@ public class StepikTaskBuilder {
     task.setUpdateDate(myStepSource.update_date);
     final String stepText = "This is " + myName.toLowerCase() + " task.";
     task.setDescriptionText(stepText);
-    String commentPrefix = LanguageCommenters.INSTANCE.forLanguage(myLanguage).getLineCommentPrefix();
-    String taskFileName = getTaskFileName(myLanguage);
 
-    if (taskFileName != null) {
-      String editorText = commentPrefix + " this is a " + myName.toLowerCase() + " task. You can use this editor as a playground\n";
-      final EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(myLanguage);
-      if (configurator != null) {
-        editorText += "\n" + configurator.getMockTemplate();
-      }
-      createMockTaskFile(task, editorText, taskFileName);
-    }
+    createMockTaskFile(task, "this is a " + myName.toLowerCase() + " task. You can use this editor as a playground\n");
     return task;
   }
 
@@ -312,25 +277,51 @@ public class StepikTaskBuilder {
     }
   }
 
-  private void createMockTaskFile(@NotNull Task task, @NotNull String editorText, @NotNull String taskFileName) {
+  private void createMockTaskFile(@NotNull Task task, @NotNull String comment) {
+    createMockTaskFile(task, comment, null);
+  }
+
+  private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String editorText) {
     final List<TaskFile> taskFiles = myStep.options.files;
     if (taskFiles != null && !taskFiles.isEmpty()) return;
+
+    String taskFilePath = getTaskFilePath(myLanguage);
+    if (taskFilePath == null) return;
+
+    StringBuilder editorTextBuilder = new StringBuilder();
+
+    if (editorText == null) {
+      Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(myLanguage);
+      if (commenter != null) {
+        String commentPrefix = commenter.getLineCommentPrefix();
+        if (commentPrefix != null) {
+          editorTextBuilder.append(commentPrefix)
+            .append(" ")
+            .append(comment);
+        }
+      }
+
+      if (myConfigurator != null) {
+        editorTextBuilder.append("\n").append(myConfigurator.getMockTemplate());
+      }
+    } else {
+      editorTextBuilder.append(editorText);
+    }
+
     final TaskFile taskFile = new TaskFile();
-    taskFile.setText(editorText);
-    taskFile.setName(taskFileName);
+    taskFile.setText(editorTextBuilder.toString());
+    taskFile.setName(taskFilePath);
     task.addTaskFile(taskFile);
   }
 
   @Nullable
-  private static String getTaskFileName(@NotNull Language language) {
+  private String getTaskFilePath(@NotNull Language language) {
     // This is a hacky way to how we should name task file.
     // It's assumed that if test's name is capitalized we need to capitalize task file name too.
-    EduConfigurator<?> eduConfigurator = EduConfiguratorManager.forLanguage(language);
-    if (eduConfigurator == null) {
-      LOG.warn("Cannot get configurator for a language: " + language);
+    if (myConfigurator == null) {
       return null;
     }
-    String testFileName = eduConfigurator.getTestFileName();
+    String testFileName = myConfigurator.getTestFileName();
     boolean capitalize = !testFileName.isEmpty() && Character.isUpperCase(testFileName.charAt(0));
 
     LanguageFileType type = language.getAssociatedFileType();
@@ -339,7 +330,8 @@ public class StepikTaskBuilder {
       return null;
     }
 
-    return (capitalize ? StringUtil.capitalize(TASK_NAME) : TASK_NAME) + "." + type.getDefaultExtension();
+    String name = (capitalize ? StringUtil.capitalize(TASK_NAME) : TASK_NAME) + "." + type.getDefaultExtension();
+    return GeneratorUtils.joinPaths(myConfigurator.getSourceDir(), name);
   }
 
   private static String getCodeTemplateForTask(@NotNull Language language,

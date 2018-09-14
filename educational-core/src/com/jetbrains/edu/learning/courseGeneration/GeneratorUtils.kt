@@ -253,9 +253,12 @@ object GeneratorUtils {
       LOG.warn("Cannot rename task file. Unable to find associated file type for language: " + language.id)
       return
     }
+
     task.taskFiles.remove(taskFile.name)
-    taskFile.name = publicClassName(project, taskFile, fileType) + "." + fileType.defaultExtension
-    task.taskFiles[taskFile.name] = taskFile
+    val pathPrefix = taskFile.name.substringBeforeLast(VfsUtilCore.VFS_SEPARATOR_CHAR, "")
+    val className = publicClassName(project, taskFile, fileType) + "." + fileType.defaultExtension
+    taskFile.name = joinPaths(pathPrefix, className)
+    task.addTaskFile(taskFile)
   }
 
   private fun publicClassName(project: Project, taskFile: TaskFile, fileType: LanguageFileType): String {
