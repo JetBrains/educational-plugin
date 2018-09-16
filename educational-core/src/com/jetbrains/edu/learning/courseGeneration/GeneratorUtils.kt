@@ -15,7 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiModifier
-import com.intellij.util.ThrowableRunnable
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
@@ -106,7 +105,7 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   private fun createTaskContent(task: Task, taskDir: VirtualFile) {
-    for ((_, taskFileContent) in task.getTaskFiles()) {
+    for ((_, taskFileContent) in task.taskFiles) {
       createTaskFile(taskDir, taskFileContent)
     }
     createFiles(taskDir, task.testsText)
@@ -119,7 +118,7 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   @JvmStatic
-  fun createTaskFile(taskDir: VirtualFile, taskFile: TaskFile) {
+  private fun createTaskFile(taskDir: VirtualFile, taskFile: TaskFile) {
     createChildFile(taskDir, taskFile.name, taskFile.getText())
   }
 
@@ -161,7 +160,7 @@ object GeneratorUtils {
 
     val task = lesson.taskList.singleOrNull() ?: return emptyMap()
     val filesToCreate = HashMap(task.testsText)
-    task.getTaskFiles().mapValuesTo(filesToCreate) { entry -> entry.value.getText() }
+    task.taskFiles.mapValuesTo(filesToCreate) { entry -> entry.value.getText() }
     filesToCreate.putAll(task.additionalFiles.mapValues { (_, file) -> file.getText() })
     return filesToCreate
   }
@@ -294,7 +293,7 @@ object GeneratorUtils {
 
   private fun String.convertToValidName(): String {
     val invalidSymbols = if (SystemInfo.isWindows) WINDOWS_INVALID_SYMBOLS else UNIX_INVALID_SYMBOLS
-    return replace(invalidSymbols, " ")
+    return replace(invalidSymbols, " ").trim()
   }
 
   private fun createUniqueDir(parentDir: VirtualFile, item: StudyItem): VirtualFile {
