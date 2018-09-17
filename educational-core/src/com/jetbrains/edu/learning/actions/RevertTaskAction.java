@@ -24,17 +24,14 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskFileExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.ChoiceVariantsPanel;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 
 public class RevertTaskAction extends DumbAwareActionWithShortcut implements RightAlignedToolbarAction {
   public static final String ACTION_ID = "Educational.RefreshTaskFile";
@@ -83,13 +80,7 @@ public class RevertTaskAction extends DumbAwareActionWithShortcut implements Rig
     task.setStatus(CheckStatus.Unchecked);
     resetAnswerPlaceholders(taskFile);
 
-    if (task instanceof ChoiceTask) {
-      ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
-      final TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
-      if (window != null) {
-        window.setBottomComponent(new ChoiceVariantsPanel((ChoiceTask)task));
-      }
-    }
+    TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
 
     WolfTheProblemSolver.getInstance(project).clearProblems(virtualFile);
     taskFile.setHighlightErrors(false);

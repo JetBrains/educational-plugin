@@ -85,8 +85,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
     setContent(mySplitPane);
 
-    //project.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-    //                                            new EduFileEditorManagerListener(this, project));
     Task task = EduUtils.getCurrentTask(project);
     setCurrentTask(project, task);
   }
@@ -160,6 +158,9 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     } else {
       setTaskText(project, myCurrentTask);
     }
+  }
+
+  public void updateTaskSpecificPanel(@Nullable Task task) {
   }
 
   public void setCurrentTask(@NotNull Project project, @Nullable Task task) {
