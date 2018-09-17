@@ -18,12 +18,15 @@ package com.jetbrains.edu.learning.ui.taskDescription;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -33,6 +36,7 @@ import java.awt.*;
 
 public class SwingToolWindow extends TaskDescriptionToolWindow {
   private JTextPane myTaskTextPane;
+  private JPanel myTaskSpecificPanel;
 
   public SwingToolWindow() {
     super();
@@ -40,8 +44,12 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
 
   @Override
   public JComponent createTaskInfoPanel(Project project) {
+    final JPanel panel = new JPanel(new VerticalFlowLayout());
+
     myTaskTextPane = new JTextPane();
-    final JBScrollPane scrollPane = new JBScrollPane(myTaskTextPane);
+    myTaskSpecificPanel = new JPanel(new BorderLayout());
+    panel.add(myTaskTextPane);
+    panel.add(myTaskSpecificPanel);
     myTaskTextPane.setContentType(new HTMLEditorKit().getContentType());
 
     final EditorColorsScheme editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
@@ -82,7 +90,18 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
         BrowserHyperlinkListener.INSTANCE.hyperlinkUpdate(e);
       }
     });
-    return scrollPane;
+    return new JBScrollPane(panel);
+  }
+
+  @Override
+  public void updateTaskSpecificPanel(@Nullable Task task) {
+    myTaskSpecificPanel.removeAll();
+    final JPanel panel = SwingTaskSpecificPanel.createSpecificPanel(task);
+    if (panel != null) {
+      myTaskSpecificPanel.add(panel, BorderLayout.CENTER);
+      myTaskSpecificPanel.revalidate();
+      myTaskSpecificPanel.repaint();
+    }
   }
 
   public void setText(@NotNull String text) {
