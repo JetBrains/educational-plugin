@@ -33,7 +33,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
 
   @Override
   public JComponent createTaskInfoPanel(Project project) {
-    myBrowserWindow = new BrowserWindow(project, true, false);
+    myBrowserWindow = new BrowserWindow(project, true);
     myBrowserWindow.addBackAndOpenButtons();
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));

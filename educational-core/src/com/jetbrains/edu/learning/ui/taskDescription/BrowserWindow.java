@@ -26,7 +26,6 @@ import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
@@ -86,15 +85,12 @@ public class BrowserWindow extends JFrame {
   private StackPane myPane;
 
   private WebEngine myEngine;
-  private ProgressBar myProgressBar;
   private final Project myProject;
   private boolean myLinkInNewBrowser;
-  private boolean myShowProgress;
 
-  public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow, final boolean showProgress) {
+  public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow) {
     myProject = project;
     myLinkInNewBrowser = linkInNewWindow;
-    myShowProgress = showProgress;
     setSize(new Dimension(900, 800));
     setLayout(new BorderLayout());
     setPanel(new JFXPanel());
@@ -156,15 +152,7 @@ public class BrowserWindow extends JFrame {
       myWebComponent.setOnDragDetected(event -> {});
       myEngine = myWebComponent.getEngine();
 
-
-      if (myShowProgress) {
-        myProgressBar = makeProgressBarWithListener();
-        myWebComponent.setVisible(false);
-        myPane.getChildren().addAll(myWebComponent, myProgressBar);
-      }
-      else {
-        myPane.getChildren().add(myWebComponent);
-      }
+      myPane.getChildren().add(myWebComponent);
       if (myLinkInNewBrowser) {
         initHyperlinkListener();
       }
@@ -192,17 +180,11 @@ public class BrowserWindow extends JFrame {
 
     VirtualFile taskDir = task.getTaskDir(myProject);
     if (taskDir == null) {
-      Platform.runLater(() -> {
-        updateLookWithProgressBarIfNeeded();
-        myEngine.loadContent(createHtmlWithCodeHighlighting(content, course));
-      });
+      Platform.runLater(() -> myEngine.loadContent(createHtmlWithCodeHighlighting(content, course)));
       return;
     }
 
-    Platform.runLater(() -> {
-      updateLookWithProgressBarIfNeeded();
-      myEngine.loadContent(doProcessContent(content, taskDir, myProject));
-    });
+    Platform.runLater(() -> myEngine.loadContent(doProcessContent(content, taskDir, myProject)));
   }
 
   @TestOnly
@@ -292,13 +274,6 @@ public class BrowserWindow extends JFrame {
     template = template.replace("${code}", content);
 
     return template;
-  }
-
-  private void updateLookWithProgressBarIfNeeded() {
-    if (myShowProgress) {
-      myProgressBar.setVisible(true);
-      myWebComponent.setVisible(false);
-    }
   }
 
   private void initHyperlinkListener() {
@@ -451,22 +426,6 @@ public class BrowserWindow extends JFrame {
     });
     button.setToolTipText(toolTipText);
     return button;
-  }
-
-
-  private ProgressBar makeProgressBarWithListener() {
-    final ProgressBar progress = new ProgressBar();
-    progress.progressProperty().bind(myWebComponent.getEngine().getLoadWorker().progressProperty());
-
-    myWebComponent.getEngine().getLoadWorker().stateProperty().addListener(
-      (ov, oldState, newState) -> {
-        if (myWebComponent.getEngine().getLocation().contains("http") && newState == Worker.State.SUCCEEDED) {
-          myProgressBar.setVisible(false);
-          myWebComponent.setVisible(true);
-        }
-      });
-
-    return progress;
   }
 
   @NotNull
