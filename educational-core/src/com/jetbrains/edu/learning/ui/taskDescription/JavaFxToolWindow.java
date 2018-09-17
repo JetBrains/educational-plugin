@@ -17,7 +17,6 @@ package com.jetbrains.edu.learning.ui.taskDescription;
 
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.editor.TaskSpecificPanel;
 import javafx.embed.swing.JFXPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +44,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   public void updateTaskSpecificPanel(@Nullable Task task) {
-    taskSpecificPanel.setScene(TaskSpecificPanel.createScene(task));
+    taskSpecificPanel.setScene(JavaFxTaskSpecificPanel.createScene(task));
   }
 
   @Override
