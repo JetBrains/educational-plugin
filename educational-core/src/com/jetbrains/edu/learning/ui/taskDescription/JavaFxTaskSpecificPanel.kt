@@ -27,13 +27,24 @@ private const val RIGHT_INSET = 10.0
 private const val TOP_INSET = 15.0
 private const val BOTTOM_INSET = 10.0
 
-const val MULTIPLE_CHOICE_LABEL = "Select one or more options from the list:"
-const val SINGLE_CHOICE_LABEL = "Select one option from the list:"
+private fun createSelectionListener(task: ChoiceTask, index: Int): (ObservableValue<out Boolean>, Boolean, Boolean) -> Unit {
+  return { _, _, isSelected ->
+    if (isSelected) {
+      task.selectedVariants.add(index)
+    }
+    else {
+      task.selectedVariants.remove(index)
+    }
+  }
+}
 
 fun Task?.createScene(): Scene? {
   val choiceTask = this as? ChoiceTask ?: return null
   return choiceTask.createScene()
 }
+
+private const val MULTIPLE_CHOICE_LABEL = "Select one or more options from the list:"
+private const val SINGLE_CHOICE_LABEL = "Select one option from the list:"
 
 fun ChoiceTask.createScene(): Scene {
   val group = Group()
@@ -42,9 +53,13 @@ fun ChoiceTask.createScene(): Scene {
   Platform.runLater {
     val vBox = VBox()
     vBox.spacing = 10.0
-    vBox.padding = Insets(TOP_INSET, RIGHT_INSET, BOTTOM_INSET, LEFT_INSET)
+    vBox.padding = Insets(TOP_INSET,
+                          RIGHT_INSET,
+                          BOTTOM_INSET,
+                          LEFT_INSET)
     if (this.isMultipleChoice) {
-      val text = createLabel(MULTIPLE_CHOICE_LABEL)
+      val text = createLabel(
+        MULTIPLE_CHOICE_LABEL)
 
       vBox.children.add(text)
       for ((index, variant) in this.choiceVariants.withIndex()) {
@@ -54,7 +69,8 @@ fun ChoiceTask.createScene(): Scene {
     }
     else {
       val toggleGroup = ToggleGroup()
-      val text = createLabel(SINGLE_CHOICE_LABEL)
+      val text = createLabel(
+        SINGLE_CHOICE_LABEL)
       vBox.children.add(text)
       for ((index, variant) in this.choiceVariants.withIndex()) {
         val radioButton = createRadioButton(variant, index, toggleGroup, this)
@@ -66,17 +82,6 @@ fun ChoiceTask.createScene(): Scene {
 
   LafManager.getInstance().addLafManagerListener(StudyLafManagerListener(scene))
   return scene
-}
-
-private fun createSelectionListener(task: ChoiceTask, index: Int): (ObservableValue<out Boolean>, Boolean, Boolean) -> Unit {
-  return { _, _, isSelected ->
-    if (isSelected) {
-      task.selectedVariants.add(index)
-    }
-    else {
-      task.selectedVariants.remove(index)
-    }
-  }
 }
 
 private fun createLabel(text: String): Label {
