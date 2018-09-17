@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 package com.jetbrains.edu.learning.ui.taskDescription;
+
 import com.intellij.openapi.project.Project;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.editor.TaskSpecificPanel;
+import javafx.embed.swing.JFXPanel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   private BrowserWindow myBrowserWindow;
+  private JFXPanel taskSpecificPanel;
 
   public JavaFxToolWindow() {
     super();
@@ -33,7 +39,13 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
     JPanel panel = new JPanel();
     panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
     panel.add(myBrowserWindow.getPanel());
+    taskSpecificPanel = new JFXPanel();
+    panel.add(taskSpecificPanel);
     return panel;
+  }
+
+  public void updateTaskSpecificPanel(@Nullable Task task) {
+    taskSpecificPanel.setScene(TaskSpecificPanel.createScene(task));
   }
 
   @Override

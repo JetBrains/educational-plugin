@@ -136,7 +136,7 @@ public class BrowserWindow extends JFrame {
   }
 
   @NotNull
-  private static String getBrowserStylesheet(boolean isDarcula) {
+  public static String getBrowserStylesheet(boolean isDarcula) {
     if (SystemInfo.isMac) {
       return isDarcula ? "/style/javaFXBrowserDarcula_mac.css" : "/style/javaFXBrowser_mac.css";
     }
