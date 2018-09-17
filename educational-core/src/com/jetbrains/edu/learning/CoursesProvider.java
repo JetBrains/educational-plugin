@@ -3,11 +3,11 @@ package com.jetbrains.edu.learning;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseLoading.BundledCoursesProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.OpenApiExtKt.checkIsBackgroundThread;
 
@@ -31,8 +31,23 @@ public interface CoursesProvider {
    */
   static List<Course> loadAllCourses() {
     checkIsBackgroundThread();
-    return Arrays.stream(Extensions.getExtensions(EP_NAME))
-      .flatMap(provider -> provider.loadCourses().stream())
-      .collect(Collectors.toList());
+
+    List<Course> courses = new ArrayList<>();
+    for (CoursesProvider provider : Extensions.getExtensions(EP_NAME)) {
+      List<Course> providedCourses = provider.loadCourses();
+      if (provider instanceof BundledCoursesProvider) {
+        //do not add bundled course if there are the same remote courses
+        for (Course providedCourse : providedCourses) {
+          if (courses.stream().anyMatch(course -> course.getName().equals(providedCourse.getName()))) {
+            continue;
+          }
+          courses.add(providedCourse);
+        }
+      }
+      else {
+       courses.addAll(providedCourses);
+      }
+    }
+    return courses;
   }
 }
