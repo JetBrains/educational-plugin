@@ -102,7 +102,8 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
         "android-styles.xml" to FileInfo("src/main/res/values/styles.xml", TASK_FILE),
         "android-strings.xml" to FileInfo("src/main/res/values/strings.xml", TASK_FILE),
         "android-colors.xml" to FileInfo("src/main/res/values/colors.xml", TASK_FILE),
-        "android-ExampleUnitTest.kt" to FileInfo("src/test/java/$packagePath/ExampleUnitTest.kt", TEST_FILE)
+        "android-ExampleUnitTest.kt" to FileInfo("src/test/java/$packagePath/ExampleUnitTest.kt", TEST_FILE),
+        "android-AndroidEduTestRunner.kt" to FileInfo("src/androidTest/java/$packageName/AndroidEduTestRunner.kt", TEST_FILE)
       )
     }
   }
