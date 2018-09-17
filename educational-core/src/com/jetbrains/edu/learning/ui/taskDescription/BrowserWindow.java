@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.ui.taskDescription;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -28,7 +26,6 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,10 +37,6 @@ import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +47,7 @@ import java.util.regex.Pattern;
 
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL;
 
-public class BrowserWindow extends JFrame {
+public class BrowserWindow {
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
   private static final String EVENT_TYPE_CLICK = "click";
   private static final Pattern IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?");
@@ -91,10 +84,7 @@ public class BrowserWindow extends JFrame {
   public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow) {
     myProject = project;
     myLinkInNewBrowser = linkInNewWindow;
-    setSize(new Dimension(900, 800));
-    setLayout(new BorderLayout());
     setPanel(new JFXPanel());
-    setTitle("Study Browser");
     LafManager.getInstance().addLafManagerListener(new StudyLafManagerListener());
     initComponents();
   }
@@ -161,9 +151,6 @@ public class BrowserWindow extends JFrame {
       myPanel.setVisible(true);
       updateLaf(LafManager.getInstance().getCurrentLookAndFeel() instanceof DarculaLookAndFeelInfo);
     });
-
-    add(myPanel, BorderLayout.CENTER);
-    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
   }
 
   public void loadContent(@NotNull final String content) {
@@ -376,56 +363,6 @@ public class BrowserWindow extends JFrame {
         return attributes.getNamedItem("href").getNodeValue();
       }
     };
-  }
-
-  public void addBackAndOpenButtons() {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      final JPanel panel = new JPanel();
-      panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-
-      final JButton backButton = makeGoButton("Click to go back", AllIcons.Actions.Back, -1);
-      final JButton forwardButton = makeGoButton("Click to go forward", AllIcons.Actions.Forward, 1);
-      final JButton openInBrowser = new JButton(AllIcons.Actions.Browser_externalJavaDoc);
-      openInBrowser.addActionListener(e -> BrowserUtil.browse(myEngine.getLocation()));
-      openInBrowser.setToolTipText("Click to open link in browser");
-      addButtonsAvailabilityListeners(backButton, forwardButton);
-
-      panel.setMaximumSize(new Dimension(40, getPanel().getHeight()));
-      panel.add(backButton);
-      panel.add(forwardButton);
-      panel.add(openInBrowser);
-
-      add(panel, BorderLayout.PAGE_START);
-    });
-  }
-
-  private void addButtonsAvailabilityListeners(JButton backButton, JButton forwardButton) {
-    Platform.runLater(() -> myEngine.getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
-      if (newState == Worker.State.SUCCEEDED) {
-        final WebHistory history = myEngine.getHistory();
-        boolean isGoBackAvailable = history.getCurrentIndex() > 0;
-        boolean isGoForwardAvailable = history.getCurrentIndex() < history.getEntries().size() - 1;
-        ApplicationManager.getApplication().invokeLater(() -> {
-          backButton.setEnabled(isGoBackAvailable);
-          forwardButton.setEnabled(isGoForwardAvailable);
-        });
-      }
-    }));
-  }
-
-  private JButton makeGoButton(@NotNull final String toolTipText, @NotNull final Icon icon, final int direction) {
-    final JButton button = new JButton(icon);
-    button.setEnabled(false);
-    button.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 1) {
-          Platform.runLater(() -> myEngine.getHistory().go(direction));
-        }
-      }
-    });
-    button.setToolTipText(toolTipText);
-    return button;
   }
 
   @NotNull
