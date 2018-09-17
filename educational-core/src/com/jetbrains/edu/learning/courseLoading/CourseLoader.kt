@@ -21,7 +21,6 @@ object CourseLoader {
           ProgressManager.getInstance().progressIndicator.isIndeterminate = true
           val courses = execCancelable<List<Course>>(Callable<List<Course>> { CoursesProvider.loadAllCourses() })
           if (courses == null) return@runProcessWithProgressSynchronously emptyList()
-          courses.sortedBy(Course::isAdaptive)
           courses
         }, "Getting Available Courses", true, null)
     }
