@@ -49,7 +49,7 @@ public class PyCheckiOMissionCheck implements Callable<CheckResult> {
     myTask = task;
 
     myResultHandler = new CheckiOTestResultHandler();
-    myBrowserWindow = new BrowserWindow(myProject, false, false);
+    myBrowserWindow = new BrowserWindow(myProject, false);
   }
 
   @NotNull
