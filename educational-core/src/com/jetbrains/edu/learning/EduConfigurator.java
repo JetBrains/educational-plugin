@@ -112,10 +112,6 @@ public interface EduConfigurator<Settings> {
     return group;
   }
 
-  default List<String> getBundledCoursePaths() {
-    return Collections.emptyList();
-  }
-
   /**
    * Allows to determine if configurator can be used in current environment or not.
    *

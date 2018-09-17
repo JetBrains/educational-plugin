@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning;
 
-import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
@@ -8,7 +7,6 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
 import com.intellij.lang.Language;
-import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -34,7 +32,6 @@ import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -55,11 +52,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.content.Content;
-import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.Time;
 import com.intellij.util.TimeoutUtil;
-import com.intellij.util.io.ZipUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
@@ -773,29 +768,6 @@ public class EduUtils {
     }
   }
 
-  public static File getBundledCourseRoot(final String courseName, Class clazz) {
-    @NonNls String jarPath = PathUtil.getJarPathForClass(clazz);
-    if (jarPath.endsWith(".jar")) {
-      final File jarFile = new File(jarPath);
-      File pluginBaseDir = jarFile.getParentFile();
-      File coursesDir = new File(pluginBaseDir, "courses");
-
-      if (!coursesDir.exists()) {
-        if (!coursesDir.mkdir()) {
-          LOG.info("Failed to create courses dir");
-          return coursesDir;
-        }
-      }
-      try {
-        ZipUtil.extract(jarFile, pluginBaseDir, (dir, name) -> name.equals(courseName));
-      } catch (IOException e) {
-        LOG.info("Failed to extract default course", e);
-      }
-      return coursesDir;
-    }
-    return new File(jarPath, "courses");
-  }
-
   public static void enableAction(@NotNull final AnActionEvent event, boolean isEnable) {
     final Presentation presentation = event.getPresentation();
     presentation.setVisible(isEnable);
@@ -998,51 +970,6 @@ public class EduUtils {
       }
     }
     return fileWindows;
-  }
-
-  /**
-   * @return null if process was canceled, otherwise not null list of courses
-   */
-  @Nullable
-  public static List<Course> getCourseInfosUnderProgress() {
-    try {
-      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        List<Course> courses = execCancelable(CoursesProvider::loadAllCourses);
-        if (courses == null) return Lists.newArrayList();
-        List<Course> bundledCourses = getBundledCourses();
-        for (Course bundledCourse : bundledCourses) {
-          if (courses.stream().anyMatch(course -> course.getName().equals(bundledCourse.getName()))) {
-            continue;
-          }
-          courses.add(bundledCourse);
-        }
-        Collections.sort(courses, (c1, c2) -> Boolean.compare(c1.isAdaptive(), c2.isAdaptive()));
-        return courses;
-      }, "Getting Available Courses", true, null);
-    } catch (ProcessCanceledException e) {
-      return null;
-    } catch (RuntimeException e) {
-      return Lists.newArrayList();
-    }
-  }
-
-  @NotNull
-  private static List<Course> getBundledCourses() {
-    final ArrayList<Course> courses = new ArrayList<>();
-    final List<LanguageExtensionPoint<EduConfigurator<?>>> extensions = EduConfiguratorManager.allExtensions();
-    for (LanguageExtensionPoint<EduConfigurator<?>> extension : extensions) {
-      final EduConfigurator configurator = extension.getInstance();
-      //noinspection unchecked
-      final List<String> paths = configurator.getBundledCoursePaths();
-      for (String path : paths) {
-        final Course localCourse = getLocalCourse(path);
-        if (localCourse != null) {
-          courses.add(localCourse);
-        }
-      }
-    }
-    return courses;
   }
 
   @Nullable
