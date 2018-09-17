@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseLoading.CourseLoader;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
@@ -155,7 +156,7 @@ public class CoursesPanel extends JPanel {
 
   private void updateCoursesList() {
     Course selectedCourse = myCoursesList.getSelectedValue();
-    List<Course> courses = EduUtils.getCourseInfosUnderProgress();
+    List<Course> courses = CourseLoader.getCourseInfosUnderProgress();
     myCourses = courses != null ? courses : Lists.newArrayList();
     updateModel(myCourses, selectedCourse.getName(), selectedCourse.isFromZip());
     myErrorLabel.setVisible(false);

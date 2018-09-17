@@ -1,25 +1,16 @@
 package com.jetbrains.edu.python.learning;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.python.learning.pycharm.PyTaskCheckerProvider;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-
 public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
-
-  private static final String COURSE_NAME = "Introduction to Python.zip";
-
   public static final String PYTHON_3 = "3.x";
   public static final String PYTHON_2 = "2.x";
   public static final String TESTS_PY = "tests.py";
@@ -47,12 +38,6 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   @Override
   public boolean isTestFile(@NotNull Project project, @NotNull VirtualFile file) {
     return TESTS_PY.equals(file.getName());
-  }
-
-  @Override
-  public List<String> getBundledCoursePaths() {
-    File bundledCourseRoot = EduUtils.getBundledCourseRoot(COURSE_NAME, PyConfigurator.class);
-    return Collections.singletonList(FileUtil.join(bundledCourseRoot.getAbsolutePath(), COURSE_NAME));
   }
 
   @Override
