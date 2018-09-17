@@ -13,6 +13,7 @@ import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
@@ -36,9 +37,15 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
       if (value != null) {
         readyToCheck()
       }
+
+      taskTextTW.updateTaskSpecificPanel(value)
       UIUtil.setBackgroundRecursively(checkPanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
       field = value
     }
+
+  fun updateTaskSpecificPanel() {
+    taskTextTW.updateTaskSpecificPanel(currentTask)
+  }
 
   fun readyToCheck() {
     checkPanel.readyToCheck()
@@ -65,8 +72,7 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
 
     setContent(panel)
 
-    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER,
-                                           EduFileEditorManagerListener(project))
+    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
     currentTask = EduUtils.getCurrentTask(project)
   }
 
@@ -76,6 +82,9 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
 
   fun checkFinished(checkResult: CheckResult) {
     checkPanel.checkFinished(checkResult)
+    if (checkResult.status == CheckStatus.Failed) {
+      updateTaskSpecificPanel()
+    }
   }
 
   private fun JPanel.addWithLeftAlignment(component: JComponent) {
