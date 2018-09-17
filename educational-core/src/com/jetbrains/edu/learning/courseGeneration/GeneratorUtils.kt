@@ -195,7 +195,8 @@ object GeneratorUtils {
   }
 
   @Throws(IOException::class)
-  private fun <T> runInWriteActionAndWait(action: ThrowableComputable<T, IOException>): T {
+  @JvmStatic
+  fun <T> runInWriteActionAndWait(action: ThrowableComputable<T, IOException>): T {
     val application = ApplicationManager.getApplication()
     val resultRef = AtomicReference<T>()
     val exceptionRef = AtomicReference<IOException>()
