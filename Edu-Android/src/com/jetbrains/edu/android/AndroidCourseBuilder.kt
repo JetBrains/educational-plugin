@@ -1,15 +1,14 @@
 package com.jetbrains.edu.android
 
-import com.android.tools.idea.sdk.IdeSdks
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.jetbrains.edu.android.AndroidCourseBuilder.Type.*
-import com.jetbrains.edu.coursecreator.actions.StudyItemType
-import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.LanguageSettings
@@ -20,21 +19,20 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
+import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = "android-build.gradle"
 
-  override val templates: Map<String, String>
-    get() = super.templates + Pair("local.properties", "android-local.properties")
+  override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = AndroidCourseProjectGenerator(this, course)
 
   override fun templateVariables(project: Project): Map<String, String> {
     // TODO: extract suitable android gradle plugin version from android plugin
     // TODO: use com.jetbrains.edu.kotlin.KtCourseBuilder.Companion#getKotlinPluginVersion
     return super.templateVariables(project) + mapOf("ANDROID_GRADLE_PLUGIN_VERSION" to "3.1.3",
-                                                    "KOTLIN_VERSION" to "1.2.50",
-                                                    "SDK_PATH" to (IdeSdks.getInstance().androidSdkPath?.absolutePath ?: ""))
+                                                    "KOTLIN_VERSION" to "1.2.50")
   }
 
   override fun showNewStudyItemUi(
