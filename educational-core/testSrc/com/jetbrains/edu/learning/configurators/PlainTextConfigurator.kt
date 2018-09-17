@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.configurators
 
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduConfigurator
@@ -21,7 +22,7 @@ class PlainTextConfigurator : EduConfigurator<Unit> {
 
   override fun getTaskCheckerProvider() = TaskCheckerProvider { task, project ->
     object : TaskChecker<EduTask>(task, project) {
-      override fun check(): CheckResult = CheckResult(CheckStatus.Solved, "")
+      override fun check(indicator: ProgressIndicator): CheckResult = CheckResult(CheckStatus.Solved, "")
     }
   }
 }
