@@ -179,13 +179,13 @@ public class CheckAction extends DumbAwareActionWithShortcut {
         TaskDescriptionView.getInstance(myProject).checkStarted();
       }
 
-      CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check();
+      CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check(indicator);
       if (localCheckResult.getStatus() == CheckStatus.Failed) {
         myResult = localCheckResult;
         return;
       }
       RemoteTaskChecker remoteChecker = RemoteTaskCheckerManager.remoteCheckerForTask(myProject, myTask);
-      myResult = remoteChecker == null ? localCheckResult : remoteChecker.check(myProject, myTask);
+      myResult = remoteChecker == null ? localCheckResult : remoteChecker.check(myProject, myTask, indicator);
     }
 
     @Override

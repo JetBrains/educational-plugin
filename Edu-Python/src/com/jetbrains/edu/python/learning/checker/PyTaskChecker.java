@@ -6,6 +6,7 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -36,7 +37,7 @@ public class PyTaskChecker extends TaskChecker<EduTask> {
 
   @NotNull
   @Override
-  public CheckResult check() {
+  public CheckResult check(@NotNull ProgressIndicator indicator) {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       LOG.info("taskDir is null for task " + task.getName());

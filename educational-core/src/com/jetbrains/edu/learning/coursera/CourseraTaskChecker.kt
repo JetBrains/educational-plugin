@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.coursera
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.vfs.VfsUtil
@@ -31,7 +32,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     EduUtils.isStudentProject(project) && CourseraNames.COURSE_TYPE == task.course.courseType
 
 
-  override fun check(project: Project, task: Task): CheckResult {
+  override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     val courseraSettings = CourseraSettings.getInstance()
     var askedForCredentials = false
     if (!courseraSettings.haveFullCredentials()) {

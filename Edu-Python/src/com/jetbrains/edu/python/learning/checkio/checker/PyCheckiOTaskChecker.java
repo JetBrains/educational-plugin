@@ -2,7 +2,7 @@ package com.jetbrains.edu.python.learning.checkio.checker;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ex.ApplicationUtil;
-import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
@@ -61,12 +61,12 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
 
   @NotNull
   @Override
-  public CheckResult check() {
+  public CheckResult check(@NotNull ProgressIndicator indicator) {
     final PyCheckiOMissionCheck missionCheck = new PyCheckiOMissionCheck(project, task);
 
     try {
       final CheckResult checkResult =
-        ApplicationUtil.runWithCheckCanceled(missionCheck, ProgressManager.getInstance().getProgressIndicator());
+        ApplicationUtil.runWithCheckCanceled(missionCheck, indicator);
 
       if (checkResult.getStatus() != CheckStatus.Unchecked) {
         showTestResultPanel(missionCheck.getBrowserPanel());

@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtil
@@ -30,7 +31,7 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
     CheckUtils.showTestResultsToolWindow(project, details?: message)
   }
 
-  override fun check(): CheckResult {
+  override fun check(indicator: ProgressIndicator): CheckResult {
     val configuration = createDefaultRunConfiguration(project) ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()
     val runner = RunnerRegistry.getInstance().getRunner(executor.id, configuration.configuration)

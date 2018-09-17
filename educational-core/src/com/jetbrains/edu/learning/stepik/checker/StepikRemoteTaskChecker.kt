@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.checker
 
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -18,7 +19,7 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
   private val Task.shouldBeCheckedOnStepik: Boolean
     get() = this is ChoiceTask || this is CodeTask
 
-  override fun check(project: Project, task: Task): CheckResult {
+  override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     val user = EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
     return when (task) {
       is ChoiceTask -> StepikAdaptiveConnector.checkChoiceTask(task, user)
