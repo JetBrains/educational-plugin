@@ -12,9 +12,11 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
 import java.awt.Component
@@ -54,6 +56,11 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
   fun init() {
     val panel = JPanel()
     panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+
+    val course = StudyTaskManager.getInstance(project).course
+    if (course != null && course.isAdaptive) {
+      panel.addWithLeftAlignment(StepikAdaptiveReactionsPanel(project))
+    }
 
     taskTextTW = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
     taskTextPanel = taskTextTW.createTaskInfoPanel(project)
