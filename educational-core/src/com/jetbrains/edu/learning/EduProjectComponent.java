@@ -45,6 +45,7 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,10 +115,7 @@ public class EduProjectComponent implements ProjectComponent {
     myBusConnection.subscribe(EditorColorsManager.TOPIC, new EditorColorsListener() {
       @Override
       public void globalSchemeChange(EditorColorsScheme scheme) {
-        final TaskDescriptionToolWindow toolWindow = getStudyToolWindow(myProject);
-        if (toolWindow != null) {
-          toolWindow.updateFonts(myProject);
-        }
+        TaskDescriptionView.getInstance(myProject).updateFonts();
       }
     });
   }

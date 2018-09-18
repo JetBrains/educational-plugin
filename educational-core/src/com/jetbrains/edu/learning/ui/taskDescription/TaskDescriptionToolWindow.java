@@ -150,8 +150,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
   public abstract void setText(@NotNull String text);
   
-  public void updateFonts(@NotNull Project project) {}
-
   public void updateTask(@NotNull Project project, @Nullable Task task) {
     if (myCurrentTask != task) {
       setCurrentTask(project, task);
