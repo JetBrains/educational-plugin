@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.kotlinPluginVersion
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
@@ -30,9 +31,8 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override fun templateVariables(project: Project): Map<String, String> {
     // TODO: extract suitable android gradle plugin version from android plugin
-    // TODO: use com.jetbrains.edu.kotlin.KtCourseBuilder.Companion#getKotlinPluginVersion
     return super.templateVariables(project) + mapOf("ANDROID_GRADLE_PLUGIN_VERSION" to "3.1.3",
-                                                    "KOTLIN_VERSION" to "1.2.50")
+                                                    "KOTLIN_VERSION" to kotlinPluginVersion())
   }
 
   override fun showNewStudyItemUi(

@@ -10,7 +10,7 @@ import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.net.ssl.CertificateManager;
 import com.intellij.util.net.ssl.ConfirmingTrustManager;
 import com.jetbrains.edu.learning.EduNames;
-import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.PluginUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
@@ -148,7 +148,7 @@ public class StepikClient {
 
   @NotNull
   private static String getUserAgent() {
-    String pluginVersion = EduVersions.pluginVersion(EduNames.PLUGIN_ID);
+    String pluginVersion = PluginUtils.pluginVersion(EduNames.PLUGIN_ID);
     String version = pluginVersion == null ? "unknown" : pluginVersion;
 
     return String.format("%s/version(%s)/%s/%s", StepikNames.PLUGIN_NAME, version, System.getProperty("os.name"),
