@@ -39,6 +39,7 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
           LOG.error("Failed to get local course from $link")
           continue
         }
+        localCourse.courseType = CourseraNames.COURSE_TYPE
         courses.add(localCourse)
       }
       return courses
