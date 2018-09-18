@@ -23,7 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
@@ -312,7 +312,7 @@ public class StepikAdaptiveConnector {
     lesson.getTaskList().set(taskIndex - 1, task);
 
     updateProjectFiles(project, task, oldTaskName, course.getLanguageById());
-    setToolWindowText(project, task);
+    TaskDescriptionView.getInstance(project).setCurrentTask(task);
   }
 
   private static void updateProjectFiles(@NotNull Project project, @NotNull Task task, String oldTaskName, Language language) {
@@ -348,13 +348,6 @@ public class StepikAdaptiveConnector {
     }
 
     taskDir.delete(StepikAdaptiveConnector.class);
-  }
-
-  private static void setToolWindowText(@NotNull Project project, @NotNull Task task) {
-    final TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
-    if (window != null) {
-      ApplicationManager.getApplication().invokeLater(() -> window.setCurrentTask(project, task));
-    }
   }
 
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepicUser user) {
