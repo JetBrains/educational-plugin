@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.coursera
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.io.FileUtil
@@ -21,7 +22,7 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
     val courses = CourseLoader.getCourseInfosUnderProgress {
       CoursesProvider.loadAllCourses(listOf(CourseraAssignmentsProvider))
     } ?: return
-    BrowseCoursesDialog(courses).show()
+    BrowseCoursesDialog(courses, DefaultActionGroup(ImportCourseraAssignment())).show()
   }
 
   private object CourseraAssignmentsProvider : CoursesProvider {

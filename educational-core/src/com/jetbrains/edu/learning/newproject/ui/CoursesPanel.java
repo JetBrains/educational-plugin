@@ -3,10 +3,7 @@ package com.jetbrains.edu.learning.newproject.ui;
 import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.Language;
-import com.intellij.openapi.actionSystem.ActionToolbarPosition;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -66,13 +63,15 @@ public class CoursesPanel extends JPanel {
   private List<Course> myCourses;
   private List<CourseValidationListener> myListeners = new ArrayList<>();
   private MessageBusConnection myBusConnection;
+  private @Nullable ActionGroup myCustomToolbarActions;
 
   private ErrorState myErrorState = ErrorState.NothingSelected.INSTANCE;
 
-  public CoursesPanel(@NotNull List<Course> courses) {
+  public CoursesPanel(@NotNull List<Course> courses, @Nullable DefaultActionGroup customToolbarActions) {
     myCourses = courses;
     setLayout(new BorderLayout());
     add(myMainPanel, BorderLayout.CENTER);
+    myCustomToolbarActions = customToolbarActions;
     initUI();
   }
 
@@ -91,8 +90,7 @@ public class CoursesPanel extends JPanel {
 
     ToolbarDecorator toolbarDecorator = ToolbarDecorator.createDecorator(myCoursesList).
       disableAddAction().disableRemoveAction().disableUpDownActions().setToolbarPosition(ActionToolbarPosition.BOTTOM);
-    DefaultActionGroup group =
-      new DefaultActionGroup(new ImportCourseAction());
+    ActionGroup group = myCustomToolbarActions != null ? myCustomToolbarActions : new DefaultActionGroup(new ImportCourseAction());
     toolbarDecorator.setActionGroup(group);
 
     JPanel toolbarDecoratorPanel = toolbarDecorator.createPanel();
