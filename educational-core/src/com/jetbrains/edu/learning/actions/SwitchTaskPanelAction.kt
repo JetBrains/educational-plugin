@@ -9,6 +9,7 @@ import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -23,14 +24,15 @@ class SwitchTaskPanelAction : AnAction() {
       val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
       toolWindow.contentManager.removeAllContents(false)
       TaskDescriptionToolWindowFactory().createToolWindowContent(project, toolWindow)
+      TaskDescriptionView.getInstance(project).updateTaskDescription()
     }
   }
   
-  fun createDialog(): DialogWrapper = MyDialog(false)
+  private fun createDialog(): DialogWrapper = MyDialog(false)
 
   class MyDialog(canBeParent: Boolean) : DialogWrapper(null, canBeParent) {
-    val JAVAFX_ITEM = "JavaFX"
-    val SWING_ITEM = "Swing"
+    private val JAVAFX_ITEM = "JavaFX"
+    private val SWING_ITEM = "Swing"
     private val myComboBox: ComboBox<String> = ComboBox()
 
     override fun createCenterPanel(): JComponent? = myComboBox
