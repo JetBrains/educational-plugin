@@ -49,9 +49,13 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
     taskTextTW.updateTaskSpecificPanel(currentTask)
   }
 
-  fun updateFonts() {
-    setTaskText(currentTask)
+  fun updateTaskDescription(task: Task?) {
+    setTaskText(task)
     updateTaskSpecificPanel()
+  }
+
+  fun updateTaskDescription() {
+    updateTaskDescription(currentTask)
   }
 
   fun readyToCheck() {
