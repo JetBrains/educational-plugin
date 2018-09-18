@@ -156,7 +156,7 @@ public class CoursesPanel extends JPanel {
 
   private void updateCoursesList() {
     Course selectedCourse = myCoursesList.getSelectedValue();
-    List<Course> courses = CourseLoader.getCourseInfosUnderProgress();
+    List<Course> courses = CourseLoader.getCourseInfosUnderProgress(() -> CoursesProvider.loadAllCourses());
     myCourses = courses != null ? courses : Lists.newArrayList();
     updateModel(myCourses, selectedCourse.getName(), selectedCourse.isFromZip());
     myErrorLabel.setVisible(false);
