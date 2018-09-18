@@ -16,10 +16,11 @@ abstract class BundledCoursesProvider : CoursesProvider {
     val courses = mutableListOf<Course>()
     for (path in getBundledCoursesPaths()) {
       val localCourse = getLocalCourse(path)
-      if (localCourse != null) {
+      if (localCourse == null) {
         LOG.error("Failed to import local course form $path")
-        courses.add(localCourse)
+        continue
       }
+      courses.add(localCourse)
     }
     return courses
   }
