@@ -97,7 +97,15 @@ public interface EduCourseBuilder<Settings> {
   /**
    * Allows to update project modules and the whole project structure
    */
-  default void refreshProject(@NotNull final Project project) {}
+  default void refreshProject(@NotNull final Project project) {
+    refreshProject(project, null);
+  }
+
+  default void refreshProject(@NotNull final Project project, @Nullable ProjectRefreshListener listener) {
+    if (listener != null) {
+      listener.onSuccess();
+    }
+  }
 
   @Nullable
   default Lesson createInitialLesson(@NotNull Project project, @NotNull Course course) {
@@ -165,5 +173,10 @@ public interface EduCourseBuilder<Settings> {
   @Nullable
   default CourseProjectGenerator<Settings> getCourseProjectGenerator(@NotNull Course course) {
     return null;
+  }
+
+  interface ProjectRefreshListener {
+    default void onSuccess() {}
+    default void onFailure(@NotNull String errorMessage) {}
   }
 }

@@ -11,9 +11,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.externalSystem.model.DataNode;
-import com.intellij.openapi.externalSystem.model.project.ProjectData;
-import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.ex.KeymapManagerEx;
@@ -37,9 +34,10 @@ import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
 import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
+import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -47,7 +45,6 @@ import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -98,7 +95,7 @@ public class EduProjectComponent implements ProjectComponent {
         }
 
         if (EduGradleUtils.isConfiguredWithGradle(myProject)) {
-          setupGradleProject();
+          setupGradleProject(course);
         }
 
         addStepikWidget();
@@ -120,22 +117,22 @@ public class EduProjectComponent implements ProjectComponent {
     });
   }
 
-  private void setupGradleProject() {
-    String projectBasePath = myProject.getBasePath();
-    if (projectBasePath == null) {
-      LOG.error("Failed to refresh gradle project");
+  private void setupGradleProject(@NotNull Course course) {
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
+    if (configurator == null) {
+      LOG.warn(String.format("Failed to refresh gradle project: configurator for `%s` is null", course.getLanguageID()));
       return;
     }
 
     if (myProject.getUserData(CourseProjectGenerator.EDU_PROJECT_CREATED) == Boolean.TRUE) {
-      EduGradleUtils.importGradleProject(myProject, projectBasePath);
+      configurator.getCourseBuilder().refreshProject(myProject);
     } else if (isAndroidStudio()) {
       // Unexpectedly, Android Studio corrupts content root paths after course project reopening
       // And project structure can't show project tree because of it.
       // We don't know better and cleaner way how to fix it than to refresh project.
-      EduGradleUtils.importGradleProject(myProject, projectBasePath, new ExternalProjectRefreshCallback() {
+      configurator.getCourseBuilder().refreshProject(myProject, new EduCourseBuilder.ProjectRefreshListener() {
         @Override
-        public void onSuccess(@Nullable DataNode<ProjectData> externalProject) {
+        public void onSuccess() {
           // We have to open current opened file in project view manually
           // because it can't restore previous state.
           VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
@@ -148,14 +145,19 @@ public class EduProjectComponent implements ProjectComponent {
         }
 
         @Override
-        public void onFailure(@NotNull String errorMessage, @Nullable String errorDetails) { }
+        public void onFailure(@NotNull String errorMessage) {
+          LOG.warn("Failed to refresh gradle project: " + errorMessage);
+        }
       });
     }
 
     // Android Studio creates `gradlew` not via VFS so we have to refresh project dir
     VfsUtil.markDirtyAndRefresh(false, true, true, myProject.getBaseDir());
-    // Android Studio creates non executable `gradlew`
-    new File(FileUtil.toSystemDependentName(projectBasePath), "gradlew").setExecutable(true);
+    String projectBasePath = myProject.getBasePath();
+    if (projectBasePath != null) {
+      // Android Studio creates non executable `gradlew`
+      new File(FileUtil.toSystemDependentName(projectBasePath), "gradlew").setExecutable(true);
+    }
   }
 
   private void selectProjectView() {
