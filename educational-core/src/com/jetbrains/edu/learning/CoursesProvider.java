@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseLoading.BundledCoursesProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.jetbrains.edu.learning.OpenApiExtKt.checkIsBackgroundThread;
@@ -29,11 +30,11 @@ public interface CoursesProvider {
    *
    * @return list of loaded courses
    */
-  static List<Course> loadAllCourses() {
+  static List<Course> loadAllCourses(@NotNull List<CoursesProvider> providers) {
     checkIsBackgroundThread();
 
     List<Course> courses = new ArrayList<>();
-    for (CoursesProvider provider : Extensions.getExtensions(EP_NAME)) {
+    for (CoursesProvider provider : providers) {
       List<Course> providedCourses = provider.loadCourses();
       if (provider instanceof BundledCoursesProvider) {
         //do not add bundled course if there are the same remote courses
@@ -49,5 +50,9 @@ public interface CoursesProvider {
       }
     }
     return courses;
+  }
+
+  static List<Course> loadAllCourses() {
+    return loadAllCourses(Arrays.asList(Extensions.getExtensions(EP_NAME)));
   }
 }
