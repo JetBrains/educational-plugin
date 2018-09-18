@@ -45,7 +45,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-import static com.jetbrains.edu.learning.PluginUtilsKt.enablePlugins;
+import static com.jetbrains.edu.learning.PluginUtils.enablePlugins;
 
 public class CoursesPanel extends JPanel {
   private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
