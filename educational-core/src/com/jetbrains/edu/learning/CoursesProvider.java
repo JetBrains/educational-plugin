@@ -34,6 +34,7 @@ public interface CoursesProvider {
     checkIsBackgroundThread();
 
     List<Course> courses = new ArrayList<>();
+    providers.sort((o1, o2) -> Boolean.compare(o1 instanceof BundledCoursesProvider, o2 instanceof BundledCoursesProvider));
     for (CoursesProvider provider : providers) {
       List<Course> providedCourses = provider.loadCourses();
       if (provider instanceof BundledCoursesProvider) {
