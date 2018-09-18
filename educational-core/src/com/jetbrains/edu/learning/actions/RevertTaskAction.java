@@ -53,7 +53,8 @@ public class RevertTaskAction extends DumbAwareActionWithShortcut implements Rig
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
     showBalloon(project);
     ProjectView.getInstance(project).refresh();
-    EduUtils.updateToolWindows(project);
+    TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
+    EduUtils.updateCourseProgress(project);
   }
 
   private static void revertTaskFile(@NotNull final TaskFile taskFile, @NotNull final Project project) {
@@ -67,8 +68,6 @@ public class RevertTaskAction extends DumbAwareActionWithShortcut implements Rig
     resetDocument(document, taskFile);
     task.setStatus(CheckStatus.Unchecked);
     resetAnswerPlaceholders(taskFile);
-
-    TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
 
     WolfTheProblemSolver.getInstance(project).clearProblems(virtualFile);
     taskFile.setHighlightErrors(false);

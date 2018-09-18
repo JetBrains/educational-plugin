@@ -78,6 +78,7 @@ import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
@@ -182,14 +183,15 @@ public class EduUtils {
   }
 
   public static void updateToolWindows(@NotNull final Project project) {
-    final TaskDescriptionToolWindow taskDescriptionToolWindow = getStudyToolWindow(project);
-    if (taskDescriptionToolWindow != null) {
-      Task task = getCurrentTask(project);
-      taskDescriptionToolWindow.updateTask(project, task);
-      final AbstractProjectViewPane pane = ProjectView.getInstance(project).getCurrentProjectViewPane();
-      if (pane instanceof CourseViewPane && isStudentProject(project)) {
-        ((CourseViewPane)pane).updateCourseProgress();
-      }
+    Task task = getCurrentTask(project);
+    TaskDescriptionView.getInstance(project).updateTaskDescription(task);
+    updateCourseProgress(project);
+  }
+
+  public static void updateCourseProgress(@NotNull Project project) {
+    final AbstractProjectViewPane pane = ProjectView.getInstance(project).getCurrentProjectViewPane();
+    if (pane instanceof CourseViewPane && isStudentProject(project)) {
+      ((CourseViewPane)pane).updateCourseProgress();
     }
   }
 

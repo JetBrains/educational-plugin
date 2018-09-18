@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 
 class SynchronizeTaskDescription(val project: Project): DocumentListener {
   override fun documentChanged(event: DocumentEvent?) {
@@ -15,6 +16,6 @@ class SynchronizeTaskDescription(val project: Project): DocumentListener {
     }
     val task = EduUtils.getTaskForFile(project, editedFile) ?: return
     task.descriptionText = eventDocument.text
-    EduUtils.updateToolWindows(project)
+    TaskDescriptionView.getInstance(project).updateTaskDescription(task)
   }
 }

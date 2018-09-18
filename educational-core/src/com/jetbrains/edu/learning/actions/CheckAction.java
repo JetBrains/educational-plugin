@@ -202,7 +202,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       }
       TaskDescriptionView.getInstance(myProject).checkFinished(myResult);
       ApplicationManager.getApplication().invokeLater(() -> {
-        EduUtils.updateToolWindows(myProject);
+        EduUtils.updateCourseProgress(myProject);
         ProjectView.getInstance(myProject).refresh();
 
         for (CheckListener listener : CheckListener.EP_NAME.getExtensions()) {
