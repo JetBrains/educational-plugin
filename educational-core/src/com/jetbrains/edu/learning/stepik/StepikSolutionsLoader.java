@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -483,10 +483,7 @@ public class StepikSolutionsLoader implements Disposable {
 
   private static void updateUI(@NotNull Project project, @NotNull Task task) {
     ProjectView.getInstance(project).refresh();
-    TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
-    if (toolWindow != null) {
-      toolWindow.setCurrentTask(project, task);
-    }
+    TaskDescriptionView.getInstance(project).setCurrentTask(task);
     NavigationUtils.navigateToTask(project, task);
   }
 
