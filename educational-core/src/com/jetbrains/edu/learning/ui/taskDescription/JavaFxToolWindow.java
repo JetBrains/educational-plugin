@@ -50,11 +50,6 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
-  public void updateFonts(@NotNull Project project) {
-    super.setTaskText(project, myCurrentTask);
-  }
-
-  @Override
   public void setText(@NotNull String text) {
     myBrowserWindow.loadContent(text);
   }
