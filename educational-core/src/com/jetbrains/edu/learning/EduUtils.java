@@ -194,6 +194,7 @@ public class EduUtils {
   }
 
   @Nullable
+  @Deprecated
   public static TaskDescriptionToolWindow getStudyToolWindow(@NotNull final Project project) {
     if (project.isDisposed()) return null;
 
