@@ -3,6 +3,7 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.openapi.ui.VerticalFlowLayout
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.awt.event.ItemEvent
@@ -22,7 +23,7 @@ fun Task?.createSpecificPanel(): JPanel? {
 
 fun ChoiceTask.createSpecificPanel(): JPanel {
   val jPanel = JPanel(VerticalFlowLayout())
-  jPanel.border = BorderFactory.createEmptyBorder(TOP_INSET, LEFT_INSET, BOTTOM_INSET, RIGHT_INSET)
+  jPanel.border = JBUI.Borders.empty(TOP_INSET, LEFT_INSET, BOTTOM_INSET, RIGHT_INSET)
 
   if (this.isMultipleChoice) {
     val text = JLabel(MULTIPLE_CHOICE_LABEL, SwingConstants.LEFT)
