@@ -17,8 +17,8 @@ class LearnAndTeachAction : WelcomePopupAction() {
   override fun isSilentlyChooseSingleOption() = true
 
   override fun fillActions(group: DefaultActionGroup) {
-    group.addAll(BrowseCoursesAction(), ImportLocalCourseAction(),
-                 StartCourseraAssignment(), StartStepikCourseAction(),
+    group.addAll(BrowseCoursesAction(), StartCourseraAssignment(),
+                 ImportLocalCourseAction(), StartStepikCourseAction(),
                  CCNewCourseAction())
   }
 
