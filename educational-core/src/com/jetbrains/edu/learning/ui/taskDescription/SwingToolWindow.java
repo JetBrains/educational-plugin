@@ -18,7 +18,6 @@ package com.jetbrains.edu.learning.ui.taskDescription;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.components.JBScrollPane;
@@ -44,12 +43,12 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
 
   @Override
   public JComponent createTaskInfoPanel(Project project) {
-    final JPanel panel = new JPanel(new VerticalFlowLayout());
+    final JPanel panel = new JPanel(new BorderLayout());
 
     myTaskTextPane = new JTextPane();
     myTaskSpecificPanel = new JPanel(new BorderLayout());
-    panel.add(myTaskTextPane);
-    panel.add(myTaskSpecificPanel);
+    panel.add(new JBScrollPane(myTaskTextPane), BorderLayout.CENTER);
+    panel.add(myTaskSpecificPanel, BorderLayout.SOUTH);
     myTaskTextPane.setContentType(new HTMLEditorKit().getContentType());
 
     final EditorColorsScheme editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
@@ -90,13 +89,14 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
         BrowserHyperlinkListener.INSTANCE.hyperlinkUpdate(e);
       }
     });
-    return new JBScrollPane(panel);
+
+    return panel;
   }
 
   @Override
   public void updateTaskSpecificPanel(@Nullable Task task) {
     myTaskSpecificPanel.removeAll();
-    final JPanel panel = SwingTaskSpecificPanel.createSpecificPanel(task);
+    final JPanel panel = SwingTaskUtil.createSpecificPanel(task);
     if (panel != null) {
       myTaskSpecificPanel.add(panel, BorderLayout.CENTER);
       myTaskSpecificPanel.revalidate();

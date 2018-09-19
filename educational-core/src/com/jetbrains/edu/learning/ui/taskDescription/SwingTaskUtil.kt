@@ -1,4 +1,4 @@
-@file:JvmName("SwingTaskSpecificPanel")
+@file:JvmName("SwingTaskUtil")
 
 package com.jetbrains.edu.learning.ui.taskDescription
 
