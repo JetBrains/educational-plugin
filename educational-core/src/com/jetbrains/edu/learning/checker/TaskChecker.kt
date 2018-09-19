@@ -7,17 +7,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 open class TaskChecker<out T : Task>(@JvmField val task: T, @JvmField val project: Project) {
   open fun onTaskSolved(message: String) {
-
   }
 
   open fun onTaskFailed(message: String, details: String?) {
-
   }
 
-  open fun check() =
-    CheckResult(CheckStatus.Unchecked, "Check for ${task.taskType} task isn't available")
+  open fun check() = CheckResult(CheckStatus.Unchecked, "Check for ${task.taskType} task isn't available")
 
-    open fun clearState() {}
+  open fun clearState() {}
 
   companion object {
     const val EP_NAME = "Educational.taskChecker"
