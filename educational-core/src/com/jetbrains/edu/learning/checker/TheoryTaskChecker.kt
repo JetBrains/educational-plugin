@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
 open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<TheoryTask>(task, project) {
-  override fun onTaskSolved(message: String) {}
 
   override fun check(): CheckResult {
     val configuration = createDefaultRunConfiguration(project)

@@ -12,10 +12,6 @@ class GradleTheoryTaskChecker(
   private val mainClassForFile: (Project, VirtualFile) -> String?
 ) : TheoryTaskChecker(task, project) {
 
-  override fun onTaskSolved(message: String) {
-    // do not show popup
-  }
-
   override fun check(): CheckResult {
     val result = runGradleRunTask(project, task, mainClassForFile)
     val output = when (result) {

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.checker;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface TaskCheckerProvider {
     @NotNull
@@ -18,9 +19,9 @@ public interface TaskCheckerProvider {
         return new TheoryTaskChecker(task, project);
     }
 
-    @NotNull
+    @Nullable
     default TaskChecker<ChoiceTask> getChoiceTaskChecker(@NotNull ChoiceTask task, @NotNull Project project) {
-        return new ChoiceTaskChecker(task, project);
+        return null;
     }
 
     @NotNull
@@ -33,7 +34,7 @@ public interface TaskCheckerProvider {
         return new IdeTaskChecker(task, project);
     }
 
-    @NotNull
+    @Nullable
     default TaskChecker getTaskChecker(@NotNull Task task, @NotNull Project project) {
         if (task instanceof EduTask) {
             return getEduTaskChecker((EduTask) task, project);

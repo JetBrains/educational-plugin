@@ -31,6 +31,7 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CheckAction extends DumbAwareActionWithShortcut {
   public static final String SHORTCUT = "ctrl alt pressed ENTER";
@@ -152,7 +153,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
   private class StudyCheckTask extends com.intellij.openapi.progress.Task.Backgroundable {
     private final Project myProject;
     private final Task myTask;
-    private final TaskChecker myChecker;
+    @Nullable private final TaskChecker myChecker;
     private CheckResult myResult;
 
     public StudyCheckTask(@NotNull Project project, @NotNull Task task) {
@@ -192,10 +193,14 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       myTask.setStatus(status);
       switch (status) {
         case Failed:
-          myChecker.onTaskFailed(message, details);
+          if (myChecker != null) {
+            myChecker.onTaskFailed(message, details);
+          }
           break;
         case Solved:
-          myChecker.onTaskSolved(message);
+          if (myChecker != null) {
+            myChecker.onTaskSolved(message);
+          }
           break;
         default:
           CheckUtils.showTestResultPopUp(message, MessageType.WARNING.getPopupBackground(), myProject);
@@ -209,7 +214,9 @@ public class CheckAction extends DumbAwareActionWithShortcut {
           listener.afterCheck(myProject, myTask, myResult);
         }
       });
-      myChecker.clearState();
+      if (myChecker != null) {
+        myChecker.clearState();
+      }
       myCheckInProgress.set(false);
     }
 
