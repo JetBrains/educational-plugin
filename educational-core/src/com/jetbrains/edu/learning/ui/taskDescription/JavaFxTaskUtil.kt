@@ -1,4 +1,4 @@
-@file:JvmName("JavaFxTaskSpecificPanel")
+@file:JvmName("JavaFxTaskUtil")
 package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.ide.ui.LafManager
