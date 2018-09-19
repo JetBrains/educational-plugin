@@ -22,7 +22,9 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
     val courses = CourseLoader.getCourseInfosUnderProgress {
       CoursesProvider.loadAllCourses(listOf(CourseraAssignmentsProvider))
     } ?: return
-    BrowseCoursesDialog(courses, DefaultActionGroup(ImportCourseraAssignment())).show()
+    val dialog = BrowseCoursesDialog(courses, DefaultActionGroup(ImportCourseraAssignment()))
+    dialog.title = "Select Assignment"
+    dialog.show()
   }
 
   private object CourseraAssignmentsProvider : CoursesProvider {
