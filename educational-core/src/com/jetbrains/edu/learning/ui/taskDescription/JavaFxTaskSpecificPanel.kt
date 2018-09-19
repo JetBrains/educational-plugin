@@ -30,7 +30,7 @@ private const val BOTTOM_INSET = 10.0
 const val MULTIPLE_CHOICE_LABEL = "Select one or more options from the list:"
 const val SINGLE_CHOICE_LABEL = "Select one option from the list:"
 
-fun Task?.createScene(): Scene? {
+fun Task.createScene(): Scene? {
   val choiceTask = this as? ChoiceTask ?: return null
   return choiceTask.createScene()
 }
