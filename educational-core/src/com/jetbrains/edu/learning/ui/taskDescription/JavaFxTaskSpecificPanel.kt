@@ -39,30 +39,28 @@ fun ChoiceTask.createScene(): Scene {
   val group = Group()
   val scene = Scene(group, getSceneBackground())
 
-  Platform.runLater {
-    val vBox = VBox()
-    vBox.spacing = 10.0
-    vBox.padding = Insets(TOP_INSET, RIGHT_INSET, BOTTOM_INSET, LEFT_INSET)
-    if (this.isMultipleChoice) {
-      val text = createLabel(MULTIPLE_CHOICE_LABEL)
+  val vBox = VBox()
+  vBox.spacing = 10.0
+  vBox.padding = Insets(TOP_INSET, RIGHT_INSET, BOTTOM_INSET, LEFT_INSET)
+  if (this.isMultipleChoice) {
+    val text = createLabel(MULTIPLE_CHOICE_LABEL)
 
-      vBox.children.add(text)
-      for ((index, variant) in this.choiceVariants.withIndex()) {
-        val checkBox = createCheckbox(variant, index, this)
-        vBox.children.add(checkBox)
-      }
+    vBox.children.add(text)
+    for ((index, variant) in this.choiceVariants.withIndex()) {
+      val checkBox = createCheckbox(variant, index, this)
+      vBox.children.add(checkBox)
     }
-    else {
-      val toggleGroup = ToggleGroup()
-      val text = createLabel(SINGLE_CHOICE_LABEL)
-      vBox.children.add(text)
-      for ((index, variant) in this.choiceVariants.withIndex()) {
-        val radioButton = createRadioButton(variant, index, toggleGroup, this)
-        vBox.children.add(radioButton)
-      }
-    }
-    group.children.add(vBox)
   }
+  else {
+    val toggleGroup = ToggleGroup()
+    val text = createLabel(SINGLE_CHOICE_LABEL)
+    vBox.children.add(text)
+    for ((index, variant) in this.choiceVariants.withIndex()) {
+      val radioButton = createRadioButton(variant, index, toggleGroup, this)
+      vBox.children.add(radioButton)
+    }
+  }
+  group.children.add(vBox)
 
   LafManager.getInstance().addLafManagerListener(StudyLafManagerListener(scene))
   return scene
