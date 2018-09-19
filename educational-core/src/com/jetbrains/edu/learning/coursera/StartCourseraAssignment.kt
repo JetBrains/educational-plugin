@@ -28,8 +28,7 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
   }
 
   private object CourseraAssignmentsProvider : CoursesProvider {
-    //TODO: change to master
-    private const val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/liana/coursera-assignmnets-list/coursera-assignmnets.txt"
+    private const val LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/coursera-assignmnets.txt"
     private val LOG = Logger.getInstance(StartCourseraAssignment::class.java)
 
     override fun loadCourses(): List<Course> {
