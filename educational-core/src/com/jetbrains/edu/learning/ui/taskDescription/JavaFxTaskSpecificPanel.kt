@@ -113,12 +113,14 @@ private fun setUpLabelStyle(node: Label) {
   val isDarcula = LafManager.getInstance().currentLookAndFeel is DarculaLookAndFeelInfo
   val engineStyleUrl = object {}.javaClass.getResource(getBrowserStylesheet(isDarcula))
   node.stylesheets.add(engineStyleUrl.toExternalForm())
-  node.font = Font.font((EditorColorsManager.getInstance().globalScheme.editorFontSize + 2).toDouble())
+  node.font = Font.font(getFontSize())
 }
+
+private fun getFontSize() = (EditorColorsManager.getInstance().globalScheme.editorFontSize + 2).toDouble()
 
 private fun setUpButtonStyle(button: ButtonBase) {
   button.isWrapText = true
-  button.font = Font.font((EditorColorsManager.getInstance().globalScheme.editorFontSize + 2).toDouble())
+  button.font = Font.font(getFontSize())
   setButtonLaf(button)
 }
 
