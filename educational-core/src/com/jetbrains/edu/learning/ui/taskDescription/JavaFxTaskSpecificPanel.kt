@@ -5,6 +5,7 @@ import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo
 import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -40,7 +41,7 @@ fun ChoiceTask.createScene(): Scene {
   val scene = Scene(group, getSceneBackground())
 
   val vBox = VBox()
-  vBox.spacing = 10.0
+  vBox.spacing = JBUI.scale(10).toDouble()
   vBox.padding = Insets(TOP_INSET, RIGHT_INSET, BOTTOM_INSET, LEFT_INSET)
   if (this.isMultipleChoice) {
     val text = createLabel(MULTIPLE_CHOICE_LABEL)
