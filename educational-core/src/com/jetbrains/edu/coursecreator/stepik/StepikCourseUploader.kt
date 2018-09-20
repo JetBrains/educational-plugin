@@ -126,7 +126,8 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
 
   private fun updateSections() {
     sectionsToPush.forEach {
-      it.position = it.index
+      // all top-level lessons are stored in one section on Stepik
+      it.position = it.index - course.lessons.size + 1
       val sectionId = postSectionInfo(project, copySection(it), course.id)
       it.id = sectionId
     }
@@ -291,7 +292,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       lessonsToPush.addAll(sectionToPush.lessons.filter { it.id == 0 })
     }
 
-    val remoteSectionIds = courseInfo.sectionIds.subList(0, courseInfo.sectionIds.size - 1)
+    val remoteSectionIds = courseInfo.sectionIds
     val sections = StepikConnector.getSections(remoteSectionIds.map { it.toString() }.toTypedArray())
     val localSectionIds = course.sections.map { it.id }
     for (section in sections) {

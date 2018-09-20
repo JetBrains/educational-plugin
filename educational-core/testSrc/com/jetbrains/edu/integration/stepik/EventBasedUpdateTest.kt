@@ -259,6 +259,31 @@ class EventBasedUpdateTest: StepikTestCase() {
     checkSections(courseFromStepik, localCourse)
   }
 
+  fun `test post new section after bunch of top-level lessons`() {
+    val courseToPost = courseWithFiles {
+      lesson("lesson1")
+      lesson("lesson2")
+      {
+        eduTask {
+          taskFile("fizz.kt")
+        }
+      }
+    }
+    StudyTaskManager.getInstance(project).course = courseToPost
+    CCPushCourse.doPush(project, courseToPost)
+
+    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
+
+    val newSection = newSection("section2", 2)
+    localCourse.addSection(newSection)
+    localCourse.init(null, null, false)
+    localCourse.stepikChangeStatus = CONTENT
+    CCPushCourse.doPush(project, localCourse)
+
+    val courseFromStepik =  StepikConnector.getCourseInfo(user, localCourse.id, true)
+    checkSections(courseFromStepik, localCourse)
+  }
+
   fun `test top-level lessons wrapped into section`() {
     val courseToPost = courseWithFiles {
       lesson("lesson1")
