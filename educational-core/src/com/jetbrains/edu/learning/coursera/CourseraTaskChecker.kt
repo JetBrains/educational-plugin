@@ -52,12 +52,15 @@ class CourseraTaskChecker : RemoteTaskChecker {
       askToEnterCredentials(true)
       statusLine = postSubmission(json).statusLine
     }
-    return statusLine.toCheckResult()
+    return statusLine.toCheckResult(task)
   }
 
-  private fun StatusLine.toCheckResult(): CheckResult {
+  private fun StatusLine.toCheckResult(task: Task): CheckResult {
     return when (statusCode) {
-      HttpStatus.SC_CREATED -> CheckResult(CheckStatus.Unchecked, SUCCESS)
+      HttpStatus.SC_CREATED -> {
+        val link = task.feedbackLink.link?.removeSuffix("/discussions")
+        CheckResult(CheckStatus.Unchecked, SUCCESS.format(link))
+      }
       HttpStatus.SC_UNAUTHORIZED -> CheckResult(CheckStatus.Unchecked, "Invalid token or email")
       HttpStatus.SC_BAD_REQUEST -> CheckResult(CheckStatus.Unchecked, "Token is for a different assignment")
       else -> CheckResult(CheckStatus.Unchecked, "Failed to create new submission: $statusCode error received")
@@ -120,6 +123,6 @@ class CourseraTaskChecker : RemoteTaskChecker {
   companion object {
     private const val ON_DEMAND_SUBMIT = "https://www.coursera.org/api/onDemandProgrammingScriptSubmissions.v1"
     private const val NEED_CREDENTIALS = "${CourseraNames.COURSERA} Credentials"
-    private const val SUCCESS = "Submission successful, please check the status on Coursera"
+    private const val SUCCESS = "<html>Submission successful, please <a href=\"%s\">check the status on Coursera</a></html>"
   }
 }
