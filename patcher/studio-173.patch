@@ -21,7 +21,7 @@ index 1f4d269..c9fb71c 100644
 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
-index 5e2f41e..e825027 100644
+index 626f6bc..297f539 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 @@ -81,14 +81,14 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
@@ -42,10 +42,10 @@ index 5e2f41e..e825027 100644
    }
 
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
-index c171bcc..bcef799 100644
+index 3f1a875..ca30893 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
-@@ -17,7 +17,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
+@@ -17,7 +17,7 @@ internal open class PyLanguageSettings : PyLanguageSettings() {
        if (it != null && PythonSdkType.isVirtualEnv(it)) {
          val data = it.sdkAdditionalData as PythonSdkAdditionalData?
          if (data != null) {
@@ -54,7 +54,7 @@ index c171bcc..bcef799 100644
            if (path != null) {
              return@removeIf true
            }
-@@ -27,7 +27,7 @@ internal class PyLanguageSettings : PyLanguageSettings() {
+@@ -27,7 +27,7 @@ internal open class PyLanguageSettings : PyLanguageSettings() {
      }
 
      val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
@@ -84,10 +84,10 @@ index 5eca860..edce814 100644
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
 diff --git a/build.gradle b/build.gradle
-index 5390f1b..3e14481 100644
+index 4642977..ba1a091 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -112,10 +112,10 @@ allprojects {
+@@ -121,10 +121,10 @@ allprojects {
      }
 
      intellij {
@@ -102,7 +102,7 @@ index 5390f1b..3e14481 100644
          }
      }
 
-@@ -164,10 +164,10 @@ allprojects {
+@@ -177,10 +177,10 @@ allprojects {
 
 
  intellij {
@@ -117,7 +117,7 @@ index 5390f1b..3e14481 100644
      }
      if (project.hasProperty("customSinceBuild")) {
          patchPluginXml.sinceBuild = customSinceBuild
-@@ -265,11 +265,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
+@@ -277,11 +277,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
  }
 
  configure([project(':educational-core'), project(':Edu-Java')]) {
@@ -131,7 +131,7 @@ index 5390f1b..3e14481 100644
 
 
      task createTwitterProperties() {
-@@ -287,7 +287,7 @@ configure(project(':Edu-Python')) {
+@@ -312,7 +312,7 @@ configure(project(':Edu-Python')) {
  }
 
  configure(project(':Edu-Scala')) {
@@ -141,10 +141,10 @@ index 5390f1b..3e14481 100644
 
  configure(project(':Edu-Android')) {
 diff --git a/educational-core/resources/META-INF/educational-core.xml b/educational-core/resources/META-INF/educational-core.xml
-index 2e3c562..1d400de 100644
+index 547e174..161a57d 100644
 --- a/educational-core/resources/META-INF/educational-core.xml
 +++ b/educational-core/resources/META-INF/educational-core.xml
-@@ -191,8 +191,7 @@
+@@ -205,8 +205,7 @@
          implementation="com.jetbrains.edu.learning.handlers.AnswerPlaceholderExtendWordHandler"/>
      <renameHandler implementation="com.jetbrains.edu.learning.handlers.EduRenameHandler"/>
      <refactoring.moveHandler implementation="com.jetbrains.edu.learning.handlers.EduMoveDelegate" order="first"/>
@@ -153,9 +153,9 @@ index 2e3c562..1d400de 100644
 +    <statistics.usagesCollector implementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
      <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduUsagesCollector"/>
      <applicationService serviceImplementation="com.jetbrains.edu.learning.EduSettings"/>
-     <applicationService serviceImplementation="com.jetbrains.edu.learning.statistics.EduStatistics"/>
+     <applicationService serviceImplementation="com.jetbrains.edu.learning.coursera.CourseraSettings"/>
 diff --git a/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java b/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
-index 6b6a37f..ca43245 100644
+index 1bd3710..f797100 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/EduProjectComponent.java
 @@ -11,10 +11,6 @@ import com.intellij.openapi.diagnostic.Logger;
@@ -185,15 +185,15 @@ index 6b6a37f..ca43245 100644
  import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
  import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
  import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-@@ -46,7 +40,6 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
- import com.jetbrains.edu.learning.stepik.*;
+@@ -47,7 +41,6 @@ import com.jetbrains.edu.learning.stepik.*;
  import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
+ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
  import org.jetbrains.annotations.NotNull;
 -import org.jetbrains.annotations.Nullable;
 
  import javax.swing.*;
  import java.io.File;
-@@ -129,29 +122,10 @@ public class EduProjectComponent implements ProjectComponent {
+@@ -127,29 +120,10 @@ public class EduProjectComponent implements ProjectComponent {
        return;
      }
 
@@ -393,32 +393,21 @@ index b7d765d..0000000
 -  }
 -}
 \ No newline at end of file
-diff --git a/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java b/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
-index 0d20b14..67304d7 100644
---- a/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
-+++ b/educational-core/src/com/jetbrains/edu/learning/stepik/StepikAdaptiveConnector.java
-@@ -353,7 +353,7 @@ public class StepikAdaptiveConnector {
-   private static void setToolWindowText(@NotNull Project project, @NotNull Task task) {
-     final TaskDescriptionToolWindow window = EduUtils.getStudyToolWindow(project);
-     if (window != null) {
--      ApplicationManager.getApplication().invokeLater(() -> window.setCurrentTask(project, task));
-+      window.setCurrentTask(project, task);
-     }
-   }
-
 diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
-index a9c1908..8416b7c 100644
+index 37f2406..942a194 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
 +++ b/educational-core/src/icons/EducationalCoreIcons.java
-@@ -37,5 +37,5 @@ public class EducationalCoreIcons {
+@@ -38,7 +38,7 @@ public class EducationalCoreIcons {
 
    public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
    public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
 -  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 +  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
- }
+
+   public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
+   public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
-index 2305cf1..41ea5bb 100644
+index 520e04c..10637bb 100644
 --- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
 +++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/CourseViewTest.kt
 @@ -49,6 +49,7 @@ class CourseViewTest : CourseViewTestBase() {
@@ -494,6 +483,6 @@ index 93c3939..aae2638 100644
      <change-notes/>
      <depends>com.intellij.modules.lang</depends>
 +    <depends>com.intellij.modules.androidstudio</depends>
- 
+
      <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
