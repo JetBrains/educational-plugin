@@ -412,61 +412,103 @@ public class StepikConnector {
         for (int index = 0; index < allSections.size(); index++) {
           Section section = allSections.get(index);
           int finalIndex = index + 1;
-          tasks.add(() -> {
-            final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
-            if (unitIds.length <= 0) {
-              return null;
-            }
-            final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
-            final String sectionName = section.getName();
-            if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
-              final Lesson lesson = lessonsFromUnits.get(0);
-              lesson.setIndex(finalIndex);
-              remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
-              return lesson;
-            }
-            else {
-              for (int i = 0; i < lessonsFromUnits.size(); i++) {
-                Lesson lesson = lessonsFromUnits.get(i);
-                lesson.setIndex(i + 1);
-              }
-              section.addLessons(lessonsFromUnits);
-
-              if (section.getName().equals(remoteCourse.getName())) {
-                remoteCourse.setSectionIds(Collections.singletonList(section.getId()));
-              }
-              section.setIndex(finalIndex);
-              return section;
-            }
-          });
+          tasks.add(() -> loadItemTask(remoteCourse, section, finalIndex));
         }
-        try {
-          for (Future<StudyItem> future : ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
-            if (!future.isCancelled()) {
-              final StudyItem item = future.get();
-              if (item != null) {
-                remoteCourse.addItem(item, item.getIndex() - 1);
-              }
-            }
-          }
-        }
-        catch (Throwable e) {
-          LOG.warn("Cannot load sections for course " + remoteCourse.getId() + e.getMessage());
-        }
+        remoteCourse.setItems(getAllItems(remoteCourse, tasks));
       }
       else {
-        final String[] unitIds = allSections.stream().map(section -> section.units).flatMap(unitList -> unitList.stream())
-          .map(unit -> String.valueOf(unit)).toArray(String[]::new);
-        if (unitIds.length > 0) {
-          final List<Lesson> lessons = getLessons(remoteCourse);
-          remoteCourse.addLessons(lessons);
-          remoteCourse.setSectionIds(allSections.stream().map(s -> s.getId()).collect(Collectors.toList()));
-          lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
-        }
+        addTopLevelLessons(remoteCourse, allSections);
       }
     }
     catch (URISyntaxException e) {
       LOG.warn(e.getMessage());
+    }
+  }
+
+  private static List<StudyItem> getAllItems(@NotNull RemoteCourse remoteCourse, List<Callable<StudyItem>> tasks) {
+    try {
+      List<StudyItem> sections = getOrderedListOfSections(tasks);
+      ArrayList<StudyItem> items = unpackTopLevelLessons(remoteCourse, sections);
+      setIndices(items);
+      return items;
+    }
+    catch (Throwable e) {
+      LOG.warn("Cannot load sections for course " + remoteCourse.getId() + e.getMessage());
+    }
+
+    return Collections.emptyList();
+  }
+
+  private static List<StudyItem> getOrderedListOfSections(List<Callable<StudyItem>> tasks) throws Throwable {
+    List<StudyItem> sections = new ArrayList<>();
+    for (Future<StudyItem> future : ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
+      if (!future.isCancelled()) {
+        final StudyItem item = future.get();
+        if (item != null) {
+          sections.add(item.getIndex() - 1, item);
+        }
+      }
+    }
+
+    return sections;
+  }
+
+  private static void setIndices(ArrayList<StudyItem> items) {
+    for (int i = 0; i < items.size(); i++) {
+      StudyItem item = items.get(i);
+      item.setIndex(i + 1);
+    }
+  }
+
+  private static ArrayList<StudyItem> unpackTopLevelLessons(@NotNull RemoteCourse remoteCourse, List<StudyItem> sections) {
+    ArrayList<StudyItem> itemsWithTopLevelLessons = new ArrayList<>();
+    for (StudyItem item : sections) {
+      if (item instanceof Section && item.getName().equals(remoteCourse.getName())) {
+        remoteCourse.setSectionIds(Collections.singletonList(item.getId()));
+        itemsWithTopLevelLessons.addAll(((Section)item).getLessons());
+      }
+      else {
+        itemsWithTopLevelLessons.add(item);
+      }
+    }
+    return itemsWithTopLevelLessons;
+  }
+
+  private static void addTopLevelLessons(@NotNull RemoteCourse remoteCourse, List<Section> allSections)
+    throws IOException {
+    final String[] unitIds = allSections.stream().map(section -> section.units).flatMap(unitList -> unitList.stream())
+      .map(unit -> String.valueOf(unit)).toArray(String[]::new);
+    if (unitIds.length > 0) {
+      final List<Lesson> lessons = getLessons(remoteCourse);
+      remoteCourse.addLessons(lessons);
+      remoteCourse.setSectionIds(allSections.stream().map(s -> s.getId()).collect(Collectors.toList()));
+      lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
+    }
+  }
+
+  @Nullable
+  private static StudyItem loadItemTask(@NotNull RemoteCourse remoteCourse, Section section, int finalIndex)
+    throws IOException {
+    final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
+    if (unitIds.length <= 0) {
+      return null;
+    }
+    final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
+    final String sectionName = section.getName();
+    if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
+      final Lesson lesson = lessonsFromUnits.get(0);
+      lesson.setIndex(finalIndex);
+      remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
+      return lesson;
+    }
+    else {
+      for (int i = 0; i < lessonsFromUnits.size(); i++) {
+        Lesson lesson = lessonsFromUnits.get(i);
+        lesson.setIndex(i + 1);
+      }
+      section.addLessons(lessonsFromUnits);
+      section.setIndex(finalIndex);
+      return section;
     }
   }
 
