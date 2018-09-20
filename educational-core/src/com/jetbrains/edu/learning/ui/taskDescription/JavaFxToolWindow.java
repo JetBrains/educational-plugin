@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   private BrowserWindow myBrowserWindow;
@@ -37,9 +36,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   @Override
   public JComponent createTaskInfoPanel(Project project) {
     myBrowserWindow = new BrowserWindow(project, true);
-    JPanel panel = new JPanel(new BorderLayout());
-    panel.add(myBrowserWindow.getPanel(), BorderLayout.CENTER);
-    return panel;
+    return myBrowserWindow.getPanel();
   }
 
   public JComponent createTaskSpecificPanel(Task task) {
