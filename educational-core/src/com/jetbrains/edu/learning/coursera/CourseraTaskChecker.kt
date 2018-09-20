@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.coursera
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
@@ -35,7 +36,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     val courseraSettings = CourseraSettings.getInstance()
     var askedForCredentials = false
     if (!courseraSettings.haveFullCredentials()) {
-      askToEnterCredentials()
+      askToEnterCredentials(task)
       askedForCredentials = true
 
       if (!courseraSettings.haveFullCredentials()) {
@@ -49,7 +50,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
 
     var statusLine = response.statusLine
     if (statusLine.statusCode == HttpStatus.SC_UNAUTHORIZED && !askedForCredentials) {
-      askToEnterCredentials(true)
+      askToEnterCredentials(task, true)
       statusLine = postSubmission(json).statusLine
     }
     return statusLine.toCheckResult(task)
@@ -58,13 +59,17 @@ class CourseraTaskChecker : RemoteTaskChecker {
   private fun StatusLine.toCheckResult(task: Task): CheckResult {
     return when (statusCode) {
       HttpStatus.SC_CREATED -> {
-        val link = task.feedbackLink.link?.removeSuffix("/discussions")
+        val link = getLinkToSubmission(task)
         CheckResult(CheckStatus.Unchecked, SUCCESS.format(link))
       }
       HttpStatus.SC_UNAUTHORIZED -> CheckResult(CheckStatus.Unchecked, "Invalid token or email")
       HttpStatus.SC_BAD_REQUEST -> CheckResult(CheckStatus.Unchecked, "Token is for a different assignment")
       else -> CheckResult(CheckStatus.Unchecked, "Failed to create new submission: $statusCode error received")
     }
+  }
+
+  private fun getLinkToSubmission(task: Task): String {
+    return task.feedbackLink.link?.removeSuffix("/discussions") ?: ""
   }
 
   private fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
@@ -89,7 +94,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
     return client.execute(post)
   }
 
-  private fun askToEnterCredentials(showWarningMessage: Boolean = false) {
+  private fun askToEnterCredentials(task: Task, showWarningMessage: Boolean = false) {
     val courseraSettings = CourseraSettings.getInstance()
 
     val emailField = JBTextField(courseraSettings.email)
@@ -100,6 +105,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
       }
       row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
       row("Token:") { tokenField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
+      noteRow("Token can be obtained <a href=\"${getLinkToSubmission(task)}\">here</a>", BrowserUtil::browse)
     }
     var refusedToProvideCredentials = false
 
