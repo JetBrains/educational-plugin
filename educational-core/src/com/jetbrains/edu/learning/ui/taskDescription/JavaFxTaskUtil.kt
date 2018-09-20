@@ -116,7 +116,7 @@ private fun setUpLabelStyle(node: Label) {
   node.font = Font.font(getFontSize())
 }
 
-private fun getFontSize() = (EditorColorsManager.getInstance().globalScheme.editorFontSize + 2).toDouble()
+private fun getFontSize() = (EditorColorsManager.getInstance().globalScheme.editorFontSize + 1).toDouble()
 
 private fun setUpButtonStyle(button: ButtonBase) {
   button.isWrapText = true
