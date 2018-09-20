@@ -1,7 +1,6 @@
 package com.jetbrains.edu.android
 
 import com.android.SdkConstants
-import com.android.tools.idea.gradle.project.build.compiler.AndroidGradleBuildConfiguration
 import com.android.tools.idea.sdk.IdeSdks
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
@@ -9,17 +8,11 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import java.io.IOException
 import java.util.*
 
 class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
-
-  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
-    super.afterProjectGenerated(project, projectSettings)
-    AndroidGradleBuildConfiguration.getInstance(project).USE_CONFIGURATION_ON_DEMAND = false
-  }
 
   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
     super.createAdditionalFiles(project, baseDir)
