@@ -131,14 +131,3 @@ index 5eca860..edce814 100644
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
-diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
-index 4b7a5a8..a4af4fe 100644
---- a/educational-core/src/icons/EducationalCoreIcons.java
-+++ b/educational-core/src/icons/EducationalCoreIcons.java
-@@ -39,5 +39,5 @@ public class EducationalCoreIcons {
- 
-   public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
-   public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
--  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
-+  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
- }
