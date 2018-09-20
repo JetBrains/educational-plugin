@@ -1,49 +1,5 @@
-diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidCourseProjectGenerator.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidCourseProjectGenerator.kt
-index feb6529..be825a3 100644
---- a/Edu-Android/src/com/jetbrains/edu/android/AndroidCourseProjectGenerator.kt
-+++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidCourseProjectGenerator.kt
-@@ -1,7 +1,6 @@
- package com.jetbrains.edu.android
- 
- import com.android.SdkConstants
--import com.android.tools.idea.gradle.project.build.compiler.AndroidGradleBuildConfiguration
- import com.android.tools.idea.sdk.IdeSdks
- import com.intellij.openapi.diagnostic.Logger
- import com.intellij.openapi.project.Project
-@@ -9,18 +8,12 @@ import com.intellij.openapi.util.ThrowableComputable
- import com.intellij.openapi.vfs.VirtualFile
- import com.jetbrains.edu.learning.courseFormat.Course
- import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
--import com.jetbrains.edu.learning.gradle.JdkProjectSettings
- import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
- import java.io.IOException
- import java.util.*
- 
- class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
- 
--  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
--    super.afterProjectGenerated(project, projectSettings)
--    AndroidGradleBuildConfiguration.getInstance(project).USE_CONFIGURATION_ON_DEMAND = false
--  }
--
-   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
-     super.createAdditionalFiles(project, baseDir)
- 
-diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-index 0c1f1cd..38e0487 100644
---- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-+++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-@@ -3,7 +3,7 @@ package com.jetbrains.edu.android
- import com.android.tools.idea.npw.FormFactor
- import com.android.tools.idea.npw.module.FormFactorApiComboBox
- import com.android.tools.idea.npw.platform.AndroidVersionsInfo
--import com.android.tools.idea.npw.project.NewProjectModel
-+import com.android.tools.idea.npw.model.NewProjectModel
- import com.intellij.openapi.project.Project
- import com.intellij.ui.components.JBTextField
- import com.intellij.ui.layout.*
 diff --git a/build.gradle b/build.gradle
-index 4642977..ba1a091 100644
+index 23b4204..0c8eae7 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -121,10 +121,10 @@ allprojects {
@@ -100,7 +56,7 @@ index 4642977..ba1a091 100644
  
  configure(project(':Edu-Android')) {
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
-index 93c3939..aae2638 100644
+index 19b5272..cf649bc 100644
 --- a/resources/META-INF/plugin.xml
 +++ b/resources/META-INF/plugin.xml
 @@ -8,6 +8,7 @@

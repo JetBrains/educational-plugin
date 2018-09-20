@@ -1,47 +1,3 @@
-diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidCourseProjectGenerator.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidCourseProjectGenerator.kt
-index feb6529..be825a3 100644
---- a/Edu-Android/src/com/jetbrains/edu/android/AndroidCourseProjectGenerator.kt
-+++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidCourseProjectGenerator.kt
-@@ -1,7 +1,6 @@
- package com.jetbrains.edu.android
-
- import com.android.SdkConstants
--import com.android.tools.idea.gradle.project.build.compiler.AndroidGradleBuildConfiguration
- import com.android.tools.idea.sdk.IdeSdks
- import com.intellij.openapi.diagnostic.Logger
- import com.intellij.openapi.project.Project
-@@ -9,18 +8,12 @@ import com.intellij.openapi.util.ThrowableComputable
- import com.intellij.openapi.vfs.VirtualFile
- import com.jetbrains.edu.learning.courseFormat.Course
- import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
--import com.jetbrains.edu.learning.gradle.JdkProjectSettings
- import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
- import java.io.IOException
- import java.util.*
-
- class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
-
--  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
--    super.afterProjectGenerated(project, projectSettings)
--    AndroidGradleBuildConfiguration.getInstance(project).USE_CONFIGURATION_ON_DEMAND = false
--  }
--
-   override fun createAdditionalFiles(project: Project, baseDir: VirtualFile) {
-     super.createAdditionalFiles(project, baseDir)
-
-diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-index 0c1f1cd..38e0487 100644
---- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-+++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-@@ -3,7 +3,7 @@ package com.jetbrains.edu.android
- import com.android.tools.idea.npw.FormFactor
- import com.android.tools.idea.npw.module.FormFactorApiComboBox
- import com.android.tools.idea.npw.platform.AndroidVersionsInfo
--import com.android.tools.idea.npw.project.NewProjectModel
-+import com.android.tools.idea.npw.model.NewProjectModel
- import com.intellij.openapi.project.Project
- import com.intellij.ui.components.JBTextField
- import com.intellij.ui.layout.*
 diff --git a/Edu-Java/testResources/META-INF/plugin.xml b/Edu-Java/testResources/META-INF/plugin.xml
 index c09e7e7..5278ba5 100644
 --- a/Edu-Java/testResources/META-INF/plugin.xml
@@ -51,7 +7,7 @@ index c09e7e7..5278ba5 100644
      <id>com.jetbrains.edu.java</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
-
+ 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Kotlin/testResources/META-INF/plugin.xml b/Edu-Kotlin/testResources/META-INF/plugin.xml
 index 1f4d269..c9fb71c 100644
@@ -62,7 +18,7 @@ index 1f4d269..c9fb71c 100644
      <id>com.jetbrains.edu.kotlin</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Kotlin.xml">com.intellij.modules.java</depends>
-
+ 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 index 626f6bc..297f539 100644
@@ -84,7 +40,7 @@ index 626f6bc..297f539 100644
 +      PySdkExtKt.associateWithProject(sdk, project, false);
      }
    }
-
+ 
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 index 3f1a875..ca30893 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
@@ -100,7 +56,7 @@ index 3f1a875..ca30893 100644
            }
 @@ -27,7 +27,7 @@ internal open class PyLanguageSettings : PyLanguageSettings() {
      }
-
+ 
      val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
 -    val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
 +    val sdkChooser = PythonSdkChooserCombo(null, sdks, null) { true }
@@ -128,12 +84,12 @@ index 5eca860..edce814 100644
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
 diff --git a/build.gradle b/build.gradle
-index 4642977..c030630 100644
+index 23b4204..8dd7943 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -121,10 +121,10 @@ allprojects {
      }
-
+ 
      intellij {
 -        if (project.hasProperty("ideaVersion")) {
 -            version ideaVersion
@@ -145,45 +101,45 @@ index 4642977..c030630 100644
 +            localPath downloadStudioIfNeededAndGetPath()
          }
      }
-
+ 
 @@ -277,11 +277,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
  }
-
+ 
  configure([project(':educational-core'), project(':Edu-Java')]) {
 -    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
 +    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy', 'smali'
  }
-
+ 
  configure(project(':Edu-Kotlin')) {
 -    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
 +    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy', 'smali'
-
-
+ 
+ 
      task createTwitterProperties() {
 @@ -312,7 +312,7 @@ configure(project(':Edu-Python')) {
  }
-
+ 
  configure(project(':Edu-Scala')) {
 -    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
 +    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy', 'smali'
  }
-
+ 
  configure(project(':Edu-Android')) {
 diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
 index 37f2406..942a194 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
 +++ b/educational-core/src/icons/EducationalCoreIcons.java
 @@ -38,7 +38,7 @@ public class EducationalCoreIcons {
-
+ 
    public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
    public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
 -  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 +  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
-
+ 
    public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
    public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
-index 93c3939..aae2638 100644
+index 19b5272..cf649bc 100644
 --- a/resources/META-INF/plugin.xml
 +++ b/resources/META-INF/plugin.xml
 @@ -8,6 +8,7 @@
@@ -191,6 +147,6 @@ index 93c3939..aae2638 100644
      <change-notes/>
      <depends>com.intellij.modules.lang</depends>
 +    <depends>com.intellij.modules.androidstudio</depends>
-
+ 
      <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
