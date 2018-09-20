@@ -128,6 +128,8 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
   public abstract JComponent createTaskInfoPanel(Project project);
 
+  public abstract JComponent createTaskSpecificPanel(Task currentTask);
+
   public static JPanel createToolbarPanel(ActionGroup group) {
     final ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("Study", group, true);
     return JBUI.Panels.simplePanel(actionToolBar.getComponent());

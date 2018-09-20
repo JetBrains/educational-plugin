@@ -39,9 +39,12 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
     myBrowserWindow = new BrowserWindow(project, true);
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(myBrowserWindow.getPanel(), BorderLayout.CENTER);
-    taskSpecificPanel = new JFXPanel();
-    panel.add(taskSpecificPanel, BorderLayout.SOUTH);
     return panel;
+  }
+
+  public JComponent createTaskSpecificPanel(Task task) {
+    taskSpecificPanel = new JFXPanel();
+    return taskSpecificPanel;
   }
 
   public void updateTaskSpecificPanel(@Nullable Task task) {
