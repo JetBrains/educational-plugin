@@ -19,8 +19,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
-import java.awt.Component
-import javax.swing.BoxLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
@@ -63,27 +61,27 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
   }
 
   fun init() {
-    val panel = JPanel()
-    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
+    val panel = JPanel(BorderLayout())
 
     val course = StudyTaskManager.getInstance(project).course
     if (course != null && course.isAdaptive) {
-      panel.addWithLeftAlignment(StepikAdaptiveReactionsPanel(project))
+      panel.add(StepikAdaptiveReactionsPanel(project), BorderLayout.NORTH)
     }
 
     taskTextTW = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
     taskTextPanel = taskTextTW.createTaskInfoPanel(project)
-    panel.addWithLeftAlignment(taskTextPanel)
+    panel.add(taskTextPanel, BorderLayout.CENTER)
+
 
     separator = SeparatorComponent(10, 15)
-    panel.addWithLeftAlignment(separator)
 
     val bottomPanel = JPanel(BorderLayout())
     bottomPanel.border = JBUI.Borders.empty(0, 15, 15, 15)
+    bottomPanel.add(separator, BorderLayout.CENTER)
     checkPanel = CheckPanel()
-    bottomPanel.add(checkPanel, BorderLayout.NORTH)
-    panel.addWithLeftAlignment(bottomPanel)
+    bottomPanel.add(checkPanel, BorderLayout.SOUTH)
 
+    panel.add(bottomPanel, BorderLayout.SOUTH)
     UIUtil.setBackgroundRecursively(panel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
 
     setContent(panel)
@@ -101,11 +99,6 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
     if (checkResult.status == CheckStatus.Failed) {
       updateTaskSpecificPanel()
     }
-  }
-
-  private fun JPanel.addWithLeftAlignment(component: JComponent) {
-    add(component)
-    component.alignmentX = Component.LEFT_ALIGNMENT
   }
 
   override fun dispose() {
