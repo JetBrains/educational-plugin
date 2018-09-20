@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
@@ -62,7 +63,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     updateLessons(courseFromServer)
     updateAdditionalMaterialsFiles(courseFromServer)
 
-    course.items = Lists.newArrayList(courseFromServer.items)
+    course.items = Lists.newArrayList(courseFromServer.items.filter { it.name != StepikNames.PYCHARM_ADDITIONAL && it.name != EduNames.ADDITIONAL_MATERIALS })
   }
 
   private fun updateLessons(courseFromServer: Course) {
