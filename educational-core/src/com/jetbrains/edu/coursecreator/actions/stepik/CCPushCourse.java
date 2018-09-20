@@ -1,6 +1,8 @@
 package com.jetbrains.edu.coursecreator.actions.stepik;
 
 import com.intellij.ide.IdeView;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -70,6 +72,13 @@ public class CCPushCourse extends DumbAwareAction {
       ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
+          if (getCourseInfo(String.valueOf(course.getId())) == null) {
+            String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
+            Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
+                                                         createPostCourseNotificationListener(project, (RemoteCourse)course));
+            notification.notify(project);
+            return;
+          }
           indicator.setIndeterminate(false);
 
           if (Experiments.isFeatureEnabled(StepikCourseUploader.FEATURE_ID)) {
