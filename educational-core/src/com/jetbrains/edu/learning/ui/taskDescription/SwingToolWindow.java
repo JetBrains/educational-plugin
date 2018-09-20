@@ -46,9 +46,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
     final JPanel panel = new JPanel(new BorderLayout());
 
     myTaskTextPane = new JTextPane();
-    myTaskSpecificPanel = new JPanel(new BorderLayout());
     panel.add(new JBScrollPane(myTaskTextPane), BorderLayout.CENTER);
-    panel.add(myTaskSpecificPanel, BorderLayout.SOUTH);
     myTaskTextPane.setContentType(new HTMLEditorKit().getContentType());
 
     final EditorColorsScheme editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
@@ -91,6 +89,11 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
     });
 
     return panel;
+  }
+
+  public JComponent createTaskSpecificPanel(Task currentTask) {
+    myTaskSpecificPanel = new JPanel(new BorderLayout());
+    return myTaskSpecificPanel;
   }
 
   @Override

@@ -72,12 +72,14 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
     taskTextPanel = taskTextTW.createTaskInfoPanel(project)
     panel.add(taskTextPanel, BorderLayout.CENTER)
 
-
-    separator = SeparatorComponent(10, 15)
-
     val bottomPanel = JPanel(BorderLayout())
     bottomPanel.border = JBUI.Borders.empty(0, 15, 15, 15)
-    bottomPanel.add(separator, BorderLayout.CENTER)
+    separator = SeparatorComponent(10, 15)
+    bottomPanel.add(separator, BorderLayout.NORTH)
+
+    val taskSpecificPanel = taskTextTW.createTaskSpecificPanel(currentTask)
+    bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
+
     checkPanel = CheckPanel()
     bottomPanel.add(checkPanel, BorderLayout.SOUTH)
 
