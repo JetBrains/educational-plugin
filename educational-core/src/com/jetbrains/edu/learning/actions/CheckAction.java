@@ -227,7 +227,9 @@ public class CheckAction extends DumbAwareActionWithShortcut {
 
     @Override
     public void onCancel() {
-      myChecker.clearState();
+      if (myChecker != null) {
+        myChecker.clearState();
+      }
       myCheckInProgress.set(false);
       if (!OpenApiExtKt.isUnitTestMode()) {
         TaskDescriptionView.getInstance(myProject).readyToCheck();
