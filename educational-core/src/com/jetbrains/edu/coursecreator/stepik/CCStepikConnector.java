@@ -21,10 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
@@ -134,7 +131,8 @@ public class CCStepikConnector {
         return;
       }
       final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
-      courseOnRemote.setItems(Lists.newArrayList(course.getItems()));
+      courseOnRemote.setItems(Lists.newArrayList(course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
+        !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).collect(Collectors.toList())));
       courseOnRemote.setAuthors(course.getAuthors());
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
       courseOnRemote.setLanguage(course.getLanguageID());
