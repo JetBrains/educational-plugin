@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.project.Project
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
@@ -18,14 +19,18 @@ import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-class CheckPanel: JPanel(BorderLayout()) {
+class CheckPanel(val project: Project): JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
+  private val checkActionsPanel: JPanel = JPanel(BorderLayout())
+  private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
 
   init {
-    add(createButtonToolbar(CheckAction.ACTION_ID), BorderLayout.WEST)
+    checkActionsPanel.add(createButtonToolbar(CheckAction.ACTION_ID), BorderLayout.WEST)
     checkFinishedPanel.border = JBUI.Borders.empty(0, 16, 0, 0)
-    add(checkFinishedPanel, BorderLayout.CENTER)
-    add(createRightActionsToolbar(), BorderLayout.EAST)
+    checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
+    checkActionsPanel.add(createRightActionsToolbar(), BorderLayout.EAST)
+    add(checkActionsPanel, BorderLayout.CENTER)
+    add(checkDetailsPlaceholder, BorderLayout.SOUTH)
   }
 
   private fun createRightActionsToolbar(): JPanel {
@@ -54,6 +59,7 @@ class CheckPanel: JPanel(BorderLayout()) {
 
   fun readyToCheck() {
     checkFinishedPanel.removeAll()
+    checkDetailsPlaceholder.removeAll()
   }
 
   fun checkStarted() {
@@ -66,7 +72,8 @@ class CheckPanel: JPanel(BorderLayout()) {
     val resultPanel = getResultPanel(result)
     checkFinishedPanel.add(resultPanel, BorderLayout.WEST)
     checkFinishedPanel.add(JPanel(), BorderLayout.CENTER)
-    UIUtil.setBackgroundRecursively(checkFinishedPanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
+    checkDetailsPlaceholder.add(CheckDetailsPanel(project, result))
+    UIUtil.setBackgroundRecursively(this, EditorColorsManager.getInstance().globalScheme.defaultBackground)
   }
 
   private fun getResultPanel(result: CheckResult): JComponent {
