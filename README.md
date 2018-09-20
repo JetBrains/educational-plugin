@@ -46,6 +46,7 @@ Everything works:\
 Something went wrong:\
 5. Fix errors caused by compatibility issues in idea branches\
 6. Create new patch file `git diff %feature.branch% > patcher/%branch.name%.patch`\
+**NOTE** To avoid adding changes from patch to patch itself it easier to save patch to some temp file and then just copy its content
 7. Commit new patch file\
 8. Revert `git reset --hard && git clean -fd`\
 9. Push all the changes
