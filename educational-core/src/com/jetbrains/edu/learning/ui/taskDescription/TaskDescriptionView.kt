@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
@@ -25,8 +26,8 @@ import javax.swing.JPanel
 
 class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
   private lateinit var checkPanel: CheckPanel
-  private lateinit var taskTextTW : TaskDescriptionToolWindow
-  private lateinit var taskTextPanel : JComponent
+  private val taskTextTW : TaskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
+  private val taskTextPanel : JComponent = taskTextTW.createTaskInfoPanel(project)
   private lateinit var separator: SeparatorComponent
   var currentTask: Task? = null
     set(value) {
@@ -44,6 +45,9 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
     }
 
   fun updateTaskSpecificPanel() {
+    if (isUnitTestMode) {
+      return
+    }
     taskTextTW.updateTaskSpecificPanel(currentTask)
   }
 
@@ -68,8 +72,6 @@ class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, tr
       panel.add(StepikAdaptiveReactionsPanel(project), BorderLayout.NORTH)
     }
 
-    taskTextTW = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
-    taskTextPanel = taskTextTW.createTaskInfoPanel(project)
     panel.add(taskTextPanel, BorderLayout.CENTER)
 
     val bottomPanel = JPanel(BorderLayout())
