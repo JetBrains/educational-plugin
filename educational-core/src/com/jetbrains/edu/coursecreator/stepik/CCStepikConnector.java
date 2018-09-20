@@ -755,17 +755,23 @@ public class CCStepikConnector {
   private static void showNoRightsToUpdateNotification(@NotNull final Project project, @NotNull final RemoteCourse course) {
     String message = "You don't have permission to update the course <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
     Notification notification = new Notification(PUSH_COURSE_GROUP_ID, FAILED_TITLE, message, NotificationType.ERROR,
-                                                 new NotificationListener.Adapter() {
-                                                   @Override
-                                                   protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
-                                                     Course nonRemoteCourse =
-                                                       XmlSerializer.deserialize(XmlSerializer.serialize(course), Course.class);
-                                                     nonRemoteCourse.init(null, null, true);
-                                                     StudyTaskManager.getInstance(project).setCourse(nonRemoteCourse);
-                                                     postCourseWithProgress(project, nonRemoteCourse);
-                                                   }
-                                                 });
+                                                 createPostCourseNotificationListener(project, course));
     notification.notify(project);
+  }
+
+  @NotNull
+  public static NotificationListener.Adapter createPostCourseNotificationListener(@NotNull Project project,
+                                                                                   @NotNull RemoteCourse course) {
+    return new NotificationListener.Adapter() {
+      @Override
+      protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+        Course nonRemoteCourse =
+          XmlSerializer.deserialize(XmlSerializer.serialize(course), Course.class);
+        nonRemoteCourse.init(null, null, true);
+        StudyTaskManager.getInstance(project).setCourse(nonRemoteCourse);
+        postCourseWithProgress(project, nonRemoteCourse);
+      }
+    };
   }
 
   public static void showNotification(@NotNull Project project,
