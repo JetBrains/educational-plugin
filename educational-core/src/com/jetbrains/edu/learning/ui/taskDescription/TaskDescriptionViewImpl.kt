@@ -75,7 +75,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val taskSpecificPanel = taskTextTW.createTaskSpecificPanel(currentTask)
     bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
 
-    checkPanel = CheckPanel()
+    checkPanel = CheckPanel(project)
     bottomPanel.add(checkPanel, BorderLayout.SOUTH)
 
     panel.add(bottomPanel, BorderLayout.SOUTH)
