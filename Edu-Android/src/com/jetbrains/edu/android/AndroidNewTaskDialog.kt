@@ -3,7 +3,7 @@ package com.jetbrains.edu.android
 import com.android.tools.idea.npw.FormFactor
 import com.android.tools.idea.npw.module.FormFactorApiComboBox
 import com.android.tools.idea.npw.platform.AndroidVersionsInfo
-import com.android.tools.idea.npw.project.NewProjectModel
+import com.android.tools.idea.npw.model.NewProjectModel
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
