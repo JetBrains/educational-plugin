@@ -17,10 +17,14 @@ interface RemoteInfo {
 class LocalInfo : RemoteInfo
 
 class StepikRemoteInfo : RemoteInfo {
+  // publish to stepik
   var isPublic: Boolean = false
   var isAdaptive = false
   var isIdeaCompatible = true
   var id: Int = 0
+
+  // do not publish to stepik
+  var loadSolutions = true // disabled for reset courses
 
   override fun isCourseValid(course: Course): Boolean {
     if (!isAdaptive) return true

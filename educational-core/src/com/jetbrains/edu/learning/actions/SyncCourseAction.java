@@ -16,6 +16,8 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
@@ -81,8 +83,11 @@ public class SyncCourseAction extends DumbAwareAction {
     }
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof RemoteCourse) || !((RemoteCourse) course).isLoadSolutions()) {
-      return false;
+    if (course != null) {
+      final RemoteInfo remoteInfo = course.getRemoteInfo();
+      if (!(course instanceof RemoteCourse) || remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).getLoadSolutions()) {
+        return false;
+      }
     }
 
     return true;
