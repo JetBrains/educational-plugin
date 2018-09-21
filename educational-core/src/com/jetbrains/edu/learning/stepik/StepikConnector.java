@@ -335,7 +335,9 @@ public class StepikConnector {
 
   private static void setCourseAuthors(@NotNull final RemoteCourse info) throws IOException {
     final ArrayList<StepikUserInfo> authors = new ArrayList<>();
-    for (Integer instructor : info.getInstructors()) {
+    final RemoteInfo remoteInfo = remoteCourse.getRemoteInfo();
+    assert remoteInfo instanceof StepikRemoteInfo;
+    for (Integer instructor : ((StepikRemoteInfo)remoteInfo).getInstructors()) {
       final StepikUserInfo author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
                                                                AuthorWrapper.class).users.get(0);
       authors.add(author);

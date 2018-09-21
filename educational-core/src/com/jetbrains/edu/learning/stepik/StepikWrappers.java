@@ -157,15 +157,13 @@ public class StepikWrappers {
       this.course.setLanguage(course.getLanguageID());
       this.course.setDescription(course.getDescription());
       this.course.setAuthors(course.getAuthors());
-      if (course instanceof RemoteCourse) {
-        this.course.setInstructors(((RemoteCourse)course).getInstructors());
-      }
 
       final StepikRemoteInfo stepikRemoteInfo = new StepikRemoteInfo();
       this.course.setRemoteInfo(stepikRemoteInfo);
       final RemoteInfo remoteInfo = course.getRemoteInfo();
       if (remoteInfo instanceof StepikRemoteInfo) {
         stepikRemoteInfo.setPublic(((StepikRemoteInfo)remoteInfo).isPublic());
+        stepikRemoteInfo.setInstructors((((StepikRemoteInfo)remoteInfo).getInstructors()));
       }
     }
   }

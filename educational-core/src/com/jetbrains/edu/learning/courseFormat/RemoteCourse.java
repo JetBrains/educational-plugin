@@ -10,13 +10,11 @@ import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RemoteCourse extends Course {
-
   private static final Logger LOG = Logger.getInstance(Course.class);
 
   private static List<String> ourSupportedLanguages;
@@ -24,8 +22,6 @@ public class RemoteCourse extends Course {
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
-
-  List<Integer> instructors = new ArrayList<>();
 
   @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
 
@@ -37,14 +33,6 @@ public class RemoteCourse extends Course {
   public void setLanguage(@NotNull final String language) {
     super.setLanguage(language);
     updateType(language);
-  }
-
-  public void setInstructors(List<Integer> instructors) {
-    this.instructors = instructors;
-  }
-
-  public List<Integer> getInstructors() {
-    return instructors;
   }
 
   @NotNull
