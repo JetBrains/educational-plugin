@@ -37,7 +37,7 @@ public class StepikProjectComponent implements ProjectComponent {
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course instanceof RemoteCourse) {
-          if (!StepikCourseExt.isAdaptive(course)) {
+          if (!StepikCourseExt.isAdaptive((RemoteCourse)course)) {
             StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
           }
 
@@ -45,11 +45,11 @@ public class StepikProjectComponent implements ProjectComponent {
           if (currentUser != null && !course.getAuthors().contains(currentUser) && !CCUtils.isCourseCreator(myProject)) {
             loadSolutionsFromStepik(course);
           }
-          addStepikWidget();
-          selectStep(course);
+          selectStep((RemoteCourse)course);
         }
       }
     );
+    addStepikWidget();
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
@@ -78,7 +78,7 @@ public class StepikProjectComponent implements ProjectComponent {
     statusBar.addWidget(new StepikUserWidget(myProject), "before Position");
   }
 
-  private void selectStep(@NotNull Course course) {
+  private void selectStep(@NotNull RemoteCourse course) {
     int stepId = PropertiesComponent.getInstance().getInt(STEP_ID, 0);
     if (stepId != 0) {
       navigateToStep(myProject, course, stepId);

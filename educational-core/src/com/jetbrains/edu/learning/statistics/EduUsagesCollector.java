@@ -23,6 +23,7 @@ import com.intellij.util.containers.hash.HashSet;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -136,7 +137,7 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
   @NotNull
   private static String courseTypeId(@NotNull Course course) {
     if (course.isStudy()) {
-      return StepikCourseExt.isAdaptive(course) ? EduNames.ADAPTIVE : EduNames.STUDY;
+      return course instanceof RemoteCourse && StepikCourseExt.isAdaptive((RemoteCourse)course) ? EduNames.ADAPTIVE : EduNames.STUDY;
     } else {
       return CCUtils.COURSE_MODE;
     }

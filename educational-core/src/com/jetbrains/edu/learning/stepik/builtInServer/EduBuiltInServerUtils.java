@@ -64,7 +64,7 @@ public class EduBuiltInServerUtils {
           if (remoteCourse != null && StepikCourseExt.getId(remoteCourse) == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
               requestFocus(project);
-              navigateToStep(project, course, stepId);
+              navigateToStep(project, (RemoteCourse)course, stepId);
             });
             return true;
           }

@@ -203,7 +203,8 @@ public abstract class CourseProjectGenerator<S> {
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
     StepikUser user = EduSettings.getInstance().getUser();
     final int id = StepikCourseExt.getId(myCourse);
-    RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, id, StepikCourseExt.isCompatible(myCourse));
+    final boolean isCompatible = myCourse instanceof RemoteCourse && StepikCourseExt.isCompatible((RemoteCourse)myCourse);
+    RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, id, isCompatible);
     if (courseFromStepik != null) {
       StepikConnector.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);

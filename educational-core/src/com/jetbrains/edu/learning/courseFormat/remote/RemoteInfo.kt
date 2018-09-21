@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Tag
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel
+import java.util.*
 import javax.swing.JPanel
 
 interface RemoteInfo {
@@ -22,6 +23,7 @@ class StepikRemoteInfo : RemoteInfo {
   var isAdaptive = false
   var isIdeaCompatible = true
   var id: Int = 0
+  var updateDate = Date(0)
 
   // do not publish to stepik
   var loadSolutions = true // disabled for reset courses
