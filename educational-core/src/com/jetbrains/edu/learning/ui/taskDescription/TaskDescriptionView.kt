@@ -8,7 +8,6 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.awt.Color
 
