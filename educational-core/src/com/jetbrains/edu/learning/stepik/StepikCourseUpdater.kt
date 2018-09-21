@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.courseFormat.ext.id
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
@@ -176,11 +177,13 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   private fun processModifiedSections(courseFromServer: RemoteCourse, sectionIds: List<Int>) {
     val sectionsFromServer = courseFromServer.sections.filter { section -> section.id in sectionIds }
     val sectionsById = course.sections.associateBy { it.id }
+    val remoteInfo = course.remoteInfo
+
     for (sectionFromServer in sectionsFromServer) {
       sectionFromServer.lessons.withIndex().forEach { (index, lesson) -> lesson.index = index + 1 }
 
-      if (!course.lessons.isEmpty()) {
-        val isTopLevelLessonsSection = sectionFromServer.id == course.sectionIds[0]
+      if (!course.lessons.isEmpty() && remoteInfo is StepikRemoteInfo) {
+        val isTopLevelLessonsSection = sectionFromServer.id == remoteInfo.sectionIds[0]
         if (isTopLevelLessonsSection) {
           return
         }
@@ -424,9 +427,10 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   // On Stepik top-level lessons section is named after a course
   // In case it was renamed on stepik, its lessons  won't be parsed as top-level
   // so we need to copy them manually
-  private fun addTopLevelLessons(courseFromServer: Course?) {
-    if (!courseFromServer!!.sections.isEmpty() && !course.sectionIds.isEmpty()) {
-      if (courseFromServer.sections[0].id == course.sectionIds[0]) {
+  private fun addTopLevelLessons(courseFromServer: RemoteCourse?) {
+    val stepikRemoteInfo = course.remoteInfo as StepikRemoteInfo
+    if (!courseFromServer!!.sections.isEmpty() && !stepikRemoteInfo.sectionIds.isEmpty()) {
+      if (courseFromServer.sections[0].id == stepikRemoteInfo.sectionIds[0]) {
         courseFromServer.addLessons(courseFromServer.sections[0].lessons)
       }
     }

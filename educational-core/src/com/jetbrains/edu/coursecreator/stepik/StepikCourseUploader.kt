@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.ext.updateDate
+import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -117,7 +118,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       val topLevelSectionId = getTopLevelSectionId(project, course)
       if (topLevelSectionId == -1) {
         val sectionId = postSectionForTopLevelLessons(project, course)
-        course.sectionIds = arrayListOf(sectionId)
+        (course.remoteInfo as StepikRemoteInfo).sectionIds = arrayListOf(sectionId)
         sectionId
       }
       else {
@@ -272,7 +273,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       lessonsToPush.addAll(course.lessons.filter { it.id == 0 })
       // process lessons moved to top-level
 
-      val section = StepikConnector.getSection(courseInfo.sectionIds[0])
+      val section = StepikConnector.getSection((courseInfo.remoteInfo as StepikRemoteInfo).sectionIds[0])
       val lessonsFromSection = StepikConnector.getLessonsFromUnits(courseInfo, section.units.map { it.toString() }.toTypedArray(), false)
       val topLevelLessonsIds = course.lessons.map { it.id }
       for (lesson in lessonsFromSection) {
@@ -285,7 +286,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       }
     }
     else {
-      course.sectionIds = emptyList()
+      (course.remoteInfo as StepikRemoteInfo).sectionIds = emptyList()
     }
     sectionsToPush.addAll(course.sections.filter { it.id == 0 })
 
@@ -301,7 +302,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
       if (section.name == StepikNames.PYCHARM_ADDITIONAL) {
         continue
       }
-      if ((section.id !in localSectionIds && section.id !in course.sectionIds) && section.updateDate <= lastUpdateDate) {
+      if ((section.id !in localSectionIds && section.id !in (course.remoteInfo as StepikRemoteInfo).sectionIds) && section.updateDate <= lastUpdateDate) {
         sectionsToDelete.add(section.id)
       }
     }
