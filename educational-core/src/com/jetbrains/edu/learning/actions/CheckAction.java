@@ -20,7 +20,6 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.OpenApiExtKt;
 import com.jetbrains.edu.learning.checker.*;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
@@ -175,9 +174,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
     public void run(@NotNull ProgressIndicator indicator) {
       indicator.setIndeterminate(true);
       myCheckInProgress.set(true);
-      if (!OpenApiExtKt.isUnitTestMode()) {
-        TaskDescriptionView.getInstance(myProject).checkStarted();
-      }
+      TaskDescriptionView.getInstance(myProject).checkStarted();
 
       CheckResult localCheckResult = myChecker == null ? CheckResult.NO_LOCAL_CHECK : myChecker.check(indicator);
       if (localCheckResult.getStatus() == CheckStatus.Failed) {
@@ -208,9 +205,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
         default:
           CheckUtils.showTestResultPopUp(message, MessageType.WARNING.getPopupBackground(), myProject);
       }
-      if (!OpenApiExtKt.isUnitTestMode()) {
-        TaskDescriptionView.getInstance(myProject).checkFinished(myResult);
-      }
+      TaskDescriptionView.getInstance(myProject).checkFinished(myResult);
       ApplicationManager.getApplication().invokeLater(() -> {
         EduUtils.updateCourseProgress(myProject);
         ProjectView.getInstance(myProject).refresh();
@@ -231,9 +226,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
         myChecker.clearState();
       }
       myCheckInProgress.set(false);
-      if (!OpenApiExtKt.isUnitTestMode()) {
-        TaskDescriptionView.getInstance(myProject).readyToCheck();
-      }
+      TaskDescriptionView.getInstance(myProject).readyToCheck();
     }
   }
 }
