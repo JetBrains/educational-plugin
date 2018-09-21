@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RemoteCourse extends Course {
+public class StepikCourse extends Course {
   private static final Logger LOG = Logger.getInstance(Course.class);
 
   private static List<String> ourSupportedLanguages;
@@ -21,7 +21,6 @@ public class RemoteCourse extends Course {
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
-
 
   public String getType() {
     return myType;

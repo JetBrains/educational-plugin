@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.stepik.*
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import org.apache.http.Consts
 import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -42,7 +43,7 @@ abstract class StepikTestCase : EduTestCase() {
 
   override fun tearDown() {
     val course = StudyTaskManager.getInstance(project).course
-    if (course is RemoteCourse) {
+    if (course is StepikCourse) {
       removeUploadedCourse(course.id, course.getLessons(true).map { it -> it.id })
     }
     EduSettings.getInstance().user = null
@@ -93,10 +94,10 @@ abstract class StepikTestCase : EduTestCase() {
     println("Lesson $lessonId deleted")
   }
 
-  fun checkCourseUploaded(course: RemoteCourse) {
+  fun checkCourseUploaded(course: StepikCourse) {
     val uploadedCourse = StepikConnector.getCourseInfo(user, course.id, true)
     assertNotNull("Uploaded course not found among courses available to instructor", uploadedCourse)
-    println("Course with id ${(uploadedCourse as RemoteCourse).id} was uploaded successfully")
+    println("Course with id ${(uploadedCourse as StepikCourse).id} was uploaded successfully")
   }
 
   private fun getTokens(): TokenInfo? {

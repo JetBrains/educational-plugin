@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
@@ -71,7 +71,7 @@ public class StepikResetCourseAction extends DumbAwareAction {
     Project project = e.getProject();
     if (project != null) {
       Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course instanceof RemoteCourse) {
+      if (course instanceof StepikCourse) {
         e.getPresentation().setEnabledAndVisible(true);
         return;
       }

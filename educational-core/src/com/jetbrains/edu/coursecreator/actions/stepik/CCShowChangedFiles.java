@@ -126,7 +126,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
       return;
     }
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course instanceof RemoteCourse && !course.isStudy()) {
+    if (course instanceof StepikCourse && !course.isStudy()) {
       presentation.setEnabledAndVisible(true);
     }
   }

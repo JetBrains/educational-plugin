@@ -290,7 +290,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
   }
 
-  private fun checkTopLevelLessons(localCourse: RemoteCourse) {
+  private fun checkTopLevelLessons(localCourse: StepikCourse) {
     val courseFromStepik = getCourseFromStepik(localCourse.id)
 
     assertEquals("Course with top-level lessons should have only one section", 1, localCourse.sectionIds.size)
@@ -308,13 +308,13 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
   }
 
-  private fun initCourse(builder: CourseBuilder.() -> Unit): RemoteCourse {
+  private fun initCourse(builder: CourseBuilder.() -> Unit): StepikCourse {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE, buildCourse = builder)
     CCPushCourse.doPush(project, course)
-    return StudyTaskManager.getInstance(project).course as RemoteCourse
+    return StudyTaskManager.getInstance(project).course as StepikCourse
   }
 
-  private fun getCourseFromStepik(courseId: Int): RemoteCourse =
+  private fun getCourseFromStepik(courseId: Int): StepikCourse =
     StepikConnector.getCourseInfo(user, courseId, true) ?: error("Uploaded courses not found among courses available to instructor")
 }
 

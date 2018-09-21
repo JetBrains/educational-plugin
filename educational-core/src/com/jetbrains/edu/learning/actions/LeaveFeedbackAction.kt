@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -36,7 +36,7 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
     presentation.isEnabledAndVisible = when (feedbackLink.type) {
       FeedbackLink.LinkType.NONE -> false
       FeedbackLink.LinkType.CUSTOM -> feedbackLink.link != null
-      FeedbackLink.LinkType.STEPIK -> task.course is RemoteCourse || task.course is HyperskillCourse
+      FeedbackLink.LinkType.STEPIK -> task.course is StepikCourse || task.course is HyperskillCourse
     }
   }
 

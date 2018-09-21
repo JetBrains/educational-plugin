@@ -48,7 +48,7 @@ public class CCPushCourse extends DumbAwareAction {
     presentation.setEnabledAndVisible(project != null && CCUtils.isCourseCreator(project));
     if (project != null) {
       final Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course instanceof RemoteCourse) {
+      if (course instanceof StepikCourse) {
         presentation.setText("Update Course on Stepik");
       }
     }
@@ -70,7 +70,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public static boolean doPush(Project project, Course course) {
-    if (course instanceof RemoteCourse) {
+    if (course instanceof StepikCourse) {
       askToWrapTopLevelLessons(project, course);
 
       ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
@@ -86,10 +86,10 @@ public class CCPushCourse extends DumbAwareAction {
           indicator.setIndeterminate(false);
 
           if (Experiments.isFeatureEnabled(StepikCourseUploader.FEATURE_ID)) {
-            new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
+            new StepikCourseUploader(project, (StepikCourse)course).updateCourse();
           }
           else {
-            pushInOldWay(indicator, project, (RemoteCourse)course);
+            pushInOldWay(indicator, project, (StepikCourse)course);
           }
         }
       });
@@ -111,7 +111,7 @@ public class CCPushCourse extends DumbAwareAction {
     return false;
   }
 
-  private static void pushInOldWay(@NotNull ProgressIndicator indicator, Project project, RemoteCourse course) {
+  private static void pushInOldWay(@NotNull ProgressIndicator indicator, Project project, StepikCourse course) {
     if (updateCourseInfo(project, course)) {
       updateCourseContent(indicator, course, project);
       StepikUtils.setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
@@ -141,7 +141,7 @@ public class CCPushCourse extends DumbAwareAction {
     }
   }
 
-  private static void updateCourseContent(@NotNull ProgressIndicator indicator, RemoteCourse course, Project project) {
+  private static void updateCourseContent(@NotNull ProgressIndicator indicator, StepikCourse course, Project project) {
     final RemoteInfo info = course.getRemoteInfo();
     assert info instanceof StepikRemoteInfo;
     final List<Integer> sectionIds = ((StepikRemoteInfo)info).getSectionIds();

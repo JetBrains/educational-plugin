@@ -692,7 +692,7 @@ public class EduUtils {
     return activeVirtualFile;
   }
 
-  public static void navigateToStep(@NotNull Project project, @NotNull Course course, int stepId) {
+  public static void navigateToStep(@NotNull Project project, @NotNull StepikCourse course, int stepId) {
     if (stepId == 0) {
       return;
     }
@@ -943,7 +943,7 @@ public class EduUtils {
     JsonElement id = object.get("id");
     try {
       if (id != null && 0 != id.getAsInt()) {
-        return gson.fromJson(object, RemoteCourse.class);
+        return gson.fromJson(object, StepikCourse.class);
       }
       return gson.fromJson(object, Course.class);
     } catch (Exception e) {

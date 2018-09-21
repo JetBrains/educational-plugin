@@ -6,7 +6,7 @@ import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduSettings.isLoggedIn
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.ext.id
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 
-fun RemoteCourse.isUpToDate(): Boolean {
+fun StepikCourse.isUpToDate(): Boolean {
   if (!isLoggedIn()) {
     return true
   }
@@ -31,7 +31,7 @@ fun RemoteCourse.isUpToDate(): Boolean {
 }
 
 @TestOnly
-fun RemoteCourse.isUpToDate(courseFromStepik: RemoteCourse): Boolean {
+fun StepikCourse.isUpToDate(courseFromStepik: StepikCourse): Boolean {
   val dateFromServer = courseFromStepik.updateDate
 
   if (dateFromServer.isSignificantlyAfter(updateDate)) {
@@ -96,7 +96,7 @@ fun Task.isUpToDate(tasksFromServer: Task?): Boolean {
   return !tasksFromServer.updateDate.isSignificantlyAfter(updateDate)
 }
 
-fun RemoteCourse.setUpdated() {
+fun StepikCourse.setUpdated() {
   val courseInfo = getCourseInfo(EduSettings.getInstance().user, id, isCompatible) ?: return
   fillItems(courseInfo)
 
@@ -120,16 +120,16 @@ fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   return diff > Time.MINUTE
 }
 
-private fun RemoteCourse.isAdditionalMaterialsUpToDate(courseFromStepik: RemoteCourse): Boolean {
+private fun StepikCourse.isAdditionalMaterialsUpToDate(courseFromStepik: StepikCourse): Boolean {
   val additionalLesson = courseFromStepik.getLessons(true).singleOrNull { it.isAdditional } ?: return true
   return !additionalLesson.updateDate.isSignificantlyAfter((courseFromStepik.remoteInfo as StepikRemoteInfo).additionalMaterialsUpdateDate)
 }
 
-private fun RemoteCourse.hasNewOrRemovedSections(courseFromStepik: RemoteCourse): Boolean {
+private fun StepikCourse.hasNewOrRemovedSections(courseFromStepik: StepikCourse): Boolean {
   return courseFromStepik.sections.size != sections.size
 }
 
-private fun RemoteCourse.hasNewOrRemovedTopLevelLessons(courseFromStepik: RemoteCourse): Boolean {
+private fun StepikCourse.hasNewOrRemovedTopLevelLessons(courseFromStepik: StepikCourse): Boolean {
   if (!hasTopLevelLessons) {
     return false
   }

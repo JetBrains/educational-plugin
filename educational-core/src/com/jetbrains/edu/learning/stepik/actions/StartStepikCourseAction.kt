@@ -10,7 +10,7 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.newproject.ui.ChooseStepikCourseLanguageDialog
 import com.jetbrains.edu.learning.newproject.ui.ImportStepikCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
@@ -67,7 +67,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
   }
 
   private fun chooseLanguageIfNeeded(languages: List<Language>,
-                                     course: RemoteCourse): Language? {
+                                     course: StepikCourse): Language? {
     return if (languages.size == 1) {
       languages[0]
     }
@@ -86,7 +86,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     Messages.showErrorDialog("Cannot add course from Stepik, please check if link is correct", "Failed to Add Stepik Course")
   }
 
-  private fun getLanguagesUnderProgress(course: RemoteCourse): List<Language> {
+  private fun getLanguagesUnderProgress(course: StepikCourse): List<Language> {
     return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Language>, RuntimeException>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true

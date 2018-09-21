@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
 import com.jetbrains.edu.learning.courseFormat.ext.isCompatible
@@ -77,7 +77,7 @@ sealed class ErrorState(
     private fun isLoggedInToStepik(): Boolean = EduSettings.isLoggedIn()
 
     private fun isStepikLoginRequired(selectedCourse: Course): Boolean =
-      selectedCourse is RemoteCourse && !selectedCourse.isCompatible
+      selectedCourse is StepikCourse && !selectedCourse.isCompatible
 
     private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
       if (selectedCourse is CheckiOCourse) {

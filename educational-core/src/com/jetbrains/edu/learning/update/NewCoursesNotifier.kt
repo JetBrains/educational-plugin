@@ -10,7 +10,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter
@@ -51,7 +51,7 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
     ApplicationManager.getApplication().executeOnPooledThread {
       val courses = CoursesProvider.loadAllCourses()
 
-      val updated = courses.filterIsInstance<RemoteCourse>()
+      val updated = courses.filterIsInstance<StepikCourse>()
         .filter {it.updateDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) }
       if (!updated.isEmpty()) {
         showNewCoursesNotification(updated)

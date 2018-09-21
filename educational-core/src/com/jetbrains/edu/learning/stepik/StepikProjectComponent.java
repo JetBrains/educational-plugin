@@ -11,7 +11,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
@@ -36,16 +36,16 @@ public class StepikProjectComponent implements ProjectComponent {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
-        if (course instanceof RemoteCourse) {
-          if (!StepikCourseExt.isAdaptive((RemoteCourse)course)) {
-            StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
+        if (course instanceof StepikCourse) {
+          if (!StepikCourseExt.isAdaptive((StepikCourse)course)) {
+            StepikConnector.updateCourseIfNeeded(myProject, (StepikCourse)course);
           }
 
           final StepicUser currentUser = EduSettings.getInstance().getUser();
           if (currentUser != null && !course.getAuthors().contains(currentUser) && !CCUtils.isCourseCreator(myProject)) {
             loadSolutionsFromStepik(course);
           }
-          selectStep((RemoteCourse)course);
+          selectStep((StepikCourse)course);
         }
       }
     );
@@ -54,7 +54,7 @@ public class StepikProjectComponent implements ProjectComponent {
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
     final RemoteInfo remoteInfo = course.getRemoteInfo();
-    if (!(course instanceof RemoteCourse) || remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).getLoadSolutions()) {
+    if (!(course instanceof StepikCourse) || remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).getLoadSolutions()) {
       return;
     }
     if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
@@ -78,7 +78,7 @@ public class StepikProjectComponent implements ProjectComponent {
     statusBar.addWidget(new StepikUserWidget(myProject), "before Position");
   }
 
-  private void selectStep(@NotNull RemoteCourse course) {
+  private void selectStep(@NotNull StepikCourse course) {
     int stepId = PropertiesComponent.getInstance().getInt(STEP_ID, 0);
     if (stepId != 0) {
       navigateToStep(myProject, course, stepId);

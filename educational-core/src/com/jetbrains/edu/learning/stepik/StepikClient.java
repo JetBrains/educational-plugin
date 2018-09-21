@@ -12,7 +12,7 @@ import com.intellij.util.net.ssl.ConfirmingTrustManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.PluginUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
@@ -111,7 +111,7 @@ public class StepikClient {
   public static Gson createGson(@Nullable Map<Key, Object> params) {
     String language = StepikConnector.COURSE_LANGUAGE.get(params);
     return new GsonBuilder()
-        .registerTypeAdapter(RemoteCourse.class, new StepikRemoteInfoAdapter(language))
+        .registerTypeAdapter(StepikCourse.class, new StepikRemoteInfoAdapter(language))
         .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter(language))
         .registerTypeAdapter(Lesson.class, new StepikLessonAdapter(language))
         .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter(language))
