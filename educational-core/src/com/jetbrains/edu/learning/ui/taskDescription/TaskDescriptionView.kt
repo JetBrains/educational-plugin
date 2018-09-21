@@ -1,117 +1,26 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
-import com.intellij.ui.SeparatorComponent
-import com.intellij.util.ui.JBUI
-import com.intellij.util.ui.UIUtil
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel
-import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
-import java.awt.BorderLayout
-import javax.swing.JComponent
-import javax.swing.JPanel
 
+abstract class TaskDescriptionView : SimpleToolWindowPanel(true, true), Disposable {
 
-class TaskDescriptionView(val project: Project) : SimpleToolWindowPanel(true, true), DataProvider, Disposable {
-  private lateinit var checkPanel: CheckPanel
-  private val taskTextTW : TaskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
-  private val taskTextPanel : JComponent = taskTextTW.createTaskInfoPanel(project)
-  private lateinit var separator: SeparatorComponent
-  var currentTask: Task? = null
-    set(value) {
-      if (currentTask !== null && currentTask === value) return
-      setTaskText(value)
-      separator.isVisible = value != null
-      checkPanel.isVisible = value != null
-      if (value != null) {
-        readyToCheck()
-      }
+  abstract var currentTask: Task?
 
-      taskTextTW.updateTaskSpecificPanel(value)
-      UIUtil.setBackgroundRecursively(checkPanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
-      field = value
-    }
+  abstract fun init()
 
-  fun updateTaskSpecificPanel() {
-    if (isUnitTestMode) {
-      return
-    }
-    taskTextTW.updateTaskSpecificPanel(currentTask)
-  }
+  abstract fun updateTaskSpecificPanel()
+  abstract fun updateTaskDescription(task: Task?)
+  abstract fun updateTaskDescription()
 
-  fun updateTaskDescription(task: Task?) {
-    setTaskText(task)
-    updateTaskSpecificPanel()
-  }
-
-  fun updateTaskDescription() {
-    updateTaskDescription(currentTask)
-  }
-
-  fun readyToCheck() {
-    checkPanel.readyToCheck()
-  }
-
-  fun init() {
-    val panel = JPanel(BorderLayout())
-
-    val course = StudyTaskManager.getInstance(project).course
-    if (course != null && course.isAdaptive) {
-      panel.add(StepikAdaptiveReactionsPanel(project), BorderLayout.NORTH)
-    }
-
-    panel.add(taskTextPanel, BorderLayout.CENTER)
-
-    val bottomPanel = JPanel(BorderLayout())
-    bottomPanel.border = JBUI.Borders.empty(0, 15, 15, 15)
-    separator = SeparatorComponent(10, 15)
-    bottomPanel.add(separator, BorderLayout.NORTH)
-
-    val taskSpecificPanel = taskTextTW.createTaskSpecificPanel(currentTask)
-    bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
-
-    checkPanel = CheckPanel()
-    bottomPanel.add(checkPanel, BorderLayout.SOUTH)
-
-    panel.add(bottomPanel, BorderLayout.SOUTH)
-    UIUtil.setBackgroundRecursively(panel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
-
-    setContent(panel)
-
-    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
-    currentTask = EduUtils.getCurrentTask(project)
-  }
-
-  fun checkStarted() {
-    checkPanel.checkStarted()
-  }
-
-  fun checkFinished(checkResult: CheckResult) {
-    checkPanel.checkFinished(checkResult)
-    if (checkResult.status == CheckStatus.Failed) {
-      updateTaskSpecificPanel()
-    }
-  }
-
-  override fun dispose() {
-
-  }
-
-  private fun setTaskText(task: Task?) {
-    taskTextTW.setTaskText(project, task)
-  }
+  abstract fun readyToCheck()
+  abstract fun checkStarted()
+  abstract fun checkFinished(checkResult: CheckResult)
 
   companion object {
 
