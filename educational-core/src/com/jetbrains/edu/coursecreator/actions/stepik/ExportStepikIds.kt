@@ -12,10 +12,10 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.ext.id
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 
 
 class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids as json", null) {
@@ -49,7 +49,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
       }
       if (item is StepikCourse) {
         val remoteInfo = item.remoteInfo
-        if (remoteInfo is StepikRemoteInfo && remoteInfo.sectionIds.isNotEmpty()) {
+        if (remoteInfo is StepikCourseRemoteInfo && remoteInfo.sectionIds.isNotEmpty()) {
           jsonObject.addChildren("sectionIds", remoteInfo.sectionIds) { id ->
             JsonPrimitive(id)
           }

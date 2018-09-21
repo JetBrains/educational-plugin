@@ -6,17 +6,17 @@ import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduSettings.isLoggedIn
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.ext.isCompatible
 import com.jetbrains.edu.learning.courseFormat.ext.updateDate
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.StepikConnector.fillItems
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import org.jetbrains.annotations.TestOnly
 import java.util.*
 
@@ -120,9 +120,9 @@ fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   return diff > Time.MINUTE
 }
 
-private fun StepikCourse.isAdditionalMaterialsUpToDate(courseFromStepik: StepikCourse): Boolean {
+private fun isAdditionalMaterialsUpToDate(courseFromStepik: StepikCourse): Boolean {
   val additionalLesson = courseFromStepik.getLessons(true).singleOrNull { it.isAdditional } ?: return true
-  return !additionalLesson.updateDate.isSignificantlyAfter((courseFromStepik.remoteInfo as StepikRemoteInfo).additionalMaterialsUpdateDate)
+  return !additionalLesson.updateDate.isSignificantlyAfter((courseFromStepik.remoteInfo as StepikCourseRemoteInfo).additionalMaterialsUpdateDate)
 }
 
 private fun StepikCourse.hasNewOrRemovedSections(courseFromStepik: StepikCourse): Boolean {

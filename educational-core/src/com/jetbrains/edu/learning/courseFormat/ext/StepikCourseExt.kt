@@ -2,19 +2,22 @@
 
 package com.jetbrains.edu.learning.courseFormat.ext
 
-import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
+import com.jetbrains.edu.learning.courseFormat.ItemContainer
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import java.util.*
 
-val StepikCourse.isAdaptive: Boolean get() = (remoteInfo as? StepikRemoteInfo)?.isAdaptive ?: false
-val StepikCourse.isCompatible: Boolean get() = (remoteInfo as? StepikRemoteInfo)?.isIdeaCompatible ?: false
-val StepikCourse.id: Int get() = (remoteInfo as? StepikRemoteInfo)?.id ?: 0
+val StepikCourse.isAdaptive: Boolean get() = (remoteInfo as? StepikCourseRemoteInfo)?.isAdaptive ?: false
+val StepikCourse.isCompatible: Boolean get() = (remoteInfo as? StepikCourseRemoteInfo)?.isIdeaCompatible ?: false
+val StepikCourse.id: Int get() = (remoteInfo as? StepikCourseRemoteInfo)?.id ?: 0
 
-var StepikCourse.updateDate: Date get() = (remoteInfo as? StepikRemoteInfo)?.updateDate ?: Date(0)
+var StepikCourse.updateDate: Date get() = (remoteInfo as? StepikCourseRemoteInfo)?.updateDate ?: Date(0)
   set(date) {
-  (remoteInfo as? StepikRemoteInfo)?.updateDate = date
+    (remoteInfo as? StepikCourseRemoteInfo)?.updateDate = date
 }
 
 val StudyItem.id: Int get() = (this as? StepikCourse)?.id ?: (this as? Section)?.id ?: (this as? Lesson)?.id ?: (this as? Task)?.id ?: 0

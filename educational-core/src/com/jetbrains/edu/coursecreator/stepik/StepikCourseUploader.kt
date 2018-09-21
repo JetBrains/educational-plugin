@@ -5,15 +5,15 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.ext.updateDate
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
@@ -118,7 +118,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       val topLevelSectionId = getTopLevelSectionId(project, course)
       if (topLevelSectionId == -1) {
         val sectionId = postSectionForTopLevelLessons(project, course)
-        (course.remoteInfo as StepikRemoteInfo).sectionIds = arrayListOf(sectionId)
+        (course.remoteInfo as StepikCourseRemoteInfo).sectionIds = arrayListOf(sectionId)
         sectionId
       }
       else {
@@ -273,7 +273,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       lessonsToPush.addAll(course.lessons.filter { it.id == 0 })
       // process lessons moved to top-level
 
-      val section = StepikConnector.getSection((courseInfo.remoteInfo as StepikRemoteInfo).sectionIds[0])
+      val section = StepikConnector.getSection((courseInfo.remoteInfo as StepikCourseRemoteInfo).sectionIds[0])
       val lessonsFromSection = StepikConnector.getLessonsFromUnits(courseInfo, section.units.map { it.toString() }.toTypedArray(), false)
       val topLevelLessonsIds = course.lessons.map { it.id }
       for (lesson in lessonsFromSection) {
@@ -286,7 +286,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       }
     }
     else {
-      (course.remoteInfo as StepikRemoteInfo).sectionIds = emptyList()
+      (course.remoteInfo as StepikCourseRemoteInfo).sectionIds = emptyList()
     }
     sectionsToPush.addAll(course.sections.filter { it.id == 0 })
 
@@ -302,7 +302,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       if (section.name == StepikNames.PYCHARM_ADDITIONAL) {
         continue
       }
-      if ((section.id !in localSectionIds && section.id !in (course.remoteInfo as StepikRemoteInfo).sectionIds) && section.updateDate <= lastUpdateDate) {
+      if ((section.id !in localSectionIds && section.id !in (course.remoteInfo as StepikCourseRemoteInfo).sectionIds) && section.updateDate <= lastUpdateDate) {
         sectionsToDelete.add(section.id)
       }
     }

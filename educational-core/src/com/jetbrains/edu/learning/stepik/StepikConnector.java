@@ -32,10 +32,10 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -347,8 +347,8 @@ public class StepikConnector {
   }
 
   private static CourseVisibility getVisibility(@NotNull StepikCourse course, @NotNull List<Integer> featuredCourses) {
-    final RemoteInfo remoteInfo = course.getRemoteInfo();
-    if (remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).isPublic()) {
+    final CourseRemoteInfo remoteInfo = course.getRemoteInfo();
+    if (remoteInfo instanceof StepikCourseRemoteInfo && !((StepikCourseRemoteInfo)remoteInfo).isPublic()) {
       return CourseVisibility.PrivateVisibility.INSTANCE;
     }
     final int courseId = StepikCourseExt.getId(course);
@@ -406,14 +406,14 @@ public class StepikConnector {
   }
 
   public static void fillItems(@NotNull StepikCourse stepikCourse) throws IOException {
-    final RemoteInfo remoteInfo = stepikCourse.getRemoteInfo();
-    assert remoteInfo instanceof StepikRemoteInfo;
+    final CourseRemoteInfo remoteInfo = stepikCourse.getRemoteInfo();
+    assert remoteInfo instanceof StepikCourseRemoteInfo;
     try {
-      String[] sectionIds = ((StepikRemoteInfo)remoteInfo).getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
+      String[] sectionIds = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
       List<Section> allSections = getSections(sectionIds);
 
       if (hasVisibleSections(allSections, stepikCourse.getName())) {
-        ((StepikRemoteInfo)remoteInfo).setSectionIds(Collections.emptyList());
+        ((StepikCourseRemoteInfo)remoteInfo).setSectionIds(Collections.emptyList());
         List<Callable<StudyItem>> tasks = ContainerUtil.newArrayList();
         for (int index = 0; index < allSections.size(); index++) {
           Section section = allSections.get(index);
@@ -557,9 +557,9 @@ public class StepikConnector {
   }
 
   private static String[] getUnitsIds(StepikCourse stepikCourse) throws IOException, URISyntaxException {
-    final RemoteInfo remoteInfo = stepikCourse.getRemoteInfo();
-    assert remoteInfo instanceof StepikRemoteInfo;
-    String[] sectionIds = ((StepikRemoteInfo)remoteInfo).getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
+    final CourseRemoteInfo remoteInfo = stepikCourse.getRemoteInfo();
+    assert remoteInfo instanceof StepikCourseRemoteInfo;
+    String[] sectionIds = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
     return allSections

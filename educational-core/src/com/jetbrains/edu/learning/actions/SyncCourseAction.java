@@ -19,14 +19,15 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,8 +89,8 @@ public class SyncCourseAction extends DumbAwareAction {
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
     if (course != null) {
-      final RemoteInfo remoteInfo = course.getRemoteInfo();
-      if (!(course instanceof StepikCourse) || remoteInfo instanceof StepikRemoteInfo && !((StepikRemoteInfo)remoteInfo).getLoadSolutions()) {
+      final CourseRemoteInfo remoteInfo = course.getRemoteInfo();
+      if (!(course instanceof StepikCourse) || remoteInfo instanceof StepikCourseRemoteInfo && !((StepikCourseRemoteInfo)remoteInfo).getLoadSolutions()) {
         return false;
       }
     }

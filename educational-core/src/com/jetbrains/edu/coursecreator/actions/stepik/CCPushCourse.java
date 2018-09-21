@@ -18,16 +18,18 @@ import com.intellij.openapi.ui.Messages;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -144,12 +146,12 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void updateCourseContent(@NotNull ProgressIndicator indicator, StepikCourse course, Project project) {
-    final RemoteInfo info = course.getRemoteInfo();
-    assert info instanceof StepikRemoteInfo;
-    final List<Integer> sectionIds = ((StepikRemoteInfo)info).getSectionIds();
+    final CourseRemoteInfo info = course.getRemoteInfo();
+    assert info instanceof StepikCourseRemoteInfo;
+    final List<Integer> sectionIds = ((StepikCourseRemoteInfo)info).getSectionIds();
     if (!sectionIds.isEmpty() && course.getLessons().isEmpty()) {
       deleteSection(sectionIds.get(0));
-      ((StepikRemoteInfo)info).setSectionIds(Collections.emptyList());
+      ((StepikCourseRemoteInfo)info).setSectionIds(Collections.emptyList());
     }
 
     int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
@@ -165,7 +167,7 @@ public class CCPushCourse extends DumbAwareAction {
     }
 
     for (Lesson lesson : course.getLessons()) {
-      Integer sectionId = ((StepikRemoteInfo)info).getSectionIds().get(0);
+      Integer sectionId = ((StepikCourseRemoteInfo)info).getSectionIds().get(0);
       if (lesson.getId() > 0) {
         updateLesson(project, lesson, false, sectionId);
       }

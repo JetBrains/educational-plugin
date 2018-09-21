@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -26,7 +26,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Course extends ItemContainer {
-  @NotNull RemoteInfo myRemoteInfo = new LocalInfo();
+  @NotNull CourseRemoteInfo myRemoteInfo = new LocalInfo();
 
   transient private List<StepikUserInfo> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
@@ -305,12 +305,12 @@ public class Course extends ItemContainer {
 
   @NotNull
   @Transient
-  public RemoteInfo getRemoteInfo() {
+  public CourseRemoteInfo getRemoteInfo() {
     return myRemoteInfo;
   }
 
   @Transient
-  public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
+  public void setRemoteInfo(@NotNull CourseRemoteInfo remoteInfo) {
     myRemoteInfo = remoteInfo;
   }
 }
