@@ -23,6 +23,10 @@ public class StepikCourse extends Course {
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
 
+  public StepikCourse() {
+    setRemoteInfo(new StepikCourseRemoteInfo());
+  }
+
   public String getType() {
     return myType;
   }
