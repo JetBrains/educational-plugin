@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.coursera
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogBuilder
@@ -105,7 +104,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
       }
       row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
       row("Token:") { tokenField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
-      noteRow("Token can be obtained <a href=\"${getLinkToSubmission(task)}\">here</a>", BrowserUtil::browse)
+      noteRow("Token can be obtained <a href=\"${getLinkToSubmission(task)}\">here</a>")
     }
     var refusedToProvideCredentials = false
 
