@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ public class Section extends ItemContainer {
     int index = 1;
 
     if (course != null) {
-      this.courseId = course.getId();
+      this.courseId = StepikCourseExt.getId(course);
     }
     for (StudyItem lesson : items) {
       if (lesson instanceof Lesson) {

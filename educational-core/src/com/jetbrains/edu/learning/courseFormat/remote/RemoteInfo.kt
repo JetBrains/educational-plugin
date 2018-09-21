@@ -20,6 +20,7 @@ class StepikRemoteInfo : RemoteInfo {
   var isPublic: Boolean = false
   var isAdaptive = false
   var isIdeaCompatible = true
+  var id: Int = 0
 
   override fun isCourseValid(course: Course): Boolean {
     if (!isAdaptive) return true

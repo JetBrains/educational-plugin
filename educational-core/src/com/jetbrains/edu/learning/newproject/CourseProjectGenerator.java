@@ -75,12 +75,13 @@ public abstract class CourseProjectGenerator<S> {
   protected boolean beforeProjectGenerated() {
     if (!(myCourse instanceof RemoteCourse)) return true;
     final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
-    if (remoteCourse.getId() > 0) {
+    final int id = StepikCourseExt.getId(remoteCourse);
+    if (id > 0) {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         final StepikUser user = EduSettings.getInstance().getUser();
-        isEnrolled = StepikConnector.isEnrolledToCourse(remoteCourse.getId(), user);
+        isEnrolled = StepikConnector.isEnrolledToCourse(id, user);
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        StepikConnector.enrollToCourse(remoteCourse.getId(), user);
+        StepikConnector.enrollToCourse(id, user);
         if (StepikConnector.loadCourseStructure(remoteCourse)) {
           myCourse = remoteCourse;
           return true;
@@ -201,15 +202,16 @@ public abstract class CourseProjectGenerator<S> {
 
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
     StepikUser user = EduSettings.getInstance().getUser();
-    RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, myCourse.getId(), StepikCourseExt.isCompatible(myCourse));
+    final int id = StepikCourseExt.getId(myCourse);
+    RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, id, StepikCourseExt.isCompatible(myCourse));
     if (courseFromStepik != null) {
       StepikConnector.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);
       new StepikChangeRetriever(project, courseFromStepik).setStepikChangeStatuses();
     }
     else {
-      LOG.warn("Failed to get stepik course for imported from zip course with id: " + myCourse.getId());
-      LOG.info("Converting course to local. Course id: " + myCourse.getId());
+      LOG.warn("Failed to get stepik course for imported from zip course with id: " + id);
+      LOG.info("Converting course to local. Course id: " + id);
       myCourse = copyAsLocalCourse(myCourse);
     }
   }

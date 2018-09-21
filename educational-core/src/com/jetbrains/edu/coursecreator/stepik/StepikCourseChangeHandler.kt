@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.stepik
 
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 object StepikCourseChangeHandler {

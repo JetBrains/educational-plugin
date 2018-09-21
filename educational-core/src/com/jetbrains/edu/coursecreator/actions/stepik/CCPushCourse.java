@@ -20,6 +20,7 @@ import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
@@ -112,14 +113,14 @@ public class CCPushCourse extends DumbAwareAction {
       updateCourseContent(indicator, course, project);
       StepikUtils.setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
       try {
-        updateAdditionalMaterials(project, course.getId());
+        updateAdditionalMaterials(project, StepikCourseExt.getId(course));
       }
       catch (IOException e1) {
         LOG.warn(e1);
       }
 
       StepikUpdateDateExt.setUpdated((RemoteCourse)course);
-      showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId()));
+      showNotification(project, "Course is updated", openOnStepikAction("/course/" + StepikCourseExt.getId(course)));
     }
   }
 

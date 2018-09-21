@@ -7,6 +7,7 @@ import com.intellij.testFramework.runInEdtAndWait
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
@@ -139,6 +140,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
                                   serverLessonIds: List<Int>,
                                   latestCourseFromServer: RemoteCourse): List<Lesson> {
     return course.lessons
+      .asSequence()
       .filter { lesson -> serverLessonIds.contains(lesson.id) }
       .filter { updateCandidate ->
         val lessonFormServer = latestCourseFromServer.getLesson(updateCandidate.id)!!
@@ -146,6 +148,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
         lessonFormServer.name != updateCandidate.name ||
         lessonFormServer.isPublic != updateCandidate.isPublic
       }
+      .toList()
   }
 
   private fun sectionsInfoToUpdate(course: RemoteCourse,

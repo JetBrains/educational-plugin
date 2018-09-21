@@ -29,6 +29,9 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
+import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
@@ -58,7 +61,7 @@ public class EduBuiltInServerUtils {
         if (studyTaskManager != null) {
           Course course = studyTaskManager.getCourse();
           RemoteCourse remoteCourse = course instanceof RemoteCourse ? (RemoteCourse)course : null;
-          if (remoteCourse != null && remoteCourse.getId() == courseId) {
+          if (remoteCourse != null && StepikCourseExt.getId(remoteCourse) == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
               requestFocus(project);
               navigateToStep(project, course, stepId);
@@ -144,7 +147,7 @@ public class EduBuiltInServerUtils {
       Course course = studyTaskManager.getCourse();
 
       if (course instanceof RemoteCourse) {
-        return course.getId();
+        return StepikCourseExt.getId(course);
       }
     }
     catch (IllegalStateException | XmlSerializationException ignored) {

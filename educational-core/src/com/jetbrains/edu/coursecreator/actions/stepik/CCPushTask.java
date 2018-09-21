@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
+import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -58,7 +59,7 @@ public class CCPushTask extends DumbAwareAction {
       return;
     }
     Lesson lesson = CCUtils.lessonFromDir(course, lessonDir, project);
-    if (lesson != null && lesson.getId() > 0 && course.getId() > 0) {
+    if (lesson != null && lesson.getId() > 0 && StepikCourseExt.getId(course) > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       final Task task = lesson.getTask(taskDir.getName());
       if (task != null && task.getStepId() <= 0) {

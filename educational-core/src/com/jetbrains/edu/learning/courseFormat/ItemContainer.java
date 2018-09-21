@@ -29,12 +29,6 @@ public abstract class ItemContainer extends StudyItem {
   }
 
   @Nullable
-  public Lesson getLesson(int id) {
-    return (Lesson)StreamEx.of(items).filter(Lesson.class::isInstance)
-      .findFirst(item -> id == item.getId()).orElse(null);
-  }
-
-  @Nullable
   public StudyItem getItem(@NotNull final String name) {
     return items.stream().filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
