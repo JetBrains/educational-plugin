@@ -208,13 +208,14 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     }
   }
 
-  private fun updateAdditionalMaterialsFiles(courseFromServer: Course) {
+  private fun updateAdditionalMaterialsFiles(courseFromServer: RemoteCourse) {
     for (lesson in courseFromServer.items.filterIsInstance(Lesson::class.java)) {
       if (lesson.isAdditional) {
-        if (!lesson.updateDate.isSignificantlyAfter(course.additionalMaterialsUpdateDate)) {
+        val remoteInfo = course.remoteInfo as StepikRemoteInfo
+        if (!lesson.updateDate.isSignificantlyAfter(remoteInfo.additionalMaterialsUpdateDate)) {
           return
         }
-        course.additionalMaterialsUpdateDate = lesson.updateDate
+        remoteInfo.additionalMaterialsUpdateDate = lesson.updateDate
 
         val filesToCreate = GeneratorUtils.additionalFilesToCreate(lesson)
         val baseDir = project.baseDir

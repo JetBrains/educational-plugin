@@ -26,6 +26,7 @@ class StepikRemoteInfo : RemoteInfo {
   var updateDate = Date(0)
   var sectionIds: List<Int> = ArrayList() // in CC mode is used to store top-level lessons section id
   var instructors: List<Int> = ArrayList()
+  var additionalMaterialsUpdateDate = Date(0)
 
   // do not publish to stepik
   var loadSolutions = true // disabled for reset courses

@@ -10,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +22,6 @@ public class RemoteCourse extends Course {
   @SerializedName("course_format") private String myType =
                         String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
 
-  @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
 
   public String getType() {
     return myType;
@@ -64,14 +62,6 @@ public class RemoteCourse extends Course {
   public void setType(String type) {
     myType = type;
     myCompatibility = courseCompatibility();
-  }
-
-  public Date getAdditionalMaterialsUpdateDate() {
-    return myAdditionalMaterialsUpdateDate;
-  }
-
-  public void setAdditionalMaterialsUpdateDate(@NotNull Date additionalMaterialsUpdateDate) {
-    myAdditionalMaterialsUpdateDate = additionalMaterialsUpdateDate;
   }
 
   @NotNull
