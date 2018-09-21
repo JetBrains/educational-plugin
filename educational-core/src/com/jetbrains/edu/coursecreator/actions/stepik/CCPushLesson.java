@@ -24,6 +24,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 

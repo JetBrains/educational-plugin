@@ -10,10 +10,12 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.CONTENT
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.INFO
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.CONTENT
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.INFO
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.StepikTestCase
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import junit.framework.TestCase
 
 class EventBasedUpdateTest: StepikTestCase() {

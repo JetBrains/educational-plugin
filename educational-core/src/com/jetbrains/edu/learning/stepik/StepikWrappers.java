@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 

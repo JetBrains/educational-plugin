@@ -7,7 +7,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.id
 
 

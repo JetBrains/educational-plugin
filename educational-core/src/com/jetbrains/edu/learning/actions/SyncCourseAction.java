@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;

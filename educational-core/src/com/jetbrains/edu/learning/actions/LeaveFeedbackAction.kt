@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames

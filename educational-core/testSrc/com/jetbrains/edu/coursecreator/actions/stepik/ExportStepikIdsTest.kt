@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import org.intellij.lang.annotations.Language
 
 class ExportStepikIdsTest : EduTestCase() {

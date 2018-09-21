@@ -16,6 +16,7 @@ import com.jetbrains.edu.coursecreator.handlers.*
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.coursecreator.ui.withMockCreateStudyItemUi
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import junit.framework.TestCase
 
 class StepikStatusesTest: EduActionTestCase() {

@@ -5,9 +5,9 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.id
 import com.jetbrains.edu.learning.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo

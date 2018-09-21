@@ -7,7 +7,8 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 
 class StepikStatusesForImportedCourseTest : EduTestCase() {
   fun `test the same course`() {

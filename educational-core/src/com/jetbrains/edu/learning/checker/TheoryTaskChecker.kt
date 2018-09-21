@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckUtils.NOT_RUNNABLE_MESSAGE
 import com.jetbrains.edu.learning.checker.CheckUtils.createDefaultRunConfiguration
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.isAdaptive
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 

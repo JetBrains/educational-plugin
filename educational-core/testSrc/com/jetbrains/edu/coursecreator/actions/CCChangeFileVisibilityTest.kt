@@ -16,6 +16,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 
 class CCChangeFileVisibilityTest : EduActionTestCase() {
 

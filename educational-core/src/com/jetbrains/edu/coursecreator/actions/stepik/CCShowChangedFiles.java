@@ -11,6 +11,8 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.helper.StringUtil;
 

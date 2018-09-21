@@ -7,7 +7,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.stepik.StepikWrappers.StepContainer
 import org.hamcrest.CoreMatchers

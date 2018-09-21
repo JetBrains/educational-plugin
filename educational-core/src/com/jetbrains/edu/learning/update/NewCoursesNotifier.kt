@@ -10,7 +10,7 @@ import com.intellij.util.Alarm
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.isSignificantlyAfter

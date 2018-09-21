@@ -5,7 +5,7 @@ import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 

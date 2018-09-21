@@ -14,6 +14,8 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.StepikTestCase
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 
 open class StepikIntegrationTest : StepikTestCase() {
 

@@ -20,7 +20,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;

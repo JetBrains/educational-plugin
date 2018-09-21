@@ -32,6 +32,8 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;

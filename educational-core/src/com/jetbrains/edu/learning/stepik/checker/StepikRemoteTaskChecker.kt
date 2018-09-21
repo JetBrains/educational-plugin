@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
-import com.jetbrains.edu.learning.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task

@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import java.io.IOException
 
 abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {

@@ -12,7 +12,7 @@ import com.intellij.util.net.ssl.ConfirmingTrustManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.PluginUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;

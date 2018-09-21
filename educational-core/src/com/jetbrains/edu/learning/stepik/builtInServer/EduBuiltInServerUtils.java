@@ -28,7 +28,7 @@ import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikAuthorizedClient;

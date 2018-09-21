@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;

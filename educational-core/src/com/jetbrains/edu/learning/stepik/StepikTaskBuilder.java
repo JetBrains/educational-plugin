@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
