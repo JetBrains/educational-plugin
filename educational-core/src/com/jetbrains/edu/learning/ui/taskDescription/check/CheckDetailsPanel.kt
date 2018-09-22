@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
@@ -33,8 +34,7 @@ class CheckDetailsPanel(project: Project, checkResult: CheckResult) : JPanel(Bor
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.details ?: checkResult.message)), BorderLayout.NORTH)
     }
     messagePanel.text = message
-    //TODO: use real focus border width for different OS
-    messagePanel.margin.left = JBUI.scale(3)
+    messagePanel.margin.left = FOCUS_BORDER_WIDTH
   }
 
   private class LightColoredActionLink(text: String, action: AnAction): ActionLink(text, action) {
@@ -48,5 +48,9 @@ class CheckDetailsPanel(project: Project, checkResult: CheckResult) : JPanel(Bor
     override fun actionPerformed(e: AnActionEvent) {
       CheckUtils.showTestResultsToolWindow(project, text)
     }
+  }
+
+  companion object {
+    private val FOCUS_BORDER_WIDTH = if (SystemInfo.isMac) 3 else if (SystemInfo.isWindows) 0 else 2
   }
 }
