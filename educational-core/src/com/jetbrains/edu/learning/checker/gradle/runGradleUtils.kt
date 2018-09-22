@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.*
@@ -42,7 +43,7 @@ class GradleCommandLine private constructor(
 
   fun launchAndCheck(): CheckResult {
     val output = launch() ?: return CheckResult.FAILED_TO_CHECK
-    if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage, output.messages.joinToString("\n"))
+    if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.messages.joinToString("\n"))
 
     return TestsOutputParser.getCheckResult(output.messages)
   }
@@ -132,7 +133,7 @@ class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
   val firstMessage: String get() = messages.firstOrNull { it.isNotBlank() } ?: "<no output>"
 }
 
-fun String.postProcessOutput() = replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
+fun String.postProcessOutput(): String = StringUtil.escapeXml(replace(System.getProperty("line.separator"), "\n").removeSuffix("\n"))
 
 /**
  * Run gradle 'run' task.

@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
@@ -33,7 +32,7 @@ class CheckDetailsPanel(project: Project, checkResult: CheckResult) : JPanel(Bor
       message = message.substring(0, 150) + "..."
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.details ?: checkResult.message)), BorderLayout.NORTH)
     }
-    messagePanel.text = StringUtil.escapeXml(message)
+    messagePanel.text = message
     //TODO: use real focus border width for different OS
     messagePanel.margin.left = JBUI.scale(3)
   }
