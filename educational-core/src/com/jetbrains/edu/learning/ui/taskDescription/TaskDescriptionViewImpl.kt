@@ -66,9 +66,10 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
 
     panel.add(taskTextPanel, BorderLayout.CENTER)
+    taskTextPanel.border = JBUI.Borders.empty(0, 0, 8, 0)
 
     val bottomPanel = JPanel(BorderLayout())
-    separator = SeparatorComponent(10, 0)
+    separator = SeparatorComponent(2, 0)
     bottomPanel.add(separator, BorderLayout.NORTH)
 
     val taskSpecificPanel = taskTextTW.createTaskSpecificPanel(currentTask)
