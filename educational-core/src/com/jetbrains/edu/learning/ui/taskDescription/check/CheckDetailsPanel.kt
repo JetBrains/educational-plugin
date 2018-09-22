@@ -34,7 +34,7 @@ class CheckDetailsPanel(project: Project, checkResult: CheckResult) : JPanel(Bor
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.details ?: checkResult.message)), BorderLayout.NORTH)
     }
     messagePanel.text = message
-    messagePanel.margin.left = FOCUS_BORDER_WIDTH
+    messagePanel.margin.left = JBUI.scale(FOCUS_BORDER_WIDTH)
   }
 
   private class LightColoredActionLink(text: String, action: AnAction): ActionLink(text, action) {
