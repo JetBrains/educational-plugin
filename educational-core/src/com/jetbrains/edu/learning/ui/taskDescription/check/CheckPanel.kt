@@ -26,7 +26,7 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
 
   init {
     checkActionsPanel.add(createButtonToolbar(CheckAction.ACTION_ID), BorderLayout.WEST)
-    checkFinishedPanel.border = JBUI.Borders.empty(0, 16, 0, 0)
+    checkFinishedPanel.border = JBUI.Borders.empty(0, 0, 0, 0)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(createRightActionsToolbar(), BorderLayout.EAST)
     add(checkActionsPanel, BorderLayout.CENTER)
