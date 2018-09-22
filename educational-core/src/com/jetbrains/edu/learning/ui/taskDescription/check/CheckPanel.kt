@@ -26,7 +26,6 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
 
   init {
     checkActionsPanel.add(createButtonToolbar(CheckAction.ACTION_ID), BorderLayout.WEST)
-    checkFinishedPanel.border = JBUI.Borders.empty(0, 0, 0, 0)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(createRightActionsToolbar(), BorderLayout.EAST)
     add(checkActionsPanel, BorderLayout.CENTER)
@@ -64,7 +63,9 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
 
   fun checkStarted() {
     readyToCheck()
-    checkFinishedPanel.add(AsyncProcessIcon("Check in progress"), BorderLayout.WEST)
+    val asyncProcessIcon = AsyncProcessIcon("Check in progress")
+    asyncProcessIcon.border = JBUI.Borders.empty(0, 16, 0, 0)
+    checkFinishedPanel.add(asyncProcessIcon, BorderLayout.WEST)
   }
 
   fun checkFinished(result: CheckResult) {
@@ -82,7 +83,9 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
       return resultLabel
     }
     val panel = JPanel(BorderLayout())
-    panel.add(createButtonToolbar(NextTaskAction.ACTION_ID), BorderLayout.WEST)
+    val nextButton = createButtonToolbar(NextTaskAction.ACTION_ID)
+    nextButton.border = JBUI.Borders.empty(0, 12, 0, 0)
+    panel.add(nextButton, BorderLayout.WEST)
     panel.add(resultLabel, BorderLayout.CENTER)
     return panel
   }
