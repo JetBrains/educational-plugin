@@ -57,6 +57,7 @@ public class RevertTaskAction extends DumbAwareActionWithShortcut implements Rig
     showBalloon(project);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
+    TaskDescriptionView.getInstance(project).readyToCheck();
     EduUtils.updateCourseProgress(project);
   }
 
