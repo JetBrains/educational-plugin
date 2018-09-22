@@ -52,7 +52,7 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     toolbar.adjustTheSameSize(true)
 
     val component = toolbar.component
-    component.border = JBUI.Borders.empty()
+    component.border = JBUI.Borders.empty(5, 0, 0, 0)
     return component
   }
 
@@ -64,8 +64,11 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
   fun checkStarted() {
     readyToCheck()
     val asyncProcessIcon = AsyncProcessIcon("Check in progress")
-    asyncProcessIcon.border = JBUI.Borders.empty(0, 16, 0, 0)
-    checkFinishedPanel.add(asyncProcessIcon, BorderLayout.WEST)
+    val iconPanel = JPanel(BorderLayout())
+    iconPanel.add(asyncProcessIcon, BorderLayout.CENTER)
+    iconPanel.border = JBUI.Borders.empty(8, 16, 0, 0)
+    checkFinishedPanel.add(iconPanel, BorderLayout.WEST)
+    updateBackground()
   }
 
   fun checkFinished(result: CheckResult) {
@@ -74,6 +77,10 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     checkFinishedPanel.add(resultPanel, BorderLayout.WEST)
     checkFinishedPanel.add(JPanel(), BorderLayout.CENTER)
     checkDetailsPlaceholder.add(CheckDetailsPanel(project, result))
+    updateBackground()
+  }
+
+  private fun updateBackground() {
     UIUtil.setBackgroundRecursively(this, EditorColorsManager.getInstance().globalScheme.defaultBackground)
   }
 

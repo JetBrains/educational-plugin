@@ -28,6 +28,6 @@ class CheckResultLabel(checkResult: CheckResult) : JBLabel() {
       CheckStatus.Solved -> "Correct"
       else -> ""
     }
-    border = JBUI.Borders.empty(0, 16, 0, 0)
+    border = JBUI.Borders.empty(8, 16, 0, 0)
   }
 }
