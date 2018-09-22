@@ -15,22 +15,16 @@
  */
 package com.jetbrains.edu.learning.ui.taskDescription;
 
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.BrowserHyperlinkListener;
-import com.intellij.ui.ColorUtil;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 
 public class SwingToolWindow extends TaskDescriptionToolWindow {
@@ -45,38 +39,10 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   public JComponent createTaskInfoPanel(Project project) {
     final JPanel panel = new JPanel(new BorderLayout());
 
-    myTaskTextPane = new JTextPane();
+    myTaskTextPane = SwingTaskUtil.createTextPaneWithStyleSheet();
     panel.add(new JBScrollPane(myTaskTextPane), BorderLayout.CENTER);
-    myTaskTextPane.setContentType(new HTMLEditorKit().getContentType());
-
-    final EditorColorsScheme editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
-    int fontSize = editorColorsScheme.getEditorFontSize();
-    final String fontName = editorColorsScheme.getEditorFontName();
-    final Font font = new Font(fontName, Font.PLAIN, fontSize);
-    String dimmedColor = ColorUtil.toHex(ColorUtil.dimmer(UIUtil.getPanelBackground()));
-    int size = font.getSize();
-    String bodyRule = String.format("body { font-family: %s; font-size: %dpt; }", font.getFamily(), size);
-    String preRule = String.format("pre {font-family: Courier; font-size: %dpt; " +
-      "display: inline; ine-height: 50px; padding-top: 5px; padding-bottom: 5px; " +
-      "padding-left: 5px; background-color:%s;}", fontSize, dimmedColor);
-    String codeRule = String.format("code {font-family: Courier; font-size:%dpt; display: flex; " +
-      "float: left; background-color: %s;}", fontSize, dimmedColor);
-    String sizeRule = String.format("h1 { font-size: %dpt; } h2 { font-size: %fpt; }", 2 * fontSize, 1.5 * fontSize);
-    HTMLEditorKit htmlEditorKit = UIUtil.getHTMLEditorKit(false);
-
-    StyleSheet styleSheet = htmlEditorKit.getStyleSheet();
-    styleSheet.addRule(bodyRule);
-    styleSheet.addRule(preRule);
-    styleSheet.addRule(codeRule);
-    styleSheet.addRule(sizeRule);
-
-    myTaskTextPane.setEditorKit(htmlEditorKit);
-
-    myTaskTextPane.setEditable(false);
-    if (!UIUtil.isUnderDarcula()) {
-      myTaskTextPane.setBackground(EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground());
-    }
     myTaskTextPane.setBorder(JBUI.Borders.empty(20, 20, 0, 10));
+
     myTaskTextPane.addHyperlinkListener(e -> {
       String url = e.getDescription();
       if (url.startsWith(TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL)) {
