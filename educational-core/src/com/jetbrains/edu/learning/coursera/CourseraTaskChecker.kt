@@ -69,7 +69,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
   }
 
   private fun getLinkToSubmission(task: Task): String {
-    return task.feedbackLink.link?.removeSuffix("/discussions") ?: ""
+    return task.feedbackLink.link?.replace("/discussions", "/submission") ?: ""
   }
 
   private fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
