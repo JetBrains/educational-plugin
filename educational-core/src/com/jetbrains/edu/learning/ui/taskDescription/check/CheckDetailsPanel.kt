@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
@@ -20,6 +21,7 @@ class CheckDetailsPanel(project: Project, checkResult: CheckResult) : JPanel(Bor
   init {
     border = JBUI.Borders.empty(20, 0, 0, 0)
     val messagePanel = createTextPaneWithStyleSheet()
+    messagePanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
     add(messagePanel, BorderLayout.CENTER)
 
     val peekSolution = LightColoredActionLink("Peek Solution...", ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
@@ -29,8 +31,8 @@ class CheckDetailsPanel(project: Project, checkResult: CheckResult) : JPanel(Bor
     linksPanel.add(peekSolution, BorderLayout.CENTER)
 
     var message = checkResult.details ?: checkResult.message
-    if (message.length > 150) {
-      message = message.substring(0, 150) + "..."
+    if (message.length > 400) {
+      message = message.substring(0, 400) + "..."
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.details ?: checkResult.message)), BorderLayout.NORTH)
     }
     messagePanel.text = message
