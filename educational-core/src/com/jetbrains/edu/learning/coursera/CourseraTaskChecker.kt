@@ -69,7 +69,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
   }
 
   private fun getLinkToSubmission(task: Task): String {
-    return task.feedbackLink.link?.replace("/discussions", "/submission") ?: ""
+    return task.feedbackLink.link?.replace("/discussions", "/submission") ?: "https://www.coursera.org/"
   }
 
   private fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
