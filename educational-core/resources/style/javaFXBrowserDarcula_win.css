@@ -11,6 +11,7 @@ body {
     font-size: 13px; /*resetting in BrowserWindow depending on editor font size*/
     font-weight: normal;
     line-height: 20px;
+    height: auto;
 }
 
 pre code {
