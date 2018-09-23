@@ -191,19 +191,14 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       CheckStatus status = myResult.getStatus();
       final String details = myResult.getDetails();
       myTask.setStatus(status);
-      switch (status) {
-        case Failed:
-          if (myChecker != null) {
-            myChecker.onTaskFailed(message, details);
-          }
-          break;
-        case Solved:
-          if (myChecker != null) {
-            myChecker.onTaskSolved(message);
-          }
-          break;
-        default:
-          CheckUtils.showTestResultPopUp(message, MessageType.WARNING.getPopupBackground(), myProject);
+      if (status == CheckStatus.Failed) {
+        if (myChecker != null) {
+          myChecker.onTaskFailed(message, details);
+        }
+      } else if (status == CheckStatus.Solved) {
+        if (myChecker != null) {
+          myChecker.onTaskSolved(message);
+        }
       }
       TaskDescriptionView.getInstance(myProject).checkFinished(myResult);
       ApplicationManager.getApplication().invokeLater(() -> {
