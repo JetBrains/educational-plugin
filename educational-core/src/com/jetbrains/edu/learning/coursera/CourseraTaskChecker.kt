@@ -44,14 +44,12 @@ class CourseraTaskChecker : RemoteTaskChecker {
       }
     }
 
-    val json = createSubmissionJson(project, task, courseraSettings)
-
-    val response = postSubmission(json)
+    val response = postSubmission(createSubmissionJson(project, task, courseraSettings))
 
     var statusLine = response.statusLine
     if (statusLine.statusCode == HttpStatus.SC_UNAUTHORIZED && !askedForCredentials) {
       askToEnterCredentials(task, true)
-      statusLine = postSubmission(json).statusLine
+      statusLine = postSubmission(createSubmissionJson(project, task, courseraSettings)).statusLine
     }
     return statusLine.toCheckResult(task)
   }
