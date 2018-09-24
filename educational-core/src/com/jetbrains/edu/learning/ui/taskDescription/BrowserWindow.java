@@ -4,9 +4,6 @@ import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.colors.FontPreferences;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.StreamUtil;
@@ -45,31 +42,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL;
+import static com.jetbrains.edu.learning.ui.taskDescription.TaskFontPropertiesKt.*;
 
 public class BrowserWindow {
   private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
   private static final String EVENT_TYPE_CLICK = "click";
   private static final Pattern IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?");
-
-  private static final double BODY_FONT_SIZE_MAC = 13.0;
-  private static final double BODY_FONT_SIZE = 14.0;
-  private static final double FONT_SCALE_MAC = BODY_FONT_SIZE_MAC / FontPreferences.DEFAULT_FONT_SIZE;
-  private static final double FONT_SCALE = BODY_FONT_SIZE / FontPreferences.DEFAULT_FONT_SIZE;
-
-  private static final double CODE_FONT_SIZE_MAC = 13.0;
-  private static final double CODE_FONT_SIZE = 14.0;
-  private static final double CODE_FONT_SCALE_MAC = CODE_FONT_SIZE_MAC / FontPreferences.DEFAULT_FONT_SIZE;
-  private static final double CODE_FONT_SCALE = CODE_FONT_SIZE / FontPreferences.DEFAULT_FONT_SIZE;
-
-  private static final double LINE_HEIGHT_MAC = 20.0;
-  private static final double LINE_HEIGHT = 24.0;
-  private static final double LINE_HEIGHT_SCALE_MAC = LINE_HEIGHT_MAC / BODY_FONT_SIZE_MAC;
-  private static final double LINE_HEIGHT_SCALE = LINE_HEIGHT/ BODY_FONT_SIZE;
-
-  private static final double CODE_LINE_HEIGHT_MAC = 16.0;
-  private static final double CODE_LINE_HEIGHT = 20.0;
-  private static final double CODE_LINE_HEIGHT_SCALE_MAC = CODE_LINE_HEIGHT_MAC / CODE_FONT_SIZE_MAC;
-  private static final double CODE_LINE_HEIGHT_SCALE = CODE_LINE_HEIGHT / CODE_FONT_SIZE;
 
   public static final String SRC_ATTRIBUTE = "src";
   private JFXPanel myPanel;
@@ -230,12 +208,11 @@ public class BrowserWindow {
       return content;
     }
 
-    final EditorColorsScheme editorColorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
-    int bodyFontSize = (int)(editorColorsScheme.getEditorFontSize() * (SystemInfo.isMac ? FONT_SCALE_MAC : FONT_SCALE));
-    int codeFontSize = (int)(editorColorsScheme.getEditorFontSize() * (SystemInfo.isMac ? CODE_FONT_SCALE_MAC : CODE_FONT_SCALE));
+    int bodyFontSize = bodyFontSize();
+    int codeFontSize = codeFontSize();
 
-    int bodyLineHeight = (int)(editorColorsScheme.getEditorFontSize() * (SystemInfo.isMac ? LINE_HEIGHT_SCALE_MAC : LINE_HEIGHT_SCALE));
-    int codeLineHeight = (int)(editorColorsScheme.getEditorFontSize() * (SystemInfo.isMac ? CODE_LINE_HEIGHT_SCALE_MAC : CODE_LINE_HEIGHT_SCALE));
+    int bodyLineHeight = bodyLineHeight();
+    int codeLineHeight = codeLineHeight();
 
     template = template.replace("${body_font_size}", String.valueOf(bodyFontSize));
     template = template.replace("${code_font_size}", String.valueOf(codeFontSize));
