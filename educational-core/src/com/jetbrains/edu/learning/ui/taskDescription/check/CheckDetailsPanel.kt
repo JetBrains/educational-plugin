@@ -16,7 +16,7 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraNames
-import com.jetbrains.edu.learning.ui.taskDescription.createTextPaneWithStyleSheet
+import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
 import com.jetbrains.edu.learning.ui.taskDescription.textWithStyles
 import java.awt.BorderLayout
 import javax.swing.JPanel
@@ -24,7 +24,7 @@ import javax.swing.JPanel
 class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) : JPanel(BorderLayout()) {
   init {
     border = JBUI.Borders.empty(20, 0, 0, 0)
-    val messagePanel = createTextPaneWithStyleSheet()
+    val messagePanel = createTextPane()
     messagePanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
     add(messagePanel, BorderLayout.CENTER)
 

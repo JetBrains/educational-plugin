@@ -83,16 +83,13 @@ fun createListener(task: ChoiceTask, index: Int): ItemListener? {
   }
 }
 
-fun createTextPaneWithStyleSheet(): JTextPane {
+fun createTextPane(): JTextPane {
   val textPane = JTextPane()
   textPane.contentType = HTMLEditorKit().contentType
-
-  val htmlEditorKit = UIUtil.getHTMLEditorKit(false)
-
-  textPane.editorKit = htmlEditorKit
+  textPane.editorKit = UIUtil.getHTMLEditorKit(false)
   textPane.isEditable = false
-
   textPane.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
+
   return textPane
 }
 
