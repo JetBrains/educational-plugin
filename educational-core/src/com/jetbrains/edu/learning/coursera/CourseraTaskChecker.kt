@@ -70,6 +70,10 @@ class CourseraTaskChecker : RemoteTaskChecker {
     return task.feedbackLink.link?.replace("/discussions", "/submission") ?: "https://www.coursera.org/"
   }
 
+  private fun getLinkToToken(task: Task): String {
+    return task.feedbackLink.link?.removeSuffix("/discussions") ?: "https://www.coursera.org/"
+  }
+
   private fun createSubmissionJson(project: Project, task: Task, courseraSettings: CourseraSettings): String {
     val taskDir = task.getDir(project) ?: error("No directory for task ${task.name}")
 
@@ -103,7 +107,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
       }
       row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
       row("Token:") { tokenField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
-      noteRow("Token can be obtained <a href=\"${getLinkToSubmission(task)}\">here</a>")
+      noteRow("Token can be obtained <a href=\"${getLinkToToken(task)}\">here</a>")
     }
     var refusedToProvideCredentials = false
 
