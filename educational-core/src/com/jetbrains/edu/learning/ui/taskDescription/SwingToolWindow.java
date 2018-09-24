@@ -41,7 +41,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
 
     myTaskTextPane = SwingTaskUtil.createTextPaneWithStyleSheet();
     panel.add(new JBScrollPane(myTaskTextPane), BorderLayout.CENTER);
-    myTaskTextPane.setBorder(JBUI.Borders.empty(20, 20, 0, 10));
+    myTaskTextPane.setBorder(JBUI.Borders.empty(20, 0, 0, 10));
 
     myTaskTextPane.addHyperlinkListener(e -> {
       String url = e.getDescription();
