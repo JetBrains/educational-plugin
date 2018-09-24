@@ -60,7 +60,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   override fun init() {
     val panel = JPanel(BorderLayout())
-    panel.border = JBUI.Borders.empty(0, 15, 15, 15)
+    panel.border = JBUI.Borders.empty(0, 15, 15, 0)
     val course = StudyTaskManager.getInstance(project).course
     if (course != null && course.isAdaptive) {
       panel.add(StepikAdaptiveReactionsPanel(project), BorderLayout.NORTH)
