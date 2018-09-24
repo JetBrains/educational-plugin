@@ -13,22 +13,28 @@ import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.ui.taskDescription.createTextPaneWithStyleSheet
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
-class CheckDetailsPanel(project: Project, checkResult: CheckResult) : JPanel(BorderLayout()) {
+class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) : JPanel(BorderLayout()) {
   init {
     border = JBUI.Borders.empty(20, 0, 0, 0)
     val messagePanel = createTextPaneWithStyleSheet()
     messagePanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
     add(messagePanel, BorderLayout.CENTER)
 
-    val peekSolution = LightColoredActionLink("Peek Solution...", ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
     val linksPanel = JPanel(BorderLayout())
     add(linksPanel, BorderLayout.SOUTH)
 
-    linksPanel.add(peekSolution, BorderLayout.CENTER)
+    if (CourseraNames.COURSE_TYPE != task.course.courseType && task.canShowSolution()) {
+      val peekSolution = LightColoredActionLink("Peek Solution...",
+                                                ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
+      linksPanel.add(peekSolution, BorderLayout.CENTER)
+    }
 
     var message = checkResult.details ?: checkResult.message
     if (message.length > 400) {

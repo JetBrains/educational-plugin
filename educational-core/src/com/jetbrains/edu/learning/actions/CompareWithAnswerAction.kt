@@ -9,7 +9,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduState
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 
 class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare your solution with answer", AllIcons.Diff.Diff) {
   companion object {
@@ -57,27 +57,14 @@ class CompareWithAnswerAction : DumbAwareAction("Compare with Answer", "Compare 
     return fullAnswer.toString()
   }
 
-  override fun update(e: AnActionEvent?) {
-    EduUtils.updateAction(e!!)
-    val project = e.project
-    if (project != null) {
-      val course = StudyTaskManager.getInstance(project).course
-      val presentation = e.presentation
-      if (course != null && !course.isStudy) {
-        presentation.isEnabled = false
-        presentation.isVisible = true
-        return
-      }
-      val studyEditor = EduUtils.getSelectedEduEditor(project)
-      val studyState = EduState(studyEditor)
-      if (!studyState.isValid) {
-        presentation.isEnabledAndVisible = false
-        return
-      }
-      val taskFile = studyState.taskFile
-      if (taskFile == null || taskFile.answerPlaceholders.isEmpty()) {
-        presentation.isEnabledAndVisible = false
-      }
+  override fun update(e: AnActionEvent) {
+    val presentation = e.presentation
+    presentation.isEnabledAndVisible = false
+    val project = e.project ?: return
+    if (!EduUtils.isStudentProject(project)) {
+      return
     }
+    val task = EduUtils.getCurrentTask(project) ?: return
+    presentation.isEnabledAndVisible = task.canShowSolution()
   }
 }

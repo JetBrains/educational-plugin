@@ -108,3 +108,8 @@ fun Task.hasTaskFilesNotInsideSourceDir(project: Project): Boolean {
     !VfsUtil.isAncestor(sourceDir, virtualFile, true)
   }
 }
+
+private fun TaskFile.canShowSolution() =
+  answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
+
+fun Task.canShowSolution() = taskFiles.values.all { it.canShowSolution() }
