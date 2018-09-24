@@ -52,12 +52,11 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
     @VisibleForTesting
     fun getLink(task: Task): String {
       val feedbackLink = task.feedbackLink
-      val link = when (feedbackLink.type) {
+      return when (feedbackLink.type) {
         FeedbackLink.LinkType.NONE -> error("LeaveFeedbackAction should be disabled for NONE links")
         FeedbackLink.LinkType.CUSTOM -> feedbackLink.link ?: error("Custom link doesn't contain an actual link")
         FeedbackLink.LinkType.STEPIK -> getStepikLink(task)
       }
-      return link
     }
   }
 }
