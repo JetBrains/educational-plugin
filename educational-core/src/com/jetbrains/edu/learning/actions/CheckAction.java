@@ -217,7 +217,7 @@ public class CheckAction extends DumbAwareActionWithShortcut {
           myChecker.onTaskSolved(message);
         }
       }
-      TaskDescriptionView.getInstance(myProject).checkFinished(myResult);
+      TaskDescriptionView.getInstance(myProject).checkFinished(myTask, myResult);
       ApplicationManager.getApplication().invokeLater(() -> {
         EduUtils.updateCourseProgress(myProject);
         ProjectView.getInstance(myProject).refresh();

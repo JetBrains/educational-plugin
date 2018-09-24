@@ -77,12 +77,12 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     updateBackground()
   }
 
-  fun checkFinished(result: CheckResult) {
+  fun checkFinished(task: Task, result: CheckResult) {
     checkFinishedPanel.removeAll()
     val resultPanel = getResultPanel(result)
     checkFinishedPanel.add(resultPanel, BorderLayout.WEST)
     checkFinishedPanel.add(JPanel(), BorderLayout.CENTER)
-    checkDetailsPlaceholder.add(CheckDetailsPanel(project, result))
+    checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, result))
     updateBackground()
   }
 

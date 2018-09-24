@@ -23,7 +23,7 @@ abstract class TaskDescriptionView : SimpleToolWindowPanel(true, true), Disposab
 
   abstract fun readyToCheck()
   abstract fun checkStarted()
-  abstract fun checkFinished(checkResult: CheckResult)
+  abstract fun checkFinished(task: Task, checkResult: CheckResult)
 
   companion object {
 
