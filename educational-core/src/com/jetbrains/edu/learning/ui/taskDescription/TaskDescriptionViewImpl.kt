@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
+import com.intellij.ide.ui.LafManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -84,6 +85,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
     currentTask = EduUtils.getCurrentTask(project)
+
+    LafManager.getInstance().addLafManagerListener { UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor()) }
   }
 
   override fun checkStarted() {
