@@ -18,8 +18,8 @@ class CheckResultLabel(checkResult: CheckResult) : JBLabel() {
       else -> null
     }
     foreground = when (status) {
-      CheckStatus.Failed -> JBColor(0xC7222D, 0xC7222D)
-      CheckStatus.Solved -> JBColor(0x368746, 0x368746)
+      CheckStatus.Failed -> JBColor(0xC7222D, 0xFF5261)
+      CheckStatus.Solved -> JBColor(0x368746, 0x499C54)
       else -> foreground
     }
 
