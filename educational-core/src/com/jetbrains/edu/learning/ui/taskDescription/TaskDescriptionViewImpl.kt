@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.ui.SeparatorComponent
@@ -37,7 +36,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       }
 
       taskTextTW.updateTaskSpecificPanel(value)
-      UIUtil.setBackgroundRecursively(checkPanel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
+      UIUtil.setBackgroundRecursively(checkPanel, getTaskDescriptionBackgroundColor())
       field = value
     }
   override fun updateTaskSpecificPanel() {
@@ -79,7 +78,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     bottomPanel.add(checkPanel, BorderLayout.SOUTH)
 
     panel.add(bottomPanel, BorderLayout.SOUTH)
-    UIUtil.setBackgroundRecursively(panel, EditorColorsManager.getInstance().globalScheme.defaultBackground)
+    UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
 
     setContent(panel)
 

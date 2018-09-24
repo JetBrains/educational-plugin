@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.ui.taskDescription.check
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.AsyncProcessIcon
@@ -15,6 +14,7 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -81,7 +81,7 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
   }
 
   private fun updateBackground() {
-    UIUtil.setBackgroundRecursively(this, EditorColorsManager.getInstance().globalScheme.defaultBackground)
+    UIUtil.setBackgroundRecursively(this, TaskDescriptionView.getTaskDescriptionBackgroundColor())
   }
 
   private fun getResultPanel(result: CheckResult): JComponent {

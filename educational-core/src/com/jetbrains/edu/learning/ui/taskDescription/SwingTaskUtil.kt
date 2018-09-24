@@ -114,8 +114,6 @@ fun createTextPaneWithStyleSheet(): JTextPane {
   textPane.editorKit = htmlEditorKit
   textPane.isEditable = false
 
-  if (!UIUtil.isUnderDarcula()) {
-    textPane.background = EditorColorsManager.getInstance().globalScheme.defaultBackground
-  }
+  textPane.background = TaskDescriptionView.getTaskDescriptionBackgroundColor()
   return textPane
 }
