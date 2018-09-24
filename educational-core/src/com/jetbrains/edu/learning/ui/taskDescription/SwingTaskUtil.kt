@@ -2,11 +2,10 @@
 
 package com.jetbrains.edu.learning.ui.taskDescription
 
-import com.intellij.openapi.diagnostic.Logger.getInstance
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.StreamUtil
-import com.intellij.refactoring.changeClassSignature.ChangeClassSignatureDialog
 import com.intellij.ui.ColorUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -23,7 +22,6 @@ private const val RIGHT_INSET = 10
 private const val TOP_INSET = 15
 private const val BOTTOM_INSET = 10
 
-private val LOG = getInstance(ChangeClassSignatureDialog::class.java)
 
 fun Task?.createSpecificPanel(): JPanel? {
   val choiceTask = this as? ChoiceTask ?: return null
@@ -93,56 +91,60 @@ fun createTextPane(): JTextPane {
   return textPane
 }
 
-fun textWithStyles(content: String): String {
+object StyledTextLoader {
+  private val LOG: Logger = Logger.getInstance(this.javaClass)
 
-  val classLoader = BrowserWindow::class.java.classLoader
-  val templateName = when {
-    SystemInfo.isMac -> if (UIUtil.isUnderDarcula()) "mac_dark.html" else "mac.html"
-    SystemInfo.isLinux -> if (UIUtil.isUnderDarcula()) "win_dark.html" else "win.html"
-    else -> if (UIUtil.isUnderDarcula()) "linux_dark.html" else "linux.html"
+  @JvmStatic
+  fun textWithStyles(content: String): String {
+    val classLoader = this.javaClass.classLoader
+    val templateName = when {
+      SystemInfo.isMac -> if (UIUtil.isUnderDarcula()) "mac_dark.html" else "mac.html"
+      SystemInfo.isLinux -> if (UIUtil.isUnderDarcula()) "win_dark.html" else "win.html"
+      else -> if (UIUtil.isUnderDarcula()) "linux_dark.html" else "linux.html"
+    }
+    var templateText = loadTemplateText(classLoader, templateName)
+
+    if (templateText == null) {
+      LOG.warn("Template for swing panel is null")
+      return content
+    }
+
+    val bodyFontSize = bodyFontSize()
+    val codeFontSize = codeFontSize()
+
+    val bodyLineHeight = bodyLineHeight()
+    val codeLineHeight = codeLineHeight()
+
+    val dimmedColor = ColorUtil.toHex(ColorUtil.dimmer(UIUtil.getPanelBackground()))
+
+    templateText = templateText.replace("\${body_font_size}", bodyFontSize.toString())
+    templateText = templateText.replace("\${code_font_size}", codeFontSize.toString())
+    templateText = templateText.replace("\${body_line_height}", bodyLineHeight.toString())
+    templateText = templateText.replace("\${code_line_height}", codeLineHeight.toString())
+    templateText = templateText.replace("\${dimmedColor}", dimmedColor)
+    templateText = templateText.replace("\${content}", content)
+
+    return templateText
   }
-  var templateText = loadTemplateText(classLoader, templateName)
 
-  if (templateText == null) {
-    LOG.warn("Code mirror template is null")
-    return content
-  }
-
-  val bodyFontSize = bodyFontSize()
-  val codeFontSize = codeFontSize()
-
-  val bodyLineHeight = bodyLineHeight()
-  val codeLineHeight = codeLineHeight()
-
-  val dimmedColor = ColorUtil.toHex(ColorUtil.dimmer(UIUtil.getPanelBackground()))
-
-  templateText = templateText.replace("\${body_font_size}", bodyFontSize.toString())
-  templateText = templateText.replace("\${code_font_size}", codeFontSize.toString())
-  templateText = templateText.replace("\${body_line_height}", bodyLineHeight.toString())
-  templateText = templateText.replace("\${code_line_height}", codeLineHeight.toString())
-  templateText = templateText.replace("\${dimmedColor}", dimmedColor)
-  templateText = templateText.replace("\${content}", content)
-
-  return templateText
-}
-
-private fun loadTemplateText(classLoader: ClassLoader, templateName: String): String? {
-  var templateText: String? = null
-  val stream = classLoader.getResourceAsStream("/style/swingTemplates/$templateName")
-  try {
-    templateText = StreamUtil.readText(stream, "utf-8")
-  }
-  catch (e: IOException) {
-    LOG.warn(e.message)
-  }
-  finally {
+  private fun loadTemplateText(classLoader: ClassLoader, templateName: String): String? {
+    var templateText: String? = null
+    val stream = classLoader.getResourceAsStream("/style/swingTemplates/$templateName")
     try {
-      stream.close()
+      templateText = StreamUtil.readText(stream, "utf-8")
     }
     catch (e: IOException) {
       LOG.warn(e.message)
     }
+    finally {
+      try {
+        stream.close()
+      }
+      catch (e: IOException) {
+        LOG.warn(e.message)
+      }
 
+    }
+    return templateText
   }
-  return templateText
 }

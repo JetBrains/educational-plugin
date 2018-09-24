@@ -16,8 +16,8 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.ui.taskDescription.StyledTextLoader
 import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
-import com.jetbrains.edu.learning.ui.taskDescription.textWithStyles
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -42,7 +42,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       message = message.substring(0, 400) + "..."
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.details ?: checkResult.message)), BorderLayout.NORTH)
     }
-    messagePanel.text = textWithStyles(message.replace("\n", "<br>"))
+    messagePanel.text = StyledTextLoader.textWithStyles(message.replace("\n", "<br>"))
     messagePanel.margin.left = JBUI.scale(FOCUS_BORDER_WIDTH)
   }
 

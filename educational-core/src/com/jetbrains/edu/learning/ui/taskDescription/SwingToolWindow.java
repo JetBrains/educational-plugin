@@ -42,8 +42,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
-import static com.jetbrains.edu.learning.ui.taskDescription.SwingTaskUtil.textWithStyles;
-
 public class SwingToolWindow extends TaskDescriptionToolWindow {
   private static final Logger LOG = Logger.getInstance(SwingToolWindow.class);
   private static final String HINT_PROTOCOL = "hint://";
@@ -100,7 +98,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
 
   public void setText(@NotNull String text) {
     String wrappedText = wrapHints(text);
-    myTaskTextPane.setText(textWithStyles(wrappedText));
+    myTaskTextPane.setText(StyledTextLoader.textWithStyles(wrappedText));
   }
 
   @Override
