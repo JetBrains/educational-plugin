@@ -34,6 +34,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       checkPanel.isVisible = value != null
       if (value != null) {
         readyToCheck()
+        checkPanel.updateCheckButton(value)
       }
 
       taskTextTW.updateTaskSpecificPanel(value)

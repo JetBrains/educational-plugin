@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.ui.taskDescription.check
 
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
+import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.panels.HorizontalLayout
@@ -14,6 +15,7 @@ import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -23,9 +25,10 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
   private val checkFinishedPanel: JPanel = JPanel(BorderLayout())
   private val checkActionsPanel: JPanel = JPanel(BorderLayout())
   private val checkDetailsPlaceholder: JPanel = JPanel(BorderLayout())
+  private val checkButtonWrapper = JPanel(BorderLayout())
 
   init {
-    checkActionsPanel.add(createButtonToolbar(CheckAction.ACTION_ID), BorderLayout.WEST)
+    checkActionsPanel.add(checkButtonWrapper, BorderLayout.WEST)
     checkActionsPanel.add(checkFinishedPanel, BorderLayout.CENTER)
     checkActionsPanel.add(createRightActionsToolbar(), BorderLayout.EAST)
     add(checkActionsPanel, BorderLayout.CENTER)
@@ -41,8 +44,11 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
 
   private fun createButtonToolbar(actionId: String): JComponent {
     val action = ActionManager.getInstance().getAction(actionId)
-    return ActionManager.getInstance().createButtonToolbar(ACTION_PLACE, DefaultActionGroup(action))
+    return createButtonToolbar(action)
   }
+
+  private fun createButtonToolbar(action: AnAction) =
+    ActionManager.getInstance().createButtonToolbar(ACTION_PLACE, DefaultActionGroup(action))
 
   private fun createSingleActionToolbar(actionId: String): JComponent {
     val action = ActionManager.getInstance().getAction(actionId)
@@ -95,6 +101,11 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     panel.add(nextButton, BorderLayout.WEST)
     panel.add(resultLabel, BorderLayout.CENTER)
     return panel
+  }
+
+  fun updateCheckButton(task: Task) {
+    checkButtonWrapper.removeAll()
+    checkButtonWrapper.add(createButtonToolbar(CheckAction.createCheckAction(task)), BorderLayout.WEST)
   }
 
   companion object {
