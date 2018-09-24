@@ -135,8 +135,7 @@ public class RevertTaskAction extends DumbAwareActionWithShortcut implements Rig
       return;
     }
     if (!course.isStudy()) {
-      presentation.setVisible(true);
-      presentation.setEnabled(false);
+      presentation.setEnabledAndVisible(false);
     }
   }
 
