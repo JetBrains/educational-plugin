@@ -5,7 +5,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
-import com.intellij.ui.SeparatorComponent
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
@@ -19,12 +18,13 @@ import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
 import javax.swing.JComponent
 import javax.swing.JPanel
+import javax.swing.JSeparator
 
 class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), DataProvider, Disposable {
   private lateinit var checkPanel: CheckPanel
   private val taskTextTW : TaskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
   private val taskTextPanel : JComponent = taskTextTW.createTaskInfoPanel(project)
-  private lateinit var separator: SeparatorComponent
+  private lateinit var separator: JSeparator
 
   override var currentTask: Task? = null
     set(value) {
@@ -66,16 +66,17 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
 
     panel.add(taskTextPanel, BorderLayout.CENTER)
-    taskTextPanel.border = JBUI.Borders.empty(0, 0, 8, 0)
+    taskTextPanel.border = JBUI.Borders.empty(0, 0, 10, 0)
 
     val bottomPanel = JPanel(BorderLayout())
-    separator = SeparatorComponent(2, 0)
+    separator = JSeparator()
     bottomPanel.add(separator, BorderLayout.NORTH)
 
     val taskSpecificPanel = taskTextTW.createTaskSpecificPanel(currentTask)
     bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
 
     checkPanel = CheckPanel(project)
+    checkPanel.border = JBUI.Borders.empty(2, 0, 0, 0)
     bottomPanel.add(checkPanel, BorderLayout.SOUTH)
 
     panel.add(bottomPanel, BorderLayout.SOUTH)
