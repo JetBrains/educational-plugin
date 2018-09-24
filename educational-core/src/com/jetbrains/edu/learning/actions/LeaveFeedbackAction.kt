@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.actions
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
+import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
@@ -14,7 +14,7 @@ import icons.EducationalCoreIcons
 
 private const val ACTION_TEXT = "Leave a comment"
 
-class LeaveFeedbackAction : AnAction(ACTION_TEXT, ACTION_TEXT, EducationalCoreIcons.CommentTask), RightAlignedToolbarAction {
+class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, EducationalCoreIcons.CommentTask), RightAlignedToolbarAction {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) ?: return
