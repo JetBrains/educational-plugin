@@ -26,6 +26,7 @@ import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.coursera.CourseraNames;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -38,11 +39,27 @@ public class CheckAction extends DumbAwareActionWithShortcut {
   public static final String ACTION_ID = "Educational.Check";
   private static final String CHECK_TASK = "Check";
   private static final String RUN_TASK = "Run";
+  private static final String RUN_DESCRIPTION = "Run current task";
+  private static final String CHECK_DESCRIPTION = "Check current task";
 
   protected final Ref<Boolean> myCheckInProgress = new Ref<>(false);
 
   public CheckAction() {
     super(CHECK_TASK,"Check current task", null);
+  }
+
+  private CheckAction(String text, String description) {
+    super(text, description, null);
+  }
+
+  public static CheckAction createCheckAction(@Nullable Task task) {
+    if (task instanceof TheoryTask) {
+      return new CheckAction(RUN_TASK, RUN_DESCRIPTION);
+    }
+    if (task != null && CourseraNames.COURSE_TYPE.equals(task.getCourse().getCourseType())) {
+      return new CheckAction(CourseraNames.SUBMIT_TO_COURSERA, CourseraNames.SUBMIT_TO_COURSERA);
+    }
+    return new CheckAction(CHECK_TASK, CHECK_DESCRIPTION);
   }
 
   @Override
@@ -98,11 +115,11 @@ public class CheckAction extends DumbAwareActionWithShortcut {
       final Task task = studyEditor.getTaskFile().getTask();
       if (task instanceof TheoryTask) {
         presentation.setText(RUN_TASK);
-        presentation.setDescription("Run current task");
+        presentation.setDescription(RUN_DESCRIPTION);
       }
       else {
         presentation.setText(CHECK_TASK);
-        presentation.setDescription("Check current task");
+        presentation.setDescription(CHECK_DESCRIPTION);
       }
     }
     if (presentation.isEnabled()) {
