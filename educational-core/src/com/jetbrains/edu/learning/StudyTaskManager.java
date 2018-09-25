@@ -18,12 +18,9 @@ import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
-import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
@@ -40,6 +37,10 @@ import java.util.List;
 import java.util.Map;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.addChildWithName;
+import static com.jetbrains.edu.learning.serialization.XmlCourseSerializerKt.deserializeCourse;
+import static com.jetbrains.edu.learning.serialization.XmlCourseSerializerKt.serializeCourse;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 /**
@@ -51,7 +52,6 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 public class StudyTaskManager implements PersistentStateComponent<Element>, DumbAware {
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
-  private static final String STEPIK_REMOTE_INFO = "stepikRemoteInfo";
 
   @Transient
   private Course myCourse;
@@ -136,22 +136,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     return el;
   }
 
-  private Element serializeCourse() {
-    Class<? extends Course> courseClass = myCourse.getClass();
-    String serializedName = courseClass.getSimpleName();
-    final Element courseElement = new Element(serializedName);
-    XmlSerializer.serializeInto(courseClass.cast(myCourse), courseElement);
-    return courseElement;
-  }
-
-  private void serializeRemoteInfo(@NotNull Element taskManagerElement, @NotNull String serializedName,
-                                   @NotNull Class<? extends CourseRemoteInfo> remoteInfoClass) {
-    final Element element = new Element(serializedName);
-    final CourseRemoteInfo info = myCourse.getRemoteInfo();
-    XmlSerializer.serializeInto(remoteInfoClass.cast(info), element);
-    taskManagerElement.addContent(element);
-  }
-
   @Override
   public void loadState(@NotNull Element state) {
     try {
@@ -230,40 +214,8 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       throw new StudyUnrecognizedFormatException();
     }
     XmlSerializer.deserializeInto(this, taskManagerElement);
-    final Element xmlCourse = getChildWithName(taskManagerElement, COURSE);
+    final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, COURSE);
     myCourse = deserializeCourse(xmlCourse);
-  }
-
-  private static Course deserializeCourse(Element xmlCourse) {
-    for (Class<? extends Course> courseClass : courseElementTypes) {
-      final Element courseElement = xmlCourse.getChild(courseClass.getSimpleName());
-      if (courseElement == null) {
-        continue;
-      }
-      try {
-        Course courseBean = courseClass.newInstance();
-        XmlSerializer.deserializeInto(courseBean, courseElement);
-        return courseBean;
-      }
-      catch (InstantiationException e) {
-        LOG.error("Failed to deserialize course");
-      }
-      catch (IllegalAccessException e) {
-        LOG.error("Failed to deserialize course");
-      }
-    }
-    return null;
-  }
-
-  private <T extends CourseRemoteInfo> boolean tryDeserializeRemoteInfo(@NotNull Element taskManagerElement, @NotNull String serializedName,
-                                                                        @NotNull T remoteInfo) {
-    final Element courseElement = taskManagerElement.getChild(serializedName);
-    if (courseElement != null) {
-      XmlSerializer.deserializeInto(remoteInfo, courseElement);
-      myCourse.setRemoteInfo(remoteInfo);
-      return true;
-    }
-    return false;
   }
 
   public static StudyTaskManager getInstance(@NotNull final Project project) {

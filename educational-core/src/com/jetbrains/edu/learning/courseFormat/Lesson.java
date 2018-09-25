@@ -4,14 +4,11 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
-import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import kotlin.collections.CollectionsKt;
 import one.util.streamex.StreamEx;
@@ -22,22 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lesson extends StudyItem {
-  @NotNull private RemoteInfo myRemoteInfo = new LocalInfo();
   @Expose
   @SerializedName("title")
   private String name;
 
   @Expose
   @SerializedName("task_list")
-  @AbstractCollection(elementTypes = {
-    CheckiOMission.class,
-    EduTask.class,
-    ChoiceTask.class,
-    TheoryTask.class,
-    CodeTask.class,
-    OutputTask.class,
-    IdeTask.class
-  })
+  @Transient
   public List<Task> taskList = new ArrayList<>();
 
   @Transient
@@ -70,6 +58,7 @@ public class Lesson extends StudyItem {
     this.name = name;
   }
 
+  @Transient
   public List<Task> getTaskList() {
     return taskList;
   }
@@ -162,14 +151,5 @@ public class Lesson extends StudyItem {
   @Nullable
   public VirtualFile getDir(@NotNull Project project) {
     return getLessonDir(project);
-  }
-
-  @NotNull
-  public RemoteInfo getRemoteInfo() {
-    return myRemoteInfo;
-  }
-
-  public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
-    myRemoteInfo = remoteInfo;
   }
 }

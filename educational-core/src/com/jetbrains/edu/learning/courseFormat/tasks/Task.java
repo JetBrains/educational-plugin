@@ -12,8 +12,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
-import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
@@ -33,14 +31,12 @@ import java.util.*;
  *
  * To implement new task there are 5 steps to be done:
  * - Extend {@link Task} class
- * - Go to {@link Lesson#taskList} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
+ * - Go to {@link com.jetbrains.edu.learning.serialization.XmlCourseSerializerKt} and update taskElementTypes. Needed for proper xml serialization
  * - Update {@link SerializationUtils.Json.TaskAdapter#deserialize} to handle json serialization
  * - Update {@link TaskCheckerProvider#getTaskChecker} and provide default checker for new task
  * - Update {@link StepikTaskBuilder#pluginTaskTypes} for the tasks we do not have separately on stepik and {@link StepikTaskBuilder#stepikTaskTypes} otherwise
  */
 public abstract class Task extends StudyItem {
-  @NotNull private RemoteInfo myRemoteInfo = new LocalInfo();
-
   @Expose private String name;
 
   protected CheckStatus myStatus = CheckStatus.Unchecked;
@@ -360,14 +356,5 @@ public abstract class Task extends StudyItem {
   @Override
   public StudyItem getParent() {
     return myLesson;
-  }
-
-  @NotNull
-  public RemoteInfo getRemoteInfo() {
-    return myRemoteInfo;
-  }
-
-  public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
-    myRemoteInfo = remoteInfo;
   }
 }

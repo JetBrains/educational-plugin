@@ -2,6 +2,9 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
  * @see com.jetbrains.edu.coursecreator.actions.StudyItemType
  */
 public abstract class StudyItem {
+  @Transient
+  @NotNull private RemoteInfo myRemoteInfo = new LocalInfo();
+
   // from 1 to number of items
   private int myIndex = -1;
 
@@ -81,4 +87,15 @@ public abstract class StudyItem {
 
   @NotNull
   public abstract StudyItem getParent();
+
+  @NotNull
+  @Transient
+  public RemoteInfo getRemoteInfo() {
+    return myRemoteInfo;
+  }
+
+  @Transient
+  public void setRemoteInfo(@NotNull RemoteInfo remoteInfo) {
+    myRemoteInfo = remoteInfo;
+  }
 }

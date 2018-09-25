@@ -1,9 +1,8 @@
 package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
-import com.intellij.util.xmlb.annotations.AbstractCollection;
+import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,12 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class ItemContainer extends StudyItem {
-  @AbstractCollection(elementTypes = {
-    Section.class,
-    Lesson.class,
-    FrameworkLesson.class,
-    CheckiOStation.class
-  })
+  @Transient
   @Expose protected List<StudyItem> items = new ArrayList<>();
 
   @Nullable
@@ -34,6 +28,7 @@ public abstract class ItemContainer extends StudyItem {
   }
 
   @NotNull
+  @Transient
   public List<StudyItem> getItems() {
     return Collections.unmodifiableList(items);
   }
@@ -86,6 +81,7 @@ public abstract class ItemContainer extends StudyItem {
     }
   }
 
+  @Transient
   public void setItems(List<StudyItem> items) {
     this.items = items;
   }

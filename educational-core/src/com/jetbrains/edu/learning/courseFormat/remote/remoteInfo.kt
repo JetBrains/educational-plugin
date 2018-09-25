@@ -9,7 +9,7 @@ interface RemoteInfo
 
 class LocalInfo : RemoteInfo
 
-interface CourseRemoteInfo {
+interface CourseRemoteInfo : RemoteInfo {
 
   fun getTags(): List<Tag> = listOf()
   fun isCourseValid(course: Course): Boolean = true
