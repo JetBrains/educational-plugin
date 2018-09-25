@@ -505,7 +505,8 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
         return -1;
       }
-      final Section postedSection = getGson(project).fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
+      final StepikSection postedSection = getGson(project).fromJson(responseString,
+                                                                    StepikWrappers.SectionContainer.class).getSections().get(0);
       StepikSectionExt.setId(section, StepikSectionExt.getId(postedSection));
       return StepikSectionExt.getId(postedSection);
     }
