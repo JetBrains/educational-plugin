@@ -61,8 +61,8 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
     val isCompatible = jsonObject.get(IS_IDEA_COMPATIBLE).asBoolean
     val id = jsonObject.get(ID).asInt
 
-    val sections = gson.fromJson<ArrayList<Int>>(jsonObject.get(SECTIONS), object: TypeToken<ArrayList<Int>>(){}.type)
-    val instructors = gson.fromJson<List<Int>>(jsonObject.get(INSTRUCTORS), object: TypeToken<List<Int>>(){}.type)
+    val sections = gson.fromJson<MutableList<Int>>(jsonObject.get(SECTIONS), object: TypeToken<MutableList<Int>>(){}.type)
+    val instructors = gson.fromJson<MutableList<Int>>(jsonObject.get(INSTRUCTORS), object: TypeToken<MutableList<Int>>(){}.type)
     val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
 
     remoteInfo.isPublic = isPublic
@@ -132,7 +132,7 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
     val courseId = jsonObject.get(COURSE_ID).asInt
     val position = jsonObject.get(POSITION).asInt
     val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
-    val units = gson.fromJson<List<Int>>(jsonObject.get(UNITS), object: TypeToken<List<Int>>(){}.type)
+    val units = gson.fromJson<MutableList<Int>>(jsonObject.get(UNITS), object: TypeToken<MutableList<Int>>(){}.type)
 
     remoteInfo.id = id
     remoteInfo.courseId = courseId
@@ -203,7 +203,7 @@ class StepikLessonRemoteInfoAdapter(val language: String?) : JsonDeserializer<Le
     val unitId = jsonObject.get(UNIT_ID).asInt
     val isPublic = jsonObject.get(IS_PUBLIC).asBoolean
     val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
-    val steps = gson.fromJson<List<Int>>(jsonObject.get(STEPS), object: TypeToken<List<Int>>(){}.type)
+    val steps = gson.fromJson<MutableList<Int>>(jsonObject.get(STEPS), object: TypeToken<MutableList<Int>>(){}.type)
 
     remoteInfo.id = id
     remoteInfo.unitId = unitId
