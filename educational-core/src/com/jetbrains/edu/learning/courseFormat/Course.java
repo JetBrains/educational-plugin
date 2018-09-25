@@ -236,7 +236,7 @@ public class Course extends ItemContainer {
 
   public Course copy() {
     Element element = XmlCourseSerializerKt.serializeCourse(this);
-    Course copy = XmlCourseSerializerKt.deserializeCourse(element);
+    Course copy = XmlCourseSerializerKt.deserializeCourseElement(element);
     assert copy != null;
     copy.init(null, null, true);
     return copy;

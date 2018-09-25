@@ -49,6 +49,21 @@ fun deserializeCourse(xmlCourse: Element): Course? {
   return null
 }
 
+fun deserializeCourseElement(courseElement: Element): Course? {
+  for (courseClass in courseElementTypes) {
+    if (courseElement.name != courseClass.simpleName) {
+      continue
+    }
+    val courseBean = courseClass.newInstance()
+    XmlSerializer.deserializeInto(courseBean, courseElement)
+    deserializeItems(courseElement, courseBean)
+    deserializeRemoteInfo(courseElement, courseBean)
+    return courseBean
+  }
+
+  return null
+}
+
 private fun deserializeTasks(parentElement: Element, lesson: Lesson) {
   val tasks = ArrayList<Task>()
   val taskElements = getChildList(parentElement, TASK_LIST)
