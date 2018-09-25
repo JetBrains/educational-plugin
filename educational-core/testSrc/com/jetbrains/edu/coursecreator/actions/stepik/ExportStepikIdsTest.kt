@@ -3,12 +3,10 @@ package com.jetbrains.edu.coursecreator.actions.stepik
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.vfs.VfsUtil
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
@@ -33,12 +31,10 @@ class ExportStepikIdsTest : EduTestCase() {
   }
 
   fun `test export stepik ids`() {
-    val course = courseWithFiles {
+    val remoteCourse = courseWithFiles {
       lesson { eduTask { } }
       section { lesson { eduTask { } } }
-    }
-
-    val remoteCourse = convertToRemoteCourse(course)
+    }.asRemote()
 
     remoteCourse.generateUniqueIds()
 
@@ -93,23 +89,15 @@ class ExportStepikIdsTest : EduTestCase() {
     assertEquals(expectedFileContent, actualFileContent)
   }
 
-  private fun convertToRemoteCourse(course: Course): StepikCourse {
-    val remoteCourse = StepikCourse()
-    remoteCourse.name = course.name
-    remoteCourse.courseMode = CCUtils.COURSE_MODE
-    remoteCourse.items = course.items
-    return remoteCourse
-  }
-
   private fun StepikCourse.generateUniqueIds() {
     (remoteInfo as StepikCourseRemoteInfo).id = 1
     sections[0].id = 2
-    val lessons = mutableListOf<Int>()
+    val sectionIds = mutableListOf<Int>()
     visitLessons { lesson ->
       val section = lesson.section
       val sectionId = section?.id ?: 1
       if (section == null) {
-        lessons.add(lesson.index)
+        sectionIds.add(lesson.index)
       }
       lesson.id = 10 * sectionId + lesson.index
       lesson.unitId = lesson.id
@@ -118,6 +106,6 @@ class ExportStepikIdsTest : EduTestCase() {
       }
       true
     }
-    (remoteInfo as StepikCourseRemoteInfo).sectionIds
+    (remoteInfo as StepikCourseRemoteInfo).sectionIds = sectionIds
   }
 }
