@@ -9,6 +9,8 @@ import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
@@ -82,7 +84,13 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     val resultPanel = getResultPanel(result)
     checkFinishedPanel.add(resultPanel, BorderLayout.WEST)
     checkFinishedPanel.add(JPanel(), BorderLayout.CENTER)
-    checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, result))
+
+    if ((EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx())) {
+      checkDetailsPlaceholder.add(JavaFxCheckDetailsPanel(project, task, result))
+    }
+    else {
+      checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, result))
+    }
     updateBackground()
   }
 
