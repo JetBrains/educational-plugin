@@ -44,6 +44,9 @@ class CreateTaskTest : EduActionTestCase() {
           dir("test/java/com/edu/task1") {
             file("ExampleUnitTest.kt")
           }
+          dir("androidTest/java/com/edu/task1") {
+            file("AndroidEduTestRunner.kt")
+          }
         }
         file("task.html")
         file("build.gradle")
