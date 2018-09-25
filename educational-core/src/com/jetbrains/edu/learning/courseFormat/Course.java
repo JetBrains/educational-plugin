@@ -6,7 +6,6 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -14,6 +13,7 @@ import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.remote.LocalCourseInfo;
+import com.jetbrains.edu.learning.serialization.XmlCourseSerializerKt;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -235,8 +235,9 @@ public class Course extends ItemContainer {
   }
 
   public Course copy() {
-    Element element = XmlSerializer.serialize(this);
-    Course copy = XmlSerializer.deserialize(element, getClass());
+    Element element = XmlCourseSerializerKt.serializeCourse(this);
+    Course copy = XmlCourseSerializerKt.deserializeCourse(element);
+    assert copy != null;
     copy.init(null, null, true);
     return copy;
   }
