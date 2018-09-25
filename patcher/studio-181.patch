@@ -1,3 +1,14 @@
+diff --git a/Edu-Android/testResources/META-INF/plugin.xml b/Edu-Android/testResources/META-INF/plugin.xml
+index 42c32aa..9255cd7 100644
+--- a/Edu-Android/testResources/META-INF/plugin.xml
++++ b/Edu-Android/testResources/META-INF/plugin.xml
+@@ -1,5 +1,6 @@
+ <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+     <id>com.jetbrains.edu.android</id>
++    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
+     <depends optional="true" config-file="Edu-Android.xml">org.jetbrains.android</depends>
+ 
+     <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Java/testResources/META-INF/plugin.xml b/Edu-Java/testResources/META-INF/plugin.xml
 index c09e7e7..5278ba5 100644
 --- a/Edu-Java/testResources/META-INF/plugin.xml
