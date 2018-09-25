@@ -385,3 +385,13 @@ index 0d72018..28a4b79 100644
 +    private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
    }
  }
+diff --git a/gradle.properties b/gradle.properties
+index 1cdca69..da722ac 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,4 +1,4 @@
+-environmentName=182
++environmentName=173
+ 
+ # needed for twitting functionality available currently only for kotlin
+ consumerKey=

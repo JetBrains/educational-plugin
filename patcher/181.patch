@@ -107,3 +107,13 @@ index 37f2406..942a194 100644
  
    public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
    public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
+diff --git a/gradle.properties b/gradle.properties
+index 1cdca69..be44218 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,4 +1,4 @@
+-environmentName=182
++environmentName=181
+ 
+ # needed for twitting functionality available currently only for kotlin
+ consumerKey=
