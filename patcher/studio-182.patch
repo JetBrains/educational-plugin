@@ -1,8 +1,8 @@
 diff --git a/build.gradle b/build.gradle
-index 23b4204..0c8eae7 100644
+index 3e1f29a..dcf62e8 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -121,10 +121,10 @@ allprojects {
+@@ -119,10 +119,10 @@ allprojects {
      }
  
      intellij {
@@ -17,7 +17,7 @@ index 23b4204..0c8eae7 100644
          }
      }
  
-@@ -177,10 +177,10 @@ allprojects {
+@@ -175,10 +175,10 @@ allprojects {
  
  
  intellij {
@@ -32,7 +32,7 @@ index 23b4204..0c8eae7 100644
      }
      if (project.hasProperty("customSinceBuild")) {
          patchPluginXml.sinceBuild = customSinceBuild
-@@ -277,11 +277,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
+@@ -275,11 +275,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
  }
  
  configure([project(':educational-core'), project(':Edu-Java')]) {
@@ -46,7 +46,7 @@ index 23b4204..0c8eae7 100644
  
  
      task createTwitterProperties() {
-@@ -312,7 +312,7 @@ configure(project(':Edu-Python')) {
+@@ -310,7 +310,7 @@ configure(project(':Edu-Python')) {
  }
  
  configure(project(':Edu-Scala')) {

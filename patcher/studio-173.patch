@@ -139,10 +139,10 @@ index 5eca860..edce814 100644
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
 diff --git a/build.gradle b/build.gradle
-index 23b4204..0c8eae7 100644
+index 3e1f29a..dcf62e8 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -121,10 +121,10 @@ allprojects {
+@@ -119,10 +119,10 @@ allprojects {
      }
  
      intellij {
@@ -157,7 +157,7 @@ index 23b4204..0c8eae7 100644
          }
      }
  
-@@ -177,10 +177,10 @@ allprojects {
+@@ -175,10 +175,10 @@ allprojects {
  
  
  intellij {
@@ -172,7 +172,7 @@ index 23b4204..0c8eae7 100644
      }
      if (project.hasProperty("customSinceBuild")) {
          patchPluginXml.sinceBuild = customSinceBuild
-@@ -277,11 +277,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
+@@ -275,11 +275,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
  }
  
  configure([project(':educational-core'), project(':Edu-Java')]) {
@@ -186,7 +186,7 @@ index 23b4204..0c8eae7 100644
  
  
      task createTwitterProperties() {
-@@ -312,7 +312,7 @@ configure(project(':Edu-Python')) {
+@@ -310,7 +310,7 @@ configure(project(':Edu-Python')) {
  }
  
  configure(project(':Edu-Scala')) {
@@ -529,6 +529,16 @@ index 0d72018..28a4b79 100644
 +    private val MAX_WAIT_TIME = TimeUnit.MINUTES.toMillis(2)
    }
  }
+diff --git a/gradle.properties b/gradle.properties
+index 1cdca69..f67729b 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,4 +1,4 @@
+-environmentName=182
++environmentName=studio-173
+ 
+ # needed for twitting functionality available currently only for kotlin
+ consumerKey=
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
 index 19b5272..cf649bc 100644
 --- a/resources/META-INF/plugin.xml
