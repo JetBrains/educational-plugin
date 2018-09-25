@@ -91,7 +91,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
 
     // We consider that directory has `FileKind.TEST_FILE` kind if it's child of any `testDir` (if it exists).
     // So single `EduUtils.isTestsFile` check is not enough because it doesn't work with directories at all
-    if (EduUtils.isTestsFile(project, this) || testDirs.any { testDir -> VfsUtilCore.isAncestor(testDir, this, true) }) {
+    if (EduUtils.isTestsFile(project, this) || testDirs.any { testDir -> VfsUtilCore.isAncestor(testDir, this, false) }) {
       return FileInfo.FileInTask(task, taskRelativePath, FileKind.TEST_FILE)
     }
     val sourceDir = task.findSourceDir(taskDir)
