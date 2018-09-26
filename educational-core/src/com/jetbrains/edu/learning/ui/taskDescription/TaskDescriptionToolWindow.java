@@ -19,7 +19,6 @@ import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.ide.actions.QualifiedNameProvider;
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.LafManagerListener;
-import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.Application;
@@ -33,6 +32,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.JBCardLayout;
 import com.intellij.ui.OnePixelSplitter;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription;
 import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
@@ -71,6 +71,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
     myCardLayout = new JBCardLayout();
     myContentPanel = new JPanel(myCardLayout);
     mySplitPane = new OnePixelSplitter(myVertical = true);
+    LafManager.getInstance().addLafManagerListener(new StudyLafManagerListener());
   }
 
   public void init(@NotNull final Project project) {
@@ -92,7 +93,6 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
 
     setContent(mySplitPane);
 
-    LafManager.getInstance().addLafManagerListener(new StudyLafManagerListener());
     Task task = EduUtils.getCurrentTask(project);
     setCurrentTask(project, task);
   }
@@ -226,7 +226,7 @@ public abstract class TaskDescriptionToolWindow extends SimpleToolWindowPanel im
   private class StudyLafManagerListener implements LafManagerListener {
     @Override
     public void lookAndFeelChanged(LafManager manager) {
-      updateLaf(manager.getCurrentLookAndFeel() instanceof DarculaLookAndFeelInfo);
+      updateLaf(UIUtil.isUnderDarcula());
     }
   }
 }
