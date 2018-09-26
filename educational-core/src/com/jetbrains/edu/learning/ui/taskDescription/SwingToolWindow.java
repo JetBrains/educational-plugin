@@ -88,6 +88,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
 
   @Override
   public void updateTaskSpecificPanel(@Nullable Task task) {
+    if (myTaskSpecificPanel == null) return;
     myTaskSpecificPanel.removeAll();
     final JPanel panel = SwingTaskUtil.createSpecificPanel(task);
     if (panel != null) {
