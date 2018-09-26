@@ -58,6 +58,7 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   public void updateTaskSpecificPanel(@Nullable Task task) {
+    if (taskSpecificPanel == null) return;
     Platform.runLater(() -> {
       final Scene scene = task != null ? JavaFxTaskUtil.createScene(task) : null;
       taskSpecificPanel.setScene(scene);
