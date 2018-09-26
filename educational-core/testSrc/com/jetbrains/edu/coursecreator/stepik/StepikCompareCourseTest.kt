@@ -1,6 +1,8 @@
 package com.jetbrains.edu.coursecreator.stepik
 
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.integration.stepik.addNewLesson
+import com.jetbrains.edu.integration.stepik.addNewSection
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.course
@@ -37,7 +39,8 @@ class StepikCompareCourseTest : EduTestCase() {
     }.asRemote()
 
     val courseFromServer = localCourse.copy() as RemoteCourse
-    val newLesson = addNewLesson("lesson2", 2, localCourse, localCourse, EduUtils.getCourseDir(project))
+    val newLesson = addNewLesson("lesson2", 2, localCourse, localCourse,
+                                                                      EduUtils.getCourseDir(project))
     val expectedInfo = StepikChangesInfo(newLessons = arrayListOf(newLesson))
 
     checkChangedItems(courseFromServer, expectedInfo)

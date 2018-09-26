@@ -1,9 +1,10 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.integration.stepik
 
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.stepik.*
 import org.apache.http.Consts
 import org.apache.http.NameValuePair
 import org.apache.http.client.entity.UrlEncodedFormEntity
@@ -66,7 +67,8 @@ abstract class StepikTestCase : EduTestCase() {
     val text = EntityUtils.toString(httpClient.execute(getCourseDelete)?.entity)
     val postCourseDelete = HttpPost(deleteLink)
     postCourseDelete.addHeader("Referer", deleteLink)
-    postCourseDelete.entity = UrlEncodedFormEntity(listOf(BasicNameValuePair(CSRF, getCSRFToken(text))), Consts.UTF_8)
+    postCourseDelete.entity = UrlEncodedFormEntity(listOf(BasicNameValuePair(
+      CSRF, getCSRFToken(text))), Consts.UTF_8)
     val postResult = httpClient.execute(postCourseDelete)
     assertEquals("Failed to remove course with id $courseId", 302, postResult?.statusLine?.statusCode)
     for (lessonId in lessonIds) {
@@ -83,7 +85,8 @@ abstract class StepikTestCase : EduTestCase() {
   }
 
   private fun deleteLesson(lessonId: Int) {
-    val deleteRequest = HttpDelete(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + lessonId)
+    val deleteRequest = HttpDelete(
+      StepikNames.STEPIK_API_URL + StepikNames.LESSONS + lessonId)
     deleteRequest.addHeader("Referer", "${StepikNames.STEPIK_URL}/edit-lesson/$lessonId/step/1")
     httpClient.execute(deleteRequest)
     println("Lesson $lessonId deleted")
@@ -102,6 +105,7 @@ abstract class StepikTestCase : EduTestCase() {
       LOG.error("Test client secret is not provided")
       return null
     }
-    return StepikAuthorizedClient.getTokens(parameters, "$CLIENT_ID:$clientSecret")
+    return StepikAuthorizedClient.getTokens(parameters,
+                                            "$CLIENT_ID:$clientSecret")
   }
 }

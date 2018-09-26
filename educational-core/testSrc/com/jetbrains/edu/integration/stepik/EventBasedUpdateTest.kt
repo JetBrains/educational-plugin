@@ -1,8 +1,11 @@
-package com.jetbrains.edu.coursecreator.stepik
+package com.jetbrains.edu.integration.stepik
 
 import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
+import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
+import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
@@ -11,7 +14,6 @@ import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.CONTENT
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus.INFO
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
-import com.jetbrains.edu.learning.stepik.StepikTestCase
 import junit.framework.TestCase
 
 class EventBasedUpdateTest: StepikTestCase() {

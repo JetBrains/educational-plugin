@@ -517,7 +517,7 @@ public class StepikWrappers {
     }
   }
 
-  static class TokenInfo {
+  public static class TokenInfo {
     @Expose String accessToken;
     @Expose String refreshToken;
     @Expose String tokenType;

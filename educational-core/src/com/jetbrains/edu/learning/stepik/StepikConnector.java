@@ -798,12 +798,12 @@ public class StepikConnector {
   }
 
   public static StepSource getStep(int step) throws IOException {
-    return getFromStepik(StepikNames.STEPS + String.valueOf(step),
+    return getFromStepik(StepikNames.STEPS + step,
                          StepContainer.class).steps.get(0);
   }
 
   @Nullable
-  static Boolean[] taskStatuses(String[] progresses) {
+  public static Boolean[] taskStatuses(String[] progresses) {
     try {
       List<ProgressContainer> progressContainers = multipleRequestToStepik(StepikNames.PROGRESS, progresses, ProgressContainer.class);
       Map<String, Boolean> progressMap = progressContainers.stream()
