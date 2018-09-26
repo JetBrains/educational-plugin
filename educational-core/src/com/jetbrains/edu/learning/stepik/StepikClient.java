@@ -124,7 +124,7 @@ public class StepikClient {
   }
 
   @NotNull
-  static HttpClientBuilder getBuilder() {
+  public static HttpClientBuilder getBuilder() {
     final HttpClientBuilder builder = HttpClients.custom().setSSLContext(CertificateManager.getInstance().getSslContext()).
       setMaxConnPerRoute(100000).setConnectionReuseStrategy(DefaultConnectionReuseStrategy.INSTANCE).setUserAgent(getUserAgent());
 

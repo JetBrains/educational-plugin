@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik
+package com.jetbrains.edu.integration.stepik
 
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
@@ -13,7 +13,8 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.stepik.StepikConnector.taskStatuses
+import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.PROGRESS_ID_PREFIX
 import org.junit.Test
 
@@ -36,8 +37,8 @@ class LoadSolutionsTest : StepikTestCase() {
     solveFirstTask()
 
     val task = firstTask(StudyTaskManager.getInstance(project).course)
-    val progresses = Array(1, { PROGRESS_ID_PREFIX + task.stepId.toString() })
-    val taskStatuses = taskStatuses(progresses)
+    val progresses = Array(1) { PROGRESS_ID_PREFIX + task.stepId.toString() }
+    val taskStatuses = StepikConnector.taskStatuses(progresses)
     assertTrue(taskNumberMismatchMessage(1, taskStatuses!!.size), taskStatuses.size == 1)
     assertTrue(taskStatusErrorMessage, taskStatuses[0])
   }

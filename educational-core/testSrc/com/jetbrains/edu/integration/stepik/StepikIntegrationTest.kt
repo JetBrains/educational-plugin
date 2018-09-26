@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.stepik
+package com.jetbrains.edu.integration.stepik
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
-import com.jetbrains.edu.learning.stepik.StepikTestCase
 
 open class StepikIntegrationTest : StepikTestCase() {
 
@@ -82,7 +81,8 @@ open class StepikIntegrationTest : StepikTestCase() {
       }
     }
 
-    val newLesson = addNewLesson("lesson3", 3, localCourse, localCourse, EduUtils.getCourseDir(project))
+    val newLesson = addNewLesson("lesson3", 3, localCourse, localCourse,
+                                                                      EduUtils.getCourseDir(project))
     CCPushLesson.doPush(newLesson, project, localCourse)
 
     checkTopLevelLessons(localCourse)
