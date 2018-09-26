@@ -78,9 +78,9 @@ public class BrowserWindow {
     Platform.runLater(() -> {
       final URL scrollBarStyleUrl = getClass().getResource(SystemInfo.isWindows ? "/style/javaFXBrowserScrollBar_win.css" : "/style/javaFXBrowserScrollBar.css");
       final URL engineStyleUrl = getClass().getResource(getBrowserStylesheet(false));
-      myPane.getStylesheets().add(scrollBarStyleUrl.toExternalForm());
       myEngine.setUserStyleSheetLocation(engineStyleUrl.toExternalForm());
-      myPanel.getScene().getStylesheets().add(engineStyleUrl.toExternalForm());
+      myPanel.getScene().getStylesheets().clear();
+      myPanel.getScene().getStylesheets().addAll(engineStyleUrl.toExternalForm(), scrollBarStyleUrl.toExternalForm());
       myEngine.reload();
     });
   }
@@ -90,9 +90,9 @@ public class BrowserWindow {
       final URL engineStyleUrl = getClass().getResource(getBrowserStylesheet(true));
       final URL scrollBarStyleUrl = getClass().getResource(SystemInfo.isWindows ? "/style/javaFXBrowserDarculaScrollBar_win.css" : "/style/javaFXBrowserDarculaScrollBar.css");
       myEngine.setUserStyleSheetLocation(engineStyleUrl.toExternalForm());
-      myPane.getStylesheets().add(scrollBarStyleUrl.toExternalForm());
+      myPanel.getScene().getStylesheets().clear();
+      myPanel.getScene().getStylesheets().addAll(engineStyleUrl.toExternalForm(), scrollBarStyleUrl.toExternalForm());
       myPane.setStyle("-fx-background-color: #3c3f41");
-      myPanel.getScene().getStylesheets().add(engineStyleUrl.toExternalForm());
       myEngine.reload();
     });
   }
