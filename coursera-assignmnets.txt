@@ -1,2 +1,4 @@
 https://www.dropbox.com/s/20qfsdv20f31z7g/week2.zip?dl=1 # Kotlin for Java Developers Week 2
-https://www.dropbox.com/s/2ek0rowcbv6c1o2/week3.zip?dl=1 # Kotlin for Java Developers Week 3
+https://www.dropbox.com/s/93s3xcsbuvk9xlq/week3.zip?dl=1 # Kotlin for Java Developers Week 3
+https://www.dropbox.com/s/wxxsl9lw6na35c6/week4.zip?dl=1 # Kotlin for Java Developers Week 4
+https://www.dropbox.com/s/mbuf9y4pxbgxb3l/week5.zip?dl=1 # Kotlin for Java Developers Week 5
