@@ -3,7 +3,8 @@ package com.jetbrains.edu.learning
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.Application
+import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.components.ApplicationComponent
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.extensions.PluginId
@@ -12,13 +13,17 @@ import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
 import com.jetbrains.edu.learning.update.NewCoursesNotifier
 import java.util.*
 
-class InitializationComponent : ApplicationComponent {
+class InitializationComponent(private val application: Application) : ApplicationComponent {
 
-    private val newCoursesNotifier = NewCoursesNotifier(ApplicationManager.getApplication())
+    private val newCoursesNotifier = NewCoursesNotifier(application)
 
     override fun initComponent() {
         //Register placeholder size listener
-        EditorFactory.getInstance().addEditorFactoryListener(EduEditorFactoryListener(), ApplicationManager.getApplication())
+        EditorFactory.getInstance().addEditorFactoryListener(EduEditorFactoryListener(), application)
+
+        if (application.isInternal) {
+            enableExperimentalFeatures()
+        }
 
         if (isUnitTestMode) return
         if (PropertiesComponent.getInstance().isValueSet(CONFLICTING_PLUGINS_DISABLED)) {
@@ -53,6 +58,10 @@ class InitializationComponent : ApplicationComponent {
             }
         }
         return disabledPlugins
+    }
+
+    private fun enableExperimentalFeatures() {
+        Experiments.setFeatureEnabled(EduExperimentalFeatures.ANDROID_COURSES, true)
     }
 
     companion object {
