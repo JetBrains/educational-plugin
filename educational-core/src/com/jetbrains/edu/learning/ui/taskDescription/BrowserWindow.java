@@ -61,7 +61,8 @@ public class BrowserWindow {
   public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow) {
     myProject = project;
     myLinkInNewBrowser = linkInNewWindow;
-    setPanel(new JFXPanel());initComponents();
+    setPanel(new JFXPanel());
+    initComponents();
   }
 
   void updateLaf(boolean isDarcula) {
