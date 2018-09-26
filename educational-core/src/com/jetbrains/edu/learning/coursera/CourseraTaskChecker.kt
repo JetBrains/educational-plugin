@@ -47,8 +47,8 @@ class CourseraTaskChecker : RemoteTaskChecker {
     val response = postSubmission(createSubmissionJson(project, task, courseraSettings))
 
     var statusLine = response.statusLine
-    if (statusLine.statusCode == HttpStatus.SC_UNAUTHORIZED && !askedForCredentials) {
-      askToEnterCredentials(task, true)
+    if (statusLine.statusCode != HttpStatus.SC_CREATED && !askedForCredentials) {
+      askToEnterCredentials(task,statusLine.toCheckResult(task).message)
       statusLine = postSubmission(createSubmissionJson(project, task, courseraSettings)).statusLine
     }
     return statusLine.toCheckResult(task)
@@ -96,14 +96,14 @@ class CourseraTaskChecker : RemoteTaskChecker {
     return client.execute(post)
   }
 
-  private fun askToEnterCredentials(task: Task, showWarningMessage: Boolean = false) {
+  private fun askToEnterCredentials(task: Task, message: String? = null) {
     val courseraSettings = CourseraSettings.getInstance()
 
     val emailField = JBTextField(courseraSettings.email)
     val tokenField = JBTextField(courseraSettings.token)
     val credentialsPanel = panel {
-      if (showWarningMessage) {
-        row { JBLabel("Token might have expired")() }
+      if (message != null) {
+        row { JBLabel(message)() }
       }
       row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
       row("Token:") { tokenField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
