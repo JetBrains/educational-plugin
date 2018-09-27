@@ -152,8 +152,7 @@ public class CCPushCourse extends DumbAwareAction {
         updateLesson(project, lesson, false, sectionId);
       }
       else {
-        int lessonId = postLesson(project, lesson, lesson.getIndex(), sectionId);
-        lesson.unitId = postUnit(lessonId, lesson.getIndex(), sectionId, project);
+        postLesson(project, lesson, lesson.getIndex(), sectionId);
       }
     }
   }
