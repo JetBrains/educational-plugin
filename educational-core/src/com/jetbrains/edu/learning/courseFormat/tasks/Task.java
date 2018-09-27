@@ -215,7 +215,11 @@ public abstract class Task extends StudyItem {
     List<String> hints = new ArrayList<>();
     for (TaskFile value : getTaskFiles().values()) {
       for (AnswerPlaceholder placeholder : value.getAnswerPlaceholders()) {
-        hints.addAll(placeholder.getHints());
+        for (String hint : placeholder.getHints()) {
+          if (!hint.isEmpty()) {
+            hints.add(hint);
+          }
+        }
       }
     }
 
