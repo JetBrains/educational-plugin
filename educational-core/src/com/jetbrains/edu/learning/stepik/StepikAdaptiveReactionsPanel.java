@@ -104,7 +104,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
       setBorder(JBUI.Borders.customLine(JBColor.border()));
       add(myButtonPanel);
       addMouseListener(reaction);
-      setBackgroundRecursively(UIUtil.getLabelBackground());
+      setBackgroundRecursively(getBackgroundColor());
     }
 
     public void setBackgroundRecursively(@NotNull Color color) {
@@ -126,7 +126,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
         myButtonPanel.setEnabled(isEnabled);
         myLabel.setEnabled(isEnabled);
         if (isEnabled) {
-          setBackgroundRecursively(UIUtil.getLabelBackground());
+          setBackgroundRecursively(getBackgroundColor());
         }
       });
     }
@@ -152,7 +152,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
               @Override
               public void run(@NotNull ProgressIndicator indicator) {
                 StepikAdaptiveReactionsPanel.this.setEnabledRecursive(false);
-                ApplicationManager.getApplication().invokeLater(()->myPanel.setBackgroundRecursively(UIUtil.getLabelBackground()));
+                ApplicationManager.getApplication().invokeLater(()->myPanel.setBackgroundRecursively(getBackgroundColor()));
                 StepikAdaptiveConnector.addNextRecommendedTask(StepikAdaptiveReactionsPanel.this.myProject, task.getLesson(), indicator,
                                                                   myReaction);
                 StepikAdaptiveReactionsPanel.this.setEnabledRecursive(true);
@@ -172,9 +172,14 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
 
       @Override
       public void mouseExited(MouseEvent e) {
-        myPanel.setBackgroundRecursively(UIUtil.getLabelBackground());
+        myPanel.setBackgroundRecursively(getBackgroundColor());
       }
     }
+  }
+
+  private static Color getBackgroundColor() {
+    // button color copy-pasted from com.intellij.ide.ui.laf.darcula.ui.DarculaButtonUI.getButtonColorEnd
+    return UIUtil.isUnderDarcula() ? JBColor.namedColor("Button.darcula.endColor", 0x414648) : UIUtil.getLabelBackground();
   }
 }
 
