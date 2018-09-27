@@ -170,7 +170,7 @@ object CCUtils {
     return lesson
   }
 
-  private fun taskIsEmpty(task: Task): Boolean = task.getTaskFiles().isEmpty() &&
+  private fun taskIsEmpty(task: Task): Boolean = task.taskFiles.isEmpty() &&
                                                  task.testsText.isEmpty() &&
                                                  task.additionalFiles.isEmpty()
 
@@ -220,7 +220,7 @@ object CCUtils {
 
   fun initializeTaskPlaceholders(task: Task, project: Project) {
     val taskDir = task.getTaskDir(project) ?: return
-    for (entry in task.getTaskFiles().entries) {
+    for (entry in task.taskFiles.entries) {
       invokeAndWaitIfNeed { runWriteAction { initializeTaskFilePlaceholders(project, taskDir, entry.value) } }
     }
   }
