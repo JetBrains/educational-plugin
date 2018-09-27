@@ -2,7 +2,6 @@
 .scroll-bar {
     -fx-background-color: #3c3f41;
     -fx-background-radius: 2em;
-    -fx-padding: 10;
 }
 
 .scroll-bar:horizontal .track,
