@@ -43,7 +43,7 @@ class GradleCommandLine private constructor(
 
   fun launchAndCheck(): CheckResult {
     val output = launch() ?: return CheckResult.FAILED_TO_CHECK
-    if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.messages.joinToString("\n"))
+    if (!output.isSuccess) return CheckResult(CheckStatus.Failed, output.firstMessage, output.messages.joinToString("\n"))
 
     return TestsOutputParser.getCheckResult(output.messages)
   }

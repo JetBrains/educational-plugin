@@ -37,10 +37,14 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       linksPanel.add(peekSolution, BorderLayout.CENTER)
     }
 
-    var message = checkResult.details ?: checkResult.message
+    val details = checkResult.details
+    if (details != null) {
+      CheckUtils.showTestResultsToolWindow(project, details)
+    }
+    var message = checkResult.message
     if (message.length > 400) {
       message = message.substring(0, 400) + "..."
-      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.details ?: checkResult.message)), BorderLayout.NORTH)
+      linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)), BorderLayout.NORTH)
     }
     messagePanel.text = StyledTextLoader.textWithStyles(message.replace("\n", "<br>"))
     messagePanel.margin.left = JBUI.scale(FOCUS_BORDER_WIDTH)
