@@ -16,12 +16,7 @@ class ToSeventhVersionJsonStepOptionConverter(private val language: String?) : J
     if (taskFiles != null) {
       for (taskFile in taskFiles) {
         if (taskFile !is JsonObject) continue
-        val path = taskFile.getAsJsonPrimitive(NAME)?.asString ?: continue
-        taskFile.addProperty(NAME, "$taskFilesRoot/$path")
-        for (placeholder in taskFile.getAsJsonArray(PLACEHOLDERS)) {
-          val placeholderObject = placeholder as? JsonObject ?: continue
-          convertPlaceholder(placeholderObject, taskFilesRoot)
-        }
+        convertTaskFile(taskFile, taskFilesRoot)
       }
     }
 
@@ -38,6 +33,16 @@ class ToSeventhVersionJsonStepOptionConverter(private val language: String?) : J
   }
 
   companion object {
+
+    @JvmStatic
+    fun convertTaskFile(taskFile: JsonObject, taskFilesRoot: String) {
+      val path = taskFile.getAsJsonPrimitive(NAME)?.asString ?: return
+      taskFile.addProperty(NAME, "$taskFilesRoot/$path")
+      for (placeholder in taskFile.getAsJsonArray(PLACEHOLDERS)) {
+        val placeholderObject = placeholder as? JsonObject ?: continue
+        convertPlaceholder(placeholderObject, taskFilesRoot)
+      }
+    }
 
     @JvmStatic
     fun convertPlaceholder(placeholder: JsonObject, taskFilesRoot: String) {
