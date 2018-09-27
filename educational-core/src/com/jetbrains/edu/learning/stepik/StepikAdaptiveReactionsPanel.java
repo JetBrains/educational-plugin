@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -38,28 +39,25 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
 
     myHardPanel = new ReactionButtonPanel(HARD_REACTION, HARD_LABEL_TOOLTIP, StepikAdaptiveConnector.TOO_HARD_RECOMMENDATION_REACTION);
     myBoringPanel = new ReactionButtonPanel(BORING_REACTION, BORING_LABEL_TOOLTIP, StepikAdaptiveConnector.TOO_BORING_RECOMMENDATION_REACTION);
+    myBoringPanel.setPreferredSize(myHardPanel.getPreferredSize());
     addFileListener();
 
     final GridBagConstraints c = new GridBagConstraints();
     c.fill = GridBagConstraints.HORIZONTAL;
-    c.gridx = 0;
-    c.gridy = 0;
-    add(Box.createVerticalStrut(3), c);
+
+    c.weightx = 1;
     c.gridx = 1;
-    c.gridy = 1;
-    add(Box.createHorizontalStrut(3), c);
-    c.weightx = 1;
-    c.gridx = 2;
     add(myHardPanel, c);
-    c.gridx = 3;
+
+    c.gridx = 2;
     c.weightx = 0;
     add(Box.createHorizontalStrut(3), c);
+
     c.weightx = 1;
-    c.gridx = 4;
+    c.gridx = 3;
     add(myBoringPanel, c);
-    c.gridx = 5;
-    c.weightx = 0;
-    add(Box.createHorizontalStrut(3), c);
+
+    setBorder(JBUI.Borders.empty(15, 0, 10, 15));
   }
 
   public void setEnabledRecursive(final boolean isEnabled) {
@@ -95,11 +93,10 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
       myLabel = new JLabel(text);
 
       myButtonPanel = new JPanel();
-      myButtonPanel.setLayout(new BoxLayout(myButtonPanel, BoxLayout.PAGE_AXIS));
+      myButtonPanel.setLayout(new BorderLayout());
       myButtonPanel.setToolTipText(isEnabled && task.getStatus() == CheckStatus.Solved ? enabledTooltip : SOLVED_TASK_TOOLTIP);
-      myButtonPanel.add(Box.createVerticalStrut(5));
-      myButtonPanel.add(myLabel);
-      myButtonPanel.add(Box.createVerticalStrut(5));
+      myLabel.setBorder(JBUI.Borders.empty(5, 0));
+      myButtonPanel.add(myLabel, BorderLayout.CENTER);
 
       setEnabledRecursive(isEnabled);
 
