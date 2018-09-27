@@ -6,12 +6,9 @@
     url("fonts/intellij-icon-font-darcula.ttf") format("truetype"),
     url("fonts/intellij-icon-font-darcula.svg#hint-icon-font") format("svg");
 }
+
 .hint + .hint {
     margin-top: 5px;
-}
-
-:not(.hint) + .hint {
-    margin-bottom: 0;
 }
 
 .hint {
@@ -20,41 +17,42 @@
     vertical-align: bottom;
 }
 
-.header {
+.hint_header {
     color: #589df6;
     font-size: inherit;
-    vertical-align: bottom;
 }
 
-.header:hover {
+.hint_header:hover {
     cursor: pointer;
 }
 
-.hint .header:before {
+.hint .hint_header:before {
     font-family: "intellij-icon-font-darcula";
     content: "\e000";
-    margin-right: 3px;
+    margin-right: -0.2em;
+    vertical-align: -0.1em;
 }
-.header:after {
+
+.hint_header:after {
     font-family: "intellij-icon-font-darcula";
     content: "\e001";
-    margin-left: 3px;
+    margin-left: -0.1em;
     transform: rotate(270deg);
     display: inline-block;
     color: #bababa;
+    vertical-align: -0.15em;
 }
 
-.header.checked:after {
+.hint_header.checked:after {
     font-family: "intellij-icon-font-darcula";
     content: "\e001";
     transform: rotate(0deg);
-    color: #bababa;
 }
 
-.content ~ header {
+.hint_content {
     display: none;
 }
 
-.content ~ header.checked {
+.hint_header.checked ~ .hint_content {
     display: inline;
 }
