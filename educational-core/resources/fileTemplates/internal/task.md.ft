@@ -3,5 +3,5 @@ This is the markdown document.
 Write your task text here
 
 <div class="hint">
-  You can add hints anywhere in task text. Copy all hint div block and change title and content.
+  You can add hints anywhere in task text. Copy all hint div block and change its content.
 </div>
