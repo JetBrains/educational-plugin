@@ -7,8 +7,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.serialization.converter.json.JsonLocalCourseConverter;
+import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionLocalCourseConverter;
 import com.jetbrains.edu.learning.serialization.converter.xml.*;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jdom.Attribute;
@@ -402,6 +405,7 @@ public class SerializationUtils {
     public static final String NAME = "name";
     public static final String TITLE = "title";
     public static final String LAST_SUBTASK = "last_subtask_index";
+    public static final String ITEMS = "items";
     public static final String ITEM_TYPE = "type";
     public static final String FRAMEWORK_TYPE = "framework";
     public static final String PLACEHOLDERS = "placeholders";
@@ -417,6 +421,8 @@ public class SerializationUtils {
     public static final String DEPENDENCY = "dependency";
     public static final String DEPENDENCY_FILE = "file";
     public static final String TEST_FILES = "test_files";
+    public static final String VERSION = "version";
+    public static final String PROGRAMMING_LANGUAGE = "programming_language";
 
     private Json() {
     }
@@ -465,6 +471,53 @@ public class SerializationUtils {
             default: throw new IllegalArgumentException("Unsupported lesson type: " + itemType);
           }
         }
+      }
+    }
+
+    public static class CourseAdapter implements JsonSerializer<Course>, JsonDeserializer<Course> {
+
+      @Override
+      public JsonElement serialize(Course src, Type typeOfSrc, JsonSerializationContext context) {
+        final Gson gson = new GsonBuilder()
+          .setPrettyPrinting()
+          .excludeFieldsWithoutExposeAnnotation()
+          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
+          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
+          .create();
+        JsonElement element = gson.toJsonTree(src, typeOfSrc);
+        if (element.isJsonObject()) {
+          element.getAsJsonObject().addProperty(VERSION, EduVersions.JSON_FORMAT_VERSION);
+        }
+        return element;
+      }
+
+      @Override
+      public Course deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        JsonObject jsonObject = json.getAsJsonObject();
+        JsonPrimitive jsonVersion = jsonObject.getAsJsonPrimitive(VERSION);
+        int version;
+        if (jsonVersion == null) {
+          version = 1;
+        } else {
+          version = jsonVersion.getAsInt();
+        }
+
+        while (version < EduVersions.JSON_FORMAT_VERSION) {
+          JsonLocalCourseConverter converter = null;
+          switch (version) {
+            case 6: converter = new ToSeventhVersionLocalCourseConverter();
+          }
+          if (converter != null) {
+            jsonObject = converter.convert(jsonObject);
+          }
+          version++;
+        }
+        Gson gson = new GsonBuilder()
+          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
+          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
+          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+          .create();
+        return gson.fromJson(jsonObject, typeOfT);
       }
     }
 

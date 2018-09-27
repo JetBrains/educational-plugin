@@ -27,7 +27,10 @@ import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
@@ -214,9 +217,11 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   }
 
   public static void generateJson(VirtualFile parentDir, Course course) throws IOException {
-    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-      registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter()).
-      registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter()).create();
+    final Gson gson = new GsonBuilder()
+      .setPrettyPrinting()
+      .excludeFieldsWithoutExposeAnnotation()
+      .registerTypeHierarchyAdapter(Course.class, new SerializationUtils.Json.CourseAdapter())
+      .create();
     final String json = gson.toJson(course);
     final VirtualFile courseJsonFile = parentDir.findOrCreateChildData(CCCreateCourseArchive.class, COURSE_META_FILE);
     VfsUtil.saveText(courseJsonFile, json);

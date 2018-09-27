@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.*;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
@@ -985,23 +986,32 @@ public class EduUtils {
       }
       byte[] bytes = entry.getData();
       final String jsonText = new String(bytes, CharsetToolkit.UTF8_CHARSET);
-      Gson gson = new GsonBuilder()
-          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
-          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-          .create();
       zipFile.close();
-      JsonParser parser = new JsonParser();
-      JsonObject object = parser.parse(jsonText).getAsJsonObject();
-      JsonElement id = object.get("id");
+      return deserializeLocalCourse(jsonText);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to unzip course archive", e);
+    }
+    return null;
+  }
+
+  @VisibleForTesting
+  @Nullable
+  public static Course deserializeLocalCourse(@NotNull final String courseJsonText) {
+    Gson gson = new GsonBuilder()
+      .registerTypeHierarchyAdapter(Course.class, new SerializationUtils.Json.CourseAdapter())
+      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+      .create();
+    JsonParser parser = new JsonParser();
+    JsonObject object = parser.parse(courseJsonText).getAsJsonObject();
+    JsonElement id = object.get("id");
+    try {
       if (id != null && 0 != id.getAsInt()) {
         return gson.fromJson(object, RemoteCourse.class);
       }
       return gson.fromJson(object, Course.class);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to unzip course archive");
-      LOG.error(e);
+    } catch (Exception e) {
+      LOG.error("Failed to deserialize course json", e);
     }
     return null;
   }
