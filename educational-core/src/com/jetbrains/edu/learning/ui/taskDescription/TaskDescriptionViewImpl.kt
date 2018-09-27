@@ -81,7 +81,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
 
     checkPanel = CheckPanel(project)
-    checkPanel.border = JBUI.Borders.empty(2, 0, 0, 0)
+    checkPanel.border = JBUI.Borders.empty(2, 0, 0, 15)
     bottomPanel.add(checkPanel, BorderLayout.SOUTH)
 
     panel.add(bottomPanel, BorderLayout.SOUTH)
