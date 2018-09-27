@@ -16,12 +16,12 @@
 package com.jetbrains.edu.learning.ui.taskDescription;
 
 import com.intellij.openapi.project.Project;
+import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,12 +29,12 @@ import javax.swing.*;
 
 public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   private BrowserWindow myBrowserWindow;
-  private static final String HINT_BLOCK_TEMPLATE = "<label class='header icon-angle-right'>Hint %d</label>" +
-                                                    "  <div class='content'>" +
+  private static final String HINT_BLOCK_TEMPLATE = "<div class='hint_header'>Hint %d</div>" +
+                                                    "  <div class='hint_content'>" +
                                                     " %s" +
                                                     "  </div>";
-  private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "<label class='header icon-angle-right checked'>Hint %d</label>" +
-                                                             "  <div class='content'>" +
+  private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "<div class='hint_header checked'>Hint %d</div>" +
+                                                             "  <div class='hint_content'>" +
                                                              " %s" +
                                                              "  </div>";
 
