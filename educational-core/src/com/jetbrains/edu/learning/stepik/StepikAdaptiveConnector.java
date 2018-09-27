@@ -312,7 +312,7 @@ public class StepikAdaptiveConnector {
     lesson.getTaskList().set(taskIndex - 1, task);
 
     updateProjectFiles(project, task, oldTaskName, course.getLanguageById());
-    TaskDescriptionView.getInstance(project).setCurrentTask(task);
+    ApplicationManager.getApplication().invokeLater(() ->TaskDescriptionView.getInstance(project).setCurrentTask(task));
   }
 
   private static void updateProjectFiles(@NotNull Project project, @NotNull Task task, String oldTaskName, Language language) {
