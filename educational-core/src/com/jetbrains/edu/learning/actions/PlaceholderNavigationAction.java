@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.actions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-abstract public class PlaceholderNavigationAction extends DumbAwareActionWithShortcut {
+abstract public class PlaceholderNavigationAction extends DumbAwareAction {
 
   protected PlaceholderNavigationAction(String actionId, String description, Icon icon) {
     super(actionId, description, icon);

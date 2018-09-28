@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.ui.taskDescription
 import com.intellij.ide.ui.LafManager
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.util.ui.JBUI
@@ -116,5 +117,16 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   private fun setTaskText(task: Task?) {
     taskTextTW.setTaskText(project, task)
+  }
+
+  override fun getData(dataId: String?): Any? {
+    return if (PlatformDataKeys.HELP_ID.`is`(dataId)) {
+      HELP_ID
+    }
+    else super.getData(dataId)
+  }
+
+  companion object {
+    private const val HELP_ID = "task.description"
   }
 }

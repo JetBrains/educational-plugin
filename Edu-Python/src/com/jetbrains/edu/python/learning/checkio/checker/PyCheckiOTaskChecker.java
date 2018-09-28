@@ -4,7 +4,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ex.ApplicationUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
@@ -13,7 +12,6 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.checkio.notifications.errors.handlers.CheckiOErrorHandler;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
 import com.jetbrains.python.PythonFileType;
@@ -86,12 +84,14 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
     testResultPanel.add(createBackButtonUI(), BorderLayout.PAGE_START);
     testResultPanel.add(createBrowserWindowUI(browserPanel));
 
-    final TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
-
-    if (toolWindow != null) {
-      toolWindow.getContentPanel().add(TEST_RESULTS_ID, testResultPanel);
-      toolWindow.showPanelById(TEST_RESULTS_ID);
-    }
+    //TODO: integrate checkio into new task description panel
+    //final TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
+    //
+    //if (toolWindow != null) {
+    //
+    //  toolWindow.getContentPanel().add(TEST_RESULTS_ID, testResultPanel);
+    //  toolWindow.showPanelById();
+    //}
   }
 
   private static JComponent createBrowserWindowUI(@NotNull JFXPanel browserPanel) {
@@ -122,9 +122,10 @@ public class PyCheckiOTaskChecker extends TaskChecker<EduTask> {
   }
 
   private void showTaskInfoPanel() {
-    final TaskDescriptionToolWindow descriptionToolWindow = EduUtils.getStudyToolWindow(project);
-    if (descriptionToolWindow != null) {
-      descriptionToolWindow.showPanelById(TaskDescriptionToolWindow.TASK_INFO_ID);
-    }
+    //TODO: integrate checkio into new task description panel
+    //final TaskDescriptionToolWindow descriptionToolWindow = EduUtils.getStudyToolWindow(project);
+    //if (descriptionToolWindow != null) {
+    //  descriptionToolWindow.showPanelById();
+    //}
   }
 }

@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -30,10 +31,9 @@ import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyM
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 
-public class RevertTaskAction extends DumbAwareActionWithShortcut implements RightAlignedToolbarAction {
+public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
   public static final String ACTION_ID = "Educational.RefreshTask";
   public static final String SHORTCUT = "ctrl shift pressed X";
   private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
@@ -137,17 +137,5 @@ public class RevertTaskAction extends DumbAwareActionWithShortcut implements Rig
     if (!course.isStudy()) {
       presentation.setEnabledAndVisible(false);
     }
-  }
-
-  @NotNull
-  @Override
-  public String getActionId() {
-    return ACTION_ID;
-  }
-
-  @Nullable
-  @Override
-  public String[] getShortcuts() {
-    return new String[]{SHORTCUT};
   }
 }

@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -11,7 +12,7 @@ abstract class TaskNavigationAction(
   text: String,
   description: String,
   icon: Icon
-) : DumbAwareActionWithShortcut(text, description, icon) {
+) : DumbAwareAction(text, description, icon) {
 
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
