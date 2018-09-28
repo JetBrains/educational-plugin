@@ -23,7 +23,7 @@ import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import java.util.*
 
-private const val LEFT_INSET = 15.0
+private const val LEFT_INSET = 3.0
 private const val RIGHT_INSET = 10.0
 private const val TOP_INSET = 15.0
 private const val BOTTOM_INSET = 10.0
