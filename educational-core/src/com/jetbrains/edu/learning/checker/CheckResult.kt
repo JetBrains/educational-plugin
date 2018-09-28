@@ -1,38 +1,24 @@
-package com.jetbrains.edu.learning.checker;
+package com.jetbrains.edu.learning.checker
 
-import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 
-public class CheckResult {
-  public static final CheckResult NO_LOCAL_CHECK = new CheckResult(CheckStatus.Unchecked, "Local check isn't available");
-  public static final CheckResult FAILED_TO_CHECK = new CheckResult(CheckStatus.Unchecked, CheckUtils.FAILED_TO_CHECK_MESSAGE);
-  public static final CheckResult LOGIN_NEEDED = new CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE);
-  public static final CheckResult CONNECTION_FAILED = new CheckResult(CheckStatus.Unchecked, "Connection failed");
+class CheckResult @JvmOverloads constructor(
+  val status: CheckStatus,
+  val message: String,
+  val details: String? = null,
+  private val isEscaped: Boolean = false
+) {
 
-  private CheckStatus myStatus;
-  private String myMessage;
-  @Nullable private String myDetails;
+  val escapedMessage: String get() = message.escaped
+  val escapedDetails: String? get() = details?.escaped
 
-  public CheckResult(CheckStatus status, String message) {
-    this(status, message, null);
-  }
+  private val String.escaped: String get() = if (isEscaped) this else StringUtil.escapeXml(this)
 
-  public CheckResult(CheckStatus status, String message, @Nullable String details) {
-    myStatus = status;
-    myMessage = message;
-    myDetails = details;
-  }
-
-  public CheckStatus getStatus() {
-    return myStatus;
-  }
-
-  public String getMessage() {
-    return myMessage;
-  }
-
-  @Nullable
-  public String getDetails() {
-    return myDetails;
+  companion object {
+    @JvmField val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, "Local check isn't available")
+    @JvmField val FAILED_TO_CHECK = CheckResult(CheckStatus.Unchecked, CheckUtils.FAILED_TO_CHECK_MESSAGE)
+    @JvmField val LOGIN_NEEDED = CheckResult(CheckStatus.Unchecked, CheckUtils.LOGIN_NEEDED_MESSAGE)
+    @JvmField val CONNECTION_FAILED = CheckResult(CheckStatus.Unchecked, "Connection failed")
   }
 }
