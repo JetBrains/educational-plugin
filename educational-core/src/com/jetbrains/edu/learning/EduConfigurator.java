@@ -1,21 +1,15 @@
 package com.jetbrains.edu.learning;
 
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
-import com.jetbrains.edu.learning.stepik.StepikTaskBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * The main interface provides courses support for some language.
@@ -86,29 +80,6 @@ public interface EduConfigurator<Settings> {
    * @return class that provide checkers for all types of tasks
    */
   @NotNull TaskCheckerProvider getTaskCheckerProvider();
-
-  @NotNull
-  default DefaultActionGroup getTaskDescriptionActionGroup() {
-    ActionManager actionManager = ActionManager.getInstance();
-    final DefaultActionGroup group = new DefaultActionGroup();
-
-    group.add(actionManager.getAction(CheckAction.ACTION_ID));
-    group.addSeparator();
-
-    String[] ids = new String[]{
-      RevertTaskAction.ACTION_ID,
-      ShowHintAction.ACTION_ID,
-      CompareWithAnswerAction.ACTION_ID
-    };
-
-    Arrays.stream(ids)
-      .map(actionManager::getAction)
-      .filter(Objects::nonNull)
-      .forEach(group::add);
-
-    group.add(new EditInputAction());
-    return group;
-  }
 
   /**
    * Allows to determine if configurator can be used in current environment or not.

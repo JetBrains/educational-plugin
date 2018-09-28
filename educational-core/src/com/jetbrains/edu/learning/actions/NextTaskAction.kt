@@ -9,8 +9,6 @@ import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 class NextTaskAction : TaskNavigationAction("Next", "Navigate to the next task", AllIcons.Actions.Forward) {
 
   override fun getTargetTask(sourceTask: Task): Task? = NavigationUtils.nextTask(sourceTask)
-  override fun getActionId(): String = ACTION_ID
-  override fun getShortcuts(): Array<String>? = arrayOf(SHORTCUT)
 
   override fun update(e: AnActionEvent) {
     if (CheckPanel.ACTION_PLACE == e.place) {

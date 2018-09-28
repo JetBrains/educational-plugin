@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -25,12 +26,11 @@ import com.jetbrains.edu.learning.ui.AnswerPlaceholderHint;
 import com.jetbrains.edu.learning.ui.HintComponent;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.List;
 
-public class ShowHintAction extends DumbAwareActionWithShortcut {
+public class ShowHintAction extends DumbAwareAction {
   public static final String ACTION_ID = "Educational.ShowHint";
   public static final String SHORTCUT = "ctrl pressed 7";
 
@@ -132,17 +132,5 @@ public class ShowHintAction extends DumbAwareActionWithShortcut {
       }
     }
     return false;
-  }
-
-  @NotNull
-  @Override
-  public String getActionId() {
-    return ACTION_ID;
-  }
-
-  @Nullable
-  @Override
-  public String[] getShortcuts() {
-    return new String[]{SHORTCUT};
   }
 }

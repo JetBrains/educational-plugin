@@ -46,13 +46,14 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.openapi.wm.*;
+import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.content.Content;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.Time;
 import com.intellij.util.TimeoutUtil;
@@ -71,8 +72,6 @@ import com.jetbrains.edu.learning.stepik.OAuthDialog;
 import com.jetbrains.edu.learning.stepik.StepicUser;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.IElementType;
@@ -87,12 +86,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -188,24 +186,6 @@ public class EduUtils {
     if (pane instanceof CourseViewPane && isStudentProject(project)) {
       ((CourseViewPane)pane).updateCourseProgress();
     }
-  }
-
-  @Nullable
-  @Deprecated
-  public static TaskDescriptionToolWindow getStudyToolWindow(@NotNull final Project project) {
-    if (project.isDisposed()) return null;
-
-    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
-    if (toolWindow != null) {
-      Content[] contents = toolWindow.getContentManager().getContents();
-      for (Content content : contents) {
-        JComponent component = content.getComponent();
-        if (component instanceof TaskDescriptionToolWindow) {
-          return (TaskDescriptionToolWindow)component;
-        }
-      }
-    }
-    return null;
   }
 
   public static void deleteFile(@Nullable final VirtualFile file) {

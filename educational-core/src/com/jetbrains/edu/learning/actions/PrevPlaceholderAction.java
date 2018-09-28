@@ -35,16 +35,4 @@ public class PrevPlaceholderAction extends PlaceholderNavigationAction {
 
     return null;
   }
-
-  @NotNull
-  @Override
-  public String getActionId() {
-    return ACTION_ID;
-  }
-
-  @Nullable
-  @Override
-  public String[] getShortcuts() {
-    return new String[]{SHORTCUT};
-  }
 }

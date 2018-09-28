@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning;
 
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.application.ApplicationManager;
@@ -29,9 +28,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
-import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
-import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
+import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -42,7 +39,6 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 
@@ -204,21 +200,13 @@ public class EduProjectComponent implements ProjectComponent {
   }
 
   private void registerShortcuts() {
-    TaskDescriptionToolWindow window = getStudyToolWindow(myProject);
-    if (window != null) {
-      List<AnAction> actionsOnToolbar = window.getActions(true);
-      for (AnAction action : actionsOnToolbar) {
-        if (action instanceof DumbAwareActionWithShortcut) {
-          String id = ((DumbAwareActionWithShortcut)action).getActionId();
-          String[] shortcuts = ((DumbAwareActionWithShortcut)action).getShortcuts();
-          if (shortcuts != null) {
-            addShortcut(id, shortcuts);
-          }
-        }
-      }
-      addShortcut(NextPlaceholderAction.ACTION_ID, new String[]{NextPlaceholderAction.SHORTCUT, NextPlaceholderAction.SHORTCUT2});
-      addShortcut(PrevPlaceholderAction.ACTION_ID, new String[]{PrevPlaceholderAction.SHORTCUT});
-    }
+    addShortcut(CheckAction.ACTION_ID, new String[]{CheckAction.SHORTCUT});
+    addShortcut(RevertTaskAction.ACTION_ID, new String[]{RevertTaskAction.SHORTCUT});
+    addShortcut(ShowHintAction.ACTION_ID, new String[]{ShowHintAction.SHORTCUT});
+    addShortcut(NextPlaceholderAction.ACTION_ID, new String[]{NextPlaceholderAction.SHORTCUT, NextPlaceholderAction.SHORTCUT2});
+    addShortcut(PrevPlaceholderAction.ACTION_ID, new String[]{PrevPlaceholderAction.SHORTCUT});
+    addShortcut(NextTaskAction.ACTION_ID, new String[]{NextTaskAction.SHORTCUT});
+    addShortcut(PreviousTaskAction.ACTION_ID, new String[]{PreviousTaskAction.SHORTCUT});
   }
 
   private void addShortcut(@NotNull final String actionIdString, @NotNull final String[] shortcuts) {

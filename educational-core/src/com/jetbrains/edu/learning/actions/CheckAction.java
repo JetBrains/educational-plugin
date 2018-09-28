@@ -11,6 +11,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -34,7 +35,7 @@ import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CheckAction extends DumbAwareActionWithShortcut {
+public class CheckAction extends DumbAwareAction {
   public static final String SHORTCUT = "ctrl alt pressed ENTER";
   public static final String ACTION_ID = "Educational.Check";
   private static final String CHECK_TASK = "Check";
@@ -154,17 +155,6 @@ public class CheckAction extends DumbAwareActionWithShortcut {
         }
       }
     }
-  }
-
-  @NotNull
-  @Override
-  public String getActionId() {
-    return ACTION_ID;
-  }
-
-  @Override
-  public String[] getShortcuts() {
-    return new String[]{SHORTCUT};
   }
 
   private class StudyCheckTask extends com.intellij.openapi.progress.Task.Backgroundable {
