@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.checker.*
-import com.jetbrains.edu.learning.checker.CheckResult.FAILED_TO_CHECK
+import com.jetbrains.edu.learning.checker.CheckResult.Companion.FAILED_TO_CHECK
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
