@@ -12,10 +12,6 @@ import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.BalloonBuilder;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.learning.EduUtils;
@@ -54,7 +50,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     });
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
     validateEditors(project);
-    showBalloon(project);
+    EduUtils.showBalloon("You can start again now", MessageType.INFO, project);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
     TaskDescriptionView.getInstance(project).readyToCheck();
@@ -96,16 +92,6 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     taskFile.setTrackChanges(false);
     document.setText(taskFile.getText());
     taskFile.setTrackChanges(true);
-  }
-
-  private static void showBalloon(@NotNull final Project project) {
-    BalloonBuilder balloonBuilder =
-      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder("You can start again now", MessageType.INFO, null);
-    final Balloon balloon = balloonBuilder.createBalloon();
-    EduEditor selectedEduEditor = EduUtils.getSelectedEduEditor(project);
-    assert selectedEduEditor != null;
-    balloon.show(EduUtils.computeLocation(selectedEduEditor.getEditor()), Balloon.Position.above);
-    Disposer.register(project, balloon);
   }
 
   public void actionPerformed(@NotNull AnActionEvent event) {

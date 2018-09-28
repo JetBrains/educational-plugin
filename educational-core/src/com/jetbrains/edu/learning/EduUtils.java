@@ -39,6 +39,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.BalloonBuilder;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
@@ -199,11 +200,10 @@ public class EduUtils {
     }
   }
 
-
-  /**
-   * shows pop up in the center of "check task" button in study editor
-   */
-  public static void showCheckPopUp(@NotNull final Project project, @NotNull final Balloon balloon) {
+  public static void showBalloon(String text, MessageType messageType, @NotNull final Project project) {
+    BalloonBuilder balloonBuilder =
+      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, messageType, null);
+    final Balloon balloon = balloonBuilder.createBalloon();
     final EduEditor eduEditor = getSelectedEduEditor(project);
     Editor editor = eduEditor != null ? eduEditor.getEditor() : FileEditorManager.getInstance(project).getSelectedTextEditor();
     assert editor != null;
@@ -211,8 +211,8 @@ public class EduUtils {
     Disposer.register(project, balloon);
   }
 
+  // TODO: choose better position for popup since we redesigned task description panel
   public static RelativePoint computeLocation(Editor editor) {
-
     final Rectangle visibleRect = editor.getComponent().getVisibleRect();
     Point point = new Point(visibleRect.x + visibleRect.width + 10,
                             visibleRect.y + 10);
@@ -387,11 +387,6 @@ public class EduUtils {
       }
     }
     return null;
-  }
-
-  @Nullable
-  public static String getTaskText(@NotNull final Project project, @Nullable final Task task) {
-    return task != null ? getTaskTextFromTask(task.getTaskDir(project), task) : null;
   }
 
   @Nullable
@@ -587,9 +582,7 @@ public class EduUtils {
   }
 
   public static void showErrorPopupOnToolbar(@NotNull Project project, String content) {
-    final Balloon balloon =
-      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(content, MessageType.ERROR, null).createBalloon();
-    showCheckPopUp(project, balloon);
+    showBalloon(content, MessageType.ERROR, project);
   }
 
   public static void selectFirstAnswerPlaceholder(@Nullable final EduEditor eduEditor, @NotNull final Project project) {
@@ -748,31 +741,6 @@ public class EduUtils {
     if (dialog.showAndGet()) {
       StepicUser user = dialog.getUser();
       EduSettings.getInstance().setUser(user);
-    }
-  }
-
-  public static void enableAction(@NotNull final AnActionEvent event, boolean isEnable) {
-    final Presentation presentation = event.getPresentation();
-    presentation.setVisible(isEnable);
-    presentation.setEnabled(isEnable);
-  }
-
-  /**
-   * Gets number index in directory names like "task1", "lesson2"
-   *
-   * @param fullName    full name of directory
-   * @param logicalName part of name without index
-   * @return index of object
-   */
-  public static int getIndex(@NotNull final String fullName, @NotNull final String logicalName) {
-    if (!fullName.startsWith(logicalName)) {
-      return -1;
-    }
-    try {
-      return Integer.parseInt(fullName.substring(logicalName.length())) - 1;
-    }
-    catch (NumberFormatException e) {
-      return -1;
     }
   }
 

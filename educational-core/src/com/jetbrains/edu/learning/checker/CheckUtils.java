@@ -13,11 +13,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.BalloonBuilder;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindow;
@@ -38,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -96,16 +91,6 @@ public class CheckUtils {
 
     NavigationUtils.navigateToFirstFailedAnswerPlaceholder(editor, taskFileToNavigate);
   }
-
-
-  public static void showTestResultPopUp(@NotNull final String text, Color color, @NotNull final Project project) {
-    String escapedText = StringUtil.escapeXml(text);
-    BalloonBuilder balloonBuilder =
-      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(escapedText, null, color, null);
-    final Balloon balloon = balloonBuilder.createBalloon();
-    EduUtils.showCheckPopUp(project, balloon);
-  }
-
 
   public static void flushWindows(@NotNull final Task task, @NotNull final VirtualFile taskDir) {
     for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {

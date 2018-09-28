@@ -227,7 +227,8 @@ public class EditInputAction extends DumbAwareAction {
   }
   @Override
   public void update(final AnActionEvent e) {
-    EduUtils.enableAction(e, false);
+    Presentation presentation = e.getPresentation();
+    presentation.setEnabledAndVisible(false);
 
     final Project project = e.getProject();
     if (project != null) {
@@ -235,7 +236,7 @@ public class EditInputAction extends DumbAwareAction {
       if (eduEditor != null) {
         final List<UserTest> userTests = StudyTaskManager.getInstance(project).getUserTests(eduEditor.getTaskFile().getTask());
         if (!userTests.isEmpty()) {
-          EduUtils.enableAction(e, true);
+          presentation.setEnabledAndVisible(true);
         }
       }
     }
