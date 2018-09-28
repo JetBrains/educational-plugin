@@ -26,11 +26,6 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
     const val OUTPUT_PATTERN_NAME = "output.txt"
   }
 
-  override fun onTaskFailed(message: String, details: String?) {
-    super.onTaskFailed("Incorrect output", details)
-    CheckUtils.showTestResultsToolWindow(project, details?: message)
-  }
-
   override fun check(indicator: ProgressIndicator): CheckResult {
     val configuration = createDefaultRunConfiguration(project) ?: return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
     val executor = DefaultRunExecutor.getRunExecutorInstance()

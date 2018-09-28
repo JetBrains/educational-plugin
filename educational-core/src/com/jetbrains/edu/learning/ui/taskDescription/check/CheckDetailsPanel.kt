@@ -39,10 +39,10 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     }
 
     val details = checkResult.details
-    if (details != null) {
-      CheckUtils.showTestResultsToolWindow(project, details)
+    if (checkResult.message == CheckUtils.COMPILATION_FAILED_MESSAGE && details != null) {
+      CheckUtils.showCompilationErrorToolWindow(project, details)
     }
-    var message = checkResult.message
+    var message = checkResult.escapedMessage
     if (message.length > 400) {
       message = message.substring(0, 400) + "..."
       linksPanel.add(LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, details ?: checkResult.message)), BorderLayout.NORTH)

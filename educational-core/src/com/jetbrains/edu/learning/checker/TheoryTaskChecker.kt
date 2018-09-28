@@ -25,11 +25,4 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
     }
     return CheckResult(CheckStatus.Solved, "")
   }
-
-  override fun onTaskFailed(message: String, details: String?) {
-    super.onTaskFailed(message, details)
-    if (details != null) {
-      CheckUtils.showTestResultsToolWindow(project, details)
-    }
-  }
 }

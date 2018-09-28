@@ -7,13 +7,13 @@ class CheckResult @JvmOverloads constructor(
   val status: CheckStatus,
   val message: String,
   val details: String? = null,
-  private val isEscaped: Boolean = false
+  private val needEscape: Boolean = true
 ) {
 
   val escapedMessage: String get() = message.escaped
   val escapedDetails: String? get() = details?.escaped
 
-  private val String.escaped: String get() = if (isEscaped) this else StringUtil.escapeXml(this)
+  private val String.escaped: String get() = if (needEscape) StringUtil.escapeXml(this) else this
 
   companion object {
     @JvmField val NO_LOCAL_CHECK = CheckResult(CheckStatus.Unchecked, "Local check isn't available")

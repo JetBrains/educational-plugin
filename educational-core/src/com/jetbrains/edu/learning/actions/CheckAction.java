@@ -74,7 +74,7 @@ public class CheckAction extends DumbAwareAction {
       EduUtils.showBalloon("Checking is not available while indexing is in progress", MessageType.WARNING, project);
       return;
     }
-    CheckUtils.hideTestResultsToolWindow(project);
+    CheckUtils.hideCheckResultToolWindow(project);
     FileDocumentManager.getInstance().saveAllDocuments();
     Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
     if (editor == null) {

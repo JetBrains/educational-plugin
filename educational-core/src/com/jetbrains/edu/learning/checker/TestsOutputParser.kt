@@ -12,8 +12,9 @@ object TestsOutputParser {
   private val TEST_FAILED_PATTERN: Pattern = Pattern.compile("((.+) )?expected: ?(.*) but was: ?(.*)",
                                                              Pattern.MULTILINE or Pattern.DOTALL)
 
+  @JvmOverloads
   @JvmStatic
-  fun getCheckResult(messages: List<String>): CheckResult {
+  fun getCheckResult(messages: List<String>, needEscapeResult: Boolean = true): CheckResult {
     var congratulations = TestsOutputParser.CONGRATULATIONS
     loop@for (message in messages) {
       when {
@@ -22,12 +23,14 @@ object TestsOutputParser {
           congratulations = message.substringAfter(TestsOutputParser.CONGRATS_MESSAGE)
         }
         TestsOutputParser.TEST_FAILED in message -> {
-          return CheckResult(CheckStatus.Failed, message.substringAfter(TestsOutputParser.TEST_FAILED).prettify())
+          return CheckResult(CheckStatus.Failed,
+                             message.substringAfter(TestsOutputParser.TEST_FAILED).prettify(),
+                             needEscape = needEscapeResult)
         }
       }
     }
 
-    return CheckResult(CheckStatus.Solved, congratulations)
+    return CheckResult(CheckStatus.Solved, congratulations, needEscape = needEscapeResult)
   }
 
   private fun String.prettify(): String {
