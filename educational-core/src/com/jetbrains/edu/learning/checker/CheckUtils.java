@@ -45,8 +45,6 @@ public class CheckUtils {
   public static final String LOGIN_NEEDED_MESSAGE = "Please, login to Stepik to check the task";
   public static final String FAILED_TO_CHECK_MESSAGE = "Failed to launch checking";
 
-  private static final Logger LOG = Logger.getInstance(CheckUtils.class);
-
   private CheckUtils() {
   }
 
