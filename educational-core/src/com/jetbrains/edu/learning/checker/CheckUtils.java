@@ -8,7 +8,6 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -28,14 +27,16 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.ui.OutputToolWindowFactory;
-import com.jetbrains.edu.learning.ui.OutputToolWindowFactoryKt;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import static com.jetbrains.edu.learning.ui.OutputToolWindowFactoryKt.*;
 
 public class CheckUtils {
   public static final String STUDY_PREFIX = "#educational_plugin";
@@ -102,11 +103,15 @@ public class CheckUtils {
   }
 
   public static void showOutputToolWindow(@NotNull final Project project, @NotNull final String message) {
-    showToolWindow(project, OutputToolWindowFactoryKt.OUTPUT_TOOLWINDOW_ID, message, ConsoleViewContentType.NORMAL_OUTPUT);
+    showToolWindow(project, OUTPUT_TOOLWINDOW_ID, message, ConsoleViewContentType.NORMAL_OUTPUT);
   }
 
   public static void showTestResultsToolWindow(@NotNull final Project project, @NotNull final String message) {
-    showToolWindow(project, OutputToolWindowFactoryKt.TEST_RESULTS_ID, message, ConsoleViewContentType.ERROR_OUTPUT);
+    showToolWindow(project, TEST_RESULTS_ID, message, ConsoleViewContentType.ERROR_OUTPUT);
+  }
+
+  public static void showCompilationErrorToolWindow(@NotNull final Project project, @NotNull final String message) {
+    showToolWindow(project, COMPILATION_ERROR_ID, message, ConsoleViewContentType.ERROR_OUTPUT);
   }
 
   private static void showToolWindow(
@@ -137,10 +142,13 @@ public class CheckUtils {
     });
   }
 
-  public static void hideTestResultsToolWindow(@NotNull Project project) {
-    ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(OutputToolWindowFactoryKt.TEST_RESULTS_ID);
-    if (toolWindow != null) {
-      toolWindow.hide(() -> {});
+  public static void hideCheckResultToolWindow(@NotNull Project project) {
+    List<String> ids = Arrays.asList(TEST_RESULTS_ID, COMPILATION_ERROR_ID, OUTPUT_TOOLWINDOW_ID);
+    for (String id : ids) {
+      ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(id);
+      if (toolWindow != null) {
+        toolWindow.setAvailable(false, null);
+      }
     }
   }
 

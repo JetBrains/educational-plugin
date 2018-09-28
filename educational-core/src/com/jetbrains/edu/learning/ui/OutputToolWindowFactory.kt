@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.EduUtils
 
 const val TEST_RESULTS_ID = "Test Results"
 const val OUTPUT_TOOLWINDOW_ID = "Output"
+const val COMPILATION_ERROR_ID = "Compilation Error"
 
 class OutputToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {

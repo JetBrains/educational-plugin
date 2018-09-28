@@ -24,9 +24,9 @@ public interface TaskCheckerProvider {
         return null;
     }
 
-    @NotNull
+    @Nullable
     default TaskChecker<CodeTask> getCodeTaskChecker(@NotNull CodeTask task, @NotNull Project project) {
-        return new CodeTaskChecker(task, project);
+        return null;
     }
 
     @NotNull
