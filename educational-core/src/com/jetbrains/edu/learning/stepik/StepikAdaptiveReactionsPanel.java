@@ -172,8 +172,8 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
   }
 
   private static Color getBackgroundColor() {
-    // button color copy-pasted from com.intellij.ide.ui.laf.darcula.ui.DarculaButtonUI.getButtonColorEnd
-    return UIUtil.isUnderDarcula() ? JBColor.namedColor("Button.darcula.endColor", 0x414648) : UIUtil.getLabelBackground();
+    // darcula button color copy-pasted from Button.darcula.endColor
+    return UIUtil.isUnderDarcula() ? Color.decode("#4C5052") : UIUtil.getLabelBackground();
   }
 }
 
