@@ -176,8 +176,7 @@ public class EduUtils {
   }
 
   public static void updateToolWindows(@NotNull final Project project) {
-    Task task = getCurrentTask(project);
-    TaskDescriptionView.getInstance(project).updateTaskDescription(task);
+    TaskDescriptionView.getInstance(project).updateTaskDescription();
     updateCourseProgress(project);
   }
 
