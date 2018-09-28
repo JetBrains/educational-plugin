@@ -104,13 +104,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
       setBorder(JBUI.Borders.customLine(JBColor.border()));
       add(myButtonPanel);
       addMouseListener(reaction);
-      setBackgroundRecursively(getBackgroundColor());
-    }
-
-    public void setBackgroundRecursively(@NotNull Color color) {
-      this.setBackground(color);
-      myButtonPanel.setBackground(color);
-      myLabel.setBackground(color);
+      UIUtil.setBackgroundRecursively(this, getBackgroundColor());
     }
 
     private void addMouseListener(int reaction) {
@@ -126,7 +120,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
         myButtonPanel.setEnabled(isEnabled);
         myLabel.setEnabled(isEnabled);
         if (isEnabled) {
-          setBackgroundRecursively(getBackgroundColor());
+          UIUtil.setBackgroundRecursively(this, getBackgroundColor());
         }
       });
     }
@@ -152,7 +146,7 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
               @Override
               public void run(@NotNull ProgressIndicator indicator) {
                 StepikAdaptiveReactionsPanel.this.setEnabledRecursive(false);
-                ApplicationManager.getApplication().invokeLater(()->myPanel.setBackgroundRecursively(getBackgroundColor()));
+                ApplicationManager.getApplication().invokeLater(() -> UIUtil.setBackgroundRecursively(myPanel, getBackgroundColor()));
                 StepikAdaptiveConnector.addNextRecommendedTask(StepikAdaptiveReactionsPanel.this.myProject, task.getLesson(), indicator,
                                                                   myReaction);
                 StepikAdaptiveReactionsPanel.this.setEnabledRecursive(true);
@@ -166,13 +160,13 @@ public class StepikAdaptiveReactionsPanel extends JPanel {
       public void mouseEntered(MouseEvent e) {
         final Task task = EduUtils.getCurrentTask(myProject);
         if (task != null && task.getStatus() != CheckStatus.Solved && myPanel.isEnabled()) {
-          myPanel.setBackgroundRecursively(JBColor.GRAY);
+          UIUtil.setBackgroundRecursively(myPanel, JBColor.GRAY);
         }
       }
 
       @Override
       public void mouseExited(MouseEvent e) {
-        myPanel.setBackgroundRecursively(getBackgroundColor());
+        UIUtil.setBackgroundRecursively(myPanel, getBackgroundColor());
       }
     }
   }
