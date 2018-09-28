@@ -72,7 +72,7 @@ fun Task.saveStudentAnswersIfNeeded(project: Project) {
   if (lesson !is FrameworkLesson) return
 
   val taskDir = getTaskDir(project) ?: return
-  for ((_, taskFile) in getTaskFiles()) {
+  for ((_, taskFile) in taskFiles) {
     val virtualFile = EduUtils.findTaskFileInDir(taskFile, taskDir) ?: continue
     val document = FileDocumentManager.getInstance().getDocument(virtualFile) ?: continue
     for (placeholder in taskFile.answerPlaceholders) {

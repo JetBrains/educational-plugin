@@ -156,7 +156,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
                 }
                 val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
                 val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, MY_TEST_JDK_NAME)
-                Assert.assertNotNull("Cannot create JDK for " + myJdkHome, jdk)
+                Assert.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
                 ProjectJdkTable.getInstance().addJdk(jdk!!)
             }
         }.execute()

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.coursera
+package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileChooser.FileChooser

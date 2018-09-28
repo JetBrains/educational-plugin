@@ -27,7 +27,7 @@ import java.io.IOException;
 
 public abstract class CCRenameHandler implements RenameHandler {
   @Override
-  public boolean isAvailableOnDataContext(DataContext dataContext) {
+  public boolean isAvailableOnDataContext(@NotNull DataContext dataContext) {
     PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
     if (!(element instanceof PsiFileSystemItem)) {
       return false;
@@ -42,7 +42,7 @@ public abstract class CCRenameHandler implements RenameHandler {
   protected abstract boolean isAvailable(@NotNull Project project, @NotNull VirtualFile file);
 
   @Override
-  public boolean isRenaming(DataContext dataContext) {
+  public boolean isRenaming(@NotNull DataContext dataContext) {
     return isAvailableOnDataContext(dataContext);
   }
 

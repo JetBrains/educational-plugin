@@ -16,8 +16,8 @@ open class AnswerPlaceholderHint(private val myPlaceholder: AnswerPlaceholder?,
                                  private val myProject: Project) {
 
   companion object {
-    val NO_PLACEHOLDER_MESSAGE = "Put the caret in the answer placeholder to get hint"
-    val HINTS_NOT_AVAILABLE = "There is no hint for this answer placeholder"
+    const val NO_PLACEHOLDER_MESSAGE = "Put the caret in the answer placeholder to get hint"
+    const val HINTS_NOT_AVAILABLE = "There is no hint for this answer placeholder"
   }
 
   val hintComponent: HintComponent = HintComponent(myPlaceholder?.taskFile?.task?.getTaskDir(myProject))
