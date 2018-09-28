@@ -181,11 +181,12 @@ public class Lesson extends StudyItem {
   public VirtualFile getLessonDir(@NotNull final Project project) {
     VirtualFile courseDir = EduUtils.getCourseDir(project);
 
-    if (mySection == null) {
+    String sectionName = mySection.getName();
+    if (mySection == null || EduNames.ADDITIONAL_MATERIALS.equals(sectionName) || StepikNames.PYCHARM_ADDITIONAL.equals(sectionName)) {
       return courseDir.findChild(getName());
     }
     else {
-      VirtualFile sectionDir = courseDir.findChild(mySection.getName());
+      VirtualFile sectionDir = courseDir.findChild(sectionName);
       assert sectionDir != null : "Section dir for lesson not found";
 
       return sectionDir.findChild(getName());
