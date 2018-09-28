@@ -114,6 +114,8 @@ private fun setUpLabelStyle(node: Label) {
   val engineStyleUrl = object {}.javaClass.getResource(getBrowserStylesheet(isDarcula))
   node.stylesheets.add(engineStyleUrl.toExternalForm())
   node.font = Font.font(getFontSize())
+  val labelForeground = UIUtil.getLabelForeground()
+  node.textFill = Color.rgb(labelForeground.red, labelForeground.green, labelForeground.blue)
 }
 
 private fun getFontSize() = (EditorColorsManager.getInstance().globalScheme.editorFontSize + 1).toDouble()
