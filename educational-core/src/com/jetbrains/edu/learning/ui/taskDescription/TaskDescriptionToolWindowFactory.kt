@@ -7,6 +7,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ex.ToolWindowEx
+import com.jetbrains.edu.coursecreator.actions.CCEditTaskDescription
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.NextTaskAction
 import com.jetbrains.edu.learning.actions.PreviousTaskAction
@@ -30,7 +31,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
   }
 
   private fun ToolWindow.initTitleActions() {
-    val actions = arrayOf(PreviousTaskAction.ACTION_ID, NextTaskAction.ACTION_ID).map {
+    val actions = arrayOf(CCEditTaskDescription.ACTION_ID, PreviousTaskAction.ACTION_ID, NextTaskAction.ACTION_ID).map {
       ActionManager.getInstance().getAction(it) ?: error("Action $it not found")
     }.toTypedArray()
     (this as ToolWindowEx).setTitleActions(*actions)

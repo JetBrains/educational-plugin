@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit) {
   companion object {
     private const val TEXT = "Edit task description"
+    const val ACTION_ID = "Educational.CCEditTaskDescription"
   }
 
   override fun actionPerformed(e: AnActionEvent?) {
