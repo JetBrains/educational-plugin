@@ -218,7 +218,6 @@
     <editorNotificationProvider implementation="com.jetbrains.edu.learning.placeholderDependencies.UnsolvedDependenciesNotificationProvider"/>
 
     <!--for educators-->
-    <projectService serviceImplementation="com.jetbrains.edu.coursecreator.CCProjectService"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCSectionMoveHandlerDelegate"
                              order="first"/>
     <refactoring.moveHandler implementation="com.jetbrains.edu.coursecreator.handlers.CCLessonMoveHandlerDelegate"

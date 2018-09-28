@@ -11,16 +11,12 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.actions.ModuleDeleteProvider;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
@@ -46,17 +42,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
   public void migrateIfNeeded() {
     Course studyCourse = StudyTaskManager.getInstance(myProject).getCourse();
-    if (studyCourse == null) {
-      Course oldCourse = CCProjectService.getInstance(myProject).getCourse();
-      if (oldCourse == null) {
-        return;
-      }
-      StudyTaskManager.getInstance(myProject).setCourse(oldCourse);
-      CCProjectService.getInstance(myProject).setCourse(null);
-      oldCourse.init(null, null, true);
-      oldCourse.setCourseMode(CCUtils.COURSE_MODE);
-      transformFiles(oldCourse, myProject);
-    } else {
+    if (studyCourse != null) {
       EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(studyCourse.getLanguageById());
       if (configurator == null) return;
       EduCourseBuilder<?> courseBuilder = configurator.getCourseBuilder();
@@ -100,52 +86,6 @@ public class CCProjectComponent extends AbstractProjectComponent {
 
     EduGradleUtils.setGradleSettings(myProject, baseDir.getPath());
     EduGradleUtils.importGradleProject(myProject, baseDir.getPath());
-  }
-
-  private static void transformFiles(Course course, Project project) {
-    List<VirtualFile> files = getAllAnswerTaskFiles(course, project);
-    for (VirtualFile answerFile : files) {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        String answerName = answerFile.getName();
-        String nameWithoutExtension = FileUtil.getNameWithoutExtension(answerName);
-        String name = FileUtil.getNameWithoutExtension(nameWithoutExtension) + "." + FileUtilRt.getExtension(answerName);
-        VirtualFile parent = answerFile.getParent();
-        VirtualFile file = parent.findChild(name);
-        try {
-          if (file != null) {
-            file.delete(CCProjectComponent.class);
-          }
-          VirtualFile windowsDescrFile = parent.findChild(FileUtil.getNameWithoutExtension(name) + EduNames.WINDOWS_POSTFIX);
-          if (windowsDescrFile != null) {
-            windowsDescrFile.delete(CCProjectComponent.class);
-          }
-          answerFile.rename(CCProjectComponent.class, name);
-        }
-        catch (IOException e) {
-          LOG.error(e);
-        }
-      });
-    }
-  }
-
-  @NotNull
-  private static List<VirtualFile> getAllAnswerTaskFiles(@NotNull Course course, @NotNull Project project) {
-    List<VirtualFile> result = new ArrayList<>();
-    for (Lesson lesson : course.getLessons()) {
-      for (Task task : lesson.getTaskList()) {
-        for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-          String name = entry.getKey();
-          String answerName = FileUtil.getNameWithoutExtension(name) + CCUtils.ANSWER_EXTENSION_DOTTED + FileUtilRt.getExtension(name);
-
-          String taskPath = FileUtil.join(project.getBasePath(), lesson.getName(), task.getName());
-          VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(FileUtil.join(taskPath, answerName));
-          if (taskFile != null) {
-            result.add(taskFile);
-          }
-        }
-      }
-    }
-    return result;
   }
 
   private static void transformCourseStructure(Course course, Project project) {

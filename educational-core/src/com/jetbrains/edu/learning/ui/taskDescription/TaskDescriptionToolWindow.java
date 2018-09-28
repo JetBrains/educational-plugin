@@ -68,7 +68,7 @@ public abstract class TaskDescriptionToolWindow {
 
   protected void setTaskText(@NotNull Project project, @Nullable Task task) {
     if (task != null) {
-      String taskText = EduUtils.getTaskText(project, task);
+      String taskText = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task);
       if (taskText != null) {
         setText(taskText);
       }

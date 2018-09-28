@@ -229,8 +229,8 @@ public class StepikAdaptiveConnector {
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     if (!(course instanceof RemoteCourse)) {
       LOG.warn("Course is in incorrect state");
-      ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
-                                                                                               "Can't get next recommendation: course is broken"));
+      ApplicationManager.getApplication().invokeLater(
+        () -> EduUtils.showErrorPopupOnToolbar(project, "Can't get next recommendation: course is broken"));
       return;
     }
 
@@ -238,15 +238,16 @@ public class StepikAdaptiveConnector {
     final StepicUser user = EduSettings.getInstance().getUser();
     if (user == null) {
       LOG.warn("Can't get next recommendation: user is null");
-      ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
-                                                                                               "Can't get next recommendation: you're not logged in"));
+      ApplicationManager.getApplication().invokeLater(
+        () -> EduUtils.showErrorPopupOnToolbar(project, "Can't get next recommendation: you're not logged in"));
       return;
     }
 
     final boolean reactionPosted = postRecommendationReaction(String.valueOf(lesson.getId()), String.valueOf(user.getId()), reactionToPost);
     if (!reactionPosted) {
       LOG.warn("Recommendation reaction wasn't posted");
-      ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project, "Couldn't post your reactionToPost"));
+      ApplicationManager.getApplication().invokeLater(
+        () -> EduUtils.showErrorPopupOnToolbar(project, "Couldn't post your reactionToPost"));
       return;
     }
 
@@ -254,8 +255,8 @@ public class StepikAdaptiveConnector {
     String oldTaskName = lesson.getTaskList().get(lesson.getTaskList().size() - 1).getName();
     final Task task = getNextRecommendation(project, (RemoteCourse)course);
     if (task == null) {
-      ApplicationManager.getApplication().invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project,
-                                                                                               "Couldn't load a new recommendation"));
+      ApplicationManager.getApplication().invokeLater(
+        () -> EduUtils.showErrorPopupOnToolbar(project, "Couldn't load a new recommendation"));
       return;
     }
 
