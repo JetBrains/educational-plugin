@@ -13,9 +13,9 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.jetbrains.edu.learning.EduUtils
 
+const val TEST_RESULTS_ID = "Test Results"
+const val OUTPUT_TOOLWINDOW_ID = "Output"
 
-@JvmField val TEST_RESULTS_ID = "Test Results"
-@JvmField val OUTPUT_TOOLWINDOW_ID = "Output"
 class OutputToolWindowFactory : ToolWindowFactory {
   override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
     val currentTask = EduUtils.getCurrentTask(project)
@@ -35,21 +35,19 @@ class OutputToolWindowFactory : ToolWindowFactory {
     }
   }
 
-  fun getFileEditorManagerListener(toolWindow: ToolWindow): FileEditorManagerListener {
+  private fun getFileEditorManagerListener(toolWindow: ToolWindow): FileEditorManagerListener {
     return object : FileEditorManagerListener {
       override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
-        toolWindow.setAvailable(false, {})
+        toolWindow.setAvailable(false) {}
       }
 
       override fun selectionChanged(event: FileEditorManagerEvent) {
-        toolWindow.setAvailable(false, {})
+        toolWindow.setAvailable(false) {}
       }
     }
   }
 }
 
 class OutputToolWindowCondition : Condition<Any> {
-  override fun value(t: Any?): Boolean {
-    return false;
-  }
+  override fun value(t: Any?): Boolean = false
 }

@@ -43,16 +43,16 @@ class MyNotification(content: String, feedbackUrl : String) :
 
 fun isFeedbackAsked() : Boolean = PropertiesComponent.getInstance().getBoolean(feedbackAsked)
 
-val feedbackAsked = "askFeedbackNotification"
+const val feedbackAsked = "askFeedbackNotification"
 
-val feedbackUrlTemplate = "https://www.jetbrains.com/feedback/feedback.jsp?" +
-    "product=EduTools&ide=\$PRODUCT&course=\$COURSE&mode=\$MODE"
+const val feedbackUrlTemplate = "https://www.jetbrains.com/feedback/feedback.jsp?" +
+                                "product=EduTools&ide=\$PRODUCT&course=\$COURSE&mode=\$MODE"
 
-val creatorTemplate = "<html>You’ve just created your first tasks with \$PRODUCT!\n" +
-    "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make teaching \$LANGUAGE better.</html>"
+const val creatorTemplate = "<html>You’ve just created your first tasks with \$PRODUCT!\n" +
+                            "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make teaching \$LANGUAGE better.</html>"
 
-val studentTemplate = "<html>You’ve just completed your first lesson with \$PRODUCT!\n" +
-    "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make learning \$LANGUAGE better.</html>"
+const val studentTemplate = "<html>You’ve just completed your first lesson with \$PRODUCT!\n" +
+                            "Please take a moment to <a href=\"\$URL\">share</a> your experience and help us make learning \$LANGUAGE better.</html>"
 
 val productMap = hashMapOf(
     Pair(PlatformUtils.PYCHARM_CE_PREFIX, "PCC"),

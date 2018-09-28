@@ -6,6 +6,7 @@ import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -75,6 +76,7 @@ public class RefreshPlaceholderTest extends EduTestCase {
     course.init(null, null, false);
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return super.getTestDataPath() + "/actions/refreshPlaceholder";

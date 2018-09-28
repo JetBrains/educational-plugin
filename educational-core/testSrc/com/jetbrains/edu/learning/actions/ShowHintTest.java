@@ -35,7 +35,7 @@ public class ShowHintTest extends EduTestCase {
     final AnswerPlaceholderHint hint = ShowHintAction.getHint(myFixture.getProject(), answerPlaceholder);
     final HintComponent hintContent = hint.getHintComponent();
     final String text = hintContent.getText();
-    assertEquals(AnswerPlaceholderHint.Companion.getNO_PLACEHOLDER_MESSAGE(), text.trim());
+    assertEquals(AnswerPlaceholderHint.NO_PLACEHOLDER_MESSAGE, text.trim());
   }
 
   public void testSecondHints() {
@@ -76,7 +76,7 @@ public class ShowHintTest extends EduTestCase {
     final AnswerPlaceholderHint hint = ShowHintAction.getHint(myFixture.getProject(), answerPlaceholder);
     final HintComponent hintContent = hint.getHintComponent();
     final String text = hintContent.getText();
-    assertEquals(AnswerPlaceholderHint.Companion.getHINTS_NOT_AVAILABLE(), text.trim());
+    assertEquals(AnswerPlaceholderHint.HINTS_NOT_AVAILABLE, text.trim());
   }
 
   @Override

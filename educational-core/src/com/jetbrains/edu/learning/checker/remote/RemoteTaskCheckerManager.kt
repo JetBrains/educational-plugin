@@ -12,12 +12,12 @@ object RemoteTaskCheckerManager {
   fun remoteCheckerForTask(project: Project, task: Task): RemoteTaskChecker? {
     val checkers = Extensions.getExtensions(EP_NAME).filter { it.canCheck(project, task) }
     if (checkers.isEmpty()) {
-      return null;
+      return null
     }
     if (checkers.size > 1) {
       error("Several remote task checkers available for ${task.taskType}:${task.name}: $checkers")
     }
-    return checkers[0];
+    return checkers[0]
   }
 
 }

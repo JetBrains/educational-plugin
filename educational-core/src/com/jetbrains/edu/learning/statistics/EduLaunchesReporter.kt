@@ -18,8 +18,8 @@ import java.util.concurrent.TimeUnit
 
 
 object EduLaunchesReporter {
-  private val LAST_UPDATE: String = "com.jetbrains.edu.LAST_UPDATE"
-  private val PLUGIN_ID: String = "com.jetbrains.edu"
+  private const val LAST_UPDATE: String = "com.jetbrains.edu.LAST_UPDATE"
+  private const val PLUGIN_ID: String = "com.jetbrains.edu"
 
   private val LOG = Logger.getInstance(EduLaunchesReporter.javaClass)
 

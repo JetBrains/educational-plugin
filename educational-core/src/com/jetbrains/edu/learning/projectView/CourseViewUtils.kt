@@ -46,7 +46,7 @@ object CourseViewUtils {
   fun findTaskDirectory(project: Project, baseDir: PsiDirectory, task: Task): PsiDirectory? {
     val sourceDirName = task.sourceDir
     if (sourceDirName.isNullOrEmpty()) {
-      return baseDir;
+      return baseDir
     }
     val isCourseCreatorGradleProject = EduGradleUtils.isConfiguredWithGradle(project) && CCUtils.isCourseCreator(project)
     if (isCourseCreatorGradleProject) {

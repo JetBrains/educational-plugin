@@ -4,7 +4,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.DocumentAdapter
-import com.intellij.ui.layout.*
 import javax.swing.event.DocumentEvent
 import javax.swing.text.JTextComponent
 

@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.coursera
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
+import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
 
 class ImportCourseraAssignment : ImportLocalCourseAction("Start Coursera Assignment") {
