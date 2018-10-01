@@ -17,6 +17,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
@@ -69,8 +70,10 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
     // Build toolwindow will be opened if `ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT` is true while sync
     project.putUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT, null)
     ExternalSystemUtil.refreshProject(projectBasePath, builder.build())
-    ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL) {
-      ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
+    if (!isUnitTestMode) {
+      ExternalSystemUtil.invokeLater(project, ModalityState.NON_MODAL) {
+        ProjectView.getInstance(project).changeViewCB(CourseViewPane.ID, null)
+      }
     }
   }
 
