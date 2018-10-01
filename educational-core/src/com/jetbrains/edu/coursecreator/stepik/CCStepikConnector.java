@@ -765,6 +765,7 @@ public class CCStepikConnector {
     return new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+        notification.expire();
         Course nonRemoteCourse =
           XmlSerializer.deserialize(XmlSerializer.serialize(course), Course.class);
         nonRemoteCourse.init(null, null, true);
