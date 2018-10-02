@@ -1,0 +1,13 @@
+.scroll-bar {
+    -fx-background-radius: 2em;
+}
+
+.scroll-bar:horizontal .thumb {
+    -fx-background-insets: 4 0 0 0;
+    -fx-background-radius: 0em;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-insets: 0 4 0 0;
+    -fx-background-radius: 0em;
+}

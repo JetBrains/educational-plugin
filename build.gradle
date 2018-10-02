@@ -116,6 +116,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven { url 'http://dl.bintray.com/jetbrains/markdown' }
+        maven { url 'http://dl.bintray.com/kotlin/kotlin-js-wrappers/' }
     }
 
     intellij {
@@ -171,6 +172,11 @@ allprojects {
         compile 'com.squareup.retrofit2:converter-gson:2.4.0'
 
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
+        
+        compile ('org.jetbrains:kotlin-css-jvm:1.0.0-pre.54-kotlin-1.2.70') {
+            exclude module: 'kotlin-runtime'
+            exclude module: 'kotlin-stdlib'
+        }
     }
 }
 
@@ -277,6 +283,7 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
 
 configure([project(':educational-core'), project(':Edu-Java')]) {
     intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
+
 }
 
 configure(project(':Edu-Kotlin')) {

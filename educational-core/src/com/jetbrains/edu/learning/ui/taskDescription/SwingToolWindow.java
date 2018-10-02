@@ -98,7 +98,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
 
   public void setText(@NotNull String text) {
     String wrappedText = wrapHints(text);
-    myTaskTextPane.setText(StyledTextLoader.textWithStyles(wrappedText));
+    myTaskTextPane.setText(JavaFxTaskUtil.htmlWithResources(myProject, wrappedText));
   }
 
   @Override
@@ -126,7 +126,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
-  protected void updateLaf(boolean isDarcula) {
+  protected void updateLaf() {
     myTaskTextPane.setBackground(EditorColorsManager.getInstance().getGlobalScheme().getDefaultBackground());
   }
 

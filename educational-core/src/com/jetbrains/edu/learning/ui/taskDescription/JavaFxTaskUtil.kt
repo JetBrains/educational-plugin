@@ -1,15 +1,19 @@
 @file:JvmName("JavaFxTaskUtil")
 package com.jetbrains.edu.learning.ui.taskDescription
 
+import com.intellij.ide.BrowserUtil
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.LafManagerListener
 import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo
 import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.StreamUtil
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow.Companion.getBrowserStylesheet
+import com.jetbrains.edu.learning.ui.taskDescription.styleManagers.StyleManager
 import javafx.application.Platform
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Insets
@@ -21,6 +25,9 @@ import javafx.scene.control.*
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.text.Font
+import org.apache.commons.lang.text.StrSubstitutor
+import org.jsoup.Jsoup
+import java.io.File
 import java.util.*
 
 private const val LEFT_INSET = 3.0
@@ -110,10 +117,8 @@ private fun getSceneBackground(): Color {
 }
 
 private fun setUpLabelStyle(node: Label) {
-  val isDarcula = LafManager.getInstance().currentLookAndFeel is DarculaLookAndFeelInfo
-  val engineStyleUrl = object {}.javaClass.getResource(getBrowserStylesheet(isDarcula))
-  node.stylesheets.add(engineStyleUrl.toExternalForm())
-  node.font = Font.font(getFontSize())
+  node.stylesheets.add(StyleManager().baseStylesheet)
+  node.font = Font(StyleManager().bodyFont, getFontSize())
   val labelForeground = UIUtil.getLabelForeground()
   node.textFill = Color.rgb(labelForeground.red, labelForeground.green, labelForeground.blue)
 }
@@ -152,12 +157,48 @@ private fun addAllDescendants(parent: Parent, nodes: ArrayList<Node>) {
 }
 
 fun setButtonLaf(button: ButtonBase) {
-  val darcula = LafManager.getInstance().currentLookAndFeel is DarculaLookAndFeelInfo
-  val stylesheetPath = if (darcula) "/style/buttonsDarcula.css" else "/style/buttons.css"
   button.stylesheets.removeAll()
-  button.stylesheets.add(object {}.javaClass.getResource(stylesheetPath).toExternalForm())
-  val engineStyleUrl = object {}.javaClass.getResource(getBrowserStylesheet(darcula))
-  button.stylesheets.add(engineStyleUrl.toExternalForm())
+  button.stylesheets.addAll(StyleManager().buttonStylesheets)
+}
+
+fun htmlWithResources(project: Project, content: String): String {
+  val templateText = loadText("/style/template.html.ft")
+  val styleManager = StyleManager()
+
+  val textWithResources = StrSubstitutor(styleManager.resources(project, content)).replace(templateText) ?: "Cannot load task text"
+  return absolutizeImgPaths(project, textWithResources)
+}
+
+fun loadText(filePath: String): String? {
+  val stream = object {}.javaClass.getResourceAsStream(filePath)
+  stream.use {
+    return StreamUtil.readText(stream, "utf-8")
+  }
+}
+
+private fun absolutizeImgPaths(project: Project, content: String): String {
+  val srcAttribute = "src"
+  val task = EduUtils.getCurrentTask(project)
+  if (task == null) {
+    return content
+  }
+
+  val taskDir = task.getTaskDir(project)
+  if (taskDir == null) {
+    return content
+  }
+
+  val document = Jsoup.parse(content)
+  val imageElements = document.getElementsByTag("img")
+  for (imageElement in imageElements) {
+    val imagePath = imageElement.attr(srcAttribute)
+    if (!BrowserUtil.isAbsoluteURL(imagePath)) {
+      val file = File(imagePath)
+      val absolutePath = File(taskDir.path, file.path).toURI().toString()
+      imageElement.attr("src", absolutePath)
+    }
+  }
+  return document.outerHtml()
 }
 
 private class StudyLafManagerListener(val scene: Scene) : LafManagerListener {
