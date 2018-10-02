@@ -1,310 +1,181 @@
-package com.jetbrains.edu.learning.ui.taskDescription;
+package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.ide.ui.LafManager
 import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.StreamUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduLanguageDecorator
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
+import com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL
 import com.sun.webkit.dom.ElementImpl
 import javafx.application.Platform
 import javafx.concurrent.Worker
+import javafx.embed.swing.JFXPanel
 import javafx.scene.Scene
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
+import javafx.scene.layout.StackPane
+import javafx.scene.web.WebEngine
+import javafx.scene.web.WebView
 import org.jetbrains.annotations.TestOnly
-import org.jsoup.select.Elements
+import org.jsoup.Jsoup
 import org.w3c.dom.Element
-import org.w3c.dom.NamedNodeMap
-import org.w3c.dom.Node
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
 import java.io.File
-import java.io.InputStream
-import java.net.URL
+import java.io.IOException
 import java.util.*
+import java.util.regex.Pattern
 
-com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL;
-import static com.jetbrains.edu.learning.ui.taskDescription.TaskFontPropertiesKt.*;
+class BrowserWindow(private val myProject: Project, private val myLinkInNewBrowser: Boolean) {
+  var panel: JFXPanel = JFXPanel()
+  private lateinit var myWebComponent: WebView
+  private lateinit var myPane: StackPane
 
-public class BrowserWindow {
-  private static final Logger LOG = Logger.getInstance(TaskDescriptionToolWindow.class);
-  private static final String EVENT_TYPE_CLICK = "click";
-  private static final Pattern IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?");
+  private var myEngine: WebEngine? = null
 
-  public static final String SRC_ATTRIBUTE = "src";
-  private JFXPanel myPanel;
-  private WebView myWebComponent;
-  private StackPane myPane;
+  val engine: WebEngine
+    get() = myWebComponent.engine
 
-  private WebEngine myEngine;
-  private final Project myProject;
-  private boolean myLinkInNewBrowser;
+  init {
+    Platform.runLater {
+      Platform.setImplicitExit(false)
+      myPane = StackPane()
+      myWebComponent = WebView()
+      myWebComponent.setOnDragDetected { _ -> }
+      myEngine = myWebComponent.engine
 
-  public BrowserWindow(@NotNull final Project project, final boolean linkInNewWindow) {
-    myProject = project;
-    myLinkInNewBrowser = linkInNewWindow;
-    setPanel(new JFXPanel());
-    initComponents();
-  }
-
-  void updateLaf(boolean isDarcula) {
-    if (isDarcula) {
-      updateLafDarcula();
-    }
-    else {
-      updateIntellijAndGTKLaf();
-    }
-  }
-
-  private void updateIntellijAndGTKLaf() {
-    Platform.runLater(() -> {
-      final URL scrollBarStyleUrl = getClass().getResource(SystemInfo.isWindows ? "/style/javaFXBrowserScrollBar_win.css" : "/style/javaFXBrowserScrollBar.css");
-      final URL engineStyleUrl = getClass().getResource(getBrowserStylesheet(false));
-      myEngine.setUserStyleSheetLocation(engineStyleUrl.toExternalForm());
-      myPanel.getScene().getStylesheets().clear();
-      myPanel.getScene().getStylesheets().addAll(engineStyleUrl.toExternalForm(), scrollBarStyleUrl.toExternalForm());
-      myEngine.reload();
-    });
-  }
-
-  private void updateLafDarcula() {
-    Platform.runLater(() -> {
-      final URL engineStyleUrl = getClass().getResource(getBrowserStylesheet(true));
-      final URL scrollBarStyleUrl = getClass().getResource(SystemInfo.isWindows ? "/style/javaFXBrowserDarculaScrollBar_win.css" : "/style/javaFXBrowserDarculaScrollBar.css");
-      myEngine.setUserStyleSheetLocation(engineStyleUrl.toExternalForm());
-      myPanel.getScene().getStylesheets().clear();
-      myPanel.getScene().getStylesheets().addAll(engineStyleUrl.toExternalForm(), scrollBarStyleUrl.toExternalForm());
-      myPane.setStyle("-fx-background-color: #3c3f41");
-      myEngine.reload();
-    });
-  }
-
-  @NotNull
-  public static String getBrowserStylesheet(boolean isDarcula) {
-    if (SystemInfo.isMac) {
-      return isDarcula ? "/style/javaFXBrowserDarcula_mac.css" : "/style/javaFXBrowser_mac.css";
-    }
-
-    if (SystemInfo.isWindows) {
-      return isDarcula ? "/style/javaFXBrowserDarcula_win.css" : "/style/javaFXBrowser_win.css";
-    }
-
-    return isDarcula ? "/style/javaFXBrowserDarcula_linux.css" : "/style/browser.css";
-  }
-
-  private void initComponents() {
-    Platform.runLater(() -> {
-      Platform.setImplicitExit(false);
-      myPane = new StackPane();
-      myWebComponent = new WebView();
-      myWebComponent.setOnDragDetected(event -> {});
-      myEngine = myWebComponent.getEngine();
-
-      myPane.getChildren().add(myWebComponent);
+      myPane.children.add(myWebComponent)
       if (myLinkInNewBrowser) {
-        initHyperlinkListener();
+        initHyperlinkListener()
       }
-      Scene scene = new Scene(myPane);
-      myPanel.setScene(scene);
-      myPanel.setVisible(true);
-      updateLaf(LafManager.getInstance().getCurrentLookAndFeel() instanceof DarculaLookAndFeelInfo);
-    });
+      val scene = Scene(myPane)
+      panel.scene = scene
+      panel.isVisible = true
+      updateLaf(LafManager.getInstance().currentLookAndFeel is DarculaLookAndFeelInfo)
+    }
   }
 
-  public void loadContent(@NotNull final String content) {
-    Course course = StudyTaskManager.getInstance(myProject).getCourse();
-    if (course == null) {
-      return;
+  fun updateLaf(isDarcula: Boolean) {
+    if (isDarcula) {
+      updateLafDarcula()
     }
+    else {
+      updateIntellijAndGTKLaf()
+    }
+  }
 
-    Task task = EduUtils.getCurrentTask(myProject);
+  private fun updateIntellijAndGTKLaf() {
+    Platform.runLater {
+      val scrollBarStyleUrl = javaClass.getResource(
+        if (SystemInfo.isWindows) "/style/javaFXBrowserScrollBar_win.css" else "/style/javaFXBrowserScrollBar.css")
+      val engineStyleUrl = javaClass.getResource(getBrowserStylesheet(false))
+      myEngine!!.userStyleSheetLocation = engineStyleUrl.toExternalForm()
+      panel.scene.stylesheets.clear()
+      panel.scene.stylesheets.addAll(engineStyleUrl.toExternalForm(), scrollBarStyleUrl.toExternalForm())
+      myEngine!!.reload()
+    }
+  }
+
+  private fun updateLafDarcula() {
+    Platform.runLater {
+      val engineStyleUrl = javaClass.getResource(getBrowserStylesheet(true))
+      val scrollBarStyleUrl = javaClass.getResource(
+        if (SystemInfo.isWindows) "/style/javaFXBrowserDarculaScrollBar_win.css" else "/style/javaFXBrowserDarculaScrollBar.css")
+      myEngine!!.userStyleSheetLocation = engineStyleUrl.toExternalForm()
+      panel.scene.stylesheets.clear()
+      panel.scene.stylesheets.addAll(engineStyleUrl.toExternalForm(), scrollBarStyleUrl.toExternalForm())
+      myPane.style = "-fx-background-color: #3c3f41"
+      myEngine!!.reload()
+    }
+  }
+
+  fun loadContent(content: String) {
+    val course = StudyTaskManager.getInstance(myProject).course ?: return
+
+    val task = EduUtils.getCurrentTask(myProject)
     if (task == null) {
-      Platform.runLater(() -> myEngine.loadContent(createHtmlWithCodeHighlighting(content, course)));
-      return;
+      Platform.runLater { myEngine!!.loadContent(createHtmlWithCodeHighlighting(content, course)) }
+      return
     }
 
-    VirtualFile taskDir = task.getTaskDir(myProject);
+    val taskDir = task.getTaskDir(myProject)
     if (taskDir == null) {
-      Platform.runLater(() -> myEngine.loadContent(createHtmlWithCodeHighlighting(content, course)));
-      return;
+      Platform.runLater { myEngine!!.loadContent(createHtmlWithCodeHighlighting(content, course)) }
+      return
     }
 
-    Platform.runLater(() -> myEngine.loadContent(doProcessContent(content, taskDir, myProject)));
+    Platform.runLater { myEngine!!.loadContent(doProcessContent(content, taskDir, myProject)) }
   }
 
-  @TestOnly
-  public static String processContent(@NotNull String content, @NotNull VirtualFile taskDir, Project project) {
-    return doProcessContent(content, taskDir, project);
-  }
+  private fun initHyperlinkListener() {
+    myEngine!!.loadWorker.stateProperty().addListener { _, _, newState ->
+      if (newState === Worker.State.SUCCEEDED) {
+        val listener = makeHyperLinkListener()
 
-  private static String doProcessContent(@NotNull String content, @NotNull VirtualFile taskDir, Project project) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course == null) {
-      return content;
-    }
-
-    String text = createHtmlWithCodeHighlighting(content, course);
-
-    return absolutizeImgPaths(text, taskDir);
-  }
-
-  @NotNull
-  private static String absolutizeImgPaths(@NotNull String withCodeHighlighting, @NotNull VirtualFile taskDir) {
-    org.jsoup.nodes.Document document = Jsoup.parse(withCodeHighlighting);
-    Elements imageElements = document.getElementsByTag("img");
-    for (org.jsoup.nodes.Element imageElement : imageElements) {
-      String imagePath = imageElement.attr(SRC_ATTRIBUTE);
-      if (!BrowserUtil.isAbsoluteURL(imagePath)) {
-        File file = new File(imagePath);
-        String absolutePath = new File(taskDir.getPath(), file.getPath()).toURI().toString();
-        imageElement.attr("src", absolutePath);
+        addListenerToAllHyperlinkItems(listener)
       }
     }
-    return document.outerHtml();
   }
 
-  @NotNull
-  private static String createHtmlWithCodeHighlighting(@NotNull final String content, @NotNull Course course) {
-    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(course.getLanguageById());
-    if (decorator == null) return content;
-
-    String template = null;
-    ClassLoader classLoader = BrowserWindow.class.getClassLoader();
-    InputStream stream = classLoader.getResourceAsStream("/style/template.html");
-    try {
-      template = StreamUtil.readText(stream, "utf-8");
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-    finally {
-      try {
-        stream.close();
-      }
-      catch (IOException e) {
-        LOG.warn(e.getMessage());
-      }
-    }
-
-    if (template == null) {
-      LOG.warn("Code mirror template is null");
-      return content;
-    }
-
-    int bodyFontSize = bodyFontSize();
-    int codeFontSize = codeFontSize();
-
-    int bodyLineHeight = bodyLineHeight();
-    int codeLineHeight = codeLineHeight();
-
-    template = template.replace("${body_font_size}", String.valueOf(bodyFontSize));
-    template = template.replace("${code_font_size}", String.valueOf(codeFontSize));
-    template = template.replace("${body_line_height}", String.valueOf(bodyLineHeight));
-    template = template.replace("${code_line_height}", String.valueOf(codeLineHeight));
-    template = setResourcePath(template, "${codemirror}", "/code-mirror/codemirror.js");
-    template = setResourcePath(template, "${jquery}", "/style/hint/jquery-1.9.1.js");
-    template = template.replace("${language_script}", decorator.getLanguageScriptUrl());
-    template = template.replace("${default_mode}", decorator.getDefaultHighlightingMode());
-    template = setResourcePath(template, "${runmode}", "/code-mirror/runmode.js");
-    template = setResourcePath(template, "${colorize}", "/code-mirror/colorize.js");
-    template = setResourcePath(template, "${javascript}", "/code-mirror/javascript.js");
-    if (LafManager.getInstance().getCurrentLookAndFeel() instanceof DarculaLookAndFeelInfo) {
-      template = setResourcePath(template, "${css_oldcodemirror}", "/code-mirror/codemirror-old-darcula.css");
-      template = setResourcePath(template, "${css_codemirror}", "/code-mirror/codemirror-darcula.css");
-      template = setResourcePath(template, "${hint_base}", "/style/hint/base_darcula.css");
-    }
-    else {
-      template = setResourcePath(template, "${hint_base}", "/style/hint/base.css");
-      template = setResourcePath(template, "${css_oldcodemirror}", "/code-mirror/codemirror-old.css");
-      template = setResourcePath(template, "${css_codemirror}", "/code-mirror/codemirror.css");
-    }
-    template = template.replace("${code}", content);
-
-    return template;
-  }
-
-  private static String setResourcePath(@NotNull String template, @NotNull String name, @NotNull String recoursePath) {
-    ClassLoader classLoader = BrowserWindow.class.getClassLoader();
-    URL codemirrorScript = classLoader.getResource(recoursePath);
-    if (codemirrorScript != null) {
-      template = template.replace(name, codemirrorScript.toExternalForm());
-    }
-    else {
-      LOG.warn("Resource not found: " + recoursePath);
-    }
-    return template;
-  }
-
-  private void initHyperlinkListener() {
-    myEngine.getLoadWorker().stateProperty().addListener((ov, oldState, newState) -> {
-      if (newState == Worker.State.SUCCEEDED) {
-        final EventListener listener = makeHyperLinkListener();
-
-        addListenerToAllHyperlinkItems(listener);
-      }
-    });
-  }
-
-  private void addListenerToAllHyperlinkItems(EventListener listener) {
-    final Document doc = myEngine.getDocument();
+  private fun addListenerToAllHyperlinkItems(listener: EventListener) {
+    val doc = myEngine!!.document
     if (doc != null) {
-      final NodeList nodeList = doc.getElementsByTagName("a");
-      for (int i = 0; i < nodeList.getLength(); i++) {
-        ((EventTarget)nodeList.item(i)).addEventListener(EVENT_TYPE_CLICK, listener, false);
+      val nodeList = doc.getElementsByTagName("a")
+      for (i in 0 until nodeList.length) {
+        (nodeList.item(i) as EventTarget).addEventListener(EVENT_TYPE_CLICK, listener, false)
       }
     }
   }
 
-  @NotNull
-  private EventListener makeHyperLinkListener() {
-    return new EventListener() {
-      @Override
-      public void handleEvent(Event ev) {
-        String domEventType = ev.getType();
-        if (domEventType.equals(EVENT_TYPE_CLICK)) {
-          ev.preventDefault();
-          Element target = (Element)ev.getTarget();
-          String hrefAttribute = getElementWithATag(target).getAttribute("href");
+  private fun makeHyperLinkListener(): EventListener {
+    return object : EventListener {
+      override fun handleEvent(ev: Event) {
+        val domEventType = ev.type
+        if (domEventType == EVENT_TYPE_CLICK) {
+          ev.preventDefault()
+          val target = ev.target as Element
+          val hrefAttribute = getElementWithATag(target).getAttribute("href")
 
           if (hrefAttribute != null) {
-            final Matcher matcher = IN_COURSE_LINK.matcher(hrefAttribute);
+            val matcher = IN_COURSE_LINK.matcher(hrefAttribute)
             if (matcher.matches()) {
-              EduUsagesCollector.inCourseLinkClicked();
-              String sectionName = null;
-              String lessonName;
-              String taskName;
+              EduUsagesCollector.inCourseLinkClicked()
+              var sectionName: String? = null
+              val lessonName: String
+              val taskName: String
               if (matcher.group(3) != null) {
-                sectionName = matcher.group(1);
-                lessonName = matcher.group(2);
-                taskName = matcher.group(4);
+                sectionName = matcher.group(1)
+                lessonName = matcher.group(2)
+                taskName = matcher.group(4)
               }
               else {
-                lessonName = matcher.group(1);
-                taskName = matcher.group(2);
+                lessonName = matcher.group(1)
+                taskName = matcher.group(2)
               }
-              NavigationUtils.navigateToTask(myProject, sectionName, lessonName, taskName);
+              NavigationUtils.navigateToTask(myProject, sectionName, lessonName, taskName)
             }
             else {
               if (hrefAttribute.startsWith(TaskDescriptionToolWindow.PSI_ELEMENT_PROTOCOL)) {
-                TaskDescriptionToolWindow.navigateToPsiElement(myProject, hrefAttribute);
-              } else {
-                EduUsagesCollector.externalLinkClicked();
-                myEngine.setJavaScriptEnabled(true);
-                myEngine.getLoadWorker().cancel();
-                String href = getLink(target);
-                if (href == null) return;
-                if (isRelativeLink(href)) {
-                  href = STEPIK_URL + href;
+                TaskDescriptionToolWindow.navigateToPsiElement(myProject, hrefAttribute)
+              }
+              else {
+                EduUsagesCollector.externalLinkClicked()
+                myEngine!!.isJavaScriptEnabled = true
+                myEngine!!.loadWorker.cancel()
+                var href: String? = getLink(target) ?: return
+                if (isRelativeLink(href!!)) {
+                  href = STEPIK_URL + href
                 }
-                BrowserUtil.browse(href);
+                BrowserUtil.browse(href)
                 if (href.startsWith(STEPIK_URL)) {
-                  EduUsagesCollector.stepikLinkClicked();
+                  EduUsagesCollector.stepikLinkClicked()
                 }
               }
             }
@@ -312,47 +183,150 @@ public class BrowserWindow {
         }
       }
 
-      private boolean isRelativeLink(@NotNull String href) {
-        return !href.startsWith("http");
+      private fun isRelativeLink(href: String): Boolean {
+        return !href.startsWith("http")
       }
 
-      private Element getElementWithATag(Element element) {
-        Element currentElement = element;
-        while (!currentElement.getTagName().toLowerCase(Locale.ENGLISH).equals("a")) {
-          currentElement = ((ElementImpl)currentElement).getParentElement();
+      private fun getElementWithATag(element: Element): Element {
+        var currentElement = element
+        while (currentElement.tagName.toLowerCase(Locale.ENGLISH) != "a") {
+          currentElement = (currentElement as ElementImpl).parentElement
         }
-        return currentElement;
+        return currentElement
       }
 
-      @Nullable
-      private String getLink(@NotNull Element element) {
-        final String href = element.getAttribute("href");
-        return href == null ? getLinkFromNodeWithCodeTag(element) : href;
+      private fun getLink(element: Element): String? {
+        val href = element.getAttribute("href")
+        return href ?: getLinkFromNodeWithCodeTag(element)
       }
 
-      @Nullable
-      private String getLinkFromNodeWithCodeTag(@NotNull Element element) {
-        Node parentNode = element.getParentNode();
-        NamedNodeMap attributes = parentNode.getAttributes();
-        while (attributes.getLength() > 0 && attributes.getNamedItem("class") != null) {
-          parentNode = parentNode.getParentNode();
-          attributes = parentNode.getAttributes();
+      private fun getLinkFromNodeWithCodeTag(element: Element): String? {
+        var parentNode = element.parentNode
+        var attributes = parentNode.attributes
+        while (attributes.length > 0 && attributes.getNamedItem("class") != null) {
+          parentNode = parentNode.parentNode
+          attributes = parentNode.attributes
         }
-        return attributes.getNamedItem("href").getNodeValue();
+        return attributes.getNamedItem("href").nodeValue
       }
-    };
+    }
   }
 
-  @NotNull
-  public WebEngine getEngine() {
-    return myWebComponent.getEngine();
-  }
+  companion object {
+    private val LOG = com.intellij.openapi.diagnostic.Logger.getInstance(TaskDescriptionToolWindow::class.java)
+    private const val EVENT_TYPE_CLICK = "click"
+    private val IN_COURSE_LINK = Pattern.compile("#(\\w+)#(\\w+)#((\\w+)#)?")
 
-  public JFXPanel getPanel() {
-    return myPanel;
-  }
+    private const val SRC_ATTRIBUTE = "src"
 
-  private void setPanel(JFXPanel panel) {
-    myPanel = panel;
+    fun getBrowserStylesheet(isDarcula: Boolean): String {
+      if (SystemInfo.isMac) {
+        return if (isDarcula) "/style/javaFXBrowserDarcula_mac.css" else "/style/javaFXBrowser_mac.css"
+      }
+
+      if (SystemInfo.isWindows) {
+        return if (isDarcula) "/style/javaFXBrowserDarcula_win.css" else "/style/javaFXBrowser_win.css"
+      }
+
+      return if (isDarcula) "/style/javaFXBrowserDarcula_linux.css" else "/style/browser.css"
+    }
+
+    @TestOnly
+    fun processContent(content: String, taskDir: VirtualFile, project: Project): String {
+      return doProcessContent(content, taskDir, project)
+    }
+
+    private fun doProcessContent(content: String, taskDir: VirtualFile, project: Project): String {
+      val course = StudyTaskManager.getInstance(project).course ?: return content
+
+      val text = createHtmlWithCodeHighlighting(content, course)
+
+      return absolutizeImgPaths(text, taskDir)
+    }
+
+    private fun absolutizeImgPaths(withCodeHighlighting: String, taskDir: VirtualFile): String {
+      val document = Jsoup.parse(withCodeHighlighting)
+      val imageElements = document.getElementsByTag("img")
+      for (imageElement in imageElements) {
+        val imagePath = imageElement.attr(SRC_ATTRIBUTE)
+        if (!BrowserUtil.isAbsoluteURL(imagePath)) {
+          val file = File(imagePath)
+          val absolutePath = File(taskDir.path, file.path).toURI().toString()
+          imageElement.attr("src", absolutePath)
+        }
+      }
+      return document.outerHtml()
+    }
+
+    private fun createHtmlWithCodeHighlighting(content: String, course: Course): String {
+      val decorator = EduLanguageDecorator.INSTANCE.forLanguage(course.languageById!!) ?: return content
+
+      var template: String? = null
+      val classLoader = BrowserWindow::class.java.classLoader
+      val stream = classLoader.getResourceAsStream("/style/template.html")
+      try {
+        template = StreamUtil.readText(stream, "utf-8")
+      }
+      catch (e: IOException) {
+        LOG.warn(e.message)
+      }
+      finally {
+        try {
+          stream.close()
+        }
+        catch (e: IOException) {
+          LOG.warn(e.message)
+        }
+      }
+
+      if (template == null) {
+        LOG.warn("Code mirror template is null")
+        return content
+      }
+
+      val bodyFontSize = bodyFontSize()
+      val codeFontSize = codeFontSize()
+
+      val bodyLineHeight = bodyLineHeight()
+      val codeLineHeight = codeLineHeight()
+
+      template = template.replace("\${body_font_size}", bodyFontSize.toString())
+      template = template.replace("\${code_font_size}", codeFontSize.toString())
+      template = template.replace("\${body_line_height}", bodyLineHeight.toString())
+      template = template.replace("\${code_line_height}", codeLineHeight.toString())
+      template = setResourcePath(template, "\${codemirror}", "/code-mirror/codemirror.js")
+      template = setResourcePath(template, "\${jquery}", "/style/hint/jquery-1.9.1.js")
+      template = template.replace("\${language_script}", decorator.languageScriptUrl)
+      template = template.replace("\${default_mode}", decorator.defaultHighlightingMode)
+      template = setResourcePath(template, "\${runmode}", "/code-mirror/runmode.js")
+      template = setResourcePath(template, "\${colorize}", "/code-mirror/colorize.js")
+      template = setResourcePath(template, "\${javascript}", "/code-mirror/javascript.js")
+      if (LafManager.getInstance().currentLookAndFeel is DarculaLookAndFeelInfo) {
+        template = setResourcePath(template, "\${css_oldcodemirror}", "/code-mirror/codemirror-old-darcula.css")
+        template = setResourcePath(template, "\${css_codemirror}", "/code-mirror/codemirror-darcula.css")
+        template = setResourcePath(template, "\${hint_base}", "/style/hint/base_darcula.css")
+      }
+      else {
+        template = setResourcePath(template, "\${hint_base}", "/style/hint/base.css")
+        template = setResourcePath(template, "\${css_oldcodemirror}", "/code-mirror/codemirror-old.css")
+        template = setResourcePath(template, "\${css_codemirror}", "/code-mirror/codemirror.css")
+      }
+      template = template.replace("\${code}", content)
+
+      return template
+    }
+
+    private fun setResourcePath(template: String, name: String, recoursePath: String): String {
+      var templateCopy = template
+      val classLoader = BrowserWindow::class.java.classLoader
+      val codemirrorScript = classLoader.getResource(recoursePath)
+      if (codemirrorScript != null) {
+        templateCopy = template.replace(name, codemirrorScript.toExternalForm())
+      }
+      else {
+        LOG.warn("Resource not found: $recoursePath")
+      }
+      return templateCopy
+    }
   }
 }

@@ -9,7 +9,7 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow.getBrowserStylesheet
+import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow.Companion.getBrowserStylesheet
 import javafx.application.Platform
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Insets
