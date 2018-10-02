@@ -1,0 +1,33 @@
+.radio-button,
+.check-box {
+    -fx-text-fill: #bababa;
+}
+
+.radio-button:selected .radio {
+    -fx-border-color: #589df6;
+}
+
+.radio-button .radio {
+    -fx-background-color: #4f5254;
+    -fx-border-color: #323232;
+}
+
+.radio-button:selected .dot,
+.check-box:selected .mark {
+    -fx-background-color: #bababa;
+}
+
+.toggle-button:selected,
+.toggle-button:selected:focused {
+    -fx-background-color: #3c3f41;
+}
+
+.radio-button .dot,
+.check-box .mark {
+    -fx-background-color: transparent;
+}
+
+
+.check-box .box {
+    -fx-background-color: #4f5254;
+}

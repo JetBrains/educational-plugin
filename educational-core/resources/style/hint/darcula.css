@@ -7,52 +7,16 @@
     url("fonts/intellij-icon-font-darcula.svg#hint-icon-font") format("svg");
 }
 
-.hint + .hint {
-    margin-top: 5px;
-}
-
-.hint {
-    margin-top: 15px;
-    margin-bottom: 20px;
-    vertical-align: bottom;
-}
-
 .hint_header {
     color: #589df6;
-    font-size: inherit;
 }
-
-.hint_header:hover {
-    cursor: pointer;
-}
-
 .hint .hint_header:before {
     font-family: "intellij-icon-font-darcula";
     content: "\e000";
-    margin-right: -0.2em;
-    vertical-align: -0.1em;
 }
 
 .hint_header:after {
     font-family: "intellij-icon-font-darcula";
     content: "\e001";
-    margin-left: -0.1em;
-    transform: rotate(270deg);
-    display: inline-block;
     color: #bababa;
-    vertical-align: -0.15em;
-}
-
-.hint_header.checked:after {
-    font-family: "intellij-icon-font-darcula";
-    content: "\e001";
-    transform: rotate(0deg);
-}
-
-.hint_content {
-    display: none;
-}
-
-.hint_header.checked ~ .hint_content {
-    display: inline;
 }

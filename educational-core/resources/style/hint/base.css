@@ -1,12 +1,4 @@
-@font-face {
-    font-family: "intellij-icon-font";
-    src:url("fonts/intellij-icon-font.eot");
-    src:url("fonts/intellij-icon-font.eot?#iefix") format("embedded-opentype"),
-    url("fonts/intellij-icon-font.woff") format("woff"),
-    url("fonts/intellij-icon-font.ttf") format("truetype"),
-    url("fonts/intellij-icon-font.svg#hint-icon-font") format("svg");
-}
-
+/*specifies the margin between two hints*/
 .hint + .hint {
     margin-top: 5px;
 }
@@ -18,7 +10,6 @@
 }
 
 .hint_header {
-    color: #2470B3;
     font-size: inherit;
 }
 
@@ -27,26 +18,18 @@
 }
 
 .hint .hint_header:before {
-    font-family: "intellij-icon-font";
-    content: "\e000";
     margin-right: -0.2em;
     vertical-align: -0.1em;
 }
 
 .hint_header:after {
-    font-family: "intellij-icon-font";
-    content: "\e001";
     margin-left: -0.1em;
-    transform: rotate(270deg);
     display: inline-block;
-    color: #7F8B91;
-    opacity: 0.9;
     vertical-align: -0.15em;
+    transform: rotate(270deg);
 }
 
 .hint_header.checked:after {
-    font-family: "intellij-icon-font";
-    content: "\e001";
     transform: rotate(0deg);
 }
 

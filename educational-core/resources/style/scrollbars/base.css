@@ -1,0 +1,18 @@
+.scroll-bar:horizontal .track,
+.scroll-bar:vertical .track {
+    -fx-border-color: transparent;
+    -fx-background-radius: 2em;
+}
+
+.scroll-bar:vertical:corner-present,
+.scroll-bar:horizontal:corner-present {
+    -fx-shape: " ";
+    -fx-width: 0;
+}
+
+.scroll-bar:horizontal .increment-arrow,
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:horizontal .decrement-arrow,
+.scroll-bar:vertical .decrement-arrow {
+    -fx-shape: " "
+}

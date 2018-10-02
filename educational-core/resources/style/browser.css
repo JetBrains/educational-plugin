@@ -1,0 +1,24 @@
+body {
+    margin-left: 0;
+    margin-right: 10px;
+    height: auto;
+}
+
+a {
+    text-decoration: none;
+    position: relative;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    line-height: 1.15em;
+    font-weight: bold;
+}
+
+pre {
+    white-space: pre-wrap;
+    min-width: 250px;
+}
