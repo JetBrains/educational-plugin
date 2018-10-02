@@ -1,47 +1,35 @@
 package com.jetbrains.edu.learning.ui.taskDescription;
 
-import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.ui.LafManager;
-import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.StreamUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.EduLanguageDecorator;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.sun.webkit.dom.ElementImpl;
-import javafx.application.Platform;
-import javafx.concurrent.Worker;
-import javafx.embed.swing.JFXPanel;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
-import org.w3c.dom.*;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
+import com.intellij.ide.BrowserUtil
+import com.intellij.ide.ui.LafManager
+import com.intellij.ide.ui.laf.darcula.DarculaLookAndFeelInfo
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.io.StreamUtil
+import com.intellij.openapi.vfs.VirtualFile
+import com.jetbrains.edu.learning.EduLanguageDecorator
+import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.navigation.NavigationUtils
+import com.jetbrains.edu.learning.statistics.EduUsagesCollector
+import com.sun.webkit.dom.ElementImpl
+import javafx.application.Platform
+import javafx.concurrent.Worker
+import javafx.scene.Scene
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
+import org.jetbrains.annotations.TestOnly
+import org.jsoup.select.Elements
+import org.w3c.dom.Element
+import org.w3c.dom.NamedNodeMap
+import org.w3c.dom.Node
+import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventTarget
+import java.io.File
+import java.io.InputStream
+import java.net.URL
+import java.util.*
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL;
+com.jetbrains.edu.learning.stepik.StepikNames.STEPIK_URL;
 import static com.jetbrains.edu.learning.ui.taskDescription.TaskFontPropertiesKt.*;
 
 public class BrowserWindow {
@@ -107,7 +95,7 @@ public class BrowserWindow {
       return isDarcula ? "/style/javaFXBrowserDarcula_win.css" : "/style/javaFXBrowser_win.css";
     }
 
-    return isDarcula ? "/style/javaFXBrowserDarcula_linux.css" : "/style/javaFXBrowser_linux.css";
+    return isDarcula ? "/style/javaFXBrowserDarcula_linux.css" : "/style/browser.css";
   }
 
   private void initComponents() {
