@@ -1,5 +1,6 @@
 package com.jetbrains.edu.android
 
+import com.android.tools.idea.gradle.plugin.AndroidPluginGeneration
 import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
 import com.android.tools.idea.gradle.project.sync.GradleSyncListener
 import com.intellij.ide.fileTemplates.FileTemplateManager
@@ -37,8 +38,8 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = AndroidCourseProjectGenerator(this, course)
 
   override fun templateVariables(project: Project): Map<String, String> {
-    // TODO: extract suitable android gradle plugin version from android plugin
-    return super.templateVariables(project) + mapOf("ANDROID_GRADLE_PLUGIN_VERSION" to "3.1.3",
+    val androidGradlePluginVersion = AndroidPluginGeneration.ORIGINAL.latestKnownVersion
+    return super.templateVariables(project) + mapOf("ANDROID_GRADLE_PLUGIN_VERSION" to androidGradlePluginVersion,
                                                     "KOTLIN_VERSION" to kotlinPluginVersion())
   }
 
