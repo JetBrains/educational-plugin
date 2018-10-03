@@ -23,8 +23,9 @@ android {
 
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+  implementation 'com.android.support:appcompat-v7:${SUPPORT_LIB_VERSION}'
   testImplementation 'junit:junit:4.12'
   testImplementation 'org.robolectric:robolectric:3.8'
-  androidTestImplementation 'com.android.support.test:runner:1.0.2'
-  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+  androidTestImplementation 'com.android.support.test:runner:${TEST_RUNNER_VERSION}'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:${ESPRESSO_CORE_VERSION}'
 }
