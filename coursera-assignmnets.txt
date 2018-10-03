@@ -1,4 +1,4 @@
-https://www.dropbox.com/s/me48ye4gir7vuhw/week2.zip?dl=1 # Kotlin for Java Developers Week 2
-https://www.dropbox.com/s/jjfpanwfv9ebo9x/week3.zip?dl=1 # Kotlin for Java Developers Week 3
-https://www.dropbox.com/s/l8skv4c2t1trxx8/week4.zip?dl=1 # Kotlin for Java Developers Week 4
-https://www.dropbox.com/s/lecfiyoa8z05dgb/week5.zip?dl=1 # Kotlin for Java Developers Week 5
+https://github.com/JetBrains/coursera-assignments/blob/master/Kotlin%20for%20Java%20Developers/week2.zip?raw=true # Kotlin for Java Developers Week 2
+https://github.com/JetBrains/coursera-assignments/blob/master/Kotlin%20for%20Java%20Developers/week3.zip?raw=true # Kotlin for Java Developers Week 3
+https://github.com/JetBrains/coursera-assignments/blob/master/Kotlin%20for%20Java%20Developers/week4.zip?raw=true # Kotlin for Java Developers Week 4
+https://github.com/JetBrains/coursera-assignments/blob/master/Kotlin%20for%20Java%20Developers/week5.zip?raw=true # Kotlin for Java Developers Week 5
