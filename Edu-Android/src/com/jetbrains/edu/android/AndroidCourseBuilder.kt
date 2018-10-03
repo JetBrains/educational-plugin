@@ -1,8 +1,13 @@
 package com.jetbrains.edu.android
 
+import com.android.ide.common.repository.GradleVersion
+import com.android.repository.io.FileOpUtils
 import com.android.tools.idea.gradle.plugin.AndroidPluginGeneration
 import com.android.tools.idea.gradle.project.sync.GradleSyncInvoker
 import com.android.tools.idea.gradle.project.sync.GradleSyncListener
+import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
+import com.android.tools.idea.sdk.IdeSdks
+import com.android.tools.idea.templates.RepositoryUrlManager
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ModalityState
@@ -30,6 +35,7 @@ import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.kotlinPluginVersion
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.io.File
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
@@ -62,11 +68,19 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     val packageName = info.getUserData(PACKAGE_NAME) ?: return
     val minAndroidSdk = info.getUserData(MIN_ANDROID_SDK) ?: return
     val compileAndroidSdk = info.getUserData(COMPILE_ANDROID_SDK) ?: return
+
+    val sdkLocation = IdeSdks.getInstance().androidSdkPath ?: return
+
     val attributes = mapOf(
       "PACKAGE_NAME" to packageName,
       "MIN_ANDROID_SDK" to minAndroidSdk.toString(),
       "COMPILE_ANDROID_SDK" to compileAndroidSdk.toString(),
-      "TARGET_ANDROID_SDK" to compileAndroidSdk.toString()
+      "TARGET_ANDROID_SDK" to compileAndroidSdk.toString(),
+      "SUPPORT_LIB_VERSION" to getLibraryRevision(GoogleMavenArtifactId.ANDROIDX_APP_COMPAT_V7, sdkLocation, "$compileAndroidSdk.0.0") {
+        it.toString().startsWith("$compileAndroidSdk.")
+      },
+      "ESPRESSO_CORE_VERSION" to getLibraryRevision(GoogleMavenArtifactId.ESPRESSO_CORE, sdkLocation, "3.0.2"),
+      "TEST_RUNNER_VERSION" to getLibraryRevision(GoogleMavenArtifactId.TEST_RUNNER, sdkLocation, "1.0.2")
     )
 
     for ((templateName, fileInfo) in defaultAndroidCourseFiles(packageName)) {
@@ -131,6 +145,22 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
         "android-AndroidEduTestRunner.kt" to FileInfo("src/androidTest/java/$packagePath/AndroidEduTestRunner.kt", TEST_FILE)
       )
     }
+  }
+
+  private fun getLibraryRevision(
+    artifactId: GoogleMavenArtifactId,
+    sdkLocation: File,
+    defaultVersion: String,
+    versionFilter: ((GradleVersion) -> Boolean)? = null
+  ): String {
+    return RepositoryUrlManager.get().getLibraryRevision(
+      artifactId.mavenGroupId,
+      artifactId.mavenArtifactId,
+      versionFilter,
+      false,
+      sdkLocation,
+      FileOpUtils.create()
+    ) ?: defaultVersion
   }
 
   private data class FileInfo(val path: String, val type: Type)
