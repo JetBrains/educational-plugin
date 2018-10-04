@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.gradle.generation
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.ide.fileTemplates.FileTemplateUtil
 import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.ServiceManager
@@ -34,34 +35,33 @@ object EduGradleUtils {
   }
 
   @JvmStatic
-  fun getInternalTemplateText(templateName: String, configVariables: Map<String, String>) =
-    FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName)?.getText(configVariables)
+  fun getInternalTemplateText(templateName: String, templateVariables: Map<String, Any>) =
+    FileTemplateManager.getDefaultInstance().getInternalTemplate(templateName)?.getText(templateVariables)
 
 
   @JvmStatic
   @Throws(IOException::class)
   fun createProjectGradleFiles(
     projectDir: VirtualFile,
-    configTemplates: Map<String, String>,
-    configVariables: Map<String, String>
+    templates: Map<String, String>,
+    templateVariables: Map<String, Any>
   ) {
-    for ((name, templateName) in configTemplates) {
+    for ((name, templateName) in templates) {
       val child = projectDir.findChild(name)
       if (child == null) {
-        val configText = getInternalTemplateText(templateName, configVariables) ?: continue
+        val configText = getInternalTemplateText(templateName, templateVariables) ?: continue
         createChildFile(projectDir, name, configText)
       }
       else {
-        replaceTemplateVariables(child, configVariables)
+        evaluateExistingTemplate(child, templateVariables)
       }
     }
   }
 
-  private fun replaceTemplateVariables(child: VirtualFile, configVariables: Map<String, String>) {
-    var content = VfsUtil.loadText(child)
-    for (configVariable in configVariables) {
-      content = content.replace("\${" + configVariable.key + "}", configVariable.value)
-    }
+  @Throws(IOException::class)
+  private fun evaluateExistingTemplate(child: VirtualFile, templateVariables: Map<String, Any>) {
+    val rawContent = VfsUtil.loadText(child)
+    val content = FileTemplateUtil.mergeTemplate(templateVariables, rawContent, false)
     invokeAndWaitIfNeed { runWriteAction { VfsUtil.saveText(child, content) } }
   }
 

@@ -11,7 +11,8 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.util.text.VersionComparatorUtil
 
 private const val KOTLIN_PLUGIN_ID = "org.jetbrains.kotlin"
-private const val DEFAULT_KOTLIN_VERSION = "1.2.30"
+private val DEFAULT_KOTLIN_VERSION = KotlinVersion("1.2.30", true)
+private val KOTLIN_VERSION_PATTERN = """(\d+\.\d+(.\d+)?(-(eap-|M|rc-)\d+)?).*""".toRegex()
 
 fun getDisabledPlugins(ids: List<String>): List<String> {
   val disabledPluginIds = PluginManager.getDisabledPlugins().toSet()
@@ -36,7 +37,14 @@ fun restartIDE(messageInfo: String) {
 
 fun pluginVersion(pluginId: String): String? = PluginManager.getPlugin(PluginId.getId(pluginId))?.version
 
-fun kotlinPluginVersion(): String {
-  val kotlinPluginVersion = pluginVersion(KOTLIN_PLUGIN_ID)?.takeWhile { it != '-' } ?: DEFAULT_KOTLIN_VERSION
-  return VersionComparatorUtil.max(kotlinPluginVersion, DEFAULT_KOTLIN_VERSION)
+fun kotlinVersion(): KotlinVersion {
+  val kotlinPluginVersion = pluginVersion(KOTLIN_PLUGIN_ID) ?: return DEFAULT_KOTLIN_VERSION
+  val matchResult = KOTLIN_VERSION_PATTERN.matchEntire(kotlinPluginVersion) ?: return DEFAULT_KOTLIN_VERSION
+  val version = matchResult.groupValues[1]
+  val kotlinVersion = KotlinVersion(version, matchResult.groups[3] == null)
+  return maxOf(kotlinVersion, DEFAULT_KOTLIN_VERSION)
+}
+
+data class KotlinVersion(val version: String, val isRelease: Boolean) : Comparable<KotlinVersion> {
+  override fun compareTo(other: KotlinVersion): Int = VersionComparatorUtil.compare(version, other.version)
 }
