@@ -23,8 +23,9 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
+import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse;
+import org.fest.util.Lists;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
@@ -35,8 +36,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.CHECKIO_COURSE;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.REMOTE_COURSE;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 /**
  * Implementation of class which contains all the information
@@ -48,8 +49,11 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   public static final Topic<CourseSetListener> COURSE_SET = Topic.create("Edu.courseSet", CourseSetListener.class);
   private static final Logger LOG = Logger.getInstance(StudyTaskManager.class);
 
+  @Transient
   private Course myCourse;
   public int VERSION = EduVersions.XML_FORMAT_VERSION;
+  private static List<Class<? extends Course>> courseElementTypes = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
+                                                                                       HyperskillCourse.class, Course.class);
 
   public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();
 
@@ -63,6 +67,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     this(null);
   }
 
+  @Transient
   public void setCourse(Course course) {
     myCourse = course;
     if (myProject != null) {
@@ -71,6 +76,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   @Nullable
+  @Transient
   public Course getCourse() {
     return myCourse;
   }
@@ -118,37 +124,26 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @NotNull
   private Element serialize() {
     Element el = new Element("taskManager");
-    Element taskManagerElement = new Element(SerializationUtils.Xml.MAIN_ELEMENT);
+    Element taskManagerElement = new Element(MAIN_ELEMENT);
     XmlSerializer.serializeInto(this, taskManagerElement);
-
-    if (myCourse instanceof RemoteCourse) {
-      serializeCourse(taskManagerElement, REMOTE_COURSE, RemoteCourse.class);
-    } else if (myCourse instanceof CheckiOCourse) {
-      serializeCourse(taskManagerElement, CHECKIO_COURSE, CheckiOCourse.class);
-    }
-
+    Element courseElement = serializeCourse();
+    addChildWithName(taskManagerElement, COURSE, courseElement);
     el.addContent(taskManagerElement);
     return el;
   }
 
-  private void serializeCourse(@NotNull Element taskManagerElement, @NotNull String serializedName, @NotNull Class<? extends Course> courseClass) {
-    try {
-      final Element course = new Element(serializedName);
-      XmlSerializer.serializeInto(courseClass.cast(myCourse), course);
-
-      final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
-      xmlCourse.removeContent();
-      xmlCourse.addContent(course);
-    }
-    catch (StudyUnrecognizedFormatException e) {
-      LOG.error("Failed to serialize " + serializedName);
-    }
+  private Element serializeCourse() {
+    Class<? extends Course> courseClass = myCourse.getClass();
+    String serializedName = courseClass.getSimpleName();
+    final Element courseElement = new Element(serializedName);
+    XmlSerializer.serializeInto(courseClass.cast(myCourse), courseElement);
+    return courseElement;
   }
 
   @Override
   public void loadState(@NotNull Element state) {
     try {
-      int version = SerializationUtils.Xml.getVersion(state);
+      int version = getVersion(state);
       if (version == -1) {
         LOG.error("StudyTaskManager doesn't contain any version:\n" + state.getValue());
         return;
@@ -156,26 +151,26 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       if (myProject != null) {
         switch (version) {
           case 1:
-            state = SerializationUtils.Xml.convertToSecondVersion(myProject, state);
+            state = convertToSecondVersion(myProject, state);
           case 2:
-            state = SerializationUtils.Xml.convertToThirdVersion(myProject, state);
+            state = convertToThirdVersion(myProject, state);
           case 3:
-            state = SerializationUtils.Xml.convertToFourthVersion(myProject, state);
+            state = convertToFourthVersion(myProject, state);
           case 4:
-            state = SerializationUtils.Xml.convertToFifthVersion(myProject, state);
+            state = convertToFifthVersion(myProject, state);
             updateTestHelper();
           case 5:
-            state = SerializationUtils.Xml.convertToSixthVersion(myProject, state);
+            state = convertToSixthVersion(myProject, state);
           case 6:
-            state = SerializationUtils.Xml.convertToSeventhVersion(myProject, state);
+            state = convertToSeventhVersion(myProject, state);
           case 7:
-            state = SerializationUtils.Xml.convertToEighthVersion(myProject, state);
+            state = convertToEighthVersion(myProject, state);
           case 8:
-            state = SerializationUtils.Xml.convertToNinthVersion(myProject, state);
+            state = convertToNinthVersion(myProject, state);
           case 9:
-            state = SerializationUtils.Xml.convertToTenthVersion(myProject, state);
+            state = convertToTenthVersion(myProject, state);
           case 10:
-            state = SerializationUtils.Xml.convertToEleventhVersion(myProject, state);
+            state = convertToEleventhVersion(myProject, state);
             // uncomment for future versions
             //case 11:
             // state = SerializationUtils.Xml.convertToTwelfthVersion(myProject, state);
@@ -218,26 +213,34 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   private void deserialize(Element state) throws StudyUnrecognizedFormatException {
-    final Element taskManagerElement = state.getChild(SerializationUtils.Xml.MAIN_ELEMENT);
+    final Element taskManagerElement = state.getChild(MAIN_ELEMENT);
     if (taskManagerElement == null) {
       throw new StudyUnrecognizedFormatException();
     }
     XmlSerializer.deserializeInto(this, taskManagerElement);
-    final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, SerializationUtils.COURSE);
-
-    if (!tryDeserializeCourse(xmlCourse, REMOTE_COURSE, new RemoteCourse())) {
-      tryDeserializeCourse(xmlCourse, CHECKIO_COURSE, new CheckiOCourse());
-    }
+    final Element xmlCourse = getChildWithName(taskManagerElement, COURSE);
+    myCourse = deserializeCourse(xmlCourse);
   }
 
-  private <T extends Course> boolean tryDeserializeCourse(@NotNull Element xmlCourse, @NotNull String serializedName, @NotNull T courseBean) {
-    final Element courseElement = xmlCourse.getChild(serializedName);
-    if (courseElement != null) {
-      XmlSerializer.deserializeInto(courseBean, courseElement);
-      myCourse = courseBean;
-      return true;
+  private static Course deserializeCourse(Element xmlCourse) {
+    for (Class<? extends Course> courseClass : courseElementTypes) {
+      final Element courseElement = xmlCourse.getChild(courseClass.getSimpleName());
+      if (courseElement == null) {
+        continue;
+      }
+      try {
+        Course courseBean = courseClass.newInstance();
+        XmlSerializer.deserializeInto(courseBean, courseElement);
+        return courseBean;
+      }
+      catch (InstantiationException e) {
+        LOG.error("Failed to deserialize course");
+      }
+      catch (IllegalAccessException e) {
+        LOG.error("Failed to deserialize course");
+      }
     }
-    return false;
+    return null;
   }
 
   public static StudyTaskManager getInstance(@NotNull final Project project) {
