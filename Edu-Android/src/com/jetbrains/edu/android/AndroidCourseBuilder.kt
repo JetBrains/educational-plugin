@@ -1,5 +1,6 @@
 package com.jetbrains.edu.android
 
+import com.android.SdkConstants
 import com.android.ide.common.repository.GradleVersion
 import com.android.repository.io.FileOpUtils
 import com.android.tools.idea.gradle.plugin.AndroidPluginGeneration
@@ -47,6 +48,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     val androidGradlePluginVersion = AndroidPluginGeneration.ORIGINAL.latestKnownVersion
     val kotlinVersion = kotlinVersion()
     return super.templateVariables(project) + mapOf(
+      GRADLE_VERSION to SdkConstants.GRADLE_LATEST_VERSION,
       "ANDROID_GRADLE_PLUGIN_VERSION" to androidGradlePluginVersion,
       "KOTLIN_VERSION" to kotlinVersion.version,
       "NEED_KOTLIN_EAP_REPOSITORY" to !kotlinVersion.isRelease
