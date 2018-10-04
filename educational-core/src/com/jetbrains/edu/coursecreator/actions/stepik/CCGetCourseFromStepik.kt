@@ -7,12 +7,12 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikConnector
 
+@Suppress("ComponentNotRegistered") // registered in educational-core.xml
 class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Course From Stepik", null) {
 
   override fun actionPerformed(e: AnActionEvent) {
@@ -21,20 +21,20 @@ class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Cou
     if (!courseId.isNullOrEmpty()) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Loading Course", true) {
         override fun run(indicator: ProgressIndicator) {
-          createCourse(project, courseId!!)
+          createCourse(courseId!!)
         }
       })
     }
   }
 
-  private fun createCourse(project: Project?, courseId: String) {
+  private fun createCourse(courseId: String) {
     val info = CCStepikConnector.getCourseInfo(courseId)
     if (info == null) {
       showError(courseId)
       return
     }
 
-    if (!StepikConnector.loadCourseStructure(project, info)) {
+    if (!StepikConnector.loadCourseStructure(info)) {
       showError(courseId)
       return
     }

@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning.stepik.alt
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.util.messages.Topic
+import com.intellij.openapi.progress.ProgressManager
+import com.jetbrains.edu.learning.courseFormat.Lesson
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import org.jetbrains.ide.BuiltInServerManager
 import retrofit2.Retrofit
@@ -20,11 +22,14 @@ object HyperskillConnector {
   private val authorizationCodeUrl = "https://hyperskill.org/oauth2/authorize/?" +
                                      "client_id=$clientId&redirect_uri=$redirectUri&grant_type=code&scope=read+write&response_type=code"
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
-  private val authorizationTopic = Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
-                                                                    HyperskillLoggedIn::class.java)
+  private val authorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
+                                                                                               HyperskillLoggedIn::class.java)
 
   private val service: HyperskillService
     get() {
+      val dispatcher = Dispatcher()
+      dispatcher.maxRequests = 10
+
       val okHttpClient = OkHttpClient.Builder()
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
@@ -37,6 +42,7 @@ object HyperskillConnector {
             .build()
           chain.proceed(newRequest)
         }
+        .dispatcher(dispatcher)
         .build()
       val retrofit = Retrofit.Builder()
         .baseUrl(HYPERSKILL_URL)
@@ -72,6 +78,25 @@ object HyperskillConnector {
 
   private fun getCurrentUser(): HyperskillUserInfo? {
     return service.getUserInfo(0).execute().body()?.users?.first() ?: return null
+  }
+
+  fun getLessons(): List<Lesson> {
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Lesson>, Exception>(
+      {
+        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+        val userInfo = HyperskillSettings.instance.account?.userInfo ?: return@runProcessWithProgressSynchronously emptyList()
+        val topics = service.topics(stage = userInfo.stage?.id.toString()).execute().body()?.topics ?:
+                     return@runProcessWithProgressSynchronously emptyList()
+
+        val lessonIds = mutableListOf<Int>()
+        for (topic in topics.filter { it.children.isEmpty()}) {
+          if (topic.hasLessons) {
+            val lessonsIds = service.lessons(topic.id).execute().body()?.lessons?.map { it.stepikId } ?: continue
+            lessonIds.addAll(lessonsIds)
+          }
+        }
+        return@runProcessWithProgressSynchronously getLessons(lessonIds.map { it -> it.toString() })
+      }, "Loading course", false, null)
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {

@@ -100,7 +100,7 @@ public class StepikAdaptiveConnector {
             for (int stepId : realLesson.steps) {
               StepikWrappers.StepSource step = StepikConnector.getStep(stepId);
               String stepType = step.block.name;
-              StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course, realLesson.getName(), step, stepId, user.getId());
+              StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), realLesson.getName(), step, stepId, user.getId());
               if (taskBuilder.isSupported(stepType)) {
                 final Task taskFromStep = taskBuilder.createTask(stepType);
                 if (taskFromStep != null) return taskFromStep;
@@ -368,7 +368,8 @@ public class StepikAdaptiveConnector {
         try {
           createNewAttempt(task.getStepId());
           StepikWrappers.StepSource step = StepikConnector.getStep(task.getStepId());
-          StepikTaskBuilder taskBuilder = new StepikTaskBuilder((RemoteCourse)task.getLesson().getCourse(), task.getName(),
+          Course course = task.getLesson().getCourse();
+          StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getName(),
                                                                 step, task.getStepId(), user.getId());
           final Task updatedTask = taskBuilder.createTask(step.block.name);
           if (updatedTask instanceof ChoiceTask) {
