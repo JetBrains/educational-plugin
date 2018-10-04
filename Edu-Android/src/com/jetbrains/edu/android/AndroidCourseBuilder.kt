@@ -32,7 +32,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.kotlinPluginVersion
+import com.jetbrains.edu.learning.kotlinVersion
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -43,10 +43,14 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator = AndroidCourseProjectGenerator(this, course)
 
-  override fun templateVariables(project: Project): Map<String, String> {
+  override fun templateVariables(project: Project): Map<String, Any> {
     val androidGradlePluginVersion = AndroidPluginGeneration.ORIGINAL.latestKnownVersion
-    return super.templateVariables(project) + mapOf("ANDROID_GRADLE_PLUGIN_VERSION" to androidGradlePluginVersion,
-                                                    "KOTLIN_VERSION" to kotlinPluginVersion())
+    val kotlinVersion = kotlinVersion()
+    return super.templateVariables(project) + mapOf(
+      "ANDROID_GRADLE_PLUGIN_VERSION" to androidGradlePluginVersion,
+      "KOTLIN_VERSION" to kotlinVersion.version,
+      "NEED_KOTLIN_EAP_REPOSITORY" to !kotlinVersion.isRelease
+    )
   }
 
   override fun showNewStudyItemUi(

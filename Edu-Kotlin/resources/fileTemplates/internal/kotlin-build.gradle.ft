@@ -3,6 +3,8 @@ buildscript {
 
     repositories {
         mavenCentral()
+        #if(${NEED_KOTLIN_EAP_REPOSITORY})maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }#end
+
     }
 
     dependencies {
@@ -27,6 +29,8 @@ subprojects {
 
     repositories {
         mavenCentral()
+        #if(${NEED_KOTLIN_EAP_REPOSITORY})maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }#end
+
     }
 
     dependencies {
