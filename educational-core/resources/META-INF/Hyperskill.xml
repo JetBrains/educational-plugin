@@ -6,5 +6,6 @@
   </extensions>
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.alt.HyperskillOptions"/>
+    <coursesProvider implementation="com.jetbrains.edu.learning.stepik.alt.HyperskillCourseProvider"/>
   </extensions>
 </idea-plugin>
