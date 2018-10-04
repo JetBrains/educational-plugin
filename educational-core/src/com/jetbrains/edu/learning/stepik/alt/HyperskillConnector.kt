@@ -29,7 +29,7 @@ object HyperskillConnector {
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         .addInterceptor { chain ->
-          val tokenInfo = HyperskillSettings.getInstance().account?.tokenInfo
+          val tokenInfo = HyperskillSettings.instance.account?.tokenInfo
           if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
 
           val newRequest = chain.request().newBuilder()
@@ -63,9 +63,9 @@ object HyperskillConnector {
 
   fun login(code: String): Boolean {
     val tokenInfo = service.getTokens(clientId, redirectUri, code, "authorization_code").execute().body() ?: return false
-    HyperskillSettings.getInstance().account = HyperskillAccount(tokenInfo)
+    HyperskillSettings.instance.account = HyperskillAccount(tokenInfo)
     val currentUser = getCurrentUser() ?: return false
-    HyperskillSettings.getInstance().account!!.userInfo = currentUser
+    HyperskillSettings.instance.account!!.userInfo = currentUser
     ApplicationManager.getApplication().messageBus.syncPublisher<HyperskillLoggedIn>(authorizationTopic).userLoggedIn()
     return true
   }

@@ -66,9 +66,6 @@ import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
-  //this prefix indicates that course can be opened by educational plugin
-  private static final String ADAPTIVE_NOTE =
-    "\n\nInitially, the adaptive system may behave somewhat randomly, but the more problems you solve, the smarter it becomes!";
   private static final String NOT_VERIFIED_NOTE = "\n\nNote: We’re sorry, but this course feels a little incomplete. " +
       "If you are the owner of the course please <a href=\"mailto:Tatiana.Vasilyeva@jetbrains.com\">get in touch with us</a>, " +
       "we would like to verify this with you; we think with improvement this can be listed as a featured course in the future.";
@@ -159,18 +156,8 @@ public class StepikConnector {
       LOG.warn("Cannot load course list " + e.getMessage());
     }
     addInProgressCourses(user, result);
-    addAdaptiveCourse(result);
     LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms");
     return result;
-  }
-
-  private static void addAdaptiveCourse(@NotNull List<Course> result) {
-    final Course altCourse = new RemoteCourse();
-    altCourse.setDescription("Learn everything in Java");
-    altCourse.setName("ALT Java");
-    altCourse.setLanguage("JAVA");
-    ((RemoteCourse)altCourse).setAdaptive(true);
-    result.add(altCourse);
   }
 
   private static void addInProgressCourses(@Nullable StepicUser user, List<Course> result) {
@@ -320,9 +307,6 @@ public class StepikConnector {
 
       setCourseAuthors(info);
 
-      //if (info.isAdaptive()) {
-      //  info.setDescription("This is a Stepik Adaptive course.\n\n" + info.getDescription() + ADAPTIVE_NOTE);
-      //}
       if (info.isPublic() && !featuredCourses.contains(info.getId())) {
         info.setDescription(info.getDescription() + NOT_VERIFIED_NOTE);
       }
