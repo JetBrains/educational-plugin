@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
@@ -82,14 +81,14 @@ public class StepikTaskBuilder {
     .build();
   private static final String EMPTY_NAME = "";
 
-  public StepikTaskBuilder(@NotNull RemoteCourse course,
+  public StepikTaskBuilder(@NotNull Language language,
                            @NotNull StepikWrappers.StepSource stepSource,
                            int stepId, int userId) {
-    this(course, EMPTY_NAME, stepSource, stepId, userId);
+    this(language, EMPTY_NAME, stepSource, stepId, userId);
   }
 
 
-  public StepikTaskBuilder(@NotNull RemoteCourse course,
+  public StepikTaskBuilder(@NotNull Language language,
                            @NotNull String name,
                            @NotNull StepikWrappers.StepSource stepSource,
                            int stepId, int userId) {
@@ -98,7 +97,7 @@ public class StepikTaskBuilder {
     myStep = stepSource.block;
     myStepId = stepId;
     myUserId = userId;
-    myLanguage = course.getLanguageById();
+    myLanguage = language;
     myConfigurator = EduConfiguratorManager.forLanguage(myLanguage);
     if (myConfigurator == null) {
       LOG.warn("Cannot get configurator for a language: " + myLanguage);

@@ -20,14 +20,18 @@ interface HyperskillService {
   ): Call<TokenInfo>
 
   @GET("api/users/{id}")
-  fun getUserInfo(@Path("id") userId: Int): Call<Data>
+  fun getUserInfo(@Path("id") userId: Int): Call<UsersData>
 
-  @GET("api/recommendations/")
-  fun recommendations(): Call<Recommendation>
+  @GET("api/topics/{id}")
+  fun topics(@Path("id") id: String = "", @Query("stage") stage: String = ""): Call<TopicsData>
+
+  @GET("api/lessons")
+  fun lessons(@Query("topic") topic: Int): Call<LessonsData>
+
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Data {
+class UsersData {
   lateinit var meta: Any
   lateinit var users: List<HyperskillUserInfo>
 }
@@ -40,13 +44,28 @@ class TokenInfo {
   var refreshToken: String = ""
 }
 
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-class Recommendation {
-  var lesson: Lesson? = null
+class TopicsData {
+  lateinit var meta: Any
+  lateinit var topics: List<Topic>
 }
 
-class Lesson {
-  @JsonProperty("stepik_id")
-  var stepikId: Int = 0
+@JsonIgnoreProperties(ignoreUnknown = true)
+class Topic {
+  var id: Int = -1
+  var title: String = ""
+  lateinit var children: List<Int>
+
+  @JsonProperty("has_lessons") var hasLessons: Boolean = false
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class LessonsData {
+  lateinit var meta: Any
+  lateinit var lessons: List<HyperskillLesson>
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class HyperskillLesson {
+  @JsonProperty("stepik_id") var stepikId: Int = -1
 }

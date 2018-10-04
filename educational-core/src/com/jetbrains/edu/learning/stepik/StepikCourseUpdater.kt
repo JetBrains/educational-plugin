@@ -38,7 +38,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     oldLessonDirectories.clear()
     oldSectionDirectories.clear()
 
-    val courseFromServer = courseFromServer(project, course)
+    val courseFromServer = courseFromServer(course)
     if (courseFromServer == null) {
       LOG.warn("Course ${course.id} not found on Stepik")
       return
@@ -404,10 +404,10 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     }
   }
 
-  private fun courseFromServer(project: Project, currentCourse: RemoteCourse): RemoteCourse? {
+  private fun courseFromServer(currentCourse: RemoteCourse): RemoteCourse? {
     try {
       val remoteCourse = getCourseInfo(EduSettings.getInstance().user, currentCourse.id, true)
-      if (remoteCourse != null && loadCourseStructure(project, remoteCourse)) {
+      if (remoteCourse != null && loadCourseStructure(remoteCourse)) {
         addTopLevelLessons(remoteCourse)
         return remoteCourse
       }

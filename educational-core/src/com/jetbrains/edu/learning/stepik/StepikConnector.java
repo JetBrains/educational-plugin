@@ -369,30 +369,16 @@ public class StepikConnector {
     return -1;
   }
 
-  public static boolean loadCourseStructure(@Nullable final Project project, @NotNull final RemoteCourse remoteCourse) {
+  public static boolean loadCourseStructure(@NotNull final RemoteCourse remoteCourse) {
     final List<StudyItem> items = remoteCourse.getItems();
     if (!items.isEmpty()) return true;
-    if (!remoteCourse.isAdaptive()) {
-      try {
-        fillItems(remoteCourse);
-        return true;
-      }
-      catch (IOException e) {
-        LOG.error(e);
-        return false;
-      }
-    }
-    else {
-      // TODO: get alt adaptive course here
-      final Lesson lesson = new Lesson();
-      lesson.setName(EduNames.ADAPTIVE);
-      remoteCourse.addLesson(lesson);
-      //TODO: more specific name?
-      final Task recommendation = StepikAdaptiveConnector.getNextRecommendation(project, remoteCourse);
-      if (recommendation != null) {
-        lesson.addTask(recommendation);
-      }
+    try {
+      fillItems(remoteCourse);
       return true;
+    }
+    catch (IOException e) {
+      LOG.error(e);
+      return false;
     }
   }
 
@@ -641,7 +627,7 @@ public class StepikConnector {
             lesson = new FrameworkLesson(lesson);
           }
         }
-        List<Task> tasks = getTasks(remoteCourse, stepIds, allStepSources);
+        List<Task> tasks = getTasks(remoteCourse.getLanguageById(), stepIds, allStepSources);
         lesson.taskList.addAll(tasks);
         lessons.add(lesson);
       }
@@ -660,13 +646,13 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Task> getTasks(RemoteCourse remoteCourse, String[] stepIds, List<StepSource> allStepSources) {
+  public static List<Task> getTasks(Language language, String[] stepIds, List<StepSource> allStepSources) {
     List<Task> tasks = new ArrayList<>();
     for (int i = 0; i < allStepSources.size(); i++) {
       StepSource step = allStepSources.get(i);
       Integer stepId = Integer.valueOf(stepIds[i]);
       StepicUser user = EduSettings.getInstance().getUser();
-      StepikTaskBuilder builder = new StepikTaskBuilder(remoteCourse, step, stepId, user == null ? -1 : user.getId());
+      StepikTaskBuilder builder = new StepikTaskBuilder(language, step, stepId, user == null ? -1 : user.getId());
       if (builder.isSupported(step.block.name)) {
         final Task task = builder.createTask(step.block.name);
         if (task != null) {
@@ -857,7 +843,7 @@ public class StepikConnector {
     return null;
   }
 
-  private static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
+  public static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws URISyntaxException, IOException {
     return multipleRequestToStepik(apiUrl, ids, container, null);
   }
 
