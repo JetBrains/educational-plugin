@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.alt;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
@@ -17,11 +15,6 @@ public class HyperskillCourseProjectGenerator extends GradleCourseProjectGenerat
   public HyperskillCourseProjectGenerator(@NotNull GradleCourseBuilderBase builder,
                                           @NotNull Course course) {
     super(builder, course);
-  }
-
-  @Override
-  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) {
-
   }
 
   @Override
