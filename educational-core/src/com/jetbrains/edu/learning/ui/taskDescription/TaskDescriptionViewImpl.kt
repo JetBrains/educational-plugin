@@ -10,11 +10,9 @@ import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -26,7 +24,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   private val taskTextTW : TaskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
   private val taskTextPanel : JComponent = taskTextTW.createTaskInfoPanel(project)
   private lateinit var separator: JSeparator
-  private var taskSpecificTopPanel = JPanel()
 
   override var currentTask: Task? = null
     set(value) {
@@ -34,7 +31,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       setTaskText(value)
       separator.isVisible = value != null
       checkPanel.isVisible = value != null
-      taskSpecificTopPanel.isVisible = value != null && (StudyTaskManager.getInstance(project).course?.isAdaptive ?: false)
       if (value != null) {
         readyToCheck()
         checkPanel.updateCheckButton(value)
@@ -64,11 +60,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   override fun init() {
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
-    val course = StudyTaskManager.getInstance(project).course
-    if (course != null && course is HyperskillCourse) {
-      taskSpecificTopPanel = StepikAdaptiveReactionsPanel(project)
-      panel.add(taskSpecificTopPanel, BorderLayout.NORTH)
-    }
 
     panel.add(taskTextPanel, BorderLayout.CENTER)
     taskTextPanel.border = JBUI.Borders.empty(0, 0, 10, 0)

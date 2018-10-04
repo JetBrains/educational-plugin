@@ -1,29 +1,18 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.intellij.ide.projectView.ProjectView;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
@@ -31,7 +20,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -48,97 +36,10 @@ import java.util.concurrent.TimeUnit;
 
 public class StepikAdaptiveConnector {
   public static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
-  public static final int NEXT_RECOMMENDATION_REACTION = 2;
-  public static final int TOO_HARD_RECOMMENDATION_REACTION = 0;
-  public static final int TOO_BORING_RECOMMENDATION_REACTION = -1;
-  public static final String LOADING_NEXT_RECOMMENDATION = "Loading Next Recommendation";
   private static final Logger LOG = Logger.getInstance(StepikAdaptiveConnector.class);
   private static final int CONNECTION_TIMEOUT = 60 * 1000;
   // Stepik uses some code complexity measure, but we agreed that it's not obvious measure and should be improved
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
-
-  @Nullable
-  public static Task getNextRecommendation(@Nullable Project project, @NotNull RemoteCourse course) {
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) {
-        LOG.warn("Http client is null");
-        return null;
-      }
-
-      StepicUser user = EduSettings.getInstance().getUser();
-      if (user == null) {
-        LOG.warn("User is null");
-        return null;
-      }
-
-      final URI uri = new URIBuilder(StepikNames.STEPIK_API_URL + StepikNames.RECOMMENDATIONS_URL)
-        .addParameter(EduNames.COURSE, String.valueOf(course.getId()))
-        .build();
-      final HttpGet request = new HttpGet(uri);
-      setTimeout(request);
-
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-
-      final int statusCode = response.getStatusLine().getStatusCode();
-      EntityUtils.consume(responseEntity);
-      if (statusCode == HttpStatus.SC_OK) {
-        final Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
-        final StepikWrappers.RecommendationWrapper recomWrapper = gson.fromJson(responseString, StepikWrappers.RecommendationWrapper.class);
-
-        if (recomWrapper.recommendations.length != 0) {
-          final StepikWrappers.Recommendation recommendation = recomWrapper.recommendations[0];
-          final String lessonId = recommendation.lesson;
-          final StepikWrappers.LessonContainer lessonContainer = StepikAuthorizedClient.getFromStepik(StepikNames.LESSONS + lessonId,
-                                                                                                         StepikWrappers.LessonContainer.class);
-          if (lessonContainer != null && lessonContainer.lessons.size() == 1) {
-            final Lesson realLesson = lessonContainer.lessons.get(0);
-            course.getLessons().get(0).setId(Integer.parseInt(lessonId));
-
-            for (int stepId : realLesson.steps) {
-              StepikWrappers.StepSource step = StepikConnector.getStep(stepId);
-              String stepType = step.block.name;
-              StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), realLesson.getName(), step, stepId, user.getId());
-              if (taskBuilder.isSupported(stepType)) {
-                final Task taskFromStep = taskBuilder.createTask(stepType);
-                if (taskFromStep != null) return taskFromStep;
-              }
-              else {
-                return skipRecommendation(project, course, user, lessonId);
-              }
-            }
-          }
-          else {
-            LOG.warn("Got unexpected number of lessons: " + (lessonContainer == null ? null : lessonContainer.lessons.size()));
-          }
-        }
-        else {
-          LOG.warn("Got empty recommendation for the task: " + responseString);
-        }
-      }
-      else {
-        throw new IOException("Stepik returned non 200 status code: " + responseString);
-      }
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-      if (project != null) {
-        ApplicationManager.getApplication()
-          .invokeLater(() -> EduUtils.showErrorPopupOnToolbar(project, "Connection problems, Please, try again"));
-      }
-    }
-    catch (URISyntaxException e) {
-      LOG.warn(e.getMessage());
-    }
-    return null;
-  }
-
-  private static Task skipRecommendation(@Nullable Project project, @NotNull RemoteCourse course, StepicUser user, String lessonId) {
-    postRecommendationReaction(lessonId, String.valueOf(user.getId()), TOO_HARD_RECOMMENDATION_REACTION);
-    return getNextRecommendation(project, course);
-  }
 
   @Nullable
   public static StepikWrappers.AdaptiveAttemptWrapper.Attempt getAttemptForStep(int stepId, int userId) {
@@ -192,163 +93,6 @@ public class StepikAdaptiveConnector {
       .setSocketTimeout(CONNECTION_TIMEOUT)
       .build();
     request.setConfig(requestConfig);
-  }
-
-  public static boolean postRecommendationReaction(@NotNull String lessonId, @NotNull String user, int reaction) {
-    final HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.RECOMMENDATION_REACTIONS_URL);
-    final String json = new Gson()
-      .toJson(new StepikWrappers.RecommendationReactionWrapper(new StepikWrappers.RecommendationReaction(reaction, user, lessonId)));
-    post.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
-    final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-    if (client == null) return false;
-    setTimeout(post);
-    try {
-      final CloseableHttpResponse execute = client.execute(post);
-      final int statusCode = execute.getStatusLine().getStatusCode();
-      final HttpEntity entity = execute.getEntity();
-      final String entityString = EntityUtils.toString(entity);
-      EntityUtils.consume(entity);
-      if (statusCode == HttpStatus.SC_CREATED) {
-        return true;
-      }
-      else {
-        LOG.warn("Stepik returned non-201 status code: " + statusCode + " " + entityString);
-        return false;
-      }
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-      return false;
-    }
-  }
-
-  public static void addNextRecommendedTask(@NotNull Project project,
-                                            @NotNull Lesson lesson,
-                                            @NotNull ProgressIndicator indicator,
-                                            int reactionToPost) {
-    final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof RemoteCourse)) {
-      LOG.warn("Course is in incorrect state");
-      ApplicationManager.getApplication().invokeLater(
-        () -> EduUtils.showErrorPopupOnToolbar(project, "Can't get next recommendation: course is broken"));
-      return;
-    }
-
-    indicator.checkCanceled();
-    final StepicUser user = EduSettings.getInstance().getUser();
-    if (user == null) {
-      LOG.warn("Can't get next recommendation: user is null");
-      ApplicationManager.getApplication().invokeLater(
-        () -> EduUtils.showErrorPopupOnToolbar(project, "Can't get next recommendation: you're not logged in"));
-      return;
-    }
-
-    final boolean reactionPosted = postRecommendationReaction(String.valueOf(lesson.getId()), String.valueOf(user.getId()), reactionToPost);
-    if (!reactionPosted) {
-      LOG.warn("Recommendation reaction wasn't posted");
-      ApplicationManager.getApplication().invokeLater(
-        () -> EduUtils.showErrorPopupOnToolbar(project, "Couldn't post your reactionToPost"));
-      return;
-    }
-
-    indicator.checkCanceled();
-    String oldTaskName = lesson.getTaskList().get(lesson.getTaskList().size() - 1).getName();
-    final Task task = getNextRecommendation(project, (RemoteCourse)course);
-    if (task == null) {
-      ApplicationManager.getApplication().invokeLater(
-        () -> EduUtils.showErrorPopupOnToolbar(project, "Couldn't load a new recommendation"));
-      return;
-    }
-
-    task.init(course, lesson, false);
-    boolean replaceCurrentTask = reactionToPost == TOO_HARD_RECOMMENDATION_REACTION || reactionToPost == TOO_BORING_RECOMMENDATION_REACTION;
-    if (replaceCurrentTask) {
-      replaceCurrentTask(project, task, oldTaskName, lesson);
-    }
-    else {
-      addAsNextTask(project, task, lesson);
-    }
-
-    ApplicationManager.getApplication().invokeLater(() -> {
-      VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
-      ProjectView.getInstance(project).refresh();
-      NavigationUtils.navigateToTask(project, task);
-    });
-  }
-
-  private static void addAsNextTask(@NotNull Project project, @NotNull Task task, @NotNull Lesson lesson) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
-
-    lesson.addTask(task);
-    task.setIndex(lesson.getTaskList().size());
-    lesson.init(course, null, true);
-
-    createFilesForNewTask(project, task, course.getLanguageById());
-  }
-
-  private static void createFilesForNewTask(@NotNull Project project,
-                                            @NotNull Task task,
-                                            @NotNull Language language) {
-    final VirtualFile lessonDir = project.getBaseDir().findChild(task.getLesson().getName());
-    if (lessonDir == null) {
-      return;
-    }
-
-    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
-      if (configurator != null) {
-        configurator.getCourseBuilder().createTaskContent(project, task, lessonDir);
-      }
-    }));
-  }
-
-  public static void replaceCurrentTask(@NotNull Project project, @NotNull Task task, String oldTaskName, @NotNull Lesson lesson) {
-    Course course = StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
-
-    int taskIndex = lesson.getTaskList().size();
-
-    task.setIndex(taskIndex);
-    lesson.getTaskList().set(taskIndex - 1, task);
-
-    updateProjectFiles(project, task, oldTaskName, course.getLanguageById());
-    ApplicationManager.getApplication().invokeLater(() ->TaskDescriptionView.getInstance(project).setCurrentTask(task));
-  }
-
-  private static void updateProjectFiles(@NotNull Project project, @NotNull Task task, String oldTaskName, Language language) {
-    final VirtualFile lessonDir = project.getBaseDir().findChild(task.getLesson().getName());
-    if (lessonDir == null) {
-      return;
-    }
-
-    ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-      try {
-        removeOldProjectFiles(project, task, oldTaskName);
-        EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(language);
-        if (configurator != null) {
-          configurator.getCourseBuilder().createTaskContent(project, task, lessonDir);
-        }
-      }
-      catch (IOException e) {
-        LOG.warn(e.getMessage());
-      }
-    }));
-  }
-
-  private static void removeOldProjectFiles(@NotNull Project project, @NotNull Task task, @NotNull String oldTaskName) throws IOException {
-    VirtualFile lessonDir = project.getBaseDir().findChild(task.getLesson().getName());
-    if (lessonDir == null) {
-      LOG.warn("Failed to update files for a new recommendation: lesson directory is null");
-      return;
-    }
-    final VirtualFile taskDir = lessonDir.findChild(oldTaskName);
-    if (taskDir == null) {
-      LOG.warn("Failed to update files for a new recommendation: task directory is null");
-      return;
-    }
-
-    taskDir.delete(StepikAdaptiveConnector.class);
   }
 
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepicUser user) {

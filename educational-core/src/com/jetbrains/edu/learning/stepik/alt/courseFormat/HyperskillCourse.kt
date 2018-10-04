@@ -1,11 +1,8 @@
 package com.jetbrains.edu.learning.stepik.alt.courseFormat
 
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Tag
-import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel
-import javax.swing.JPanel
 
 class HyperskillCourse : Course {
   @Suppress("unused") constructor() // used for deserialization
@@ -14,11 +11,6 @@ class HyperskillCourse : Course {
     setName(name)
     description = COURSE_DESCRIPTION
     language = languageID
-  }
-
-  // temporary. Wait for extract stepik branch to merge
-  fun getTaskDescriptionTopPanel(project: Project): JPanel {
-    return StepikAdaptiveReactionsPanel(project)
   }
 
   override fun getTags(): List<Tag> {
