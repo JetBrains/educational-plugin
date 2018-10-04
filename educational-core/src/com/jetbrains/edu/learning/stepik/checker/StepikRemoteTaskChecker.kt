@@ -10,10 +10,11 @@ import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector
+import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
 
 class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun canCheck(project: Project, task: Task): Boolean {
-    return task.course is RemoteCourse && task.shouldBeCheckedOnStepik
+    return (task.course is RemoteCourse || task.course is HyperskillCourse) && task.shouldBeCheckedOnStepik
   }
 
   private val Task.shouldBeCheckedOnStepik: Boolean
