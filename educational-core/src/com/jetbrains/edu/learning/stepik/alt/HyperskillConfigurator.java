@@ -17,7 +17,7 @@ public class HyperskillConfigurator extends GradleConfiguratorBase {
   @NotNull
   @Override
   public String getTestFileName() {
-    return null;
+    return "";
   }
 
   @NotNull
