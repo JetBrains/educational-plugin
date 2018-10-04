@@ -7,18 +7,14 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.navigation.NavigationUtils;
-import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
@@ -44,7 +40,7 @@ public class SyncCourseAction extends DumbAwareAction {
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     if (course instanceof RemoteCourse) {
-      ProgressManager.getInstance().run(new com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course", true) {
+      ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Course", true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
@@ -67,40 +63,8 @@ public class SyncCourseAction extends DumbAwareAction {
       return;
     }
 
-    if (course.isAdaptive()) {
-      //updateAdaptiveCourse(project, course);
-    }
-    else {
-      StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
-      courseSynchronizer.loadSolutionsInBackground();
-    }
-  }
-
-  private static void updateAdaptiveCourse(@NotNull Project project, @NotNull Course course) {
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-      EduUtils.execCancelable(() -> {
-        Lesson adaptiveLesson = course.getLessons().get(0);
-        assert adaptiveLesson != null;
-
-        int taskNumber = adaptiveLesson.getTaskList().size();
-        Task lastRecommendationInCourse = adaptiveLesson.getTaskList().get(taskNumber - 1);
-        Task lastRecommendationOnStepik = StepikAdaptiveConnector.getNextRecommendation(project, (RemoteCourse) course);
-
-        if (lastRecommendationOnStepik != null && lastRecommendationOnStepik.getStepId() != lastRecommendationInCourse.getStepId()) {
-          lastRecommendationOnStepik.init(course, adaptiveLesson, false);
-          StepikAdaptiveConnector.replaceCurrentTask(project, lastRecommendationOnStepik, lastRecommendationInCourse.getName(), adaptiveLesson);
-
-          ApplicationManager.getApplication().invokeLater(() -> {
-            VirtualFileManager.getInstance().refreshWithoutFileWatcher(false);
-            NavigationUtils.navigateToTask(project, lastRecommendationOnStepik);
-          });
-          return true;
-        }
-
-        return false;
-      });
-    }, "Synchronizing Course", true, project);
+    StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
+    courseSynchronizer.loadSolutionsInBackground();
   }
 
   public static boolean isAvailable(@Nullable Project project) {

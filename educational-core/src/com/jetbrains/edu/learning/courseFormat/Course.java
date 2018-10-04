@@ -244,6 +244,8 @@ public class Course extends ItemContainer {
     return copy;
   }
 
+  // to be removed
+  @Deprecated
   public boolean isAdaptive() {
     return false;
   }
@@ -276,9 +278,6 @@ public class Course extends ItemContainer {
   public List<Tag> getTags() {
     List<Tag> tags = new ArrayList<>();
     tags.add(new ProgrammingLanguageTag(getLanguageById()));
-    if (isAdaptive()) {
-      tags.add(new Tag(EduNames.ADAPTIVE));
-    }
     tags.add(new HumanLanguageTag(getHumanLanguage()));
     return tags;
   }

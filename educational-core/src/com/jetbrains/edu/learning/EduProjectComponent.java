@@ -81,7 +81,7 @@ public class EduProjectComponent implements ProjectComponent {
           return;
         }
 
-        if (!course.isAdaptive() && course instanceof RemoteCourse) {
+        if (course instanceof RemoteCourse) {
           StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
         }
 
@@ -99,7 +99,7 @@ public class EduProjectComponent implements ProjectComponent {
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
             registerShortcuts();
-            EduUsagesCollector.projectTypeOpened(course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY);
+            EduUsagesCollector.projectTypeOpened(EduNames.STUDY);
           }));
       }
     );

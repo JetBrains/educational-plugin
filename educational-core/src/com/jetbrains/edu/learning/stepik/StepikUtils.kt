@@ -22,27 +22,11 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
-import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import java.util.regex.Pattern
 
 object StepikUtils {
   private val LOG = Logger.getInstance(StepikUtils::class.java)
   private val PYCHARM_COURSE_TYPE = Pattern.compile(String.format("%s(\\d*) (\\w+)", StepikNames.PYCHARM_PREFIX))
-
-  @JvmStatic
-  fun wrapStepikTasks(task: Task, text: String): String {
-    var finalText = text
-    val course = task.course
-    if (course.isAdaptive) {
-      when (task) {
-        is TheoryTask -> finalText += "<br/><br/><b>Note</b>: This theory task aims to help you solve difficult tasks. "
-        is CodeTask ->  finalText += "<br/><br/><b>Note</b>: Use standard input to obtain input for the task."
-      }
-    }
-    return finalText
-  }
 
   @JvmStatic
   fun setCourseLanguage(info: RemoteCourse) {

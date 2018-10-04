@@ -6,7 +6,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VfsUtil
@@ -220,10 +219,6 @@ object GeneratorUtils {
   fun initializeCourse(project: Project, course: Course) {
     course.init(null, null, false)
 
-    if (course.isAdaptive && !EduUtils.isCourseValid(course)) {
-      Messages.showWarningDialog("There is no recommended tasks for this adaptive course",
-                                 "Error in Course Creation")
-    }
     if (updateTaskFilesNeeded(course)) {
       updateJavaCodeTaskFileNames(project, course)
     }

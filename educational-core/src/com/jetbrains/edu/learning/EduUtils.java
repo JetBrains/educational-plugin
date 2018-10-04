@@ -631,17 +631,6 @@ public class EduUtils {
     return Pair.create(startOffset, endOffset);
   }
 
-  public static boolean isCourseValid(@Nullable Course course) {
-    if (course == null) return false;
-    if (course.isAdaptive()) {
-      final List<Lesson> lessons = course.getLessons();
-      if (lessons.size() == 1) {
-        return !lessons.get(0).getTaskList().isEmpty();
-      }
-    }
-    return true;
-  }
-
   public static void openFirstTask(@NotNull final Course course, @NotNull final Project project) {
     LocalFileSystem.getInstance().refresh(false);
     final StudyItem firstItem = getFirst(course.getItems());
@@ -704,7 +693,7 @@ public class EduUtils {
   }
 
   public static void navigateToStep(@NotNull Project project, @NotNull Course course, int stepId) {
-    if (stepId == 0 || course.isAdaptive()) {
+    if (stepId == 0) {
       return;
     }
     Task task = getTask(course, stepId);

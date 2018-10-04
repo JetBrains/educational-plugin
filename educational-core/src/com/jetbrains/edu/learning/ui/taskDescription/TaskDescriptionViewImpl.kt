@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel
+import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
 import javax.swing.JComponent
@@ -65,7 +65,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
     val course = StudyTaskManager.getInstance(project).course
-    if (course != null && course.isAdaptive) {
+    if (course != null && course is HyperskillCourse) {
       taskSpecificTopPanel = StepikAdaptiveReactionsPanel(project)
       panel.add(taskSpecificTopPanel, BorderLayout.NORTH)
     }

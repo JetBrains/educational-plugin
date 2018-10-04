@@ -259,7 +259,6 @@
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.StepikOptions"/>
     <optionsProvider instance="com.jetbrains.edu.learning.coursera.CourseraOptions"/>
     <checkListener implementation="com.jetbrains.edu.learning.twitter.TwitterAction"/>
-    <checkListener implementation="com.jetbrains.edu.learning.stepik.NextRecommendationCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.stepik.PostSolutionCheckListener"/>
     <checkListener implementation="com.jetbrains.edu.learning.statistics.PostFeedbackCheckListener"/>
     <coursesProvider implementation="com.jetbrains.edu.learning.stepik.StepikCoursesProvider"/>

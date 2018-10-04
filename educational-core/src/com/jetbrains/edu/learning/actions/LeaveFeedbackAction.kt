@@ -42,10 +42,8 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
     const val ACTION_ID = "Educational.LeaveFeedback"
 
     private fun getStepikLink(task: Task): String {
-      val isAdaptive = task.course.isAdaptive
-      val index = if (isAdaptive) 1 else task.index
-      val link = "${StepikNames.STEPIK_URL}/lesson/${task.lesson.id}/step/$index"
-      return if (isAdaptive) "$link?adaptive=true" else link
+      val index = task.index
+      return "${StepikNames.STEPIK_URL}/lesson/${task.lesson.id}/step/$index"
     }
 
     @JvmStatic

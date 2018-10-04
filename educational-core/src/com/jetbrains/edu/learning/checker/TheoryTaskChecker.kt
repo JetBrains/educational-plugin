@@ -19,9 +19,7 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
     }
 
     StudyTaskManager.getInstance(project).course?.let {
-      if (!it.isAdaptive) {
-        ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
-      }
+      ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
     }
     return CheckResult(CheckStatus.Solved, "")
   }

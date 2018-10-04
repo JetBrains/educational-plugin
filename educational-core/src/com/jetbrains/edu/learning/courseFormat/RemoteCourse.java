@@ -84,7 +84,9 @@ public class RemoteCourse extends Course {
     return myUpdateDate;
   }
 
+  // to be removed
   @Override
+  @Deprecated
   public boolean isAdaptive() {
     return isAdaptive;
   }
@@ -168,14 +170,6 @@ public class RemoteCourse extends Course {
   @NotNull
   private static CourseCompatibility courseCompatibility(@NotNull RemoteCourse courseInfo) {
     final List<String> supportedLanguages = getSupportedLanguages();
-
-    if (courseInfo.isAdaptive()) {
-      if (supportedLanguages.contains(courseInfo.getLanguageID())) {
-        return CourseCompatibility.COMPATIBLE;
-      } else {
-        return CourseCompatibility.UNSUPPORTED;
-      }
-    }
 
     String courseType = courseInfo.getType();
     final List<String> typeLanguage = StringUtil.split(courseType, " ");
