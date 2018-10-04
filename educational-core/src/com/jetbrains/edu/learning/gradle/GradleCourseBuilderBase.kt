@@ -34,7 +34,7 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
                   GradleConstants.SETTINGS_FILE_NAME to settingGradleTemplateName)
 
   open fun templateVariables(project: Project): Map<String, Any> {
-    return mapOf("GRADLE_VERSION" to EduGradleUtils.gradleVersion(),
+    return mapOf(GRADLE_VERSION to EduGradleUtils.gradleVersion(),
                  "PROJECT_NAME" to EduGradleUtils.sanitizeName(project.name))
   }
 
@@ -81,4 +81,8 @@ abstract class GradleCourseBuilderBase : EduCourseBuilder<JdkProjectSettings> {
 
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator =
     GradleCourseProjectGenerator(this, course)
+
+  companion object {
+    const val GRADLE_VERSION: String = "GRADLE_VERSION"
+  }
 }
