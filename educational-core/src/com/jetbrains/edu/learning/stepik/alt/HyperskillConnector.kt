@@ -3,7 +3,8 @@ package com.jetbrains.edu.learning.stepik.alt
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
-import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.intellij.util.ConcurrencyUtil
+import com.jetbrains.edu.learning.courseFormat.Section
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import org.jetbrains.ide.BuiltInServerManager
@@ -11,9 +12,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.IOException
 import java.net.URISyntaxException
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object HyperskillConnector {
+  private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
+  private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
+
   private const val HYPERSKILL_URL = "https://hyperskill.org/"
   private val port = BuiltInServerManager.getInstance().port
   private val redirectUri = "http://localhost:$port/api/edu/hyperskill/oauth"
@@ -80,22 +86,38 @@ object HyperskillConnector {
     return service.getUserInfo(0).execute().body()?.users?.first() ?: return null
   }
 
-  fun getLessons(): List<Lesson> {
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Lesson>, Exception>(
+  fun getSections(): List<Section> {
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Section>, Exception>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         val userInfo = HyperskillSettings.instance.account?.userInfo ?: return@runProcessWithProgressSynchronously emptyList()
-        val topics = service.topics(stage = userInfo.stage?.id.toString()).execute().body()?.topics ?:
+        val topics = service.topics(stage = userInfo.stage?.id.toString()).execute().body()?.topics?.filter { it.children.isEmpty()} ?:
                      return@runProcessWithProgressSynchronously emptyList()
 
-        val lessonIds = mutableListOf<Int>()
-        for (topic in topics.filter { it.children.isEmpty()}) {
-          if (topic.hasLessons) {
-            val lessonsIds = service.lessons(topic.id).execute().body()?.lessons?.map { it.stepikId } ?: continue
-            lessonIds.addAll(lessonsIds)
+        val sections = mutableListOf<Section>()
+        val tasks = mutableListOf<Callable<Section>>()
+        for (topic in topics) {
+          tasks.add(Callable {
+                      val section = Section()
+                      section.name = topic.title
+                      section.id = topic.id
+                      if (topic.hasLessons) {
+                        val lessonsIds = service.lessons(topic.id).execute().body()?.lessons?.map { it.stepikId } ?: return@Callable section
+                        val lessons = getLessons(lessonsIds.map { it -> it.toString() })
+                        section.addLessons(lessons)
+                        return@Callable section
+                      }
+                      return@Callable section
+                     })
+        }
+        for (future in ConcurrencyUtil.invokeAll<Section>(tasks, EXECUTOR_SERVICE)) {
+          if (!future.isCancelled) {
+            val section = future.get()
+            sections.add(section)
           }
         }
-        return@runProcessWithProgressSynchronously getLessons(lessonIds.map { it -> it.toString() })
+        sections.sortBy { it.id }
+        return@runProcessWithProgressSynchronously sections
       }, "Loading course", false, null)
   }
 
