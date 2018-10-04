@@ -246,10 +246,7 @@ public abstract class CourseProjectGenerator<S> {
 
   @NotNull
   private static String courseTypeId(@NotNull Course course) {
-    if (course.isStudy()) {
-      return course.isAdaptive() ? EduNames.ADAPTIVE : EduNames.STUDY;
-    } else {
-      return CCUtils.COURSE_MODE;
-    }
+    if (course.isStudy()) return EduNames.STUDY;
+    return CCUtils.COURSE_MODE;
   }
 }

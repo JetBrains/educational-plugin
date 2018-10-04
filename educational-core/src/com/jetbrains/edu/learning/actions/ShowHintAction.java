@@ -96,12 +96,7 @@ public class ShowHintAction extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     if (project != null) {
-      final Course course = StudyTaskManager.getInstance(project).getCourse();
       Presentation presentation = e.getPresentation();
-      if (course != null && course.isAdaptive()) {
-        presentation.setEnabled(false);
-        return;
-      }
       EduUtils.updateAction(e);
       if (!presentation.isEnabled()) {
         return;

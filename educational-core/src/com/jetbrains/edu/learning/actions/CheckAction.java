@@ -123,7 +123,6 @@ public class CheckAction extends DumbAwareAction {
       }
     }
     if (presentation.isEnabled()) {
-      updateDescription(e);
       presentation.setEnabled(!myCheckInProgress.get());
       return;
     }
@@ -136,23 +135,6 @@ public class CheckAction extends DumbAwareAction {
     }
     if (EduUtils.isTestsFile(project, virtualFile)) {
       presentation.setEnabledAndVisible(true);
-    }
-  }
-
-  private static void updateDescription(AnActionEvent e) {
-    final Presentation presentation = e.getPresentation();
-    final Project project = e.getProject();
-    if (project != null) {
-      final EduEditor eduEditor = EduUtils.getSelectedEduEditor(project);
-      if (eduEditor != null) {
-        final Task task = eduEditor.getTaskFile().getTask();
-        if (task instanceof TheoryTask) {
-          presentation.setText(task.getLesson().getCourse().isAdaptive() ? "Get Next Recommendation" : "Mark as read");
-        }
-        else {
-          presentation.setText(CHECK_TASK);
-        }
-      }
     }
   }
 

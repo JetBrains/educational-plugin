@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
 import icons.EducationalCoreIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -203,9 +202,6 @@ public abstract class Task extends StudyItem {
       if (descriptionFormat == DescriptionFormat.MD) {
         taskText = EduUtils.convertToHtml(taskText, taskDir);
       }
-    }
-    if (getLesson().getCourse() instanceof RemoteCourse && taskText != null) {
-      taskText = StepikUtils.wrapStepikTasks(this, taskText);
     }
     return taskText;
   }
