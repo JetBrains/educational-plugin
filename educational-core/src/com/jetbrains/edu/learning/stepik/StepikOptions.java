@@ -18,7 +18,6 @@ package com.jetbrains.edu.learning.stepik;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
@@ -32,7 +31,6 @@ import javax.swing.event.HyperlinkEvent;
 
 public class StepikOptions implements OptionsProvider {
   private JPanel myPane;
-  private JBCheckBox myEnableTestingFromSamples;
   private JBLabel myUsernameLabel;
   private HoverHyperlinkLabel myHoverHyperlinkLabel;
   private StepicUser myUser;
@@ -86,15 +84,10 @@ public class StepikOptions implements OptionsProvider {
     return myPane;
   }
 
-  private boolean isTestingFromSamplesEnabled() {
-    return myEnableTestingFromSamples.isSelected();
-  }
-
   @Override
   public void reset() {
     final EduSettings stepikSettings = EduSettings.getInstance();
     myUser = stepikSettings.getUser();
-    myEnableTestingFromSamples.setSelected(stepikSettings.isEnableTestingFromSamples());
     updateLoginLabels(stepikSettings.getUser());
   }
 
@@ -138,9 +131,6 @@ public class StepikOptions implements OptionsProvider {
   @Override
   public void apply() {
     final EduSettings stepikSettings = EduSettings.getInstance();
-    if (isTestingFromSamplesEnabled() != stepikSettings.isEnableTestingFromSamples()) {
-      stepikSettings.setEnableTestingFromSamples(isTestingFromSamplesEnabled());
-    }
 
     final StepicUser user = stepikSettings.getUser();
     boolean userDeleted = myUser == null && user != null;
@@ -164,12 +154,11 @@ public class StepikOptions implements OptionsProvider {
 
   public boolean isModified() {
     final EduSettings stepikSettings = EduSettings.getInstance();
-    boolean isTestOptionModified = !isTestingFromSamplesEnabled() == stepikSettings.isEnableTestingFromSamples();
     final StepicUser user = stepikSettings.getUser();
 
     boolean userDeleted = myUser == null && user != null;
     boolean userModified = myUser != null && !myUser.equals(user);
-    return isTestOptionModified || (userDeleted || userModified);
+    return userDeleted || userModified;
   }
 
   @Nls

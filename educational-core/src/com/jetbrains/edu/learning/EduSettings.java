@@ -24,7 +24,6 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
   public static final Topic<StudySettingsListener> SETTINGS_CHANGED = Topic.create("Edu.UserSet", StudySettingsListener.class);
   private StepicUser myUser;
   public long LAST_TIME_CHECKED = 0;
-  private boolean myEnableTestingFromSamples = false;
   public boolean myShouldUseJavaFx = EduUtils.hasJavaFx();
 
   public EduSettings() {
@@ -77,15 +76,6 @@ public class EduSettings implements PersistentStateComponent<EduSettings> {
 
   public static boolean isLoggedIn() {
     return getInstance().myUser != null;
-  }
-
-  public boolean isEnableTestingFromSamples() {
-    return myEnableTestingFromSamples;
-  }
-
-  public void setEnableTestingFromSamples(boolean enableTestingFromSamples) {
-    myEnableTestingFromSamples = enableTestingFromSamples;
-    ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).settingsChanged();
   }
 
   @NotNull
