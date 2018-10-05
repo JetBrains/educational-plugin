@@ -10,7 +10,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepicUserInfo;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Course extends ItemContainer {
-  transient private List<StepicUser> authors = new ArrayList<>();
+  transient private List<StepicUserInfo> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
 
@@ -113,7 +113,7 @@ public class Course extends ItemContainer {
   }
 
   @NotNull
-  public List<StepicUser> getAuthors() {
+  public List<StepicUserInfo> getAuthors() {
     return authors;
   }
 
@@ -125,8 +125,8 @@ public class Course extends ItemContainer {
     myIsFromZip = fromZip;
   }
 
-  public static String getAuthorsString(@NotNull List<StepicUser> authors) {
-    return StringUtil.join(authors, StepicUser::getName, ", ");
+  public static String getAuthorsString(@NotNull List<StepicUserInfo> authors) {
+    return StringUtil.join(authors, StepicUserInfo::getName, ", ");
   }
 
   @Transient
@@ -135,7 +135,7 @@ public class Course extends ItemContainer {
     for (String name : authors) {
       final List<String> firstLast = StringUtil.split(name, " ");
       if (!firstLast.isEmpty()) {
-        final StepicUser user = StepicUser.createEmptyUser();
+        final StepicUserInfo user = StepicUserInfo.createEmptyUser();
         user.setFirstName(firstLast.remove(0));
         if (firstLast.size() > 0) {
           user.setLastName(StringUtil.join(firstLast, " "));
@@ -216,7 +216,7 @@ public class Course extends ItemContainer {
     return split[1];
   }
 
-  public void setAuthors(List<StepicUser> authors) {
+  public void setAuthors(List<StepicUserInfo> authors) {
     this.authors = authors;
   }
 

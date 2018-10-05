@@ -13,10 +13,6 @@ public class StepicUser extends OauthAccount<StepicUserInfo> {
     super(tokenInfo);
   }
 
-  public static StepicUser createEmptyUser() {
-    return new StepicUser();
-  }
-
   @Transient
   public int getId() {
     StepicUserInfo info = getUserInfo();

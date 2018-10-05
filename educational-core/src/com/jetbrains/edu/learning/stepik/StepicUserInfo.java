@@ -14,6 +14,9 @@ public class StepicUserInfo {
     myFirstName = "";
     myLastName = "";
   }
+  public static StepicUserInfo createEmptyUser() {
+    return new StepicUserInfo();
+  }
 
   public int getId() {
     return id;
@@ -73,5 +76,10 @@ public class StepicUserInfo {
     result = 31 * result + myFirstName.hashCode();
     result = 31 * result + myLastName.hashCode();
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return myFirstName;
   }
 }

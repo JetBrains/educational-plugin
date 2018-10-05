@@ -48,4 +48,9 @@ public class CheckiOUserInfo {
   public int hashCode() {
     return myUid;
   }
+
+  @Override
+  public String toString() {
+    return myUsername;
+  }
 }
