@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.alt
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.jetbrains.edu.learning.TokenInfo
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -34,14 +35,6 @@ interface HyperskillService {
 class UsersData {
   lateinit var meta: Any
   lateinit var users: List<HyperskillUserInfo>
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class TokenInfo {
-  @JsonProperty("access_token")
-  var accessToken: String = ""
-  @JsonProperty("refresh_token")
-  var refreshToken: String = ""
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)

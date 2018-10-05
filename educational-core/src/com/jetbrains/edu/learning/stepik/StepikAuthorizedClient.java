@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.TokenInfo;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -88,7 +89,7 @@ public class StepikAuthorizedClient {
   }
 
   private static boolean updateTokens(@NotNull StepicUser user) {
-    StepikWrappers.TokenInfo tokenInfo = getUpdatedTokens(user.getRefreshToken());
+    TokenInfo tokenInfo = getUpdatedTokens(user.getRefreshToken());
     if (tokenInfo != null) {
       user.setTokenInfo(tokenInfo);
       return true;
@@ -130,7 +131,7 @@ public class StepikAuthorizedClient {
     parameters.add(new BasicNameValuePair("redirect_uri", redirectUrl));
     parameters.add(new BasicNameValuePair("client_id", StepikNames.CLIENT_ID));
 
-    StepikWrappers.TokenInfo tokenInfo = getTokens(parameters);
+    TokenInfo tokenInfo = getTokens(parameters);
     if (tokenInfo == null) {
       return null;
     }
@@ -138,7 +139,7 @@ public class StepikAuthorizedClient {
     return login(tokenInfo);
   }
 
-  public static StepicUser login(@NotNull StepikWrappers.TokenInfo tokenInfo) {
+  public static StepicUser login(@NotNull TokenInfo tokenInfo) {
     final StepicUser user = new StepicUser(tokenInfo);
     ourClient = createInitializedClient(user.getAccessToken());
 
@@ -156,7 +157,7 @@ public class StepikAuthorizedClient {
   }
 
   @Nullable
-  private static StepikWrappers.TokenInfo getUpdatedTokens(@NotNull final String refreshToken) {
+  private static TokenInfo getUpdatedTokens(@NotNull final String refreshToken) {
     final List<NameValuePair> parameters = new ArrayList<>();
     parameters.add(new BasicNameValuePair("client_id", StepikNames.CLIENT_ID));
     parameters.add(new BasicNameValuePair("content-type", "application/json"));
@@ -186,7 +187,7 @@ public class StepikAuthorizedClient {
   }
 
   @Nullable
-  public static StepikWrappers.TokenInfo getTokens(@NotNull final List<NameValuePair> parameters, @Nullable String credentials) {
+  public static TokenInfo getTokens(@NotNull final List<NameValuePair> parameters, @Nullable String credentials) {
     final Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     final HttpPost request = new HttpPost(StepikNames.TOKEN_URL);
@@ -204,7 +205,7 @@ public class StepikAuthorizedClient {
       final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
       EntityUtils.consume(responseEntity);
       if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-        return gson.fromJson(responseString, StepikWrappers.TokenInfo.class);
+        return gson.fromJson(responseString, TokenInfo.class);
       }
       else {
         LOG.warn("Failed to get tokens: " + statusLine.getStatusCode() + statusLine.getReasonPhrase());
@@ -217,7 +218,7 @@ public class StepikAuthorizedClient {
   }
 
   @Nullable
-  public static StepikWrappers.TokenInfo getTokens(@NotNull final List<NameValuePair> parameters) {
+  public static TokenInfo getTokens(@NotNull final List<NameValuePair> parameters) {
     return getTokens(parameters, null);
   }
 }

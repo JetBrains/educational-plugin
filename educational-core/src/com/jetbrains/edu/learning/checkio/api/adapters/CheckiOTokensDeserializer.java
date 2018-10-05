@@ -1,13 +1,13 @@
 package com.jetbrains.edu.learning.checkio.api.adapters;
 
 import com.google.gson.*;
-import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
+import com.jetbrains.edu.learning.TokenInfo;
 
 import java.lang.reflect.Type;
 
-public class CheckiOTokensDeserializer implements JsonDeserializer<CheckiOTokens> {
+public class CheckiOTokensDeserializer implements JsonDeserializer<TokenInfo> {
   @Override
-  public CheckiOTokens deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+  public TokenInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
     final JsonObject jsonObject = json.getAsJsonObject();
 
     final String accessToken = jsonObject.get("access_token").getAsString();
@@ -16,6 +16,10 @@ public class CheckiOTokensDeserializer implements JsonDeserializer<CheckiOTokens
 
     final long expiringTime = expiresIn + (System.currentTimeMillis() / 1000);
 
-    return new CheckiOTokens(accessToken, refreshToken, expiringTime);
+    TokenInfo tokenInfo = new TokenInfo();
+    tokenInfo.setRefreshToken(refreshToken);
+    tokenInfo.setAccessToken(accessToken);
+    tokenInfo.setExpiresIn(expiringTime);
+    return tokenInfo;
   }
 }
