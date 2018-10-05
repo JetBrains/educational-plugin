@@ -98,10 +98,10 @@ public class CCStepikConnector {
     }
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.COURSES);
 
-    final StepicUser currentUser = StepikAuthorizedClient.getCurrentUser();
+    final StepicUserInfo currentUser = StepikAuthorizedClient.getCurrentUser();
     if (currentUser != null) {
-      final List<StepicUser> courseAuthors = course.getAuthors();
-      for (final StepicUser courseAuthor : courseAuthors) {
+      final List<StepicUserInfo> courseAuthors = course.getAuthors();
+      for (final StepicUserInfo courseAuthor : courseAuthors) {
         currentUser.setFirstName(courseAuthor.getFirstName());
         currentUser.setLastName(courseAuthor.getLastName());
       }
@@ -161,7 +161,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static boolean isTestAccount(@Nullable StepicUser user) {
+  private static boolean isTestAccount(@Nullable StepicUserInfo user) {
     return user != null && TESTER_USER_IDS.contains(user.getId());
   }
 

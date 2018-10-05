@@ -343,7 +343,7 @@ public class StepikWrappers {
   }
 
   static class AuthorWrapper {
-    List<StepicUser> users;
+    List<StepicUserInfo> users;
   }
 
   static class SubmissionsWrapper {

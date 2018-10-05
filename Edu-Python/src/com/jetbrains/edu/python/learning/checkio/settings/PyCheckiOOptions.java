@@ -7,12 +7,13 @@ import org.jetbrains.annotations.Nls;
 
 public class PyCheckiOOptions extends CheckiOOptions {
   protected PyCheckiOOptions() {
-    super(PyCheckiONames.PY_CHECKIO, PyCheckiOOAuthConnector.getInstance());
+    super(PyCheckiOOAuthConnector.getInstance());
   }
 
   @Nls
   @Override
   public String getDisplayName() {
-    return PyCheckiONames.PY_CHECKIO + " options";
+    return PyCheckiONames.PY_CHECKIO;
   }
+
 }

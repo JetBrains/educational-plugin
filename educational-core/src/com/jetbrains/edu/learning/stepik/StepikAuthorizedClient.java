@@ -143,11 +143,9 @@ public class StepikAuthorizedClient {
     final StepicUser user = new StepicUser(tokenInfo);
     ourClient = createInitializedClient(user.getAccessToken());
 
-    final StepicUser currentUser = getCurrentUser();
+    final StepicUserInfo currentUser = getCurrentUser();
     if (currentUser != null) {
-      user.setId(currentUser.getId());
-      user.setFirstName(currentUser.getFirstName());
-      user.setLastName(currentUser.getLastName());
+      user.setUserInfo(currentUser);
     }
     return user;
   }
@@ -168,7 +166,7 @@ public class StepikAuthorizedClient {
   }
 
   @Nullable
-  public static StepicUser getCurrentUser() {
+  public static StepicUserInfo getCurrentUser() {
     CloseableHttpClient client = getHttpClient();
     if (client != null) {
       try {

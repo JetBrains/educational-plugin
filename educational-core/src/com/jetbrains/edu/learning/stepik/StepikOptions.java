@@ -16,42 +16,34 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.ui.components.JBLabel;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.settings.OptionsProvider;
+import com.jetbrains.edu.learning.settings.OauthOptions;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
-public class StepikOptions implements OptionsProvider {
-  private JPanel myPane;
-  private JBLabel myUsernameLabel;
-  private HoverHyperlinkLabel myHoverHyperlinkLabel;
-  private StepicUser myUser;
-  private HyperlinkAdapter myListener;
-
+public class StepikOptions extends OauthOptions<StepicUser> {
   public StepikOptions() {
+    initAccounts();
+  }
+
+  @Nullable
+  @Override
+  public StepicUser getCurrentAccount() {
+    return EduSettings.getInstance().getUser();
+  }
+
+  @Override
+  public void setCurrentAccount(@Nullable StepicUser lastSavedAccount) {
+    EduSettings.getInstance().setUser(lastSavedAccount);
   }
 
   @NotNull
-  private HyperlinkAdapter createLogoutListener() {
-    return new HyperlinkAdapter() {
-      @Override
-      protected void hyperlinkActivated(HyperlinkEvent e) {
-        removeCredentials();
-        updateLoginLabels(null);
-      }
-    };
-  }
-
-  @NotNull
-  private HyperlinkAdapter createAuthorizeListener() {
+  protected HyperlinkAdapter createAuthorizeListener() {
     return new HyperlinkAdapter() {
 
       @Override
@@ -59,11 +51,8 @@ public class StepikOptions implements OptionsProvider {
         EduUsagesCollector.loginFromSettings();
         ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
           StepicUser user = EduSettings.getInstance().getUser();
-          if (user != null && !user.equals(myUser)) {
-            EduSettings.getInstance().setUser(myUser);
-            myUser = user;
-            updateLoginLabels(myUser);
-          }
+          setLastSavedAccount(user);
+          updateLoginLabels();
         });
 
         StepikConnector.doAuthorize(() -> showDialog());
@@ -74,96 +63,29 @@ public class StepikOptions implements OptionsProvider {
   private void showDialog() {
     OAuthDialog dialog = new OAuthDialog();
     if (dialog.showAndGet()) {
-      myUser = dialog.getUser();
-      updateLoginLabels(myUser);
+      StepicUser user = dialog.getUser();
+      setLastSavedAccount(user);
+      updateLoginLabels();
     }
   }
 
+  @Override
   @NotNull
-  public JComponent getPanel() {
-    return myPane;
-  }
-
-  @Override
-  public void reset() {
-    final EduSettings stepikSettings = EduSettings.getInstance();
-    myUser = stepikSettings.getUser();
-    updateLoginLabels(stepikSettings.getUser());
-  }
-
-  private void updateLoginLabels(@Nullable StepicUser user) {
-    if (myListener != null) {
-      myHoverHyperlinkLabel.removeHyperlinkListener(myListener);
-    }
-
-    if (user == null) {
-      myUsernameLabel.setText("You're not logged in");
-      myHoverHyperlinkLabel.setText("Log in to Stepik");
-
-      myListener = createAuthorizeListener();
-    }
-    else {
-      String firstName = user.getFirstName();
-      String lastName = user.getLastName();
-      String loggedInText = "You're logged in";
-      if (firstName == null || lastName == null || firstName.isEmpty() || lastName.isEmpty()) {
-        myUsernameLabel.setText(loggedInText);
+  protected HyperlinkAdapter createLogoutListener() {
+    return new HyperlinkAdapter() {
+      @Override
+      protected void hyperlinkActivated(HyperlinkEvent e) {
+        StepikAuthorizedClient.invalidateClient();
+        setCurrentAccount(null);
+        setLastSavedAccount(null);
+        updateLoginLabels();
       }
-      else {
-        myUsernameLabel.setText(loggedInText + " as " + firstName + " " + lastName);
-      }
-
-      myHoverHyperlinkLabel.setText("Log out");
-      myListener = createLogoutListener();
-    }
-    myHoverHyperlinkLabel.addHyperlinkListener(myListener);
-  }
-
-  public void createUIComponents() {
-    myHoverHyperlinkLabel = new HoverHyperlinkLabel("");
-  }
-
-  @Override
-  public void disposeUIResources() {
-
-  }
-
-  @Override
-  public void apply() {
-    final EduSettings stepikSettings = EduSettings.getInstance();
-
-    final StepicUser user = stepikSettings.getUser();
-    boolean userDeleted = myUser == null && user != null;
-    boolean userModified = myUser != null && !myUser.equals(user);
-    if (userDeleted || userModified) {
-      stepikSettings.setUser(myUser);
-    }
-    reset();
-  }
-
-  private void removeCredentials() {
-    myUser = null;
-    StepikAuthorizedClient.invalidateClient();
-  }
-
-  @Nullable
-  @Override
-  public JComponent createComponent() {
-    return myPane;
-  }
-
-  public boolean isModified() {
-    final EduSettings stepikSettings = EduSettings.getInstance();
-    final StepicUser user = stepikSettings.getUser();
-
-    boolean userDeleted = myUser == null && user != null;
-    boolean userModified = myUser != null && !myUser.equals(user);
-    return userDeleted || userModified;
+    };
   }
 
   @Nls
   @Override
   public String getDisplayName() {
-    return "Stepik options";
+    return "Stepik";
   }
 }

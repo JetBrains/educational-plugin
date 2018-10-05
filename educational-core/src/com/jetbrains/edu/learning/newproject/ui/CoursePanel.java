@@ -15,10 +15,13 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
-import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepicUserInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -153,7 +156,7 @@ public class CoursePanel extends JPanel {
   @Nullable
   private static String htmlInstructorText(@NotNull Course course) {
     StringBuilder builder = new StringBuilder();
-    List<StepicUser> authors = course.getAuthors();
+    List<StepicUserInfo> authors = course.getAuthors();
     if (authors.isEmpty()) return null;
     builder.append("<b>Instructor");
     if (authors.size() > 1) {

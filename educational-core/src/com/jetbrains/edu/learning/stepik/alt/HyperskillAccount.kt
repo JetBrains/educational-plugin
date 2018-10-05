@@ -11,6 +11,10 @@ class HyperskillUserInfo {
   var email: String = ""
   var fullname: String = ""
   var stage: HyperskillStage? = null
+
+  override fun toString(): String {
+    return fullname
+  }
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
