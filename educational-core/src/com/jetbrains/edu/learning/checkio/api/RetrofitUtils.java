@@ -3,7 +3,9 @@ package com.jetbrains.edu.learning.checkio.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.jetbrains.edu.learning.TokenInfo;
 import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOMissionListDeserializer;
+import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOTokensDeserializer;
 import com.jetbrains.edu.learning.checkio.call.CheckiOCallAdapterFactory;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
@@ -18,11 +20,17 @@ public final class RetrofitUtils {
   private RetrofitUtils() {}
 
   public static CheckiOOAuthInterface createRetrofitOAuthInterface() {
-    return createRetrofitInterface(CheckiONames.CHECKIO_OAUTH_HOST, new Gson(), CheckiOOAuthInterface.class);
+    return createRetrofitInterface(CheckiONames.CHECKIO_OAUTH_HOST, createOauthGson(), CheckiOOAuthInterface.class);
   }
 
   public static CheckiOApiInterface createRetrofitApiInterface(@NotNull String apiBaseUrl) {
     return createRetrofitInterface(apiBaseUrl, createApiGson(), CheckiOApiInterface.class);
+  }
+
+  private static Gson createOauthGson() {
+    final GsonBuilder gsonBuilder = new GsonBuilder();
+    gsonBuilder.registerTypeAdapter(TokenInfo.class, new CheckiOTokensDeserializer());
+    return gsonBuilder.create();
   }
 
   private static Gson createApiGson() {

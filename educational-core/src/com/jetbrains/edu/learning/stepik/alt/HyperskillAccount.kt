@@ -1,21 +1,9 @@
 package com.jetbrains.edu.learning.stepik.alt
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.jetbrains.edu.learning.OauthAccount
 
-class HyperskillAccount {
-  var tokenInfo: TokenInfo? = null
-  var userInfo: HyperskillUserInfo? = null
-
-  @Suppress("unused") private constructor() // used for deserialization
-
-  constructor(tokenInfo: TokenInfo) {
-    this.tokenInfo = tokenInfo
-  }
-
-  fun updateTokens(tokenInfo: TokenInfo) {
-    this.tokenInfo = tokenInfo
-  }
-}
+class HyperskillAccount : OauthAccount<HyperskillUserInfo>()
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class HyperskillUserInfo {

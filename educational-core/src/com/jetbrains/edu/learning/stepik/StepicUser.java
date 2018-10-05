@@ -1,98 +1,89 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.xmlb.annotations.Transient;
+import com.jetbrains.edu.learning.OauthAccount;
+import com.jetbrains.edu.learning.TokenInfo;
 import org.jetbrains.annotations.NotNull;
 
-public class StepicUser {
-  private int id = -1;
-  @SerializedName("first_name") private String myFirstName;
-  @SerializedName("last_name") private String myLastName;
-  private String myAccessToken;
-  private String myRefreshToken;
-  private boolean isGuest;
+public class StepicUser extends OauthAccount<StepicUserInfo> {
+  private StepicUser() { }
 
-  private StepicUser() {
-    myFirstName = "";
-    myLastName = "";
-    myAccessToken = "";
-    myRefreshToken = "";
+  public StepicUser(@NotNull TokenInfo tokenInfo) {
+    super(tokenInfo);
   }
 
   public static StepicUser createEmptyUser() {
     return new StepicUser();
   }
 
-  public StepicUser(@NotNull StepikWrappers.TokenInfo tokenInfo) {
-    setTokenInfo(tokenInfo);
-  }
-
+  @Transient
   public int getId() {
-    return id;
+    StepicUserInfo info = getUserInfo();
+    return info.getId();
   }
 
+  @Transient
   public void setId(int id) {
-    this.id = id;
+    StepicUserInfo info = getUserInfo();
+    info.setId(id);
   }
 
+  @Transient
   public String getFirstName() {
-    return myFirstName;
+    StepicUserInfo info = getUserInfo();
+    return info.getFirstName();
   }
 
+  @Transient
   public void setFirstName(final String firstName) {
-    myFirstName = firstName;
+    StepicUserInfo info = getUserInfo();
+    info.setFirstName(firstName);
   }
 
+  @Transient
   public String getLastName() {
-    return myLastName;
+    StepicUserInfo info = getUserInfo();
+    return info.getLastName();
   }
 
+  @Transient
   public void setLastName(final String lastName) {
-    myLastName = lastName;
+    StepicUserInfo info = getUserInfo();
+    info.setLastName(lastName);
   }
 
+  @Transient
   @NotNull
   public String getName() {
-    return StringUtil.join(new String[]{myFirstName, myLastName}, " ");
+    StepicUserInfo info = getUserInfo();
+    return StringUtil.join(new String[]{info.getFirstName(), info.getLastName()}, " ");
   }
 
+  @Transient
   @NotNull
   public String getAccessToken() {
-    // for old project where authors were created with null tokens
-    if (myAccessToken == null) {
-      return "";
-    }
-    return myAccessToken;
+    TokenInfo tokenInfo = getTokenInfo();
+    return tokenInfo.getAccessToken();
   }
 
+  @Transient
   public void setAccessToken(String accessToken) {
-    this.myAccessToken = accessToken;
+    TokenInfo tokenInfo = getTokenInfo();
+    tokenInfo.setAccessToken(accessToken);
   }
 
+  @Transient
   @NotNull
   public String getRefreshToken() {
-    // for old project where authors were created with null tokens
-    if (myRefreshToken == null) {
-      return "";
-    }
-    return myRefreshToken;
+    TokenInfo tokenInfo = getTokenInfo();
+    return tokenInfo.getRefreshToken();
   }
 
-  public void setRefreshToken(String refreshToken) {
-    this.myRefreshToken = refreshToken;
-  }
-
-  public void setTokenInfo(@NotNull final StepikWrappers.TokenInfo tokenInfo) {
-    myAccessToken = tokenInfo.getAccessToken();
-    myRefreshToken = tokenInfo.getRefreshToken();
-  }
-
+  @Transient
   public boolean isGuest() {
-    return isGuest;
-  }
-
-  public void setGuest(boolean guest) {
-    isGuest = guest;
+    StepicUserInfo userInfo = getUserInfo();
+    return userInfo.isGuest();
   }
 
   @Override
@@ -101,20 +92,14 @@ public class StepicUser {
     if (o == null || getClass() != o.getClass()) return false;
 
     StepicUser user = (StepicUser)o;
-
-    if (id != user.id) return false;
-    if (isGuest != user.isGuest) return false;
-    if (!myFirstName.equals(user.myFirstName)) return false;
-    if (!myLastName.equals(user.myLastName)) return false;
-
-    return true;
+    StepicUserInfo info = getUserInfo();
+    StepicUserInfo otherInfo = user.getUserInfo();
+    return info.equals(otherInfo);
   }
 
   @Override
   public int hashCode() {
-    int result = id;
-    result = 31 * result + myFirstName.hashCode();
-    result = 31 * result + myLastName.hashCode();
-    return result;
+    StepicUserInfo info = getUserInfo();
+    return info.hashCode();
   }
 }

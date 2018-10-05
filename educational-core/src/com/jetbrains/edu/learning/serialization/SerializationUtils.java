@@ -114,6 +114,11 @@ public class SerializationUtils {
     public static final String LANGUAGE = "language";
     public static final String PLACEHOLDER_DEPENDENCY = "placeholderDependency";
     public static final String DEPENDENCY_FILE_NAME = "fileName";
+    public static final String SETTINGS_NAME = "EduSettings";
+    public static final String USER = "user";
+    public static final String LAST_TIME_CHECKED = "lastTimeChecked";
+    public static final String USE_JAVA_FX = "shouldUseJavaFx";
+    public static final String STEPIK_USER = "StepicUser";
 
     private Xml() {
     }

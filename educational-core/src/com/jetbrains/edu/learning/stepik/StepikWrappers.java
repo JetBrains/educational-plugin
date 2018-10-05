@@ -517,31 +517,6 @@ public class StepikWrappers {
     }
   }
 
-  public static class TokenInfo {
-    @Expose String accessToken;
-    @Expose String refreshToken;
-    @Expose String tokenType;
-    @Expose String scope;
-    @Expose long expiresIn;
-
-    public TokenInfo() {
-      accessToken = "";
-      refreshToken = "";
-    }
-
-    public String getAccessToken() {
-      return accessToken;
-    }
-
-    public String getRefreshToken() {
-      return refreshToken;
-    }
-
-    public long getExpiresIn() {
-      return expiresIn;
-    }
-  }
-
   static class ProgressContainer {
     static class Progress {
       String id;

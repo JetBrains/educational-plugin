@@ -7,10 +7,11 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.TokenInfo;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.authUtils.OAuthUtils;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
-import com.jetbrains.edu.learning.checkio.account.CheckiOTokens;
+import com.jetbrains.edu.learning.checkio.account.CheckiOTokensKt;
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
 import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthInterface;
 import com.jetbrains.edu.learning.checkio.api.RetrofitUtils;
@@ -59,11 +60,11 @@ public abstract class CheckiOOAuthConnector {
     final CheckiOAccount currentAccount = requireUserLoggedIn();
     ensureTokensUpToDate();
 
-    return currentAccount.getTokens().getAccessToken();
+    return currentAccount.getTokenInfo().getAccessToken();
   }
 
   @NotNull
-  private CheckiOTokens getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
+  private TokenInfo getTokens(@NotNull String code, @NotNull String redirectUri) throws ApiException {
     requireClientPropertiesExist();
 
     return CHECKIO_OAUTH_INTERFACE.getTokens(
@@ -81,7 +82,7 @@ public abstract class CheckiOOAuthConnector {
   }
 
   @NotNull
-  private CheckiOTokens refreshTokens(@NotNull String refreshToken) throws ApiException {
+  private TokenInfo refreshTokens(@NotNull String refreshToken) throws ApiException {
     requireClientPropertiesExist();
 
     return CHECKIO_OAUTH_INTERFACE.refreshTokens(
@@ -95,9 +96,10 @@ public abstract class CheckiOOAuthConnector {
   private void ensureTokensUpToDate() throws CheckiOLoginRequiredException, ApiException {
     final CheckiOAccount currentAccount = requireUserLoggedIn();
 
-    if (!currentAccount.getTokens().isUpToDate()) {
-      final String refreshToken = currentAccount.getTokens().getRefreshToken();
-      final CheckiOTokens newTokens = refreshTokens(refreshToken);
+    TokenInfo tokenInfo = currentAccount.getTokenInfo();
+    if (!CheckiOTokensKt.isUpToDate(tokenInfo)) {
+      final String refreshToken = tokenInfo.getRefreshToken();
+      final TokenInfo newTokens = refreshTokens(refreshToken);
       currentAccount.updateTokens(newTokens);
     }
   }
@@ -216,7 +218,7 @@ public abstract class CheckiOOAuthConnector {
         return "You're logged in already";
       }
 
-      final CheckiOTokens tokens = getTokens(code, handlingPath);
+      final TokenInfo tokens = getTokens(code, handlingPath);
       final CheckiOUserInfo userInfo = getUserInfo(tokens.getAccessToken());
       setAccount(new CheckiOAccount(userInfo, tokens));
       ApplicationManager.getApplication().getMessageBus().syncPublisher(myAuthorizationTopic).userLoggedIn();
