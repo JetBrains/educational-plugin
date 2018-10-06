@@ -14,6 +14,8 @@ import icons.EducationalCoreIcons;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 
+import static com.jetbrains.edu.learning.EduNames.PROJECT_PLAYGROUND;
+
 
 public class CourseNode extends EduNode {
   protected final Course myCourse;
@@ -49,6 +51,9 @@ public class CourseNode extends EduNode {
       final Lesson lesson = myCourse.getLesson(directory.getName());
       if (lesson != null) {
         return createLessonNode(directory, lesson);
+      }
+      if (directory.getName().equals(PROJECT_PLAYGROUND)) {
+        return new ProjectNode(myProject, directory, getSettings());
       }
     }
     return null;
