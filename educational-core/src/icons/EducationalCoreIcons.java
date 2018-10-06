@@ -21,6 +21,7 @@ public class EducationalCoreIcons {
   public static final Icon StepikRefresh = load("/icons/com/jetbrains/edu/learning/StepikRefresh.png"); // 16x16
 
   public static final Icon CheckiO = load("/icons/com/jetbrains/edu/learning/CheckiOLogo.png");
+  public static final Icon Hyperskill = load("/icons/com/jetbrains/edu/learning/hyperskill.png");
 
   public static final Icon Student = load("/icons/com/jetbrains/edu/student.png"); // 180x180
   public static final Icon StudentHover = load("/icons/com/jetbrains/edu/studentHover.png"); // 180x180
