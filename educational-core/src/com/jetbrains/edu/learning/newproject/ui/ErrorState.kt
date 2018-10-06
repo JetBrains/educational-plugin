@@ -15,6 +15,8 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.alt.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
 import java.awt.Color
 
 sealed class ErrorState(
@@ -30,6 +32,7 @@ sealed class ErrorState(
   abstract class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)
   object StepikLoginRequired : LoginRequired(StepikNames.STEPIK)
   object CheckiOLoginRequired : LoginRequired(CheckiONames.CHECKIO)
+  object HyperskillLoginRequired : LoginRequired("Hyperskill")
   object IncompatibleVersion : ErrorState(3, ErrorMessage("", "Update", " plugin to start this course"), ERROR.titleForeground, false)
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
     ErrorState(3, errorMessage(disabledPluginIds), ERROR.titleForeground, false)
@@ -48,6 +51,7 @@ sealed class ErrorState(
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
         course.courseType == CourseraNames.COURSE_TYPE -> None
         isCheckiOLoginRequired(course) -> CheckiOLoginRequired
+        isHyperskillLoginRequired(course) -> HyperskillLoginRequired
         !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
       }
@@ -80,6 +84,12 @@ sealed class ErrorState(
         return checkiOAccount == null
       }
       return false
+    }
+    private fun isHyperskillLoginRequired(selectedCourse: Course): Boolean {
+      return if (selectedCourse is HyperskillCourse) {
+        HyperskillSettings.instance.account == null
+      }
+      else false
     }
   }
 }

@@ -35,6 +35,7 @@ import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction;
+import com.jetbrains.edu.learning.stepik.alt.HyperskillConnector;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -42,8 +43,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 import static com.jetbrains.edu.learning.PluginUtils.enablePlugins;
 
@@ -104,11 +105,16 @@ public class CoursesPanel extends JPanel {
       if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.StepikLoginRequired.INSTANCE) {
         addLoginListener(this::updateCoursesList);
         StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
-      } else if (myErrorState == ErrorState.CheckiOLoginRequired.INSTANCE) {
-        addCheckiOLoginListener((CheckiOCourse) myCoursesList.getSelectedValue());
-      } else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
+      }
+      else if (myErrorState == ErrorState.CheckiOLoginRequired.INSTANCE) {
+        addCheckiOLoginListener((CheckiOCourse) myCoursesList.getSelectedValue());}
+      else if (myErrorState == ErrorState.HyperskillLoginRequired.INSTANCE) {
+        addHyperskillLoginListener();
+      }
+      else if (myErrorState == ErrorState.IncompatibleVersion.INSTANCE) {
         PluginsAdvertiser.installAndEnablePlugins(SetsKt.setOf(EduNames.PLUGIN_ID), () -> {});
-      } else if (myErrorState instanceof ErrorState.RequiredPluginsDisabled) {
+      }
+      else if (myErrorState instanceof ErrorState.RequiredPluginsDisabled) {
         List<String> disabledPluginIds = ((ErrorState.RequiredPluginsDisabled)myErrorState).getDisabledPluginIds();
         enablePlugins(disabledPluginIds);
       }
@@ -125,6 +131,13 @@ public class CoursesPanel extends JPanel {
     final CheckiOOAuthConnector checkiOOAuthConnector = checkiOConnectorProvider.getOAuthConnector();
 
     checkiOOAuthConnector.doAuthorize(
+      () -> myErrorLabel.setVisible(false),
+      () -> notifyListeners(true)
+    );
+  }
+
+  private void addHyperskillLoginListener() {
+    HyperskillConnector.INSTANCE.doAuthorize(
       () -> myErrorLabel.setVisible(false),
       () -> notifyListeners(true)
     );

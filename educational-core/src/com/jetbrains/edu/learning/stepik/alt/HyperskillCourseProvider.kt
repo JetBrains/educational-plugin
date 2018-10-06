@@ -6,6 +6,6 @@ import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
 
 class HyperskillCourseProvider : CoursesProvider {
   override fun loadCourses(): List<Course> {
-    return listOf<Course>(HyperskillCourse("Adaptive JAVA", "Hyperskill-JAVA"))
+    return listOf<Course>(HyperskillCourse("Hyperskill Course", "Hyperskill-JAVA"))
   }
 }

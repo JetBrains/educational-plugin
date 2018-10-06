@@ -11,7 +11,7 @@ import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
 
-class HyperskillOAuthRestService : OAuthRestService("Hyperskill") {
+class HyperskillOAuthRestService : OAuthRestService(HYPERSKILL) {
 
   override fun getServiceName(): String = EDU_HYPERSKILL_SERVICE_NAME
 
