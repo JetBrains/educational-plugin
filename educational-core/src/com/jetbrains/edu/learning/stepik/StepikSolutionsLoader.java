@@ -45,7 +45,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector.EDU_TOOLS_COMMENT;
+import static com.jetbrains.edu.learning.stepik.StepikCheckerConnector.EDU_TOOLS_COMMENT;
 import static com.jetbrains.edu.learning.stepik.StepikConnector.*;
 
 public class StepikSolutionsLoader implements Disposable {

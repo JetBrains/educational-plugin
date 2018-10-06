@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikAdaptiveConnector
+import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
 import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
 
 class StepikRemoteTaskChecker : RemoteTaskChecker {
@@ -23,8 +23,8 @@ class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {
     val user = EduSettings.getInstance().user ?: return CheckResult.LOGIN_NEEDED
     return when (task) {
-      is ChoiceTask -> StepikAdaptiveConnector.checkChoiceTask(task, user)
-      is CodeTask -> StepikAdaptiveConnector.checkCodeTask(project, task, user)
+      is ChoiceTask -> StepikCheckerConnector.checkChoiceTask(task, user)
+      is CodeTask -> StepikCheckerConnector.checkCodeTask(project, task, user)
       else -> error("Can't check ${task.taskType} on Stepik")
     }
   }

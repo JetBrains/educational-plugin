@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning;
 
+import com.google.common.collect.Lists;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
@@ -25,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
 import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse;
-import org.fest.util.Lists;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;

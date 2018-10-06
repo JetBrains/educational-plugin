@@ -300,7 +300,7 @@ public class StepikConnector {
                                   @NotNull List<Integer> featuredCourses) throws IOException {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse info : courses) {
-      if (info.isAdaptive() || StringUtil.isEmptyOrSpaces(info.getType())) continue;
+      if (StringUtil.isEmptyOrSpaces(info.getType())) continue;
 
       CourseCompatibility compatibility = info.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;

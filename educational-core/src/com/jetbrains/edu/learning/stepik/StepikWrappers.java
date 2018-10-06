@@ -278,24 +278,7 @@ public class StepikWrappers {
     }
   }
 
-  static class AttemptWrapper {
-    static class Attempt {
-      public Attempt(int step) {
-        this.step = step;
-      }
-
-      int step;
-      int id;
-    }
-
-    public AttemptWrapper(int step) {
-      attempt = new Attempt(step);
-    }
-
-    Attempt attempt;
-  }
-
-  public static class AdaptiveAttemptWrapper {
+  public static class AttemptWrapper {
     public static class Attempt {
       int step;
       public Dataset dataset;
@@ -317,15 +300,11 @@ public class StepikWrappers {
       public List<String> options;
     }
 
-    public AdaptiveAttemptWrapper(int step) {
+    public AttemptWrapper(int step) {
       attempt = new Attempt(step);
     }
 
     Attempt attempt;
-  }
-
-  static class AdaptiveAttemptContainer {
-    List<AdaptiveAttemptWrapper.Attempt> attempts;
   }
 
   static class AttemptContainer {
@@ -388,36 +367,6 @@ public class StepikWrappers {
       this.attempt = attemptId;
     }
   }
-
-  static class RecommendationReaction {
-    int reaction;
-    String user;
-    String lesson;
-
-    public RecommendationReaction(int reaction, String user, String lesson) {
-      this.reaction = reaction;
-      this.user = user;
-      this.lesson = lesson;
-    }
-  }
-
-  static class RecommendationReactionWrapper {
-    RecommendationReaction recommendationReaction;
-
-    public RecommendationReactionWrapper(RecommendationReaction recommendationReaction) {
-      this.recommendationReaction = recommendationReaction;
-    }
-  }
-
-  static class RecommendationWrapper {
-    Recommendation[] recommendations;
-  }
-
-  static class Recommendation {
-    String id;
-    String lesson;
-  }
-
 
   static class SubmissionToPostWrapper {
     Submission submission;

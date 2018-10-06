@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.handlers.EduMoveDelegate;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,8 +66,8 @@ public class JMoveRenameHandler extends EduMoveDelegate implements RenameHandler
   }
 
   private static PsiElement getElementToMove(@NotNull PsiElement element, @NotNull Course course) {
-    // prevent class renaming in adaptive courses
-    if (course.isAdaptive() && element instanceof PsiClass) {
+    // prevent class renaming in hyperskill? courses
+    if (course instanceof HyperskillCourse && element instanceof PsiClass) {
       String fileName = element.getContainingFile().getName();
       int dotIndex = fileName.lastIndexOf('.');
       String fileNameWithoutExtension = dotIndex >= 0 ? fileName.substring(0, dotIndex) : fileName;

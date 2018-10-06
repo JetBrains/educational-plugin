@@ -244,12 +244,6 @@ public class Course extends ItemContainer {
     return copy;
   }
 
-  // to be removed
-  @Deprecated
-  public boolean isAdaptive() {
-    return false;
-  }
-
   public boolean isStudy() {
     return EduNames.STUDY.equals(courseMode);
   }
