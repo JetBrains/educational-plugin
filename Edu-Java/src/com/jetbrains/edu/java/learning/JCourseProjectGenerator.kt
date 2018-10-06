@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java
+package com.jetbrains.edu.java.learning
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.application.ApplicationManager

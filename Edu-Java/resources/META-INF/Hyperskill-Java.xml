@@ -1,0 +1,13 @@
+<idea-plugin>
+
+  <extensions defaultExtensionNs="Educational">
+    <coursesProvider implementation="com.jetbrains.edu.java.learning.stepik.alt.JHyperskillCourseProvider"/>
+    <configurator implementationClass="com.jetbrains.edu.java.learning.stepik.alt.JHyperskillConfigurator" language="Hyperskill-JAVA"/>
+  </extensions>
+
+  <application-components>
+    <component>
+      <implementation-class>com.jetbrains.edu.java.learning.stepik.alt.JHyperskillApplicationComponent</implementation-class>
+    </component>
+  </application-components>
+</idea-plugin>

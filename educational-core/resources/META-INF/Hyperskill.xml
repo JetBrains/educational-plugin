@@ -6,13 +6,5 @@
   </extensions>
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.alt.HyperskillOptions"/>
-    <coursesProvider implementation="com.jetbrains.edu.learning.stepik.alt.HyperskillCourseProvider"/>
-    <configurator implementationClass="com.jetbrains.edu.learning.stepik.alt.HyperskillConfigurator" language="Hyperskill-JAVA"/>
   </extensions>
-
-  <application-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.learning.stepik.alt.HyperskillApplicationComponent</implementation-class>
-    </component>
-  </application-components>
 </idea-plugin>

@@ -22,7 +22,6 @@ class HyperskillCourse : Course {
 
   companion object {
     private const val COURSE_DESCRIPTION = "This is a Hyperskill course.<br/><br/>" +
-                                           "Learn everything in Java<br/><br/>" +
-                                           "Learn more <a href=\"https://hyperskill.org\">https://hyperskill.org</a>"
+                                           "Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org</a>"
   }
 }

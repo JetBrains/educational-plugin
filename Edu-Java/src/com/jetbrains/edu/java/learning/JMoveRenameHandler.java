@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java;
+package com.jetbrains.edu.java.learning;
 
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;

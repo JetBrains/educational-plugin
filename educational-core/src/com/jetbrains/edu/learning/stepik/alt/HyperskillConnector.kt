@@ -79,7 +79,7 @@ object HyperskillConnector {
     return service.getUserInfo(0).execute().body()?.users?.first() ?: return null
   }
 
-  fun getSections(): List<Section> {
+  fun getSections(languageId: String): List<Section> {
     return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Section>, Exception>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
@@ -96,7 +96,7 @@ object HyperskillConnector {
                       section.id = topic.id
                       if (topic.hasLessons) {
                         val lessonsIds = service.lessons(topic.id).execute().body()?.lessons?.map { it.stepikId } ?: return@Callable section
-                        val lessons = getLessons(lessonsIds.map { it -> it.toString() })
+                        val lessons = getLessons(lessonsIds.map { it -> it.toString() }, languageId)
                         section.addLessons(lessons)
                         return@Callable section
                       }

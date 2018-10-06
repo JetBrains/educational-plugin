@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.alt;
+package com.jetbrains.edu.java.learning.stepik.alt;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -9,8 +9,8 @@ import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class HyperskillConfigurator extends GradleConfiguratorBase {
-  private final HyperskillCourseBuilder myCourseBuilder = new HyperskillCourseBuilder();
+public class JHyperskillConfigurator extends GradleConfiguratorBase {
+  private final JHyperskillCourseBuilder myCourseBuilder = new JHyperskillCourseBuilder();
 
   @NotNull
   @Override

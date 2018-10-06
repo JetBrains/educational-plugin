@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java
+package com.jetbrains.edu.java.learning
 
 import com.intellij.execution.JavaExecutionUtil
 import com.intellij.openapi.project.Project
