@@ -1,19 +1,20 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <depends>com.intellij.modules.lang</depends>
   <depends>org.jetbrains.plugins.gradle</depends>
   <depends>JUnit</depends>
+  <xi:include href="/META-INF/Hyperskill-Java.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="Educational">
-    <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
+    <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.learning.JConfigurator"/>
   </extensions>
 
   <extensions defaultExtensionNs="educational">
-    <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.JLanguageDecorator"/>
+    <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.learning.JLanguageDecorator"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <renameHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
-    <refactoring.moveHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.java.learning.JMoveRenameHandler" order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.java.learning.JMoveRenameHandler" order="first"/>
   </extensions>
 </idea-plugin>
 

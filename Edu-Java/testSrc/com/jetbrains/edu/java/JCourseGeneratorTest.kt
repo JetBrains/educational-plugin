@@ -1,6 +1,7 @@
 package com.jetbrains.edu.java
 
 import com.intellij.lang.java.JavaLanguage
+import com.jetbrains.edu.java.learning.JCourseBuilder
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 

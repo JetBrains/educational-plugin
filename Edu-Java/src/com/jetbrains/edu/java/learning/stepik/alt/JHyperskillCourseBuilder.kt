@@ -1,10 +1,10 @@
-package com.jetbrains.edu.learning.stepik.alt
+package com.jetbrains.edu.java.learning.stepik.alt
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 
-class HyperskillCourseBuilder : GradleCourseBuilderBase() {
+class JHyperskillCourseBuilder : GradleCourseBuilderBase() {
 
   override val buildGradleTemplateName: String = "java-build.gradle"
 
@@ -12,6 +12,6 @@ class HyperskillCourseBuilder : GradleCourseBuilderBase() {
 
   override fun getTestTemplateName(): String? = null
   override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator {
-    return HyperskillCourseProjectGenerator(this, course)
+    return JHyperskillCourseProjectGenerator(this, course)
   }
 }
