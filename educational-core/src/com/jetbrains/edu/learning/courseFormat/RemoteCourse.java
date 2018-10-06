@@ -31,7 +31,6 @@ public class RemoteCourse extends Course {
   List<Integer> instructors = new ArrayList<>();
   @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
-  @Expose private boolean isAdaptive = false;
   @Expose @SerializedName("is_public") boolean isPublic;
   @Expose private boolean myLoadSolutions = true; // disabled for reset courses
 
@@ -82,17 +81,6 @@ public class RemoteCourse extends Course {
 
   public Date getUpdateDate() {
     return myUpdateDate;
-  }
-
-  // to be removed
-  @Override
-  @Deprecated
-  public boolean isAdaptive() {
-    return isAdaptive;
-  }
-
-  public void setAdaptive(boolean adaptive) {
-    isAdaptive = adaptive;
   }
 
   public int getId() {

@@ -3,6 +3,7 @@ package com.jetbrains.edu.integration.stepik
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.TokenInfo
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.stepik.*
 import org.apache.http.Consts
@@ -98,7 +99,7 @@ abstract class StepikTestCase : EduTestCase() {
     println("Course with id ${(uploadedCourse as RemoteCourse).id} was uploaded successfully")
   }
 
-  private fun getTokens(): StepikWrappers.TokenInfo? {
+  private fun getTokens(): TokenInfo? {
     val parameters = ArrayList<NameValuePair>(listOf(BasicNameValuePair ("grant_type", "client_credentials")))
     val clientSecret = System.getenv("STEPIK_TEST_CLIENT_SECRET")
     if (clientSecret == null || clientSecret.isEmpty()) {

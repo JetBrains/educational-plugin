@@ -34,19 +34,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class StepikAdaptiveConnector {
+public class StepikCheckerConnector {
   public static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
-  private static final Logger LOG = Logger.getInstance(StepikAdaptiveConnector.class);
+  private static final Logger LOG = Logger.getInstance(StepikCheckerConnector.class);
   private static final int CONNECTION_TIMEOUT = 60 * 1000;
   // Stepik uses some code complexity measure, but we agreed that it's not obvious measure and should be improved
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
   @Nullable
-  public static StepikWrappers.AdaptiveAttemptWrapper.Attempt getAttemptForStep(int stepId, int userId) {
+  public static StepikWrappers.AttemptWrapper.Attempt getAttemptForStep(int stepId, int userId) {
     try {
-      final List<StepikWrappers.AdaptiveAttemptWrapper.Attempt> attempts = getAttempts(stepId, userId);
+      final List<StepikWrappers.AttemptWrapper.Attempt> attempts = getAttempts(stepId, userId);
       if (attempts != null && attempts.size() > 0) {
-        final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = attempts.get(0);
+        final StepikWrappers.AttemptWrapper.Attempt attempt = attempts.get(0);
         return attempt.isActive() ? attempt : createNewAttempt(stepId);
       }
       else {
@@ -59,21 +59,21 @@ public class StepikAdaptiveConnector {
     return null;
   }
 
-  private static StepikWrappers.AdaptiveAttemptWrapper.Attempt createNewAttempt(int id) throws IOException {
+  private static StepikWrappers.AttemptWrapper.Attempt createNewAttempt(int id) throws IOException {
     final String response = StepikConnector.postAttempt(id);
-    final StepikWrappers.AdaptiveAttemptContainer attempt = new Gson().fromJson(response, StepikWrappers.AdaptiveAttemptContainer.class);
+    final StepikWrappers.AttemptContainer attempt = new Gson().fromJson(response, StepikWrappers.AttemptContainer.class);
     return attempt.attempts.get(0);
   }
 
   @Nullable
-  private static List<StepikWrappers.AdaptiveAttemptWrapper.Attempt> getAttempts(int stepId, int userId)
+  private static List<StepikWrappers.AttemptWrapper.Attempt> getAttempts(int stepId, int userId)
     throws URISyntaxException, IOException {
     final URI attemptUrl = new URIBuilder(StepikNames.ATTEMPTS)
       .addParameter("step", String.valueOf(stepId))
       .addParameter("user", String.valueOf(userId))
       .build();
-    final StepikWrappers.AdaptiveAttemptContainer attempt =
-      StepikAuthorizedClient.getFromStepik(attemptUrl.toString(), StepikWrappers.AdaptiveAttemptContainer.class);
+    final StepikWrappers.AttemptContainer attempt =
+      StepikAuthorizedClient.getFromStepik(attemptUrl.toString(), StepikWrappers.AttemptContainer.class);
     return attempt == null ? null : attempt.attempts;
   }
 
@@ -97,7 +97,7 @@ public class StepikAdaptiveConnector {
 
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepicUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
-    final StepikWrappers.AdaptiveAttemptWrapper.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
+    final StepikWrappers.AttemptWrapper.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
 
     if (attempt != null) {
       final int attemptId = attempt.id;
@@ -107,7 +107,7 @@ public class StepikAdaptiveConnector {
       if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
       final StepikWrappers.SubmissionToPostWrapper wrapper = new StepikWrappers.SubmissionToPostWrapper(String.valueOf(attemptId),
                                                                                                         createChoiceTaskAnswerArray(task));
-      final CheckResult result = doAdaptiveCheck(wrapper, attemptId, user.getId());
+      final CheckResult result = doCheck(wrapper, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
         try {
           createNewAttempt(task.getStepId());
@@ -160,7 +160,7 @@ public class StepikAdaptiveConnector {
         assert defaultLanguage != null : ("Default Stepik language not found for: " + courseLanguage.getDisplayName());
         final StepikWrappers.SubmissionToPostWrapper submissionToPost =
           new StepikWrappers.SubmissionToPostWrapper(String.valueOf(attemptId), defaultLanguage, answer);
-        return doAdaptiveCheck(submissionToPost, attemptId, user.getId());
+        return doCheck(submissionToPost, attemptId, user.getId());
       }
     }
     else {
@@ -169,8 +169,8 @@ public class StepikAdaptiveConnector {
     return CheckResult.FAILED_TO_CHECK;
   }
 
-  private static CheckResult doAdaptiveCheck(@NotNull StepikWrappers.SubmissionToPostWrapper submission,
-                                             int attemptId, int userId) {
+  private static CheckResult doCheck(@NotNull StepikWrappers.SubmissionToPostWrapper submission,
+                                     int attemptId, int userId) {
     final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
     if (client != null) {
       StepikWrappers.ResultSubmissionWrapper wrapper = postResultsForCheck(client, submission);
@@ -191,7 +191,7 @@ public class StepikAdaptiveConnector {
         }
       }
       else {
-        LOG.warn("Can't do adaptive check: " + "wrapper is null");
+        LOG.warn("Can't perform check: wrapper is null");
         return new CheckResult(CheckStatus.Unchecked, "Can't get check results for Stepik");
       }
     }
@@ -252,7 +252,7 @@ public class StepikAdaptiveConnector {
   }
 
   private static int getAttemptId(@NotNull Task task) throws IOException {
-    final StepikWrappers.AdaptiveAttemptWrapper attemptWrapper = new StepikWrappers.AdaptiveAttemptWrapper(task.getStepId());
+    final StepikWrappers.AttemptWrapper attemptWrapper = new StepikWrappers.AttemptWrapper(task.getStepId());
 
     final HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ATTEMPTS);
     post.setEntity(new StringEntity(new Gson().toJson(attemptWrapper)));

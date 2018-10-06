@@ -83,6 +83,7 @@ object HyperskillConnector {
     return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Section>, Exception>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+        ProgressManager.getInstance().progressIndicator.text2 = "Loading course structure"
         val userInfo = HyperskillSettings.instance.account?.userInfo ?: return@runProcessWithProgressSynchronously emptyList()
         val topics = service.topics(stage = userInfo.stage?.id.toString()).execute().body()?.topics?.filter { it.children.isEmpty()} ?:
                      return@runProcessWithProgressSynchronously emptyList()
