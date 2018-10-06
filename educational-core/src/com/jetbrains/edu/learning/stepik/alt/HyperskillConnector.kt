@@ -7,7 +7,6 @@ import com.intellij.util.ConcurrencyUtil
 import com.jetbrains.edu.learning.courseFormat.Section
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
-import org.jetbrains.ide.BuiltInServerManager
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.io.IOException
@@ -20,13 +19,6 @@ object HyperskillConnector {
   private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
   private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
 
-  private const val HYPERSKILL_URL = "https://hyperskill.org/"
-  private val port = BuiltInServerManager.getInstance().port
-  private val redirectUri = "http://localhost:$port/api/edu/hyperskill/oauth"
-
-  private var clientId = "jcboczaSZYHmmCewusCNrE172yHkOONV7JY1ECh4"
-  private val authorizationCodeUrl = "https://hyperskill.org/oauth2/authorize/?" +
-                                     "client_id=$clientId&redirect_uri=$redirectUri&grant_type=code&scope=read+write&response_type=code"
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
   private val authorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
                                                                                                HyperskillLoggedIn::class.java)
@@ -62,7 +54,7 @@ object HyperskillConnector {
   fun doAuthorize(vararg postLoginActions: Runnable) {
     try {
       createAuthorizationListener(*postLoginActions)
-      BrowserUtil.browse(authorizationCodeUrl)
+      BrowserUtil.browse(AUTHORISATION_CODE_URL)
     }
     catch (e: URISyntaxException) {
       // IOException is thrown when there're no available ports, in some cases restarting can fix this
@@ -74,7 +66,7 @@ object HyperskillConnector {
   }
 
   fun login(code: String): Boolean {
-    val tokenInfo = service.getTokens(clientId, redirectUri, code, "authorization_code").execute().body() ?: return false
+    val tokenInfo = service.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").execute().body() ?: return false
     HyperskillSettings.instance.account = HyperskillAccount()
     HyperskillSettings.instance.account!!.tokenInfo = tokenInfo
     val currentUser = getCurrentUser() ?: return false

@@ -18,7 +18,7 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
 
   @Nls
   override fun getDisplayName(): String {
-    return "Hyperskill"
+    return HYPERSKILL
   }
 
   override fun createAuthorizeListener(): HyperlinkAdapter {
