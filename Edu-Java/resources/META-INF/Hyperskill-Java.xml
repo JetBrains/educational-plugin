@@ -4,6 +4,9 @@
     <coursesProvider implementation="com.jetbrains.edu.java.learning.stepik.alt.JHyperskillCourseProvider"/>
     <configurator implementationClass="com.jetbrains.edu.java.learning.stepik.alt.JHyperskillConfigurator" language="Hyperskill-JAVA"/>
   </extensions>
+  <extensions defaultExtensionNs="educational">
+    <languageDecorator implementationClass="com.jetbrains.edu.java.learning.stepik.alt.JHyperskillLanguageDecorator" language="Hyperskill-JAVA" />
+  </extensions>
 
   <application-components>
     <component>
