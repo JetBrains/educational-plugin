@@ -1,6 +1,8 @@
 [![official JetBrains project](http://jb.gg/badges/official-flat-square.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![JetBrains community Discord](https://goo.gl/xe5fjk)](https://discord.gg/RTjKrQN)
 
 [![Build Status](https://travis-ci.org/JetBrains/educational-plugin.svg?branch=master)](https://travis-ci.org/JetBrains/educational-plugin)
+
 ## Educational Plugin
 
 This plugin allows to learn and teach programming languages and technologies 
@@ -20,6 +22,7 @@ Please submit your issues to [Educational Plugin YouTrack](https://youtrack.jetb
 * This plugins comes with integration with [Stepik](http://welcome.stepik.org/) learning platform
 * You can learn more about our Kotlin support from [this](https://blog.jetbrains.com/kotlin/2016/03/kotlin-educational-plugin/) blog post
 * You can read more about plugin development in [IntelliJ Sdk Docs](http://www.jetbrains.org/intellij/sdk/docs/index.html)
+* Feel free to chat with the community and meet other developers on the [Community Discord](https://discord.gg/RTjKrQN)
 
 ### Configuring development environment
 
