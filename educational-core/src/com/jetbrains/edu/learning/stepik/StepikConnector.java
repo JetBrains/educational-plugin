@@ -2,6 +2,8 @@ package com.jetbrains.edu.learning.stepik;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.BrowserUtil;
@@ -874,8 +876,8 @@ public class StepikConnector {
     try {
       final String response = postAttempt(task.getStepId());
       if (response.isEmpty()) return;
-      final AttemptWrapper.Attempt attempt =
-        new Gson().fromJson(response, AttemptContainer.class).attempts.get(0);
+      final Gson gson = new GsonBuilder().addDeserializationExclusionStrategy(getDatasetExclusionStrategy()).create();
+      final AttemptWrapper.Attempt attempt = gson.fromJson(response, AttemptContainer.class).attempts.get(0);
       final ArrayList<SolutionFile> files = new ArrayList<>();
       final VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir == null) {
@@ -909,6 +911,21 @@ public class StepikConnector {
     catch (IOException e) {
       LOG.error(e.getMessage());
     }
+  }
+
+  @NotNull
+  private static ExclusionStrategy getDatasetExclusionStrategy() {
+    return new ExclusionStrategy() {
+      @Override
+      public boolean shouldSkipField(FieldAttributes f) {
+        return false;
+      }
+
+      @Override
+      public boolean shouldSkipClass(Class<?> clazz) {
+        return clazz == AttemptWrapper.Dataset.class;
+      }
+    };
   }
 
   static String postAttempt(int id) throws IOException {
