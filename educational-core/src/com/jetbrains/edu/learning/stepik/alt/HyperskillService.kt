@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik.alt
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.TokenInfo
 import retrofit2.Call
 import retrofit2.http.GET
@@ -23,11 +22,8 @@ interface HyperskillService {
   @GET("api/users/{id}")
   fun getUserInfo(@Path("id") userId: Int): Call<UsersData>
 
-  @GET("api/topics/{id}")
-  fun topics(@Path("id") id: String = "", @Query("stage") stage: String = ""): Call<TopicsData>
-
-  @GET("api/lessons")
-  fun lessons(@Query("topic") topic: Int): Call<LessonsData>
+  @GET("api/stages")
+  fun stages(@Query("project") projectId: Int): Call<StagesData>
 
 }
 
@@ -38,28 +34,7 @@ class UsersData {
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class TopicsData {
+class StagesData {
   lateinit var meta: Any
-  lateinit var topics: List<Topic>
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class Topic {
-  var id: Int = -1
-  var title: String = ""
-  lateinit var children: List<Int>
-
-  @JsonProperty("has_lessons") var hasLessons: Boolean = false
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class LessonsData {
-  lateinit var meta: Any
-  lateinit var lessons: List<HyperskillLesson>
-}
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-class HyperskillLesson {
-  @JsonProperty("stepik_id") var stepikId: Int = -1
-  var type = ""   // practice, theory, test; we do not need tests
+  lateinit var stages: List<HyperskillStage>
 }
