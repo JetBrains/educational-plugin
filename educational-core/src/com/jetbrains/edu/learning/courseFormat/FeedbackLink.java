@@ -16,6 +16,11 @@ public class FeedbackLink {
   @Nullable
   private String myLink;
 
+  public FeedbackLink(@Nullable String link) {
+    myType = LinkType.CUSTOM;
+    myLink = link;
+  }
+
   public FeedbackLink() {
     myType = LinkType.STEPIK;
   }
