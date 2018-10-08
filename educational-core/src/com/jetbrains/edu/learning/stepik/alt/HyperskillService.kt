@@ -61,4 +61,5 @@ class LessonsData {
 @JsonIgnoreProperties(ignoreUnknown = true)
 class HyperskillLesson {
   @JsonProperty("stepik_id") var stepikId: Int = -1
+  var type = ""   // practice, theory, test; we do not need tests
 }

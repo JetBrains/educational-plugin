@@ -42,8 +42,7 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
     const val ACTION_ID = "Educational.LeaveFeedback"
 
     private fun getStepikLink(task: Task): String {
-      val index = task.index
-      return "${StepikNames.STEPIK_URL}/lesson/${task.lesson.id}/step/$index"
+      return "${StepikNames.STEPIK_URL}/lesson/${task.lesson.id}/step/${task.index}"
     }
 
     @JvmStatic

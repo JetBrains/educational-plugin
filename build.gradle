@@ -168,8 +168,7 @@ allprojects {
 
         compile 'com.squareup.retrofit2:retrofit:2.4.0'
         compile 'com.squareup.retrofit2:converter-jackson:2.3.0'
-
-        implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+        compile 'com.squareup.retrofit2:converter-gson:2.4.0'
 
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
     }
