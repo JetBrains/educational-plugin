@@ -13,7 +13,8 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.alt.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.alt.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.alt.getLesson
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
@@ -39,8 +40,10 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
   override fun beforeProjectGenerated(): Boolean {
     return try {
       val language = myCourse.languageById
-      val sections = HyperskillConnector.getSections(language.displayName)
-      sections.forEach { section -> myCourse.addSection(section) }
+      val lessonId = HyperskillSettings.instance.account?.userInfo?.project?.lesson ?: return false
+
+      val lesson = getLesson(lessonId, language) ?: return false
+      myCourse.addLesson(lesson)
       true
     }
     catch (e: Exception) {

@@ -11,6 +11,7 @@ class HyperskillUserInfo {
   var email: String = ""
   var fullname: String = ""
   var stage: HyperskillStage? = null
+  var project: HyperskillProject? = null
 
   override fun toString(): String {
     return fullname
@@ -21,4 +22,5 @@ class HyperskillUserInfo {
 data class HyperskillStage(var id: Int = -1, var title: String = "")
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class HyperskillProject(var id: Int = -1, var title: String = "", var description: String = "")
+data class HyperskillProject(var id: Int = -1, var title: String = "", var description: String = "",
+                             var lesson: Int = -1)
