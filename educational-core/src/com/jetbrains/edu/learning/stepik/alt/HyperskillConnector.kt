@@ -2,21 +2,13 @@ package com.jetbrains.edu.learning.stepik.alt
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.util.ConcurrencyUtil
-import com.jetbrains.edu.learning.courseFormat.Section
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object HyperskillConnector {
-  private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
-  private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
-
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
   private val authorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
                                                                                                HyperskillLoggedIn::class.java)
@@ -68,41 +60,8 @@ object HyperskillConnector {
     return service.getUserInfo(0).execute().body()?.users?.first() ?: return null
   }
 
-  fun getSections(languageId: String): List<Section> {
-    return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Section>, Exception>(
-      {
-        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-        ProgressManager.getInstance().progressIndicator.text2 = "Loading course structure"
-        val userInfo = HyperskillSettings.instance.account?.userInfo ?: return@runProcessWithProgressSynchronously emptyList()
-        val topics = service.topics(stage = userInfo.stage?.id.toString()).execute().body()?.topics?.filter { it.children.isEmpty()} ?:
-                     return@runProcessWithProgressSynchronously emptyList()
-
-        val sections = mutableListOf<Section>()
-        val tasks = mutableListOf<Callable<Section>>()
-        for (topic in topics) {
-          tasks.add(Callable {
-                      val section = Section()
-                      section.name = topic.title
-                      section.id = topic.id
-                      if (topic.hasLessons) {
-                        val lessonsIds = service.lessons(topic.id).execute().body()?.
-                          lessons?.asSequence()?.filter { it.type != "test" }?.map { it.stepikId }?.toList() ?: return@Callable section
-                        val lessons = getLessons(lessonsIds.map { it -> it.toString() }, languageId)
-                        section.addLessons(lessons)
-                        return@Callable section
-                      }
-                      return@Callable section
-                     })
-        }
-        for (future in ConcurrencyUtil.invokeAll<Section>(tasks, EXECUTOR_SERVICE)) {
-          if (!future.isCancelled) {
-            val section = future.get()
-            sections.add(section)
-          }
-        }
-        sections.sortBy { it.id }
-        return@runProcessWithProgressSynchronously sections
-      }, "Loading course", false, null)
+  fun getStages(projectId: Int): List<HyperskillStage>? {
+    return service.stages(projectId).execute().body()?.stages
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
