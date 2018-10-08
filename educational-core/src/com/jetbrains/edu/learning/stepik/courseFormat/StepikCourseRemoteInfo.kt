@@ -1,13 +1,10 @@
 package com.jetbrains.edu.learning.stepik.courseFormat
 
-import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Tag
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo
-import com.jetbrains.edu.learning.stepik.StepikAdaptiveReactionsPanel
 import java.util.*
-import javax.swing.JPanel
 
 class StepikCourseRemoteInfo : CourseRemoteInfo {
   // publish to stepik
@@ -37,6 +34,4 @@ class StepikCourseRemoteInfo : CourseRemoteInfo {
       listOf(Tag(EduNames.ADAPTIVE))
     }
     else listOf()
-
-  override fun getAdditionalDescriptionPanel(project: Project): JPanel? = if (isAdaptive) StepikAdaptiveReactionsPanel(project) else null
 }
