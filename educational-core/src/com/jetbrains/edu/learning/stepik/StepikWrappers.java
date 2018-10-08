@@ -122,10 +122,6 @@ public class StepikWrappers {
   }
 
   private static void setAdditionalFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
-    // we already loaded additional files in CCUtils.createAdditionalLesson
-    if (task.getLesson().isAdditional()) {
-      return;
-    }
     final VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) {
       LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
