@@ -7,6 +7,7 @@ import com.intellij.util.KeyedLazyInstance;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import org.jetbrains.annotations.NotNull;
@@ -112,6 +113,8 @@ public class StepikCourse extends Course {
   }
 
   public StepikCourseRemoteInfo getStepikRemoteInfo() {
-    return (StepikCourseRemoteInfo)super.getRemoteInfo();
+    final RemoteInfo info = super.getRemoteInfo();
+    assert info instanceof StepikCourseRemoteInfo;
+    return (StepikCourseRemoteInfo)info;
   }
 }

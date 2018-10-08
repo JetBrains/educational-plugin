@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.courseFormat
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo
 import java.util.*
 
-
 class StepikSectionRemoteInfo : RemoteInfo {
   var id: Int = 0
   var units: MutableList<Int> = mutableListOf()
