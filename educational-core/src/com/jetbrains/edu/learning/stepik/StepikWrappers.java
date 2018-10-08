@@ -11,11 +11,11 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
@@ -164,7 +164,7 @@ public class StepikWrappers {
 
       final StepikCourseRemoteInfo stepikRemoteInfo = new StepikCourseRemoteInfo();
       this.course.setRemoteInfo(stepikRemoteInfo);
-      final CourseRemoteInfo remoteInfo = course.getRemoteInfo();
+      final RemoteInfo remoteInfo = course.getRemoteInfo();
       if (remoteInfo instanceof StepikCourseRemoteInfo) {
         stepikRemoteInfo.setPublic(((StepikCourseRemoteInfo)remoteInfo).isPublic());
         stepikRemoteInfo.setInstructors((((StepikCourseRemoteInfo)remoteInfo).getInstructors()));

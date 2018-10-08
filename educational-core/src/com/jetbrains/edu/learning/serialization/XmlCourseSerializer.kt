@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.courseFormat.remote.LocalCourseInfo
 import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo
 import com.jetbrains.edu.learning.courseFormat.tasks.*
@@ -33,7 +32,7 @@ private var remoteInfoTypes: List<Class<out RemoteInfo>> = Lists.newArrayList(St
                                                                               StepikLessonRemoteInfo::class.java,
                                                                               StepikSectionRemoteInfo::class.java,
                                                                               StepikTaskRemoteInfo::class.java,
-                                                                              LocalCourseInfo::class.java, LocalInfo::class.java)
+                                                                              LocalInfo::class.java)
 
 fun deserializeCourse(xmlCourse: Element): Course? {
   for (courseClass in courseElementTypes) {

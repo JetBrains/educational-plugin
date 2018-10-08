@@ -12,11 +12,10 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -34,11 +33,9 @@ public class StepikResetCourseAction extends DumbAwareAction {
 
     StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     Course course = studyTaskManager.getCourse();
-    assert course != null;
-    final CourseRemoteInfo remoteInfo = course.getRemoteInfo();
-    if (remoteInfo instanceof StepikCourseRemoteInfo) {
-      ((StepikCourseRemoteInfo)remoteInfo).setLoadSolutions(false);
-    }
+    assert course instanceof StepikCourse;
+    final StepikCourseRemoteInfo remoteInfo = ((StepikCourse)course).getStepikRemoteInfo();
+    remoteInfo.setLoadSolutions(false);
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       course.visitLessons((lesson) -> {

@@ -17,7 +17,6 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -177,9 +176,8 @@ public class CCPushLesson extends DumbAwareAction {
       else {
         int position = lessonPosition(course, lesson);
         int sectionId;
-        final CourseRemoteInfo remoteInfo = course.getRemoteInfo();
-        assert remoteInfo instanceof StepikCourseRemoteInfo;
-        final List<Integer> sections = ((StepikCourseRemoteInfo)remoteInfo).getSectionIds();
+        final StepikCourseRemoteInfo remoteInfo = course.getStepikRemoteInfo();
+        final List<Integer> sections = remoteInfo.getSectionIds();
         sectionId = sections.get(sections.size() - 1);
         CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), sectionId);
         if (lesson.getIndex() < course.getLessons().size()) {

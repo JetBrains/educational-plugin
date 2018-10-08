@@ -22,7 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
@@ -148,7 +148,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void updateCourseContent(@NotNull ProgressIndicator indicator, StepikCourse course, Project project) {
-    final CourseRemoteInfo info = course.getRemoteInfo();
+    final RemoteInfo info = course.getRemoteInfo();
     assert info instanceof StepikCourseRemoteInfo;
     final StepikCourseRemoteInfo stepikRemoteInfo = (StepikCourseRemoteInfo)info;
 

@@ -11,13 +11,14 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import org.jetbrains.annotations.NotNull;
 
-import static com.jetbrains.edu.learning.EduUtils.*;
+import static com.jetbrains.edu.learning.EduUtils.getVisibleWidget;
+import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
 public class StepikProjectComponent implements ProjectComponent {
@@ -53,7 +54,7 @@ public class StepikProjectComponent implements ProjectComponent {
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
-    final CourseRemoteInfo remoteInfo = course.getRemoteInfo();
+    final RemoteInfo remoteInfo = course.getRemoteInfo();
     if (!(course instanceof StepikCourse) || remoteInfo instanceof StepikCourseRemoteInfo && !((StepikCourseRemoteInfo)remoteInfo).getLoadSolutions()) {
       return;
     }

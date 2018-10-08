@@ -49,9 +49,7 @@ public class Course extends ItemContainer {
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
   protected CourseCompatibility myCompatibility = CourseCompatibility.COMPATIBLE;
 
-  public Course() {
-    setRemoteInfo(new LocalCourseInfo());
-  }
+  public Course() { }
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     for (int i = 0; i < items.size(); i++) {
@@ -271,8 +269,6 @@ public class Course extends ItemContainer {
     List<Tag> tags = new ArrayList<>();
     tags.add(new ProgrammingLanguageTag(getLanguageById()));
     tags.add(new HumanLanguageTag(getHumanLanguage()));
-    CourseRemoteInfo info = getRemoteInfo();
-    tags.addAll(info.getTags());
     return tags;
   }
 
@@ -308,10 +304,4 @@ public class Course extends ItemContainer {
     items.add(index, item);
   }
 
-  @NotNull
-  @Transient
-  @Override
-  public CourseRemoteInfo getRemoteInfo() {
-    return (CourseRemoteInfo)super.getRemoteInfo();
-  }
 }

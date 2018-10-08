@@ -1,12 +1,9 @@
 package com.jetbrains.edu.learning.stepik.courseFormat
 
-import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Tag
-import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo
 import java.util.*
 
-class StepikCourseRemoteInfo : CourseRemoteInfo {
+class StepikCourseRemoteInfo : RemoteInfo {
   // publish to stepik
   var isPublic: Boolean = false
   var isAdaptive = false
@@ -20,18 +17,4 @@ class StepikCourseRemoteInfo : CourseRemoteInfo {
   // do not publish to stepik
   var loadSolutions = true // disabled for reset courses
 
-  override fun isCourseValid(course: Course): Boolean {
-    if (!isAdaptive) return true
-    val lessons = course.lessons
-    if (lessons.size == 1) {
-      return !lessons[0].getTaskList().isEmpty()
-    }
-    return true
-  }
-
-  override fun getTags(): List<Tag> =
-    if (isAdaptive) {
-      listOf(Tag(EduNames.ADAPTIVE))
-    }
-    else listOf()
 }
