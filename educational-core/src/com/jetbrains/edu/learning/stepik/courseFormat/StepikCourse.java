@@ -110,4 +110,8 @@ public class StepikCourse extends Course {
       return CourseCompatibility.UNSUPPORTED;
     }
   }
+
+  public StepikCourseRemoteInfo getStepikRemoteInfo() {
+    return (StepikCourseRemoteInfo)super.getRemoteInfo();
+  }
 }

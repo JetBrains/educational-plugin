@@ -37,10 +37,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSectionRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -424,12 +421,12 @@ public class StepikConnector {
         for (int index = 0; index < allSections.size(); index++) {
           StepikSection section = allSections.get(index);
           int finalIndex = index + 1;
-          tasks.add(() -> loadItemTask(remoteCourse, section, finalIndex));
+          tasks.add(() -> loadItemTask(stepikCourse, section, finalIndex));
         }
-        remoteCourse.setItems(getAllItems(remoteCourse, tasks));
+        stepikCourse.setItems(getAllItems(stepikCourse, tasks));
       }
       else {
-        addTopLevelLessons(remoteCourse, allSections);
+        addTopLevelLessons(stepikCourse, allSections);
       }
     }
     catch (URISyntaxException e) {
@@ -437,15 +434,15 @@ public class StepikConnector {
     }
   }
 
-  private static List<StudyItem> getAllItems(@NotNull RemoteCourse remoteCourse, List<Callable<StudyItem>> tasks) {
+  private static List<StudyItem> getAllItems(@NotNull StepikCourse stepikCourse, List<Callable<StudyItem>> tasks) {
     try {
       List<StudyItem> sections = getOrderedListOfSections(tasks);
-      ArrayList<StudyItem> items = unpackTopLevelLessons(remoteCourse, sections);
+      ArrayList<StudyItem> items = unpackTopLevelLessons(stepikCourse, sections);
       setIndices(items);
       return items;
     }
     catch (Throwable e) {
-      LOG.warn("Cannot load sections for course " + remoteCourse.getId() + e.getMessage());
+      LOG.warn("Cannot load sections for course " + stepikCourse.getStepikRemoteInfo().getId() + e.getMessage());
     }
 
     return Collections.emptyList();
@@ -472,11 +469,11 @@ public class StepikConnector {
     }
   }
 
-  private static ArrayList<StudyItem> unpackTopLevelLessons(@NotNull RemoteCourse remoteCourse, List<StudyItem> sections) {
+  private static ArrayList<StudyItem> unpackTopLevelLessons(@NotNull StepikCourse stepikCourse, List<StudyItem> sections) {
     ArrayList<StudyItem> itemsWithTopLevelLessons = new ArrayList<>();
     for (StudyItem item : sections) {
-      if (item instanceof Section && item.getName().equals(remoteCourse.getName())) {
-        remoteCourse.setSectionIds(Collections.singletonList(item.getId()));
+      if (item instanceof Section && item.getName().equals(stepikCourse.getName())) {
+        stepikCourse.getStepikRemoteInfo().setSectionIds(Collections.singletonList(StepikStudyItemExt.getId(item)));
         itemsWithTopLevelLessons.addAll(((Section)item).getLessons());
       }
       else {
@@ -486,31 +483,34 @@ public class StepikConnector {
     return itemsWithTopLevelLessons;
   }
 
-  private static void addTopLevelLessons(@NotNull RemoteCourse remoteCourse, List<Section> allSections)
+  private static void addTopLevelLessons(@NotNull StepikCourse stepikCourse, List<StepikSection> allSections)
     throws IOException {
-    final String[] unitIds = allSections.stream().map(section -> section.units).flatMap(unitList -> unitList.stream())
+    final String[] unitIds = allSections.stream()
+      .map(section -> section.getStepikRemoteInfo().getUnits()).flatMap(unitList -> unitList.stream())
       .map(unit -> String.valueOf(unit)).toArray(String[]::new);
     if (unitIds.length > 0) {
-      final List<Lesson> lessons = getLessons(remoteCourse);
-      remoteCourse.addLessons(lessons);
-      remoteCourse.setSectionIds(allSections.stream().map(s -> s.getId()).collect(Collectors.toList()));
-      lessons.stream().filter(lesson -> lesson.isAdditional()).forEach(lesson -> remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate()));
+      final List<Lesson> lessons = getLessons(stepikCourse);
+      stepikCourse.addLessons(lessons);
+      stepikCourse.getStepikRemoteInfo().setSectionIds(allSections.stream().map(s -> StepikSectionExt.getId(s))
+                                                         .collect(Collectors.toList()));
+      lessons.stream().filter(lesson -> lesson.isAdditional())
+        .forEach(lesson -> stepikCourse.getStepikRemoteInfo().setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson)));
     }
   }
 
   @Nullable
-  private static StudyItem loadItemTask(@NotNull RemoteCourse remoteCourse, Section section, int finalIndex)
+  private static StudyItem loadItemTask(@NotNull StepikCourse stepikCourse, StepikSection section, int finalIndex)
     throws IOException {
-    final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
+    final String[] unitIds = section.getStepikRemoteInfo().getUnits().stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
     if (unitIds.length <= 0) {
       return null;
     }
-    final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
+    final List<Lesson> lessonsFromUnits = getLessonsFromUnits(stepikCourse, unitIds, false);
     final String sectionName = section.getName();
     if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
       final Lesson lesson = lessonsFromUnits.get(0);
       lesson.setIndex(finalIndex);
-      remoteCourse.setAdditionalMaterialsUpdateDate(lesson.getUpdateDate());
+      stepikCourse.getStepikRemoteInfo().setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson));
       return lesson;
     }
     else {

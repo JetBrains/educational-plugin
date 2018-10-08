@@ -296,7 +296,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       lessonsToPush.addAll(sectionToPush.lessons.filter { it.id == 0 })
     }
 
-    val remoteSectionIds = courseInfo.sectionIds
+    val remoteSectionIds = courseInfo.stepikRemoteInfo.sectionIds
     val sections = StepikConnector.getSections(remoteSectionIds.map { it.toString() }.toTypedArray())
     val localSectionIds = course.sections.map { it.id }
     for (section in sections) {

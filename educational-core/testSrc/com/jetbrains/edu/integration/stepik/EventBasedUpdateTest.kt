@@ -15,7 +15,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
-import com.jetbrains.edu.learning.stepik.StepikTestCase
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.CONTENT
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.INFO
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
@@ -280,7 +279,7 @@ class EventBasedUpdateTest: StepikTestCase() {
     StudyTaskManager.getInstance(project).course = courseToPost
     CCPushCourse.doPush(project, courseToPost)
 
-    val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
+    val localCourse = StudyTaskManager.getInstance(project).course as StepikCourse
 
     val newSection = newSection("section2", 2)
     localCourse.addSection(newSection)

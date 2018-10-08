@@ -21,15 +21,10 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
-import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
@@ -147,7 +142,7 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
         return;
       }
-      final RemoteCourse courseOnRemote = getGson(project).fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
+      final StepikCourse courseOnRemote = getGson(project).fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
       courseOnRemote.setItems(Lists.newArrayList(course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
         !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).collect(Collectors.toList())));
       courseOnRemote.setAuthors(course.getAuthors());
@@ -800,7 +795,7 @@ public class CCStepikConnector {
 
   @NotNull
   public static NotificationListener.Adapter createPostCourseNotificationListener(@NotNull Project project,
-                                                                                   @NotNull RemoteCourse course) {
+                                                                                   @NotNull StepikCourse course) {
     return new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {

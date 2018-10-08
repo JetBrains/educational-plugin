@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning;
 
 import com.intellij.ide.projectView.ProjectView;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.application.ApplicationManager;
@@ -24,16 +22,8 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.*;
-import com.jetbrains.edu.learning.actions.DumbAwareActionWithShortcut;
-import com.jetbrains.edu.learning.actions.NextPlaceholderAction;
-import com.jetbrains.edu.learning.actions.PrevPlaceholderAction;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
-import com.jetbrains.edu.learning.courseFormat.ext.StepikCourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.StepikRemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
@@ -41,8 +31,7 @@ import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
-import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -85,11 +74,6 @@ public class EduProjectComponent implements ProjectComponent {
 
         if (course instanceof StepikCourse) {
           StepikConnector.updateCourseIfNeeded(myProject, (StepikCourse)course);
-        }
-
-        final StepikUser currentUser = EduSettings.getInstance().getUser();
-        if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo) && !CCUtils.isCourseCreator(myProject)) {
-          loadSolutionsFromStepik(course);
         }
 
         if (EduGradleUtils.isConfiguredWithGradle(myProject)) {

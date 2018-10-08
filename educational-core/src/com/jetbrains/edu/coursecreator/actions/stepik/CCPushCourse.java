@@ -82,10 +82,10 @@ public class CCPushCourse extends DumbAwareAction {
       ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          if (getCourseInfo(String.valueOf(course.getId())) == null) {
+          if (getCourseInfo(String.valueOf(((StepikCourse)course).getStepikRemoteInfo().getId())) == null) {
             String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
             Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
-                                                         createPostCourseNotificationListener(project, (RemoteCourse)course));
+                                                         createPostCourseNotificationListener(project, (StepikCourse)course));
             notification.notify(project);
             return;
           }
