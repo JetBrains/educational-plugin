@@ -51,7 +51,7 @@ sealed class ErrorState(
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
         course.courseType == CourseraNames.COURSE_TYPE -> None
         isCheckiOLoginRequired(course) -> CheckiOLoginRequired
-        isHyperskillLoginRequired(course) -> HyperskillLoginRequired
+        course is HyperskillCourse -> if (HyperskillSettings.instance.account == null) HyperskillLoginRequired else None
         !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
       }
@@ -84,12 +84,6 @@ sealed class ErrorState(
         return checkiOAccount == null
       }
       return false
-    }
-    private fun isHyperskillLoginRequired(selectedCourse: Course): Boolean {
-      return if (selectedCourse is HyperskillCourse) {
-        HyperskillSettings.instance.account == null
-      }
-      else false
     }
   }
 }

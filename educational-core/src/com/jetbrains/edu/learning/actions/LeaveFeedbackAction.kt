@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
 
 private const val ACTION_TEXT = "Leave a comment"
@@ -34,7 +35,7 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
     presentation.isEnabledAndVisible = when (feedbackLink.type) {
       FeedbackLink.LinkType.NONE -> false
       FeedbackLink.LinkType.CUSTOM -> feedbackLink.link != null
-      FeedbackLink.LinkType.STEPIK -> task.course is RemoteCourse
+      FeedbackLink.LinkType.STEPIK -> task.course is RemoteCourse || task.course is HyperskillCourse
     }
   }
 

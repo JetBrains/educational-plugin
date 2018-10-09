@@ -23,4 +23,4 @@ data class HyperskillStage(var id: Int = -1, var title: String = "")
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class HyperskillProject(var id: Int = -1, var title: String = "", var description: String = "",
-                             var lesson: Int = -1)
+                             var lesson: Int = -1, var repo_url: String = "")
