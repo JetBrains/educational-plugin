@@ -31,7 +31,7 @@ private object HyperskillProjectsProvider : CoursesProvider {
     for (project in projects) {
       val isKotlin = project.title.contains("Kotlin")   // TODO: get language properly
       if (!isKotlin) { // TODO: kotlin part
-        val languageId = "Hyperskill-" + EduNames.JAVA
+        val languageId = HYPERSKILL + "-" + EduNames.JAVA
         val hyperskillCourse = HyperskillCourse(project.title, languageId)
         hyperskillCourse.id = project.id
         courses.add(hyperskillCourse)

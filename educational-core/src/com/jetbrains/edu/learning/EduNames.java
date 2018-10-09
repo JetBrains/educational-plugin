@@ -46,15 +46,12 @@ public class EduNames {
   public static final String PYCHARM = "PyCharm";
 
   public static final String STUDY = "Study";
-  public static final String ADAPTIVE = "Adaptive";
 
   public static final String SRC = "src";
   public static final String TEST = "test";
   public static final String UTIL = "util";
   public static final String BUILD = "build";
   public static final String OUT = "out";
-
-  public static final String PROJECT_PLAYGROUND = "Project Playground";
 
   public static final String STUDY_PROJECT_XML_PATH = "/.idea/study_project.xml";
 

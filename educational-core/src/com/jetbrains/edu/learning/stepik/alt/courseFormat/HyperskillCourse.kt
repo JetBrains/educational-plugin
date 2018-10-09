@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.stepik.alt.courseFormat
 
-import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Tag
 
 class HyperskillCourse : Course {
   private var _id: Int = -1
@@ -20,13 +18,6 @@ class HyperskillCourse : Course {
     description = COURSE_DESCRIPTION
     language = languageID
   }
-
-  override fun getTags(): List<Tag> {
-    val tags = super.getTags()
-    tags.add(Tag(EduNames.ADAPTIVE))
-    return tags
-  }
-
 
   companion object {
     private const val COURSE_DESCRIPTION = "This is a Hyperskill course.<br/><br/>" +
