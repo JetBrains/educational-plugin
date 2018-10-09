@@ -64,6 +64,10 @@ object HyperskillConnector {
     return service.stages(projectId).execute().body()?.stages
   }
 
+  fun getProjects(): List<HyperskillProject>? {
+    return service.projects().execute().body()?.projects
+  }
+
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
     authorizationBusConnection.disconnect()
     authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()

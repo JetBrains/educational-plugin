@@ -25,12 +25,21 @@ interface HyperskillService {
   @GET("api/stages")
   fun stages(@Query("project") projectId: Int): Call<StagesData>
 
+  @GET("api/projects")
+  fun projects(): Call<ProjectsData>
+
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class UsersData {
   lateinit var meta: Any
   lateinit var users: List<HyperskillUserInfo>
+}
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+class ProjectsData {
+  lateinit var meta: Any
+  lateinit var projects: List<HyperskillProject>
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
