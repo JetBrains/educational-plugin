@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.alt.courseFormat
+package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.Course
 

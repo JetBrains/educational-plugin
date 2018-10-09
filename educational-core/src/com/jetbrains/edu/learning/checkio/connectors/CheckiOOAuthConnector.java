@@ -7,7 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.TokenInfo;
+import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.authUtils.OAuthUtils;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;

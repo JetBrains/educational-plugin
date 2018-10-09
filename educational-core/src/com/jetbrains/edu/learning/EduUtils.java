@@ -70,7 +70,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.OAuthDialog;
-import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -728,7 +728,7 @@ public class EduUtils {
   public static void showOAuthDialog() {
     OAuthDialog dialog = new OAuthDialog();
     if (dialog.showAndGet()) {
-      StepicUser user = dialog.getUser();
+      StepikUser user = dialog.getUser();
       EduSettings.getInstance().setUser(user);
     }
   }

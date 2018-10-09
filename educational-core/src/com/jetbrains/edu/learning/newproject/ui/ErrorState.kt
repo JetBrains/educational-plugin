@@ -15,8 +15,8 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.alt.HyperskillSettings
-import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.Color
 
 sealed class ErrorState(
@@ -51,7 +51,7 @@ sealed class ErrorState(
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
         course.courseType == CourseraNames.COURSE_TYPE -> None
         isCheckiOLoginRequired(course) -> CheckiOLoginRequired
-        course is HyperskillCourse -> if (HyperskillSettings.instance.account == null) HyperskillLoginRequired else None
+        course is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
         !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
       }

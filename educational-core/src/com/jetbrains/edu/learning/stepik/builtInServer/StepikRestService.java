@@ -166,7 +166,7 @@ public class StepikRestService extends OAuthRestService {
     if (codeMatcher.matches()) {
       String code = getStringParameter("code", urlDecoder);
       if (code != null) {
-        StepicUser user = StepikAuthorizedClient.login(code, StepikConnector.getOAuthRedirectUrl());
+        StepikUser user = StepikAuthorizedClient.login(code, StepikConnector.getOAuthRedirectUrl());
         if (user != null) {
           EduSettings.getInstance().setUser(user);
           showOkPage(request, context);

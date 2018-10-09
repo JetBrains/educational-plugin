@@ -19,7 +19,11 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
 
   override fun createCenterPanel(): JComponent = panel
 
-  val selectedCourse: Course get() = panel.selectedCourse
+  var selectedCourse: Course
+    get() = panel.selectedCourse
+    set(value) {
+      panel.selectedCourse = value
+    }
   val projectSettings: Any get() = panel.projectSettings
   val locationString: String get() = panel.locationString
 }

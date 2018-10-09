@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.alt
+package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import io.netty.channel.ChannelHandlerContext
@@ -50,7 +50,7 @@ class HyperskillOAuthRestService : OAuthRestService(HYPERSKILL) {
   }
 
   companion object {
-    const val EDU_HYPERSKILL_SERVICE_NAME = "edu/hyperskill/oauth"
+    private const val EDU_HYPERSKILL_SERVICE_NAME = "edu/hyperskill/oauth"
     private val OAUTH_CODE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?code=(\\w+)")
   }
 }

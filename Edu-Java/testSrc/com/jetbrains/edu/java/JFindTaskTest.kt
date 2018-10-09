@@ -1,6 +1,5 @@
 package com.jetbrains.edu.java
 
-import com.jetbrains.edu.java.learning.JCourseBuilder
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.FindTaskFileTestBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings

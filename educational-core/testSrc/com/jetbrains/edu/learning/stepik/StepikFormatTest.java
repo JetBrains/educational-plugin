@@ -126,7 +126,7 @@ public class StepikFormatTest extends EduTestCase {
     final StepikWrappers.AuthorWrapper wrapper = gson.fromJson(jsonText, StepikWrappers.AuthorWrapper.class);
     assertNotNull(wrapper);
     assertFalse(wrapper.users.isEmpty());
-    StepicUserInfo user = wrapper.users.get(0);
+    StepikUserInfo user = wrapper.users.get(0);
     assertNotNull(user);
     assertFalse(user.isGuest());
   }
@@ -137,7 +137,7 @@ public class StepikFormatTest extends EduTestCase {
     final StepikWrappers.AuthorWrapper wrapper = gson.fromJson(jsonText, StepikWrappers.AuthorWrapper.class);
     assertNotNull(wrapper);
     assertFalse(wrapper.users.isEmpty());
-    StepicUserInfo user = wrapper.users.get(0);
+    StepikUserInfo user = wrapper.users.get(0);
     assertNotNull(user);
     assertFalse(user.isGuest());
   }

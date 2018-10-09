@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java.learning
+package com.jetbrains.edu.java
 
 import com.jetbrains.edu.learning.EduLanguageDecorator
 import icons.EducationalCoreIcons

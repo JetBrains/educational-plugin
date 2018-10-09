@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.alt
+package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ui.HyperlinkAdapter
 import com.jetbrains.edu.learning.settings.OauthOptions
@@ -10,10 +10,10 @@ class HyperskillOptions : OauthOptions<HyperskillAccount>() {
     initAccounts()
   }
 
-  override fun getCurrentAccount() : HyperskillAccount? = HyperskillSettings.instance.account
+  override fun getCurrentAccount() : HyperskillAccount? = HyperskillSettings.INSTANCE.account
 
   override fun setCurrentAccount(lastSavedAccount: HyperskillAccount?) {
-    HyperskillSettings.instance.account = lastSavedAccount
+    HyperskillSettings.INSTANCE.account = lastSavedAccount
   }
 
   @Nls

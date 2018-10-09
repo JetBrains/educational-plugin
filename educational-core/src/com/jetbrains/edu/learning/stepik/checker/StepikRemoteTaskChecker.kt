@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikCheckerConnector
-import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun canCheck(project: Project, task: Task): Boolean {

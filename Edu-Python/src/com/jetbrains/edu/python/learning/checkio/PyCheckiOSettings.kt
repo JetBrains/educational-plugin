@@ -6,9 +6,9 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
+import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo
-import com.jetbrains.edu.learning.deserializeAccount
 import org.jdom.Element
 
 private const val serviceName = "PyCheckiOSettings"
@@ -34,8 +34,6 @@ class PyCheckiOSettings : PersistentStateComponent<Element> {
   }
 
   companion object {
-    @JvmStatic
-    val instance: PyCheckiOSettings
-      get() = ServiceManager.getService(PyCheckiOSettings::class.java)
+    @JvmField val INSTANCE: PyCheckiOSettings = ServiceManager.getService(PyCheckiOSettings::class.java)
   }
 }

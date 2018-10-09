@@ -167,7 +167,7 @@ public class StepikClient {
       final StepikWrappers.AuthorWrapper wrapper =
         getFromStepik(StepikNames.CURRENT_USER, StepikWrappers.AuthorWrapper.class, httpClient);
       if (wrapper != null && !wrapper.users.isEmpty()) {
-        StepicUserInfo user = wrapper.users.get(0);
+        StepikUserInfo user = wrapper.users.get(0);
         return user != null && !user.isGuest();
       }
       else {

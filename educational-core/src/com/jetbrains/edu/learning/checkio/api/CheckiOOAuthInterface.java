@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.checkio.api;
 
-import com.jetbrains.edu.learning.TokenInfo;
+import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
 import com.jetbrains.edu.learning.checkio.call.CheckiOCall;
 import retrofit2.http.*;

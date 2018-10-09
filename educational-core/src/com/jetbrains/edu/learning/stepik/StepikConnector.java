@@ -80,11 +80,22 @@ public class StepikConnector {
   private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER);
 
   public static final Key<String> COURSE_LANGUAGE = Key.create("COURSE_LANGUAGE");
+  private static final ExclusionStrategy ourExclusionStrategy = new ExclusionStrategy() {
+    @Override
+    public boolean shouldSkipField(FieldAttributes f) {
+      return false;
+    }
+
+    @Override
+    public boolean shouldSkipClass(Class<?> clazz) {
+      return clazz == AttemptWrapper.Dataset.class;
+    }
+  };
 
   private StepikConnector() {
   }
 
-  public static boolean enrollToCourse(final int courseId, @Nullable final StepicUser user) {
+  public static boolean enrollToCourse(final int courseId, @Nullable final StepikUser user) {
     if (user == null) return false;
     HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ENROLLMENTS);
     try {
@@ -101,7 +112,7 @@ public class StepikConnector {
     return false;
   }
 
-  public static boolean isEnrolledToCourse(final int courseId, @Nullable final StepicUser user) {
+  public static boolean isEnrolledToCourse(final int courseId, @Nullable final StepikUser user) {
     if (user == null) return false;
     HttpGet request = new HttpGet(StepikNames.STEPIK_API_URL + StepikNames.ENROLLMENTS + "/" + courseId);
     try {
@@ -117,7 +128,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Course> getCourseInfos(@Nullable StepicUser user) {
+  public static List<Course> getCourseInfos(@Nullable StepikUser user) {
     LOG.info("Loading courses started...");
     long startTime = System.currentTimeMillis();
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
@@ -162,7 +173,7 @@ public class StepikConnector {
     return result;
   }
 
-  private static void addInProgressCourses(@Nullable StepicUser user, List<Course> result) {
+  private static void addInProgressCourses(@Nullable StepikUser user, List<Course> result) {
     final List<Integer> inProgressCourses = getInProgressCoursesIds();
     for (Integer courseId : inProgressCourses) {
       try {
@@ -240,11 +251,11 @@ public class StepikConnector {
     return -1;
   }
 
-  private static CoursesContainer getCourseContainers(@Nullable StepicUser user, @NotNull URI url) throws IOException {
+  private static CoursesContainer getCourseContainers(@Nullable StepikUser user, @NotNull URI url) throws IOException {
     return getCourseContainers(user, url.toString());
   }
 
-  public static CoursesContainer getCourseContainers(@Nullable StepicUser user, @NotNull String url) throws IOException {
+  public static CoursesContainer getCourseContainers(@Nullable StepikUser user, @NotNull String url) throws IOException {
     final CoursesContainer coursesContainer;
     if (user != null) {
       coursesContainer = StepikAuthorizedClient.getFromStepik(url, CoursesContainer.class, user);
@@ -260,7 +271,7 @@ public class StepikConnector {
     return coursesContainer;
   }
 
-  private static boolean addCourseInfos(@Nullable StepicUser user, List<Course> result, int pageNumber,
+  private static boolean addCourseInfos(@Nullable StepikUser user, List<Course> result, int pageNumber,
                                         @NotNull List<Integer> featuredCourses) throws IOException {
     final URI url;
     try {
@@ -277,7 +288,7 @@ public class StepikConnector {
   }
 
   @Nullable
-  public static RemoteCourse getCourseInfo(@Nullable StepicUser user, int courseId, boolean isIdeaCompatible) {
+  public static RemoteCourse getCourseInfo(@Nullable StepikUser user, int courseId, boolean isIdeaCompatible) {
     final URI url;
     final CoursesContainer coursesContainer;
     try {
@@ -318,10 +329,10 @@ public class StepikConnector {
   }
 
   private static void setCourseAuthors(@NotNull final RemoteCourse info) throws IOException {
-    final ArrayList<StepicUserInfo> authors = new ArrayList<>();
+    final ArrayList<StepikUserInfo> authors = new ArrayList<>();
     for (Integer instructor : info.getInstructors()) {
-      final StepicUserInfo author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
-                                                           AuthorWrapper.class).users.get(0);
+      final StepikUserInfo author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
+                                                               AuthorWrapper.class).users.get(0);
       authors.add(author);
     }
     info.setAuthors(authors);
@@ -340,7 +351,7 @@ public class StepikConnector {
     return CourseVisibility.PublicVisibility.INSTANCE;
   }
 
-  public static RemoteCourse getCourseInfoByLink(@NotNull StepicUser user, @NotNull String link) {
+  public static RemoteCourse getCourseInfoByLink(@NotNull StepikUser user, @NotNull String link) {
     int courseId;
     try {
       courseId = Integer.parseInt(link);
@@ -653,7 +664,7 @@ public class StepikConnector {
     for (int i = 0; i < allStepSources.size(); i++) {
       StepSource step = allStepSources.get(i);
       Integer stepId = Integer.valueOf(stepIds[i]);
-      StepicUser user = EduSettings.getInstance().getUser();
+      StepikUser user = EduSettings.getInstance().getUser();
       StepikTaskBuilder builder = new StepikTaskBuilder(language, step, stepId, user == null ? -1 : user.getId());
       if (builder.isSupported(step.block.name)) {
         final Task task = builder.createTask(step.block.name);
@@ -712,7 +723,7 @@ public class StepikConnector {
 
   private static <T> T getFromStepik(String link, final Class<T> container, @Nullable Map<Key, Object> params) throws IOException {
     if (EduSettings.isLoggedIn()) {
-      final StepicUser user = EduSettings.getInstance().getUser();
+      final StepikUser user = EduSettings.getInstance().getUser();
       assert user != null;
       return StepikAuthorizedClient.getFromStepik(link, container, user, params);
     }
@@ -876,7 +887,7 @@ public class StepikConnector {
     try {
       final String response = postAttempt(task.getStepId());
       if (response.isEmpty()) return;
-      final Gson gson = new GsonBuilder().addDeserializationExclusionStrategy(getDatasetExclusionStrategy()).create();
+      final Gson gson = new GsonBuilder().addDeserializationExclusionStrategy(ourExclusionStrategy).create();
       final AttemptWrapper.Attempt attempt = gson.fromJson(response, AttemptContainer.class).attempts.get(0);
       final ArrayList<SolutionFile> files = new ArrayList<>();
       final VirtualFile taskDir = task.getTaskDir(project);
@@ -911,21 +922,6 @@ public class StepikConnector {
     catch (IOException e) {
       LOG.error(e.getMessage());
     }
-  }
-
-  @NotNull
-  private static ExclusionStrategy getDatasetExclusionStrategy() {
-    return new ExclusionStrategy() {
-      @Override
-      public boolean shouldSkipField(FieldAttributes f) {
-        return false;
-      }
-
-      @Override
-      public boolean shouldSkipClass(Class<?> clazz) {
-        return clazz == AttemptWrapper.Dataset.class;
-      }
-    };
   }
 
   static String postAttempt(int id) throws IOException {
@@ -1005,7 +1001,7 @@ public class StepikConnector {
   }
 
   private static String codeHandler(@NotNull String code, @NotNull String redirectUri) {
-    final StepicUser user = StepikAuthorizedClient.login(code, redirectUri);
+    final StepikUser user = StepikAuthorizedClient.login(code, redirectUri);
     if (user != null) {
       EduSettings.getInstance().setUser(user);
       return null;

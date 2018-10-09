@@ -5,16 +5,16 @@
   <xi:include href="/META-INF/Hyperskill-Java.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="Educational">
-    <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.learning.JConfigurator"/>
+    <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
   </extensions>
 
   <extensions defaultExtensionNs="educational">
-    <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.learning.JLanguageDecorator"/>
+    <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.JLanguageDecorator"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <renameHandler implementation="com.jetbrains.edu.java.learning.JMoveRenameHandler" order="first"/>
-    <refactoring.moveHandler implementation="com.jetbrains.edu.java.learning.JMoveRenameHandler" order="first"/>
+    <renameHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
+    <refactoring.moveHandler implementation="com.jetbrains.edu.java.JMoveRenameHandler" order="first"/>
   </extensions>
 </idea-plugin>
 
