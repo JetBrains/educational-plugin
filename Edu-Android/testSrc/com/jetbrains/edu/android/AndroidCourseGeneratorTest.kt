@@ -17,6 +17,7 @@ class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>(
 
     val expectedFileTree = fileTree {
       file("local.properties")
+      file("gradle.properties")
       file("build.gradle")
       file("settings.gradle")
     }

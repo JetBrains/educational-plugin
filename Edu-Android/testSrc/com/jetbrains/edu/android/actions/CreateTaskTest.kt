@@ -52,6 +52,7 @@ class CreateTaskTest : EduActionTestCase() {
         file("build.gradle")
       }
       file("local.properties")
+      file("gradle.properties")
       file("build.gradle")
       file("settings.gradle")
     }
