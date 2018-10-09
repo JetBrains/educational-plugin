@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
 
 private const val ACTION_TEXT = "Leave a comment"

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java.learning;
+package com.jetbrains.edu.java;
 
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.jetbrains.edu.learning.EduUtils;

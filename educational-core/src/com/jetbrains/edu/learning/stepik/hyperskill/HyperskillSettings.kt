@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.alt
+package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
@@ -6,7 +6,7 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.XmlSerializer
 import com.intellij.util.xmlb.annotations.Transient
-import com.jetbrains.edu.learning.deserializeAccount
+import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import org.jdom.Element
 
 private const val serviceName = "HyperskillSettings"
@@ -32,7 +32,7 @@ class HyperskillSettings : PersistentStateComponent<Element> {
   }
 
   companion object {
-    val instance: HyperskillSettings
+    val INSTANCE: HyperskillSettings
       get() = ServiceManager.getService(HyperskillSettings::class.java)
   }
 }

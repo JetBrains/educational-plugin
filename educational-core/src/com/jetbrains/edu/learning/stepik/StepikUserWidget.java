@@ -34,7 +34,7 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
     new ClickListener() {
       @Override
       public boolean onClick(@NotNull MouseEvent e, int clickCount) {
-        StepicUser user = EduSettings.getInstance().getUser();
+        StepikUser user = EduSettings.getInstance().getUser();
         ListPopup popup = createPopup(user, project);
         Dimension preferredSize = popup.getContent().getPreferredSize();
         Point point = new Point(0, 0);
@@ -68,16 +68,16 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
   }
 
   public void update() {
-    StepicUser user = EduSettings.getInstance().getUser();
+    StepikUser user = EduSettings.getInstance().getUser();
     Icon icon = getWidgetIcon(user);
     myComponent.setIcon(icon);
   }
 
-  private static Icon getWidgetIcon(@Nullable StepicUser user) {
+  private static Icon getWidgetIcon(@Nullable StepikUser user) {
     return user == null ? EducationalCoreIcons.StepikOff : EducationalCoreIcons.Stepik;
   }
 
-  private static ListPopup createPopup(@Nullable StepicUser user, @NotNull Project project) {
+  private static ListPopup createPopup(@Nullable StepikUser user, @NotNull Project project) {
     String loginText = "Log in ";
     String logOutText = "Log out";
     String syncCourseStep = "Synchronize course";

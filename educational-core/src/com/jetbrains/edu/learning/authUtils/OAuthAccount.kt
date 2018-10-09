@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.authUtils
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -6,9 +6,9 @@ import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 
-abstract class OauthAccount<T : Any> {
+abstract class OAuthAccount<UserInfo : Any> {
   var tokenInfo: TokenInfo = TokenInfo()
-  lateinit var userInfo: T
+  lateinit var userInfo: UserInfo
 
   constructor()
 
@@ -31,7 +31,7 @@ abstract class OauthAccount<T : Any> {
   }
 }
 
-fun <Account: OauthAccount<UserInfo>, UserInfo: Any> deserializeAccount(
+fun <Account: OAuthAccount<UserInfo>, UserInfo: Any> deserializeAccount(
   xmlAccount: Element,
   accountClass: Class<Account>,
   userInfoClass: Class<UserInfo> ) : Account {

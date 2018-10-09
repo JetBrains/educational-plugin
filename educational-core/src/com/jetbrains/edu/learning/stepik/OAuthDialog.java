@@ -11,7 +11,7 @@ import javax.swing.*;
 public class OAuthDialog extends DialogWrapper {
   protected final AuthorizationPanel myLoginPanel;
   private String myProgressTitle;
-  private StepicUser myUser;
+  private StepikUser myUser;
 
   public OAuthDialog() {
     super(false);
@@ -67,7 +67,7 @@ public class OAuthDialog extends DialogWrapper {
     ApplicationManager.getApplication().invokeLater(() -> super.doOKAction());
   }
 
-  public StepicUser getUser() {
+  public StepikUser getUser() {
     return myUser;
   }
 }

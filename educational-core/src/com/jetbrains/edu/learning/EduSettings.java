@@ -12,8 +12,8 @@ import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
-import com.jetbrains.edu.learning.stepik.StepicUser;
-import com.jetbrains.edu.learning.stepik.StepicUserInfo;
+import com.jetbrains.edu.learning.stepik.StepikUser;
+import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jetbrains.edu.learning.OauthAccountKt.deserializeAccount;
+import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeAccount;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 @State(name = "EduSettings", storages = @Storage("other.xml"))
@@ -31,7 +31,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   public static final Topic<StudySettingsListener> SETTINGS_CHANGED = Topic.create("Edu.UserSet", StudySettingsListener.class);
   @Transient
   @Nullable
-  private StepicUser myUser;
+  private StepikUser myUser;
   private long myLastTimeChecked = 0;
   private boolean myShouldUseJavaFx = EduUtils.hasJavaFx();
 
@@ -91,7 +91,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
     if (user != null) {
       Element userXml = user.getChild(STEPIK_USER);
       if (userXml != null) {
-        myUser = deserializeAccount(userXml, StepicUser.class, StepicUserInfo.class);
+        myUser = deserializeAccount(userXml, StepikUser.class, StepikUserInfo.class);
       }
     }
   }
@@ -102,12 +102,12 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   @Nullable
   @Transient
-  public StepicUser getUser() {
+  public StepikUser getUser() {
     return myUser;
   }
 
   @Transient
-  public void setUser(@Nullable final StepicUser user) {
+  public void setUser(@Nullable final StepikUser user) {
     myUser = user;
     ApplicationManager.getApplication().getMessageBus().syncPublisher(SETTINGS_CHANGED).settingsChanged();
 

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.alt
+package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -22,7 +22,7 @@ object HyperskillConnector {
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         .addInterceptor { chain ->
-          val tokenInfo = HyperskillSettings.instance.account?.tokenInfo
+          val tokenInfo = HyperskillSettings.INSTANCE.account?.tokenInfo
           if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
 
           val newRequest = chain.request().newBuilder()
@@ -48,10 +48,10 @@ object HyperskillConnector {
 
   fun login(code: String): Boolean {
     val tokenInfo = service.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").execute().body() ?: return false
-    HyperskillSettings.instance.account = HyperskillAccount()
-    HyperskillSettings.instance.account!!.tokenInfo = tokenInfo
+    HyperskillSettings.INSTANCE.account = HyperskillAccount()
+    HyperskillSettings.INSTANCE.account!!.tokenInfo = tokenInfo
     val currentUser = getCurrentUser() ?: return false
-    HyperskillSettings.instance.account!!.userInfo = currentUser
+    HyperskillSettings.INSTANCE.account!!.userInfo = currentUser
     ApplicationManager.getApplication().messageBus.syncPublisher<HyperskillLoggedIn>(authorizationTopic).userLoggedIn()
     return true
   }

@@ -4,18 +4,18 @@ import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class StepicUserInfo {
+public class StepikUserInfo {
   private int id = -1;
   @SerializedName("first_name") private String myFirstName;
   @SerializedName("last_name") private String myLastName;
   private boolean isGuest;
 
-  private StepicUserInfo() {
+  private StepikUserInfo() {
     myFirstName = "";
     myLastName = "";
   }
-  public static StepicUserInfo createEmptyUser() {
-    return new StepicUserInfo();
+  public static StepikUserInfo createEmptyUser() {
+    return new StepikUserInfo();
   }
 
   public int getId() {
@@ -60,7 +60,7 @@ public class StepicUserInfo {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    StepicUserInfo user = (StepicUserInfo)o;
+    StepikUserInfo user = (StepikUserInfo)o;
 
     if (id != user.id) return false;
     if (isGuest != user.isGuest) return false;

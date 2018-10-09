@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java.learning.stepik.alt
+package com.jetbrains.edu.java.stepik.hyperskill
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase

@@ -85,7 +85,7 @@ public class EduProjectComponent implements ProjectComponent {
           StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
         }
 
-        final StepicUser currentUser = EduSettings.getInstance().getUser();
+        final StepikUser currentUser = EduSettings.getInstance().getUser();
         if (currentUser != null && !course.getAuthors().contains(currentUser) && !CCUtils.isCourseCreator(myProject)) {
           loadSolutionsFromStepik(course);
         }
@@ -99,7 +99,7 @@ public class EduProjectComponent implements ProjectComponent {
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
             registerShortcuts();
-            EduUsagesCollector.projectTypeOpened(EduNames.STUDY);
+            EduUsagesCollector.projectTypeOpened(course.getCourseMode());
           }));
       }
     );

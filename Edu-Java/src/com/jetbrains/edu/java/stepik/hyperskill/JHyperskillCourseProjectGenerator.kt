@@ -1,13 +1,15 @@
-package com.jetbrains.edu.java.learning.stepik.alt
+package com.jetbrains.edu.java.stepik.hyperskill
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.alt.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.alt.HyperskillSettings
-import com.jetbrains.edu.learning.stepik.alt.getLesson
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.hyperskill.getLesson
+
+private const val PROJECT_PREFIX = "Project # "
 
 class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
                                         course: Course) : GradleCourseProjectGenerator(builder, course) {
@@ -15,13 +17,23 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
   override fun beforeProjectGenerated(): Boolean {
     return try {
       val language = myCourse.languageById
-      val userInfo = HyperskillSettings.instance.account?.userInfo ?: return false
-      val lessonId = userInfo.project?.lesson ?: return false
+      val hyperskillAccount = HyperskillSettings.INSTANCE.account
+      if (hyperskillAccount == null) {
+        LOG.error("User is not logged in to the Hyperskill")
+        return false
+      }
+      val userInfo = hyperskillAccount.userInfo
+      val hyperskillProject = userInfo.hyperskillProject
+      if (hyperskillProject == null) {
+        LOG.error("User didn't choose project on hyperskill")
+        return false
+      }
+      val lessonId = hyperskillProject.lesson
       val projectId = myCourse.id
 
       val stages = HyperskillConnector.getStages(projectId) ?: return false
       val lesson = getLesson(lessonId, language, stages) ?: return false
-      lesson.name = userInfo.project?.title?.removePrefix("Project # ") // TODO: better place for prefix
+      lesson.name = hyperskillProject.title.removePrefix(PROJECT_PREFIX)
 
       myCourse.addLesson(FrameworkLesson(lesson))
       true
@@ -33,7 +45,6 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
   }
 
   companion object {
-    @JvmStatic
     private val LOG = Logger.getInstance(JHyperskillCourseProjectGenerator::class.java)
   }
 }

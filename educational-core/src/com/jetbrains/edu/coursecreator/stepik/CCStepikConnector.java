@@ -67,7 +67,7 @@ public class CCStepikConnector {
   @Nullable
   public static RemoteCourse getCourseInfo(@NotNull String courseId) {
     final String url = StepikNames.COURSES + "/" + courseId;
-    final StepicUser user = EduSettings.getInstance().getUser();
+    final StepikUser user = EduSettings.getInstance().getUser();
     try {
       final StepikWrappers.CoursesContainer coursesContainer = StepikConnector.getCourseContainers(user, url);
       return coursesContainer == null ? null : coursesContainer.courses.get(0);
@@ -98,10 +98,10 @@ public class CCStepikConnector {
     }
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.COURSES);
 
-    final StepicUserInfo currentUser = StepikAuthorizedClient.getCurrentUser();
+    final StepikUserInfo currentUser = StepikAuthorizedClient.getCurrentUser();
     if (currentUser != null) {
-      final List<StepicUserInfo> courseAuthors = course.getAuthors();
-      for (final StepicUserInfo courseAuthor : courseAuthors) {
+      final List<StepikUserInfo> courseAuthors = course.getAuthors();
+      for (final StepikUserInfo courseAuthor : courseAuthors) {
         currentUser.setFirstName(courseAuthor.getFirstName());
         currentUser.setLastName(courseAuthor.getLastName());
       }
@@ -161,7 +161,7 @@ public class CCStepikConnector {
     }
   }
 
-  private static boolean isTestAccount(@Nullable StepicUserInfo user) {
+  private static boolean isTestAccount(@Nullable StepikUserInfo user) {
     return user != null && TESTER_USER_IDS.contains(user.getId());
   }
 

@@ -35,7 +35,7 @@ import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction;
-import com.jetbrains.edu.learning.stepik.alt.HyperskillConnector;
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -253,6 +253,10 @@ public class CoursesPanel extends JPanel {
 
   public Course getSelectedCourse() {
     return myCoursesList.getSelectedValue();
+  }
+
+  public void setSelectedCourse(Course course) {
+    myCoursesList.setSelectedValue(course, true);
   }
 
   private void createUIComponents() {

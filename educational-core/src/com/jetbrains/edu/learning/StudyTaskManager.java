@@ -25,7 +25,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
-import com.jetbrains.edu.learning.stepik.alt.courseFormat.HyperskillCourse;
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;

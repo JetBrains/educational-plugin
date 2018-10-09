@@ -1,15 +1,15 @@
 <idea-plugin>
 
   <extensions defaultExtensionNs="Educational">
-    <configurator implementationClass="com.jetbrains.edu.java.learning.stepik.alt.JHyperskillConfigurator" language="Hyperskill-JAVA"/>
+    <configurator implementationClass="com.jetbrains.edu.java.stepik.hyperskill.JHyperskillConfigurator" language="Hyperskill-JAVA"/>
   </extensions>
   <extensions defaultExtensionNs="educational">
-    <languageDecorator implementationClass="com.jetbrains.edu.java.learning.stepik.alt.JHyperskillLanguageDecorator" language="Hyperskill-JAVA" />
+    <languageDecorator implementationClass="com.jetbrains.edu.java.stepik.hyperskill.JHyperskillLanguageDecorator" language="Hyperskill-JAVA" />
   </extensions>
 
   <application-components>
     <component>
-      <implementation-class>com.jetbrains.edu.java.learning.stepik.alt.JHyperskillApplicationComponent</implementation-class>
+      <implementation-class>com.jetbrains.edu.java.stepik.hyperskill.JHyperskillApplicationComponent</implementation-class>
     </component>
   </application-components>
 </idea-plugin>

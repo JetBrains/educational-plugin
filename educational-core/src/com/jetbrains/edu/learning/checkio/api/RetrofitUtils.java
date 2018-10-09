@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning.checkio.api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.jetbrains.edu.learning.TokenInfo;
+import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOMissionListDeserializer;
 import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOTokensDeserializer;
 import com.jetbrains.edu.learning.checkio.call.CheckiOCallAdapterFactory;

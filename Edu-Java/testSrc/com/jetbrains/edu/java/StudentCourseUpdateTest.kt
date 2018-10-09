@@ -1,6 +1,5 @@
 package com.jetbrains.edu.java
 
-import com.jetbrains.edu.java.learning.JCourseBuilder
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse

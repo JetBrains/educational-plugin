@@ -26,19 +26,19 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 
-public class StepikOptions extends OauthOptions<StepicUser> {
+public class StepikOptions extends OauthOptions<StepikUser> {
   public StepikOptions() {
     initAccounts();
   }
 
   @Nullable
   @Override
-  public StepicUser getCurrentAccount() {
+  public StepikUser getCurrentAccount() {
     return EduSettings.getInstance().getUser();
   }
 
   @Override
-  public void setCurrentAccount(@Nullable StepicUser lastSavedAccount) {
+  public void setCurrentAccount(@Nullable StepikUser lastSavedAccount) {
     EduSettings.getInstance().setUser(lastSavedAccount);
   }
 
@@ -50,7 +50,7 @@ public class StepikOptions extends OauthOptions<StepicUser> {
       protected void hyperlinkActivated(HyperlinkEvent e) {
         EduUsagesCollector.loginFromSettings();
         ApplicationManager.getApplication().getMessageBus().connect().subscribe(EduSettings.SETTINGS_CHANGED, () -> {
-          StepicUser user = EduSettings.getInstance().getUser();
+          StepikUser user = EduSettings.getInstance().getUser();
           setLastSavedAccount(user);
           updateLoginLabels();
         });
@@ -63,7 +63,7 @@ public class StepikOptions extends OauthOptions<StepicUser> {
   private void showDialog() {
     OAuthDialog dialog = new OAuthDialog();
     if (dialog.showAndGet()) {
-      StepicUser user = dialog.getUser();
+      StepikUser user = dialog.getUser();
       setLastSavedAccount(user);
       updateLoginLabels();
     }

@@ -19,12 +19,12 @@ public final class PyCheckiOOAuthConnector extends CheckiOOAuthConnector {
   @Nullable
   @Override
   public CheckiOAccount getAccount() {
-    return PyCheckiOSettings.getInstance().getAccount();
+    return PyCheckiOSettings.INSTANCE.getAccount();
   }
 
   @Override
   public void setAccount(@Nullable CheckiOAccount account) {
-    PyCheckiOSettings.getInstance().setAccount(account);
+    PyCheckiOSettings.INSTANCE.setAccount(account);
   }
 
   @NotNull

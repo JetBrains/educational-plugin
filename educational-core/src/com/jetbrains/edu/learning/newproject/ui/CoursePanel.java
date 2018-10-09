@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
-import com.jetbrains.edu.learning.stepik.StepicUserInfo;
+import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -156,7 +156,7 @@ public class CoursePanel extends JPanel {
   @Nullable
   private static String htmlInstructorText(@NotNull Course course) {
     StringBuilder builder = new StringBuilder();
-    List<StepicUserInfo> authors = course.getAuthors();
+    List<StepikUserInfo> authors = course.getAuthors();
     if (authors.isEmpty()) return null;
     builder.append("<b>Instructor");
     if (authors.size() > 1) {

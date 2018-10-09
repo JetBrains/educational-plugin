@@ -95,7 +95,7 @@ public class StepikCheckerConnector {
     request.setConfig(requestConfig);
   }
 
-  public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepicUser user) {
+  public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
     final StepikWrappers.AttemptWrapper.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
 
@@ -141,7 +141,7 @@ public class StepikCheckerConnector {
     return answer;
   }
 
-  public static CheckResult checkCodeTask(@NotNull Project project, @NotNull Task task, @NotNull StepicUser user) {
+  public static CheckResult checkCodeTask(@NotNull Project project, @NotNull Task task, @NotNull StepikUser user) {
     int attemptId = -1;
     try {
       attemptId = getAttemptId(task);

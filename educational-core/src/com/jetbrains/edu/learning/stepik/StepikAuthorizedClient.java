@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.learning.EduSettings;
-import com.jetbrains.edu.learning.TokenInfo;
+import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -34,7 +34,7 @@ public class StepikAuthorizedClient {
 
   @Nullable
   public static CloseableHttpClient getHttpClient() {
-    StepicUser user = EduSettings.getInstance().getUser();
+    StepikUser user = EduSettings.getInstance().getUser();
 
     final boolean isUpToDate = user == null || StepikClient.isTokenUpToDate(user.getAccessToken());
     if (ourClient != null && isUpToDate) {
@@ -73,7 +73,7 @@ public class StepikAuthorizedClient {
    * Make sure you saved stepik user in EduSettings after using this method.
    */
   @NotNull
-  public static CloseableHttpClient getHttpClient(@NotNull final StepicUser user) {
+  public static CloseableHttpClient getHttpClient(@NotNull final StepikUser user) {
     final boolean isUpToDate = StepikClient.isTokenUpToDate(user.getAccessToken());
 
     if (ourClient != null && isUpToDate) {
@@ -88,7 +88,7 @@ public class StepikAuthorizedClient {
     return ourClient;
   }
 
-  private static boolean updateTokens(@NotNull StepicUser user) {
+  private static boolean updateTokens(@NotNull StepikUser user) {
     TokenInfo tokenInfo = getUpdatedTokens(user.getRefreshToken());
     if (tokenInfo != null) {
       user.setTokenInfo(tokenInfo);
@@ -100,14 +100,14 @@ public class StepikAuthorizedClient {
   /*
    * This method should be used only in project generation while project is not available.
    */
-  public static <T> T getFromStepik(String link, final Class<T> container, @NotNull final StepicUser stepicUser) throws IOException {
-    return StepikClient.getFromStepik(link, container, getHttpClient(stepicUser));
+  public static <T> T getFromStepik(String link, final Class<T> container, @NotNull final StepikUser stepikUser) throws IOException {
+    return StepikClient.getFromStepik(link, container, getHttpClient(stepikUser));
   }
 
   public static <T> T getFromStepik(String link, final Class<T> container,
-                                    @NotNull final StepicUser stepicUser,
+                                    @NotNull final StepikUser stepikUser,
                                     @Nullable Map<Key, Object> params) throws IOException {
-    return StepikClient.getFromStepik(link, container, getHttpClient(stepicUser), params);
+    return StepikClient.getFromStepik(link, container, getHttpClient(stepikUser), params);
   }
 
   @NotNull
@@ -124,7 +124,7 @@ public class StepikAuthorizedClient {
   }
 
   @Nullable
-  public static StepicUser login(@NotNull final String code, String redirectUrl) {
+  public static StepikUser login(@NotNull final String code, String redirectUrl) {
     final List<NameValuePair> parameters = new ArrayList<>();
     parameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
     parameters.add(new BasicNameValuePair("code", code));
@@ -139,11 +139,11 @@ public class StepikAuthorizedClient {
     return login(tokenInfo);
   }
 
-  public static StepicUser login(@NotNull TokenInfo tokenInfo) {
-    final StepicUser user = new StepicUser(tokenInfo);
+  public static StepikUser login(@NotNull TokenInfo tokenInfo) {
+    final StepikUser user = new StepikUser(tokenInfo);
     ourClient = createInitializedClient(user.getAccessToken());
 
-    final StepicUserInfo currentUser = getCurrentUser();
+    final StepikUserInfo currentUser = getCurrentUser();
     if (currentUser != null) {
       user.setUserInfo(currentUser);
     }
@@ -166,7 +166,7 @@ public class StepikAuthorizedClient {
   }
 
   @Nullable
-  public static StepicUserInfo getCurrentUser() {
+  public static StepikUserInfo getCurrentUser() {
     CloseableHttpClient client = getHttpClient();
     if (client != null) {
       try {

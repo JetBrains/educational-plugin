@@ -1,4 +1,4 @@
-package com.jetbrains.edu.java.learning
+package com.jetbrains.edu.java
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase

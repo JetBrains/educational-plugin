@@ -1,7 +1,7 @@
-package com.jetbrains.edu.learning.stepik.alt
+package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.jetbrains.edu.learning.TokenInfo
+import com.jetbrains.edu.learning.authUtils.TokenInfo
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST

@@ -30,7 +30,7 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
-import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jdom.Document;
@@ -156,7 +156,7 @@ public class EduBuiltInServerUtils {
     ApplicationManager.getApplication().invokeLater(() -> ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       execCancelable(() -> {
-        StepicUser user = EduSettings.getInstance().getUser();
+        StepikUser user = EduSettings.getInstance().getUser();
         RemoteCourse course = StepikConnector.getCourseInfo(user, courseId, true);
         showDialog(course, stepId);
         return null;

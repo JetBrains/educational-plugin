@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.checkio.api.adapters;
 
 import com.google.gson.*;
-import com.jetbrains.edu.learning.TokenInfo;
+import com.jetbrains.edu.learning.authUtils.TokenInfo;
 
 import java.lang.reflect.Type;
 

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.alt
+package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.courseFormat.Lesson

@@ -6,12 +6,12 @@ import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.components.JBLabel
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
-import com.jetbrains.edu.learning.OauthAccount
+import com.jetbrains.edu.learning.authUtils.OAuthAccount
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 
-abstract class OauthOptions<T : OauthAccount<out Any>> : OptionsProvider {
+abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
   private var loginLabel = JBLabel()
   private var loginLink = HoverHyperlinkLabel("")
   private var panel = JPanel()
