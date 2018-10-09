@@ -33,6 +33,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.kotlinVersion
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -75,7 +76,8 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     val minAndroidSdk = info.getUserData(MIN_ANDROID_SDK) ?: return
     val compileAndroidSdk = info.getUserData(COMPILE_ANDROID_SDK) ?: return
 
-    val sdkLocation = IdeSdks.getInstance().androidSdkPath ?: return
+    // TODO: setup android sdk on CI
+    val sdkLocation = if (isUnitTestMode) File("/") else IdeSdks.getInstance().androidSdkPath ?: return
 
     val attributes = mapOf(
       "PACKAGE_NAME" to packageName,
