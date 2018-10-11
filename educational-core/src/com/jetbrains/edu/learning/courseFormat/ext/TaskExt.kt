@@ -112,4 +112,4 @@ fun Task.hasTaskFilesNotInsideSourceDir(project: Project): Boolean {
 private fun TaskFile.canShowSolution() =
   answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
 
-fun Task.canShowSolution() = taskFiles.values.all { it.canShowSolution() }
+fun Task.canShowSolution() = taskFiles.values.any { it.canShowSolution() }
