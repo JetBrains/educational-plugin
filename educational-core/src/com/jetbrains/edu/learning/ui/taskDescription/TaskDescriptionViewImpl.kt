@@ -26,7 +26,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   private val taskTextTW : TaskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
   private val taskTextPanel : JComponent = taskTextTW.createTaskInfoPanel(project)
   private lateinit var separator: JSeparator
-  private var adaptiveReactionsPanel = JPanel()
+  private var taskSpecificTopPanel = JPanel()
 
   override var currentTask: Task? = null
     set(value) {
@@ -34,7 +34,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       setTaskText(value)
       separator.isVisible = value != null
       checkPanel.isVisible = value != null
-      adaptiveReactionsPanel.isVisible = value != null && (StudyTaskManager.getInstance(project).course?.isAdaptive ?: false)
+      taskSpecificTopPanel.isVisible = value != null && (StudyTaskManager.getInstance(project).course?.isAdaptive ?: false)
       if (value != null) {
         readyToCheck()
         checkPanel.updateCheckButton(value)
@@ -66,8 +66,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
     val course = StudyTaskManager.getInstance(project).course
     if (course != null && course.isAdaptive) {
-      adaptiveReactionsPanel = StepikAdaptiveReactionsPanel(project)
-      panel.add(adaptiveReactionsPanel, BorderLayout.NORTH)
+      taskSpecificTopPanel = StepikAdaptiveReactionsPanel(project)
+      panel.add(taskSpecificTopPanel, BorderLayout.NORTH)
     }
 
     panel.add(taskTextPanel, BorderLayout.CENTER)
