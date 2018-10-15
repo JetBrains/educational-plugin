@@ -80,7 +80,6 @@ public abstract class CourseProjectGenerator<S> {
         isEnrolled = StepikConnector.isEnrolledToCourse(remoteCourse.getId(), user);
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
         StepikConnector.enrollToCourse(remoteCourse.getId(), user);
-        StepikConnector.loadCourseStructure(remoteCourse);
         if (StepikConnector.loadCourseStructure(remoteCourse)) {
           myCourse = remoteCourse;
           return true;
