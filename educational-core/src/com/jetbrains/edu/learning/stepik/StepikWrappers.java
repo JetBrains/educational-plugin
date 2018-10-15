@@ -162,8 +162,7 @@ public class StepikWrappers {
       this.course.setDescription(course.getDescription());
       this.course.setAuthors(course.getAuthors());
 
-      final StepikCourseRemoteInfo stepikRemoteInfo = new StepikCourseRemoteInfo();
-      this.course.setRemoteInfo(stepikRemoteInfo);
+      final StepikCourseRemoteInfo stepikRemoteInfo = this.course.getStepikRemoteInfo();
       final RemoteInfo remoteInfo = course.getRemoteInfo();
       if (remoteInfo instanceof StepikCourseRemoteInfo) {
         stepikRemoteInfo.setPublic(((StepikCourseRemoteInfo)remoteInfo).isPublic());
