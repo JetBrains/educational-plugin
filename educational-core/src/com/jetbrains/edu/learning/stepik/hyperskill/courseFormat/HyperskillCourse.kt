@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 import com.jetbrains.edu.learning.courseFormat.Course
 
 class HyperskillCourse : Course {
-  var id: Int = -1
-
   @Suppress("unused") constructor() // used for deserialization
 
   constructor(name: String, languageID: String) {

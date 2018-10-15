@@ -39,7 +39,6 @@ private object HyperskillProjectsProvider : CoursesProvider {
       if (!isKotlin) { // TODO: kotlin part
         val languageId = HYPERSKILL + "-" + EduNames.JAVA
         val hyperskillCourse = HyperskillCourse(project.title, languageId)
-        hyperskillCourse.id = project.id
         courses.add(hyperskillCourse)
       }
     }
