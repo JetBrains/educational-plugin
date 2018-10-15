@@ -99,7 +99,7 @@ public class StepikUserWidget implements IconLikeCustomStatusBarWidget {
           else {
             if (loginText.equals(selectedValue)) {
               EduUsagesCollector.loginFromWidget();
-              StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
+              StepikConnector.doAuthorize(StepikUtils::showOAuthDialog);
             }
             else if (logOutText.equals(selectedValue)) {
               EduUsagesCollector.logoutFromWidget();

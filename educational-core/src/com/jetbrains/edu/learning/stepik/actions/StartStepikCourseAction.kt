@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.StepikUtils
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.newProject.ChooseStepikCourseLanguageDialog
 import com.jetbrains.edu.learning.stepik.newProject.ImportStepikCourseDialog
@@ -30,7 +31,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
             }
           }
         })
-        StepikConnector.doAuthorize { EduUtils.showOAuthDialog() }
+        StepikConnector.doAuthorize { StepikUtils.showOAuthDialog() }
       }
       return
     }

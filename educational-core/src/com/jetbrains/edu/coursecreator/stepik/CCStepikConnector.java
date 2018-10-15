@@ -64,7 +64,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static com.jetbrains.edu.learning.EduUtils.showOAuthDialog;
+import static com.jetbrains.edu.learning.stepik.StepikUtils.showOAuthDialog;
 
 public class CCStepikConnector {
   private static final Logger LOG = Logger.getInstance(CCStepikConnector.class.getName());

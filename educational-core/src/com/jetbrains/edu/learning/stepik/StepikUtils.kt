@@ -19,6 +19,8 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.WindowManager
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
@@ -73,4 +75,23 @@ object StepikUtils {
       navigateToTask(project, task)
     }
   }
+
+  @JvmStatic
+  fun getVisibleWidget(project: Project): StepikUserWidget? {
+    val frame = WindowManager.getInstance().getIdeFrame(project)
+    return if (frame != null) {
+      frame.statusBar.getWidget(StepikUserWidget.ID) as StepikUserWidget?
+    }
+    else null
+  }
+
+  @JvmStatic
+  fun showOAuthDialog() {
+    val dialog = OAuthDialog()
+    if (dialog.showAndGet()) {
+      val user = dialog.user
+      EduSettings.getInstance().user = user
+    }
+  }
+
 }

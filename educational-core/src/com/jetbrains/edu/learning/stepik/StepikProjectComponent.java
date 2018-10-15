@@ -16,7 +16,6 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
-import static com.jetbrains.edu.learning.EduUtils.getVisibleWidget;
 import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
@@ -67,7 +66,7 @@ public class StepikProjectComponent implements ProjectComponent {
   }
 
   private void addStepikWidget() {
-    StepikUserWidget widget = getVisibleWidget(myProject);
+    StepikUserWidget widget = StepikUtils.getVisibleWidget(myProject);
     StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
     if (widget != null) {
       statusBar.removeWidget(StepikUserWidget.ID);

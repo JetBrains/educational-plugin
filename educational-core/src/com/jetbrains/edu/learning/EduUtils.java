@@ -47,8 +47,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -67,9 +65,6 @@ import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
-import com.jetbrains.edu.learning.stepik.OAuthDialog;
-import com.jetbrains.edu.learning.stepik.StepikUser;
-import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
@@ -687,23 +682,6 @@ public class EduUtils {
       }
     }
     return activeVirtualFile;
-  }
-
-  @Nullable
-  public static StepikUserWidget getVisibleWidget(Project project) {
-    IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
-    if (frame != null) {
-      return (StepikUserWidget)frame.getStatusBar().getWidget(StepikUserWidget.ID);
-    }
-    return null;
-  }
-
-  public static void showOAuthDialog() {
-    OAuthDialog dialog = new OAuthDialog();
-    if (dialog.showAndGet()) {
-      StepikUser user = dialog.getUser();
-      EduSettings.getInstance().setUser(user);
-    }
   }
 
   @Nullable
