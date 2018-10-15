@@ -26,5 +26,5 @@ fun StepikCourse.getTask(stepId: Int): Task? {
     }
     true
   }
-  return null
+  return taskRef.get()
 }
