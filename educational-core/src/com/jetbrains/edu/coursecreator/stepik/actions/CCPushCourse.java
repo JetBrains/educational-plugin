@@ -32,7 +32,6 @@ import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -137,8 +136,7 @@ public class CCPushCourse extends DumbAwareAction {
 
   private static void askToWrapTopLevelLessons(Project project, StepikCourse course) {
     if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
-      boolean hasUnpushedLessons = course.getLessons().stream().
-        anyMatch(lesson -> !(lesson.getRemoteInfo() instanceof StepikLessonRemoteInfo));
+      boolean hasUnpushedLessons = course.getLessons().stream().anyMatch(lesson -> !StepikLessonExt.isStepikLesson(lesson));
       if (hasUnpushedLessons) {
         int result = Messages
           .showYesNoDialog(project, "Top-level lessons will be wrapped with sections as it's not allowed to have both top-level lessons and sections",
