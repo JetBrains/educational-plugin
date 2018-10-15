@@ -22,11 +22,12 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
-import com.jetbrains.edu.learning.stepik.courseFormat.*;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
@@ -150,9 +151,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void updateCourseContent(@NotNull ProgressIndicator indicator, StepikCourse course, Project project) {
-    final RemoteInfo info = course.getRemoteInfo();
-    assert info instanceof StepikCourseRemoteInfo;
-    final StepikCourseRemoteInfo stepikRemoteInfo = (StepikCourseRemoteInfo)info;
+    final StepikCourseRemoteInfo stepikRemoteInfo = course.getStepikRemoteInfo();
 
     final List<Integer> sectionIds = stepikRemoteInfo.getSectionIds();
     if (!sectionIds.isEmpty() && course.getLessons().isEmpty()) {
