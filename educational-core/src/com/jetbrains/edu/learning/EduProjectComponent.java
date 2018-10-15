@@ -86,7 +86,7 @@ public class EduProjectComponent implements ProjectComponent {
         }
 
         final StepikUser currentUser = EduSettings.getInstance().getUser();
-        if (currentUser != null && !course.getAuthors().contains(currentUser) && !CCUtils.isCourseCreator(myProject)) {
+        if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo) && !CCUtils.isCourseCreator(myProject)) {
           loadSolutionsFromStepik(course);
         }
 
