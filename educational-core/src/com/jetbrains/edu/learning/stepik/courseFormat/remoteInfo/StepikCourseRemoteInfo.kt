@@ -8,7 +8,6 @@ class StepikCourseRemoteInfo : StepikRemoteInfo() {
   // publish to stepik
   var isPublic: Boolean = false
   var isIdeaCompatible = true
-  var id: Int = 0
   var sectionIds: MutableList<Int> = mutableListOf() // in CC mode is used to store top-level lessons section id
   var instructors: MutableList<Int> = mutableListOf()
   var additionalMaterialsUpdateDate = Date(0)

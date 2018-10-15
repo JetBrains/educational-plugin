@@ -244,7 +244,7 @@ class StepikTaskRemoteInfoAdapter : JsonDeserializer<Task>, JsonSerializer<Task>
 
     val stepikRemoteInfo = remoteInfo as? StepikTaskRemoteInfo
 
-    jsonObject.add(ID, JsonPrimitive(stepikRemoteInfo?.stepId ?: 0))
+    jsonObject.add(ID, JsonPrimitive(stepikRemoteInfo?.id ?: 0))
 
     val updateDate = stepikRemoteInfo?.updateDate
     if (updateDate != null) {
@@ -271,7 +271,7 @@ class StepikTaskRemoteInfoAdapter : JsonDeserializer<Task>, JsonSerializer<Task>
     val id = jsonObject.get(ID).asInt
     val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
 
-    remoteInfo.stepId = id
+    remoteInfo.id = id
     remoteInfo.updateDate = updateDate
 
     task.remoteInfo = remoteInfo

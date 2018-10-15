@@ -5,4 +5,5 @@ import java.util.*
 
 open class StepikRemoteInfo : RemoteInfo  {
   var updateDate = Date(0)
+  var id: Int = 0
 }
