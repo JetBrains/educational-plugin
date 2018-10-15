@@ -118,7 +118,7 @@ public class SerializationUtils {
     public static final String USER = "user";
     public static final String LAST_TIME_CHECKED = "lastTimeChecked";
     public static final String USE_JAVA_FX = "shouldUseJavaFx";
-    public static final String STEPIK_USER = "StepicUser";
+    public static final String STEPIK_USER = "StepikUser";
 
     private Xml() {
     }
