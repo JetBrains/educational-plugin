@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
@@ -97,7 +98,8 @@ public class StepikCheckerConnector {
 
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
-    final StepikWrappers.AttemptWrapper.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
+    final int stepId = StepikTaskExt.getStepId(task);
+    final StepikWrappers.AttemptWrapper.Attempt attempt = getAttemptForStep(stepId, user.getId());
 
     if (attempt != null) {
       final int attemptId = attempt.id;
@@ -110,11 +112,11 @@ public class StepikCheckerConnector {
       final CheckResult result = doCheck(wrapper, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
         try {
-          createNewAttempt(task.getStepId());
-          StepikWrappers.StepSource step = StepikConnector.getStep(task.getStepId());
+          createNewAttempt(stepId);
+          StepikWrappers.StepSource step = StepikConnector.getStep(stepId);
           Course course = task.getLesson().getCourse();
           StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getName(),
-                                                                step, task.getStepId(), user.getId());
+                                                                step, stepId, user.getId());
           final Task updatedTask = taskBuilder.createTask(step.block.name);
           if (updatedTask instanceof ChoiceTask) {
             final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();
@@ -252,7 +254,7 @@ public class StepikCheckerConnector {
   }
 
   private static int getAttemptId(@NotNull Task task) throws IOException {
-    final StepikWrappers.AttemptWrapper attemptWrapper = new StepikWrappers.AttemptWrapper(task.getStepId());
+    final StepikWrappers.AttemptWrapper attemptWrapper = new StepikWrappers.AttemptWrapper(StepikTaskExt.getStepId(task));
 
     final HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ATTEMPTS);
     post.setEntity(new StringEntity(new Gson().toJson(attemptWrapper)));

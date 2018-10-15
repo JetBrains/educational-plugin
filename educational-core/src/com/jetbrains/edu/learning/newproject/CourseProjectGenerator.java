@@ -190,7 +190,7 @@ public abstract class CourseProjectGenerator<S> {
           setStepikChangeStatuses(project);
         }
         createAdditionalFiles(project, baseDir);
-        EduUsagesCollector.projectTypeCreated(myCourse.getCourseMode());
+        EduUsagesCollector.projectTypeCreated(myCourse);
 
         return null; // just to use correct overloading of `runProcessWithProgressSynchronously` method
       }, "Generating Course Structure", false, project);
@@ -203,8 +203,9 @@ public abstract class CourseProjectGenerator<S> {
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
     StepikUser user = EduSettings.getInstance().getUser();
     assert myCourse instanceof StepikCourse;
-    final int id = StepikCourseExt.getId(myCourse);
-    final boolean isCompatible = myCourse instanceof StepikCourse && StepikCourseExt.isCompatible((StepikCourse)myCourse);
+    final StepikCourse course = (StepikCourse)myCourse;
+    final int id = StepikCourseExt.getId(course);
+    final boolean isCompatible = StepikCourseExt.isCompatible(course);
     StepikCourse courseFromStepik = StepikConnector.getCourseInfo(user, id, isCompatible);
     if (courseFromStepik != null) {
       StepikConnector.fillItems(courseFromStepik);

@@ -6,7 +6,6 @@ import java.util.*
 class StepikCourseRemoteInfo : RemoteInfo {
   // publish to stepik
   var isPublic: Boolean = false
-  var isAdaptive = false
   var isIdeaCompatible = true
   var id: Int = 0
   var updateDate = Date(0)

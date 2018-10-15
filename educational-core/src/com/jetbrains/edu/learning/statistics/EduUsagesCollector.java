@@ -20,11 +20,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.hash.HashSet;
-import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,11 +30,11 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
   public static final String GROUP_ID = "statistics.educational";
 
   public static void projectTypeCreated(@NotNull Course course) {
-    advanceKey("project.created." + courseTypeId(course));
+    advanceKey("project.created." + course.getCourseMode());
   }
 
   public static void projectTypeOpened(@NotNull Course course) {
-    advanceKey("project.opened." + courseTypeId(course));
+    advanceKey("project.opened." + course.getCourseMode());
   }
 
   public static void projectTypeOpened(@NotNull String projectTypeId) {
@@ -134,12 +130,4 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
     return ServiceManager.getService(EduStatistics.class).getUsageDescriptors();
   }
 
-  @NotNull
-  private static String courseTypeId(@NotNull Course course) {
-    if (course.isStudy()) {
-      return course instanceof StepikCourse && StepikCourseExt.isAdaptive((StepikCourse)course) ? EduNames.ADAPTIVE : EduNames.STUDY;
-    } else {
-      return CCUtils.COURSE_MODE;
-    }
-  }
 }

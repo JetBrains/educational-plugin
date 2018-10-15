@@ -11,11 +11,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.ITEMS
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*
 import com.jetbrains.edu.learning.stepik.courseFormat.*
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.fest.util.Lists
 import org.jdom.Element
 import java.util.*
 
-private var courseElementTypes: List<Class<out Course>> = Lists.newArrayList(Course::class.java, StepikCourse::class.java,
+private var courseElementTypes: List<Class<out Course>> = Lists.newArrayList(Course::class.java,
+                                                                             StepikCourse::class.java,
+                                                                             HyperskillCourse::class.java,
                                                                              CheckiOCourse::class.java)
 
 private var itemElementTypes: List<Class<out StudyItem>> = Lists.newArrayList(Section::class.java, Lesson::class.java,

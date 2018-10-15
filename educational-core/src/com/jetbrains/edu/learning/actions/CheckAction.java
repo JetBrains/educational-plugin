@@ -25,8 +25,6 @@ import com.jetbrains.edu.learning.checker.*;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.coursera.CourseraNames;
@@ -34,8 +32,6 @@ import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
-import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

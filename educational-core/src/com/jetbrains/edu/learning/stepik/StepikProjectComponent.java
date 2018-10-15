@@ -14,13 +14,13 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.learning.EduUtils.getVisibleWidget;
 import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class StepikProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(StepikProjectComponent.class.getName());
   private final Project myProject;
@@ -38,12 +38,8 @@ public class StepikProjectComponent implements ProjectComponent {
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course instanceof StepikCourse) {
-          if (!StepikCourseExt.isAdaptive((StepikCourse)course)) {
-            StepikConnector.updateCourseIfNeeded(myProject, (StepikCourse)course);
-          }
-
-          final StepicUser currentUser = EduSettings.getInstance().getUser();
-          if (currentUser != null && !course.getAuthors().contains(currentUser) && !CCUtils.isCourseCreator(myProject)) {
+          final StepikUser currentUser = EduSettings.getInstance().getUser();
+          if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo) && !CCUtils.isCourseCreator(myProject)) {
             loadSolutionsFromStepik(course);
           }
           selectStep((StepikCourse)course);

@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.steps
 
 fun getLesson(lessonId: Int, language: Language, stages: List<HyperskillStage>): Lesson? {
   val lesson = StepikConnector.getLesson(lessonId)

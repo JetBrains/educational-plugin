@@ -9,12 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.stepik.StepikUserInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.CourseRemoteInfo;
-import com.jetbrains.edu.learning.courseFormat.remote.LocalCourseInfo;
 import com.jetbrains.edu.learning.serialization.XmlCourseSerializerKt;
-import com.jetbrains.edu.learning.stepik.StepicUser;
+import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -27,8 +23,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class Course extends ItemContainer {
-  @NotNull private CourseRemoteInfo myRemoteInfo = new LocalCourseInfo();
-
   transient private List<StepikUserInfo> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;

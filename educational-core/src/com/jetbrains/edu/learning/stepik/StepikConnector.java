@@ -326,8 +326,8 @@ public class StepikConnector {
 
       setCourseAuthors(course);
 
-      final RemoteInfo remoteInfo = course.getRemoteInfo();
-      if (remoteInfo instanceof StepikRemoteInfo && ((StepikRemoteInfo)remoteInfo).isPublic()
+      final StepikCourseRemoteInfo remoteInfo = course.getStepikRemoteInfo();
+      if (remoteInfo.isPublic()
           && !featuredCourses.contains(StepikCourseExt.getId(course))) {
         course.setDescription(course.getDescription() + NOT_VERIFIED_NOTE);
       }
@@ -338,9 +338,8 @@ public class StepikConnector {
 
   private static void setCourseAuthors(@NotNull final StepikCourse stepikCourse) throws IOException {
     final ArrayList<StepikUserInfo> authors = new ArrayList<>();
-    final RemoteInfo remoteInfo = stepikCourse.getRemoteInfo();
-    assert remoteInfo instanceof StepikRemoteInfo;
-    for (Integer instructor : ((StepikRemoteInfo)remoteInfo).getInstructors()) {
+    final StepikCourseRemoteInfo remoteInfo = stepikCourse.getStepikRemoteInfo();
+    for (Integer instructor : remoteInfo.getInstructors()) {
       final StepikUserInfo author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
                                                                AuthorWrapper.class).users.get(0);
       authors.add(author);

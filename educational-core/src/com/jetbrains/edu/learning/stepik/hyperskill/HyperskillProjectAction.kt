@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseLoading.CourseLoader
 import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {

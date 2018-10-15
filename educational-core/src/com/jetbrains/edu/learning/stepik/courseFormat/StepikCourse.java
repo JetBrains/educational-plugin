@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.StepikNames;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -87,8 +86,7 @@ public class StepikCourse extends Course {
   private CourseCompatibility courseCompatibility() {
     final List<String> supportedLanguages = getSupportedLanguages();
 
-    String courseType = courseInfo.getType();
-    final List<String> typeLanguage = StringUtil.split(courseType, " ");
+    final List<String> typeLanguage = StringUtil.split(myType, " ");
     String prefix = typeLanguage.get(0);
     if (!supportedLanguages.contains(getLanguageID())) return CourseCompatibility.UNSUPPORTED;
     if (typeLanguage.size() < 2 || !prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {

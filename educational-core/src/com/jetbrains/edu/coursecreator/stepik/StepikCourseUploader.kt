@@ -287,7 +287,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       }
     }
     else {
-      (course.remoteInfo as StepikCourseRemoteInfo).sectionIds = emptyList()
+      (course.remoteInfo as StepikCourseRemoteInfo).sectionIds = mutableListOf()
     }
     sectionsToPush.addAll(course.sections.filter { it.id == 0 })
 

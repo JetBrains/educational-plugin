@@ -14,7 +14,6 @@ import java.util.*
 
 class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikCourse>, JsonSerializer<StepikCourse> {
   private val IS_PUBLIC = "is_public"
-  private val IS_ADAPTIVE = "is_adaptive"
   private val IS_IDEA_COMPATIBLE = "is_idea_compatible"
   private val ID = "id"
   private val UPDATE_DATE = "update_date"
@@ -30,7 +29,6 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
     val stepikRemoteInfo = remoteInfo as? StepikCourseRemoteInfo
 
     jsonObject.add(IS_PUBLIC, JsonPrimitive(stepikRemoteInfo?.isPublic ?: false))
-    jsonObject.add(IS_ADAPTIVE, JsonPrimitive(stepikRemoteInfo?.isAdaptive ?: false))
     jsonObject.add(IS_IDEA_COMPATIBLE, JsonPrimitive(stepikRemoteInfo?.isIdeaCompatible ?: false))
     jsonObject.add(ID, JsonPrimitive(stepikRemoteInfo?.id ?: 0))
     jsonObject.add(SECTIONS, gson.toJsonTree(stepikRemoteInfo?.sectionIds ?: Lists.emptyList<Int>()))
@@ -57,7 +55,6 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
     val jsonObject = json.asJsonObject
     val remoteInfo = StepikCourseRemoteInfo()
     val isPublic = jsonObject.get(IS_PUBLIC).asBoolean
-    val isAdaptive = jsonObject.get(IS_ADAPTIVE).asBoolean
     val isCompatible = jsonObject.get(IS_IDEA_COMPATIBLE).asBoolean
     val id = jsonObject.get(ID).asInt
 
@@ -66,7 +63,6 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
     val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
 
     remoteInfo.isPublic = isPublic
-    remoteInfo.isAdaptive = isAdaptive
     remoteInfo.isIdeaCompatible = isCompatible
     remoteInfo.id = id
     remoteInfo.sectionIds = sections

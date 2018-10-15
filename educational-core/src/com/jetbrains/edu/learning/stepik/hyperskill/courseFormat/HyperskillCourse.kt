@@ -3,13 +3,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 import com.jetbrains.edu.learning.courseFormat.Course
 
 class HyperskillCourse : Course {
-  private var _id: Int = -1
-
-  override fun getId(): Int = _id
-
-  fun setId(id: Int) {
-    _id = id
-  }
+  var id: Int = -1
 
   @Suppress("unused") constructor() // used for deserialization
 

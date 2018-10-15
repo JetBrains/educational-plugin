@@ -4,9 +4,8 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
-import com.jetbrains.edu.learning.stepik.StepicUser
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.stepik.StepikUser
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
 import com.jetbrains.edu.learning.stepik.isUpToDate
 import junit.framework.TestCase
 import java.util.*

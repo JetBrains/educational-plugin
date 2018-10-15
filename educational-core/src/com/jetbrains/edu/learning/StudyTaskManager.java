@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning;
 
-import com.google.common.collect.Lists;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
@@ -23,9 +22,6 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
@@ -37,11 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.addChildWithName;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 import static com.jetbrains.edu.learning.serialization.XmlCourseSerializerKt.deserializeCourse;
 import static com.jetbrains.edu.learning.serialization.XmlCourseSerializerKt.serializeCourse;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 
 /**
  * Implementation of class which contains all the information
@@ -56,9 +50,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Transient
   private Course myCourse;
   public int VERSION = EduVersions.XML_FORMAT_VERSION;
-  private static List<Class<? extends Course>> courseElementTypes = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
-                                                                                       HyperskillCourse.class, Course.class);
-
   public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();
 
   @Transient @Nullable private final Project myProject;
@@ -130,7 +121,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
     Element el = new Element("taskManager");
     Element taskManagerElement = new Element(MAIN_ELEMENT);
     XmlSerializer.serializeInto(this, taskManagerElement);
-    Element courseElement = serializeCourse();
+    Element courseElement = serializeCourse(myCourse);
     addChildWithName(taskManagerElement, COURSE, courseElement);
     el.addContent(taskManagerElement);
     return el;
@@ -214,7 +205,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
       throw new StudyUnrecognizedFormatException();
     }
     XmlSerializer.deserializeInto(this, taskManagerElement);
-    final Element xmlCourse = SerializationUtils.Xml.getChildWithName(taskManagerElement, COURSE);
+    final Element xmlCourse = getChildWithName(taskManagerElement, COURSE);
     myCourse = deserializeCourse(xmlCourse);
   }
 

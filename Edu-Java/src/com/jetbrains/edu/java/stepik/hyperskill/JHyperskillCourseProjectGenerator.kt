@@ -5,6 +5,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.getLesson
