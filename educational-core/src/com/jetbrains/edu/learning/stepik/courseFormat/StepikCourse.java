@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.courseFormat;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
@@ -20,8 +21,8 @@ public class StepikCourse extends Course {
   private static List<String> ourSupportedLanguages;
 
   //course type in format "pycharm<version> <language>"
-  @SerializedName("course_format") private String myType =
-                        String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
+  @Expose @SerializedName("course_format")
+  private String myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
 
   public StepikCourse() {
     setRemoteInfo(new StepikCourseRemoteInfo());
