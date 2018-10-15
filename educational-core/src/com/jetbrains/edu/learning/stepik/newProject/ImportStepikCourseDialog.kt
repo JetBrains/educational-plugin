@@ -2,7 +2,7 @@ package com.jetbrains.edu.learning.stepik.newProject
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
-import com.jetbrains.edu.learning.newproject.ui.ImportStepikCoursePanel
+import com.jetbrains.edu.learning.stepik.ImportStepikCoursePanel
 import javax.swing.JComponent
 
 class ImportStepikCourseDialog : DialogWrapper(false) {

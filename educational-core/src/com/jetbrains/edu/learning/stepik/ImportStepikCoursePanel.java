@@ -1,8 +1,7 @@
-package com.jetbrains.edu.learning.newproject.ui;
+package com.jetbrains.edu.learning.stepik;
 
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
