@@ -23,10 +23,10 @@ import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,15 +70,13 @@ public class CCPushLesson extends DumbAwareAction {
     }
 
     final Section section = lesson.getSection();
-    if (section != null && StepikSectionExt.getId(section) <= 0) {
+    if (section != null && !(section instanceof StepikSection)) {
       return;
     }
 
-    if (StepikStudyItemExt.getId(course) > 0) {
-      e.getPresentation().setEnabledAndVisible(true);
-      if (!isStepikLesson(lesson)) {
-        e.getPresentation().setText("Upload Lesson to Stepik");
-      }
+    e.getPresentation().setEnabledAndVisible(true);
+    if (!isStepikLesson(lesson)) {
+      e.getPresentation().setText("Upload Lesson to Stepik");
     }
   }
 
@@ -142,7 +140,7 @@ public class CCPushLesson extends DumbAwareAction {
 
   // public for tests
   public static void doPush(Lesson lesson, Project project, StepikCourse course) {
-    if (StepikLessonExt.getId(lesson) > 0) {
+    if (isStepikLesson(lesson)) {
       StepikWrappers.Unit unit = StepikConnector.getUnit(StepikLessonExt.getUnitId(lesson));
 
       int sectionId;
