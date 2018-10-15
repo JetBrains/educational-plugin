@@ -8,16 +8,22 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.courseFormat.*
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikTaskRemoteInfo
 import org.fest.util.Lists
 import java.lang.reflect.Type
 import java.util.*
+
+private const val UPDATE_DATE = "update_date"
 
 class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikCourse>, JsonSerializer<Course> {
   private val IS_PUBLIC = "is_public"
   private val IS_IDEA_COMPATIBLE = "is_idea_compatible"
   private val ID = "id"
-  private val UPDATE_DATE = "update_date"
   private val SECTIONS = "sections"
   private val INSTRUCTORS = "instructors"
   private val COURSE_FORMAT = "course_format"
@@ -95,7 +101,6 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
   private val COURSE_ID = "course"
   private val POSITION = "position"
   private val UNITS = "units"
-  private val UPDATE_DATE = "update_date"
 
   override fun serialize(section: Section?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = getGson()
@@ -158,7 +163,6 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
 
 class StepikLessonRemoteInfoAdapter(val language: String?) : JsonDeserializer<Lesson>, JsonSerializer<Lesson> {
   private val ID = "id"
-  private val UPDATE_DATE = "update_date"
   private val IS_PUBLIC = "is_public"
   private val STEPS = "steps"
 
@@ -231,7 +235,6 @@ class StepikLessonRemoteInfoAdapter(val language: String?) : JsonDeserializer<Le
 
 class StepikTaskRemoteInfoAdapter : JsonDeserializer<Task>, JsonSerializer<Task> {
   private val ID = "stepic_id"
-  private val UPDATE_DATE = "update_date"
 
   override fun serialize(task: Task?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = getGson()

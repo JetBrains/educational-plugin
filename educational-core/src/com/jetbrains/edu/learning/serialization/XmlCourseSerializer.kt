@@ -11,6 +11,10 @@ import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.serialization.SerializationUtils.ITEMS
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*
 import com.jetbrains.edu.learning.stepik.courseFormat.*
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikTaskRemoteInfo
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import org.fest.util.Lists
 import org.jdom.Element
@@ -31,11 +35,12 @@ private var taskElementTypes: List<Class<out Task>> = Lists.newArrayList(CheckiO
                                                                          OutputTask::class.java,
                                                                          IdeTask::class.java)
 
-private var remoteInfoTypes: List<Class<out RemoteInfo>> = Lists.newArrayList(StepikCourseRemoteInfo::class.java,
-                                                                              StepikLessonRemoteInfo::class.java,
-                                                                              StepikSectionRemoteInfo::class.java,
-                                                                              StepikTaskRemoteInfo::class.java,
-                                                                              LocalInfo::class.java)
+private var remoteInfoTypes: List<Class<out RemoteInfo>> = Lists.newArrayList(
+  StepikCourseRemoteInfo::class.java,
+  StepikLessonRemoteInfo::class.java,
+  StepikSectionRemoteInfo::class.java,
+  StepikTaskRemoteInfo::class.java,
+  LocalInfo::class.java)
 
 fun deserializeCourse(xmlCourse: Element): Course? {
   for (courseClass in courseElementTypes) {
