@@ -364,7 +364,7 @@ public class CCStepikConnector {
       if (indicator != null) {
         indicator.setText2("Publishing additional files");
       }
-      final Section section = new Section();
+      final StepikSection section = new StepikSection();
       section.setName(StepikNames.PYCHARM_ADDITIONAL);
       StepikSectionExt.setPosition(section, position);
       final int sectionId = postSectionInfo(project, section, id);
@@ -439,7 +439,9 @@ public class CCStepikConnector {
     assert course != null;
     final String language = course.getLanguageID();
     return new GsonBuilder()
+      .registerTypeAdapter(StepikCourse.class, new StepikCourseRemoteInfoAdapter(language))
       .registerTypeAdapter(Course.class, new StepikCourseRemoteInfoAdapter(language))
+      .registerTypeAdapter(StepikSection.class, new StepikSectionRemoteInfoAdapter(language))
       .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter(language))
       .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter(language))
       .registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter())
