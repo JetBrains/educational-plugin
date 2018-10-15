@@ -76,16 +76,7 @@ public class EduSettings implements PersistentStateComponent<Element> {
   }
 
   private void deserialize(@NotNull Element state) throws StudyUnrecognizedFormatException {
-    Element lastTimeChecked = getChildWithName(state, LAST_TIME_CHECKED, true);
-    if (lastTimeChecked != null) {
-      String value = lastTimeChecked.getAttributeValue(VALUE);
-      myLastTimeChecked = Long.parseLong(value);
-    }
-    Element shouldUseJavaFx = getChildWithName(state, USE_JAVA_FX, true);
-    if (shouldUseJavaFx != null) {
-    String value = shouldUseJavaFx.getAttributeValue(VALUE);
-      myShouldUseJavaFx = Boolean.parseBoolean(value);
-    }
+    XmlSerializer.deserializeInto(this, state);
 
     Element user = getChildWithName(state, USER, true);
     if (user != null) {
