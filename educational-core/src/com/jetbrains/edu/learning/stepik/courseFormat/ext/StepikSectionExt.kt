@@ -11,7 +11,7 @@ var Section.id: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.id ?: 0
     if (remoteInfo !is StepikSectionRemoteInfo) {
       remoteInfo = StepikSectionRemoteInfo()
     }
-    (remoteInfo as? StepikSectionRemoteInfo)?.id = id
+    (remoteInfo as StepikSectionRemoteInfo).id = id
   }
 
 var Section.position: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.position ?: 0
@@ -19,7 +19,7 @@ var Section.position: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.posi
     if (remoteInfo !is StepikSectionRemoteInfo) {
       remoteInfo = StepikSectionRemoteInfo()
     }
-    (remoteInfo as? StepikSectionRemoteInfo)?.position = position
+    (remoteInfo as StepikSectionRemoteInfo).position = position
   }
 
 var Section.courseId: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.courseId ?: 0
@@ -27,7 +27,7 @@ var Section.courseId: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.cour
     if (remoteInfo !is StepikSectionRemoteInfo) {
       remoteInfo = StepikSectionRemoteInfo()
     }
-    (remoteInfo as? StepikSectionRemoteInfo)?.courseId = courseId
+    (remoteInfo as StepikSectionRemoteInfo).courseId = courseId
   }
 
 var Section.updateDate: Date get() = (remoteInfo as? StepikSectionRemoteInfo)?.updateDate ?: Date(0)
@@ -35,6 +35,6 @@ var Section.updateDate: Date get() = (remoteInfo as? StepikSectionRemoteInfo)?.u
     if (remoteInfo !is StepikSectionRemoteInfo) {
       remoteInfo = StepikSectionRemoteInfo()
     }
-    (remoteInfo as? StepikSectionRemoteInfo)?.updateDate = date
+    (remoteInfo as StepikSectionRemoteInfo).updateDate = date
   }
 

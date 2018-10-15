@@ -11,7 +11,7 @@ var Task.stepId: Int get() = (remoteInfo as? StepikTaskRemoteInfo)?.id ?: 0
     if (remoteInfo !is StepikTaskRemoteInfo) {
       remoteInfo = StepikTaskRemoteInfo()
     }
-    (remoteInfo as? StepikTaskRemoteInfo)?.id = id
+    (remoteInfo as StepikTaskRemoteInfo).id = id
   }
 
 var Task.updateDate: Date
@@ -20,5 +20,5 @@ var Task.updateDate: Date
     if (remoteInfo !is StepikTaskRemoteInfo) {
       remoteInfo = StepikTaskRemoteInfo()
     }
-    (remoteInfo as? StepikTaskRemoteInfo)?.updateDate = date
+    (remoteInfo as StepikTaskRemoteInfo).updateDate = date
   }

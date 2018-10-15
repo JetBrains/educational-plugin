@@ -12,7 +12,7 @@ var Lesson.unitId: Int get() = (remoteInfo as? StepikLessonRemoteInfo)?.unitId ?
     if (remoteInfo !is StepikLessonRemoteInfo) {
       remoteInfo = StepikLessonRemoteInfo()
     }
-    (remoteInfo as? StepikLessonRemoteInfo)?.unitId = unitId
+    (remoteInfo as StepikLessonRemoteInfo).unitId = unitId
   }
 
 var Lesson.id: Int get() = (remoteInfo as? StepikLessonRemoteInfo)?.id ?: 0
@@ -20,7 +20,7 @@ var Lesson.id: Int get() = (remoteInfo as? StepikLessonRemoteInfo)?.id ?: 0
     if (remoteInfo !is StepikLessonRemoteInfo) {
       remoteInfo = StepikLessonRemoteInfo()
     }
-    (remoteInfo as? StepikLessonRemoteInfo)?.id = id
+    (remoteInfo as StepikLessonRemoteInfo).id = id
   }
 
 var Lesson.updateDate: Date get() = (remoteInfo as? StepikLessonRemoteInfo)?.updateDate ?: Date(0)
@@ -28,7 +28,7 @@ var Lesson.updateDate: Date get() = (remoteInfo as? StepikLessonRemoteInfo)?.upd
     if (remoteInfo !is StepikLessonRemoteInfo) {
       remoteInfo = StepikLessonRemoteInfo()
     }
-    (remoteInfo as? StepikLessonRemoteInfo)?.updateDate = date
+    (remoteInfo as StepikLessonRemoteInfo).updateDate = date
   }
 
 val Lesson.steps: List<Int> get() = (remoteInfo as? StepikLessonRemoteInfo)?.steps ?: listOf()

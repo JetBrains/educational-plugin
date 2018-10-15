@@ -13,7 +13,10 @@ val StepikCourse.id: Int get() = (remoteInfo as? StepikCourseRemoteInfo)?.id ?: 
 
 var StepikCourse.updateDate: Date get() = (remoteInfo as? StepikCourseRemoteInfo)?.updateDate ?: Date(0)
   set(date) {
-    (remoteInfo as? StepikCourseRemoteInfo)?.updateDate = date
+    if (remoteInfo !is StepikCourseRemoteInfo) {
+      remoteInfo = StepikCourseRemoteInfo()
+    }
+    (remoteInfo as StepikCourseRemoteInfo).updateDate = date
   }
 
 fun StepikCourse.getTask(stepId: Int): Task? {
