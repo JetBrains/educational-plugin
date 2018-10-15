@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.serialization
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -12,7 +13,7 @@ import org.fest.util.Lists
 import java.lang.reflect.Type
 import java.util.*
 
-class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikCourse>, JsonSerializer<StepikCourse> {
+class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikCourse>, JsonSerializer<Course> {
   private val IS_PUBLIC = "is_public"
   private val IS_IDEA_COMPATIBLE = "is_idea_compatible"
   private val ID = "id"
@@ -20,7 +21,7 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
   private val SECTIONS = "sections"
   private val INSTRUCTORS = "instructors"
 
-  override fun serialize(course: StepikCourse?, type: Type?, context: JsonSerializationContext?): JsonElement {
+  override fun serialize(course: Course?, type: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = getGson()
     val tree = gson.toJsonTree(course)
     val jsonObject = tree.asJsonObject
@@ -84,14 +85,14 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
   }
 }
 
-class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikSection>, JsonSerializer<StepikSection> {
+class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikSection>, JsonSerializer<Section> {
   private val ID = "id"
   private val COURSE_ID = "course"
   private val POSITION = "position"
   private val UNITS = "units"
   private val UPDATE_DATE = "update_date"
 
-  override fun serialize(section: StepikSection?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
+  override fun serialize(section: Section?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = getGson()
     val tree = gson.toJsonTree(section)
     val jsonObject = tree.asJsonObject
@@ -120,10 +121,10 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
     return section
   }
 
-  private fun deserializeRemoteInfo(gson: Gson, section: StepikSection, json: JsonElement): Section? {
+  private fun deserializeRemoteInfo(gson: Gson, section: StepikSection, json: JsonElement) {
     val jsonObject = json.asJsonObject
 
-    val remoteInfo = section.stepikRemoteInfo
+    val remoteInfo = StepikSectionRemoteInfo()
     val id = jsonObject.get(ID).asInt
     val courseId = jsonObject.get(COURSE_ID).asInt
     val position = jsonObject.get(POSITION).asInt
@@ -137,7 +138,6 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
     remoteInfo.units = units
 
     section.remoteInfo = remoteInfo
-    return section
   }
 
   private fun getGson(): Gson {
@@ -188,7 +188,7 @@ class StepikLessonRemoteInfoAdapter(val language: String?) : JsonDeserializer<Le
     return lesson
   }
 
-  private fun deserializeRemoteInfo(gson: Gson, lesson: Lesson, json: JsonElement): Lesson? {
+  private fun deserializeRemoteInfo(gson: Gson, lesson: Lesson, json: JsonElement) {
     val jsonObject = json.asJsonObject
 
     val remoteInfo = StepikLessonRemoteInfo()
@@ -204,7 +204,6 @@ class StepikLessonRemoteInfoAdapter(val language: String?) : JsonDeserializer<Le
     remoteInfo.steps = steps
 
     lesson.remoteInfo = remoteInfo
-    return lesson
   }
 
   private fun renameAdditionalInfo(lesson: Lesson) {
@@ -256,7 +255,7 @@ class StepikTaskRemoteInfoAdapter : JsonDeserializer<Task>, JsonSerializer<Task>
     return task
   }
 
-  private fun deserializeRemoteInfo(gson: Gson, task: Task, json: JsonElement): Task? {
+  private fun deserializeRemoteInfo(gson: Gson, task: Task, json: JsonElement) {
     val jsonObject = json.asJsonObject
 
     val remoteInfo = StepikTaskRemoteInfo()
@@ -268,7 +267,6 @@ class StepikTaskRemoteInfoAdapter : JsonDeserializer<Task>, JsonSerializer<Task>
     remoteInfo.updateDate = updateDate
 
     task.remoteInfo = remoteInfo
-    return task
   }
 
   private fun getGson(): Gson {
