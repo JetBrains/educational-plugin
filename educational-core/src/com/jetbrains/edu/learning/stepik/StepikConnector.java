@@ -319,16 +319,15 @@ public class StepikConnector {
                                   @NotNull List<Integer> featuredCourses) throws IOException {
     final List<StepikCourse> courses = coursesContainer.courses;
     for (StepikCourse course : courses) {
-      if (StringUtil.isEmptyOrSpaces(course.getType())) continue;
+      final StepikCourseRemoteInfo remoteInfo = course.getStepikRemoteInfo();
+      if (StringUtil.isEmptyOrSpaces(remoteInfo.getCourseFormat())) continue;
 
       CourseCompatibility compatibility = course.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
 
       setCourseAuthors(course);
 
-      final StepikCourseRemoteInfo remoteInfo = course.getStepikRemoteInfo();
-      if (remoteInfo.isPublic()
-          && !featuredCourses.contains(StepikCourseExt.getId(course))) {
+      if (remoteInfo.isPublic() && !featuredCourses.contains(StepikCourseExt.getId(course))) {
         course.setDescription(course.getDescription() + NOT_VERIFIED_NOTE);
       }
       course.setVisibility(getVisibility(course, featuredCourses));

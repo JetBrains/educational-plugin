@@ -21,6 +21,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.WindowManager
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
@@ -35,15 +36,15 @@ object StepikUtils {
 
   @JvmStatic
   fun setCourseLanguage(info: StepikCourse) {
-    val courseType = info.type
-    val matcher = PYCHARM_COURSE_TYPE.matcher(courseType)
+    val courseFormat = info.stepikRemoteInfo.courseFormat
+    val matcher = PYCHARM_COURSE_TYPE.matcher(courseFormat)
     if (matcher.matches()) {
       val language = matcher.group(2)
       info.language = language
     }
     else {
       LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
-                             info.name, courseType))
+                             info.name, courseFormat))
     }
   }
 
@@ -94,4 +95,8 @@ object StepikUtils {
     }
   }
 
+  @JvmStatic
+  fun getCourseFormat(language: String) : String {
+    return String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, JSON_FORMAT_VERSION, language)
+  }
 }

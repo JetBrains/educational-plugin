@@ -20,6 +20,7 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
   private val UPDATE_DATE = "update_date"
   private val SECTIONS = "sections"
   private val INSTRUCTORS = "instructors"
+  private val COURSE_FORMAT = "course_format"
 
   override fun serialize(course: Course?, type: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = getGson()
@@ -34,6 +35,7 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
     jsonObject.add(ID, JsonPrimitive(stepikRemoteInfo?.id ?: 0))
     jsonObject.add(SECTIONS, gson.toJsonTree(stepikRemoteInfo?.sectionIds ?: Lists.emptyList<Int>()))
     jsonObject.add(INSTRUCTORS, gson.toJsonTree(stepikRemoteInfo?.instructors ?: Lists.emptyList<Int>()))
+    jsonObject.add(COURSE_FORMAT, JsonPrimitive(stepikRemoteInfo?.courseFormat ?: ""))
 
     val updateDate = stepikRemoteInfo?.updateDate
     if (updateDate != null) {
@@ -49,6 +51,7 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
 
     val course = gson.fromJson(json, StepikCourse::class.java)
     deserializeRemoteInfo(json, course, gson)
+    course.updateCourseCompatibility()
     return course
   }
 
@@ -58,6 +61,7 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
     val isPublic = jsonObject.get(IS_PUBLIC).asBoolean
     val isCompatible = jsonObject.get(IS_IDEA_COMPATIBLE).asBoolean
     val id = jsonObject.get(ID).asInt
+    val courseFormat = jsonObject.get(COURSE_FORMAT).asString
 
     val sections = gson.fromJson<MutableList<Int>>(jsonObject.get(SECTIONS), object: TypeToken<MutableList<Int>>(){}.type)
     val instructors = gson.fromJson<MutableList<Int>>(jsonObject.get(INSTRUCTORS), object: TypeToken<MutableList<Int>>(){}.type)
@@ -69,6 +73,7 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
     remoteInfo.sectionIds = sections
     remoteInfo.instructors = instructors
     remoteInfo.updateDate = updateDate
+    remoteInfo.courseFormat = courseFormat
 
     course.remoteInfo = remoteInfo
   }
