@@ -9,7 +9,6 @@ import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.coursera.StartCourseraAssignment
 import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectAction
 import icons.EducationalCoreIcons
 
 class LearnAndTeachAction : WelcomePopupAction() {
@@ -18,7 +17,7 @@ class LearnAndTeachAction : WelcomePopupAction() {
   override fun isSilentlyChooseSingleOption() = true
 
   override fun fillActions(group: DefaultActionGroup) {
-    group.addAll(BrowseCoursesAction(), StartCourseraAssignment(), HyperskillProjectAction(),
+    group.addAll(BrowseCoursesAction(), StartCourseraAssignment(),
                  ImportLocalCourseAction(), StartStepikCourseAction(),
                  CCNewCourseAction())
   }
