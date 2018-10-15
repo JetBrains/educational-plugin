@@ -41,3 +41,7 @@ fun Lesson.getTask(id: Int): Task? {
   }
   return null
 }
+
+fun isStepikLesson(lesson: Lesson): Boolean {
+  return lesson.remoteInfo is StepikLessonRemoteInfo
+}

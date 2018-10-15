@@ -26,9 +26,7 @@ import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
@@ -40,6 +38,7 @@ import java.util.List;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
   private static Logger LOG = Logger.getInstance(CCPushCourse.class);
 
@@ -77,25 +76,25 @@ public class CCPushCourse extends DumbAwareAction {
 
   public static boolean doPush(Project project, Course course) {
     if (course instanceof StepikCourse) {
-      askToWrapTopLevelLessons(project, course);
-
+      final StepikCourse stepikCourse = (StepikCourse)course;
+      askToWrapTopLevelLessons(project, stepikCourse);
       ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
-          if (getCourseInfo(String.valueOf(((StepikCourse)course).getStepikRemoteInfo().getId())) == null) {
+          if (getCourseInfo(String.valueOf(stepikCourse.getStepikRemoteInfo().getId())) == null) {
             String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
             Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
-                                                         createPostCourseNotificationListener(project, (StepikCourse)course));
+                                                         createPostCourseNotificationListener(project, stepikCourse));
             notification.notify(project);
             return;
           }
           indicator.setIndeterminate(false);
 
           if (Experiments.isFeatureEnabled(StepikCourseUploader.FEATURE_ID)) {
-            new StepikCourseUploader(project, (StepikCourse)course).updateCourse();
+            new StepikCourseUploader(project, stepikCourse).updateCourse();
           }
           else {
-            pushInOldWay(indicator, project, (StepikCourse)course);
+            pushInOldWay(indicator, project, stepikCourse);
           }
         }
       });
@@ -133,9 +132,10 @@ public class CCPushCourse extends DumbAwareAction {
     }
   }
 
-  private static void askToWrapTopLevelLessons(Project project, Course course) {
+  private static void askToWrapTopLevelLessons(Project project, StepikCourse course) {
     if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
-      boolean hasUnpushedLessons = course.getLessons().stream().anyMatch(lesson -> StepikLessonExt.getId(lesson) == 0);
+      boolean hasUnpushedLessons = course.getLessons().stream().
+        anyMatch(lesson -> !(lesson.getRemoteInfo() instanceof StepikLessonRemoteInfo));
       if (hasUnpushedLessons) {
         int result = Messages
           .showYesNoDialog(project, "Top-level lessons will be wrapped with sections as it's not allowed to have both top-level lessons and sections",
@@ -161,7 +161,7 @@ public class CCPushCourse extends DumbAwareAction {
     int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
     for (Section section : course.getSections()) {
       StepikSectionExt.setPosition(section, position++);
-      if (StepikSectionExt.getId(section) > 0) {
+      if (section instanceof StepikSection) {
         updateSection(project, section);
       }
       else {
@@ -172,7 +172,7 @@ public class CCPushCourse extends DumbAwareAction {
 
     for (Lesson lesson : course.getLessons()) {
       Integer sectionId = stepikRemoteInfo.getSectionIds().get(0);
-      if (StepikLessonExt.getId(lesson) > 0) {
+      if (StepikLessonExt.isStepikLesson(lesson)) {
         updateLesson(project, lesson, false, sectionId);
       }
       else {

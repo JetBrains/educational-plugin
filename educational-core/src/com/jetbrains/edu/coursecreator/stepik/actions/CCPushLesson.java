@@ -24,7 +24,6 @@ import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikLessonRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
@@ -34,6 +33,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt.isStepikLesson;
+
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushLesson extends DumbAwareAction {
   public CCPushLesson() {
     super("Update Lesson on Stepik", "Update Lesson on Stepik", null);
@@ -242,9 +244,5 @@ public class CCPushLesson extends DumbAwareAction {
     }
 
     return position;
-  }
-
-  private static boolean isStepikLesson(@NotNull Lesson lesson) {
-    return lesson.getRemoteInfo() instanceof StepikLessonRemoteInfo;
   }
 }

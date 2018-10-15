@@ -65,7 +65,7 @@ public class CCWrapWithSection extends DumbAwareAction {
     ProjectView.getInstance(project).refresh();
     StepikCourseChangeHandler.contentChanged(course);
     for (Lesson lesson : section.getLessons()) {
-      if (StepikLessonExt.getId(lesson) != 0) {
+      if (StepikLessonExt.isStepikLesson(lesson)) {
         StepikCourseChangeHandler.infoChanged(lesson);
       }
     }
