@@ -13,12 +13,12 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.position
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.position
 
 class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Section on Stepik", null) {
 
@@ -90,8 +90,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
             }
 
             if (positionChanged && section.position < course.sections.size) {
-              updateSectionsPositions(project, course.sections,
-                                                                                                             1 + if (course.hasTopLevelLessons) 1 else 0)
+              updateSectionsPositions(project, course.sections, 1 + if (course.hasTopLevelLessons) 1 else 0)
               CCStepikConnector.updateAdditionalSection(project)
             }
 
@@ -105,9 +104,8 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
             CCStepikConnector.postSection(project, section, indicator)
             CCStepikConnector.updateAdditionalSection(project)
             if (section.position < course.sections.size) {
-              updateSectionsPositions(project, course.sections.slice(
-                IntRange(section.position, course.sections.size - 1)),
-                                                                                                             section.position + 1)
+              updateSectionsPositions(project, course.sections.slice(IntRange(section.position, course.sections.size - 1)),
+                                      section.position + 1)
             }
             CCStepikConnector.showNotification(project, "Section \"${section.name}\" posted",
                                                CCStepikConnector.openOnStepikAction("/course/" + course.id))
@@ -116,8 +114,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       })
     }
 
-    private fun sectionPosition(course: StepikCourse,
-                                sectionName: String): Int {
+    private fun sectionPosition(course: StepikCourse, sectionName: String): Int {
       var position = 1 + if (course.hasTopLevelLessons) 1 else 0
       for (s in course.sections) {
         if (s.name == sectionName) {
@@ -132,9 +129,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       return position
     }
 
-    private fun updateSectionsPositions(project: Project,
-                                        sectionsToUpdate: List<Section>,
-                                        initialPosition: Int) {
+    private fun updateSectionsPositions(project: Project, sectionsToUpdate: List<Section>, initialPosition: Int) {
       var position = initialPosition
       for (s in sectionsToUpdate) {
         if (s.id == 0) continue
@@ -144,6 +139,4 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       }
     }
   }
-
-
 }
