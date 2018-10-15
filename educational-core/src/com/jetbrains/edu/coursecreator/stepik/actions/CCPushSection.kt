@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions.stepik
+package com.jetbrains.edu.coursecreator.stepik.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -90,7 +90,8 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
             }
 
             if (positionChanged && section.position < course.sections.size) {
-              updateSectionsPositions(project, course.sections, 1 + if (course.hasTopLevelLessons) 1 else 0)
+              updateSectionsPositions(project, course.sections,
+                                                                                                             1 + if (course.hasTopLevelLessons) 1 else 0)
               CCStepikConnector.updateAdditionalSection(project)
             }
 
@@ -104,8 +105,9 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
             CCStepikConnector.postSection(project, section, indicator)
             CCStepikConnector.updateAdditionalSection(project)
             if (section.position < course.sections.size) {
-              updateSectionsPositions(project, course.sections.slice(IntRange(section.position, course.sections.size - 1)),
-                                      section.position + 1)
+              updateSectionsPositions(project, course.sections.slice(
+                IntRange(section.position, course.sections.size - 1)),
+                                                                                                             section.position + 1)
             }
             CCStepikConnector.showNotification(project, "Section \"${section.name}\" posted",
                                                CCStepikConnector.openOnStepikAction("/course/" + course.id))

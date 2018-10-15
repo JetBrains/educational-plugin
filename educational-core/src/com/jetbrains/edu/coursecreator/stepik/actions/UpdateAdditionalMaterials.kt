@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions.stepik
+package com.jetbrains.edu.coursecreator.stepik.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressIndicator

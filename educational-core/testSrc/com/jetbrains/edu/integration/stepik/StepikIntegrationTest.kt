@@ -4,9 +4,9 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
-import com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson
-import com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection
+import com.jetbrains.edu.coursecreator.stepik.actions.CCPushCourse
+import com.jetbrains.edu.coursecreator.stepik.actions.CCPushLesson
+import com.jetbrains.edu.coursecreator.stepik.actions.CCPushSection
 import com.jetbrains.edu.learning.CourseBuilder
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager

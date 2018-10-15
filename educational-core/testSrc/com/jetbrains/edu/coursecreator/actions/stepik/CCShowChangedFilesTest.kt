@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.stepik
 
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.stepik.actions.CCShowChangedFiles
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*

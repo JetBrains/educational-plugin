@@ -133,15 +133,15 @@
       <reference id="Educational.Educator.CreateCoursePreview"/>
       <reference id="Educational.Educator.ChangeCourseInfo"/>
       <action id="Educational.Educator.PackCourse" class="com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive"/>
-      <action id="Educational.Educator.PushTask" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushTask"/>
-      <action id="Educational.Educator.PushLesson" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson"/>
-      <action id="Educational.Educator.PushSection" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection"/>
-      <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse"/>
-      <action id="Educational.Educator.UpdateAdditionalMaterials" class="com.jetbrains.edu.coursecreator.actions.stepik.UpdateAdditionalMaterials"/>
+      <action id="Educational.Educator.PushTask" class="com.jetbrains.edu.coursecreator.stepik.actions.CCPushTask"/>
+      <action id="Educational.Educator.PushLesson" class="com.jetbrains.edu.coursecreator.stepik.actions.CCPushLesson"/>
+      <action id="Educational.Educator.PushSection" class="com.jetbrains.edu.coursecreator.stepik.actions.CCPushSection"/>
+      <action id="Educational.Educator.PushCourse" class="com.jetbrains.edu.coursecreator.stepik.actions.CCPushCourse"/>
+      <action id="Educational.Educator.UpdateAdditionalMaterials" class="com.jetbrains.edu.coursecreator.stepik.actions.UpdateAdditionalMaterials"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CutCopyPasteGroup"/>
     </group>
 
-    <action id="Educational.Educator.ExportStepikIds" class="com.jetbrains.edu.coursecreator.actions.stepik.ExportStepikIds"/>
+    <action id="Educational.Educator.ExportStepikIds" class="com.jetbrains.edu.coursecreator.stepik.actions.ExportStepikIds"/>
 
     <group id="Educational.Educator.File" popup="true" text="Course Creator"
            class="com.jetbrains.edu.coursecreator.actions.CCFileActionGroup">
@@ -174,8 +174,8 @@
     </group>
 
     <action id="Educational.Educator.UnpackCourse" class="com.jetbrains.edu.coursecreator.actions.CCUnpackCourseArchive"/>
-    <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.actions.stepik.CCGetCourseFromStepik"/>
-    <action id="Educational.Educator.CCShowChangedFiles" class="com.jetbrains.edu.coursecreator.actions.stepik.CCShowChangedFiles"/>
+    <action id="Educational.Educator.GetCourse" class="com.jetbrains.edu.coursecreator.stepik.actions.CCGetCourseFromStepik"/>
+    <action id="Educational.Educator.CCShowChangedFiles" class="com.jetbrains.edu.coursecreator.stepik.actions.CCShowChangedFiles"/>
 
     <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
       <reference id="Educational.BrowseCourses"/>

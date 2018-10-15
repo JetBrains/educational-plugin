@@ -2,7 +2,7 @@ package com.jetbrains.edu.integration.stepik
 
 import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
+import com.jetbrains.edu.coursecreator.stepik.actions.CCPushCourse
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader

@@ -1,4 +1,4 @@
-package com.jetbrains.edu.coursecreator.actions.stepik;
+package com.jetbrains.edu.coursecreator.stepik.actions;
 
 import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
