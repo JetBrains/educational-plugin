@@ -295,7 +295,7 @@ public class CCStepikConnector {
   public static boolean updateSection(@NotNull Project project, @NotNull Section section) {
     StepikCourse course = (StepikCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    StepikSectionExt.setPosition(section, course.getId());
+    StepikSectionExt.setCourseId(section, course.getId());
     boolean updated = updateSectionInfo(project, section);
     if (updated) {
       for (Lesson lesson : section.getLessons()) {
