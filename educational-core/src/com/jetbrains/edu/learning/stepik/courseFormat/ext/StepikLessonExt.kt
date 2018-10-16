@@ -7,31 +7,34 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
 import java.util.*
 
-var Lesson.unitId: Int get() = (remoteInfo as? StepikLessonRemoteInfo)?.unitId ?: 0
+var Lesson.unitId: Int
+  get() = (remoteInfo as? StepikLessonRemoteInfo)?.unitId ?: 0
   set(unitId) {
-    if (remoteInfo !is StepikLessonRemoteInfo) {
-      remoteInfo = StepikLessonRemoteInfo()
-    }
-    (remoteInfo as StepikLessonRemoteInfo).unitId = unitId
+    stepikRemoteInfo.unitId = unitId
   }
 
-var Lesson.id: Int get() = (remoteInfo as? StepikLessonRemoteInfo)?.id ?: 0
+var Lesson.id: Int
+  get() = (remoteInfo as? StepikLessonRemoteInfo)?.id ?: 0
   set(id) {
-    if (remoteInfo !is StepikLessonRemoteInfo) {
-      remoteInfo = StepikLessonRemoteInfo()
-    }
-    (remoteInfo as StepikLessonRemoteInfo).id = id
+    stepikRemoteInfo.id = id
   }
 
-var Lesson.updateDate: Date get() = (remoteInfo as? StepikLessonRemoteInfo)?.updateDate ?: Date(0)
+var Lesson.updateDate: Date
+  get() = (remoteInfo as? StepikLessonRemoteInfo)?.updateDate ?: Date(0)
   set(date) {
+    stepikRemoteInfo.updateDate = date
+  }
+
+val Lesson.stepikRemoteInfo : StepikLessonRemoteInfo
+  get() {
     if (remoteInfo !is StepikLessonRemoteInfo) {
       remoteInfo = StepikLessonRemoteInfo()
     }
-    (remoteInfo as StepikLessonRemoteInfo).updateDate = date
+    return remoteInfo as StepikLessonRemoteInfo
   }
 
-val Lesson.steps: List<Int> get() = (remoteInfo as? StepikLessonRemoteInfo)?.steps ?: listOf()
+val Lesson.steps: List<Int>
+  get() = (remoteInfo as? StepikLessonRemoteInfo)?.steps ?: listOf()
 
 fun Lesson.getTask(id: Int): Task? {
   for (task in taskList) {
