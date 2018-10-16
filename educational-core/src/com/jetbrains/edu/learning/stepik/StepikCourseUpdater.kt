@@ -25,11 +25,11 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseInfo
 import com.jetbrains.edu.learning.stepik.StepikConnector.loadCourseStructure
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
@@ -300,11 +300,13 @@ class StepikCourseUpdater(val course: StepikCourse, val project: Project) {
 
     return lessonFromServer.taskList
       .zip(taskIds)
+      .asSequence()
       .filter { (newTask, taskId) ->
         val task = tasksById[Integer.parseInt(taskId)]
         task == null || task.updateDate.before(newTask.updateDate)
       }
       .map { (_, taskId) -> Integer.parseInt(taskId) }
+      .toList()
   }
 
   private fun tasksToDelete(lessonFromServer: Lesson, currentLesson: Lesson): List<Task> {

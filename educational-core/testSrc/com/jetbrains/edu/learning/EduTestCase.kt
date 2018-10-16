@@ -34,9 +34,9 @@ import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import java.io.IOException
 
 abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
@@ -188,14 +188,14 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   protected fun Course.asRemote(): StepikCourse {
-    val remoteCourse = StepikCourse()
-    (remoteCourse.remoteInfo as StepikCourseRemoteInfo).id = 1
-    remoteCourse.name = name
-    remoteCourse.courseMode = CCUtils.COURSE_MODE
-    remoteCourse.items = Lists.newArrayList(items)
-    remoteCourse.language = language
+    val stepikCourse = StepikCourse()
+    (stepikCourse.remoteInfo as StepikCourseRemoteInfo).id = 1
+    stepikCourse.name = name
+    stepikCourse.courseMode = CCUtils.COURSE_MODE
+    stepikCourse.items = Lists.newArrayList(items)
+    stepikCourse.language = language
 
-    for (item in remoteCourse.items) {
+    for (item in stepikCourse.items) {
       if (item is Section) {
         item.id = item.index
         for (lesson in item.lessons) {
@@ -214,9 +214,9 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
       }
     }
 
-    remoteCourse.init(null, null, true)
-    StudyTaskManager.getInstance(project).course = remoteCourse
-    return remoteCourse
+    stepikCourse.init(null, null, true)
+    StudyTaskManager.getInstance(project).course = stepikCourse
+    return stepikCourse
   }
 
   private fun registerConfigurator(language: Language, configuratorClass: Class<*>, disposable: Disposable) {

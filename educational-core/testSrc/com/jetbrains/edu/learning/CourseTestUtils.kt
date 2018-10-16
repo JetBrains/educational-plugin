@@ -29,8 +29,7 @@ fun createCourseFromJson(pathToJson: String, courseType: CourseType): Course {
 fun createRemoteCourseFromJson(pathToJson: String, courseType: CourseType): StepikCourse {
   val courseJson = File(pathToJson).readText()
   val gson = GsonBuilder()
-    .registerTypeAdapter(Task::class.java, SerializationUtils.Json.TaskAdapter())
-    .registerTypeAdapter(StudyItem::class.java, SerializationUtils.Json.LessonSectionAdapter())
+    .registerTypeAdapter(StepikCourse::class.java, SerializationUtils.Json.CourseAdapter())
     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
     .create()
   return gson.fromJson(courseJson, StepikCourse::class.java).apply {

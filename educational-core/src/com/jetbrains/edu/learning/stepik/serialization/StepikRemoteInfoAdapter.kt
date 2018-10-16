@@ -6,7 +6,10 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikUtils
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
@@ -16,14 +19,19 @@ import java.lang.reflect.Type
 import java.util.*
 
 private const val UPDATE_DATE = "update_date"
+private const val ID = "id"
+private const val IS_PUBLIC = "is_public"
+private const val STEPS = "steps"
+private const val COURSE_ID = "course"
+private const val POSITION = "position"
+private const val UNITS = "units"
+private const val IS_IDEA_COMPATIBLE = "is_idea_compatible"
+private const val SECTIONS = "sections"
+private const val INSTRUCTORS = "instructors"
+private const val COURSE_FORMAT = "course_format"
 
-class StepikCourseRemoteInfoAdapter : JsonDeserializer<StepikCourse>, JsonSerializer<Course> {
-  private val IS_PUBLIC = "is_public"
-  private val IS_IDEA_COMPATIBLE = "is_idea_compatible"
-  private val ID = "id"
-  private val SECTIONS = "sections"
-  private val INSTRUCTORS = "instructors"
-  private val COURSE_FORMAT = "course_format"
+// These adapters should be used everywhere we communicate with stepik
+object StepikCourseRemoteInfoAdapter : JsonDeserializer<StepikCourse>, JsonSerializer<Course> {
 
   override fun serialize(course: Course?, type: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = getGson()
@@ -53,32 +61,9 @@ class StepikCourseRemoteInfoAdapter : JsonDeserializer<StepikCourse>, JsonSerial
     val gson = getGson()
 
     val course = gson.fromJson(json, StepikCourse::class.java)
-    deserializeRemoteInfo(json, course, gson)
+    course.remoteInfo = deserializeCourseRemoteInfo(json, gson)
     course.updateCourseCompatibility()
     return course
-  }
-
-  private fun deserializeRemoteInfo(json: JsonElement, course: StepikCourse, gson: Gson) {
-    val jsonObject = json.asJsonObject
-    val remoteInfo = StepikCourseRemoteInfo()
-    val isPublic = jsonObject.get(IS_PUBLIC).asBoolean
-    val isCompatible = jsonObject.get(IS_IDEA_COMPATIBLE).asBoolean
-    val id = jsonObject.get(ID).asInt
-    val courseFormat = jsonObject.get(COURSE_FORMAT).asString
-
-    val sections = gson.fromJson<MutableList<Int>>(jsonObject.get(SECTIONS), object: TypeToken<MutableList<Int>>(){}.type)
-    val instructors = gson.fromJson<MutableList<Int>>(jsonObject.get(INSTRUCTORS), object: TypeToken<MutableList<Int>>(){}.type)
-    val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
-
-    remoteInfo.isPublic = isPublic
-    remoteInfo.isIdeaCompatible = isCompatible
-    remoteInfo.id = id
-    remoteInfo.sectionIds = sections
-    remoteInfo.instructors = instructors
-    remoteInfo.updateDate = updateDate
-    remoteInfo.courseFormat = courseFormat
-
-    course.remoteInfo = remoteInfo
   }
 
   private fun getGson(): Gson {
@@ -86,19 +71,14 @@ class StepikCourseRemoteInfoAdapter : JsonDeserializer<StepikCourse>, JsonSerial
       .setPrettyPrinting()
       .excludeFieldsWithoutExposeAnnotation()
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter())
-      .registerTypeAdapter(Section::class.java, StepikSectionRemoteInfoAdapter())
+      .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter)
+      .registerTypeAdapter(Section::class.java, StepikSectionRemoteInfoAdapter)
       .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
       .create()
   }
 }
 
-class StepikSectionRemoteInfoAdapter : JsonDeserializer<Section>, JsonSerializer<Section> {
-  private val ID = "id"
-  private val COURSE_ID = "course"
-  private val POSITION = "position"
-  private val UNITS = "units"
-
+object StepikSectionRemoteInfoAdapter : JsonDeserializer<Section>, JsonSerializer<Section> {
   override fun serialize(section: Section?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = getGson()
     val tree = gson.toJsonTree(section)
@@ -124,27 +104,8 @@ class StepikSectionRemoteInfoAdapter : JsonDeserializer<Section>, JsonSerializer
     val gson = getGson()
 
     val section = gson.fromJson(json, Section::class.java)
-    deserializeRemoteInfo(gson, section, json)
+    section.remoteInfo = deserializeSectionRemoteInfo(gson, json)
     return section
-  }
-
-  private fun deserializeRemoteInfo(gson: Gson, section: Section, json: JsonElement) {
-    val jsonObject = json.asJsonObject
-
-    val remoteInfo = StepikSectionRemoteInfo()
-    val id = jsonObject.get(ID).asInt
-    val courseId = jsonObject.get(COURSE_ID).asInt
-    val position = jsonObject.get(POSITION).asInt
-    val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
-    val units = gson.fromJson<MutableList<Int>>(jsonObject.get(UNITS), object: TypeToken<MutableList<Int>>(){}.type)
-
-    remoteInfo.id = id
-    remoteInfo.courseId = courseId
-    remoteInfo.position = position
-    remoteInfo.updateDate = updateDate
-    remoteInfo.units = units
-
-    section.remoteInfo = remoteInfo
   }
 
   private fun getGson(): Gson {
@@ -152,16 +113,13 @@ class StepikSectionRemoteInfoAdapter : JsonDeserializer<Section>, JsonSerializer
       .setPrettyPrinting()
       .excludeFieldsWithoutExposeAnnotation()
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter())
+      .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter)
       .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
       .create()
   }
 }
 
-class StepikLessonRemoteInfoAdapter : JsonDeserializer<Lesson>, JsonSerializer<Lesson> {
-  private val ID = "id"
-  private val IS_PUBLIC = "is_public"
-  private val STEPS = "steps"
+object StepikLessonRemoteInfoAdapter : JsonDeserializer<Lesson>, JsonSerializer<Lesson> {
 
   override fun serialize(lesson: Lesson?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
     val gson = getGson()
@@ -189,27 +147,9 @@ class StepikLessonRemoteInfoAdapter : JsonDeserializer<Lesson>, JsonSerializer<L
     val gson = getGson()
 
     val lesson = gson.fromJson(json, Lesson::class.java)
-    deserializeRemoteInfo(gson, lesson, json)
+    lesson.remoteInfo = deserializeLessonRemoteInfo(gson, json)
     renameAdditionalInfo(lesson)
     return lesson
-  }
-
-  private fun deserializeRemoteInfo(gson: Gson, lesson: Lesson, json: JsonElement) {
-    val jsonObject = json.asJsonObject
-
-    val remoteInfo = StepikLessonRemoteInfo()
-
-    val id = jsonObject.get(ID).asInt
-    val isPublic = jsonObject.get(IS_PUBLIC).asBoolean
-    val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
-    val steps = gson.fromJson<MutableList<Int>>(jsonObject.get(STEPS), object: TypeToken<MutableList<Int>>(){}.type)
-
-    remoteInfo.id = id
-    remoteInfo.isPublic = isPublic
-    remoteInfo.updateDate = updateDate
-    remoteInfo.steps = steps
-
-    lesson.remoteInfo = remoteInfo
   }
 
   private fun renameAdditionalInfo(lesson: Lesson) {
@@ -227,4 +167,71 @@ class StepikLessonRemoteInfoAdapter : JsonDeserializer<Lesson>, JsonSerializer<L
       .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
       .create()
   }
+}
+
+// Some local zip archives contain stepik remote info (id and update_date)
+// these functions are used both for stepik communication and deserializing local courses
+
+fun deserializeCourseRemoteInfo(json: JsonElement, gson: Gson): RemoteInfo {
+  val jsonObject = json.asJsonObject
+  if (!jsonObject.has(UPDATE_DATE)) return LocalInfo()
+
+  val remoteInfo = StepikCourseRemoteInfo()
+  val isPublic = jsonObject.get(IS_PUBLIC)?.asBoolean ?: false
+  val isCompatible = jsonObject.get(IS_IDEA_COMPATIBLE)?.asBoolean ?: false
+  val id = jsonObject.get(ID).asInt
+  val courseFormat = jsonObject.get(COURSE_FORMAT)?.asString ?: StepikUtils.getCourseFormat("")
+
+  val sections = gson.fromJson<MutableList<Int>>(jsonObject.get(SECTIONS), object: TypeToken<MutableList<Int>>(){}.type) ?: mutableListOf()
+  val instructors = gson.fromJson<MutableList<Int>>(jsonObject.get(INSTRUCTORS), object: TypeToken<MutableList<Int>>(){}.type) ?: mutableListOf()
+  val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
+
+  remoteInfo.isPublic = isPublic
+  remoteInfo.isIdeaCompatible = isCompatible
+  remoteInfo.id = id
+  remoteInfo.sectionIds = sections
+  remoteInfo.instructors = instructors
+  remoteInfo.updateDate = updateDate
+  remoteInfo.courseFormat = courseFormat
+
+  return remoteInfo
+}
+
+fun deserializeSectionRemoteInfo(gson: Gson, json: JsonElement): RemoteInfo {
+  val jsonObject = json.asJsonObject
+  if (!jsonObject.has(UPDATE_DATE)) return LocalInfo()
+
+  val remoteInfo = StepikSectionRemoteInfo()
+  val id = jsonObject.get(ID).asInt
+  val courseId = jsonObject.get(COURSE_ID)?.asInt ?: 0
+  val position = jsonObject.get(POSITION)?.asInt ?: 0
+  val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
+  val units = gson.fromJson<MutableList<Int>>(jsonObject.get(UNITS), object: TypeToken<MutableList<Int>>(){}.type) ?: mutableListOf()
+
+  remoteInfo.id = id
+  remoteInfo.courseId = courseId
+  remoteInfo.position = position
+  remoteInfo.updateDate = updateDate
+  remoteInfo.units = units
+
+  return remoteInfo
+}
+
+fun deserializeLessonRemoteInfo(gson: Gson, json: JsonElement) : RemoteInfo {
+  val jsonObject = json.asJsonObject
+  if (!jsonObject.has(UPDATE_DATE)) return LocalInfo()
+
+  val remoteInfo = StepikLessonRemoteInfo()
+
+  val id = jsonObject.get(ID).asInt
+  val isPublic = jsonObject.get(IS_PUBLIC)?.asBoolean ?: false
+  val updateDate = gson.fromJson(jsonObject.get(UPDATE_DATE), Date::class.java)
+  val steps = gson.fromJson<MutableList<Int>>(jsonObject.get(STEPS), object: TypeToken<MutableList<Int>>(){}.type)
+
+  remoteInfo.id = id
+  remoteInfo.isPublic = isPublic
+  remoteInfo.updateDate = updateDate
+  remoteInfo.steps = steps
+
+  return remoteInfo
 }

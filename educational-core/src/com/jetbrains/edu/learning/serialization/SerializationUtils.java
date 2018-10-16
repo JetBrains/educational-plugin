@@ -9,11 +9,14 @@ import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.serialization.converter.json.JsonLocalCourseConverter;
 import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionLocalCourseConverter;
 import com.jetbrains.edu.learning.serialization.converter.xml.*;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -22,8 +25,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapterKt.deserializeCourseRemoteInfo;
+import static com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapterKt.deserializeLessonRemoteInfo;
+import static com.jetbrains.edu.learning.stepik.serialization.StepikRemoteInfoAdapterKt.deserializeSectionRemoteInfo;
 
 public class SerializationUtils {
   private static final Logger LOG = Logger.getInstance(SerializationUtils.class);
@@ -407,6 +415,8 @@ public class SerializationUtils {
     public static final String FORMAT_VERSION = "format_version";
     public static final String INDEX = "index";
     public static final String TASK_TYPE = "task_type";
+    public static final String STEPIK_ID = "stepic_id";
+    public static final String UPDATE_DATE = "update_date";
     public static final String NAME = "name";
     public static final String TITLE = "title";
     public static final String LAST_SUBTASK = "last_subtask_index";
@@ -436,8 +446,7 @@ public class SerializationUtils {
 
       @Override
       public JsonElement serialize(StudyItem item, Type type, JsonSerializationContext context) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Task.class, new TaskAdapter())
-          .excludeFieldsWithoutExposeAnnotation().create();
+        Gson gson = getGson();
         JsonElement tree = gson.toJsonTree(item);
         final JsonObject jsonItem = tree.getAsJsonObject();
         String itemType = EduNames.LESSON;
@@ -451,16 +460,36 @@ public class SerializationUtils {
         return jsonItem;
       }
 
+      @NotNull
+      private static Gson getGson() {
+        return new GsonBuilder().setPrettyPrinting()
+          .registerTypeAdapter(Task.class, new TaskAdapter())
+          .registerTypeAdapter(StudyItem.class, new LessonSectionAdapter())
+          .excludeFieldsWithoutExposeAnnotation().create();
+      }
+
       @Override
       public StudyItem deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation()
-            .registerTypeAdapter(Task.class, new TaskAdapter()).registerTypeAdapter(StudyItem.class, new LessonSectionAdapter()).create();
+        Gson gson = getGson();
         final StudyItem item = deserializeItem(json, gson);
+        final RemoteInfo info = deserializeRemoteInfo(json, gson, item);
+        item.setRemoteInfo(info);
         final String name = item.getName();
         if (StepikNames.PYCHARM_ADDITIONAL.equals(name)) {
           item.setName(EduNames.ADDITIONAL_MATERIALS);
         }
         return item;
+      }
+
+      @NotNull
+      private static RemoteInfo deserializeRemoteInfo(JsonElement json, Gson gson, StudyItem item) {
+        if (item instanceof Lesson) {
+          return deserializeLessonRemoteInfo(gson, json);
+        }
+        else if (item instanceof Section) {
+          return deserializeSectionRemoteInfo(gson, json);
+        }
+        return new LocalInfo();
       }
 
       private static StudyItem deserializeItem(@NotNull JsonElement json, @NotNull Gson gson) {
@@ -522,7 +551,11 @@ public class SerializationUtils {
           .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
           .create();
-        return gson.fromJson(jsonObject, typeOfT);
+
+        final Course course = gson.fromJson(jsonObject, typeOfT);
+        final RemoteInfo info = deserializeCourseRemoteInfo(json, gson);
+        course.setRemoteInfo(info);
+        return course;
       }
     }
 
@@ -537,7 +570,23 @@ public class SerializationUtils {
       @Override
       public Task deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-        return doDeserialize(json, gson);
+        final Task task = doDeserialize(json, gson);
+
+        if (task != null) {
+          deserializeRemoteInfo(json, gson, task);
+        }
+        return task;
+      }
+
+      private static void deserializeRemoteInfo(JsonElement json, Gson gson, Task task) {
+        final JsonObject jsonObject = json.getAsJsonObject();
+        if (jsonObject.has(STEPIK_ID)) {
+          StepikTaskExt.setStepId(task, jsonObject.get(STEPIK_ID).getAsInt());
+        }
+        if (jsonObject.has(UPDATE_DATE)) {
+          final Date date = gson.fromJson(jsonObject.get(UPDATE_DATE), Date.class);
+          StepikTaskExt.setUpdateDate(task, date);
+        }
       }
     }
 

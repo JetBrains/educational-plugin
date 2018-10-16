@@ -4,8 +4,8 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.actions.CCShowChangedFiles
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.remote.LocalInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.*
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import junit.framework.TestCase
 
 class CCShowChangedFilesTest: EduActionTestCase() {
@@ -51,8 +51,8 @@ class CCShowChangedFilesTest: EduActionTestCase() {
 
     val changedSection = course.getSection("section2")!!
     changedSection.stepikChangeStatus = CONTENT
-    changedSection.id = 0
-    changedSection.lessons[0].id = 0
+    changedSection.remoteInfo = LocalInfo()
+    changedSection.lessons[0].remoteInfo = LocalInfo()
 
     checkMessage(course,  "section2 $CONTENT\nsection2 New\nsection2/lesson1 New\n")
   }
@@ -104,7 +104,7 @@ class CCShowChangedFilesTest: EduActionTestCase() {
 
     val changedSection = course.sections[0]
     changedSection.stepikChangeStatus = CONTENT
-    changedSection.lessons[1].id = 0
+    changedSection.lessons[1].remoteInfo = LocalInfo()
     checkMessage(course, "${changedSection.name} ${CONTENT}\nsection1/lesson2 New\n")
   }
 

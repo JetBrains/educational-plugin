@@ -426,10 +426,10 @@ public class CCStepikConnector {
     final Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     return new GsonBuilder()
-      .registerTypeAdapter(StepikCourse.class, new StepikCourseRemoteInfoAdapter())
-      .registerTypeAdapter(Course.class, new StepikCourseRemoteInfoAdapter())
-      .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter())
-      .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter())
+      .registerTypeAdapter(StepikCourse.class, StepikCourseRemoteInfoAdapter.INSTANCE)
+      .registerTypeAdapter(Course.class, StepikCourseRemoteInfoAdapter.INSTANCE)
+      .registerTypeAdapter(Section.class, StepikSectionRemoteInfoAdapter.INSTANCE)
+      .registerTypeAdapter(Lesson.class, StepikLessonRemoteInfoAdapter.INSTANCE)
       .create();
   }
 
