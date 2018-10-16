@@ -45,15 +45,6 @@ public class StepikTaskBuilder {
     .put("text", this::theoryTask)
     .put("string", this::theoryTask)
     .put("pycharm", this::pycharmTask)
-    .put("video", this::unsupportedTask)
-    .put("number", this::unsupportedTask)
-    .put("sorting", this::unsupportedTask)
-    .put("matching", this::unsupportedTask)
-    .put("math", this::unsupportedTask)
-    .put("free-answer", this::unsupportedTask)
-    .put("table", this::unsupportedTask)
-    .put("dataset", this::unsupportedTask)
-    .put("admin", this::unsupportedTask)
     .build();
 
   private final Map<String, Computable<Task>> pluginTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
@@ -103,11 +94,11 @@ public class StepikTaskBuilder {
     }
   }
 
-  @Nullable
+  @NotNull
   public Task createTask(String type) {
     myName = myName == EMPTY_NAME ? DEFAULT_NAMES.get(type) : myName;
     final Computable<Task> taskComputable = stepikTaskTypes.get(type);
-    return taskComputable != null ? taskComputable.compute() : null;
+    return taskComputable != null ? taskComputable.compute() : unsupportedTask();
   }
 
   public boolean isSupported(String type) {

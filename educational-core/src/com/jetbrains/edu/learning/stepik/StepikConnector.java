@@ -668,9 +668,7 @@ public class StepikConnector {
       StepikTaskBuilder builder = new StepikTaskBuilder(language, step, user == null ? -1 : user.getId());
       if (builder.isSupported(step.block.name)) {
         final Task task = builder.createTask(step.block.name);
-        if (task != null) {
-          tasks.add(task);
-        }
+        tasks.add(task);
       }
     }
     return tasks;
