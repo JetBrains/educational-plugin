@@ -1,7 +1,6 @@
 package com.jetbrains.edu.coursecreator.settings;
 
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
 import com.jetbrains.edu.learning.settings.OptionsProvider;
 import org.jetbrains.annotations.Nls;
@@ -13,7 +12,6 @@ public class CCOptions implements OptionsProvider {
   private JRadioButton myHtmlRadioButton;
   private JRadioButton myMarkdownRadioButton;
   private JPanel myPanel;
-  private JBCheckBox myShowSplitEditorCheckBox;
 
   @Nullable
   @Override
@@ -29,22 +27,19 @@ public class CCOptions implements OptionsProvider {
       IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(
         () -> IdeFocusManager.getGlobalInstance().requestFocus(myMarkdownRadioButton, true));
     }
-    myShowSplitEditorCheckBox.setSelected(CCSettings.getInstance().showSplitEditor());
     return myPanel;
   }
 
   @Override
   public boolean isModified() {
-    CCSettings settings = CCSettings.getInstance();
-    return myHtmlRadioButton.isSelected() != settings.useHtmlAsDefaultTaskFormat() ||
-           myShowSplitEditorCheckBox.isSelected() != settings.showSplitEditor();
+    final boolean htmlAsDefaultTaskFormat = CCSettings.getInstance().useHtmlAsDefaultTaskFormat();
+    return myHtmlRadioButton.isSelected() != htmlAsDefaultTaskFormat;
   }
 
   @Override
   public void apply() {
     if (isModified()) {
       CCSettings.getInstance().setUseHtmlAsDefaultTaskFormat(myHtmlRadioButton.isSelected());
-      CCSettings.getInstance().setShowSplitEditor(myShowSplitEditorCheckBox.isSelected());
     }
   }
 
