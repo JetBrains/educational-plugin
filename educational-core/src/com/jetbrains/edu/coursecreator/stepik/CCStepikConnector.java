@@ -259,8 +259,7 @@ public class CCStepikConnector {
       return unit.getSection();
     }
     else {
-      StepikCourse courseInfo = StepikConnector
-        .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
+      StepikCourse courseInfo = StepikConnector.getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
       if (courseInfo != null) {
         String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
         try {
