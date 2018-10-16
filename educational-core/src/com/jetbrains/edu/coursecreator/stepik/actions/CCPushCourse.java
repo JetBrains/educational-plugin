@@ -27,11 +27,11 @@ import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -160,7 +160,7 @@ public class CCPushCourse extends DumbAwareAction {
     int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
     for (Section section : course.getSections()) {
       StepikSectionExt.setPosition(section, position++);
-      if (section instanceof StepikSection) {
+      if (section.getRemoteInfo() instanceof StepikRemoteInfo) {
         updateSection(project, section);
       }
       else {

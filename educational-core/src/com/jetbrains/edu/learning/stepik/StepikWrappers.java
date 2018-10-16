@@ -15,10 +15,9 @@ import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -227,8 +226,8 @@ public class StepikWrappers {
   }
 
   public static class SectionContainer {
-    List<StepikSection> sections;
-    public List<StepikSection> getSections() {
+    List<Section> sections;
+    public List<Section> getSections() {
       return sections;
     }
   }

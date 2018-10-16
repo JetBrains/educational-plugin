@@ -34,10 +34,9 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.*;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -409,13 +408,13 @@ public class StepikConnector {
     final StepikCourseRemoteInfo remoteInfo = stepikCourse.getStepikRemoteInfo();
     try {
       String[] sectionIds = remoteInfo.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
-      List<StepikSection> allSections = getSections(sectionIds);
+      List<Section> allSections = getSections(sectionIds);
 
       if (hasVisibleSections(allSections, stepikCourse.getName())) {
         remoteInfo.setSectionIds(Collections.emptyList());
         List<Callable<StudyItem>> tasks = ContainerUtil.newArrayList();
         for (int index = 0; index < allSections.size(); index++) {
-          StepikSection section = allSections.get(index);
+          Section section = allSections.get(index);
           int finalIndex = index + 1;
           tasks.add(() -> loadItemTask(stepikCourse, section, finalIndex));
         }
@@ -479,10 +478,14 @@ public class StepikConnector {
     return itemsWithTopLevelLessons;
   }
 
-  private static void addTopLevelLessons(@NotNull StepikCourse stepikCourse, List<StepikSection> allSections)
+  private static void addTopLevelLessons(@NotNull StepikCourse stepikCourse, List<Section> allSections)
     throws IOException {
     final String[] unitIds = allSections.stream()
-      .map(section -> section.getStepikRemoteInfo().getUnits()).flatMap(unitList -> unitList.stream())
+      .map(section -> {
+            final RemoteInfo info = section.getRemoteInfo();
+            assert info instanceof StepikSectionRemoteInfo;
+            return ((StepikSectionRemoteInfo)info).getUnits();
+           }).flatMap(unitList -> unitList.stream())
       .map(unit -> String.valueOf(unit)).toArray(String[]::new);
     if (unitIds.length > 0) {
       final List<Lesson> lessons = getLessons(stepikCourse);
@@ -495,9 +498,11 @@ public class StepikConnector {
   }
 
   @Nullable
-  private static StudyItem loadItemTask(@NotNull StepikCourse stepikCourse, StepikSection section, int finalIndex)
+  private static StudyItem loadItemTask(@NotNull StepikCourse stepikCourse, Section section, int finalIndex)
     throws IOException {
-    final String[] unitIds = section.getStepikRemoteInfo().getUnits().stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
+    final RemoteInfo remoteInfo = section.getRemoteInfo();
+    if (!(remoteInfo instanceof StepikSectionRemoteInfo)) return null;
+    final String[] unitIds = ((StepikSectionRemoteInfo)remoteInfo).getUnits().stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
     if (unitIds.length <= 0) {
       return null;
     }
@@ -520,7 +525,7 @@ public class StepikConnector {
     }
   }
 
-  public static List<StepikSection> getSections(String[] sectionIds) throws URISyntaxException, IOException {
+  public static List<Section> getSections(String[] sectionIds) throws URISyntaxException, IOException {
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     return containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream())
       .collect(Collectors.toList());
@@ -571,7 +576,7 @@ public class StepikConnector {
             .toArray(String[]::new);
   }
 
-  private static boolean hasVisibleSections(@NotNull final List<StepikSection> sections, String courseName) {
+  private static boolean hasVisibleSections(@NotNull final List<Section> sections, String courseName) {
     if (sections.isEmpty()) {
       return false;
     }
@@ -1049,9 +1054,9 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static StepikSection getSection(int sectionId) {
+  public static Section getSection(int sectionId) {
     try {
-      List<StepikSection> sections =
+      List<Section> sections =
         getFromStepik(StepikNames.SECTIONS + "/" + String.valueOf(sectionId), SectionContainer.class).getSections();
       if (!sections.isEmpty()) {
         return sections.get(0);
@@ -1060,7 +1065,7 @@ public class StepikConnector {
     catch (IOException e) {
       LOG.warn("Failed getting section: " + sectionId);
     }
-    return new StepikSection();
+    return new Section();
   }
 
   public static Lesson getLesson(int lessonId) {

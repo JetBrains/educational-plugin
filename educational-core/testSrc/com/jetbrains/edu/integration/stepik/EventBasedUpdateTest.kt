@@ -2,10 +2,10 @@ package com.jetbrains.edu.integration.stepik
 
 import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.stepik.actions.CCPushCourse
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader
+import com.jetbrains.edu.coursecreator.stepik.actions.CCPushCourse
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
@@ -18,9 +18,10 @@ import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.CONTENT
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.INFO
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.position
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
 import junit.framework.TestCase
 
 class EventBasedUpdateTest: StepikTestCase() {
@@ -393,7 +394,7 @@ class EventBasedUpdateTest: StepikTestCase() {
     TestCase.assertTrue("Section name mismatch. Expected: ${localCourse.name}.\n Actual: ${section.name}",
                         section.name == localCourse.name)
 
-    val unitIds = section.stepikRemoteInfo.units.map { unit -> unit.toString() }
+    val unitIds = (section.remoteInfo as StepikSectionRemoteInfo).units.map { unit -> unit.toString() }
     val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
 
     TestCase.assertTrue("Lessons number mismatch. Expected: ${localCourse.lessons.size}. Actual: ${lessonsFromUnits.size}",

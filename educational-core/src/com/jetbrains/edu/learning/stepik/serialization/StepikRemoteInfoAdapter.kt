@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
@@ -90,13 +89,13 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
       .excludeFieldsWithoutExposeAnnotation()
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter(language))
-      .registerTypeAdapter(StepikSection::class.java, StepikSectionRemoteInfoAdapter(language))
+      .registerTypeAdapter(Section::class.java, StepikSectionRemoteInfoAdapter(language))
       .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
       .create()
   }
 }
 
-class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikSection>, JsonSerializer<Section> {
+class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<Section>, JsonSerializer<Section> {
   private val ID = "id"
   private val COURSE_ID = "course"
   private val POSITION = "position"
@@ -123,15 +122,15 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
     return jsonObject
   }
 
-  override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): StepikSection {
+  override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): Section {
     val gson = getGson()
 
-    val section = gson.fromJson(json, StepikSection::class.java)
+    val section = gson.fromJson(json, Section::class.java)
     deserializeRemoteInfo(gson, section, json)
     return section
   }
 
-  private fun deserializeRemoteInfo(gson: Gson, section: StepikSection, json: JsonElement) {
+  private fun deserializeRemoteInfo(gson: Gson, section: Section, json: JsonElement) {
     val jsonObject = json.asJsonObject
 
     val remoteInfo = StepikSectionRemoteInfo()

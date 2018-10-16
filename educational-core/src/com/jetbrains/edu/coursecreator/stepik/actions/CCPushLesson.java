@@ -24,10 +24,10 @@ import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikRemoteInfo;
 import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,7 +71,7 @@ public class CCPushLesson extends DumbAwareAction {
     }
 
     final Section section = lesson.getSection();
-    if (section == null || section instanceof StepikSection) {
+    if (section == null || section.getRemoteInfo() instanceof StepikRemoteInfo) {
       e.getPresentation().setEnabledAndVisible(true);
       if (!isStepikLesson(lesson)) {
         e.getPresentation().setText("Upload Lesson to Stepik");

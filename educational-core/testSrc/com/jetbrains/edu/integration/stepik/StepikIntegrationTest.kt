@@ -18,8 +18,9 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
 
 open class StepikIntegrationTest : StepikTestCase() {
 
@@ -267,7 +268,7 @@ open class StepikIntegrationTest : StepikTestCase() {
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikConnector.getSection((courseFromStepik.remoteInfo as StepikCourseRemoteInfo).sectionIds[0])
-    val unitIds = section.stepikRemoteInfo.units.map { unit -> unit.toString() }
+    val unitIds = (section.remoteInfo as StepikSectionRemoteInfo).units.map { unit -> unit.toString() }
     val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
 
     val taskFromStepik = lessonsFromUnits[0].getTask("task1") ?: error("Can't find `task1`")
@@ -306,7 +307,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val section = StepikConnector.getSection(remoteInfo.sectionIds[0])
     assertEquals("Section name mismatch", localCourse.name, section.name)
 
-    val unitIds = section.stepikRemoteInfo.units.map { unit -> unit.toString() }
+    val unitIds = (section.remoteInfo as StepikSectionRemoteInfo).units.map { unit -> unit.toString() }
     val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
 
     assertEquals("Lessons number mismatch", localCourse.lessons.size, lessonsFromUnits.size)

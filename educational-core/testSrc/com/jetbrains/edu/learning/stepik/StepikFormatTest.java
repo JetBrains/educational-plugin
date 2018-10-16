@@ -7,9 +7,11 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import kotlin.collections.CollectionsKt;
 import org.hamcrest.Matcher;
@@ -148,7 +150,10 @@ public class StepikFormatTest extends EduTestCase {
     final StepikWrappers.SectionContainer sectionContainer = gson.fromJson(jsonText, StepikWrappers.SectionContainer.class);
     assertNotNull(sectionContainer);
     assertEquals(1, sectionContainer.sections.size());
-    List<Integer> unitIds = sectionContainer.sections.get(0).getStepikRemoteInfo().getUnits();
+    final Section section = sectionContainer.sections.get(0);
+    final RemoteInfo remoteInfo = section.getRemoteInfo();
+    assert remoteInfo instanceof StepikSectionRemoteInfo;
+    List<Integer> unitIds = ((StepikSectionRemoteInfo)remoteInfo).getUnits();
     assertEquals(10, unitIds.size());
   }
 

@@ -25,10 +25,11 @@ import com.intellij.ui.AppIcon;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.authUtils.OAuthRestService;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.Section;
+import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.*;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -137,9 +138,10 @@ public class StepikRestService extends OAuthRestService {
         return log("Unrecognized the Unit id");
       }
 
-      StepikSection section = StepikConnector.getSection(unit.getSection());
-      final StepikSectionRemoteInfo remoteInfo = section.getStepikRemoteInfo();
-      courseId = remoteInfo.getCourseId();
+      Section section = StepikConnector.getSection(unit.getSection());
+      final RemoteInfo remoteInfo = section.getRemoteInfo();
+      assert remoteInfo instanceof StepikSectionRemoteInfo;
+      courseId = ((StepikSectionRemoteInfo)remoteInfo).getCourseId();
       if (courseId == 0) {
         return log("Unrecognized the course id");
       }
