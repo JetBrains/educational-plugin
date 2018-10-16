@@ -464,8 +464,7 @@ public class CCStepikConnector {
   public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS);
     StepikSectionExt.setCourseId(section, courseId);
-    final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
-    sectionContainer.setSection(section);
+    final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper(section);
     String requestBody = getGson(project).toJson(sectionContainer);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
@@ -484,8 +483,7 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
         return -1;
       }
-      final Section postedSection = getGson(project).fromJson(responseString,
-                                                                    StepikWrappers.SectionContainer.class).getSections().get(0);
+      final Section postedSection = getGson(project).fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
       StepikSectionExt.setId(section, StepikSectionExt.getId(postedSection));
       return StepikSectionExt.getId(postedSection);
     }
@@ -497,8 +495,11 @@ public class CCStepikConnector {
 
   public static boolean updateSectionInfo(@NotNull Project project, @NotNull Section section) {
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS + "/" + StepikSectionExt.getId(section));
-    final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
-    sectionContainer.setSection(section);
+    final Course course = section.getCourse();
+    if (course instanceof StepikCourse) {
+      StepikSectionExt.setCourseId(section, ((StepikCourse)course).getId());
+    }
+    final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper(section);
     String requestBody = getGson(project).toJson(sectionContainer);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 

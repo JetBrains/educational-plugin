@@ -131,11 +131,11 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
 
     private fun updateSectionsPositions(project: Project, sectionsToUpdate: List<Section>, initialPosition: Int) {
       var position = initialPosition
-      for (s in sectionsToUpdate) {
-        if (s.id == 0) continue
-        s.position = position++
-        CCStepikConnector.updateSectionInfo(project, s)
-        s.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
+      for (section in sectionsToUpdate) {
+        if (section.id == 0) continue
+        section.position = position++
+        CCStepikConnector.updateSectionInfo(project, section)
+        section.stepikChangeStatus = StepikChangeStatus.UP_TO_DATE
       }
     }
   }

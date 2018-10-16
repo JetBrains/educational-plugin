@@ -217,7 +217,7 @@ public class StepikWrappers {
   public static class SectionWrapper {
     Section section;
 
-    public void setSection(Section section) {
+    public SectionWrapper(Section section) {
       this.section = section;
     }
   }
