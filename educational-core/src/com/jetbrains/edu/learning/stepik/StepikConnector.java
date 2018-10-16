@@ -184,7 +184,7 @@ public class StepikConnector {
         if (info == null) continue;
         CourseCompatibility compatibility = info.getCompatibility();
         if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
-        CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(StepikCourseExt.getId(info)));
+        CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId()));
         info.setVisibility(visibility);
         setCourseAuthors(info);
 
@@ -314,7 +314,7 @@ public class StepikConnector {
 
       setCourseAuthors(course);
 
-      if (remoteInfo.isPublic() && !featuredCourses.contains(StepikCourseExt.getId(course))) {
+      if (remoteInfo.isPublic() && !featuredCourses.contains(course.getId())) {
         course.setDescription(course.getDescription() + NOT_VERIFIED_NOTE);
       }
       course.setVisibility(getVisibility(course, featuredCourses));
@@ -338,7 +338,7 @@ public class StepikConnector {
     if (remoteInfo instanceof StepikCourseRemoteInfo && !((StepikCourseRemoteInfo)remoteInfo).isPublic()) {
       return CourseVisibility.PrivateVisibility.INSTANCE;
     }
-    final int courseId = StepikCourseExt.getId(course);
+    final int courseId = course.getId();
     if (featuredCourses.contains(courseId)) {
       return new CourseVisibility.FeaturedVisibility(featuredCourses.indexOf(courseId));
     }

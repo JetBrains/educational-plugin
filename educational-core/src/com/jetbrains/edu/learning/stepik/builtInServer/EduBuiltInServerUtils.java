@@ -30,12 +30,11 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
-import com.jetbrains.edu.learning.stepik.*;
-import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikUser;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -61,7 +60,7 @@ public class EduBuiltInServerUtils {
         if (studyTaskManager != null) {
           Course course = studyTaskManager.getCourse();
           StepikCourse stepikCourse = course instanceof StepikCourse ? (StepikCourse)course : null;
-          if (stepikCourse != null && StepikCourseExt.getId(stepikCourse) == courseId) {
+          if (stepikCourse != null && stepikCourse.getId() == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
               requestFocus(project);
               StepikUtils.navigateToStep(project, stepikCourse, stepId);

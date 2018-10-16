@@ -19,11 +19,9 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.ui.AnswerPlaceholderHint;
 import com.jetbrains.edu.learning.ui.HintComponent;
 import icons.EducationalCoreIcons;
@@ -32,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.List;
 
+@SuppressWarnings("ComponentNotRegistered") //educational-core.xml
 public class ShowHintAction extends DumbAwareAction {
   public static final String ACTION_ID = "Educational.ShowHint";
   public static final String SHORTCUT = "ctrl pressed 7";

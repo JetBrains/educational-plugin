@@ -48,7 +48,6 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +76,7 @@ public abstract class CourseProjectGenerator<S> {
   protected boolean beforeProjectGenerated() {
     if (!(myCourse instanceof StepikCourse)) return true;
     final StepikCourse stepikCourse = (StepikCourse) this.myCourse;
-    final int id = StepikCourseExt.getId(stepikCourse);
+    final int id = stepikCourse.getId();
     return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       final StepikUser user = EduSettings.getInstance().getUser();
       isEnrolled = StepikConnector.isEnrolledToCourse(id, user);
