@@ -70,13 +70,11 @@ public class CCPushLesson extends DumbAwareAction {
     }
 
     final Section section = lesson.getSection();
-    if (section != null && !(section instanceof StepikSection)) {
-      return;
-    }
-
-    e.getPresentation().setEnabledAndVisible(true);
-    if (!isStepikLesson(lesson)) {
-      e.getPresentation().setText("Upload Lesson to Stepik");
+    if (section == null || section instanceof StepikSection) {
+      e.getPresentation().setEnabledAndVisible(true);
+      if (!isStepikLesson(lesson)) {
+        e.getPresentation().setText("Upload Lesson to Stepik");
+      }
     }
   }
 
