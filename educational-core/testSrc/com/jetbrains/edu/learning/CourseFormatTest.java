@@ -10,9 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,10 +18,6 @@ import java.util.Map;
 
 
 public class CourseFormatTest extends EduTestCase {
-  @Rule
-  public TestName name = new TestName();
-
-  @Test
   public void testAdditionalMaterialsLesson() throws IOException {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons(true);
@@ -36,7 +29,6 @@ public class CourseFormatTest extends EduTestCase {
     assertNull(oldAdditional);
   }
 
-  @Test
   public void testCourseWithSection() throws IOException {
     final Course course = getCourseFromJson();
     final List<StudyItem> items = course.getItems();
@@ -46,7 +38,6 @@ public class CourseFormatTest extends EduTestCase {
     assertEquals(1, ((Section)items.get(0)).getLessons().size());
   }
 
-  @Test
   public void testFrameworkLesson() throws IOException {
     final Course course = getCourseFromJson();
     final List<StudyItem> items = course.getItems();
@@ -54,7 +45,6 @@ public class CourseFormatTest extends EduTestCase {
     assertTrue(items.get(0) instanceof FrameworkLesson);
   }
 
-  @Test
   public void testPycharmToEduTask() throws IOException {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons();
@@ -65,13 +55,11 @@ public class CourseFormatTest extends EduTestCase {
     assertTrue(taskList.get(0) instanceof EduTask);
   }
 
-  @Test
   public void testDescription() throws IOException {
     EduTask eduTask = getFirstEduTask();
     assertEquals("First task description", eduTask.getTaskDescription(false, null));
   }
 
-  @Test
   public void testFeedbackLinks() throws IOException {
     EduTask eduTask = getFirstEduTask();
 
@@ -93,7 +81,6 @@ public class CourseFormatTest extends EduTestCase {
     return (EduTask)task;
   }
 
-  @Test
   public void testHint() throws IOException {
     EduTask eduTask = getFirstEduTask();
     final TaskFile taskFile = eduTask.getTaskFile("task.py");
@@ -105,7 +92,6 @@ public class CourseFormatTest extends EduTestCase {
     assertEquals("my first hint", hints.get(0));
   }
 
-  @Test
   public void testPlaceholderText() throws IOException {
     EduTask eduTask = getFirstEduTask();
     final TaskFile taskFile = eduTask.getTaskFile("task.py");
@@ -115,7 +101,6 @@ public class CourseFormatTest extends EduTestCase {
     assertEquals("write function body", answerPlaceholders.get(0).getPlaceholderText());
   }
 
-  @Test
   public void testPossibleAnswer() throws IOException {
     EduTask eduTask = getFirstEduTask();
     final TaskFile taskFile = eduTask.getTaskFile("task.py");
@@ -125,31 +110,26 @@ public class CourseFormatTest extends EduTestCase {
     assertEquals("pass", answerPlaceholders.get(0).getPossibleAnswer());
   }
 
-  @Test
   public void testCourseName() throws IOException {
     final Course course = getCourseFromJson();
     assertEquals("My Python Course", course.getName());
   }
 
-  @Test
   public void testCourseProgrammingLanguage() throws IOException {
     final Course course = getCourseFromJson();
     assertEquals(EduNames.PYTHON, course.getLanguageID());
   }
 
-  @Test
   public void testCourseLanguage() throws IOException {
     final Course course = getCourseFromJson();
     assertEquals("Russian", course.getHumanLanguage());
   }
 
-  @Test
   public void testCourseDescription() throws IOException {
     final Course course = getCourseFromJson();
     assertEquals("Best course ever", course.getDescription());
   }
 
-  @Test
   public void testTestFiles() throws IOException {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons();
@@ -161,7 +141,6 @@ public class CourseFormatTest extends EduTestCase {
     assertEquals(1, task.getTestsText().size());
   }
 
-  @Test
   public void testTestFilesCustomName() throws IOException {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons();
@@ -175,7 +154,6 @@ public class CourseFormatTest extends EduTestCase {
     assertTrue(testsText.containsKey("super_test.py"));
   }
 
-  @Test
   public void testStudentTaskText() throws IOException {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons();
@@ -194,8 +172,7 @@ public class CourseFormatTest extends EduTestCase {
     String courseJson = FileUtil.loadFile(new File(getTestDataPath(), fileName));
 
     Gson gson = new GsonBuilder()
-        .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-        .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
+        .registerTypeAdapter(Course.class, new SerializationUtils.Json.CourseAdapter())
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
     return gson.fromJson(courseJson, Course.class);

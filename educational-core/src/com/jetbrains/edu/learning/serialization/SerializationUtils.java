@@ -38,7 +38,6 @@ public class SerializationUtils {
 
   public static final String LINE = "line";
   public static final String START = "start";
-  public static final String LENGTH = "length";
   public static final String HINT = "hint";
   public static final String ADDITIONAL_HINTS = "additional_hints";
   public static final String OFFSET = "offset";
@@ -60,7 +59,6 @@ public class SerializationUtils {
     public final static String COURSE_ELEMENT = "courseElement";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
     public final static String REMOTE_COURSE = "RemoteCourse";
-    public static final String CHECKIO_COURSE = "CheckiOCourse";
     public static final String SECTION = "Section";
     public static final String LESSON = "Lesson";
     public static final String FRAMEWORK_LESSON = "FrameworkLesson";
@@ -124,8 +122,6 @@ public class SerializationUtils {
     public static final String DEPENDENCY_FILE_NAME = "fileName";
     public static final String SETTINGS_NAME = "EduSettings";
     public static final String USER = "user";
-    public static final String LAST_TIME_CHECKED = "lastTimeChecked";
-    public static final String USE_JAVA_FX = "shouldUseJavaFx";
     public static final String STEPIK_USER = "StepikUser";
 
     private Xml() {
@@ -442,7 +438,7 @@ public class SerializationUtils {
     private Json() {
     }
 
-    public static class LessonSectionAdapter implements JsonDeserializer<StudyItem>, JsonSerializer<StudyItem> {
+    private static class LessonSectionAdapter implements JsonDeserializer<StudyItem>, JsonSerializer<StudyItem> {
 
       @Override
       public JsonElement serialize(StudyItem item, Type type, JsonSerializationContext context) {
@@ -508,21 +504,28 @@ public class SerializationUtils {
       }
     }
 
+    // This adapter is used to serialize/deserialize local course json
     public static class CourseAdapter implements JsonSerializer<Course>, JsonDeserializer<Course> {
 
       @Override
       public JsonElement serialize(Course src, Type typeOfSrc, JsonSerializationContext context) {
-        final Gson gson = new GsonBuilder()
-          .setPrettyPrinting()
-          .excludeFieldsWithoutExposeAnnotation()
-          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
-          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-          .create();
+        final Gson gson = getGson();
         JsonElement element = gson.toJsonTree(src, typeOfSrc);
         if (element.isJsonObject()) {
           element.getAsJsonObject().addProperty(VERSION, EduVersions.JSON_FORMAT_VERSION);
         }
         return element;
+      }
+
+      @NotNull
+      private static Gson getGson() {
+        return new GsonBuilder()
+                .setPrettyPrinting()
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .excludeFieldsWithoutExposeAnnotation()
+                .registerTypeAdapter(StudyItem.class, new LessonSectionAdapter())
+                .registerTypeAdapter(Task.class, new TaskAdapter())
+                .create();
       }
 
       @Override
@@ -546,11 +549,7 @@ public class SerializationUtils {
           }
           version++;
         }
-        Gson gson = new GsonBuilder()
-          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
-          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-          .create();
+        Gson gson = getGson();
 
         final Course course = gson.fromJson(jsonObject, typeOfT);
         final RemoteInfo info = deserializeCourseRemoteInfo(json, gson);
@@ -559,7 +558,7 @@ public class SerializationUtils {
       }
     }
 
-    public static class TaskAdapter implements JsonSerializer<Task>, JsonDeserializer<Task> {
+    private static class TaskAdapter implements JsonSerializer<Task>, JsonDeserializer<Task> {
 
       @Override
       public JsonElement serialize(Task src, Type typeOfSrc, JsonSerializationContext context) {

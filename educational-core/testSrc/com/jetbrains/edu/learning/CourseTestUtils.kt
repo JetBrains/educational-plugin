@@ -5,8 +5,6 @@ import com.google.gson.GsonBuilder
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.StudyItem
-import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import java.io.File
@@ -16,8 +14,7 @@ import java.io.IOException
 fun createCourseFromJson(pathToJson: String, courseType: CourseType): Course {
   val courseJson = File(pathToJson).readText()
   val gson = GsonBuilder()
-          .registerTypeAdapter(Task::class.java, SerializationUtils.Json.TaskAdapter())
-          .registerTypeAdapter(StudyItem::class.java, SerializationUtils.Json.LessonSectionAdapter())
+          .registerTypeAdapter(Course::class.java, SerializationUtils.Json.CourseAdapter())
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
           .create()
   return gson.fromJson(courseJson, Course::class.java).apply {
