@@ -19,7 +19,7 @@ import java.util.*
 
 private const val UPDATE_DATE = "update_date"
 
-class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<StepikCourse>, JsonSerializer<Course> {
+class StepikCourseRemoteInfoAdapter : JsonDeserializer<StepikCourse>, JsonSerializer<Course> {
   private val IS_PUBLIC = "is_public"
   private val IS_IDEA_COMPATIBLE = "is_idea_compatible"
   private val ID = "id"
@@ -88,14 +88,14 @@ class StepikCourseRemoteInfoAdapter(val language: String?) : JsonDeserializer<St
       .setPrettyPrinting()
       .excludeFieldsWithoutExposeAnnotation()
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter(language))
-      .registerTypeAdapter(Section::class.java, StepikSectionRemoteInfoAdapter(language))
+      .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter())
+      .registerTypeAdapter(Section::class.java, StepikSectionRemoteInfoAdapter())
       .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
       .create()
   }
 }
 
-class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<Section>, JsonSerializer<Section> {
+class StepikSectionRemoteInfoAdapter : JsonDeserializer<Section>, JsonSerializer<Section> {
   private val ID = "id"
   private val COURSE_ID = "course"
   private val POSITION = "position"
@@ -154,13 +154,13 @@ class StepikSectionRemoteInfoAdapter(val language: String?) : JsonDeserializer<S
       .setPrettyPrinting()
       .excludeFieldsWithoutExposeAnnotation()
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter(language))
+      .registerTypeAdapter(Lesson::class.java, StepikLessonRemoteInfoAdapter())
       .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
       .create()
   }
 }
 
-class StepikLessonRemoteInfoAdapter(val language: String?) : JsonDeserializer<Lesson>, JsonSerializer<Lesson> {
+class StepikLessonRemoteInfoAdapter : JsonDeserializer<Lesson>, JsonSerializer<Lesson> {
   private val ID = "id"
   private val IS_PUBLIC = "is_public"
   private val STEPS = "steps"

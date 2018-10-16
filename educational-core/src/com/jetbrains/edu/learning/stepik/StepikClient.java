@@ -112,9 +112,9 @@ public class StepikClient {
     return new GsonBuilder()
         .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter(language))
         .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter(language))
-        .registerTypeAdapter(StepikCourse.class, new StepikCourseRemoteInfoAdapter(language))
-        .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter(language))
-        .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter(language))
+        .registerTypeAdapter(StepikCourse.class, new StepikCourseRemoteInfoAdapter())
+        .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter())
+        .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter())
         .registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter())
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
