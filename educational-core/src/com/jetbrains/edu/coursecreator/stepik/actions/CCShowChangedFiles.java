@@ -15,13 +15,14 @@ import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.helper.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCShowChangedFiles extends DumbAwareAction {
 
   public CCShowChangedFiles() {
@@ -107,7 +108,7 @@ public class CCShowChangedFiles extends DumbAwareAction {
    * we don't have "New" StepikChangeStatus
    */
   private static boolean isNew(@NotNull StudyItem item) {
-    return StepikStudyItemExt.getId(item) == 0;
+    return !(item.getRemoteInfo() instanceof StepikRemoteInfo);
   }
 
   private static void appendChangeLine(@NotNull StudyItem item, @NotNull StringBuilder stringBuilder) {
