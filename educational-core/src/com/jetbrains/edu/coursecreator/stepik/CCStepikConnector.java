@@ -34,12 +34,13 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikSection;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikRemoteInfo;
 import com.jetbrains.edu.learning.stepik.serialization.StepikCourseRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSectionRemoteInfoAdapter;
@@ -212,7 +213,7 @@ public class CCStepikConnector {
     ApplicationManager.getApplication().invokeAndWait(() -> {
       List<Lesson> lessons = course.getLessons();
       for (Lesson lesson : lessons) {
-        if (StepikLessonExt.getId(lesson) > 0) {
+        if (lesson.getRemoteInfo() instanceof StepikRemoteInfo) {
           continue;
         }
         CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), "Section. " + StringUtil.capitalize(lesson.getName()));
@@ -306,7 +307,7 @@ public class CCStepikConnector {
     boolean updated = updateSectionInfo(project, section);
     if (updated) {
       for (Lesson lesson : section.getLessons()) {
-        if (StepikLessonExt.getId(lesson) > 0) {
+        if (lesson.getRemoteInfo() instanceof StepikRemoteInfo) {
           updateLesson(project, lesson, false, StepikSectionExt.getId(section));
         }
         else {
