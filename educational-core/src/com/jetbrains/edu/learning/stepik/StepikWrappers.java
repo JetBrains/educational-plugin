@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class StepikWrappers {
-  private static final Logger LOG = Logger.getInstance(StepOptions.class);
+  private static final Logger LOG = Logger.getInstance(StepikWrappers.class);
 
   static class StepContainer {
     List<StepSource> steps;
@@ -124,17 +124,17 @@ public class StepikWrappers {
         source.test.add(new FileWrapper(entry.getKey(), entry.getValue()));
       }
     }
-  }
 
-  private static void setAdditionalFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
-    final VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) {
-      LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
-    } else {
-      CCUtils.loadAdditionalFileTextsToTask(task, taskDir);
+    private static void setAdditionalFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
+      final VirtualFile taskDir = task.getTaskDir(project);
+      if (taskDir == null) {
+        LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
+      } else {
+        CCUtils.loadAdditionalFileTextsToTask(task, taskDir);
+      }
+
+      source.additionalFiles = new HashMap<>(task.getAdditionalFiles());
     }
-
-    source.additionalFiles = new HashMap<>(task.getAdditionalFiles());
   }
 
   public static class CoursesContainer {
@@ -355,7 +355,6 @@ public class StepikWrappers {
   }
 
   public static class Reply {
-
     String score;
     List<SolutionFile> solution;
     String language;
