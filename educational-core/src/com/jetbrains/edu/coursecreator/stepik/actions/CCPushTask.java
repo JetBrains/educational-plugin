@@ -22,7 +22,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikTaskRemoteInfo;
 import org.jetbrains.annotations.NotNull;
@@ -65,13 +64,14 @@ public class CCPushTask extends DumbAwareAction {
     }
 
     Lesson lesson = EduUtils.getLesson(lessonDir.getVirtualFile(), course);
-    if (lesson != null && StepikLessonExt.getId(lesson) > 0 && StepikStudyItemExt.getId(course) > 0) {
-      e.getPresentation().setEnabledAndVisible(true);
+    if (lesson != null && StepikLessonExt.isStepikLesson(lesson)) {
       final Task task = lesson.getTask(taskDir.getName());
-      if (task == null || task.getRemoteInfo() instanceof StepikTaskRemoteInfo) {
-        return;
+      if (task == null) return;
+
+      e.getPresentation().setEnabledAndVisible(true);
+      if (!(task.getRemoteInfo() instanceof StepikTaskRemoteInfo)) {
+        e.getPresentation().setText("Upload Task to Stepik");
       }
-      e.getPresentation().setText("Upload Task to Stepik");
     }
   }
 
