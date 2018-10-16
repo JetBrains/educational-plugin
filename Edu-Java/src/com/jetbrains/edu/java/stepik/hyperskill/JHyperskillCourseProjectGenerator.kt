@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
 import com.jetbrains.edu.learning.stepik.hyperskill.getLesson
@@ -30,7 +29,7 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
         return false
       }
       val lessonId = hyperskillProject.lesson
-      val projectId = myCourse.id
+      val projectId = hyperskillProject.id
 
       val stages = HyperskillConnector.getStages(projectId) ?: return false
       val lesson = getLesson(lessonId, language, stages) ?: return false
