@@ -17,7 +17,6 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,9 +64,7 @@ public class CCWrapWithSection extends DumbAwareAction {
     ProjectView.getInstance(project).refresh();
     StepikCourseChangeHandler.contentChanged(course);
     for (Lesson lesson : section.getLessons()) {
-      if (StepikLessonExt.isStepikLesson(lesson)) {
-        StepikCourseChangeHandler.infoChanged(lesson);
-      }
+      StepikCourseChangeHandler.infoChanged(lesson);
     }
   }
 
