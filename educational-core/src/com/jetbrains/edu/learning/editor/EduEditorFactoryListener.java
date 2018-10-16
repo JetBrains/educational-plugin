@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
 
-  private static final Map<Document, EduDocumentListener> ourDocumentListeners = new HashMap<>();
+  private static final Map<Document, EduDocumentListenerHolder> ourDocumentListeners = new HashMap<>();
 
   private TaskFile myTaskFile;
 
@@ -126,19 +126,39 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
   }
 
   public static void addDocumentListener(@NotNull final Document document, @NotNull final EduDocumentListener listener) {
-    document.addDocumentListener(listener);
-    ourDocumentListeners.put(document, listener);
+    // We can have some editors for the same document because there are several editor types (`EduSingleFileEditor` and `EduSplitEditor`)
+    // so after new editor creation we can already have listener for the document.
+    // In this case we shouldn't add new listener because it will duplicate all actions in it
+    EduDocumentListenerHolder listenerHolder = ourDocumentListeners.get(document);
+    if (listenerHolder == null) {
+      document.addDocumentListener(listener);
+      ourDocumentListeners.put(document, new EduDocumentListenerHolder(listener));
+    } else {
+      listenerHolder.myCount++;
+    }
   }
 
-  public static void removeDocumentListener(Document document) {
-    final EduDocumentListener listener = ourDocumentListeners.get(document);
-    if (listener != null) {
-      document.removeDocumentListener(listener);
+  public static void removeDocumentListener(@NotNull Document document) {
+    final EduDocumentListenerHolder listenerHolder = ourDocumentListeners.get(document);
+    if (listenerHolder == null) return;
+    listenerHolder.myCount--;
+    if (listenerHolder.myCount == 0) {
+      document.removeDocumentListener(listenerHolder.myListener);
+      ourDocumentListeners.remove(document);
     }
-    ourDocumentListeners.remove(document);
   }
 
   public static boolean hasDocumentListener(@NotNull final Document document) {
     return ourDocumentListeners.containsKey(document);
+  }
+
+  private static class EduDocumentListenerHolder {
+    final EduDocumentListener myListener;
+    int myCount;
+
+    public EduDocumentListenerHolder(@NotNull EduDocumentListener listener) {
+      myListener = listener;
+      myCount = 1;
+    }
   }
 }
