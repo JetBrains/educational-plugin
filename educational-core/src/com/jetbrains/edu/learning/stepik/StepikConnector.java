@@ -471,8 +471,7 @@ public class StepikConnector {
     if (unitIds.length > 0) {
       final List<Lesson> lessons = getLessons(stepikCourse);
       stepikCourse.addLessons(lessons);
-      stepikCourse.setSectionIds(allSections.stream().map(s -> StepikSectionExt.getId(s))
-                                                         .collect(Collectors.toList()));
+      stepikCourse.setSectionIds(allSections.stream().map(s -> StepikSectionExt.getId(s)).collect(Collectors.toList()));
       lessons.stream().filter(lesson -> lesson.isAdditional())
         .forEach(lesson -> stepikCourse.setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson)));
     }
