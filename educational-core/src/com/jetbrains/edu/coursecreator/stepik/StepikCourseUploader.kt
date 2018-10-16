@@ -129,7 +129,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
     sectionsToPush.forEach {
       // all top-level lessons are stored in one section on Stepik
       it.position = it.index - course.lessons.size + 1
-      val sectionId = postSectionInfo(project, copySection(it), course.id)
+      val sectionId = postSectionInfo(project, it, course.id)
       it.id = sectionId
     }
 

@@ -197,16 +197,6 @@ public class StepikConnector {
   }
 
   public static void updateCourseIfNeeded(@NotNull Project project, @NotNull StepikCourse course) {
-    int id = StepikCourseExt.getId(course);
-
-    if (id == 0) {
-      return;
-    }
-
-    if (!course.isStudy()) {
-      return;
-    }
-
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(new Backgroundable(project, "Updating Course") {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {

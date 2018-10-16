@@ -33,7 +33,6 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikCourseExt;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,7 +71,7 @@ public class EduProjectComponent implements ProjectComponent {
           return;
         }
 
-        if (course instanceof StepikCourse) {
+        if (course instanceof StepikCourse && course.isStudy()) {
           StepikConnector.updateCourseIfNeeded(myProject, (StepikCourse)course);
         }
 

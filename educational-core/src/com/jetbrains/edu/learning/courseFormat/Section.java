@@ -6,9 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,12 +21,6 @@ public class Section extends ItemContainer {
     myCourse = course;
     int index = 1;
 
-    if (course != null) {
-      final RemoteInfo remoteInfo = getRemoteInfo();
-      if (remoteInfo instanceof StepikSectionRemoteInfo) {
-        ((StepikSectionRemoteInfo)remoteInfo).setCourseId(StepikStudyItemExt.getId(course));
-      }
-    }
     for (StudyItem lesson : items) {
       if (lesson instanceof Lesson) {
         lesson.setIndex(index);

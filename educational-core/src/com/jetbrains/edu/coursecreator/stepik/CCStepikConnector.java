@@ -292,7 +292,7 @@ public class CCStepikConnector {
   public static int postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
     StepikCourse course = (StepikCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    final int sectionId = postSectionInfo(project, copySection(section), StepikCourseExt.getId(course));
+    final int sectionId = postSectionInfo(project, section, StepikCourseExt.getId(course));
     StepikSectionExt.setId(section, sectionId);
     postLessons(project, indicator, course, sectionId, section.getLessons());
 
@@ -318,16 +318,6 @@ public class CCStepikConnector {
     return updated;
   }
 
-  public static Section copySection(@NotNull Section section) {
-    Section sectionToPost = new Section();
-    sectionToPost.setName(section.getName());
-    StepikSectionExt.setPosition(sectionToPost, StepikSectionExt.getPosition(section));
-    StepikSectionExt.setId(sectionToPost, StepikSectionExt.getId(section));
-    StepikSectionExt.setCourseId(sectionToPost, StepikSectionExt.getCourseId(section));
-
-    return sectionToPost;
-  }
-
   private static void postLessons(@NotNull Project project,
                                   @Nullable ProgressIndicator indicator,
                                   @NotNull StepikCourse course,
@@ -350,7 +340,7 @@ public class CCStepikConnector {
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
     if (!EduSettings.isLoggedIn()) {
-      showStepikNotification(project, NotificationType.ERROR, failedActionName);
+      showStepikErrorNotification(project, failedActionName);
       return false;
     }
     return true;
@@ -516,10 +506,9 @@ public class CCStepikConnector {
   }
 
   public static boolean updateSectionInfo(@NotNull Project project, @NotNull Section section) {
-    Section sectionCopy = copySection(section);
     final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS + "/" + StepikSectionExt.getId(section));
     final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
-    sectionContainer.setSection(sectionCopy);
+    sectionContainer.setSection(section);
     String requestBody = getGson(project).toJson(sectionContainer);
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
 
@@ -831,10 +820,9 @@ public class CCStepikConnector {
     };
   }
 
-  private static void showStepikNotification(@NotNull Project project,
-                                             @NotNull NotificationType notificationType, @NotNull String failedActionName) {
+  private static void showStepikErrorNotification(@NotNull Project project, @NotNull String failedActionName) {
     String text = "Log in to Stepik to " + failedActionName;
-    Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, notificationType);
+    Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, NotificationType.ERROR);
     notification.addAction(new DumbAwareAction("Log in") {
 
       @Override
@@ -847,11 +835,11 @@ public class CCStepikConnector {
     notification.notify(project);
   }
 
-  public static int postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
+  public static void postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
     Lesson postedLesson = postLessonInfo(project, lesson, sectionId, position);
 
     if (postedLesson == null) {
-      return -1;
+      return;
     }
     StepikLessonExt.setId(lesson, StepikLessonExt.getId(postedLesson));
     StepikLessonExt.setUnitId(lesson, StepikLessonExt.getUnitId(postedLesson));
@@ -863,7 +851,7 @@ public class CCStepikConnector {
       postTask(project, task, StepikLessonExt.getId(postedLesson));
     }
 
-    return StepikLessonExt.getId(postedLesson);
+    StepikLessonExt.setId(lesson, StepikLessonExt.getId(postedLesson));
   }
 
   public static Lesson postLessonInfo(@NotNull Project project, @NotNull Lesson lesson, int sectionId, int position) {
