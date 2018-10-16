@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.*
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
@@ -190,20 +189,19 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
     }
 
     lessonsToDelete.addAll(StepikConnector.getUnits(
-      deleteCandidates.map { it.toString() }.toTypedArray()).filter { it.updateDate <= lastUpdateDate }.map { it.id })
+      deleteCandidates.map { it.toString() }.toTypedArray()).asSequence().filter { it.updateDate <= lastUpdateDate }.map { it.id }.toList())
   }
 
   private fun processSectionContentChanged(section: Section,
                                            deleteCandidates: ArrayList<Int>,
                                            sectionFromServer: Section) {
     lessonsToPush.addAll(section.lessons.filter { it.id == 0 })
-    val sectionRemoteInfo = sectionFromServer.remoteInfo as StepikSectionRemoteInfo
-    val lessonFromServerIds = sectionRemoteInfo.units
-    lessonsToMove.addAll(section.lessons.filter { it.id > 0 }.filter { it.unitId !in lessonFromServerIds })
+    val lessonFromServerIds = sectionFromServer.units
+    lessonsToMove.addAll(section.lessons.asSequence().filter { it.id > 0 }.filter { it.unitId !in lessonFromServerIds }.toList())
 
     val localSectionUnits = section.lessons.map { it.unitId }
     val allLocalUnits = course.allLessons().map { it.unitId }
-    deleteCandidates.addAll(sectionRemoteInfo.units.filter {
+    deleteCandidates.addAll(sectionFromServer.units.filter {
       val isMoved = it in allLocalUnits
       it !in localSectionUnits && !isMoved
     })
@@ -236,7 +234,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
     }
 
     lessonsToDelete.addAll(StepikConnector.getUnits(
-      deleteCandidates.map { it.toString() }.toTypedArray()).filter { it.updateDate <= lastUpdateDate }.map { it.id })
+      deleteCandidates.map { it.toString() }.toTypedArray()).asSequence().filter { it.updateDate <= lastUpdateDate }.map { it.id }.toList())
   }
 
   private fun processLessonContentChanged(lesson: Lesson,
@@ -275,7 +273,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
 
       val section = StepikConnector.getSection(courseInfo.stepikRemoteInfo.sectionIds[0])
       val lessonsFromSection = StepikConnector
-        .getLessonsFromUnits(courseInfo, (section.remoteInfo as StepikSectionRemoteInfo).units.map { it.toString() }.toTypedArray(), false)
+        .getLessonsFromUnits(courseInfo, section.units.map { it.toString() }.toTypedArray(), false)
       val topLevelLessonsIds = course.lessons.map { it.id }
       for (lesson in lessonsFromSection) {
         if (lesson.id !in topLevelLessonsIds) {
