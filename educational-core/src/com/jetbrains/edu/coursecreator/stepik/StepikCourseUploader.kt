@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.*
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
@@ -118,7 +117,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       val topLevelSectionId = getTopLevelSectionId(project, course)
       if (topLevelSectionId == -1) {
         val sectionId = postSectionForTopLevelLessons(project, course)
-        (course.remoteInfo as StepikCourseRemoteInfo).sectionIds = arrayListOf(sectionId)
+        course.stepikRemoteInfo.sectionIds = arrayListOf(sectionId)
         sectionId
       }
       else {
@@ -198,12 +197,13 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
                                            deleteCandidates: ArrayList<Int>,
                                            sectionFromServer: Section) {
     lessonsToPush.addAll(section.lessons.filter { it.id == 0 })
-    val lessonFromServerIds = (sectionFromServer.remoteInfo as StepikSectionRemoteInfo).units
+    val sectionRemoteInfo = sectionFromServer.remoteInfo as StepikSectionRemoteInfo
+    val lessonFromServerIds = sectionRemoteInfo.units
     lessonsToMove.addAll(section.lessons.filter { it.id > 0 }.filter { it.unitId !in lessonFromServerIds })
 
     val localSectionUnits = section.lessons.map { it.unitId }
     val allLocalUnits = course.allLessons().map { it.unitId }
-    deleteCandidates.addAll((sectionFromServer.remoteInfo as StepikSectionRemoteInfo).units.filter {
+    deleteCandidates.addAll(sectionRemoteInfo.units.filter {
       val isMoved = it in allLocalUnits
       it !in localSectionUnits && !isMoved
     })
@@ -287,7 +287,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       }
     }
     else {
-      (course.remoteInfo as StepikCourseRemoteInfo).sectionIds = mutableListOf()
+      course.stepikRemoteInfo.sectionIds = mutableListOf()
     }
     sectionsToPush.addAll(course.sections.filter { it.id == 0 })
 
@@ -303,7 +303,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       if (section.name == StepikNames.PYCHARM_ADDITIONAL) {
         continue
       }
-      if ((section.id !in localSectionIds && section.id !in (course.remoteInfo as StepikCourseRemoteInfo).sectionIds) && section.updateDate <= lastUpdateDate) {
+      if ((section.id !in localSectionIds && section.id !in course.stepikRemoteInfo.sectionIds) && section.updateDate <= lastUpdateDate) {
         sectionsToDelete.add(section.id)
       }
     }
