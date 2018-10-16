@@ -25,7 +25,7 @@ var Lesson.updateDate: Date
     stepikRemoteInfo.updateDate = date
   }
 
-val Lesson.stepikRemoteInfo : StepikLessonRemoteInfo
+private val Lesson.stepikRemoteInfo : StepikLessonRemoteInfo
   get() {
     if (remoteInfo !is StepikLessonRemoteInfo) {
       remoteInfo = StepikLessonRemoteInfo()

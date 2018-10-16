@@ -30,7 +30,7 @@ var Section.updateDate: Date
     stepikRemoteInfo.updateDate = date
   }
 
-val Section.stepikRemoteInfo : StepikSectionRemoteInfo
+private val Section.stepikRemoteInfo : StepikSectionRemoteInfo
   get() {
     if (remoteInfo !is StepikSectionRemoteInfo) {
       remoteInfo = StepikSectionRemoteInfo()

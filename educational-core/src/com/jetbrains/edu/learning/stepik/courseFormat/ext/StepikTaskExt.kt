@@ -18,7 +18,7 @@ var Task.updateDate: Date
     stepikRemoteInfo.updateDate = date
   }
 
-val Task.stepikRemoteInfo : StepikTaskRemoteInfo
+private val Task.stepikRemoteInfo : StepikTaskRemoteInfo
   get() {
     if (remoteInfo !is StepikTaskRemoteInfo) {
       remoteInfo = StepikTaskRemoteInfo()
