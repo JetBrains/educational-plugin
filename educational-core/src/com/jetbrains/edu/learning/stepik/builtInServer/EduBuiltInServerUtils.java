@@ -24,6 +24,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Ref;
 import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -63,7 +64,7 @@ public class EduBuiltInServerUtils {
           if (stepikCourse != null && StepikCourseExt.getId(stepikCourse) == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
               requestFocus(project);
-              StepikUtils.navigateToStep(project, (StepikCourse)course, stepId);
+              StepikUtils.navigateToStep(project, stepikCourse, stepId);
             });
             return true;
           }
@@ -75,13 +76,14 @@ public class EduBuiltInServerUtils {
 
   @Nullable
   private static Project openProject(@NotNull String projectPath) {
-    final Project[] project = {null};
+    final Ref<Project> project = Ref.create();
     ApplicationManager.getApplication().invokeAndWait(() -> {
       TransactionGuard.getInstance().submitTransactionAndWait(() ->
-        project[0] = ProjectUtil.openProject(projectPath, null, true));
-      requestFocus(project[0]);
+        project.set(ProjectUtil.openProject(projectPath, null, true))
+      );
+      requestFocus(project.get());
     });
-    return project[0];
+    return project.get();
   }
 
   private static void requestFocus(@NotNull Project project) {
@@ -90,19 +92,16 @@ public class EduBuiltInServerUtils {
 
   public static boolean openRecentProject(int targetCourseId, int stepId) {
     RecentProjectsManagerBase recentProjectsManager = RecentProjectsManagerBase.getInstanceEx();
-
     if (recentProjectsManager == null) {
       return false;
     }
 
     RecentProjectsManagerBase.State state = recentProjectsManager.getState();
-
     if (state == null) {
       return false;
     }
 
     List<String> recentPaths = state.recentPaths;
-
     SAXBuilder parser = new SAXBuilder();
 
     for (String projectPath : recentPaths) {
