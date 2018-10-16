@@ -8,10 +8,10 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.unitId
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import org.intellij.lang.annotations.Language
 
 class ExportStepikIdsTest : EduTestCase() {
@@ -106,6 +106,6 @@ class ExportStepikIdsTest : EduTestCase() {
       }
       true
     }
-    (remoteInfo as StepikCourseRemoteInfo).sectionIds = sectionIds
+    this.sectionIds = sectionIds
   }
 }

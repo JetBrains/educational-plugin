@@ -19,7 +19,6 @@ import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
 
 open class StepikIntegrationTest : StepikTestCase() {
@@ -267,7 +266,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
-    val section = StepikConnector.getSection((courseFromStepik.remoteInfo as StepikCourseRemoteInfo).sectionIds[0])
+    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])
     val unitIds = (section.remoteInfo as StepikSectionRemoteInfo).units.map { unit -> unit.toString() }
     val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
 
@@ -299,12 +298,10 @@ open class StepikIntegrationTest : StepikTestCase() {
 
   private fun checkTopLevelLessons(localCourse: StepikCourse) {
     val courseFromStepik = getCourseFromStepik(localCourse.id)
-    val localCourseRemoteInfo = localCourse.remoteInfo as StepikCourseRemoteInfo
-    val remoteInfo = localCourse.remoteInfo as StepikCourseRemoteInfo
-    assertEquals("Course with top-level lessons should have only one section", 1, localCourseRemoteInfo.sectionIds.size)
+    assertEquals("Course with top-level lessons should have only one section", 1, localCourse.sectionIds.size)
 
-    assertEquals("Top-level lessons section id mismatch", localCourseRemoteInfo.sectionIds[0], remoteInfo.sectionIds[0])
-    val section = StepikConnector.getSection(remoteInfo.sectionIds[0])
+    assertEquals("Top-level lessons section id mismatch", localCourse.sectionIds[0], localCourse.sectionIds[0])
+    val section = StepikConnector.getSection(localCourse.sectionIds[0])
     assertEquals("Section name mismatch", localCourse.name, section.name)
 
     val unitIds = (section.remoteInfo as StepikSectionRemoteInfo).units.map { unit -> unit.toString() }

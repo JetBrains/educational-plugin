@@ -14,26 +14,6 @@ import java.util.*
 
 class StepikCourse : Course() {
 
-  val stepikRemoteInfo: StepikCourseRemoteInfo
-    get() {
-      val info = super.getRemoteInfo()
-      assert(info is StepikCourseRemoteInfo)
-      return info as StepikCourseRemoteInfo
-    }
-
-  val isCompatible: Boolean get() = (remoteInfo as? StepikCourseRemoteInfo)?.isIdeaCompatible ?: false
-
-  val id: Int get() = (remoteInfo as? StepikCourseRemoteInfo)?.id ?: 0
-
-  var updateDate: Date
-    get() = (remoteInfo as? StepikCourseRemoteInfo)?.updateDate ?: Date(0)
-    set(date) {
-      if (remoteInfo !is StepikCourseRemoteInfo) {
-        remoteInfo = StepikCourseRemoteInfo()
-      }
-      (remoteInfo as StepikCourseRemoteInfo).updateDate = date
-    }
-
   init {
     remoteInfo = StepikCourseRemoteInfo()
   }
@@ -49,11 +29,78 @@ class StepikCourse : Course() {
     return tags
   }
 
+  private val stepikRemoteInfo: StepikCourseRemoteInfo
+    get() {
+      if (remoteInfo !is StepikCourseRemoteInfo) {
+        remoteInfo = StepikCourseRemoteInfo()
+      }
+      return remoteInfo as StepikCourseRemoteInfo
+    }
+
+  val isCompatible: Boolean
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.isIdeaCompatible ?: false
+  val id: Int
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.id ?: 0
+
+  var instructors: MutableList<Int>
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.instructors ?: mutableListOf()
+    set(value) {
+      stepikRemoteInfo.instructors = value
+    }
+
+  var isPublic: Boolean
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.isPublic ?: false
+    set(value) {
+      stepikRemoteInfo.isPublic = value
+    }
+
+  var courseFormat: String
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.courseFormat ?: ""
+    set(value) {
+      stepikRemoteInfo.courseFormat = value
+    }
+
+  var additionalMaterialsUpdateDate: Date
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.additionalMaterialsUpdateDate ?: Date(0)
+    set(value) {
+      stepikRemoteInfo.additionalMaterialsUpdateDate = value
+    }
+
+  var sectionIds: MutableList<Int>
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.sectionIds ?: mutableListOf()
+    set(value) {
+      stepikRemoteInfo.sectionIds = value
+    }
+
+  var loadSolutions: Boolean
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.loadSolutions ?: true
+    set(value) {
+      stepikRemoteInfo.loadSolutions = value
+    }
+
+  var updateDate: Date
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.updateDate ?: Date(0)
+    set(date) {
+      stepikRemoteInfo.updateDate = date
+    }
+
+  fun updateFormat(language: String) {
+    val separator = courseFormat.indexOf(" ")
+    val version: String
+    version = if (separator != -1) {
+      courseFormat.substring(StepikNames.PYCHARM_PREFIX.length, separator)
+    }
+    else {
+      JSON_FORMAT_VERSION.toString()
+    }
+
+    courseFormat = String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, version, language)
+  }
+
   fun updateCourseCompatibility() {
-    val info = stepikRemoteInfo
     val supportedLanguages = EduConfiguratorManager.supportedLanguages
 
-    val typeLanguage = StringUtil.split(info.courseFormat, " ")
+    val typeLanguage = StringUtil.split(courseFormat, " ")
     val prefix = typeLanguage[0]
     if (!supportedLanguages.contains(languageID)) myCompatibility = CourseCompatibility.UNSUPPORTED
     if (typeLanguage.size < 2 || !prefix.startsWith(StepikNames.PYCHARM_PREFIX)) {

@@ -48,9 +48,8 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
         jsonObject.addProperty("unit_id", item.unitId)
       }
       if (item is StepikCourse) {
-        val remoteInfo = item.stepikRemoteInfo
-        if (remoteInfo.sectionIds.isNotEmpty()) {
-          jsonObject.addChildren("sectionIds", remoteInfo.sectionIds) { id ->
+        if (item.sectionIds.isNotEmpty()) {
+          jsonObject.addChildren("sectionIds", item.sectionIds) { id ->
             JsonPrimitive(id)
           }
         }

@@ -11,12 +11,10 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -161,12 +159,10 @@ public class StepikWrappers {
       this.course.setDescription(course.getDescription());
       this.course.setAuthors(course.getAuthors());
 
-      final StepikCourseRemoteInfo stepikRemoteInfo = this.course.getStepikRemoteInfo();
-      stepikRemoteInfo.updateFormat(course.getLanguageID());
-      final RemoteInfo remoteInfo = course.getRemoteInfo();
-      if (remoteInfo instanceof StepikCourseRemoteInfo) {
-        stepikRemoteInfo.setPublic(((StepikCourseRemoteInfo)remoteInfo).isPublic());
-        stepikRemoteInfo.setInstructors((((StepikCourseRemoteInfo)remoteInfo).getInstructors()));
+      this.course.updateFormat(course.getLanguageID());
+      if (course instanceof StepikCourse) {
+        this.course.setPublic(((StepikCourse)course).isPublic());
+        this.course.setInstructors(((StepikCourse)course).getInstructors());
       }
     }
   }

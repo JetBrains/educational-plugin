@@ -20,7 +20,6 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus.INFO
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.position
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo
 import junit.framework.TestCase
 
@@ -385,12 +384,11 @@ class EventBasedUpdateTest: StepikTestCase() {
 
   private fun checkTopLevelLessons(courseFromStepik: StepikCourse, localCourse: StepikCourse) {
     assertNotNull("Uploaded courses not found among courses available to instructor", courseFromStepik)
-    val localCourseRemoteInfo = localCourse.remoteInfo as StepikCourseRemoteInfo
-    TestCase.assertTrue("Course with top-level lessons should have only one section, but has: ${localCourseRemoteInfo.sectionIds.size}",
-                        localCourseRemoteInfo.sectionIds.size == 1)
+    TestCase.assertTrue("Course with top-level lessons should have only one section, but has: ${localCourse.sectionIds.size}",
+                        localCourse.sectionIds.size == 1)
     TestCase.assertTrue("Top-level lessons section id mismatch",
-                        localCourseRemoteInfo.sectionIds[0] == (courseFromStepik.remoteInfo as StepikCourseRemoteInfo).sectionIds[0])
-    val section = StepikConnector.getSection((courseFromStepik.remoteInfo as StepikCourseRemoteInfo).sectionIds[0])
+                        localCourse.sectionIds[0] == courseFromStepik.sectionIds[0])
+    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])
     TestCase.assertTrue("Section name mismatch. Expected: ${localCourse.name}.\n Actual: ${section.name}",
                         section.name == localCourse.name)
 

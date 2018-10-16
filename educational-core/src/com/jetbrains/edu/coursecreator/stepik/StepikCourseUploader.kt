@@ -116,7 +116,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       val topLevelSectionId = getTopLevelSectionId(project, course)
       if (topLevelSectionId == -1) {
         val sectionId = postSectionForTopLevelLessons(project, course)
-        course.stepikRemoteInfo.sectionIds = arrayListOf(sectionId)
+        course.sectionIds = arrayListOf(sectionId)
         sectionId
       }
       else {
@@ -271,7 +271,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       lessonsToPush.addAll(course.lessons.filter { it.id == 0 })
       // process lessons moved to top-level
 
-      val section = StepikConnector.getSection(courseInfo.stepikRemoteInfo.sectionIds[0])
+      val section = StepikConnector.getSection(courseInfo.sectionIds[0])
       val lessonsFromSection = StepikConnector
         .getLessonsFromUnits(courseInfo, section.units.map { it.toString() }.toTypedArray(), false)
       val topLevelLessonsIds = course.lessons.map { it.id }
@@ -285,7 +285,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       }
     }
     else {
-      course.stepikRemoteInfo.sectionIds = mutableListOf()
+      course.sectionIds = mutableListOf()
     }
     sectionsToPush.addAll(course.sections.filter { it.id == 0 })
 
@@ -294,14 +294,14 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
       lessonsToPush.addAll(sectionToPush.lessons.filter { it.id == 0 })
     }
 
-    val remoteSectionIds = courseInfo.stepikRemoteInfo.sectionIds
+    val remoteSectionIds = courseInfo.sectionIds
     val sections = StepikConnector.getSections(remoteSectionIds.map { it.toString() }.toTypedArray())
     val localSectionIds = course.sections.map { it.id }
     for (section in sections) {
       if (section.name == StepikNames.PYCHARM_ADDITIONAL) {
         continue
       }
-      if ((section.id !in localSectionIds && section.id !in course.stepikRemoteInfo.sectionIds) && section.updateDate <= lastUpdateDate) {
+      if ((section.id !in localSectionIds && section.id !in course.sectionIds) && section.updateDate <= lastUpdateDate) {
         sectionsToDelete.add(section.id)
       }
     }

@@ -62,7 +62,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
       return null
     }
     val language = chooseLanguageIfNeeded(languages, course) ?: return null
-    course.stepikRemoteInfo.courseFormat = getCourseFormat(language.id)
+    course.courseFormat = getCourseFormat(language.id)
     course.language = language.id
     return course
   }

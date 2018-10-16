@@ -244,8 +244,7 @@ public class CCStepikConnector {
   private static void postTopLevelLessons(@NotNull Project project, @NotNull StepikCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     final int sectionId = postSectionForTopLevelLessons(project, course);
-    final StepikCourseRemoteInfo info = course.getStepikRemoteInfo();
-    info.setSectionIds(Collections.singletonList(sectionId));
+    course.setSectionIds(Collections.singletonList(sectionId));
     postLessons(project, indicator, course, sectionId, course.getLessons());
   }
 
@@ -265,8 +264,7 @@ public class CCStepikConnector {
       StepikCourse courseInfo = StepikConnector
         .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
       if (courseInfo != null) {
-        final StepikCourseRemoteInfo info = courseInfo.getStepikRemoteInfo();
-        String[] sectionIds = info.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
+        String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
         try {
           List<Section> sections = StepikConnector.getSections(sectionIds);
           for (Section section : sections) {
@@ -635,8 +633,7 @@ public class CCStepikConnector {
     StepikCourse courseInfo = getCourseInfo(String.valueOf(courseId));
     assert courseInfo != null;
 
-    final StepikCourseRemoteInfo remoteInfo = courseInfo.getStepikRemoteInfo();
-    List<Integer> sectionIds = remoteInfo.getSectionIds();
+    final List<Integer> sectionIds = courseInfo.getSectionIds();
     for (Integer sectionId : sectionIds) {
       final Section section = StepikConnector.getSection(sectionId);
       if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
@@ -666,8 +663,7 @@ public class CCStepikConnector {
     StepikCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
     assert courseInfo != null;
 
-    final StepikCourseRemoteInfo remoteInfo = courseInfo.getStepikRemoteInfo();
-    List<Integer> sectionIds = remoteInfo.getSectionIds();
+    List<Integer> sectionIds = courseInfo.getSectionIds();
     for (Integer sectionId : sectionIds) {
       final Section section = StepikConnector.getSection(sectionId);
       if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
@@ -1001,8 +997,7 @@ public class CCStepikConnector {
   }
 
   public static int getTopLevelSectionId(@NotNull Project project, @NotNull StepikCourse course) {
-    final StepikCourseRemoteInfo info = course.getStepikRemoteInfo();
-    final List<Integer> sectionIds = info.getSectionIds();
+    final List<Integer> sectionIds = course.getSectionIds();
     if (!sectionIds.isEmpty()) {
       return sectionIds.get(0);
     }

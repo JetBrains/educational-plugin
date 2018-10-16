@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,8 +75,7 @@ public class SyncCourseAction extends DumbAwareAction {
     if (!(course instanceof StepikCourse)) {
       return false;
     }
-    final StepikCourseRemoteInfo remoteInfo = ((StepikCourse)course).getStepikRemoteInfo();
-    if (remoteInfo.getLoadSolutions()) {
+    if (((StepikCourse)course).getLoadSolutions()) {
       return true;
     }
     return false;

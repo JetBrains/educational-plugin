@@ -306,15 +306,14 @@ public class StepikConnector {
                                   @NotNull List<Integer> featuredCourses) throws IOException {
     final List<StepikCourse> courses = coursesContainer.courses;
     for (StepikCourse course : courses) {
-      final StepikCourseRemoteInfo remoteInfo = course.getStepikRemoteInfo();
-      if (StringUtil.isEmptyOrSpaces(remoteInfo.getCourseFormat())) continue;
+      if (StringUtil.isEmptyOrSpaces(course.getCourseFormat())) continue;
 
       CourseCompatibility compatibility = course.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
 
       setCourseAuthors(course);
 
-      if (remoteInfo.isPublic() && !featuredCourses.contains(course.getId())) {
+      if (course.isPublic() && !featuredCourses.contains(course.getId())) {
         course.setDescription(course.getDescription() + NOT_VERIFIED_NOTE);
       }
       course.setVisibility(getVisibility(course, featuredCourses));
@@ -324,8 +323,7 @@ public class StepikConnector {
 
   private static void setCourseAuthors(@NotNull final StepikCourse stepikCourse) throws IOException {
     final ArrayList<StepikUserInfo> authors = new ArrayList<>();
-    final StepikCourseRemoteInfo remoteInfo = stepikCourse.getStepikRemoteInfo();
-    for (Integer instructor : remoteInfo.getInstructors()) {
+    for (Integer instructor : stepikCourse.getInstructors()) {
       final StepikUserInfo author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
                                                                AuthorWrapper.class).users.get(0);
       authors.add(author);
@@ -393,13 +391,12 @@ public class StepikConnector {
   }
 
   public static void fillItems(@NotNull StepikCourse stepikCourse) throws IOException {
-    final StepikCourseRemoteInfo remoteInfo = stepikCourse.getStepikRemoteInfo();
     try {
-      String[] sectionIds = remoteInfo.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
+      String[] sectionIds = stepikCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
       List<Section> allSections = getSections(sectionIds);
 
       if (hasVisibleSections(allSections, stepikCourse.getName())) {
-        remoteInfo.setSectionIds(Collections.emptyList());
+        stepikCourse.setSectionIds(Collections.emptyList());
         List<Callable<StudyItem>> tasks = ContainerUtil.newArrayList();
         for (int index = 0; index < allSections.size(); index++) {
           Section section = allSections.get(index);
@@ -425,7 +422,7 @@ public class StepikConnector {
       return items;
     }
     catch (Throwable e) {
-      LOG.warn("Cannot load sections for course " + stepikCourse.getStepikRemoteInfo().getId() + e.getMessage());
+      LOG.warn("Cannot load sections for course " + stepikCourse.getId() + e.getMessage());
     }
 
     return Collections.emptyList();
@@ -456,7 +453,7 @@ public class StepikConnector {
     ArrayList<StudyItem> itemsWithTopLevelLessons = new ArrayList<>();
     for (StudyItem item : sections) {
       if (item instanceof Section && item.getName().equals(stepikCourse.getName())) {
-        stepikCourse.getStepikRemoteInfo().setSectionIds(Collections.singletonList(StepikStudyItemExt.getId(item)));
+        stepikCourse.setSectionIds(Collections.singletonList(StepikStudyItemExt.getId(item)));
         itemsWithTopLevelLessons.addAll(((Section)item).getLessons());
       }
       else {
@@ -474,10 +471,10 @@ public class StepikConnector {
     if (unitIds.length > 0) {
       final List<Lesson> lessons = getLessons(stepikCourse);
       stepikCourse.addLessons(lessons);
-      stepikCourse.getStepikRemoteInfo().setSectionIds(allSections.stream().map(s -> StepikSectionExt.getId(s))
+      stepikCourse.setSectionIds(allSections.stream().map(s -> StepikSectionExt.getId(s))
                                                          .collect(Collectors.toList()));
       lessons.stream().filter(lesson -> lesson.isAdditional())
-        .forEach(lesson -> stepikCourse.getStepikRemoteInfo().setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson)));
+        .forEach(lesson -> stepikCourse.setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson)));
     }
   }
 
@@ -493,7 +490,7 @@ public class StepikConnector {
     if (sectionName.equals(StepikNames.PYCHARM_ADDITIONAL)) {
       final Lesson lesson = lessonsFromUnits.get(0);
       lesson.setIndex(finalIndex);
-      stepikCourse.getStepikRemoteInfo().setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson));
+      stepikCourse.setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(lesson));
       return lesson;
     }
     else {
@@ -546,8 +543,7 @@ public class StepikConnector {
   }
 
   private static String[] getUnitsIds(StepikCourse stepikCourse) throws IOException, URISyntaxException {
-    final StepikCourseRemoteInfo remoteInfo = stepikCourse.getStepikRemoteInfo();
-    String[] sectionIds = remoteInfo.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
+    String[] sectionIds = stepikCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
     return allSections

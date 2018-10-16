@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.navigation.NavigationUtils.navigateToTask
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.getTask
 import java.util.regex.Pattern
 
 object StepikUtils {
@@ -36,7 +35,7 @@ object StepikUtils {
 
   @JvmStatic
   fun setCourseLanguage(info: StepikCourse) {
-    val courseFormat = info.stepikRemoteInfo.courseFormat
+    val courseFormat = info.courseFormat
     val matcher = PYCHARM_COURSE_TYPE.matcher(courseFormat)
     if (matcher.matches()) {
       val language = matcher.group(2)

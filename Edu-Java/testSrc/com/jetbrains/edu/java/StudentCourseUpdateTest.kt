@@ -608,7 +608,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
   private fun setTopLevelSection(course: StepikCourse) {
     if (!course.lessons.isEmpty()) {
       // it's a hack.Originally we need to put here and id of remote section for top-level lesson
-      course.stepikRemoteInfo.sectionIds = Collections.singletonList(1)
+      course.sectionIds = Collections.singletonList(1)
     }
   }
 
