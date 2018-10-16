@@ -11,9 +11,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
 import static com.jetbrains.edu.learning.EduUtils.isStudyProject;
@@ -49,8 +47,7 @@ public class StepikProjectComponent implements ProjectComponent {
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
-    final RemoteInfo remoteInfo = course.getRemoteInfo();
-    if (!(course instanceof StepikCourse) || remoteInfo instanceof StepikCourseRemoteInfo && !((StepikCourseRemoteInfo)remoteInfo).getLoadSolutions()) {
+    if (!(course instanceof StepikCourse) || !((StepikCourse)course).getLoadSolutions()) {
       return;
     }
     if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {

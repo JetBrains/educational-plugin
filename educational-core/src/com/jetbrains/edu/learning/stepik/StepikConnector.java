@@ -31,11 +31,12 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.*;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -332,8 +333,7 @@ public class StepikConnector {
   }
 
   private static CourseVisibility getVisibility(@NotNull StepikCourse course, @NotNull List<Integer> featuredCourses) {
-    final RemoteInfo remoteInfo = course.getRemoteInfo();
-    if (remoteInfo instanceof StepikCourseRemoteInfo && !((StepikCourseRemoteInfo)remoteInfo).isPublic()) {
+    if (!course.isPublic()) {
       return CourseVisibility.PrivateVisibility.INSTANCE;
     }
     final int courseId = course.getId();

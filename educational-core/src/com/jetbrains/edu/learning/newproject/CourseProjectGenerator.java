@@ -42,13 +42,11 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -200,10 +198,9 @@ public abstract class CourseProjectGenerator<S> {
 
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
     StepikUser user = EduSettings.getInstance().getUser();
-    final RemoteInfo info = myCourse.getRemoteInfo();
-    assert info instanceof StepikCourseRemoteInfo;
-    final int id = ((StepikCourseRemoteInfo)info).getId();
-    final boolean isCompatible = ((StepikCourseRemoteInfo)info).isIdeaCompatible();
+    assert myCourse instanceof StepikCourse;
+    final int id = ((StepikCourse)myCourse).getId();
+    final boolean isCompatible = ((StepikCourse)myCourse).isCompatible();
     StepikCourse courseFromStepik = StepikConnector.getCourseInfo(user, id, isCompatible);
     if (courseFromStepik != null) {
       StepikConnector.fillItems(courseFromStepik);

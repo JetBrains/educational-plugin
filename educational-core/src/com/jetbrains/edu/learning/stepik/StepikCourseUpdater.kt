@@ -29,7 +29,6 @@ import com.jetbrains.edu.learning.stepik.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.updateDate
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
@@ -213,11 +212,10 @@ class StepikCourseUpdater(val course: StepikCourse, val project: Project) {
   private fun updateAdditionalMaterialsFiles(courseFromServer: StepikCourse) {
     for (lesson in courseFromServer.items.filterIsInstance(Lesson::class.java)) {
       if (lesson.isAdditional) {
-        val remoteInfo = course.remoteInfo as StepikCourseRemoteInfo
-        if (!lesson.updateDate.isSignificantlyAfter(remoteInfo.additionalMaterialsUpdateDate)) {
+        if (!lesson.updateDate.isSignificantlyAfter(course.additionalMaterialsUpdateDate)) {
           return
         }
-        remoteInfo.additionalMaterialsUpdateDate = lesson.updateDate
+        course.additionalMaterialsUpdateDate = lesson.updateDate
 
         val filesToCreate = GeneratorUtils.additionalFilesToCreate(lesson)
         val baseDir = project.baseDir

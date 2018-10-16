@@ -37,10 +37,14 @@ class StepikCourse : Course() {
       return remoteInfo as StepikCourseRemoteInfo
     }
 
-  val isCompatible: Boolean
-    get() = (remoteInfo as? StepikCourseRemoteInfo)?.isIdeaCompatible ?: false
   val id: Int
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.id ?: 0
+
+  var isCompatible: Boolean
+    get() = (remoteInfo as? StepikCourseRemoteInfo)?.isIdeaCompatible ?: false
+    set(value) {
+      stepikRemoteInfo.isIdeaCompatible = value
+    }
 
   var instructors: MutableList<Int>
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.instructors ?: mutableListOf()

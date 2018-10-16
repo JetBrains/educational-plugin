@@ -26,7 +26,6 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -37,7 +36,6 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikSectionExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikRemoteInfo;
 import com.jetbrains.edu.learning.stepik.serialization.StepikCourseRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonRemoteInfoAdapter;
@@ -357,7 +355,7 @@ public class CCStepikConnector {
     }
   }
 
-  public static void updateAdditionalFiles(@NotNull Course course, @NotNull final Project project, Lesson lesson) {
+  public static void updateAdditionalFiles(@NotNull StepikCourse course, @NotNull final Project project, Lesson lesson) {
     final Lesson postedLesson = CCUtils.createAdditionalLesson(course, project, StepikNames.PYCHARM_ADDITIONAL);
     if (postedLesson != null) {
       StepikLessonExt.setId(postedLesson, StepikLessonExt.getId(lesson));
@@ -371,8 +369,7 @@ public class CCStepikConnector {
 
       Lesson updatedLesson = updateLesson(project, postedLesson, false, StepikSectionExt.getId(section));
       if (updatedLesson != null) {
-        final StepikCourseRemoteInfo info = (StepikCourseRemoteInfo)course.getRemoteInfo();
-        info.setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(updatedLesson));
+        course.setAdditionalMaterialsUpdateDate(StepikLessonExt.getUpdateDate(updatedLesson));
       }
     }
   }
@@ -583,12 +580,8 @@ public class CCStepikConnector {
     // so we get actual info here
     StepikCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
     if (courseInfo != null) {
-      final RemoteInfo localRemoteInfo = course.getRemoteInfo();
-      final RemoteInfo remoteInfo = courseInfo.getRemoteInfo();
-      if (localRemoteInfo instanceof StepikCourseRemoteInfo && remoteInfo instanceof StepikCourseRemoteInfo) {
-        ((StepikCourseRemoteInfo)localRemoteInfo).setPublic(((StepikCourseRemoteInfo)remoteInfo).isPublic());
-        ((StepikCourseRemoteInfo)localRemoteInfo).setIdeaCompatible(((StepikCourseRemoteInfo)remoteInfo).isIdeaCompatible());
-      }
+      course.setPublic(courseInfo.isPublic());
+      course.setCompatible(courseInfo.isCompatible());
     }
     else {
       LOG.warn("Failed to get current course info");
