@@ -14,7 +14,6 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.remote.RemoteInfo;
 import com.jetbrains.edu.learning.stepik.StepikCourseUpdater;
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
 import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
@@ -24,6 +23,7 @@ import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class SyncCourseAction extends DumbAwareAction {
 
   public SyncCourseAction() {
@@ -40,54 +40,47 @@ public class SyncCourseAction extends DumbAwareAction {
 
   public static void doUpdate(@NotNull Project project) {
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    assert course != null;
-    if (course instanceof StepikCourse) {
-      ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Course", true) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-
-          if (StepikUpdateDateExt.isUpToDate((StepikCourse)course)) {
-            ApplicationManager.getApplication().invokeLater(() -> {
-              Notification notification = new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
-              notification.notify(project);
-            });
-          }
-          else {
-            new StepikCourseUpdater((StepikCourse)course, project).updateCourse();
-            StepikUpdateDateExt.setUpdated((StepikCourse)course);
-          }
+    assert course instanceof StepikCourse;
+    final StepikCourse stepikCourse = (StepikCourse)course;
+    ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Course", true) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+        if (StepikUpdateDateExt.isUpToDate(stepikCourse)) {
+          ApplicationManager.getApplication().invokeLater(() -> {
+            Notification notification = new Notification("Update.course", "Course is up to date", "", NotificationType.INFORMATION);
+            notification.notify(project);
+          });
         }
-      });
-
-      if (CCUtils.isCourseCreator(project)) {
-        return;
+        else {
+          new StepikCourseUpdater(stepikCourse, project).updateCourse();
+          StepikUpdateDateExt.setUpdated(stepikCourse);
+        }
       }
+    });
 
-      StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
-      courseSynchronizer.loadSolutionsInBackground();
+    if (CCUtils.isCourseCreator(project)) {
+      return;
     }
 
+    StepikSolutionsLoader courseSynchronizer = StepikSolutionsLoader.getInstance(project);
+    courseSynchronizer.loadSolutionsInBackground();
   }
 
   public static boolean isAvailable(@Nullable Project project) {
-    if (project == null) {
-      return false;
-    }
-
-    if (!EduUtils.isStudyProject(project)) {
+    if (project == null || !EduUtils.isStudyProject(project)) {
       return false;
     }
 
     Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (course != null) {
-      final RemoteInfo remoteInfo = course.getRemoteInfo();
-      if (!(course instanceof StepikCourse) || remoteInfo instanceof StepikCourseRemoteInfo && !((StepikCourseRemoteInfo)remoteInfo).getLoadSolutions()) {
-        return false;
-      }
+    if (!(course instanceof StepikCourse)) {
+      return false;
     }
-
-    return true;
+    final StepikCourseRemoteInfo remoteInfo = ((StepikCourse)course).getStepikRemoteInfo();
+    if (remoteInfo.getLoadSolutions()) {
+      return true;
+    }
+    return false;
   }
 
   @Override

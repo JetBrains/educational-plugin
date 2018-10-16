@@ -28,7 +28,6 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
-
 public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
   public static final String ACTION_ID = "Educational.RefreshTask";
   public static final String SHORTCUT = "ctrl shift pressed X";
