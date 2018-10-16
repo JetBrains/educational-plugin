@@ -11,10 +11,10 @@ import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.getLesson
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.id
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.stepId
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikLessonRemoteInfo
 
 @VisibleForTesting
 data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
@@ -49,6 +49,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     val updateCandidates = allLessons.filter { lesson -> serverLessonIds.contains(lesson.id) }
     val lessonsById = allLessons(courseFromServer).associateBy({ it.id }, { it })
     stepikChanges.tasksToPostByLessonIndex = updateCandidates
+      .asSequence()
       .filter { !stepikChanges.newLessons.contains(it) }
       .associateBy({ it.index },
                    { newTasks(lessonsById[it.id]!!, it) })
@@ -122,8 +123,10 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
   }
 
   private fun lessonIds(latestCourseFromServer: StepikCourse) = latestCourseFromServer.lessons
+    .asSequence()
     .plus(latestCourseFromServer.sections.flatMap { it.lessons })
     .map { lesson -> lesson.id }
+    .toList()
 
   private fun courseInfoChanged(course: StepikCourse, latestCourseFromServer: StepikCourse): Boolean {
     return course.name != latestCourseFromServer.name ||
@@ -162,12 +165,14 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
                                    latestCourseFromServer: StepikCourse): List<Section> {
     val sectionsById = latestCourseFromServer.sections.associateBy({ it.id }, { it })
     return course.sections
+      .asSequence()
       .filter { sectionIdsFromServer.contains(it.id) }
       .filter {
         val sectionFromServer = sectionsById[it.id]!!
         it.index != sectionFromServer.index ||
         it.name != sectionFromServer.name
       }
+      .toList()
   }
 
   private fun AnswerPlaceholderDependency.isEqualTo(otherDependency: AnswerPlaceholderDependency?): Boolean {
