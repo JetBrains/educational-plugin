@@ -106,7 +106,8 @@ public class StepikTaskBuilder {
   @Nullable
   public Task createTask(String type) {
     myName = myName == EMPTY_NAME ? DEFAULT_NAMES.get(type) : myName;
-    return stepikTaskTypes.get(type).compute();
+    final Computable<Task> taskComputable = stepikTaskTypes.get(type);
+    return taskComputable != null ? taskComputable.compute() : null;
   }
 
   public boolean isSupported(String type) {
