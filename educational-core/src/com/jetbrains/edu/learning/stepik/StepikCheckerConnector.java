@@ -115,8 +115,7 @@ public class StepikCheckerConnector {
           createNewAttempt(stepId);
           StepikWrappers.StepSource step = StepikConnector.getStep(stepId);
           Course course = task.getLesson().getCourse();
-          StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getName(),
-                                                                step, stepId, user.getId());
+          StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getName(), step, user.getId());
           final Task updatedTask = taskBuilder.createTask(step.block.name);
           if (updatedTask instanceof ChoiceTask) {
             final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();

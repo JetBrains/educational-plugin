@@ -16,11 +16,10 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
-import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikTaskRemoteInfo;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +33,6 @@ public class StepikTaskBuilder {
   private static final String TASK_NAME = "task";
   private static final Logger LOG = Logger.getInstance(StepikTaskBuilder.class);
   private final StepikWrappers.StepSource myStepSource;
-  private int myStepId;
   private int myUserId;
   @NonNls private String myName;
   private final Language myLanguage;
@@ -85,19 +83,18 @@ public class StepikTaskBuilder {
 
   public StepikTaskBuilder(@NotNull Language language,
                            @NotNull StepikWrappers.StepSource stepSource,
-                           int stepId, int userId) {
-    this(language, EMPTY_NAME, stepSource, stepId, userId);
+                           int userId) {
+    this(language, EMPTY_NAME, stepSource, userId);
   }
 
 
   public StepikTaskBuilder(@NotNull Language language,
                            @NotNull String name,
                            @NotNull StepikWrappers.StepSource stepSource,
-                           int stepId, int userId) {
+                           int userId) {
     myName = name;
     myStepSource = stepSource;
     myStep = stepSource.block;
-    myStepId = stepId;
     myUserId = userId;
     myLanguage = language;
     myConfigurator = EduConfiguratorManager.forLanguage(myLanguage);
@@ -160,7 +157,7 @@ public class StepikTaskBuilder {
     task.setDescriptionText(myStep.text);
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      final StepikWrappers.AttemptWrapper.Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
+      final StepikWrappers.AttemptWrapper.Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepSource.id, myUserId);
       if (attempt != null) {
         final StepikWrappers.AttemptWrapper.Dataset dataset = attempt.dataset;
         if (dataset != null) {
@@ -168,7 +165,7 @@ public class StepikTaskBuilder {
           task.setMultipleChoice(dataset.is_multiple_choice);
         }
         else {
-          LOG.warn("Dataset for step " + myStepId + " is null");
+          LOG.warn("Dataset for step " + myStepSource.id + " is null");
         }
       }
     }
@@ -200,14 +197,16 @@ public class StepikTaskBuilder {
 
   private void initializeTask(Task task) {
     task.setIndex(myStepSource.position);
-    StepikTaskExt.setStepId(task, myStepId);
-    StepikTaskExt.setUpdateDate(task, myStepSource.update_date);
+    final StepikTaskRemoteInfo remoteInfo = new StepikTaskRemoteInfo();
+    remoteInfo.setId(myStepSource.id);
+    remoteInfo.setUpdateDate(myStepSource.update_date);
+    task.setRemoteInfo(remoteInfo);
   }
 
   @Nullable
   private Task pycharmTask() {
     if (!myStep.name.startsWith(PYCHARM_PREFIX)) {
-      LOG.error("Got a block with non-pycharm prefix: " + myStep.name + " for step: " + myStepId);
+      LOG.error("Got a block with non-pycharm prefix: " + myStep.name + " for step: " + myStepSource.id);
       return null;
     }
     Task task = createPluginTask();

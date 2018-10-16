@@ -254,7 +254,7 @@ class StepikCourseUploader(val project: Project, val course: StepikCourse) {
 
     val stringIds = deleteCandidates.map { it.toString() }.toTypedArray()
     val stepSources = StepikConnector.getStepSources(stringIds, lesson.course.languageID)
-    val tasksFromStep = StepikConnector.getTasks(course.languageById, stringIds, stepSources)
+    val tasksFromStep = StepikConnector.getTasks(course.languageById, stepSources)
     tasksToDelete.addAll(tasksFromStep.asSequence().filter { it.updateDate <= lastUpdateDate }.map{ it.stepId }.toList())
   }
 

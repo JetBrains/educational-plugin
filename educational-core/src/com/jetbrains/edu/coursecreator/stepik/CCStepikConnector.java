@@ -43,7 +43,6 @@ import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikRemoteInf
 import com.jetbrains.edu.learning.stepik.serialization.StepikCourseRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikLessonRemoteInfoAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSectionRemoteInfoAdapter;
-import com.jetbrains.edu.learning.stepik.serialization.StepikTaskRemoteInfoAdapter;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -431,7 +430,6 @@ public class CCStepikConnector {
       .registerTypeAdapter(Course.class, new StepikCourseRemoteInfoAdapter())
       .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter())
       .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter())
-      .registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter())
       .create();
   }
 

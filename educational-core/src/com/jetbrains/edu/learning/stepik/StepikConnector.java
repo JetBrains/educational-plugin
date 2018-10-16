@@ -642,7 +642,7 @@ public class StepikConnector {
             lesson = new FrameworkLesson(lesson);
           }
         }
-        List<Task> tasks = getTasks(stepikCourse.getLanguageById(), stepIds, allStepSources);
+        List<Task> tasks = getTasks(stepikCourse.getLanguageById(), allStepSources);
         lesson.taskList.addAll(tasks);
         lessons.add(lesson);
       }
@@ -661,13 +661,11 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Task> getTasks(Language language, String[] stepIds, List<StepSource> allStepSources) {
+  public static List<Task> getTasks(Language language, List<StepSource> allStepSources) {
     List<Task> tasks = new ArrayList<>();
-    for (int i = 0; i < allStepSources.size(); i++) {
-      StepSource step = allStepSources.get(i);
-      Integer stepId = Integer.valueOf(stepIds[i]);
+    for (StepSource step : allStepSources) {
       StepikUser user = EduSettings.getInstance().getUser();
-      StepikTaskBuilder builder = new StepikTaskBuilder(language, step, stepId, user == null ? -1 : user.getId());
+      StepikTaskBuilder builder = new StepikTaskBuilder(language, step, user == null ? -1 : user.getId());
       if (builder.isSupported(step.block.name)) {
         final Task task = builder.createTask(step.block.name);
         if (task != null) {
@@ -836,8 +834,7 @@ public class StepikConnector {
   }
 
   public static StepSource getStep(int step) throws IOException {
-    return getFromStepik(StepikNames.STEPS + step,
-                         StepContainer.class).steps.get(0);
+    return getFromStepik(StepikNames.STEPS + step, StepContainer.class).steps.get(0);
   }
 
   @Nullable

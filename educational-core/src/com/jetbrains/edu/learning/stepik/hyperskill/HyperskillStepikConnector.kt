@@ -11,7 +11,7 @@ fun getLesson(lessonId: Int, language: Language, stages: List<HyperskillStage>):
   val lesson = StepikConnector.getLesson(lessonId)
   val stepIds = lesson.steps.map { stepId -> stepId.toString() }.toTypedArray()
   val allStepSources = StepikConnector.getStepSources(stepIds, language.baseLanguage?.id)
-  val tasks = StepikConnector.getTasks(language, stepIds, allStepSources)
+  val tasks = StepikConnector.getTasks(language, allStepSources)
   val convertedTasks = mutableListOf<EduTask>()
   for ((index, task) in tasks.withIndex()) {
     val stage = stages[index]

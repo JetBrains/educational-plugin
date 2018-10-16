@@ -13,7 +13,6 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.PluginUtils;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.serialization.*;
 import org.apache.http.HttpEntity;
@@ -115,7 +114,6 @@ public class StepikClient {
         .registerTypeAdapter(StepikCourse.class, new StepikCourseRemoteInfoAdapter())
         .registerTypeAdapter(Section.class, new StepikSectionRemoteInfoAdapter())
         .registerTypeAdapter(Lesson.class, new StepikLessonRemoteInfoAdapter())
-        .registerTypeAdapter(Task.class, new StepikTaskRemoteInfoAdapter())
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
   }

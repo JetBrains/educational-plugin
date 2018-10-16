@@ -7,9 +7,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.*
 import com.jetbrains.edu.learning.stepik.StepikWrappers.StepContainer
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
@@ -37,7 +37,7 @@ class StepikTaskBuilderTest : EduTestCase() {
 
       val course = StepikCourse()
       course.language = language.id
-      val task = StepikTaskBuilder(language, stepSource, -1, -1).createTask(stepSource.block.name) ?: error("")
+      val task = StepikTaskBuilder(language, stepSource, -1).createTask(stepSource.block.name) ?: error("")
 
       assertInstanceOf(task, T::class.java)
 

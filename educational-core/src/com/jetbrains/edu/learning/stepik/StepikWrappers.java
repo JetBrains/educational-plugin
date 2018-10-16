@@ -34,7 +34,7 @@ public class StepikWrappers {
     @Expose public StepOptions options;
     @Expose public String text;
     @Expose public String name = "pycharm";
-    @Expose public StepOptions source;
+    @Expose public StepOptions source;   // used only to publish step
 
     public static Step fromTask(Project project, @NotNull final Task task) {
       final Step step = new Step();
@@ -195,6 +195,7 @@ public class StepikWrappers {
     @Expose public int lesson;
     @Expose public String progress;
     @Expose public int cost = 1;
+    @Expose public int id = 0;
     public Date update_date;
 
     public StepSource(Project project, Task task, int lesson) {

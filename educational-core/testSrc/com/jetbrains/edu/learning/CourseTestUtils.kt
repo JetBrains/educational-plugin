@@ -5,10 +5,10 @@ import com.google.gson.GsonBuilder
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
+import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse
 import java.io.File
 import java.io.IOException
 
