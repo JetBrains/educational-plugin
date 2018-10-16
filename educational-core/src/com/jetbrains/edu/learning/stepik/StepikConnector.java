@@ -36,7 +36,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.*;
 import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikCourseRemoteInfo;
-import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikSectionRemoteInfo;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -100,8 +99,8 @@ public class StepikConnector {
   private StepikConnector() {
   }
 
-  public static boolean enrollToCourse(final int courseId, @Nullable final StepikUser user) {
-    if (user == null) return false;
+  public static void enrollToCourse(final int courseId, @Nullable final StepikUser user) {
+    if (user == null) return;
     HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ENROLLMENTS);
     try {
       final EnrollmentWrapper enrollment = new EnrollmentWrapper(String.valueOf(courseId));
@@ -109,12 +108,11 @@ public class StepikConnector {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient(user);
       CloseableHttpResponse response = client.execute(post);
       StatusLine line = response.getStatusLine();
-      return line.getStatusCode() == HttpStatus.SC_CREATED;
+      line.getStatusCode();
     }
     catch (IOException e) {
       LOG.warn(e.getMessage());
     }
-    return false;
   }
 
   public static boolean isEnrolledToCourse(final int courseId, @Nullable final StepikUser user) {
@@ -481,11 +479,7 @@ public class StepikConnector {
   private static void addTopLevelLessons(@NotNull StepikCourse stepikCourse, List<Section> allSections)
     throws IOException {
     final String[] unitIds = allSections.stream()
-      .map(section -> {
-            final RemoteInfo info = section.getRemoteInfo();
-            assert info instanceof StepikSectionRemoteInfo;
-            return ((StepikSectionRemoteInfo)info).getUnits();
-           }).flatMap(unitList -> unitList.stream())
+      .map(section -> StepikSectionExt.getUnits(section)).flatMap(unitList -> unitList.stream())
       .map(unit -> String.valueOf(unit)).toArray(String[]::new);
     if (unitIds.length > 0) {
       final List<Lesson> lessons = getLessons(stepikCourse);
@@ -500,9 +494,7 @@ public class StepikConnector {
   @Nullable
   private static StudyItem loadItemTask(@NotNull StepikCourse stepikCourse, Section section, int finalIndex)
     throws IOException {
-    final RemoteInfo remoteInfo = section.getRemoteInfo();
-    if (!(remoteInfo instanceof StepikSectionRemoteInfo)) return null;
-    final String[] unitIds = ((StepikSectionRemoteInfo)remoteInfo).getUnits().stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
+    final String[] unitIds = StepikSectionExt.getUnits(section).stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
     if (unitIds.length <= 0) {
       return null;
     }
@@ -558,8 +550,7 @@ public class StepikConnector {
       return Collections.emptyList();
     }
     Section firstSection = sectionContainer.sections.get(0);
-    final StepikSectionRemoteInfo sectionRemoteInfo = (StepikSectionRemoteInfo)firstSection.getRemoteInfo();
-    String[] unitIds = sectionRemoteInfo.getUnits().stream().map(id -> String.valueOf(id)).toArray(String[]::new);
+    String[] unitIds = StepikSectionExt.getUnits(firstSection).stream().map(id -> String.valueOf(id)).toArray(String[]::new);
 
     return new ArrayList<>(getLessonsFromUnits(stepikCourse, unitIds, true));
   }
@@ -570,7 +561,7 @@ public class StepikConnector {
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
     return allSections
-            .map(section -> ((StepikSectionRemoteInfo)section.getRemoteInfo()).getUnits())
+            .map(section -> StepikSectionExt.getUnits(section))
             .flatMap(unitList -> unitList.stream())
             .map(unit -> String.valueOf(unit))
             .toArray(String[]::new);

@@ -14,6 +14,8 @@ var Section.id: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.id ?: 0
     (remoteInfo as StepikSectionRemoteInfo).id = id
   }
 
+val Section.units: List<Int> get() = (remoteInfo as? StepikSectionRemoteInfo)?.units ?: listOf()
+
 var Section.position: Int get() = (remoteInfo as? StepikSectionRemoteInfo)?.position ?: 0
   set(position) {
     if (remoteInfo !is StepikSectionRemoteInfo) {
