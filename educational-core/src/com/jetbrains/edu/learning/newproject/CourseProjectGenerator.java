@@ -76,20 +76,17 @@ public abstract class CourseProjectGenerator<S> {
     if (!(myCourse instanceof StepikCourse)) return true;
     final StepikCourse stepikCourse = (StepikCourse) this.myCourse;
     final int id = StepikCourseExt.getId(stepikCourse);
-    if (id > 0) {
-      return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        final StepikUser user = EduSettings.getInstance().getUser();
-        isEnrolled = StepikConnector.isEnrolledToCourse(id, user);
-        ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        StepikConnector.enrollToCourse(id, user);
-        if (StepikConnector.loadCourseStructure(stepikCourse)) {
-          myCourse = stepikCourse;
-          return true;
-        }
-        return false;
-      }, "Loading Course", true, null);
-    }
-    return true;
+    return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
+      final StepikUser user = EduSettings.getInstance().getUser();
+      isEnrolled = StepikConnector.isEnrolledToCourse(id, user);
+      ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
+      StepikConnector.enrollToCourse(id, user);
+      if (StepikConnector.loadCourseStructure(stepikCourse)) {
+        myCourse = stepikCourse;
+        return true;
+      }
+      return false;
+    }, "Loading Course", true, null);
   }
 
   protected void afterProjectGenerated(@NotNull Project project, @NotNull S projectSettings) {
