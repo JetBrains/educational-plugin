@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -64,7 +65,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
 
-    final Lesson lesson = CCUtils.lessonFromDir(course, lessonDir, project);
+    Lesson lesson = EduUtils.getLesson(lessonDir.getVirtualFile(), course);
     if (lesson == null) {
       return;
     }
@@ -99,7 +100,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
 
-    final Lesson lesson = CCUtils.lessonFromDir(course, lessonDir, project);
+    Lesson lesson = EduUtils.getLesson(lessonDir.getVirtualFile(), course);
     if (lesson == null) {
       return;
     }

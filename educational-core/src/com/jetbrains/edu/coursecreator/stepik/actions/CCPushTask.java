@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -23,6 +24,7 @@ import com.jetbrains.edu.learning.stepik.courseFormat.StepikCourse;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikLessonExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikStudyItemExt;
 import com.jetbrains.edu.learning.stepik.courseFormat.ext.StepikTaskExt;
+import com.jetbrains.edu.learning.stepik.courseFormat.remoteInfo.StepikTaskRemoteInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends DumbAwareAction {
   public CCPushTask() {
     super("Update Task on Stepik", "Update Task on Stepik", null);
@@ -60,13 +63,15 @@ public class CCPushTask extends DumbAwareAction {
     if (lessonDir == null) {
       return;
     }
-    Lesson lesson = CCUtils.lessonFromDir(course, lessonDir, project);
+
+    Lesson lesson = EduUtils.getLesson(lessonDir.getVirtualFile(), course);
     if (lesson != null && StepikLessonExt.getId(lesson) > 0 && StepikStudyItemExt.getId(course) > 0) {
       e.getPresentation().setEnabledAndVisible(true);
       final Task task = lesson.getTask(taskDir.getName());
-      if (task != null && StepikTaskExt.getStepId(task) <= 0) {
-        e.getPresentation().setText("Upload Task to Stepik");
+      if (task == null || task.getRemoteInfo() instanceof StepikTaskRemoteInfo) {
+        return;
       }
+      e.getPresentation().setText("Upload Task to Stepik");
     }
   }
 
@@ -95,7 +100,7 @@ public class CCPushTask extends DumbAwareAction {
     final PsiDirectory lessonDir = taskDir.getParentDirectory();
     if (lessonDir == null) return;
 
-    Lesson lesson = CCUtils.lessonFromDir(course, lessonDir, project);
+    Lesson lesson = EduUtils.getLesson(lessonDir.getVirtualFile(), course);
     if (lesson == null) return;
 
     final Task task = lesson.getTask(taskDir.getName());
