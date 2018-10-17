@@ -128,17 +128,17 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Course> getCourseInfos(@Nullable StepikUser user) {
+  public static List<RemoteCourse> getCourseInfos(@Nullable StepikUser user) {
     LOG.info("Loading courses started...");
     long startTime = System.currentTimeMillis();
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Integer> featuredCourses = getFeaturedCoursesIds();
 
-    List<Callable<List<Course>>> tasks = ContainerUtil.newArrayList();
+    List<Callable<List<RemoteCourse>>> tasks = ContainerUtil.newArrayList();
     for (int i = 0; i < THREAD_NUMBER; i++) {
       final int currentThread = i;
       tasks.add(() -> {
-        List<Course> courses = ContainerUtil.newArrayList();
+        List<RemoteCourse> courses = ContainerUtil.newArrayList();
         try {
           int pageNumber = currentThread + 1;
           while (addCourseInfos(user, courses, pageNumber, featuredCourses)) {
@@ -154,11 +154,11 @@ public class StepikConnector {
         }
       });
     }
-    List<Course> result = ContainerUtil.newArrayList();
+    List<RemoteCourse> result = ContainerUtil.newArrayList();
     try {
-      for (Future<List<Course>> future : ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
+      for (Future<List<RemoteCourse>> future : ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
         if (!future.isCancelled()) {
-          List<Course> courses = future.get();
+          List<RemoteCourse> courses = future.get();
           if (courses != null) {
             result.addAll(courses);
           }
@@ -169,27 +169,39 @@ public class StepikConnector {
       LOG.warn("Cannot load course list " + e.getMessage());
     }
     addInProgressCourses(user, result);
+    setAuthors(result);
+
     LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms");
     return result;
   }
 
-  private static void addInProgressCourses(@Nullable StepikUser user, List<Course> result) {
+  private static void setAuthors(List<RemoteCourse> result) {
+    final Set<Integer> allInstructors = result.stream().map(it -> it.getInstructors()).flatMap(List::stream).collect(Collectors.toSet());
+    final String[] instructorIds = allInstructors.stream().map(it -> String.valueOf(it)).toArray(String[]::new);
+    try {
+      final List<AuthorWrapper> authors = multipleRequestToStepik(StepikNames.USERS, instructorIds, AuthorWrapper.class);
+      final Map<Integer, StepikUserInfo> infoMap =
+        authors.stream().flatMap(it -> it.users.stream()).collect(Collectors.toMap(userInfo -> userInfo.getId(), userInfo -> userInfo));
+      for (RemoteCourse course : result) {
+        List<StepikUserInfo> courseAuthors = course.getInstructors().stream().map(infoMap::get).collect(Collectors.toList());
+        course.setAuthors(courseAuthors);
+      }
+    }
+    catch (IOException | URISyntaxException e) {
+      LOG.warn("Cannot load course list " + e.getMessage());
+    }
+  }
+
+  private static void addInProgressCourses(@Nullable StepikUser user, List<RemoteCourse> result) {
     final List<Integer> inProgressCourses = getInProgressCoursesIds();
     for (Integer courseId : inProgressCourses) {
-      try {
-        final RemoteCourse info = getCourseInfo(user, courseId, false);
-        if (info == null) continue;
-        CourseCompatibility compatibility = info.getCompatibility();
-        if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
-        CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId()));
-        info.setVisibility(visibility);
-        setCourseAuthors(info);
-
-        result.add(info);
-      }
-      catch (IOException e) {
-        LOG.warn("Cannot load course " + courseId + "  " + e.getMessage());
-      }
+      final RemoteCourse info = getCourseInfo(user, courseId, false);
+      if (info == null) continue;
+      CourseCompatibility compatibility = info.getCompatibility();
+      if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
+      CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId()));
+      info.setVisibility(visibility);
+      result.add(info);
     }
   }
 
@@ -271,7 +283,7 @@ public class StepikConnector {
     return coursesContainer;
   }
 
-  private static boolean addCourseInfos(@Nullable StepikUser user, List<Course> result, int pageNumber,
+  private static boolean addCourseInfos(@Nullable StepikUser user, List<RemoteCourse> result, int pageNumber,
                                         @NotNull List<Integer> featuredCourses) throws IOException {
     final URI url;
     try {
@@ -309,8 +321,8 @@ public class StepikConnector {
     }
   }
 
-  private static void addAvailableCourses(List<Course> result, CoursesContainer coursesContainer,
-                                  @NotNull List<Integer> featuredCourses) throws IOException {
+  private static void addAvailableCourses(List<RemoteCourse> result, CoursesContainer coursesContainer,
+                                  @NotNull List<Integer> featuredCourses) {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse info : courses) {
       if (StringUtil.isEmptyOrSpaces(info.getType())) continue;
@@ -318,24 +330,12 @@ public class StepikConnector {
       CourseCompatibility compatibility = info.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
 
-      setCourseAuthors(info);
-
       if (info.isPublic() && !featuredCourses.contains(info.getId())) {
         info.setDescription(info.getDescription() + NOT_VERIFIED_NOTE);
       }
       info.setVisibility(getVisibility(info, featuredCourses));
       result.add(info);
     }
-  }
-
-  private static void setCourseAuthors(@NotNull final RemoteCourse info) throws IOException {
-    final ArrayList<StepikUserInfo> authors = new ArrayList<>();
-    for (Integer instructor : info.getInstructors()) {
-      final StepikUserInfo author = StepikClient.getFromStepik(StepikNames.USERS + String.valueOf(instructor),
-                                                               AuthorWrapper.class).users.get(0);
-      authors.add(author);
-    }
-    info.setAuthors(authors);
   }
 
   private static CourseVisibility getVisibility(@NotNull RemoteCourse course, @NotNull List<Integer> featuredCourses) {
