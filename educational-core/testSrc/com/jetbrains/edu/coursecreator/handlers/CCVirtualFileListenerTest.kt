@@ -7,15 +7,18 @@ import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListenerTest.FileSetKind.*
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduTestCase
+import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
+import com.jetbrains.edu.learning.withTestDialog
 import junit.framework.TestCase
 
 class CCVirtualFileListenerTest : EduTestCase() {
@@ -348,6 +351,45 @@ class CCVirtualFileListenerTest : EduTestCase() {
     )
   }
 
+  fun `test move non course file as src file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1/src") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf("src/non_course_file1.txt" to TASK_FILES `in` task)
+  }
+
+  fun `test move non course file as test file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1/test") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf("test/non_course_file1.txt" to TEST_FILES `in` task)
+  }
+
+  fun `test move non course file as additional file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf("non_course_file1.txt" to ADDITIONAL_FILES `in` task)
+  }
+
+  fun `test move non course folder to src folder`() = doMoveTest("non_course_dir", "lesson1/task1/src") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "src/non_course_dir/non_course_file1.txt" to TASK_FILES `in` task,
+      "src/non_course_dir/non_course_file2.txt" to TASK_FILES `in` task
+    )
+  }
+
+  fun `test move non course folder to test folder`() = doMoveTest("non_course_dir", "lesson1/task1/test") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "test/non_course_dir/non_course_file1.txt" to TEST_FILES `in` task,
+      "test/non_course_dir/non_course_file2.txt" to TEST_FILES `in` task
+    )
+  }
+
+  fun `test move non course folder to task root folder`() = doMoveTest("non_course_dir", "lesson1/task1") { course ->
+    val task = course.findTask("lesson1", "task1")
+    listOf(
+      "non_course_dir/non_course_file1.txt" to ADDITIONAL_FILES `in` task,
+      "non_course_dir/non_course_file2.txt" to ADDITIONAL_FILES `in` task
+    )
+  }
+
   private fun doAddFileTest(filePathInTask: String, checksProducer: (Task) -> List<FileCheck>) {
     val course = courseWithFiles(
       courseMode = CCUtils.COURSE_MODE,
@@ -489,9 +531,18 @@ class CCVirtualFileListenerTest : EduTestCase() {
       }
     }
 
+    val requestor = CCVirtualFileListenerTest::class.java
+
+    runWriteAction {
+      val dir = LightPlatformTestCase.getSourceRoot()
+        .createChildDirectory(requestor, "non_course_dir")
+      dir.createChildData(requestor, "non_course_file1.txt")
+      dir.createChildData(requestor, "non_course_file2.txt")
+    }
+
     val file = findFile(filePath)
     val newParent  = findFile(newParentPath)
-    runWriteAction { file.move(CCVirtualFileListenerTest::class.java, newParent) }
+    runWriteAction { file.move(requestor, newParent) }
 
     checksProducer(course).forEach(FileCheck::check)
   }

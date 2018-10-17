@@ -23,7 +23,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
   override fun fileCreated(event: VirtualFileEvent) {
     if (event.file.isDirectory) return
     val fileInfo = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
-    fileInTaskCreated(event, fileInfo)
+    fileInTaskCreated(fileInfo)
   }
 
   /**
@@ -41,7 +41,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
    * In such cases, these checks prevent replacing correct task file
    * with empty (without placeholders, hints, etc.) one.
    */
-  protected open fun fileInTaskCreated(event: VirtualFileEvent, fileInfo: FileInfo.FileInTask) {
+  protected open fun fileInTaskCreated(fileInfo: FileInfo.FileInTask) {
     val (task, pathInTask, kind) = fileInfo
     when (kind) {
       FileKind.TASK_FILE -> {
