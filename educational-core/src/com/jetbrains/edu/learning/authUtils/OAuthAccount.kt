@@ -6,6 +6,8 @@ import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 
+// Base class for oauth-based accounts
+// All user-specific information should be stored in userInfo
 abstract class OAuthAccount<UserInfo : Any> {
   var tokenInfo: TokenInfo = TokenInfo()
   lateinit var userInfo: UserInfo

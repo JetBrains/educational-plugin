@@ -11,6 +11,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.event.HyperlinkEvent
 
+// Implement this class to show oauth settings with login/logout link
 abstract class OauthOptions<T : OAuthAccount<out Any>> : OptionsProvider {
   private var loginLabel = JBLabel()
   private var loginLink = HoverHyperlinkLabel("")

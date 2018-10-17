@@ -69,11 +69,6 @@ public class StepikRestService extends OAuthRestService {
   }
 
   @Override
-  protected boolean isMethodSupported(@NotNull HttpMethod method) {
-    return method == HttpMethod.GET;
-  }
-
-  @Override
   protected boolean isPrefixlessAllowed() {
     return true;
   }
