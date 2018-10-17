@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -124,8 +125,7 @@ public class CoursesPanel extends JPanel {
   }
 
   private void addCheckiOLoginListener(@NotNull CheckiOCourse selectedCourse) {
-    final CheckiOConnectorProvider checkiOConnectorProvider =
-      (CheckiOConnectorProvider) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById());
+    final CheckiOConnectorProvider checkiOConnectorProvider = (CheckiOConnectorProvider) CourseExt.getConfigurator(selectedCourse);
     assert checkiOConnectorProvider != null;
 
     final CheckiOOAuthConnector checkiOOAuthConnector = checkiOConnectorProvider.getOAuthConnector();
@@ -311,12 +311,12 @@ public class CoursesPanel extends JPanel {
   @Nullable
   private static Icon getLogo(@NotNull Course course) {
     Language language = course.getLanguageById();
-    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(language);
-    if (decorator == null) {
-      LOG.info("language decorator is null, language: " + language.getDisplayName());
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
+    if (configurator == null) {
+      LOG.info(String.format("configurator is null, language: %s course type: %s", language.getDisplayName(), course.getCourseType()));
       return null;
     }
-    return decorator.getLogo();
+    return configurator.getLogo();
   }
 
   @NotNull

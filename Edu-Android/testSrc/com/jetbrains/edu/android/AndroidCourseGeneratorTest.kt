@@ -1,10 +1,8 @@
 package com.jetbrains.edu.android
 
-import com.jetbrains.edu.learning.CourseGenerationTestBase
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.fileTree
+import com.intellij.openapi.fileTypes.PlainTextLanguage
+import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
-import com.jetbrains.edu.learning.newCourse
 
 class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
@@ -12,7 +10,7 @@ class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>(
   override val defaultSettings: JdkProjectSettings get() = JdkProjectSettings.emptySettings()
 
   fun `test new course structure`() {
-    val course = newCourse(Android)
+    val course = newCourse(PlainTextLanguage.INSTANCE, courseType = EduNames.ANDROID)
     createCourseStructure(courseBuilder, course, defaultSettings)
 
     val expectedFileTree = fileTree {

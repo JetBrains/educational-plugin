@@ -8,4 +8,5 @@ class JHyperskillConfigurator : GradleConfiguratorBase() {
   override fun getCourseBuilder() = JHyperskillCourseBuilder()
   override fun getTestFileName() = ""
   override fun getTaskCheckerProvider() = JTaskCheckerProvider()
+  override fun isCourseCreatorEnabled() = false
 }

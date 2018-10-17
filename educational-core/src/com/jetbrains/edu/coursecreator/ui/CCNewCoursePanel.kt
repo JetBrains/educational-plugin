@@ -17,8 +17,12 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.enablePlugins
+import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
@@ -65,7 +69,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     myPanel = panel {
       row("Title:") { myTitleField(CCFlags.pushX) }
       row("Instructor:") { myAuthorField() }
-      row("Course Type:") { myCourseTypesComboBox(CCFlags.growX) }
+      row("Type:") { myCourseTypesComboBox(CCFlags.growX) }
       row("Description:") { scrollPane(CCFlags.growX) }
     }
 
@@ -116,6 +120,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     myCourse.name = myTitleField.text
     myCourse.description = myDescriptionTextArea.text
     myCourse.setAuthorsAsString(StringUtil.splitByLines(myAuthorField.text.orEmpty()))
+
     return myCourse
   }
   val projectSettings: Any get() = myLanguageSettings.settings
@@ -167,7 +172,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   private fun createLocationField(): LabeledComponent<TextFieldWithBrowseButton> {
     val field = TextFieldWithBrowseButton(myPathField)
     field.addBrowseFolderListener("Select Course Location", "Select course location", null,
-            FileChooserDescriptorFactory.createSingleFolderDescriptor())
+                                  FileChooserDescriptorFactory.createSingleFolderDescriptor())
     return LabeledComponent.create(field, "Location:", BorderLayout.WEST)
   }
 
@@ -188,8 +193,9 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       }
     }
 
-    val configurator = EduConfiguratorManager.forLanguage(courseTypeData.language) ?: return
+    val configurator = EduConfiguratorManager.forLanguageAndCourseType(courseTypeData.courseType, courseTypeData.language) ?: return
     myCourse.language = courseTypeData.language.id
+    myCourse.courseType = courseTypeData.courseType
     myLanguageSettings = configurator.courseBuilder.languageSettings
     myLanguageSettings.addSettingsChangeListener { doValidation() }
 
@@ -206,10 +212,11 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       listOfNotNull(obtainCourseTypeData(course.languageID, course.courseType))
     } else {
       EduConfiguratorManager.allExtensions()
+        .filter { it.instance.isCourseCreatorEnabled }
         .mapNotNull { extension -> obtainCourseTypeData(extension.language, extension.courseType) }
     }
     courseTypeData
-      .sortedBy { (language, _) -> language.displayName }
+      .sortedBy { it.displayName }
       .forEach { myCourseTypesComboBox.addItem(it) }
   }
 
@@ -219,7 +226,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       LOG.info("Language with id $languageId not found")
       return null
     }
-    return CourseTypeData(language, courseType, EduLanguageDecorator.INSTANCE.forLanguage(language)?.logo)
+    return CourseTypeData(language, courseType, EduConfiguratorManager.forLanguageAndCourseType(courseType, language)?.logo)
   }
 
   companion object {
@@ -231,7 +238,13 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   }
 
   private data class CourseTypeData(val language: Language, val courseType: String, val icon: Icon?) {
-    val displayName get() = if (courseType == EduNames.PYCHARM) language.displayName else courseType + " " + language.displayName
+  val displayName get(): String {
+      return when (courseType) {
+        EduNames.PYCHARM -> language.displayName
+        EduNames.ANDROID -> courseType
+        else -> "$courseType ${language.displayName}"
+      }
+    }
   }
 
   private class CourseTitleDocument : PlainDocument() {

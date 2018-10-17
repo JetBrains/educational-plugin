@@ -55,7 +55,7 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
   }
 
   fun `test educator course structure from not empty course`() {
-    generateCourseStructure("testData/newCourse/python_course.json", CourseType.EDUCATOR)
+    generateCourseStructure("testData/newCourse/python_course.json", CourseMode.EDUCATOR)
     val expectedFileTree = fileTree {
       dir("Introduction") {
         dir("Our first program") {

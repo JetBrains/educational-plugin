@@ -3,12 +3,15 @@ package com.jetbrains.edu.python.learning;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PlatformUtils;
-import com.jetbrains.edu.learning.EduConfigurator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.python.learning.pycharm.PyTaskCheckerProvider;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
+import icons.PythonIcons;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   public static final String PYTHON_3 = "3.x";
@@ -50,5 +53,11 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   @Override
   public TaskCheckerProvider getTaskCheckerProvider() {
     return new PyTaskCheckerProvider();
+  }
+
+  @NotNull
+  @Override
+  public Icon getLogo() {
+    return PythonIcons.Python.Python_logo;
   }
 }

@@ -380,3 +380,20 @@
       ]
     }
     ```
+
+ 8. Added course type.
+
+    Before:
+    ```json
+    {
+      // other properties
+    }
+    ```
+
+    After:
+    ```json
+    {
+      "course_type" : "pycharm"
+      // other properties
+    }
+    ```

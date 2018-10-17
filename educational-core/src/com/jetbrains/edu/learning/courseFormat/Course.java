@@ -281,6 +281,7 @@ public class Course extends ItemContainer {
     return loc.getDisplayName();
   }
 
+  @SuppressWarnings("unused") // used for serialization
   public String getLanguageCode() {
     return myLanguageCode;
   }

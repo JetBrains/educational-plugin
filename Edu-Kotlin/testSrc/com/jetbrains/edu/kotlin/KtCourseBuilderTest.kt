@@ -76,7 +76,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
   }
 
   fun `test educator course structure from not empty course`() {
-    generateCourseStructure("testData/newCourse/kotlin_course.json", CourseType.EDUCATOR)
+    generateCourseStructure("testData/newCourse/kotlin_course.json", CourseMode.EDUCATOR)
     val expectedFileTree = fileTree {
       dir("Introduction") {
         dir("Hello, world!") {

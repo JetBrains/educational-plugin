@@ -34,8 +34,8 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
     }
   }
 
-  protected fun generateCourseStructure(pathToCourseJson: String, courseType: CourseType = CourseType.STUDENT): Course {
-    val course = createCourseFromJson(pathToCourseJson, courseType)
+  protected fun generateCourseStructure(pathToCourseJson: String, courseMode: CourseMode = CourseMode.STUDENT): Course {
+    val course = createCourseFromJson(pathToCourseJson, courseMode)
     createCourseStructure(courseBuilder, course, defaultSettings)
     return course
   }

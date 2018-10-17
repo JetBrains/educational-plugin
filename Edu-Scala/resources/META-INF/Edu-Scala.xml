@@ -5,9 +5,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.ScalaConfigurator"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="educational">
     <languageDecorator language="Scala" implementationClass="com.jetbrains.edu.scala.ScalaLanguageDecorator"/>
   </extensions>
 

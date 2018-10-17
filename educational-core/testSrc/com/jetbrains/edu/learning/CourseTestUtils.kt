@@ -13,7 +13,7 @@ import java.io.File
 import java.io.IOException
 
 @Throws(IOException::class)
-fun createCourseFromJson(pathToJson: String, courseType: CourseType): Course {
+fun createCourseFromJson(pathToJson: String, courseMode: CourseMode): Course {
   val courseJson = File(pathToJson).readText()
   val gson = GsonBuilder()
           .registerTypeAdapter(Task::class.java, SerializationUtils.Json.TaskAdapter())
@@ -21,12 +21,12 @@ fun createCourseFromJson(pathToJson: String, courseType: CourseType): Course {
           .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
           .create()
   return gson.fromJson(courseJson, Course::class.java).apply {
-    courseMode = courseType.toString()
+    this.courseMode = courseMode.toString()
   }
 }
 
 @Throws(IOException::class)
-fun createRemoteCourseFromJson(pathToJson: String, courseType: CourseType): RemoteCourse {
+fun createRemoteCourseFromJson(pathToJson: String, courseMode: CourseMode): RemoteCourse {
   val courseJson = File(pathToJson).readText()
   val gson = GsonBuilder()
     .registerTypeAdapter(Task::class.java, SerializationUtils.Json.TaskAdapter())
@@ -34,18 +34,19 @@ fun createRemoteCourseFromJson(pathToJson: String, courseType: CourseType): Remo
     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
     .create()
   return gson.fromJson(courseJson, RemoteCourse::class.java).apply {
-    courseMode = courseType.toString()
+    this.courseMode = courseMode.toString()
   }
 }
 
-fun newCourse(courseLanguage: Language, courseType: CourseType = CourseType.EDUCATOR): Course = Course().apply {
+fun newCourse(courseLanguage: Language, courseMode: CourseMode = CourseMode.EDUCATOR, courseType: String = EduNames.PYCHARM): Course = Course().apply {
   name = "Test Course"
   description = "Test Description"
-  courseMode = courseType.toString()
+  this.courseMode = courseMode.toString()
+  this.courseType = courseType
   language = courseLanguage.id
 }
 
-enum class CourseType {
+enum class CourseMode {
   STUDENT,
   EDUCATOR;
 

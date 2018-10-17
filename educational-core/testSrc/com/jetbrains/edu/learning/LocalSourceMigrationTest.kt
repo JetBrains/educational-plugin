@@ -17,6 +17,12 @@ class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
 
   override fun getTestDataPath(): String = "testData/localCourses"
 
+  fun `test to 8 version`() {
+    val course = EduUtils.deserializeLocalCourse(loadLocalCourseJsonText()) ?: error("Failed to load local course")
+    assert(course.courseType == "Android")
+    assert(course.languageID == "kotlin")
+  }
+
   fun `test kotlin sixth version`() {
     val course = EduUtils.deserializeLocalCourse(loadLocalCourseJsonText()) ?: error("Failed to load local course")
     val section = course.items[0] as Section

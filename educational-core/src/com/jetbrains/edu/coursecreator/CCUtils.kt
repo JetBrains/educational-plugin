@@ -27,6 +27,7 @@ import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -126,7 +127,7 @@ object CCUtils {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
 
     val baseDir = project.baseDir
-    val configurator = EduConfiguratorManager.forLanguage(course.languageById!!)
+    val configurator = course.configurator
 
     val lesson = Lesson()
     lesson.name = name
