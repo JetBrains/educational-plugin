@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.KeyedLazyInstance;
 import com.jetbrains.edu.learning.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.stepik.StepikNames;
@@ -146,7 +145,7 @@ public class RemoteCourse extends Course {
     if (ourSupportedLanguages == null) {
       final List<String> supportedLanguages = EduConfiguratorManager.allExtensions()
         .stream()
-        .map(KeyedLazyInstance::getKey)
+        .map(it -> it.language)
         .collect(Collectors.toList());
       ourSupportedLanguages = supportedLanguages;
       return supportedLanguages;

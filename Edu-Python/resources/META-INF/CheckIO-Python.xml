@@ -6,8 +6,8 @@
   </extensions>
 
   <extensions defaultExtensionNs="Educational">
-    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOConfigurator" language="CheckiO-Python"/>
-    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.pycharm.PyCheckiOConfigurator" language="CheckiO-Python"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOConfigurator" language="Python" courseType="CheckiO"/>
+    <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.pycharm.PyCheckiOConfigurator" language="Python" courseType="CheckiO"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProvider"/>
     <optionsProvider instance="com.jetbrains.edu.python.learning.checkio.settings.PyCheckiOOptions"/>
   </extensions>
