@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.courseFormat
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.xmlb.annotations.Transient
 import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
@@ -40,48 +41,64 @@ class StepikCourse : Course() {
   val id: Int
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.id ?: 0
 
+  @get:Transient
+  @set:Transient
   var isCompatible: Boolean
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.isIdeaCompatible ?: false
     set(value) {
       stepikRemoteInfo.isIdeaCompatible = value
     }
 
+  @get:Transient
+  @set:Transient
   var instructors: MutableList<Int>
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.instructors ?: mutableListOf()
     set(value) {
       stepikRemoteInfo.instructors = value
     }
 
+  @get:Transient
+  @set:Transient
   var isPublic: Boolean
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.isPublic ?: false
     set(value) {
       stepikRemoteInfo.isPublic = value
     }
 
+  @get:Transient
+  @set:Transient
   var courseFormat: String
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.courseFormat ?: ""
     set(value) {
       stepikRemoteInfo.courseFormat = value
     }
 
+  @get:Transient
+  @set:Transient
   var additionalMaterialsUpdateDate: Date
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.additionalMaterialsUpdateDate ?: Date(0)
     set(value) {
       stepikRemoteInfo.additionalMaterialsUpdateDate = value
     }
 
+  @get:Transient
+  @set:Transient
   var sectionIds: MutableList<Int>
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.sectionIds ?: mutableListOf()
     set(value) {
       stepikRemoteInfo.sectionIds = value
     }
 
+  @get:Transient
+  @set:Transient
   var loadSolutions: Boolean
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.loadSolutions ?: true
     set(value) {
       stepikRemoteInfo.loadSolutions = value
     }
 
+  @get:Transient
+  @set:Transient
   var updateDate: Date
     get() = (remoteInfo as? StepikCourseRemoteInfo)?.updateDate ?: Date(0)
     set(date) {
