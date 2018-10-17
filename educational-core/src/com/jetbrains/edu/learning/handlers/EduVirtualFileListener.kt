@@ -82,8 +82,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
 
     val taskRelativePath = EduUtils.pathRelativeToTask(project, this)
 
-    if (EduUtils.isTaskDescriptionFile(name)
-        || taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
+    if (taskRelativePath.contains(EduNames.WINDOW_POSTFIX)
         || taskRelativePath.contains(EduNames.WINDOWS_POSTFIX)
         || taskRelativePath.contains(EduNames.ANSWERS_POSTFIX)) {
       return null
@@ -102,13 +101,10 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
   }
 
   private fun shouldIgnore(file: VirtualFile, project: Project): Boolean {
-    if (file.path.contains(CCUtils.GENERATED_FILES_FOLDER) ||
-        file.path.contains(CCUtils.DS_STORE)) return true
-    if (YamlFormatSynchronizer.isConfigFile(file)) return true
     val courseDir = EduUtils.getCourseDir(project)
     if (!FileUtil.isAncestor(courseDir.path, file.path, true)) return true
     val course = StudyTaskManager.getInstance(project).course ?: return true
-    if (course.configurator?.excludeFromArchive(project, file.path) == true) return true
+    if (course.configurator?.excludeFromArchive(project, file) == true) return true
     return false
   }
 

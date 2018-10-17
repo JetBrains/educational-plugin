@@ -31,8 +31,9 @@ public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
   }
 
   @Override
-  public boolean excludeFromArchive(@NotNull Project project, @NotNull String path) {
-    return path.contains("__pycache__") || path.endsWith(".pyc");
+  public boolean excludeFromArchive(@NotNull Project project, @NotNull VirtualFile file) {
+    String path = file.getPath();
+    return EduConfigurator.super.excludeFromArchive(project, file) || path.contains("__pycache__") || path.endsWith(".pyc");
   }
 
   @Override
