@@ -63,6 +63,34 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     YamlFormatSynchronizer.saveItem(task)
   }
 
+  /**
+   * Handles move events for non course files like drag & drop action produces
+   */
+  override fun fileMoved(event: VirtualFileMoveEvent) {
+    val movedFile = event.file
+    val fileInfo = movedFile.fileInfo(project) as? FileInfo.FileInTask ?: return
+    val directoryInfo = event.oldParent.directoryFileInfo(project)
+    // not null directoryInfo means that we've already processed this file in `beforeFileMovement`
+    if (directoryInfo != null) return
+
+    if (movedFile.isDirectory) {
+      // We need collect all children files manually
+      // because the platform produces move event only for root file
+      VfsUtil.visitChildrenRecursively(movedFile, object : VirtualFileVisitor<Any>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
+        override fun visitFile(file: VirtualFile): Boolean {
+          if (!file.isDirectory) {
+            val relativePath = VfsUtil.findRelativePath(movedFile, file, VfsUtilCore.VFS_SEPARATOR_CHAR)
+            val newFileInfo = fileInfo.copy(pathInTask = "${fileInfo.pathInTask}${VfsUtilCore.VFS_SEPARATOR_CHAR}$relativePath")
+            fileInTaskCreated(newFileInfo)
+          }
+          return true
+        }
+      })
+    } else {
+      fileInTaskCreated(fileInfo)
+    }
+  }
+
   private fun VirtualFile.directoryFileInfo(project: Project): FileInfo.FileInTask? {
     val course = StudyTaskManager.getInstance(project).course ?: return null
     val sourceDir = course.sourceDir ?: return null
@@ -144,8 +172,8 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     YamlFormatSynchronizer.saveItem(task)
   }
 
-  override fun fileInTaskCreated(event: VirtualFileEvent, fileInfo: FileInfo.FileInTask) {
-    super.fileInTaskCreated(event, fileInfo)
+  override fun fileInTaskCreated(fileInfo: FileInfo.FileInTask) {
+    super.fileInTaskCreated(fileInfo)
     YamlFormatSynchronizer.saveItem(fileInfo.task)
     StepikCourseChangeHandler.changed(fileInfo.task)
   }
