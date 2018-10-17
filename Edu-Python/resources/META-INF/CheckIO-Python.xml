@@ -10,16 +10,7 @@
     <configurator implementationClass="com.jetbrains.edu.python.learning.checkio.pycharm.PyCheckiOConfigurator" language="Python" courseType="CheckiO"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProvider"/>
     <optionsProvider instance="com.jetbrains.edu.python.learning.checkio.settings.PyCheckiOOptions"/>
+    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOLanguageDecorator" language="Python" courseType="CheckiO"/>
   </extensions>
-
-  <extensions defaultExtensionNs="educational">
-    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOLanguageDecorator" language="CheckiO-Python" />
-  </extensions>
-
-  <application-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.python.learning.checkio.PyCheckiOApplicationComponent</implementation-class>
-    </component>
-  </application-components>
 
 </idea-plugin>

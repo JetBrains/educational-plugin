@@ -44,7 +44,7 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
           continue
         }
         val language = Language.findLanguageByID(localCourse.languageID) ?: continue
-        if (EduConfiguratorManager.forLanguage(language) == null) {
+        if (EduConfiguratorManager.forLanguage(language, localCourse.courseType) == null) {
           continue
         }
         localCourse.courseType = CourseraNames.COURSE_TYPE

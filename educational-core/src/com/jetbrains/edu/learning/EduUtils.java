@@ -228,7 +228,7 @@ public class EduUtils {
     if (language == null) {
       return false;
     }
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(language);
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(language, course.getCourseType());
     if (configurator == null) {
       return false;
     }

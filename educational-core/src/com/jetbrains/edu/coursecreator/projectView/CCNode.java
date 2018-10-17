@@ -47,7 +47,7 @@ public class CCNode extends DirectoryNode {
       if (course == null) {
         return null;
       }
-      EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+      EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById(), course.getCourseType());
       if (configurator == null) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       }

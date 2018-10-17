@@ -125,7 +125,7 @@ public class CoursesPanel extends JPanel {
 
   private void addCheckiOLoginListener(@NotNull CheckiOCourse selectedCourse) {
     final CheckiOConnectorProvider checkiOConnectorProvider =
-      (CheckiOConnectorProvider) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById());
+      (CheckiOConnectorProvider) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById(), selectedCourse.getCourseType());
     assert checkiOConnectorProvider != null;
 
     final CheckiOOAuthConnector checkiOOAuthConnector = checkiOConnectorProvider.getOAuthConnector();
@@ -311,7 +311,7 @@ public class CoursesPanel extends JPanel {
   @Nullable
   private static Icon getLogo(@NotNull Course course) {
     Language language = course.getLanguageById();
-    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(language);
+    EduLanguageDecorator decorator = EduLanguageDecorator.forLanguage(language, course.getCourseType());
     if (decorator == null) {
       LOG.info("language decorator is null, language: " + language.getDisplayName());
       return null;

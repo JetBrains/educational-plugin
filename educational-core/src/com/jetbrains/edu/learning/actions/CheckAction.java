@@ -25,6 +25,7 @@ import com.jetbrains.edu.learning.checker.*;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.coursera.CourseraNames;
@@ -148,7 +149,8 @@ public class CheckAction extends DumbAwareAction {
       super(project, "Checking Task", true);
       myProject = project;
       myTask = task;
-      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(task.getLesson().getCourse().getLanguageById());
+      final Course course = task.getLesson().getCourse();
+      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(course.getLanguageById(), course.getCourseType());
       if (configurator != null) {
         TaskCheckerProvider checkerProvider = configurator.getTaskCheckerProvider();
         myChecker = checkerProvider.getTaskChecker(task, project);

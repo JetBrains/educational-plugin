@@ -9,15 +9,16 @@ object EduConfiguratorManager {
    * Returns any enabled [EduConfigurator] for given language
    */
   @JvmStatic
-  fun forLanguage(language: Language): EduConfigurator<*>? =
-          allExtensions().find { extension -> extension.language == language.id }?.instance
+  fun forLanguage(language: Language, courseType: String): EduConfigurator<out Any>? =
+          allExtensions().find { extension -> extension.language == language.id &&
+                                 extension.courseType == courseType}?.instance
 
   /**
    * Returns all extension points of [EduConfigurator] where instance of [EduConfigurator] is enabled
    */
   @JvmStatic
-  fun allExtensions(): List<EduConfiguratorEP> =
-    Extensions.getExtensions<EduConfiguratorEP>(EduConfigurator.EP_NAME, null)
-                  .filter { it.instance.isEnabled }
+  fun allExtensions(): List<EducationalExtensionPoint<EduConfigurator<out Any>>> =
+    Extensions.getExtensions<EducationalExtensionPoint<EduConfigurator<out Any>>>(EduConfigurator.EP_NAME, null)
+      .filter { it.instance.isEnabled }
 
 }

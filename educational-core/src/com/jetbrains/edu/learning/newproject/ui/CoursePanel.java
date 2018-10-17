@@ -181,7 +181,7 @@ public class CoursePanel extends JPanel {
   }
 
   private void updateAdvancedSettings(@NotNull Course course) {
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById(), course.getCourseType());
     if (configurator == null) {
       return;
     }

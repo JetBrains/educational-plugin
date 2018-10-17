@@ -33,7 +33,7 @@ class CCNewCourseDialog(
     val location = myPanel.locationString
     val language = course.languageById
     if (language != null) {
-      EduConfiguratorManager.forLanguage(language)
+      EduConfiguratorManager.forLanguage(language, course.courseType)
         ?.courseBuilder
         ?.getCourseProjectGenerator(course)
         ?.doCreateCourseProject(location, projectSettings)

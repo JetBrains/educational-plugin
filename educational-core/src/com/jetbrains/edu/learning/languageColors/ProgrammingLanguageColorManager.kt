@@ -20,7 +20,7 @@ object ProgrammingLanguageColorManager {
   }
 
   operator fun get(language: Language): Color? {
-    val tagColor = EduLanguageDecorator.INSTANCE.forLanguage(language)?.languageTagColor()
+    val tagColor = EduLanguageDecorator.forLanguage(language)?.languageTagColor()
     return if (tagColor != null) {
       tagColor
     } else {

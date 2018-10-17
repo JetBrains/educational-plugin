@@ -215,7 +215,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   private fun registerConfigurator(language: Language, configuratorClass: Class<*>, disposable: Disposable) {
-    val extension = EduConfiguratorEP()
+    val extension = EducationalExtensionPoint<EduConfigurator<out Any>>()
     extension.language = language.id
     extension.implementationClass = configuratorClass.name
     PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)
