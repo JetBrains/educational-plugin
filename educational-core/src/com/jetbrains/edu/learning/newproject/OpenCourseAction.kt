@@ -22,7 +22,7 @@ abstract class OpenCourseActionBase(
     val projectSettings = dialog.projectSettings
     val location = dialog.locationString
     dialog.close(DialogWrapper.OK_EXIT_CODE)
-    val configurator = EduConfiguratorManager.forLanguage(course.languageById)
+    val configurator = EduConfiguratorManager.forLanguage(course.languageById, course.courseType)
     if (configurator != null) {
       course.courseMode = courseMode
       val projectGenerator = configurator

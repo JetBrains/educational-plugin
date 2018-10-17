@@ -4,19 +4,9 @@
     <depends>org.jetbrains.plugins.gradle</depends>
     <depends>JUnit</depends>
 
-    <application-components>
-        <component>
-            <implementation-class>com.jetbrains.edu.android.AndroidApplicationComponent
-            </implementation-class>
-        </component>
-    </application-components>
-
     <extensions defaultExtensionNs="Educational">
         <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" courseType="Android"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="educational">
-        <languageDecorator language="edu-android"
+        <languageDecorator language="kotlin" courseType="Android"
                            implementationClass="com.jetbrains.edu.android.AndroidLanguageDecorator"/>
     </extensions>
 

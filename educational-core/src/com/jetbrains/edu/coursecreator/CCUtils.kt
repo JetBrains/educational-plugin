@@ -128,7 +128,7 @@ object CCUtils {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
 
     val baseDir = project.baseDir
-    val configurator = EduConfiguratorManager.forLanguage(course.languageById!!)
+    val configurator = EduConfiguratorManager.forLanguage(course.languageById!!, course.courseType)
 
     val lesson = Lesson()
     lesson.name = name

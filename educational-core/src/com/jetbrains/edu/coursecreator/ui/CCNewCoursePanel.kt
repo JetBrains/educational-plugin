@@ -116,6 +116,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     myCourse.name = myTitleField.text
     myCourse.description = myDescriptionTextArea.text
     myCourse.setAuthorsAsString(StringUtil.splitByLines(myAuthorField.text.orEmpty()))
+
     return myCourse
   }
   val projectSettings: Any get() = myLanguageSettings.settings
@@ -188,8 +189,9 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       }
     }
 
-    val configurator = EduConfiguratorManager.forLanguage(courseTypeData.language) ?: return
+    val configurator = EduConfiguratorManager.forLanguage(courseTypeData.language, courseTypeData.courseType) ?: return
     myCourse.language = courseTypeData.language.id
+    myCourse.courseType = courseTypeData.courseType
     myLanguageSettings = configurator.courseBuilder.languageSettings
     myLanguageSettings.addSettingsChangeListener { doValidation() }
 
@@ -219,7 +221,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       LOG.info("Language with id $languageId not found")
       return null
     }
-    return CourseTypeData(language, courseType, EduLanguageDecorator.INSTANCE.forLanguage(language)?.logo)
+    return CourseTypeData(language, courseType, EduLanguageDecorator.forLanguage(language, courseType)?.logo)
   }
 
   companion object {
@@ -230,7 +232,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     fun onInputDataValidated(isInputDataComplete: Boolean)
   }
 
-  private data class CourseTypeData(val language: Language, val courseType: String, val icon: Icon?) {
+  private data class CourseTypeData(val language: Language, val courseType: String = EduNames.PYCHARM, val icon: Icon?) {
     val displayName get() = if (courseType == EduNames.PYCHARM) language.displayName else courseType + " " + language.displayName
   }
 

@@ -43,7 +43,7 @@ sealed class ErrorState(
   companion object {
     @JvmStatic
     fun forCourse(course: Course?): ErrorState {
-      val pluginRequirements = course?.languageById?.let(EduConfiguratorManager::forLanguage)?.pluginRequirements().orEmpty()
+      val pluginRequirements = getPluginRequirements(course)
       val disabledPlugins = getDisabledPlugins(pluginRequirements)
       return when {
         course == null -> NothingSelected
@@ -55,6 +55,13 @@ sealed class ErrorState(
         !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
       }
+    }
+
+    private fun getPluginRequirements(course: Course?): List<String> {
+      if (course == null) return listOf()
+      val language = course.languageById
+      if (language == null) return listOf()
+      return EduConfiguratorManager.forLanguage(language, course.courseType)?.pluginRequirements().orEmpty()
     }
 
     @JvmStatic
@@ -79,7 +86,8 @@ sealed class ErrorState(
 
     private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
       if (selectedCourse is CheckiOCourse) {
-        val checkiOConnectorProvider = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConnectorProvider
+        val checkiOConnectorProvider =
+          EduConfiguratorManager.forLanguage(selectedCourse.languageById, selectedCourse.courseType) as CheckiOConnectorProvider
         val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
         return checkiOAccount == null
       }

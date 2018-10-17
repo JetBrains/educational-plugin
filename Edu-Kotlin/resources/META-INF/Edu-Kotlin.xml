@@ -15,9 +15,6 @@
         <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
         <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
         <coursesProvider implementation="com.jetbrains.edu.kotlin.KtBundledCoursesProvider"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="educational">
         <languageDecorator implementationClass="com.jetbrains.edu.kotlin.KtLanguageDecorator" language="kotlin" />
     </extensions>
 

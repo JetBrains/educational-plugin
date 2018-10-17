@@ -23,7 +23,7 @@ public class CCTestsTabTitleProvider implements EditorTabTitleProvider {
     }
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById(), course.getCourseType());
     if (configurator == null) {
       return null;
     }

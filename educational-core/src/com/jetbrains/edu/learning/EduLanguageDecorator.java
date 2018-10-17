@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning;
 
-import com.intellij.lang.LanguageExtension;
+import com.google.common.collect.Lists;
+import com.intellij.lang.Language;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel;
@@ -9,12 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.List;
 
 public interface EduLanguageDecorator {
 
-  String EP_NAME = "educational.languageDecorator";
-
-  LanguageExtension<EduLanguageDecorator> INSTANCE = new LanguageExtension<>(EP_NAME);
+  String EP_NAME = "Educational.languageDecorator";
 
   /**
    * Used for code highlighting in Task Description tool window.
@@ -64,5 +65,24 @@ public interface EduLanguageDecorator {
   @NotNull
   default Icon getLogo() {
     return EmptyIcon.ICON_16;
+  }
+
+  @Nullable
+  static EduLanguageDecorator forLanguage(Language language, String courseType) {
+    final EducationalExtensionPoint<EduLanguageDecorator> extensionPoint = allExtensions()
+      .stream()
+      .filter(extension -> extension.language.equals(language.getID()))
+      .filter(extension -> extension.courseType.equals(courseType))
+      .findFirst().orElse(null);
+    return extensionPoint != null ? extensionPoint.getInstance() : null;
+  }
+
+  @Nullable
+  static EduLanguageDecorator forLanguage(Language language) {
+    return forLanguage(language, EduNames.PYCHARM);
+  }
+
+  static List<EducationalExtensionPoint<EduLanguageDecorator>> allExtensions() {
+    return Lists.newArrayList(Extensions.getExtensions(EP_NAME, null));
   }
 }

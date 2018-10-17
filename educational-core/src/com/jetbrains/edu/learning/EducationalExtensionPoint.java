@@ -6,7 +6,7 @@ import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
-public class EduConfiguratorEP extends AbstractExtensionPointBean {
+public class EducationalExtensionPoint<T> extends AbstractExtensionPointBean {
   public static final String EP_NAME = "Educational.configurator";
 
   @Attribute("implementationClass")
@@ -18,10 +18,10 @@ public class EduConfiguratorEP extends AbstractExtensionPointBean {
   @Attribute("courseType")
   public String courseType = EduNames.PYCHARM;
 
-  private final AtomicNotNullLazyValue<EduConfigurator> myInstanceHolder = new AtomicNotNullLazyValue<EduConfigurator>() {
+  private final AtomicNotNullLazyValue<T> myInstanceHolder = new AtomicNotNullLazyValue<T>() {
     @NotNull
     @Override
-    protected EduConfigurator compute() {
+    protected T compute() {
       try {
         return instantiate(implementationClass, ApplicationManager.getApplication().getPicoContainer());
       }
@@ -32,7 +32,7 @@ public class EduConfiguratorEP extends AbstractExtensionPointBean {
   };
 
   @NotNull
-  public EduConfigurator getInstance() {
+  public T getInstance() {
     return myInstanceHolder.getValue();
   }
 }

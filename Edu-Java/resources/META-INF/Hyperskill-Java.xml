@@ -3,13 +3,5 @@
   <extensions defaultExtensionNs="Educational">
     <configurator implementationClass="com.jetbrains.edu.java.stepik.hyperskill.JHyperskillConfigurator" language="JAVA" courseType="Hyperskill"/>
   </extensions>
-  <extensions defaultExtensionNs="educational">
-    <languageDecorator implementationClass="com.jetbrains.edu.java.stepik.hyperskill.JHyperskillLanguageDecorator" language="Hyperskill-JAVA" />
-  </extensions>
 
-  <application-components>
-    <component>
-      <implementation-class>com.jetbrains.edu.java.stepik.hyperskill.JHyperskillApplicationComponent</implementation-class>
-    </component>
-  </application-components>
 </idea-plugin>

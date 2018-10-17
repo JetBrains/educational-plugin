@@ -43,7 +43,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
   public void migrateIfNeeded() {
     Course studyCourse = StudyTaskManager.getInstance(myProject).getCourse();
     if (studyCourse != null) {
-      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(studyCourse.getLanguageById());
+      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(studyCourse.getLanguageById(), studyCourse.getCourseType());
       if (configurator == null) return;
       EduCourseBuilder<?> courseBuilder = configurator.getCourseBuilder();
       if (courseBuilder instanceof GradleCourseBuilderBase && !EduGradleUtils.isConfiguredWithGradle(myProject)) {

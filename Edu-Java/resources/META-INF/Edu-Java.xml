@@ -6,9 +6,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="educational">
     <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.JLanguageDecorator"/>
   </extensions>
 
