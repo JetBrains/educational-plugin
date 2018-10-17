@@ -201,6 +201,107 @@
     </EduTask>
     ```
 
+12. Store stepik remote info separately
+
+Before:
+```
+<RemoteCourse>
+<option name="additionalMaterialsUpdateDate" value="0" />
+<option name="compatible" value="true" />
+<option name="description" value="Introduction course to Python." />
+<option name="id" value="238" />
+<option name="instructors">
+<list>
+  <option value="17813950" />
+</list>
+</option>
+<option name="loadSolutions" value="true" />
+<option name="public" value="true" />
+<option name="sectionIds">
+<list>
+  <option value="662" />
+</list>
+</option>
+<option name="type" value="pycharm Python" />
+<option name="updateDate" value="1532706938000" />
+<!-- other fields -->
+<option name="items">
+<list>
+  <Lesson>
+    <option name="id" value="13416" />
+    <option name="stepikChangeStatus" value="Up to date" />
+    <option name="updateDate" value="1532706586000" />
+    <!-- other fields -->
+    <option name="taskList">
+      <list>
+        <EduTask>
+          <option name="stepId" value="186010" />
+          <option name="updateDate" value="1532706586000" />
+          <!-- other fields -->
+        </EduTask>
+      </list>
+    </option>
+    <option name="unitId" value="3588" />
+  </Lesson>
+</list>
+</option>
+</RemoteCourse>
+```
+After:
+```
+<StepikCourse>
+      <!-- other fields -->
+      <option name="items">
+        <list>
+          <Lesson>
+            <!-- other fields -->
+            <option name="taskList">
+              <list>
+                <EduTask>
+                  <!-- other fields -->
+                  <StepikTaskRemoteInfo>
+                    <option name="id" value="186010" />
+                    <option name="updateDate" value="1532706586000" />
+                  </StepikTaskRemoteInfo>
+                </EduTask>
+              </list>
+            </option>
+            <StepikLessonRemoteInfo>
+              <option name="id" value="13416" />
+              <option name="public" value="true" />
+              <option name="steps">
+                <list>
+                  <option value="186010" />
+                  <option value="186011" />
+                </list>
+              </option>
+              <option name="unitId" value="3584" />
+              <option name="updateDate" value="1532706586000" />
+            </StepikLessonRemoteInfo>
+          </Lesson>
+        </list>
+      </option>
+      <StepikCourseRemoteInfo>
+        <option name="additionalMaterialsUpdateDate" value="0" />
+        <option name="courseFormat" value="pycharm Python" />
+        <option name="id" value="238" />
+        <option name="ideaCompatible" value="true" />
+        <option name="instructors">
+          <list>
+            <option value="17813950" />
+          </list>
+        </option>
+        <option name="loadSolutions" value="true" />
+        <option name="public" value="true" />
+        <option name="sectionIds">
+          <list>
+            <option value="662" />
+          </list>
+        </option>
+        <option name="updateDate" value="1532706938000" />
+      </StepikCourseRemoteInfo>
+    </StepikCourse>
+    ```
 ### JSON format version
 
 4.  Skipped. 

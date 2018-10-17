@@ -1,0 +1,136 @@
+<component name="StudySettings">
+  <StudyTaskManager>
+    <option name="VERSION" value="11" />
+    <option name="myUserTests">
+      <map />
+    </option>
+    <option name="course">
+      <RemoteCourse>
+        <option name="additionalMaterialsUpdateDate" value="0" />
+        <option name="authors">
+          <list>
+            <StepikUserInfo>
+              <option name="firstName" value="JetBrains" />
+              <option name="guest" value="false" />
+              <option name="id" value="17813950" />
+              <option name="lastName" value="" />
+            </StepikUserInfo>
+          </list>
+        </option>
+        <option name="compatible" value="true" />
+        <option name="courseMode" value="Study" />
+        <option name="courseType" value="PyCharm" />
+        <option name="customPresentableName" />
+        <option name="description" value="Introduction course to Python." />
+        <option name="fromZip" value="false" />
+        <option name="id" value="238" />
+        <option name="index" value="-1" />
+        <option name="instructors">
+          <list>
+            <option value="17813950" />
+          </list>
+        </option>
+        <option name="language" value="Python" />
+        <option name="languageCode" value="en" />
+        <option name="loadSolutions" value="true" />
+        <option name="name" value="Introduction to Python" />
+        <option name="public" value="true" />
+        <option name="sectionIds">
+          <list>
+            <option value="662" />
+          </list>
+        </option>
+        <option name="stepikChangeStatus" value="Up to date" />
+        <option name="type" value="pycharm Python" />
+        <option name="updateDate" value="1532706938000" />
+        <option name="items">
+          <list>
+            <Lesson>
+              <option name="customPresentableName" />
+              <option name="id" value="13416" />
+              <option name="index" value="1" />
+              <option name="name" value="Introduction" />
+              <option name="stepikChangeStatus" value="Up to date" />
+              <option name="updateDate" value="1532706586000" />
+              <option name="taskList">
+                <list>
+                  <EduTask>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&#10;Traditionally the first program you write in any programming language is &lt;code&gt;&quot;Hello World!&quot;&lt;/code&gt;.&#10;&lt;br&gt;&lt;br&gt;&#10;Introduce yourself to the World.&#10;&lt;br&gt;&lt;br&gt;&#10;Hint: To run a script сhoose 'Run &amp;lt;name&amp;gt;' on the context menu. &lt;br&gt;&#10;For more information visit &lt;a href=&quot;https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html&quot;&gt;our help&lt;/a&gt;.&#10;&#10;&lt;br&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="1" />
+                    <option name="name" value="Our first program" />
+                    <option name="status" value="Solved" />
+                    <option name="stepId" value="186010" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="hello_world.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list>
+                                  <AnswerPlaceholder>
+                                    <option name="hints">
+                                      <list>
+                                        <option value="Type your name here." />
+                                      </list>
+                                    </option>
+                                    <option name="index" value="0" />
+                                    <option name="initialState">
+                                      <MyInitialState>
+                                        <option name="length" value="14" />
+                                        <option name="offset" value="32" />
+                                      </MyInitialState>
+                                    </option>
+                                    <option name="initializedFromDependency" value="false" />
+                                    <option name="length" value="4" />
+                                    <option name="offset" value="32" />
+                                    <option name="placeholderDependency" />
+                                    <option name="placeholderText" value="type your name" />
+                                    <option name="possibleAnswer" value="Liana" />
+                                    <option name="selected" value="false" />
+                                    <option name="status" value="Solved" />
+                                    <option name="studentAnswer" />
+                                    <option name="useLength" value="true" />
+                                  </AnswerPlaceholder>
+                                </list>
+                              </option>
+                              <option name="highlightErrors" value="false" />
+                              <option name="name" value="hello_world.py" />
+                              <option name="text" value="print(&quot;Hello, world! My name is type your name&quot;)&#10;" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map>
+                        <entry key="tests.py" value="from test_helper import run_common_tests, failed, passed, get_answer_placeholders&#10;&#10;&#10;def test_initial():&#10;    window = get_answer_placeholders()[0]&#10;    if window == &quot;type your name&quot;:&#10;        failed(&quot;You should modify the file&quot;)&#10;    else:&#10;        passed()&#10;&#10;if __name__ == '__main__':&#10;    run_common_tests(&quot;You should enter your name&quot;)&#10;    test_initial()&#10;&#10;&#10;" />
+                      </map>
+                    </option>
+                    <option name="updateDate" value="1532706586000" />
+                  </EduTask>
+                </list>
+              </option>
+              <option name="unitId" value="3584" />
+            </Lesson>
+          </list>
+        </option>
+      </RemoteCourse>
+    </option>
+  </StudyTaskManager>
+</component>

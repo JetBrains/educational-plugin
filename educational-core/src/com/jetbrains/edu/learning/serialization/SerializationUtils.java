@@ -56,9 +56,30 @@ public class SerializationUtils {
   }
 
   public static class Xml {
+    public static final String PUBLIC = "public";
+    public static final String UNIT_ID = "unitId";
+    public static final String TASK_REMOTE_INFO = "StepikTaskRemoteInfo";
+    public static final String LOCAL_INFO = "LocalInfo";
+    public static final String LESSON_REMOTE_INFO = "StepikLessonRemoteInfo";
+    public static final String COURSE_REMOTE_INFO = "StepikCourseRemoteInfo";
+    public static final String SECTION_REMOTE_INFO = "StepikSectionRemoteInfo";
+    public static final String ADDITIONAL_UPDATE_DATE = "additionalMaterialsUpdateDate";
+    public static final String COURSE_FORMAT = "courseFormat";
+    public static final String COURSE_TYPE = "type";
+    public static final String IDEA_COMPATIBLE = "ideaCompatible";
+    public static final String COMPATIBLE = "compatible";
+    public static final String LOAD_SOLUTIONS = "loadSolutions";
+    public static final String INSTRUCTORS = "instructors";
+    public static final String SECTION_IDS = "sectionIds";
+    public static final String STEP_ID = "stepId";
+    public static final String UPDATE_DATE = "updateDate";
+    public static final String COURSE_ID = "courseId";
+    public static final String POSITION = "position";
+    public static final String UNITS = "units";
     public final static String COURSE_ELEMENT = "courseElement";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
     public final static String REMOTE_COURSE = "RemoteCourse";
+    public final static String STEPIK_COURSE = "StepikCourse";
     public static final String SECTION = "Section";
     public static final String LESSON = "Lesson";
     public static final String FRAMEWORK_LESSON = "FrameworkLesson";
@@ -200,6 +221,12 @@ public class SerializationUtils {
     public static Element convertToEleventhVersion(@NotNull Project project,
                                                    @NotNull Element element) throws StudyUnrecognizedFormatException {
       return new ToEleventhVersionXmlConverter().convert(project, element);
+    }
+
+    @NotNull
+    public static Element convertTo12Version(@NotNull Project project,
+                                                   @NotNull Element element) throws StudyUnrecognizedFormatException {
+      return new To12VersionXmlConverter().convert(project, element);
     }
 
     @Nullable

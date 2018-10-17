@@ -1,0 +1,135 @@
+<component name="StudySettings">
+  <StudyTaskManager>
+    <option name="VERSION" value="11" />
+    <option name="myUserTests">
+      <map />
+    </option>
+    <option name="course">
+      <StepikCourse>
+        <option name="authors">
+          <list>
+            <StepikUserInfo>
+              <option name="firstName" value="ktisha" />
+              <option name="guest" value="false" />
+              <option name="id" value="27269502" />
+              <option name="lastName" value="" />
+            </StepikUserInfo>
+          </list>
+        </option>
+        <option name="courseMode" value="Course Creator" />
+        <option name="courseType" value="PyCharm" />
+        <option name="customPresentableName" />
+        <option name="description" value="my course" />
+        <option name="fromZip" value="false" />
+        <option name="index" value="-1" />
+        <option name="language" value="JAVA" />
+        <option name="languageCode" value="en" />
+        <option name="name" value="Java Course2" />
+        <option name="stepikChangeStatus" value="Up to date" />
+        <option name="items">
+          <list>
+            <Section>
+              <option name="customPresentableName" />
+              <option name="index" value="1" />
+              <option name="name" value="section1" />
+              <option name="stepikChangeStatus" value="Up to date" />
+              <option name="items">
+                <list>
+                  <Lesson>
+                    <option name="customPresentableName" />
+                    <option name="index" value="1" />
+                    <option name="name" value="lesson1" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskList">
+                      <list>
+                        <EduTask>
+                          <option name="additionalFiles">
+                            <map />
+                          </option>
+                          <option name="customPresentableName" />
+                          <option name="descriptionFormat" value="HTML" />
+                          <option name="descriptionText" value="&lt;html&gt;&#10;Write your task text here.&#10;&lt;br&gt;&#10;&lt;br&gt;&#10;&lt;div class=&quot;hint&quot;&gt;&#10;  You can add hints anywhere in task text. Copy all hint div block and change its content.&#10;&lt;/div&gt;&#10;&lt;/html&gt;" />
+                          <option name="feedbackLink">
+                            <FeedbackLink>
+                              <option name="link" />
+                              <option name="type" value="STEPIK" />
+                            </FeedbackLink>
+                          </option>
+                          <option name="index" value="1" />
+                          <option name="name" value="task1" />
+                          <option name="status" value="Unchecked" />
+                          <option name="stepikChangeStatus" value="Info and Content changed" />
+                          <option name="taskFiles">
+                            <map>
+                              <entry key="src/Task.java">
+                                <value>
+                                  <TaskFile>
+                                    <option name="answerPlaceholders">
+                                      <list />
+                                    </option>
+                                    <option name="highlightErrors" value="true" />
+                                    <option name="name" value="src/Task.java" />
+                                    <option name="text" value="class Task {&#10;  //put your task here&#10;}" />
+                                    <option name="trackChanges" value="true" />
+                                    <option name="trackLengths" value="true" />
+                                    <option name="userCreated" value="false" />
+                                    <option name="visible" value="true" />
+                                  </TaskFile>
+                                </value>
+                              </entry>
+                            </map>
+                          </option>
+                          <option name="testsText">
+                            <map>
+                              <entry key="test/Test.java" value="public class Test {&#10;    // put your test here&#10;}" />
+                            </map>
+                          </option>
+                          <StepikTaskRemoteInfo>
+                            <option name="id" value="513592" />
+                            <option name="updateDate" value="1539771524000" />
+                          </StepikTaskRemoteInfo>
+                        </EduTask>
+                      </list>
+                    </option>
+                    <StepikLessonRemoteInfo>
+                      <option name="id" value="182166" />
+                      <option name="public" value="true" />
+                      <option name="unitId" value="156798" />
+                      <option name="updateDate" value="1539771522000" />
+                    </StepikLessonRemoteInfo>
+                  </Lesson>
+                </list>
+              </option>
+              <StepikSectionRemoteInfo>
+                <option name="courseId" value="48095" />
+                <option name="id" value="68730" />
+                <option name="position" value="0" />
+                <option name="units">
+                  <list />
+                </option>
+                <option name="updateDate" value="1539771520000" />
+              </StepikSectionRemoteInfo>
+            </Section>
+          </list>
+        </option>
+        <StepikCourseRemoteInfo>
+          <option name="additionalMaterialsUpdateDate" value="0" />
+          <option name="courseFormat" value="pycharm7 JAVA" />
+          <option name="id" value="48095" />
+          <option name="ideaCompatible" value="true" />
+          <option name="instructors">
+            <list>
+              <option value="27269502" />
+            </list>
+          </option>
+          <option name="loadSolutions" value="true" />
+          <option name="public" value="false" />
+          <option name="sectionIds">
+            <list />
+          </option>
+          <option name="updateDate" value="1539771518000" />
+        </StepikCourseRemoteInfo>
+      </StepikCourse>
+    </option>
+  </StudyTaskManager>
+</component>
