@@ -122,11 +122,15 @@ public class StepikWrappers {
   }
 
   private static void setAdditionalFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
-    final VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) {
-      LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
-    } else {
-      CCUtils.loadAdditionalFileTextsToTask(task, taskDir);
+    // We don't need to load text for files from additional materials lesson
+    // because they are already loaded by `CCUtils#createAdditionalLesson`
+    if (!task.getLesson().isAdditional()) {
+      final VirtualFile taskDir = task.getTaskDir(project);
+      if (taskDir == null) {
+        LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
+      } else {
+        CCUtils.loadAdditionalFileTextsToTask(task, taskDir);
+      }
     }
 
     source.additionalFiles = new HashMap<>(task.getAdditionalFiles());
