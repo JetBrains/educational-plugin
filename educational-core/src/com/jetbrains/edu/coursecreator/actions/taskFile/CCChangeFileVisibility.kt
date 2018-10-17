@@ -37,7 +37,7 @@ abstract class CCChangeFileVisibility(val name: String, val requiredVisibility: 
 
     fun collect(files: List<VirtualFile>) {
       for (file in files) {
-        if (configurator.excludeFromArchive(project, file.path)) continue
+        if (configurator.excludeFromArchive(project, file)) continue
         val task = EduUtils.getTaskForFile(project, file) ?: return
         if (file.isDirectory) {
           collect(VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })

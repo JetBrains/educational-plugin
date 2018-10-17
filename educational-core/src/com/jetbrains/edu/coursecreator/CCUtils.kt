@@ -145,17 +145,14 @@ object CCUtils {
       override fun visitFile(file: VirtualFile): Boolean {
         @Suppress("NAME_SHADOWING")
         val name = file.name
-        if (name == EduNames.COURSE_META_FILE || name == EduNames.HINTS || name.startsWith(".")) return false
         if (name == archiveName) return false
-        if (name == EduNames.STEPIK_IDS_JSON) return false
-        if (GENERATED_FILES_FOLDER == name || Project.DIRECTORY_STORE_FOLDER == name) return false
         if (file.isDirectory) {
           // All files inside task directory are already handled by `CCVirtualFileListener`
           // so here we don't need to process them again
           return EduUtils.getTask(file, course) == null
         }
-        if (EduUtils.isTaskDescriptionFile(name) || EduUtils.isTestsFile(project, file)) return true
-        if (name.contains(".iml") || configurator != null && configurator.excludeFromArchive(project, file.path)) return false
+        if (EduUtils.isTestsFile(project, file)) return true
+        if (configurator != null && configurator.excludeFromArchive(project, file)) return false
 
         val taskFile = EduUtils.getTaskFile(project, file)
         if (taskFile == null) {

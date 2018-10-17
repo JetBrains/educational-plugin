@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.gradle
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -21,21 +20,23 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
   abstract override fun getCourseBuilder(): GradleCourseBuilderBase
 
-  override fun excludeFromArchive(project: Project, path: String): Boolean {
+  override fun excludeFromArchive(project: Project, file: VirtualFile): Boolean {
+    if (super.excludeFromArchive(project, file)) return true
+    val name = file.name
+    val path = file.path
     val pathSegments = path.split(VfsUtilCore.VFS_SEPARATOR_CHAR)
-    val name = pathSegments.last()
     if (GradleConstants.SETTINGS_FILE_NAME == name) {
       try {
         val settingsDefaultText = EduGradleUtils.getInternalTemplateText(courseBuilder.settingGradleTemplateName,
                                                                          courseBuilder.templateVariables(project))
-        val file = File(path)
-        return if (file.exists()) FileUtil.loadFile(file) == settingsDefaultText else true
+        val ioFile = File(path)
+        return if (ioFile.exists()) FileUtil.loadFile(ioFile) == settingsDefaultText else true
       }
       catch (e: IOException) {
         LOG.error(e)
       }
     }
-    return name in NAMES_TO_EXCLUDE || pathSegments.any { it in FOLDERS_TO_EXCLUDE } || "iml" == FileUtilRt.getExtension(name)
+    return name in NAMES_TO_EXCLUDE || pathSegments.any { it in FOLDERS_TO_EXCLUDE }
   }
 
   override fun getSourceDir(): String = EduNames.SRC

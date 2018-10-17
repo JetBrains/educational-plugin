@@ -3,11 +3,15 @@ package com.jetbrains.edu.learning;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +40,24 @@ public interface EduConfigurator<Settings> {
   /**
    * Used in educator plugin to filter files to be packed into course archive
    */
-  default boolean excludeFromArchive(@NotNull Project project, @NotNull String path) {
+  default boolean excludeFromArchive(@NotNull Project project, @NotNull VirtualFile file) {
+    List<String> ancestorNames = new ArrayList<>();
+    VirtualFile parent = file;
+    while (parent != null) {
+      ancestorNames.add(parent.getName());
+      parent = parent.getParent();
+    }
+    String name = file.getName();
+
+    // Project related files
+    if (ancestorNames.contains(Project.DIRECTORY_STORE_FOLDER) || "iml".equals(file.getExtension())) return true;
+    // Course structure files
+    if (EduUtils.isTaskDescriptionFile(name) || YamlFormatSynchronizer.isConfigFile(file)) return true;
+    // Hidden files
+    if (CollectionsKt.any(ancestorNames, ancestorName -> ancestorName.startsWith("."))) return true;
+    // Special files
+    if (ancestorNames.contains(CCUtils.GENERATED_FILES_FOLDER) || EduNames.HINTS.equals(name) || EduNames.STEPIK_IDS_JSON.equals(name)) return true;
+
     return false;
   }
 
