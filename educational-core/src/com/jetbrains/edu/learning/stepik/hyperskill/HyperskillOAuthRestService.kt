@@ -15,9 +15,6 @@ class HyperskillOAuthRestService : OAuthRestService(HYPERSKILL) {
 
   override fun getServiceName(): String = EDU_HYPERSKILL_SERVICE_NAME
 
-  override fun isMethodSupported(method: HttpMethod): Boolean =
-    method === HttpMethod.GET
-
   @Throws(InterruptedException::class, InvocationTargetException::class)
   override fun isHostTrusted(request: FullHttpRequest): Boolean {
     val uri = request.uri()

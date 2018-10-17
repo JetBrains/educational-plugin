@@ -30,11 +30,6 @@ public abstract class CheckiOOAuthRestService extends OAuthRestService {
   }
 
   @Override
-  protected boolean isMethodSupported(@NotNull HttpMethod method) {
-    return method == HttpMethod.GET;
-  }
-
-  @Override
   protected boolean isHostTrusted(@NotNull FullHttpRequest request) throws InterruptedException, InvocationTargetException {
     final String uri = request.uri();
     final Matcher codeMatcher = myOAuthCodePattern.matcher(uri);

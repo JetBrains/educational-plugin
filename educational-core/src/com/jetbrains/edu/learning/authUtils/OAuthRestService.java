@@ -4,6 +4,7 @@ import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.StreamUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+// Should be implemented to handle oauth redirect to localhost:<port>
+// and get the authorization code for different oauth providers
 public abstract class OAuthRestService extends RestService {
   protected final String myPlatformName;
 
@@ -68,5 +71,10 @@ public abstract class OAuthRestService extends RestService {
       response.headers().set("X-Frame-Options", "Deny");
       return response;
     }
+  }
+
+  @Override
+  protected boolean isMethodSupported(@NotNull HttpMethod method) {
+    return method == HttpMethod.GET;
   }
 }
