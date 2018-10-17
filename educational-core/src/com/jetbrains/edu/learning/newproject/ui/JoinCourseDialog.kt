@@ -1,19 +1,19 @@
 package com.jetbrains.edu.learning.newproject.ui
 
 import com.intellij.openapi.ui.DialogWrapper
-import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import javax.swing.JComponent
 
-class JoinCourseDialog(private val myCourse: Course) : DialogWrapper(true) {
+class JoinCourseDialog(private val course: Course) : DialogWrapper(true) {
 
-  private val myPanel: JoinCoursePanel = JoinCoursePanel()
+  private val panel: JoinCoursePanel = JoinCoursePanel()
 
   init {
-    title = myCourse.name
+    title = course.name
     setOKButtonText("Join")
-    myPanel.bindCourse(myCourse)
-    myPanel.setValidationListener(object : JoinCoursePanel.ValidationListener {
+    panel.bindCourse(course)
+    panel.setValidationListener(object : JoinCoursePanel.ValidationListener {
       override fun onInputDataValidated(isInputDataComplete: Boolean) {
         isOKActionEnabled = isInputDataComplete
       }
@@ -22,18 +22,15 @@ class JoinCourseDialog(private val myCourse: Course) : DialogWrapper(true) {
     init()
   }
 
-  override fun createCenterPanel(): JComponent = myPanel
+  override fun createCenterPanel(): JComponent = panel
 
   override fun doOKAction() {
-    val location = myPanel.locationString
-    val projectSettings = myPanel.projectSettings
-    val language = myCourse.languageById
-    if (language != null) {
-      EduConfiguratorManager.forLanguage(language)
-              ?.courseBuilder
-              ?.getCourseProjectGenerator(myCourse)
-              ?.doCreateCourseProject(location, projectSettings)
-    }
+    val location = panel.locationString
+    val projectSettings = panel.projectSettings
+    course.configurator
+            ?.courseBuilder
+            ?.getCourseProjectGenerator(course)
+            ?.doCreateCourseProject(location, projectSettings)
     close(OK_EXIT_CODE)
   }
 }

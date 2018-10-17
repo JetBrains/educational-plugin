@@ -4,6 +4,8 @@ import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider
 import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase
+import icons.EducationalCoreIcons
+import javax.swing.Icon
 
 class ScalaConfigurator : GradleConfiguratorBase() {
 
@@ -18,6 +20,8 @@ class ScalaConfigurator : GradleConfiguratorBase() {
   override fun getTaskCheckerProvider(): TaskCheckerProvider = ScalaTaskCheckerProvider()
 
   override fun getMockTemplate(): String = FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_SCALA).text
+
+  override fun getLogo(): Icon = EducationalCoreIcons.ScalaLogo
 
   companion object {
     const val TEST_SCALA = "Test.scala"

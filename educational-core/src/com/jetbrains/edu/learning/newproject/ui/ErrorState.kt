@@ -4,7 +4,6 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.MessageType.ERROR
 import com.intellij.openapi.ui.MessageType.WARNING
-import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -12,6 +11,7 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.coursera.CourseraNames
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.stepik.StepikNames
@@ -43,7 +43,7 @@ sealed class ErrorState(
   companion object {
     @JvmStatic
     fun forCourse(course: Course?): ErrorState {
-      val pluginRequirements = course?.languageById?.let(EduConfiguratorManager::forLanguage)?.pluginRequirements().orEmpty()
+      val pluginRequirements = getPluginRequirements(course)
       val disabledPlugins = getDisabledPlugins(pluginRequirements)
       return when {
         course == null -> NothingSelected
@@ -55,6 +55,10 @@ sealed class ErrorState(
         !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
       }
+    }
+
+    private fun getPluginRequirements(course: Course?): List<String> {
+      return course?.configurator?.pluginRequirements().orEmpty()
     }
 
     @JvmStatic
@@ -79,7 +83,7 @@ sealed class ErrorState(
 
     private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
       if (selectedCourse is CheckiOCourse) {
-        val checkiOConnectorProvider = selectedCourse.languageById.let(EduConfiguratorManager::forLanguage) as CheckiOConnectorProvider
+        val checkiOConnectorProvider = selectedCourse.configurator as CheckiOConnectorProvider
         val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
         return checkiOAccount == null
       }

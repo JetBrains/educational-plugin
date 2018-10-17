@@ -10,7 +10,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
-import com.jetbrains.edu.learning.EduConfigurator
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course

@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.ActionCallback
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduConfigurator
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator

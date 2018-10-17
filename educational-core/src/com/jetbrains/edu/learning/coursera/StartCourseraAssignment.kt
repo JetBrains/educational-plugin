@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.coursera
 
-import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.diagnostic.Logger
@@ -8,9 +7,9 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.learning.CoursesProvider
-import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseLoading.CourseLoader
 import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import java.io.BufferedReader
@@ -43,11 +42,10 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
           LOG.error("Failed to get local course from $link")
           continue
         }
-        val language = Language.findLanguageByID(localCourse.languageID) ?: continue
-        if (EduConfiguratorManager.forLanguage(language) == null) {
+        localCourse.courseType = CourseraNames.COURSE_TYPE
+        if (localCourse.configurator == null) {
           continue
         }
-        localCourse.courseType = CourseraNames.COURSE_TYPE
         courses.add(localCourse)
       }
       return courses

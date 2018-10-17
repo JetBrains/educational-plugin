@@ -1,25 +1,31 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.configuration;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
+import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel;
+import com.jetbrains.edu.learning.EduCourseBuilder;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * The main interface provides courses support for some language.
+ * The main interface provides courses support for some language and course type.
  *
  * To get configurator instance for some language use {@link EduConfiguratorManager}
- * instead of {@link com.intellij.lang.LanguageExtension} because configurator shouldn't be used in some environments
  * and {@link EduConfiguratorManager} supports the corresponding filtering.
  *
  * @param <Settings> container type holds course project settings state
@@ -114,6 +120,15 @@ public interface EduConfigurator<Settings> {
   }
 
   /**
+   * Allows to determine if configurator can be used to create new course using course creator features.
+   *
+   * @return true if configurator can be used to create new courses
+   */
+  default boolean isCourseCreatorEnabled() {
+    return true;
+  }
+
+  /**
    * Allows to customize file template used as playground in theory and choice tasks
    * Template should work along with the according {@link TheoryTaskChecker}
    *
@@ -131,5 +146,19 @@ public interface EduConfigurator<Settings> {
    */
   default List<String> pluginRequirements() {
     return Collections.emptyList();
+  }
+
+  /**
+   * This icon is used in places where course is associated with language.
+   * For example, 'Browse Courses' and 'Create New Course' dialogs.
+   *
+   * @return 16x16 icon
+   *
+   * @see CoursesPanel
+   * @see CCNewCoursePanel
+   */
+  @NotNull
+  default Icon getLogo() {
+    return EmptyIcon.ICON_16;
   }
 }

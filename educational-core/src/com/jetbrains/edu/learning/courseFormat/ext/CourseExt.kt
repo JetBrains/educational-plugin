@@ -7,16 +7,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.ui.LayeredIcon
 import com.intellij.util.ui.JBUI
-import com.jetbrains.edu.learning.EduConfigurator
-import com.jetbrains.edu.learning.EduConfiguratorManager
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import javax.swing.Icon
 
 val Course.configurator: EduConfigurator<*>? get() {
   val language = languageById ?: return null
-  return EduConfiguratorManager.forLanguage(language)
+  return EduConfiguratorManager.forLanguageAndCourseType(courseType, language)
 }
 
 val Course.sourceDir: String? get() = configurator?.sourceDir

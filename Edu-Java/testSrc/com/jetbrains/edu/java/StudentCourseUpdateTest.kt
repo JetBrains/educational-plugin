@@ -577,10 +577,10 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
   }
 
   private fun doTest(expectedFileTree: FileTree, testPath: String) {
-    val course = createRemoteCourseFromJson("$testPath/course.json", CourseType.STUDENT)
+    val course = createRemoteCourseFromJson("$testPath/course.json", CourseMode.STUDENT)
     setTopLevelSection(course)
     createCourseStructure(courseBuilder, course, defaultSettings)
-    val courseFromServer = createRemoteCourseFromJson("$testPath/updated_course.json", CourseType.STUDENT)
+    val courseFromServer = createRemoteCourseFromJson("$testPath/updated_course.json", CourseMode.STUDENT)
     setTopLevelSection(courseFromServer)
 
     StepikCourseUpdater(course, project).doUpdate(courseFromServer)

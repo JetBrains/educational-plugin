@@ -25,6 +25,8 @@ import com.intellij.ui.docking.DockManager
 import com.jetbrains.edu.coursecreator.CCTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener
+import com.jetbrains.edu.learning.configuration.EduConfigurator
+import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
 import com.jetbrains.edu.learning.configurators.FakeGradleConfigurator
 import com.jetbrains.edu.learning.configurators.PlainTextConfigurator
@@ -132,11 +134,12 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   fun courseWithFiles(
     name: String = "Test Course",
     courseMode: String = EduNames.STUDY,
+    courseType: String = EduNames.PYCHARM,
     language: Language = PlainTextLanguage.INSTANCE,
     settings: Any = Unit,
     buildCourse: CourseBuilder.() -> Unit
   ): Course {
-    return course(name, language, courseMode, buildCourse).apply {
+    return course(name, language, courseType, courseMode, buildCourse).apply {
       createCourseFiles(project, LightPlatformTestCase.getSourceRoot(), settings)
     }
   }
@@ -218,7 +221,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   private fun registerConfigurator(language: Language, configuratorClass: Class<*>, disposable: Disposable) {
-    val extension = EduConfiguratorEP()
+    val extension = EducationalExtensionPoint<EduConfigurator<out Any>>()
     extension.language = language.id
     extension.implementationClass = configuratorClass.name
     PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)
