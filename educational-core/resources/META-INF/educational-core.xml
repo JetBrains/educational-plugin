@@ -22,7 +22,7 @@
   </application-components>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="Educational.configurator" beanClass="com.intellij.lang.LanguageExtensionPoint">
+    <extensionPoint qualifiedName="Educational.configurator" beanClass="com.jetbrains.edu.learning.EduConfiguratorEP">
       <with attribute="implementationClass" implements="com.jetbrains.edu.learning.EduConfigurator"/>
     </extensionPoint>
     <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"

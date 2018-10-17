@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning
 
 import com.google.common.collect.Lists
 import com.intellij.lang.Language
-import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.extensions.ExtensionPointName
@@ -219,7 +218,7 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   private fun registerConfigurator(language: Language, configuratorClass: Class<*>, disposable: Disposable) {
-    val extension = LanguageExtensionPoint<EduConfigurator<*>>()
+    val extension = EduConfiguratorEP()
     extension.language = language.id
     extension.implementationClass = configuratorClass.name
     PlatformTestUtil.registerExtension(ExtensionPointName.create(EduConfigurator.EP_NAME), extension, disposable)

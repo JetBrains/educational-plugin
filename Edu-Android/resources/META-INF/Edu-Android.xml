@@ -12,8 +12,7 @@
     </application-components>
 
     <extensions defaultExtensionNs="Educational">
-        <configurator language="edu-android"
-                      implementationClass="com.jetbrains.edu.android.AndroidConfigurator"/>
+        <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" courseType="Android"/>
     </extensions>
 
     <extensions defaultExtensionNs="educational">
