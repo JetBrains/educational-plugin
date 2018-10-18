@@ -56,7 +56,7 @@ object HyperskillConnector {
     return true
   }
 
-  private fun getCurrentUser(): HyperskillUserInfo? {
+  fun getCurrentUser(): HyperskillUserInfo? {
     return service.getUserInfo(0).execute().body()?.users?.first() ?: return null
   }
 

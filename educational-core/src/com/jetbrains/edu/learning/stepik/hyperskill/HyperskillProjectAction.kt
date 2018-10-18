@@ -1,60 +1,65 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.icons.AllIcons
+import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.project.DumbAwareAction
-import com.jetbrains.edu.learning.CoursesProvider
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
-import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseLoading.CourseLoader
-import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
+import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import java.awt.event.ActionEvent
+import java.awt.event.ActionListener
+import javax.swing.JComponent
 
 class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
   override fun actionPerformed(e: AnActionEvent) {
-    val courses = CourseLoader.getCourseInfosUnderProgress {
-      CoursesProvider.loadAllCourses(listOf(HyperskillProjectsProvider))
-    } ?: return
-    val dialog = BrowseCoursesDialog(courses, DefaultActionGroup(ImportHyperskillProject()))
-    val projectId = HyperskillSettings.INSTANCE.account?.userInfo?.hyperskillProject?.id
-    val toSelect = courses.find { it.id == projectId }
-    if (toSelect != null) {
-      dialog.selectedCourse = toSelect
+    val account = HyperskillSettings.INSTANCE.account
+    if (account == null) {
+      showBalloon(e, "Please, <a href=\"\">login to Hyperskill</a> and select project.", true)
     }
-    dialog.title = "Select Project"
-    dialog.show()
-  }
-}
+    else {
+      val currentUser = HyperskillConnector.getCurrentUser()
+      if (currentUser != null) {
+        account.userInfo = currentUser
+      }
 
-private object HyperskillProjectsProvider : CoursesProvider {
-  override fun loadCourses(): List<Course> {
-    val courses = mutableListOf<Course>()
-    val projects = HyperskillConnector.getProjects() ?: return emptyList()
-
-    for (project in projects) {
-      val isKotlin = project.title.contains("Kotlin")   // TODO: get language properly
-      if (!isKotlin) { // TODO: kotlin part
+      val hyperskillProject = account.userInfo.hyperskillProject
+      if (hyperskillProject == null) {
+        showBalloon(e, "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select project</a> ", false)
+      }
+      else {
         val languageId = HYPERSKILL + "-" + EduNames.JAVA
-        val hyperskillCourse = HyperskillCourse(project.title, languageId)
-        hyperskillCourse.id = project.id
-        courses.add(hyperskillCourse)
+        val hyperskillCourse = HyperskillCourse(hyperskillProject.title, languageId)
+        hyperskillCourse.courseType = HYPERSKILL
+        val dialog = JoinCourseDialog(hyperskillCourse)
+        dialog.show()
       }
     }
-    return courses
+  }
+
+  private fun showBalloon(e: AnActionEvent, message: String, authorize: Boolean) {
+    val builder = JBPopupFactory.getInstance()
+      .createHtmlTextBalloonBuilder(message,MessageType.INFO, null)
+    builder.setHideOnClickOutside(true)
+    builder.setClickHandler(HSHyperlinkListener(authorize), true)
+    val balloon = builder.createBalloon()
+
+    val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
+    if (component is JComponent) {
+      balloon.showInCenterOf(component)
+    }
   }
 }
 
-class ImportHyperskillProject : ImportLocalCourseAction("Start Hyperskill Project") {
-
-  override fun initCourse(course: Course) {
-    super.initCourse(course)
-    course.courseType = HYPERSKILL
-  }
-
-  override fun update(e: AnActionEvent) {
-    e.presentation.icon = AllIcons.ToolbarDecorator.Import
-    e.presentation.isEnabledAndVisible = true
+private class HSHyperlinkListener(private val authorize: Boolean) : ActionListener {
+  override fun actionPerformed(e: ActionEvent?) {
+    if (authorize) {
+      HyperskillConnector.doAuthorize()
+    }
+    else {
+      BrowserUtil.browse(HYPERSKILL_PROJECTS_URL)
+    }
   }
 }
