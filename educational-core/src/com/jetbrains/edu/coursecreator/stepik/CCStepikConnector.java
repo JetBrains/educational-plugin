@@ -45,7 +45,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -263,7 +262,7 @@ public class CCStepikConnector {
             }
           }
         }
-        catch (URISyntaxException | IOException e) {
+        catch (IOException e) {
           LOG.warn(e.getMessage());
         }
       }
