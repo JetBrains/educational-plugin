@@ -24,5 +24,8 @@ class HyperskillUserInfo {
 data class HyperskillStage(var id: Int = -1, var title: String = "")
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class HyperskillProject(var id: Int = -1, var title: String = "", var description: String = "",
-                             var lesson: Int = -1, @JsonProperty("repo_url") var repoUrl: String = "")
+data class HyperskillProject(@JsonProperty("id") var id: Int = -1,
+                             @JsonProperty("title") var title: String = "",
+                             @JsonProperty("description") var description: String = "",
+                             @JsonProperty("lesson_stepik_id") var lesson: Int = -1,
+                             @JsonProperty("repo_url") var repoUrl: String = "")
