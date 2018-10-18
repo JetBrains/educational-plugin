@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.intellij.ide.BrowserUtil
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.FullHttpRequest
@@ -37,6 +38,7 @@ class HyperskillOAuthRestService : OAuthRestService(HYPERSKILL) {
       val success = HyperskillConnector.login(code)
       if (success) {
         RestService.LOG.info("$myPlatformName: OAuth code is handled")
+        BrowserUtil.browse(HYPERSKILL_PROJECTS_URL)   // TODO: design a page that redirects to hyperskill projects
         return sendOkResponse(request, context)
       }
       return sendErrorResponse(request, context, "Failed to login using provided code")

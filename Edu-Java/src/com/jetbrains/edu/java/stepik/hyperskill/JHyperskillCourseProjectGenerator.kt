@@ -29,7 +29,7 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
         return false
       }
       val lessonId = hyperskillProject.lesson
-      val projectId = myCourse.id
+      val projectId = hyperskillProject.id
 
       val stages = HyperskillConnector.getStages(projectId) ?: return false
       val lesson = getLesson(lessonId, language, stages) ?: return false
