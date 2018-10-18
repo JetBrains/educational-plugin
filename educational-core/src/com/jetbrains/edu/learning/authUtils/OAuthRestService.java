@@ -61,7 +61,7 @@ public abstract class OAuthRestService extends RestService {
   }
 
   @NotNull
-  private static HttpResponse createResponse(@NotNull String template) throws IOException {
+  public static HttpResponse createResponse(@NotNull String template) throws IOException {
     try (
       BufferExposingByteArrayOutputStream byteOut = new BufferExposingByteArrayOutputStream()
     ) {

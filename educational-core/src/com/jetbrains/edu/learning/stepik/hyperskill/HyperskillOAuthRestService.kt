@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.intellij.ide.BrowserUtil
+import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.FullHttpRequest
@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.HttpMethod
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.netty.handler.codec.http.QueryStringDecoder
 import org.jetbrains.ide.RestService
+import org.jetbrains.io.send
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.util.regex.Pattern
@@ -38,8 +39,9 @@ class HyperskillOAuthRestService : OAuthRestService(HYPERSKILL) {
       val success = HyperskillConnector.login(code)
       if (success) {
         RestService.LOG.info("$myPlatformName: OAuth code is handled")
-        BrowserUtil.browse(HYPERSKILL_PROJECTS_URL)   // TODO: design a page that redirects to hyperskill projects
-        return sendOkResponse(request, context)
+        val pageContent = FileTemplateManager.getDefaultInstance().getInternalTemplate("hyperskill.redirectPage.html").text
+        createResponse(pageContent).send(context.channel(), request)
+        return null
       }
       return sendErrorResponse(request, context, "Failed to login using provided code")
     }
