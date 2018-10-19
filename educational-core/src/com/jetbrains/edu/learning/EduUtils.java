@@ -62,6 +62,7 @@ import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
 import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
@@ -217,6 +218,24 @@ public class EduUtils {
     Point point = new Point(visibleRect.x + visibleRect.width + 10,
                             visibleRect.y + 10);
     return new RelativePoint(editor.getComponent(), point);
+  }
+
+  /**
+   * @return true, if file doesn't belong to task (in term of course structure)
+   * but can be added to it as task, test or additional file.
+   * Otherwise, returns false
+   */
+  public static boolean canBeAddedToTask(@NotNull Project project, @NotNull VirtualFile file) {
+    if (file.isDirectory()) return false;
+    Task task = getTaskForFile(project, file);
+    if (task == null) return false;
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(task.getCourse());
+    if (configurator == null) return false;
+    if (configurator.excludeFromArchive(project, file)) return false;
+    String relativePath = pathRelativeToTask(project, file);
+    return task.getTaskFile(relativePath) == null &&
+           task.getTestsText().get(relativePath) == null &&
+           task.getAdditionalFiles().get(relativePath) == null;
   }
 
   public static boolean isTestsFile(@NotNull Project project, @NotNull VirtualFile file) {

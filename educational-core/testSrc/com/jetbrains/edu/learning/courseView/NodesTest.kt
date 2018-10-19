@@ -1,6 +1,8 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.edu.learning.courseView
 
+import com.intellij.openapi.application.runWriteAction
+import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -180,6 +182,38 @@ class NodesTest: CourseViewTestBase() {
            additionalFile3.txt
            CCStudentInvisibleFileNode additionalFile4.txt
           CCStudentInvisibleFileNode task.html
+    """.trimIndent(), ignoreOrder = true)
+  }
+
+  fun `test non course files`() {
+    courseWithInvisibleItems(CCUtils.COURSE_MODE)
+    runWriteAction {
+      LightPlatformTestCase.getSourceRoot().createChildData(NodesTest::class.java, "non_course_file1.txt")
+      findFile("lesson1/task1").createChildData(NodesTest::class.java, "non_course_file2.txt")
+      findFile("lesson1/task2/folder").createChildData(NodesTest::class.java, "non_course_file3.txt")
+    }
+
+    assertCourseView("""
+      -Project
+       -CCCourseNode Test Course (Course Creation)
+        -CCLessonNode lesson1
+         -CCTaskNode task1
+          -CCNode folder1
+           taskFile3.txt
+           CCStudentInvisibleFileNode taskFile4.txt
+          CCStudentInvisibleFileNode task.html
+          taskFile1.txt
+          CCStudentInvisibleFileNode taskFile2.txt
+          CCStudentInvisibleFileNode non_course_file2.txt (excluded)
+         -CCTaskNode task2
+          additionalFile1.txt
+          CCStudentInvisibleFileNode additionalFile2.txt
+          -CCNode folder
+           additionalFile3.txt
+           CCStudentInvisibleFileNode additionalFile4.txt
+           CCStudentInvisibleFileNode non_course_file3.txt (excluded)
+          CCStudentInvisibleFileNode task.html
+        CCStudentInvisibleFileNode non_course_file1.txt
     """.trimIndent(), ignoreOrder = true)
   }
 
