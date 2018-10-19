@@ -27,6 +27,8 @@
     </extensionPoint>
     <extensionPoint qualifiedName="Educational.twitterPluginConfigurator"
                     interface="com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator"/>
+    <extensionPoint qualifiedName="Educational.taskCustomAction"
+                    interface="com.jetbrains.edu.learning.TaskCustomActionProvider"/>
     <extensionPoint qualifiedName="Educational.remoteTaskChecker" interface="com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker"/>
     <extensionPoint qualifiedName="Educational.checkListener"
                     interface="com.jetbrains.edu.learning.checker.CheckListener"/>

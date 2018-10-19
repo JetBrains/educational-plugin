@@ -4,11 +4,13 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.TaskCustomActionProvider
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
 import com.jetbrains.edu.learning.actions.NextTaskAction
@@ -39,7 +41,18 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     val actionsPanel = JPanel(HorizontalLayout(10))
     actionsPanel.add(createSingleActionToolbar(RevertTaskAction.ACTION_ID))
     actionsPanel.add(createSingleActionToolbar(LeaveFeedbackAction.ACTION_ID))
+    addCustomActions(actionsPanel)
     return actionsPanel
+  }
+
+  private fun addCustomActions(actionsPanel: JPanel) {
+    val actionProviders = Extensions.getExtensions(TaskCustomActionProvider.EP_NAME)
+    for (actionProvider in actionProviders) {
+      if (actionProvider.isAvailable(project)) {
+        val action = actionProvider.getAction(project)
+        actionsPanel.add(createSingleActionToolbar(action))
+      }
+    }
   }
 
   private fun createButtonToolbar(actionId: String): JComponent {
@@ -52,6 +65,10 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
 
   private fun createSingleActionToolbar(actionId: String): JComponent {
     val action = ActionManager.getInstance().getAction(actionId)
+    return createSingleActionToolbar(action)
+  }
+
+  private fun createSingleActionToolbar(action: AnAction): JComponent {
     val toolbar = ActionManager.getInstance().createActionToolbar(ACTION_PLACE, DefaultActionGroup(action), true)
     //these options affect paddings
     toolbar.layoutPolicy = ActionToolbar.NOWRAP_LAYOUT_POLICY

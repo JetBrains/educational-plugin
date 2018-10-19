@@ -1,0 +1,6 @@
+<idea-plugin>
+  <depends>Git4Idea</depends>
+  <extensions defaultExtensionNs="Educational">
+    <taskCustomAction implementation="com.jetbrains.edu.learning.github.GithubActionProvider"/>
+  </extensions>
+</idea-plugin>
