@@ -190,7 +190,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       }
     }
 
-    val configurator = EduConfiguratorManager.forLanguageAndCourseType(courseTypeData.language, courseTypeData.courseType) ?: return
+    val configurator = EduConfiguratorManager.forLanguageAndCourseType(courseTypeData.courseType, courseTypeData.language) ?: return
     myCourse.language = courseTypeData.language.id
     myCourse.courseType = courseTypeData.courseType
     myLanguageSettings = configurator.courseBuilder.languageSettings

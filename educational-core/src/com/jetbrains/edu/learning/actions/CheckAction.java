@@ -18,14 +18,14 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.*;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.coursera.CourseraNames;
@@ -150,7 +150,7 @@ public class CheckAction extends DumbAwareAction {
       myProject = project;
       myTask = task;
       final Course course = task.getLesson().getCourse();
-      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguageAndCourseType(course.getLanguageById(), course.getCourseType());
+      EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
       if (configurator != null) {
         TaskCheckerProvider checkerProvider = configurator.getTaskCheckerProvider();
         myChecker = checkerProvider.getTaskChecker(task, project);

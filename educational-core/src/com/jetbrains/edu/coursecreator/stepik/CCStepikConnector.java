@@ -529,8 +529,7 @@ public class CCStepikConnector {
                                         + String.valueOf(task.getStepId()));
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
 
-    final Language language = lesson.getCourse().getLanguageById();
-    final EduConfigurator configurator = EduConfiguratorManager.forLanguageAndCourseType(language, lesson.getCourse().getCourseType());
+    final EduConfigurator configurator = CourseExt.getConfigurator(lesson.getCourse());
     if (configurator == null) return false;
     final String[] requestBody = new String[1];
     ApplicationManager.getApplication().invokeAndWait(() -> {

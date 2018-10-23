@@ -4,8 +4,8 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.OptionAction
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.BrowseCoursesDialog
 import java.awt.event.ActionEvent
 import javax.swing.AbstractAction
@@ -22,7 +22,7 @@ abstract class OpenCourseActionBase(
     val projectSettings = dialog.projectSettings
     val location = dialog.locationString
     dialog.close(DialogWrapper.OK_EXIT_CODE)
-    val configurator = EduConfiguratorManager.forLanguageAndCourseType(course.languageById, course.courseType)
+    val configurator = course.configurator
     if (configurator != null) {
       course.courseMode = courseMode
       val projectGenerator = configurator

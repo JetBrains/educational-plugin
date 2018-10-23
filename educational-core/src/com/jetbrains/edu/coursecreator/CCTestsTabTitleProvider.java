@@ -3,11 +3,11 @@ package com.jetbrains.edu.coursecreator;
 import com.intellij.openapi.fileEditor.impl.EditorTabTitleProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +23,7 @@ public class CCTestsTabTitleProvider implements EditorTabTitleProvider {
     }
     Course course = StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
-    EduConfigurator configurator = EduConfiguratorManager.forLanguageAndCourseType(course.getLanguageById(), course.getCourseType());
+    EduConfigurator configurator = CourseExt.getConfigurator(course);
     if (configurator == null) {
       return null;
     }

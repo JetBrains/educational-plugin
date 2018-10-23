@@ -30,7 +30,7 @@ class PyTestRunner {
 
   Process createCheckProcess(@NotNull final Project project, @NotNull final String executablePath) throws ExecutionException {
     final Sdk sdk = PythonSdkType.findPythonSdk(ModuleManager.getInstance(project).getModules()[0]);
-    EduConfigurator<?> configurator = EduConfiguratorManager.forLanguageAndCourseType(PythonLanguage.getInstance(), EduNames.PYCHARM);
+    EduConfigurator<?> configurator = EduConfiguratorManager.forLanguageAndCourseType(EduNames.PYCHARM, PythonLanguage.getInstance());
     if (configurator == null) {
       LOG.warn("Plugin configurator for Python is null");
       return null;

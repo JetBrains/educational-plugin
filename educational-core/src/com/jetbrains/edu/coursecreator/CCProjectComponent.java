@@ -16,9 +16,9 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
@@ -45,7 +45,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
   public void migrateIfNeeded() {
     Course studyCourse = StudyTaskManager.getInstance(myProject).getCourse();
     if (studyCourse != null) {
-      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguageAndCourseType(studyCourse.getLanguageById(), studyCourse.getCourseType());
+      EduConfigurator<?> configurator = CourseExt.getConfigurator(studyCourse);
       if (configurator == null) return;
       EduCourseBuilder<?> courseBuilder = configurator.getCourseBuilder();
       if (courseBuilder instanceof GradleCourseBuilderBase && !EduGradleUtils.isConfiguredWithGradle(myProject)) {
