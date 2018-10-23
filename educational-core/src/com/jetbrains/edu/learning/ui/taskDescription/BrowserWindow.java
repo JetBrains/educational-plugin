@@ -183,7 +183,7 @@ public class BrowserWindow {
 
   @NotNull
   private static String createHtmlWithCodeHighlighting(@NotNull final String content, @NotNull Course course) {
-    EduLanguageDecorator decorator = EduLanguageDecorator.forLanguage(course.getLanguageById());
+    EduLanguageDecorator decorator = EduLanguageDecorator.INSTANCE.forLanguage(course.getLanguageById());
     if (decorator == null) return content;
 
     String template = null;

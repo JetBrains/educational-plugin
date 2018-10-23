@@ -17,9 +17,12 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.enablePlugins
+import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
 import com.jetbrains.edu.learning.newproject.ui.ErrorState
@@ -223,7 +226,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       LOG.info("Language with id $languageId not found")
       return null
     }
-    return CourseTypeData(language, courseType, EduLanguageDecorator.forLanguage(language, courseType)?.logo)
+    return CourseTypeData(language, courseType, EduConfiguratorManager.forLanguageAndCourseType(courseType, language)?.logo)
   }
 
   companion object {

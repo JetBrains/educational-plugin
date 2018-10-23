@@ -3,12 +3,16 @@ package com.jetbrains.edu.learning.configuration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.EmptyIcon;
+import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
+import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
 
+import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -111,5 +115,20 @@ public interface EduConfigurator<Settings> {
    */
   default List<String> pluginRequirements() {
     return Collections.emptyList();
+  }
+
+  /**
+   * Returns icon for decorator language.
+   * This icon is used in places where course is associated with language.
+   * For example, 'Browse Courses' and 'Create New Course' dialogs.
+   *
+   * @return 16x16 icon
+   *
+   * @see CoursesPanel
+   * @see CCNewCoursePanel
+   */
+  @NotNull
+  default Icon getLogo() {
+    return EmptyIcon.ICON_16;
   }
 }

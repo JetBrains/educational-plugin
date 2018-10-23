@@ -8,7 +8,10 @@ import com.jetbrains.edu.python.learning.PyConfigurator;
 import com.jetbrains.edu.python.learning.checkio.checker.PyCheckiOTaskCheckerProvider;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
+import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class PyCheckiOConfigurator extends PyConfigurator implements CheckiOConnectorProvider {
   private final PyCheckiOCourseBuilder myCourseBuilder = new PyCheckiOCourseBuilder();
@@ -30,4 +33,11 @@ public class PyCheckiOConfigurator extends PyConfigurator implements CheckiOConn
   public CheckiOOAuthConnector getOAuthConnector() {
     return PyCheckiOOAuthConnector.getInstance();
   }
+
+  @NotNull
+  @Override
+  public Icon getLogo() {
+    return EducationalCoreIcons.CheckiO;
+  }
+
 }

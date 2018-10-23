@@ -6,8 +6,6 @@
 
     <extensions defaultExtensionNs="Educational">
         <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" courseType="Android"/>
-        <languageDecorator language="kotlin" courseType="Android"
-                           implementationClass="com.jetbrains.edu.android.AndroidLanguageDecorator"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">

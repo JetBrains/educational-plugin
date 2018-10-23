@@ -5,7 +5,10 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase;
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
+import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 public class JConfigurator extends GradleConfiguratorBase {
 
@@ -41,5 +44,11 @@ public class JConfigurator extends GradleConfiguratorBase {
   @Override
   public String getMockTemplate() {
     return FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_JAVA).getText();
+  }
+
+  @NotNull
+  @Override
+  public Icon getLogo() {
+    return EducationalCoreIcons.JavaLogo;
   }
 }
