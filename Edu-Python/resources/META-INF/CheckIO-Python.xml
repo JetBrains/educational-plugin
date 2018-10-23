@@ -12,7 +12,6 @@
                   language="Python" courseType="CheckiO" courseCreatorEnabled="false"/>
     <coursesProvider implementation="com.jetbrains.edu.python.learning.checkio.PyCheckiOCourseProvider"/>
     <optionsProvider instance="com.jetbrains.edu.python.learning.checkio.settings.PyCheckiOOptions"/>
-    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.checkio.PyCheckiOLanguageDecorator" language="Python" courseType="CheckiO"/>
   </extensions>
 
 </idea-plugin>

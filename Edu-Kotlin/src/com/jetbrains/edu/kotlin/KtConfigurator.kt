@@ -3,6 +3,8 @@ package com.jetbrains.edu.kotlin
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.jetbrains.edu.kotlin.checker.KtTaskCheckerProvider
 import com.jetbrains.edu.learning.gradle.GradleConfiguratorBase
+import org.jetbrains.kotlin.idea.KotlinIcons
+import javax.swing.Icon
 
 open class KtConfigurator : GradleConfiguratorBase() {
 
@@ -17,6 +19,7 @@ open class KtConfigurator : GradleConfiguratorBase() {
   override fun getMockTemplate(): String {
     return FileTemplateManager.getDefaultInstance().getInternalTemplate(MOCK_KT).text
   }
+  override fun getLogo(): Icon = KotlinIcons.SMALL_LOGO
 
   companion object {
     const val TESTS_KT = "Tests.kt"
