@@ -18,6 +18,7 @@ import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
 import com.jetbrains.edu.learning.newproject.ui.ErrorMessage
@@ -189,7 +190,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       }
     }
 
-    val configurator = EduConfiguratorManager.forLanguage(courseTypeData.language, courseTypeData.courseType) ?: return
+    val configurator = EduConfiguratorManager.forLanguageAndCourseType(courseTypeData.language, courseTypeData.courseType) ?: return
     myCourse.language = courseTypeData.language.id
     myCourse.courseType = courseTypeData.courseType
     myLanguageSettings = configurator.courseBuilder.languageSettings

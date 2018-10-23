@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -125,7 +126,7 @@ public class CoursesPanel extends JPanel {
 
   private void addCheckiOLoginListener(@NotNull CheckiOCourse selectedCourse) {
     final CheckiOConnectorProvider checkiOConnectorProvider =
-      (CheckiOConnectorProvider) EduConfiguratorManager.forLanguage(selectedCourse.getLanguageById(), selectedCourse.getCourseType());
+      (CheckiOConnectorProvider) EduConfiguratorManager.forLanguageAndCourseType(selectedCourse.getLanguageById(), selectedCourse.getCourseType());
     assert checkiOConnectorProvider != null;
 
     final CheckiOOAuthConnector checkiOOAuthConnector = checkiOConnectorProvider.getOAuthConnector();

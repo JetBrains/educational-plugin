@@ -10,8 +10,8 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -98,7 +98,7 @@ public class StepikTaskBuilder {
     myStepId = stepId;
     myUserId = userId;
     myLanguage = language;
-    myConfigurator = EduConfiguratorManager.forLanguage(myLanguage, EduNames.PYCHARM);
+    myConfigurator = EduConfiguratorManager.forLanguageAndCourseType(myLanguage, EduNames.PYCHARM);
     if (myConfigurator == null) {
       LOG.warn("Cannot get configurator for a language: " + myLanguage);
     }

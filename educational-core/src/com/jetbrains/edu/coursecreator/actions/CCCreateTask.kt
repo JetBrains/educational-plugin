@@ -8,7 +8,7 @@ import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
-import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
@@ -34,7 +34,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
 
   override fun createItemDir(project: Project, item: Task,
                              parentDirectory: VirtualFile, course: Course): VirtualFile? {
-    val configurator = EduConfiguratorManager.forLanguage(course.languageById!!, course.courseType)
+    val configurator = EduConfiguratorManager.forLanguageAndCourseType(course.languageById!!, course.courseType)
     val taskDir = configurator?.courseBuilder?.createTaskContent(project, item, parentDirectory)
     YamlFormatSynchronizer.saveItem(item)
     return taskDir

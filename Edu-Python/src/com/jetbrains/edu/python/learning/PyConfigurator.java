@@ -3,7 +3,7 @@ package com.jetbrains.edu.python.learning;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PlatformUtils;
-import com.jetbrains.edu.learning.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.python.learning.pycharm.PyTaskCheckerProvider;

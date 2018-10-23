@@ -18,8 +18,8 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.*;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
@@ -150,7 +150,7 @@ public class CheckAction extends DumbAwareAction {
       myProject = project;
       myTask = task;
       final Course course = task.getLesson().getCourse();
-      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguage(course.getLanguageById(), course.getCourseType());
+      EduConfigurator<?> configurator = EduConfiguratorManager.forLanguageAndCourseType(course.getLanguageById(), course.getCourseType());
       if (configurator != null) {
         TaskCheckerProvider checkerProvider = configurator.getTaskCheckerProvider();
         myChecker = checkerProvider.getTaskChecker(task, project);

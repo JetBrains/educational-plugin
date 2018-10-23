@@ -62,6 +62,8 @@ import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.settings.CCSettings;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
@@ -228,7 +230,7 @@ public class EduUtils {
     if (language == null) {
       return false;
     }
-    EduConfigurator configurator = EduConfiguratorManager.forLanguage(language, course.getCourseType());
+    EduConfigurator configurator = EduConfiguratorManager.forLanguageAndCourseType(language, course.getCourseType());
     if (configurator == null) {
       return false;
     }
