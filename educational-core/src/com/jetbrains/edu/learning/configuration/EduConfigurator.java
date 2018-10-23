@@ -17,10 +17,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The main interface provides courses support for some language.
+ * The main interface provides courses support for some language and course type.
  *
  * To get configurator instance for some language use {@link EduConfiguratorManager}
- * instead of {@link com.intellij.lang.LanguageExtension} because configurator shouldn't be used in some environments
  * and {@link EduConfiguratorManager} supports the corresponding filtering.
  *
  * @param <Settings> container type holds course project settings state
