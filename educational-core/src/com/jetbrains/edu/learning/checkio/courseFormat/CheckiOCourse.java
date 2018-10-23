@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO;
+
 public class CheckiOCourse extends Course {
   private static final String COURSE_DESCRIPTION =
     "CheckiO is a game where you code in Python or JavaScript.\n" +
@@ -19,6 +21,7 @@ public class CheckiOCourse extends Course {
     setName(name);
     setDescription(COURSE_DESCRIPTION);
     setLanguage(languageID);
+    setCourseType(CHECKIO);
   }
 
   public void addStation(@NotNull CheckiOStation station) {
