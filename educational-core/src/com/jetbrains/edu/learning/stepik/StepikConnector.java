@@ -652,7 +652,7 @@ public class StepikConnector {
     return lessons;
   }
 
-  public static List<StepSource> getStepSources(String[] stepIds, String language) throws URISyntaxException, IOException {
+  public static List<StepSource> getStepSources(String[] stepIds, @Nullable String language) throws URISyntaxException, IOException {
     Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
     List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class, params);
     return stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
@@ -784,7 +784,7 @@ public class StepikConnector {
   }
 
   @Nullable
-  static Reply getLastSubmission(@NotNull String stepId, boolean isSolved, String language) throws IOException {
+  static Reply getLastSubmission(@NotNull String stepId, boolean isSolved, @Nullable String language) throws IOException {
     try {
       URI url = new URIBuilder(StepikNames.SUBMISSIONS)
         .addParameter("order", "desc")

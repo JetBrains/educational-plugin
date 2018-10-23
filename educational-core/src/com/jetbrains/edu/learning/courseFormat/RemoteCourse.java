@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class RemoteCourse extends Course {
   }
 
   @Override
-  public void setLanguage(@NotNull final String language) {
+  public void setLanguage(@Nullable final String language) {
     super.setLanguage(language);
     updateType(language);
   }
@@ -90,7 +91,7 @@ public class RemoteCourse extends Course {
     this.id = id;
   }
 
-  private void updateType(String language) {
+  private void updateType(@Nullable String language) {
     final int separator = myType.indexOf(" ");
     final String version;
     if (separator == -1) {
