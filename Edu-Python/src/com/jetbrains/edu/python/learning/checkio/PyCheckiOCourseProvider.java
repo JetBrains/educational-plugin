@@ -10,14 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-import static com.jetbrains.edu.learning.checkio.utils.CheckiONames.CHECKIO;
-
 public class PyCheckiOCourseProvider implements CoursesProvider {
   @NotNull
   @Override
   public List<Course> loadCourses() {
-    final CheckiOCourse course = new CheckiOCourse(PyCheckiONames.PY_CHECKIO, EduNames.PYTHON);
-    course.setCourseType(CHECKIO);
-    return Collections.singletonList(course);
+    return Collections.singletonList(new CheckiOCourse(PyCheckiONames.PY_CHECKIO, EduNames.PYTHON));
   }
 }
