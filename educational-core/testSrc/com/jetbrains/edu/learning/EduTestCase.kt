@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
 import com.intellij.openapi.fileEditor.impl.EditorHistoryManager
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
+import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -50,6 +51,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     val dockManager = DockManager.getInstance(myFixture.project)
     myOldDockContainers = dockManager.containers
     myManager = FileEditorManagerImpl(myFixture.project, dockManager)
+    // Copied from TestEditorManagerImpl's constructor
+    myManager.registerExtraEditorDataProvider(TextEditorPsiDataProvider(), null)
     myOldManager = (myFixture.project as ComponentManagerImpl).registerComponentInstance<FileEditorManager>(FileEditorManager::class.java, myManager)
     (FileEditorProviderManager.getInstance() as FileEditorProviderManagerImpl).clearSelectedProviders()
   }

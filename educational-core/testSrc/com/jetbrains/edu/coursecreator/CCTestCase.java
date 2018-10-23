@@ -6,12 +6,20 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.components.impl.ComponentManagerImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager;
+import com.intellij.openapi.fileEditor.impl.EditorHistoryManager;
+import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
+import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl;
+import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.openapi.ui.AbstractPainter;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
@@ -20,6 +28,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.TestActionEvent;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.ui.docking.DockContainer;
+import com.intellij.ui.docking.DockManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.NewPlaceholderPainter;
@@ -36,15 +46,17 @@ import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// TODO: merge it with EduTestCase
 public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase {
   private static final Logger LOG = Logger.getInstance(CCTestCase.class);
+
+  private FileEditorManagerImpl myManager;
+  private FileEditorManager myOldManager;
+  private Set<DockContainer> myOldDockContainers;
 
   @Nullable
   public static AbstractPainter getPainter(AnswerPlaceholder placeholder) {
@@ -99,6 +111,15 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   @Override
   protected void setUp() throws Exception {
     super.setUp();
+
+    DockManager dockManager = DockManager.getInstance(myFixture.getProject());
+    myOldDockContainers = dockManager.getContainers();
+    myManager = new FileEditorManagerImpl(myFixture.getProject(), dockManager);
+    // Copied from TestEditorManagerImpl's constructor
+    myManager.registerExtraEditorDataProvider(new TextEditorPsiDataProvider(), null);
+    myOldManager = ((ComponentManagerImpl)myFixture.getProject()).registerComponentInstance(FileEditorManager.class, myManager);
+    ((FileEditorProviderManagerImpl)FileEditorProviderManager.getInstance()).clearSelectedProviders();
+
     Course course = new Course();
     course.setName("test course");
     course.setLanguage(PlainTextLanguage.INSTANCE.getID());
@@ -128,6 +149,26 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
         }
       }
     });
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    try {
+      DockManager.getInstance(myFixture.getProject()).getContainers()
+        .stream()
+        .filter(container -> !myOldDockContainers.contains(container))
+        .forEach(container -> Disposer.dispose(container));
+
+      ((ComponentManagerImpl)myFixture.getProject()).registerComponentInstance(FileEditorManager.class, myOldManager);
+      myManager.closeAllFiles();
+      for (VirtualFile file : EditorHistoryManager.getInstance(myFixture.getProject()).getFiles()) {
+        EditorHistoryManager.getInstance(myFixture.getProject()).removeFile(file);
+      }
+
+      ((FileEditorProviderManagerImpl)FileEditorProviderManager.getInstance()).clearSelectedProviders();
+    } finally {
+      super.tearDown();
+    }
   }
 
   protected VirtualFile copyFileToTask(String name) {
