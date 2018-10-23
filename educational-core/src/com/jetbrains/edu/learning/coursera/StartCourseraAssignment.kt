@@ -8,7 +8,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.platform.templates.github.DownloadUtil
 import com.jetbrains.edu.learning.CoursesProvider
-import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseLoading.CourseLoader
@@ -44,7 +44,7 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
           continue
         }
         val language = Language.findLanguageByID(localCourse.languageID) ?: continue
-        if (EduConfiguratorManager.forLanguage(language, localCourse.courseType) == null) {
+        if (EduConfiguratorManager.forLanguageAndCourseType(language, localCourse.courseType) == null) {
           continue
         }
         localCourse.courseType = CourseraNames.COURSE_TYPE

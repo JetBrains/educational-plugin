@@ -4,7 +4,7 @@ import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.MessageType.ERROR
 import com.intellij.openapi.ui.MessageType.WARNING
-import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -61,7 +61,7 @@ sealed class ErrorState(
       if (course == null) return listOf()
       val language = course.languageById
       if (language == null) return listOf()
-      return EduConfiguratorManager.forLanguage(language, course.courseType)?.pluginRequirements().orEmpty()
+      return EduConfiguratorManager.forLanguageAndCourseType(language, course.courseType)?.pluginRequirements().orEmpty()
     }
 
     @JvmStatic
@@ -87,7 +87,7 @@ sealed class ErrorState(
     private fun isCheckiOLoginRequired(selectedCourse: Course): Boolean {
       if (selectedCourse is CheckiOCourse) {
         val checkiOConnectorProvider =
-          EduConfiguratorManager.forLanguage(selectedCourse.languageById, selectedCourse.courseType) as CheckiOConnectorProvider
+          EduConfiguratorManager.forLanguageAndCourseType(selectedCourse.languageById, selectedCourse.courseType) as CheckiOConnectorProvider
         val checkiOAccount = checkiOConnectorProvider.oAuthConnector.account
         return checkiOAccount == null
       }

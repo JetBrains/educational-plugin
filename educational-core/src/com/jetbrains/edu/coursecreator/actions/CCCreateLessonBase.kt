@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
-import com.jetbrains.edu.learning.EduConfiguratorManager
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
@@ -29,7 +29,7 @@ abstract class CCCreateLessonBase<Item : Lesson>(itemType: StudyItemType, icon: 
 
   override fun createItemDir(project: Project, item: Item,
                              parentDirectory: VirtualFile, course: Course): VirtualFile? {
-    val configurator = EduConfiguratorManager.forLanguage(course.languageById, course.courseType)
+    val configurator = EduConfiguratorManager.forLanguageAndCourseType(course.languageById, course.courseType)
     if (configurator == null) {
       LOG.info("Failed to get configurator for " + course.languageID)
       return null

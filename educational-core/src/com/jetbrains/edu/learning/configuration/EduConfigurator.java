@@ -1,10 +1,13 @@
-package com.jetbrains.edu.learning;
+package com.jetbrains.edu.learning.configuration;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
+import com.jetbrains.edu.learning.EduCourseBuilder;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
 import kotlin.collections.CollectionsKt;

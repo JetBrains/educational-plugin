@@ -9,8 +9,8 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
-import com.jetbrains.edu.learning.EduConfigurator;
-import com.jetbrains.edu.learning.EduConfiguratorManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -47,7 +47,7 @@ public class CCNode extends DirectoryNode {
       if (course == null) {
         return null;
       }
-      EduConfigurator configurator = EduConfiguratorManager.forLanguage(course.getLanguageById(), course.getCourseType());
+      EduConfigurator configurator = EduConfiguratorManager.forLanguageAndCourseType(course.getLanguageById(), course.getCourseType());
       if (configurator == null) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, myViewSettings);
       }

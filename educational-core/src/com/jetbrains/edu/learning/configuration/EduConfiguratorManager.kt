@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning
+package com.jetbrains.edu.learning.configuration
 
 import com.intellij.lang.Language
 import com.intellij.openapi.extensions.Extensions
@@ -6,12 +6,12 @@ import com.intellij.openapi.extensions.Extensions
 object EduConfiguratorManager {
 
   /**
-   * Returns any enabled [EduConfigurator] for given language
+   * Returns any enabled [EduConfigurator] for given language and courseType
    */
   @JvmStatic
-  fun forLanguage(language: Language, courseType: String): EduConfigurator<out Any>? =
+  fun forLanguageAndCourseType(courseType: String, language: Language): EduConfigurator<out Any>? =
           allExtensions().find { extension -> extension.language == language.id &&
-                                 extension.courseType == courseType}?.instance
+                                              extension.courseType == courseType}?.instance
 
   /**
    * Returns all extension points of [EduConfigurator] where instance of [EduConfigurator] is enabled

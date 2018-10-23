@@ -6,6 +6,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.coursecreator.ui.CCNewCoursePanel;
+import com.jetbrains.edu.learning.configuration.EducationalExtensionPoint;
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -22,6 +22,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
@@ -527,7 +529,7 @@ public class CCStepikConnector {
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
 
     final Language language = lesson.getCourse().getLanguageById();
-    final EduConfigurator configurator = EduConfiguratorManager.forLanguage(language, lesson.getCourse().getCourseType());
+    final EduConfigurator configurator = EduConfiguratorManager.forLanguageAndCourseType(language, lesson.getCourse().getCourseType());
     if (configurator == null) return false;
     final String[] requestBody = new String[1];
     ApplicationManager.getApplication().invokeAndWait(() -> {
