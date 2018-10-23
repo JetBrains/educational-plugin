@@ -9,10 +9,12 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.projectView.TaskNode;
@@ -56,7 +58,7 @@ public class CCTaskNode extends TaskNode {
       if (course == null) {
         return null;
       }
-      EduConfigurator configurator = EduConfiguratorManager.forLanguageAndCourseType(course.getLanguageById(), course.getCourseType());
+      EduConfigurator configurator = CourseExt.getConfigurator(course);
       if (configurator == null) {
         return new CCStudentInvisibleFileNode(myProject, psiFile, getSettings());
       }
