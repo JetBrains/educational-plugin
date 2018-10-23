@@ -15,8 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import javax.swing.Icon
 
 val Course.configurator: EduConfigurator<*>? get() {
-  val language = languageById ?: return null
-  return EduConfiguratorManager.forLanguageAndCourseType(courseType, language)
+  return EduConfiguratorManager.forLanguageAndCourseType(courseType, languageById)
 }
 
 val Course.sourceDir: String? get() = configurator?.sourceDir
