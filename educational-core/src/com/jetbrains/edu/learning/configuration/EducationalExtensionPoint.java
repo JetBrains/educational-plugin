@@ -19,6 +19,9 @@ public class EducationalExtensionPoint<T> extends AbstractExtensionPointBean {
   @Attribute("courseType")
   public String courseType = EduNames.PYCHARM;
 
+  @Attribute("courseCreatorEnabled")
+  public boolean courseCreatorEnabled = true;
+
   private final AtomicNotNullLazyValue<T> myInstanceHolder = new AtomicNotNullLazyValue<T>() {
     @NotNull
     @Override
