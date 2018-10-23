@@ -20,7 +20,7 @@ fun showNotification(student : Boolean, course: Course, project: Project) {
       .replace("\$MODE", if (course.courseMode == EduNames.STUDY) "Learner" else "Educator")
 
   val product = if (PlatformUtils.isPyCharmEducational()) "PyCharm Edu" else "EduTools"
-  val language = course.languageID
+  val language = course.languageID ?: "Android"    // TODO: send course type
 
   var content = if (student) studentTemplate else creatorTemplate
 

@@ -6,6 +6,7 @@ import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.jetbrains.edu.learning.EduNames;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EducationalExtensionPoint<T> extends AbstractExtensionPointBean {
   public static final String EP_NAME = "Educational.configurator";
@@ -14,7 +15,8 @@ public class EducationalExtensionPoint<T> extends AbstractExtensionPointBean {
   public String implementationClass;
 
   @Attribute("language")
-  public String language = "";
+  @Nullable
+  public String language = null;
 
   @Attribute("courseType")
   public String courseType = EduNames.PYCHARM;

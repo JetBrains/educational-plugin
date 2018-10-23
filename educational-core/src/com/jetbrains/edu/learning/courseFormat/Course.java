@@ -27,7 +27,7 @@ public class Course extends ItemContainer {
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
 
-  @Expose @SerializedName("programming_language") private String myProgrammingLanguage = EduNames.PYTHON;
+  @Nullable @Expose @SerializedName("programming_language") private String myProgrammingLanguage = null;
   @Expose @SerializedName("language") private String myLanguageCode = "en";
 
   // flag for distinguishing courses imported from zip from Stepik courses
@@ -199,16 +199,18 @@ public class Course extends ItemContainer {
     return myProgrammingLanguage;
   }
 
-  public void setLanguage(@NotNull final String language) {
+  public void setLanguage(@Nullable final String language) {
     myProgrammingLanguage = language;
   }
 
+  @Nullable
   public String getLanguageID() {
-    return myProgrammingLanguage.split(" ")[0];
+    return myProgrammingLanguage == null ? null : myProgrammingLanguage.split(" ")[0];
   }
 
   @Nullable
   public String getLanguageVersion() {
+    if (myProgrammingLanguage == null) return null;
     String[] split = myProgrammingLanguage.split(" ");
     if (split.length <= 1) {
       return null;
@@ -281,6 +283,7 @@ public class Course extends ItemContainer {
     return loc.getDisplayName();
   }
 
+  @SuppressWarnings("unused") // used for serialization
   public String getLanguageCode() {
     return myLanguageCode;
   }
