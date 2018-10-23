@@ -34,6 +34,24 @@ class EduEditorState(
     targetElement.addContent(splitEditorState)
   }
 
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as EduEditorState
+
+    if (mainEditorState != other.mainEditorState) return false
+    if (secondaryEditorState != other.secondaryEditorState) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result = mainEditorState?.hashCode() ?: 0
+    result = 31 * result + (secondaryEditorState?.hashCode() ?: 0)
+    return result
+  }
+
   companion object {
     private const val SPLIT_EDITOR_STATE = "EduEditorState"
     private const val MAIN_EDITOR_STATE = "MainEditorState"
