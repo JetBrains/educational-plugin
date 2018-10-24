@@ -8,14 +8,16 @@ import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
+import com.jetbrains.edu.learning.FileInfo
+import com.jetbrains.edu.learning.FileKind.*
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.AdditionalFile
 import com.jetbrains.edu.learning.courseFormat.StudyFile
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
+import com.jetbrains.edu.learning.fileInfo
 import com.jetbrains.edu.learning.handlers.EduVirtualFileListener
-import com.jetbrains.edu.learning.handlers.EduVirtualFileListener.FileKind.*
 
 class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) {
 

@@ -232,10 +232,20 @@ public class EduUtils {
     EduConfigurator<?> configurator = CourseExt.getConfigurator(task.getCourse());
     if (configurator == null) return false;
     if (configurator.excludeFromArchive(project, file)) return false;
+    return !belongToTask(project, file);
+  }
+
+  /**
+   * @return true, if some task contains given {@code file} as task, test or additional file.
+   * Otherwise, returns false
+   */
+  public static boolean belongToTask(@NotNull Project project, @NotNull VirtualFile file) {
+    Task task = getTaskForFile(project, file);
+    if (task == null) return false;
     String relativePath = pathRelativeToTask(project, file);
-    return task.getTaskFile(relativePath) == null &&
-           task.getTestsText().get(relativePath) == null &&
-           task.getAdditionalFiles().get(relativePath) == null;
+    return task.getTaskFile(relativePath) != null ||
+           task.getTestsText().get(relativePath) != null ||
+           task.getAdditionalFiles().get(relativePath) != null;
   }
 
   public static boolean isTestsFile(@NotNull Project project, @NotNull VirtualFile file) {

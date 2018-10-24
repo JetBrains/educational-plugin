@@ -1,144 +1,47 @@
 package com.jetbrains.edu.coursecreator.actions.taskFile
 
-import com.intellij.ide.projectView.ProjectView
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.AdditionalFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
-import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 class CCMakeVisibleToStudent : CCChangeFileVisibility("Make Visible to Student", true)
 class CCHideFromStudent : CCChangeFileVisibility("Hide from Student", false)
 
-abstract class CCChangeFileVisibility(val name: String, val requiredVisibility: Boolean) : DumbAwareAction(name) {
+abstract class CCChangeFileVisibility(val name: String, val requiredVisibility: Boolean) : CCChangeFilePropertyActionBase(name) {
 
-  override fun actionPerformed(e: AnActionEvent) {
-    val project = e.project ?: return
-    val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext)?.toList() ?: return
-    val configurator = StudyTaskManager.getInstance(project).course?.configurator ?: return
-
-    val affectedFiles = mutableListOf<VirtualFile>()
-    val states = mutableListOf<State>()
-    val tasks = mutableSetOf<Task>()
-
-    fun collect(files: List<VirtualFile>) {
-      for (file in files) {
-        if (configurator.excludeFromArchive(project, file)) continue
-        val task = EduUtils.getTaskForFile(project, file) ?: return
-        if (file.isDirectory) {
-          collect(VfsUtil.collectChildrenRecursively(file).filter { !it.isDirectory })
-        } else {
-          affectedFiles += file
-        }
-        val taskRelativePath = EduUtils.pathRelativeToTask(project, file)
-        val taskFile = task.getTaskFile(taskRelativePath)
-        if (taskFile != null) {
-          states += TaskFileState(taskFile, file)
-          tasks += task
-        } else {
-          val additionalFile = task.additionalFiles[taskRelativePath]
-          if (additionalFile != null) {
-            states += AdditionalFileState(additionalFile)
-            tasks += task
-          }
-        }
+  override fun createStateForFile(project: Project, task: Task, file: VirtualFile): State? {
+    val taskRelativePath = EduUtils.pathRelativeToTask(project, file)
+    val taskFile = task.getTaskFile(taskRelativePath)
+    if (taskFile != null) {
+      return TaskFileState(taskFile, file, requiredVisibility)
+    } else {
+      val additionalFile = task.additionalFiles[taskRelativePath]
+      if (additionalFile != null) {
+        return AdditionalFileState(additionalFile, requiredVisibility)
       }
     }
-
-    collect(virtualFiles)
-    tasks.mapTo(states) { TaskState(it) }
-
-    val action = ChangeVisibilityUndoableAction(project, states, tasks, requiredVisibility, affectedFiles)
-    EduUtils.runUndoableAction(project, name, action)
+    return null
   }
 
-  override fun update(e: AnActionEvent) {
-    val project = e.project
-    val presentation = e.presentation
-    presentation.isEnabledAndVisible = false
-
-    if (project == null || !CCUtils.isCourseCreator(project)) return
-    val virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.dataContext).orEmpty()
-
-    presentation.isEnabledAndVisible = when (virtualFiles.size) {
-      0 -> false
-      1 -> isAvailableForFile(project, virtualFiles.single())
-      else -> virtualFiles.all { isAvailableForFile(project, it) }
-    }
-  }
-
-  private fun isAvailableForFile(project: Project, file: VirtualFile): Boolean {
-    val task = EduUtils.getTaskForFile(project, file) ?: return false
-    return if (file.isDirectory) {
-      // Recursive check is too expensive for `update` method
-      // so we allow this action for directories
-      true
-    } else {
-      val path = EduUtils.pathRelativeToTask(project, file)
-      val visibleFile = task.getTaskFile(path) ?: task.additionalFiles[path]
-      visibleFile?.isVisible == !requiredVisibility
-    }
-  }
-
-  private class ChangeVisibilityUndoableAction(
-    private val project: Project,
-    private val states: List<State>,
-    private val affectedTasks: Collection<Task>,
-    private val visibility: Boolean,
-    files: List<VirtualFile>
-  ) : BasicUndoableAction(*files.toTypedArray()) {
-
-    override fun redo() = doAction { it.changeState(project, visibility) }
-    override fun undo() = doAction { it.restoreState(project) }
-
-    private inline fun doAction(changeState: (State) -> Unit) {
-      states.forEach(changeState)
-      ProjectView.getInstance(project).refresh()
-      affectedTasks.forEach(YamlFormatSynchronizer::saveItem)
-    }
-
-    override fun isGlobal(): Boolean = true
+  override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean {
+    val path = EduUtils.pathRelativeToTask(project, file)
+    val visibleFile = task.getTaskFile(path) ?: task.additionalFiles[path]
+    return visibleFile?.isVisible == !requiredVisibility
   }
 }
 
-private sealed class State {
-  abstract fun changeState(project: Project, isVisible: Boolean)
-  abstract fun restoreState(project: Project)
-}
-
-private class TaskState(val task: Task) : State() {
-
-  val initialStepikStatus: StepikChangeStatus = task.stepikChangeStatus
-
-  override fun changeState(project: Project, isVisible: Boolean) {
-    StepikCourseChangeHandler.changed(task)
-  }
-
-  override fun restoreState(project: Project) {
-    task.stepikChangeStatus = initialStepikStatus
-  }
-}
-
-private class AdditionalFileState(val file: AdditionalFile) : State() {
+private class AdditionalFileState(val file: AdditionalFile, val visibility: Boolean) : State {
 
   val initialVisibility: Boolean = file.isVisible
 
-  override fun changeState(project: Project, isVisible: Boolean) {
-    file.isVisible = isVisible
+  override fun changeState(project: Project) {
+    file.isVisible = visibility
   }
 
   override fun restoreState(project: Project) {
@@ -148,15 +51,16 @@ private class AdditionalFileState(val file: AdditionalFile) : State() {
 
 private class TaskFileState(
   val taskFile: TaskFile,
-  val file: VirtualFile
-) : State() {
+  val file: VirtualFile,
+  val visibility: Boolean
+) : State {
 
   val initialVisibility: Boolean = taskFile.isVisible
   val placeholders: List<AnswerPlaceholder> = taskFile.answerPlaceholders
 
-  override fun changeState(project: Project, isVisible: Boolean) {
-    taskFile.isVisible = isVisible
-    onVisibilityChange(project, taskFile, file, isVisible)
+  override fun changeState(project: Project) {
+    taskFile.isVisible = visibility
+    onVisibilityChange(project, taskFile, file, visibility)
     taskFile.answerPlaceholders = mutableListOf()
   }
 
