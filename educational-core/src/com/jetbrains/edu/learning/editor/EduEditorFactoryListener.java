@@ -15,7 +15,6 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
-import com.jetbrains.edu.learning.EduDocumentListener;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.NewPlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -33,13 +32,9 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFa
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
-
-  private static final Map<Document, EduDocumentListenerHolder> ourDocumentListeners = new HashMap<>();
 
   private TaskFile myTaskFile;
 
@@ -95,8 +90,6 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
           StepikConnector.postTheory(task, project);
         }
 
-        addDocumentListener(document, new EduDocumentListener(project, myTaskFile));
-
         boolean isStudyProject = course.isStudy();
         if (!myTaskFile.getAnswerPlaceholders().isEmpty() && myTaskFile.isValid(editor.getDocument().getText())) {
           PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
@@ -114,8 +107,6 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
   @Override
   public void editorReleased(@NotNull EditorFactoryEvent event) {
     final Editor editor = event.getEditor();
-    final Document document = editor.getDocument();
-    removeDocumentListener(document);
     if (myTaskFile != null) {
       final List<AnswerPlaceholder> placeholders = myTaskFile.getAnswerPlaceholders();
       for (AnswerPlaceholder placeholder : placeholders) {
@@ -123,42 +114,5 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       }
     }
     editor.getSelectionModel().removeSelection();
-  }
-
-  public static void addDocumentListener(@NotNull final Document document, @NotNull final EduDocumentListener listener) {
-    // We can have some editors for the same document because there are several editor types (`EduSingleFileEditor` and `EduSplitEditor`)
-    // so after new editor creation we can already have listener for the document.
-    // In this case we shouldn't add new listener because it will duplicate all actions in it
-    EduDocumentListenerHolder listenerHolder = ourDocumentListeners.get(document);
-    if (listenerHolder == null) {
-      document.addDocumentListener(listener);
-      ourDocumentListeners.put(document, new EduDocumentListenerHolder(listener));
-    } else {
-      listenerHolder.myCount++;
-    }
-  }
-
-  public static void removeDocumentListener(@NotNull Document document) {
-    final EduDocumentListenerHolder listenerHolder = ourDocumentListeners.get(document);
-    if (listenerHolder == null) return;
-    listenerHolder.myCount--;
-    if (listenerHolder.myCount == 0) {
-      document.removeDocumentListener(listenerHolder.myListener);
-      ourDocumentListeners.remove(document);
-    }
-  }
-
-  public static boolean hasDocumentListener(@NotNull final Document document) {
-    return ourDocumentListeners.containsKey(document);
-  }
-
-  private static class EduDocumentListenerHolder {
-    final EduDocumentListener myListener;
-    int myCount;
-
-    public EduDocumentListenerHolder(@NotNull EduDocumentListener listener) {
-      myListener = listener;
-      myCount = 1;
-    }
   }
 }
