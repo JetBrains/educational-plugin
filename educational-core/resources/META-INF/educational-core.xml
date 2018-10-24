@@ -126,6 +126,8 @@
       <action id="Educational.Educator.CCWrapWithSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection"/>
       <action id="Educational.Educator.CCRemoveSection" class="com.jetbrains.edu.coursecreator.actions.sections.CCRemoveSection"
       use-shortcut-of="$Delete"/>
+      <action id="Educational.Educator.IncludeIntoTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCIncludeIntoTask"/>
+      <action id="Educational.Educator.ExcludeFromTask" class="com.jetbrains.edu.coursecreator.actions.taskFile.CCExcludeFromTask"/>
       <separator/>
       <reference id="Educational.Educator.CreateCoursePreview"/>
       <reference id="Educational.Educator.ChangeCourseInfo"/>
