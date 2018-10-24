@@ -1,7 +1,6 @@
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.command.undo.UndoManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
@@ -9,9 +8,6 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.actions.taskFile.CCChangeFileVisibility
-import com.jetbrains.edu.coursecreator.actions.taskFile.CCHideFromStudent
-import com.jetbrains.edu.coursecreator.actions.taskFile.CCMakeVisibleToStudent
 import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.courseFormat.*
@@ -163,17 +159,6 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
         }
       }
       assertEquals(stepikInitialStatus, task.stepikChangeStatus)
-    }
-  }
-
-  private fun checkActionEnabled(presentation: Presentation, shouldBeEnabled: Boolean) {
-    if (presentation.isEnabledAndVisible != shouldBeEnabled) {
-      val message = if (shouldBeEnabled) {
-        "`${presentation.text}` action is not enabled as expected"
-      } else {
-        "`${presentation.text}` action is not disabled as expected"
-      }
-      error(message)
     }
   }
 }

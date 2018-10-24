@@ -9,7 +9,10 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListenerTest.FileSetKind.*
+import com.jetbrains.edu.coursecreator.FileCheck
+import com.jetbrains.edu.coursecreator.FileSetKind.*
+import com.jetbrains.edu.coursecreator.`in`
+import com.jetbrains.edu.coursecreator.notIn
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduTestDialog
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -546,39 +549,4 @@ class CCVirtualFileListenerTest : EduTestCase() {
 
     checksProducer(course).forEach(FileCheck::check)
   }
-  
-  private enum class FileSetKind(val fileSetName: String) {
-    TASK_FILES("task files"),
-    TEST_FILES("test files"),
-    ADDITIONAL_FILES("additional files");
-    
-    fun fileSet(task: Task): Map<String, Any> = when (this) {
-      TASK_FILES -> task.taskFiles
-      TEST_FILES -> task.testsText
-      ADDITIONAL_FILES -> task.additionalFiles
-    }
-  }
-
-  private data class FileCheck(
-    val task: Task,
-    val path: String,
-    val kind: FileSetKind,
-    val shouldContain: Boolean
-  ) {
-    fun invert(): FileCheck = copy(shouldContain = !shouldContain)
-    fun check() {
-      if (shouldContain) {
-        check(path in kind.fileSet(task)) {
-          "`$path` should be in ${kind.fileSetName} of `${task.name}` task"
-        }
-      } else {
-        check(path !in kind.fileSet(task)) {
-          "`$path` shouldn't be in ${kind.fileSetName} of `${task.name}` task"
-        }
-      }
-    }
-  }
-
-  private infix fun Pair<String, FileSetKind>.`in`(task: Task): FileCheck = FileCheck(task, first, second, true)
-  private infix fun Pair<String, FileSetKind>.notIn(task: Task): FileCheck = FileCheck(task, first, second, false)
 }

@@ -11,14 +11,14 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane
 
 abstract class EduActionTestCase : EduTestCase() {
 
-  fun dataContext(files: Array<VirtualFile>): DataContext {
+  protected fun dataContext(files: Array<VirtualFile>): DataContext {
     return MapDataContext().apply {
       put(CommonDataKeys.PROJECT, project)
       put(CommonDataKeys.VIRTUAL_FILE_ARRAY, files)
     }
   }
 
-  fun dataContext(file: VirtualFile): DataContext {
+  protected fun dataContext(file: VirtualFile): DataContext {
     val psiManager = PsiManager.getInstance(project)
     val psiFile = psiManager.findDirectory(file) ?: psiManager.findFile(file)
     val studyItem = findStudyItem(file)
@@ -49,12 +49,23 @@ abstract class EduActionTestCase : EduTestCase() {
     return studyItem
   }
 
-  fun testAction(context: DataContext, action: AnAction, runAction: Boolean = true): Presentation {
+  protected fun testAction(context: DataContext, action: AnAction, runAction: Boolean = true): Presentation {
     val e = TestActionEvent(context, action)
     action.beforeActionPerformedUpdate(e)
     if (e.presentation.isEnabledAndVisible && runAction) {
       action.actionPerformed(e)
     }
     return e.presentation
+  }
+
+  protected fun checkActionEnabled(presentation: Presentation, shouldBeEnabled: Boolean) {
+    if (presentation.isEnabledAndVisible != shouldBeEnabled) {
+      val message = if (shouldBeEnabled) {
+        "`${presentation.text}` action is not enabled as expected"
+      } else {
+        "`${presentation.text}` action is not disabled as expected"
+      }
+      error(message)
+    }
   }
 }
