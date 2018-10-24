@@ -56,7 +56,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.PlatformUtils;
-import com.intellij.util.Time;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.io.zip.JBZipEntry;
 import com.intellij.util.io.zip.JBZipFile;
@@ -85,6 +84,7 @@ import org.intellij.markdown.parser.MarkdownParser;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.SystemIndependent;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -575,14 +575,12 @@ public class EduUtils {
     if (course == null) return null;
     Lesson lesson = course.getLessons().get(lessonIndex - 1);
     Task task = lesson.getTaskList().get(taskIndex - 1);
-    String filePath = FileUtil.join(project.getBasePath(), lesson.getName(), task.getName(), fileName);
+    @SystemIndependent String basePath = project.getBasePath();
+    if (basePath == null) return null;
+    String filePath = FileUtil.join(basePath, lesson.getName(), task.getName(), fileName);
 
     VirtualFile taskFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     return taskFile == null ? null : FileDocumentManager.getInstance().getDocument(taskFile);
-  }
-
-  public static void showErrorPopupOnToolbar(@NotNull Project project, String content) {
-    showBalloon(content, MessageType.ERROR, project);
   }
 
   public static void selectFirstAnswerPlaceholder(@Nullable final EduEditor eduEditor, @NotNull final Project project) {
@@ -1000,10 +998,5 @@ public class EduUtils {
   public static Section getSection(@NotNull VirtualFile sectionDir, @NotNull final Course course) {
     if (!sectionDir.isDirectory()) return null;
     return course.getSection(sectionDir.getName());
-  }
-
-  public static boolean isAfter(Date date, Date date2) {
-    long diff = date.getTime() - date2.getTime();
-    return diff > Time.MINUTE;
   }
 }
