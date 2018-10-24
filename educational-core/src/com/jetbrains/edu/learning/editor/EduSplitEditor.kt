@@ -11,7 +11,6 @@ import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.courseFormat.TaskFile
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import java.awt.BorderLayout
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -22,14 +21,12 @@ import javax.swing.JPanel
 
 class EduSplitEditor(
   private val project: Project,
-  private val mainEditorData: EditorData<EduEditor>,
-  private val secondaryEditorData: EditorData<FileEditor>
-) : EduEditor by mainEditorData.editor {
+  private val mainEditor: EduEditor,
+  private val secondaryEditor: FileEditor,
+  private val secondaryTaskFile: TaskFile
+) : EduEditor by mainEditor {
 
   private var component: JComponent? = null
-
-  private val mainEditor = mainEditorData.editor
-  private val secondaryEditor = secondaryEditorData.editor
 
   override fun getName(): String = "EduSplitEditor"
 
@@ -39,15 +36,15 @@ class EduSplitEditor(
     val splitter = JBSplitter(false, 0.5f, 0.15f, 0.85f)
 
     splitter.splitterProportionKey = "EduSplitEditor.SplitterProportionKey"
-    splitter.firstComponent = EditorComponent(secondaryEditorData).apply {
+    splitter.firstComponent = EditorComponent(secondaryEditor, secondaryTaskFile).apply {
       label.addMouseListener(object : MouseAdapter() {
         override fun mouseClicked(e: MouseEvent) {
-          val file = secondaryEditorData.taskFile.getVirtualFile(project) ?: return
+          val file = secondaryEditor.file ?: return
           FileEditorManager.getInstance(project).openFile(file, true)
         }
       })
     }
-    splitter.secondComponent = EditorComponent(mainEditorData)
+    splitter.secondComponent = EditorComponent(mainEditor, mainEditor.taskFile)
     return JBUI.Panels.simplePanel(splitter).apply {
       component = this
     }
@@ -97,21 +94,16 @@ class EduSplitEditor(
     Disposer.dispose(secondaryEditor)
   }
 
-  data class EditorData<T : FileEditor>(
-    val editor: T,
-    val taskFile: TaskFile
-  )
-
-  private class EditorComponent(editorData: EditorData<out FileEditor>): JPanel(BorderLayout()) {
+  private class EditorComponent(fileEditor: FileEditor, taskFile: TaskFile): JPanel(BorderLayout()) {
 
     val label: JLabel
 
     init {
-      label = JBLabel(editorData.taskFile.task.name).apply {
+      label = JBLabel(taskFile.task.name).apply {
         border = JBUI.Borders.empty(8)
       }
       add(BorderLayout.NORTH, label)
-      add(BorderLayout.CENTER, editorData.editor.component)
+      add(BorderLayout.CENTER, fileEditor.component)
     }
   }
 }

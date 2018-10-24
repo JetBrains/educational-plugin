@@ -30,9 +30,9 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
       if (prevTaskFile != null && taskDir != null) {
         val prevTaskVirtualFile = EduUtils.findTaskFileInDir(prevTaskFile, taskDir)
         if (prevTaskVirtualFile != null) {
-          val previousTaskFileEditor = defaultTextEditorProvider.createEditor(project, prevTaskVirtualFile)
-          if (previousTaskFileEditor is TextEditor) {
-            val editor = previousTaskFileEditor.editor as? EditorEx
+          val prevTaskFileEditor = defaultTextEditorProvider.createEditor(project, prevTaskVirtualFile)
+          if (prevTaskFileEditor is TextEditor) {
+            val editor = prevTaskFileEditor.editor as? EditorEx
             if (editor != null) {
               editor.isViewer = true
               editor.setCaretVisible(false)
@@ -41,13 +41,14 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
           }
           return EduSplitEditor(
             project,
-            EduSplitEditor.EditorData(EduSingleFileEditor(project, file), taskFile),
-            EduSplitEditor.EditorData(previousTaskFileEditor, prevTaskFile)
+            EduSingleFileEditor(project, file, taskFile),
+            prevTaskFileEditor,
+            prevTaskFile
           )
         }
       }
     }
-    return EduSingleFileEditor(project, file)
+    return EduSingleFileEditor(project, file, taskFile)
   }
 
   override fun disposeEditor(editor: FileEditor) {

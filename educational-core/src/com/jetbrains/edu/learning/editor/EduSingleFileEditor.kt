@@ -11,7 +11,6 @@ import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduDocumentListener
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager
@@ -26,10 +25,11 @@ import javax.swing.SwingConstants
  *
  * @see [EduFileEditorProvider]
  */
-class EduSingleFileEditor(project: Project, file: VirtualFile) : PsiAwareTextEditorImpl(project, file, TextEditorProvider.getInstance()),
-                                                                 EduEditor {
-
-  override val taskFile: TaskFile = EduUtils.getTaskFile(project, file) ?: error("Can't find task file for `$file`")
+class EduSingleFileEditor(
+  project: Project,
+  file: VirtualFile,
+  override val taskFile: TaskFile
+) : PsiAwareTextEditorImpl(project, file, TextEditorProvider.getInstance()), EduEditor {
 
   private val documentListener: EduDocumentListener = EduDocumentListener(project, taskFile)
 
