@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
 import com.intellij.openapi.application.runUndoTransparentWriteAction
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.ui.EditorNotifications
@@ -11,12 +13,9 @@ import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholderDependency
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.ext.getDocument
-import com.jetbrains.edu.learning.courseFormat.ext.getUnsolvedTaskDependencies
-import com.jetbrains.edu.learning.courseFormat.ext.hasChangedFiles
-import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
+import com.jetbrains.edu.learning.courseFormat.ext.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.editor.EduEditorFactoryListener
+import com.jetbrains.edu.learning.editor.EduSingleFileEditor
 
 object PlaceholderDependencyManager {
   @JvmStatic
@@ -57,10 +56,12 @@ object PlaceholderDependencyManager {
   }
 
   private fun replaceWithListener(project: Project, placeholderToReplace: AnswerPlaceholder, replacementText: String) {
-    val document = placeholderToReplace.taskFile.getDocument(project)!!
+    val file = placeholderToReplace.taskFile.getVirtualFile(project) ?: return
+    val document = FileDocumentManager.getInstance().getDocument(file) ?: return
     val startOffset = placeholderToReplace.offset
     val endOffset = startOffset + placeholderToReplace.realLength
-    val hasListener = EduEditorFactoryListener.hasDocumentListener(document)
+    // EduSingleFileEditor adds own EduDocumentListener on creation
+    val hasListener = FileEditorManager.getInstance(project).getAllEditors(file).any { it is EduSingleFileEditor }
     val eduDocumentListener = if (hasListener) null else EduDocumentListener(project, placeholderToReplace.taskFile)
     if (eduDocumentListener != null) {
       document.addDocumentListener(eduDocumentListener)

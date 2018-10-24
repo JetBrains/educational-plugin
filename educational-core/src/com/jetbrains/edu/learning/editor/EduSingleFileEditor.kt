@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.components.JBLoadingPanel
 import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
+import com.jetbrains.edu.learning.EduDocumentListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -30,7 +31,10 @@ class EduSingleFileEditor(project: Project, file: VirtualFile) : PsiAwareTextEdi
 
   override val taskFile: TaskFile = EduUtils.getTaskFile(project, file) ?: error("Can't find task file for `$file`")
 
+  private val documentListener: EduDocumentListener = EduDocumentListener(project, taskFile)
+
   init {
+    editor.document.addDocumentListener(documentListener)
     validateTaskFile()
   }
 
@@ -76,6 +80,11 @@ class EduSingleFileEditor(project: Project, file: VirtualFile) : PsiAwareTextEdi
   override fun selectNotify() {
     super.selectNotify()
     PlaceholderDependencyManager.updateDependentPlaceholders(myProject, taskFile!!.task)
+  }
+
+  override fun dispose() {
+    editor.document.removeDocumentListener(documentListener)
+    super.dispose()
   }
 
   companion object {
