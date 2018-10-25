@@ -5,7 +5,7 @@
     <depends>JUnit</depends>
 
     <extensions defaultExtensionNs="Educational">
-        <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" courseType="Android"/>
+        <configurator implementationClass="com.jetbrains.edu.android.AndroidConfigurator" language="kotlin" courseType="Android"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">

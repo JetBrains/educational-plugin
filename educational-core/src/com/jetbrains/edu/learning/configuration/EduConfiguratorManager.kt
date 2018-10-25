@@ -9,9 +9,9 @@ object EduConfiguratorManager {
    * Returns any enabled [EduConfigurator] for given language and courseType
    */
   @JvmStatic
-  fun forLanguageAndCourseType(courseType: String, language: Language?): EduConfigurator<out Any>? =
-          allExtensions().find { extension -> extension.language == language?.id &&
-                                              extension.courseType == courseType}?.instance
+  fun forLanguageAndCourseType(courseType: String, language: Language): EduConfigurator<out Any>? =
+    allExtensions().find { extension -> extension.language == language.id &&
+                                        extension.courseType == courseType}?.instance
 
   /**
    * Returns all extension points of [EduConfigurator] where instance of [EduConfigurator] is enabled
