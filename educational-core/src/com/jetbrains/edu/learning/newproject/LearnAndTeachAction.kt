@@ -8,7 +8,7 @@ import com.jetbrains.edu.coursecreator.actions.CCNewCourseAction
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.actions.ImportLocalCourseAction
 import com.jetbrains.edu.learning.coursera.StartCourseraAssignment
-import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction
+import com.jetbrains.edu.learning.stepik.pure.StartStepikCourseAction
 import icons.EducationalCoreIcons
 
 class LearnAndTeachAction : WelcomePopupAction() {
