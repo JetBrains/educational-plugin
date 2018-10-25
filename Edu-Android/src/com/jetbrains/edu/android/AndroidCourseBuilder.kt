@@ -17,14 +17,13 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.jetbrains.edu.android.AndroidCourseBuilder.Type.*
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
-import com.jetbrains.edu.learning.EduCourseBuilder
-import com.jetbrains.edu.learning.LanguageSettings
+import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.FileKind.*
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -33,8 +32,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.isUnitTestMode
-import com.jetbrains.edu.learning.kotlinVersion
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -171,10 +168,5 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     ) ?: defaultVersion
   }
 
-  private data class FileInfo(val path: String, val type: Type)
-  private enum class Type {
-    TASK_FILE,
-    TEST_FILE,
-    ADDITIONAL_FILE
-  }
+  private data class FileInfo(val path: String, val type: FileKind)
 }
