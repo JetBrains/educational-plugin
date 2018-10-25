@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import java.util.ArrayList;
 import java.util.Map;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class ResetCourseAction extends DumbAwareAction {
 
 
@@ -36,30 +37,28 @@ public class ResetCourseAction extends DumbAwareAction {
     assert course != null;
     ((RemoteCourse)course).setLoadSolutions(false);
 
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      course.visitLessons((lesson) -> {
-        for (Task task : lesson.getTaskList()) {
-          VirtualFile taskDir = task.getTaskDir(project);
-          if (taskDir == null) continue;
-          for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
-            TaskFile taskFile = entry.getValue();
-            VirtualFile taskFileVF = EduUtils.findTaskFileInDir(taskFile, taskDir);
-            if (taskFileVF != null) {
-              Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
-              if (document != null) {
-                RevertTaskAction.resetDocument(document, taskFile);
-                task.setStatus(CheckStatus.Unchecked);
-                if (task instanceof ChoiceTask) {
-                  ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
-                }
-                RevertTaskAction.resetAnswerPlaceholders(taskFile);
+    ApplicationManager.getApplication().runWriteAction(() -> course.visitLessons((lesson) -> {
+      for (Task task : lesson.getTaskList()) {
+        VirtualFile taskDir = task.getTaskDir(project);
+        if (taskDir == null) continue;
+        for (Map.Entry<String, TaskFile> entry : task.getTaskFiles().entrySet()) {
+          TaskFile taskFile = entry.getValue();
+          VirtualFile taskFileVF = EduUtils.findTaskFileInDir(taskFile, taskDir);
+          if (taskFileVF != null) {
+            Document document = FileDocumentManager.getInstance().getDocument(taskFileVF);
+            if (document != null) {
+              RevertTaskAction.resetDocument(document, taskFile);
+              task.setStatus(CheckStatus.Unchecked);
+              if (task instanceof ChoiceTask) {
+                ((ChoiceTask)task).setSelectedVariants(new ArrayList<>());
               }
+              RevertTaskAction.resetAnswerPlaceholders(taskFile);
             }
           }
         }
-        return true;
-      });
-    });
+      }
+      return true;
+    }));
   }
 
   @Override
