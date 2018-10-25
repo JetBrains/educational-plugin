@@ -8,7 +8,6 @@ import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,7 +22,7 @@ public class RemoteCourse extends Course {
 
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
-                        String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
+    String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
   @SerializedName("is_idea_compatible") private boolean isCompatible = true;
 
   // in CC mode is used to store top-level lessons section id
@@ -41,7 +40,7 @@ public class RemoteCourse extends Course {
   }
 
   @Override
-  public void setLanguage(@Nullable final String language) {
+  public void setLanguage(@NotNull final String language) {
     super.setLanguage(language);
     updateType(language);
   }
@@ -91,7 +90,7 @@ public class RemoteCourse extends Course {
     this.id = id;
   }
 
-  private void updateType(@Nullable String language) {
+  private void updateType(String language) {
     final int separator = myType.indexOf(" ");
     final String version;
     if (separator == -1) {

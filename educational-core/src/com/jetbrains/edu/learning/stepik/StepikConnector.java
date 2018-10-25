@@ -69,8 +69,8 @@ public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
   private static final String NOT_VERIFIED_NOTE = "\n\nNote: We’re sorry, but this course feels a little incomplete. " +
-      "If you are the owner of the course please <a href=\"mailto:Tatiana.Vasilyeva@jetbrains.com\">get in touch with us</a>, " +
-      "we would like to verify this with you; we think with improvement this can be listed as a featured course in the future.";
+                                                  "If you are the owner of the course please <a href=\"mailto:Tatiana.Vasilyeva@jetbrains.com\">get in touch with us</a>, " +
+                                                  "we would like to verify this with you; we think with improvement this can be listed as a featured course in the future.";
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
   private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
@@ -310,7 +310,7 @@ public class StepikConnector {
   }
 
   private static void addAvailableCourses(List<Course> result, CoursesContainer coursesContainer,
-                                  @NotNull List<Integer> featuredCourses) throws IOException {
+                                          @NotNull List<Integer> featuredCourses) throws IOException {
     final List<RemoteCourse> courses = coursesContainer.courses;
     for (RemoteCourse info : courses) {
       if (StringUtil.isEmptyOrSpaces(info.getType())) continue;
@@ -534,7 +534,7 @@ public class StepikConnector {
 
   public static List<Lesson> getLessons(RemoteCourse remoteCourse, int sectionId) throws IOException {
     final SectionContainer sectionContainer = getFromStepik(StepikNames.SECTIONS + "/" + String.valueOf(sectionId),
-            SectionContainer.class);
+                                                            SectionContainer.class);
     if (sectionContainer.sections.isEmpty()) {
       return Collections.emptyList();
     }
@@ -549,10 +549,10 @@ public class StepikConnector {
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
     return allSections
-            .map(section -> section.units)
-            .flatMap(unitList -> unitList.stream())
-            .map(unit -> String.valueOf(unit))
-            .toArray(String[]::new);
+      .map(section -> section.units)
+      .flatMap(unitList -> unitList.stream())
+      .map(unit -> String.valueOf(unit))
+      .toArray(String[]::new);
   }
 
   private static boolean hasVisibleSections(@NotNull final List<Section> sections, String courseName) {
@@ -652,7 +652,7 @@ public class StepikConnector {
     return lessons;
   }
 
-  public static List<StepSource> getStepSources(String[] stepIds, @Nullable String language) throws URISyntaxException, IOException {
+  public static List<StepSource> getStepSources(String[] stepIds, String language) throws URISyntaxException, IOException {
     Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
     List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class, params);
     return stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
@@ -784,7 +784,7 @@ public class StepikConnector {
   }
 
   @Nullable
-  static Reply getLastSubmission(@NotNull String stepId, boolean isSolved, @Nullable String language) throws IOException {
+  static Reply getLastSubmission(@NotNull String stepId, boolean isSolved, String language) throws IOException {
     try {
       URI url = new URIBuilder(StepikNames.SUBMISSIONS)
         .addParameter("order", "desc")
@@ -808,10 +808,10 @@ public class StepikConnector {
     HashMap<String, String> taskFileToText = new HashMap<>();
     try {
       URI url = new URIBuilder(StepikNames.SUBMISSIONS)
-              .addParameter("order", "desc")
-              .addParameter("page", "1")
-              .addParameter("status", isSolved ? "correct" : "wrong")
-              .addParameter("step", String.valueOf(task.getStepId())).build();
+        .addParameter("order", "desc")
+        .addParameter("page", "1")
+        .addParameter("status", isSolved ? "correct" : "wrong")
+        .addParameter("step", String.valueOf(task.getStepId())).build();
       Submission[] submissions = getFromStepik(url.toString(), SubmissionsWrapper.class).submissions;
       Language language = task.getLesson().getCourse().getLanguageById();
       String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();

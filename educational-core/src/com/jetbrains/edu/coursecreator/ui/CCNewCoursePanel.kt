@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.ui
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.lang.Language
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.LabeledComponent
@@ -171,7 +172,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
   private fun createLocationField(): LabeledComponent<TextFieldWithBrowseButton> {
     val field = TextFieldWithBrowseButton(myPathField)
     field.addBrowseFolderListener("Select Course Location", "Select course location", null,
-            FileChooserDescriptorFactory.createSingleFolderDescriptor())
+                                  FileChooserDescriptorFactory.createSingleFolderDescriptor())
     return LabeledComponent.create(field, "Location:", BorderLayout.WEST)
   }
 
@@ -193,7 +194,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     }
 
     val configurator = EduConfiguratorManager.forLanguageAndCourseType(courseTypeData.courseType, courseTypeData.language) ?: return
-    myCourse.language = courseTypeData.language?.id
+    myCourse.language = courseTypeData.language.id
     myCourse.courseType = courseTypeData.courseType
     myLanguageSettings = configurator.courseBuilder.languageSettings
     myLanguageSettings.addSettingsChangeListener { doValidation() }
@@ -219,21 +220,29 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       .forEach { myCourseTypesComboBox.addItem(it) }
   }
 
-  private fun obtainCourseTypeData(languageId: String?, courseType: String): CourseTypeData? {
-    val language = languageId?.let { Language.findLanguageByID(languageId) }
+  private fun obtainCourseTypeData(languageId: String, courseType: String): CourseTypeData? {
+    val language = Language.findLanguageByID(languageId)
+    if (language == null) {
+      LOG.info("Language with id $languageId not found")
+      return null
+    }
     return CourseTypeData(language, courseType, EduConfiguratorManager.forLanguageAndCourseType(courseType, language)?.logo)
+  }
+
+  companion object {
+    private val LOG = Logger.getInstance(CCNewCoursePanel::class.java)
   }
 
   interface ValidationListener {
     fun onInputDataValidated(isInputDataComplete: Boolean)
   }
 
-  private data class CourseTypeData(val language: Language?, val courseType: String = EduNames.PYCHARM, val icon: Icon?) {
-    val displayName get(): String {
-      return when {
-        courseType == EduNames.PYCHARM -> language!!.displayName
-        language != null -> "$courseType ${language.displayName}"
-        else -> courseType
+  private data class CourseTypeData(val language: Language, val courseType: String = EduNames.PYCHARM, val icon: Icon?) {
+  val displayName get(): String {
+      return when (courseType) {
+        EduNames.PYCHARM -> language.displayName
+        EduNames.ANDROID -> courseType
+        else -> "$courseType ${language.displayName}"
       }
     }
   }
