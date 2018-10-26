@@ -2,6 +2,7 @@ package com.jetbrains.edu.coursecreator.actions;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -25,7 +26,6 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
@@ -216,13 +216,14 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   public static void generateJson(VirtualFile parentDir, Course course) throws IOException {
     JsonFactory factory = new JsonFactory();
     ObjectMapper mapper = new ObjectMapper(factory);
+    SimpleModule module = new SimpleModule();
+    module.addSerializer(Task.class, new TaskSerializer());
+    mapper.registerModule(module);
     mapper.addMixIn(EduCourse.class, LocalCourseMixin.class);
     mapper.addMixIn(Section.class, LocalSectionMixin.class);
     mapper.addMixIn(Lesson.class, LocalLessonMixin.class);
     mapper.addMixIn(Task.class, LocalTaskMixin.class);
     mapper.addMixIn(TaskFile.class, LocalTaskFileMixin.class);
-    mapper.writerWithDefaultPrettyPrinter()
-      .withAttribute("version", EduVersions.JSON_FORMAT_VERSION)
-      .writeValue(new File(new File(parentDir.getPath()), COURSE_META_FILE), course);
+    mapper.writerWithDefaultPrettyPrinter().writeValue(new File(new File(parentDir.getPath()), COURSE_META_FILE), course);
   }
 }

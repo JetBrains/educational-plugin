@@ -5,8 +5,12 @@ package com.jetbrains.edu.coursecreator.actions
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
-import com.fasterxml.jackson.databind.annotation.JsonAppend
+import com.fasterxml.jackson.core.JsonGenerator
+import com.fasterxml.jackson.databind.BeanDescription
+import com.fasterxml.jackson.databind.JsonSerializer
+import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.jetbrains.edu.learning.courseFormat.*
@@ -36,9 +40,6 @@ private const val TYPE = "type"
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(VERSION, TITLE, SUMMARY, PROGRAMMING_LANGUAGE, LANGUAGE, ITEMS)
-@JsonAppend(
-  attrs = arrayOf(JsonAppend.Attr(value = VERSION))
-)
 abstract class LocalCourseMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
@@ -74,9 +75,6 @@ abstract class LocalSectionMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonAppend(
-  attrs = arrayOf(JsonAppend.Attr(value = TYPE))
-)
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
@@ -89,9 +87,6 @@ abstract class LocalLessonMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonAppend(
-  attrs = arrayOf(JsonAppend.Attr(value = TASK_TYPE))
-)
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
@@ -133,4 +128,16 @@ private class ProgrammingLanguageConverter : StdConverter<String, String>() {
 
 private class LanguageConverter : StdConverter<String, String>() {
   override fun convert(languageCode: String): String = Locale(languageCode).displayName
+}
+
+class TaskSerializer : JsonSerializer<Task>() {
+  override fun serialize(value: Task, jgen: JsonGenerator, provider: SerializerProvider) {
+    jgen.writeStartObject()
+    val javaType = provider.constructType(Task::class.java)
+    val beanDesc: BeanDescription = provider.config.introspect(javaType)
+    val serializer = BeanSerializerFactory.instance.findBeanSerializer(provider, javaType, beanDesc)
+    serializer.unwrappingSerializer(null).serialize(value, jgen, provider)
+    jgen.writeObjectField(TASK_TYPE, "edu")
+    jgen.writeEndObject()
+  }
 }
