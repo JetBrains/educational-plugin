@@ -49,7 +49,7 @@ public class StepikCourseConnector {
     }
     if (courseId != -1) {
       RemoteCourse info = getCourseInfo(user, courseId, false);
-      return (StepikCourse)info;
+      return StepikCourse.fromRemote(info);
     }
     return null;
   }
