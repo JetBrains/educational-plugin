@@ -218,6 +218,8 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     ObjectMapper mapper = new ObjectMapper(factory);
     SimpleModule module = new SimpleModule();
     module.addSerializer(Task.class, new TaskSerializer());
+    module.addSerializer(Lesson.class, new LessonSerializer());
+    module.addSerializer(Course.class, new CourseSerializer());
     mapper.registerModule(module);
     mapper.addMixIn(EduCourse.class, LocalCourseMixin.class);
     mapper.addMixIn(Section.class, LocalSectionMixin.class);

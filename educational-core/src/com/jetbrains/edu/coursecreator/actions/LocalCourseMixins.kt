@@ -13,8 +13,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.serialization.SerializationUtils
 import java.util.*
 
 private const val VERSION = "version"
@@ -131,13 +134,48 @@ private class LanguageConverter : StdConverter<String, String>() {
 }
 
 class TaskSerializer : JsonSerializer<Task>() {
-  override fun serialize(value: Task, jgen: JsonGenerator, provider: SerializerProvider) {
-    jgen.writeStartObject()
-    val javaType = provider.constructType(Task::class.java)
-    val beanDesc: BeanDescription = provider.config.introspect(javaType)
-    val serializer = BeanSerializerFactory.instance.findBeanSerializer(provider, javaType, beanDesc)
-    serializer.unwrappingSerializer(null).serialize(value, jgen, provider)
-    jgen.writeObjectField(TASK_TYPE, "edu")
-    jgen.writeEndObject()
+  override fun serialize(task: Task, generator: JsonGenerator, provider: SerializerProvider) {
+    generator.writeStartObject()
+    generator.writeObjectField(TASK_TYPE, task.taskType)
+    val serializer = getJsonSerializer(provider, Task::class.java)
+    serializer.unwrappingSerializer(null).serialize(task, generator, provider)
+    generator.writeEndObject()
   }
+}
+
+class LessonSerializer : JsonSerializer<Lesson>() {
+  override fun serialize(lesson: Lesson, generator: JsonGenerator, provider: SerializerProvider) {
+    generator.writeStartObject()
+    generator.writeObjectField(TYPE, itemType(lesson))
+    val serializer = getJsonSerializer(provider, Lesson::class.java)
+    serializer.unwrappingSerializer(null).serialize(lesson, generator, provider)
+    generator.writeEndObject()
+  }
+
+  private fun itemType(lesson: Lesson): String {
+    var itemType = EduNames.LESSON
+    if (lesson is FrameworkLesson) {
+      itemType = SerializationUtils.Json.FRAMEWORK_TYPE
+    }
+    else if (lesson is Section) {
+      itemType = EduNames.SECTION
+    }
+    return itemType
+  }
+}
+
+class CourseSerializer : JsonSerializer<Course>() {
+  override fun serialize(course: Course, generator: JsonGenerator, provider: SerializerProvider) {
+    generator.writeStartObject()
+    generator.writeObjectField(VERSION, JSON_FORMAT_VERSION)
+    val serializer = getJsonSerializer(provider, Course::class.java)
+    serializer.unwrappingSerializer(null).serialize(course, generator, provider)
+    generator.writeEndObject()
+  }
+}
+
+private fun getJsonSerializer(provider: SerializerProvider, itemClass: Class<out StudyItem>): JsonSerializer<Any> {
+  val javaType = provider.constructType(itemClass)
+  val beanDesc: BeanDescription = provider.config.introspect(javaType)
+  return BeanSerializerFactory.instance.findBeanSerializer(provider, javaType, beanDesc)
 }
