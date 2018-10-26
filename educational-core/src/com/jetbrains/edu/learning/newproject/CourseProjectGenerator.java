@@ -41,8 +41,8 @@ import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -72,8 +72,8 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   protected boolean beforeProjectGenerated() {
-    if (!(myCourse instanceof RemoteCourse)) return true;
-    final RemoteCourse remoteCourse = (RemoteCourse) this.myCourse;
+    if (!(myCourse instanceof EduCourse) || !((EduCourse)myCourse).isRemote()) return true;
+    final EduCourse remoteCourse = (EduCourse) myCourse;
     if (remoteCourse.getId() > 0) {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
         final StepikUser user = EduSettings.getInstance().getUser();
@@ -184,7 +184,7 @@ public abstract class CourseProjectGenerator<S> {
         if (CCUtils.isCourseCreator(project)) {
           CCUtils.initializeCCPlaceholders(project,myCourse);
         }
-        if (myCourse instanceof RemoteCourse && myCourse.isFromZip() && CCUtils.isCourseCreator(project)) {
+        if (myCourse instanceof EduCourse && ((EduCourse)myCourse).isRemote() && myCourse.isFromZip() && CCUtils.isCourseCreator(project)) {
           setStepikChangeStatuses(project);
         }
         createAdditionalFiles(project, baseDir);
@@ -200,7 +200,7 @@ public abstract class CourseProjectGenerator<S> {
 
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
     StepikUser user = EduSettings.getInstance().getUser();
-    RemoteCourse courseFromStepik = StepikConnector.getCourseInfo(user, myCourse.getId(), ((RemoteCourse)myCourse).isCompatible());
+    EduCourse courseFromStepik = StepikConnector.getCourseInfo(user, myCourse.getId(), ((EduCourse)myCourse).isCompatible());
     if (courseFromStepik != null) {
       StepikConnector.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);
@@ -222,7 +222,7 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
-    if (course.isStudy() && course instanceof RemoteCourse && EduSettings.isLoggedIn()) {
+    if (course.isStudy() && course instanceof EduCourse && ((EduCourse)myCourse).isRemote() && EduSettings.isLoggedIn()) {
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
       if (isEnrolled) {
         StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);

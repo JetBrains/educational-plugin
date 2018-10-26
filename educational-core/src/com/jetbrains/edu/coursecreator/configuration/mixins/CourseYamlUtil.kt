@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.configuration.InvalidYamlFormatException
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import java.util.*
 
@@ -63,7 +64,7 @@ private class CourseBuilder(@JsonProperty(TITLE) val title: String,
                             @JsonProperty(CONTENT) val content: List<String?>) {
   @Suppress("unused") // used for deserialization
   private fun build(): Course {
-    val course = Course()
+    val course = EduCourse()
     course.apply {
       name = title
       description = summary

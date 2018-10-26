@@ -41,7 +41,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof RemoteCourse)) {
+    if (!(course instanceof EduCourse) || !((EduCourse)course).isRemote()) {
       return;
     }
     if (!course.getCourseMode().equals(CCUtils.COURSE_MODE)) return;
@@ -80,7 +80,7 @@ public class CCPushLesson extends DumbAwareAction {
       return;
     }
     final Course course = StudyTaskManager.getInstance(project).getCourse();
-    if (!(course instanceof RemoteCourse)) {
+    if (!(course instanceof EduCourse) || !((EduCourse)course).isRemote()) {
       return;
     }
     final PsiDirectory[] directories = view.getDirectories();
@@ -119,7 +119,7 @@ public class CCPushLesson extends DumbAwareAction {
       if (result == Messages.YES) {
        Section section = CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
         if (section != null) {
-          CCPushSection.doPush(project, section, (RemoteCourse)course);
+          CCPushSection.doPush(project, section, (EduCourse)course);
         }
       }
     });
@@ -140,7 +140,7 @@ public class CCPushLesson extends DumbAwareAction {
         sectionId = lesson.getSection().getId();
       }
       else {
-        sectionId = CCStepikConnector.getTopLevelSectionId(project, (RemoteCourse)course);
+        sectionId = CCStepikConnector.getTopLevelSectionId(project, (EduCourse)course);
       }
       Lesson updatedLesson = CCStepikConnector.updateLesson(project, lesson, true, sectionId);
       int lessonId = updatedLesson == null ? -1 : updatedLesson.getId();
@@ -168,7 +168,7 @@ public class CCPushLesson extends DumbAwareAction {
       else {
         int position = lessonPosition(course, lesson);
         int sectionId;
-        final List<Integer> sections = ((RemoteCourse)course).getSectionIds();
+        final List<Integer> sections = ((EduCourse)course).getSectionIds();
         sectionId = sections.get(sections.size() - 1);
         CCStepikConnector.postLesson(project, lesson, lesson.getIndex(), sectionId);
         if (lesson.getIndex() < course.getLessons().size()) {
@@ -207,7 +207,7 @@ public class CCPushLesson extends DumbAwareAction {
         sectionId = lesson.getSection().getId();
       }
       else {
-        RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+        EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
         assert  course != null;
         sectionId = CCStepikConnector.getTopLevelSectionId(project, course);
       }

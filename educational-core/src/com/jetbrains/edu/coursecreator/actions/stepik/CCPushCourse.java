@@ -44,7 +44,7 @@ public class CCPushCourse extends DumbAwareAction {
     presentation.setEnabledAndVisible(project != null && CCUtils.isCourseCreator(project));
     if (project != null) {
       final Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course instanceof RemoteCourse) {
+      if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
         presentation.setText("Update Course on Stepik");
       }
     }
@@ -66,7 +66,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public static boolean doPush(Project project, Course course) {
-    if (course instanceof RemoteCourse) {
+    if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
       askToWrapTopLevelLessons(project, course);
 
       ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
@@ -75,14 +75,14 @@ public class CCPushCourse extends DumbAwareAction {
           if (getCourseInfo(String.valueOf(course.getId())) == null) {
             String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
             Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
-                                                         createPostCourseNotificationListener(project, (RemoteCourse)course));
+                                                         createPostCourseNotificationListener(project, (EduCourse)course));
             notification.notify(project);
             return;
           }
           indicator.setIndeterminate(false);
 
           if (Experiments.isFeatureEnabled(StepikCourseUploader.FEATURE_ID)) {
-            new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
+            new StepikCourseUploader(project, (EduCourse)course).updateCourse();
           }
           else {
             pushInOldWay(indicator, project, course);
@@ -108,7 +108,7 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void pushInOldWay(@NotNull ProgressIndicator indicator, Project project, Course course) {
-    if (updateCourseInfo(project, (RemoteCourse)course)) {
+    if (updateCourseInfo(project, (EduCourse)course)) {
       updateCourseContent(indicator, course, project);
       StepikUtils.setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
       try {
@@ -118,7 +118,7 @@ public class CCPushCourse extends DumbAwareAction {
         LOG.warn(e1);
       }
 
-      StepikUpdateDateExt.setUpdated((RemoteCourse)course);
+      StepikUpdateDateExt.setUpdated((EduCourse)course);
       showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId()));
     }
   }
@@ -138,9 +138,9 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   private static void updateCourseContent(@NotNull ProgressIndicator indicator, Course course, Project project) {
-    if (!((RemoteCourse)course).getSectionIds().isEmpty() && course.getLessons().isEmpty()) {
-      deleteSection(((RemoteCourse)course).getSectionIds().get(0));
-      ((RemoteCourse)course).setSectionIds(Collections.emptyList());
+    if (!((EduCourse)course).getSectionIds().isEmpty() && course.getLessons().isEmpty()) {
+      deleteSection(((EduCourse)course).getSectionIds().get(0));
+      ((EduCourse)course).setSectionIds(Collections.emptyList());
     }
 
     int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
@@ -156,7 +156,7 @@ public class CCPushCourse extends DumbAwareAction {
     }
 
     for (Lesson lesson : course.getLessons()) {
-      Integer sectionId = ((RemoteCourse)course).getSectionIds().get(0);
+      Integer sectionId = ((EduCourse)course).getSectionIds().get(0);
       if (lesson.getId() > 0) {
         updateLesson(project, lesson, false, sectionId);
       }

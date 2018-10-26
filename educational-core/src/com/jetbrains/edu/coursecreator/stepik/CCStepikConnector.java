@@ -66,7 +66,7 @@ public class CCStepikConnector {
   }
 
   @Nullable
-  public static RemoteCourse getCourseInfo(@NotNull String courseId) {
+  public static EduCourse getCourseInfo(@NotNull String courseId) {
     final String url = StepikNames.COURSES + "/" + courseId;
     final StepikUser user = EduSettings.getInstance().getUser();
     try {
@@ -131,7 +131,7 @@ public class CCStepikConnector {
         showErrorNotification(project, FAILED_TITLE, detailString);
         return;
       }
-      final RemoteCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
+      final EduCourse courseOnRemote = new Gson().fromJson(responseString, StepikWrappers.CoursesContainer.class).courses.get(0);
       courseOnRemote.setItems(Lists.newArrayList(course.getItems().stream().filter(it -> !it.getName().equals(EduNames.ADDITIONAL_MATERIALS) &&
         !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).collect(Collectors.toList())));
       courseOnRemote.setAuthors(course.getAuthors());
@@ -210,7 +210,7 @@ public class CCStepikConnector {
   /**
    * This method should be used for courses with sections only
    */
-  private static int postSections(@NotNull Project project, @NotNull RemoteCourse course) {
+  private static int postSections(@NotNull Project project, @NotNull EduCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     course.sortItems();
     final List<Section> sections = course.getSections();
@@ -230,14 +230,14 @@ public class CCStepikConnector {
     return sections.size();
   }
 
-  private static void postTopLevelLessons(@NotNull Project project, @NotNull RemoteCourse course) {
+  private static void postTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     final int sectionId = postSectionForTopLevelLessons(project, course);
     course.setSectionIds(Collections.singletonList(sectionId));
     postLessons(project, indicator, course, sectionId, course.getLessons());
   }
 
-  public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull RemoteCourse course) {
+  public static int postSectionForTopLevelLessons(@NotNull Project project, @NotNull EduCourse course) {
     Section section = new Section();
     section.setName(course.getName());
     section.setPosition(1);
@@ -252,7 +252,7 @@ public class CCStepikConnector {
     else {
       Course course = StudyTaskManager.getInstance(project).getCourse();
       assert  course != null;
-      RemoteCourse courseInfo = StepikConnector
+      EduCourse courseInfo = StepikConnector
         .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
       if (courseInfo != null) {
         String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
@@ -277,7 +277,7 @@ public class CCStepikConnector {
   }
 
   public static int postSection(@NotNull Project project, @NotNull Section section, @Nullable ProgressIndicator indicator) {
-    RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+    EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     final int sectionId = postSectionInfo(project, copySection(section), course.getId());
     section.setId(sectionId);
@@ -287,7 +287,7 @@ public class CCStepikConnector {
   }
 
   public static boolean updateSection(@NotNull Project project, @NotNull Section section) {
-    RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+    EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
     section.setCourseId(course.getId());
     boolean updated = updateSectionInfo(project, section);
@@ -317,7 +317,7 @@ public class CCStepikConnector {
 
   private static void postLessons(@NotNull Project project,
                                   @Nullable ProgressIndicator indicator,
-                                  @NotNull RemoteCourse course,
+                                  @NotNull EduCourse course,
                                   int sectionId,
                                   @NotNull List<Lesson> lessons) {
     int position = 1;
@@ -372,7 +372,7 @@ public class CCStepikConnector {
 
       Lesson updatedLesson = updateLesson(project, postedLesson, false, section.getId());
       if (updatedLesson != null) {
-        ((RemoteCourse)course).setAdditionalMaterialsUpdateDate(updatedLesson.getUpdateDate());
+        ((EduCourse)course).setAdditionalMaterialsUpdateDate(updatedLesson.getUpdateDate());
       }
     }
   }
@@ -563,12 +563,12 @@ public class CCStepikConnector {
     return false;
   }
 
-  public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final RemoteCourse course) {
+  public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final EduCourse course) {
     if (!checkIfAuthorized(project, "update course")) return false;
 
     // Course info parameters such as isPublic() and isCompatible can be changed from Stepik site only
     // so we get actual info here
-    RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
+    EduCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
     if (courseInfo != null) {
       course.setPublic(courseInfo.isPublic());
       course.setCompatible(courseInfo.isCompatible());
@@ -613,7 +613,7 @@ public class CCStepikConnector {
 
   public static void updateAdditionalMaterials(@NotNull Project project, int courseId) throws IOException {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
-    RemoteCourse courseInfo = getCourseInfo(String.valueOf(courseId));
+    EduCourse courseInfo = getCourseInfo(String.valueOf(courseId));
     assert courseInfo != null;
 
     List<Integer> sectionIds = courseInfo.getSectionIds();
@@ -640,10 +640,10 @@ public class CCStepikConnector {
   public static boolean updateAdditionalSection(@NotNull Project project) {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
 
-    RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
+    EduCourse course = (EduCourse)StudyTaskManager.getInstance(project).getCourse();
     assert course != null;
 
-    RemoteCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
+    EduCourse courseInfo = getCourseInfo(String.valueOf(course.getId()));
     assert courseInfo != null;
 
     List<Integer> sectionIds = courseInfo.getSectionIds();
@@ -752,7 +752,7 @@ public class CCStepikConnector {
     notification.notify(project);
   }
 
-  private static void showNoRightsToUpdateNotification(@NotNull final Project project, @NotNull final RemoteCourse course) {
+  private static void showNoRightsToUpdateNotification(@NotNull final Project project, @NotNull final EduCourse course) {
     String message = "You don't have permission to update the course <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
     Notification notification = new Notification(PUSH_COURSE_GROUP_ID, FAILED_TITLE, message, NotificationType.ERROR,
                                                  createPostCourseNotificationListener(project, course));
@@ -761,7 +761,7 @@ public class CCStepikConnector {
 
   @NotNull
   public static NotificationListener.Adapter createPostCourseNotificationListener(@NotNull Project project,
-                                                                                   @NotNull RemoteCourse course) {
+                                                                                   @NotNull EduCourse course) {
     return new NotificationListener.Adapter() {
       @Override
       protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
@@ -980,7 +980,7 @@ public class CCStepikConnector {
     return false;
   }
 
-  public static int getTopLevelSectionId(@NotNull Project project, @NotNull RemoteCourse course) {
+  public static int getTopLevelSectionId(@NotNull Project project, @NotNull EduCourse course) {
     if (!course.getSectionIds().isEmpty()) {
       return course.getSectionIds().get(0);
     }
@@ -1002,7 +1002,7 @@ public class CCStepikConnector {
   }
 
   @Nullable
-  private static Lesson getTopLevelLesson(RemoteCourse course) {
+  private static Lesson getTopLevelLesson(EduCourse course) {
     for (Lesson lesson : course.getLessons()) {
       if (lesson.getStepikChangeStatus() == StepikChangeStatus.UP_TO_DATE) {
         return lesson;

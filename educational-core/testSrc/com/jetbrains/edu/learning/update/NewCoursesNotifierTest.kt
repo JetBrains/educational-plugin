@@ -8,7 +8,7 @@ import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -34,15 +34,15 @@ class NewCoursesNotifierTest : EduTestCase() {
     }
   }
 
-  private fun doTest(expectedCheckNumber: Int, expectedCourses: List<RemoteCourse>, courseProducer: (Int) -> List<RemoteCourse>) {
+  private fun doTest(expectedCheckNumber: Int, expectedCourses: List<EduCourse>, courseProducer: (Int) -> List<EduCourse>) {
     val newCoursesNotifier = NewCoursesNotifier(testRootDisposable)
     PlatformTestUtil.registerExtension(CoursesProvider.EP_NAME, TestCoursesProvider(courseProducer), testRootDisposable)
 
     val actionCallback = ActionCallback()
     try {
-      val newCourses = Collections.synchronizedList(mutableListOf<RemoteCourse>())
+      val newCourses = Collections.synchronizedList(mutableListOf<EduCourse>())
       withMockNewCoursesNotifierUi(object : NewCoursesNotifierUi {
-        override fun showNotification(courses: List<RemoteCourse>) {
+        override fun showNotification(courses: List<EduCourse>) {
           newCourses.addAll(courses)
         }
       }) {
@@ -61,14 +61,14 @@ class NewCoursesNotifierTest : EduTestCase() {
     }
   }
 
-  private fun createCourse(courseId: Int, isNew: Boolean = true): RemoteCourse = RemoteCourse().apply {
+  private fun createCourse(courseId: Int, isNew: Boolean = true): EduCourse = EduCourse().apply {
     name = "Test Course $courseId"
     id = courseId
     language = PlainTextLanguage.INSTANCE.id
     updateDate = Date(System.currentTimeMillis() + if (isNew) DateFormatUtil.DAY else -DateFormatUtil.DAY)
   }
 
-  private class TestCoursesProvider(private val producer: (Int) -> List<RemoteCourse>) : CoursesProvider {
+  private class TestCoursesProvider(private val producer: (Int) -> List<EduCourse>) : CoursesProvider {
 
     private val counter = AtomicInteger()
 

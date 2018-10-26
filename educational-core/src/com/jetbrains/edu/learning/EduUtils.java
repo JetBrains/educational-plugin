@@ -1,7 +1,9 @@
 package com.jetbrains.edu.learning;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.*;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -91,8 +93,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -936,7 +938,7 @@ public class EduUtils {
   }
 
   @Nullable
-  public static Course getLocalCourse(@NotNull final String zipFilePath) {
+  public static EduCourse getLocalCourse(@NotNull final String zipFilePath) {
     try {
       final JBZipFile zipFile = new JBZipFile(zipFilePath);
       final JBZipEntry entry = zipFile.getEntry(EduNames.COURSE_META_FILE);
@@ -956,19 +958,13 @@ public class EduUtils {
 
   @VisibleForTesting
   @Nullable
-  public static Course deserializeLocalCourse(@NotNull final String courseJsonText) {
+  public static EduCourse deserializeLocalCourse(@NotNull final String courseJsonText) {
     Gson gson = new GsonBuilder()
       .registerTypeHierarchyAdapter(Course.class, new SerializationUtils.Json.CourseAdapter())
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .create();
-    JsonParser parser = new JsonParser();
-    JsonObject object = parser.parse(courseJsonText).getAsJsonObject();
-    JsonElement id = object.get("id");
     try {
-      if (id != null && 0 != id.getAsInt()) {
-        return gson.fromJson(object, RemoteCourse.class);
-      }
-      return gson.fromJson(object, Course.class);
+      return gson.fromJson(courseJsonText, EduCourse.class);
     } catch (Exception e) {
       LOG.error("Failed to deserialize course json", e);
     }

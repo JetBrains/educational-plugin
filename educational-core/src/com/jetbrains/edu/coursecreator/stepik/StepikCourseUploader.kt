@@ -4,8 +4,8 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -15,7 +15,7 @@ import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
 
-class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
+class StepikCourseUploader(val project: Project, val course: EduCourse) {
   private var courseInfoToUpdate = false
 
   private var sectionsToPush: MutableList<Section> = ArrayList()
@@ -325,7 +325,7 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
 }
 
 
-private fun RemoteCourse.lastUpdateDate(): Date {
+private fun EduCourse.lastUpdateDate(): Date {
   var lastUpdateDate = updateDate
   allLessons().filter { it.id > 0 }.forEach { lesson ->
     if (lastUpdateDate < lesson.updateDate) {
@@ -348,9 +348,9 @@ private fun RemoteCourse.lastUpdateDate(): Date {
   return lastUpdateDate
 }
 
-private fun RemoteCourse.allLessons() = lessons.plus(sections.flatMap { it.lessons })
+private fun EduCourse.allLessons() = lessons.plus(sections.flatMap { it.lessons })
 
-private fun RemoteCourse.setStatusRecursively(status: StepikChangeStatus) {
+private fun EduCourse.setStatusRecursively(status: StepikChangeStatus) {
   stepikChangeStatus = status
   for (item in items) {
     item.stepikChangeStatus = status

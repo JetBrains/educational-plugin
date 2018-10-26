@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.configuration.EduConfiguratorManager
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.enablePlugins
 import com.jetbrains.edu.learning.getDisabledPlugins
 import com.jetbrains.edu.learning.newproject.ui.AdvancedSettings
@@ -49,7 +50,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
 
   private val myErrorLabel = HyperlinkLabel()
 
-  private val myCourse: Course = (course ?: Course()).apply { courseMode = CCUtils.COURSE_MODE }
+  private val myCourse: Course = (course ?: EduCourse()).apply { courseMode = CCUtils.COURSE_MODE }
   private lateinit var myLanguageSettings: LanguageSettings<*>
 
   private var myRequiredAndDisabledPlugins: List<String> = emptyList()

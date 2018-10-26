@@ -20,7 +20,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -52,7 +52,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Transient
   private Course myCourse;
   public int VERSION = EduVersions.XML_FORMAT_VERSION;
-  private static List<Class<? extends Course>> courseElementTypes = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
+  private static List<Class<? extends Course>> courseElementTypes = Lists.newArrayList(EduCourse.class, CheckiOCourse.class,
                                                                                        HyperskillCourse.class, Course.class);
 
   public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();

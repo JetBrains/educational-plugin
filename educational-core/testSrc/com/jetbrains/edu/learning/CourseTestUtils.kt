@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder
 import com.intellij.lang.Language
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.serialization.SerializationUtils
@@ -26,19 +26,19 @@ fun createCourseFromJson(pathToJson: String, courseType: CourseType): Course {
 }
 
 @Throws(IOException::class)
-fun createRemoteCourseFromJson(pathToJson: String, courseType: CourseType): RemoteCourse {
+fun createRemoteCourseFromJson(pathToJson: String, courseType: CourseType): EduCourse {
   val courseJson = File(pathToJson).readText()
   val gson = GsonBuilder()
     .registerTypeAdapter(Task::class.java, SerializationUtils.Json.TaskAdapter())
     .registerTypeAdapter(StudyItem::class.java, SerializationUtils.Json.LessonSectionAdapter())
     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
     .create()
-  return gson.fromJson(courseJson, RemoteCourse::class.java).apply {
+  return gson.fromJson(courseJson, EduCourse::class.java).apply {
     courseMode = courseType.toString()
   }
 }
 
-fun newCourse(courseLanguage: Language, courseType: CourseType = CourseType.EDUCATOR): Course = Course().apply {
+fun newCourse(courseLanguage: Language, courseType: CourseType = CourseType.EDUCATOR): Course = EduCourse().apply {
   name = "Test Course"
   description = "Test Description"
   courseMode = courseType.toString()

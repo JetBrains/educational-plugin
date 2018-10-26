@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.stepik.pure;
 
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.stepik.StepikLanguages;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
@@ -48,7 +48,7 @@ public class StepikCourseConnector {
       courseId = getCourseIdFromLink(link);
     }
     if (courseId != -1) {
-      RemoteCourse info = getCourseInfo(user, courseId, false);
+      EduCourse info = getCourseInfo(user, courseId, false);
       return StepikCourse.fromRemote(info);
     }
     return null;

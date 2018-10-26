@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
 import com.jetbrains.edu.learning.EduUtils
 
+@Suppress("ComponentNotRegistered") // educational-core.xml
 class CCUnpackCourseArchive : DumbAwareAction("Unpack Course From Archive", "Unpack Course From Archive", null) {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.getData(CommonDataKeys.PROJECT)

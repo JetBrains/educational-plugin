@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask
 import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -14,7 +14,8 @@ import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCours
 
 class StepikRemoteTaskChecker : RemoteTaskChecker {
   override fun canCheck(project: Project, task: Task): Boolean {
-    return (task.course is RemoteCourse || task.course is HyperskillCourse) && task.shouldBeCheckedOnStepik
+    val course = task.course
+    return task.shouldBeCheckedOnStepik && ((course is EduCourse && course.isRemote)|| course is HyperskillCourse)
   }
 
   private val Task.shouldBeCheckedOnStepik: Boolean

@@ -10,14 +10,13 @@ import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ItemContainer
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
-
+@Suppress("ComponentNotRegistered") // educational-core.xml
 class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids as json", null) {
-
 
   private fun <T>JsonObject.addChildren(propertyName: String, children: List<T>, serializeChild: (T) -> JsonElement){
     val jsonArray = JsonArray()
@@ -45,7 +44,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
         jsonObject.addChildren("task_list", item.taskList, serializeStudyItem)
         jsonObject.addProperty("unit_id", item.unitId)
       }
-      if (item is RemoteCourse) {
+      if (item is EduCourse && item.isRemote) {
         if (item.sectionIds.isNotEmpty()) {
           jsonObject.addChildren("sectionIds", item.sectionIds) { id ->
             JsonPrimitive(id)
@@ -72,7 +71,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
       return
     }
     val course = StudyTaskManager.getInstance(project).course ?: return
-    if (course !is RemoteCourse) {
+    if (course !is EduCourse || !course.isRemote) {
       return
     }
     presentation.isEnabledAndVisible = true

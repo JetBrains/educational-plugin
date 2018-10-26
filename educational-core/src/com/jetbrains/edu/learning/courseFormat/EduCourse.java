@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RemoteCourse extends Course {
+public class EduCourse extends Course {
 
   private static final Logger LOG = Logger.getInstance(Course.class);
 
@@ -140,6 +140,10 @@ public class RemoteCourse extends Course {
     myAdditionalMaterialsUpdateDate = additionalMaterialsUpdateDate;
   }
 
+  public boolean isRemote() {
+    return id != 0;
+  }
+
   @NotNull
   private static List<String> getSupportedLanguages() {
     if (ourSupportedLanguages == null) {
@@ -155,7 +159,7 @@ public class RemoteCourse extends Course {
   }
 
   @NotNull
-  private static CourseCompatibility courseCompatibility(@NotNull RemoteCourse courseInfo) {
+  private static CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
     final List<String> supportedLanguages = getSupportedLanguages();
 
     String courseType = courseInfo.getType();

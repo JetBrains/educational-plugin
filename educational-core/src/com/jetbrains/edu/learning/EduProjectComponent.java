@@ -31,7 +31,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.*;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
@@ -82,8 +82,8 @@ public class EduProjectComponent implements ProjectComponent {
           return;
         }
 
-        if (course instanceof RemoteCourse) {
-          StepikConnector.updateCourseIfNeeded(myProject, (RemoteCourse)course);
+        if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
+          StepikConnector.updateCourseIfNeeded(myProject, (EduCourse)course);
         }
 
         final StepikUser currentUser = EduSettings.getInstance().getUser();
@@ -171,16 +171,17 @@ public class EduProjectComponent implements ProjectComponent {
   }
 
   private void loadSolutionsFromStepik(@NotNull Course course) {
-    if (!(course instanceof RemoteCourse) || !((RemoteCourse) course).isLoadSolutions()) return;
-    if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
-      PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
-      return;
-    }
-    try {
-      StepikSolutionsLoader.getInstance(myProject).loadSolutionsInBackground();
-    }
-    catch (Exception e) {
-      LOG.warn(e.getMessage());
+    if (course instanceof EduCourse && ((EduCourse)course).isRemote() && ((EduCourse)course).isLoadSolutions()) {
+      if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
+        PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
+        return;
+      }
+      try {
+        StepikSolutionsLoader.getInstance(myProject).loadSolutionsInBackground();
+      }
+      catch (Exception e) {
+        LOG.warn(e.getMessage());
+      }
     }
   }
 

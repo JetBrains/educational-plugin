@@ -3,9 +3,9 @@ package com.jetbrains.edu.learning.taskDescription
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.actions.LeaveFeedbackAction
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
 
@@ -45,7 +45,7 @@ class FeedbackLinksTest : EduTestCase() {
         eduTask { }
       }
     }
-    val remoteCourse = RemoteCourse()
+    val remoteCourse = EduCourse()
     remoteCourse.items = course.items
     remoteCourse.init(null, null, false)
 
