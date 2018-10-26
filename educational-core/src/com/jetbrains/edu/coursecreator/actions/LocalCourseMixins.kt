@@ -43,6 +43,7 @@ private const val TYPE = "type"
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(VERSION, TITLE, SUMMARY, PROGRAMMING_LANGUAGE, LANGUAGE, ITEMS)
+@JsonSerialize(using = CourseSerializer::class)
 abstract class LocalCourseMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
@@ -66,6 +67,7 @@ abstract class LocalCourseMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonSerialize(using = StudyItemSerializer::class)
 abstract class LocalSectionMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
@@ -78,6 +80,7 @@ abstract class LocalSectionMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonSerialize(using = StudyItemSerializer::class)
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
@@ -90,6 +93,7 @@ abstract class LocalLessonMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonSerialize(using = TaskSerializer::class)
 abstract class LocalTaskMixin {
   @JsonProperty(NAME)
   private lateinit var name: String
@@ -143,16 +147,16 @@ class TaskSerializer : JsonSerializer<Task>() {
   }
 }
 
-class LessonSerializer : JsonSerializer<Lesson>() {
-  override fun serialize(lesson: Lesson, generator: JsonGenerator, provider: SerializerProvider) {
+class StudyItemSerializer : JsonSerializer<StudyItem>() {
+  override fun serialize(item: StudyItem, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
-    generator.writeObjectField(TYPE, itemType(lesson))
-    val serializer = getJsonSerializer(provider, Lesson::class.java)
-    serializer.unwrappingSerializer(null).serialize(lesson, generator, provider)
+    generator.writeObjectField(TYPE, itemType(item))
+    val serializer = getJsonSerializer(provider, StudyItem::class.java)
+    serializer.unwrappingSerializer(null).serialize(item, generator, provider)
     generator.writeEndObject()
   }
 
-  private fun itemType(lesson: Lesson): String {
+  private fun itemType(lesson: StudyItem): String {
     var itemType = EduNames.LESSON
     if (lesson is FrameworkLesson) {
       itemType = SerializationUtils.Json.FRAMEWORK_TYPE

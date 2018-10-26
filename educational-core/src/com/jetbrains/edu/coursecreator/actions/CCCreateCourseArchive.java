@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -216,11 +215,6 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   public static void generateJson(VirtualFile parentDir, Course course) throws IOException {
     JsonFactory factory = new JsonFactory();
     ObjectMapper mapper = new ObjectMapper(factory);
-    SimpleModule module = new SimpleModule();
-    module.addSerializer(Task.class, new TaskSerializer());
-    module.addSerializer(Lesson.class, new LessonSerializer());
-    module.addSerializer(Course.class, new CourseSerializer());
-    mapper.registerModule(module);
     mapper.addMixIn(EduCourse.class, LocalCourseMixin.class);
     mapper.addMixIn(Section.class, LocalSectionMixin.class);
     mapper.addMixIn(Lesson.class, LocalLessonMixin.class);
