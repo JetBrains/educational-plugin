@@ -1,21 +1,24 @@
 <idea-plugin>
-    <depends>com.intellij.modules.lang</depends>
-    <depends>org.jetbrains.kotlin</depends>
-    <depends>org.jetbrains.plugins.gradle</depends>
-    <depends>JUnit</depends>
+  <depends>com.intellij.modules.lang</depends>
+  <depends>org.jetbrains.kotlin</depends>
+  <depends>org.jetbrains.plugins.gradle</depends>
+  <depends>JUnit</depends>
 
 
-    <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceInterface="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"
-                        serviceImplementation="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"/>
-    </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceInterface="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"
+                    serviceImplementation="com.jetbrains.edu.kotlin.twitter.KtTwitterSettings"/>
+  </extensions>
 
-    <extensions defaultExtensionNs="Educational">
-        <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
-        <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
-        <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
-        <coursesProvider implementation="com.jetbrains.edu.kotlin.KtBundledCoursesProvider"/>
-        <languageDecorator implementationClass="com.jetbrains.edu.kotlin.KtLanguageDecorator" language="kotlin" />
-    </extensions>
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin"/>
+    <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
+    <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
+    <coursesProvider implementation="com.jetbrains.edu.kotlin.KtBundledCoursesProvider"/>
+    <languageDecorator implementationClass="com.jetbrains.edu.kotlin.KtLanguageDecorator" language="kotlin"/>
+
+    <!-- Coursera -->
+    <configurator implementationClass="com.jetbrains.edu.kotlin.KtConfigurator" language="kotlin" courseType="Coursera"/>
+  </extensions>
 
 </idea-plugin>
