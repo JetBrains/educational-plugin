@@ -1,7 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -17,7 +17,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -26,14 +25,11 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.DescriptionFormat;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +44,7 @@ import java.util.zip.ZipOutputStream;
 
 import static com.jetbrains.edu.learning.EduNames.COURSE_META_FILE;
 
+@SuppressWarnings("ComponentNotRegistered") //educational-core.xml
 public class CCCreateCourseArchive extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCCreateCourseArchive.class.getName());
 
@@ -217,13 +214,15 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   }
 
   public static void generateJson(VirtualFile parentDir, Course course) throws IOException {
-    final Gson gson = new GsonBuilder()
-      .setPrettyPrinting()
-      .excludeFieldsWithoutExposeAnnotation()
-      .registerTypeHierarchyAdapter(Course.class, new SerializationUtils.Json.CourseAdapter())
-      .create();
-    final String json = gson.toJson(course);
-    final VirtualFile courseJsonFile = parentDir.findOrCreateChildData(CCCreateCourseArchive.class, COURSE_META_FILE);
-    VfsUtil.saveText(courseJsonFile, json);
+    JsonFactory factory = new JsonFactory();
+    ObjectMapper mapper = new ObjectMapper(factory);
+    mapper.addMixIn(EduCourse.class, LocalCourseMixin.class);
+    mapper.addMixIn(Section.class, LocalSectionMixin.class);
+    mapper.addMixIn(Lesson.class, LocalLessonMixin.class);
+    mapper.addMixIn(Task.class, LocalTaskMixin.class);
+    mapper.addMixIn(TaskFile.class, LocalTaskFileMixin.class);
+    mapper.writerWithDefaultPrettyPrinter()
+      .withAttribute("version", EduVersions.JSON_FORMAT_VERSION)
+      .writeValue(new File(new File(parentDir.getPath()), COURSE_META_FILE), course);
   }
 }
