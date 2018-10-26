@@ -58,8 +58,7 @@ sealed class ErrorState(
     }
 
     private fun getPluginRequirements(course: Course?): List<String> {
-      if (course == null) return listOf()
-      return course.configurator?.pluginRequirements().orEmpty()
+      return course?.configurator?.pluginRequirements().orEmpty()
     }
 
     @JvmStatic
