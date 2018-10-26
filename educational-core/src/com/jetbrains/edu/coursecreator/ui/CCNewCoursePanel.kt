@@ -237,7 +237,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     fun onInputDataValidated(isInputDataComplete: Boolean)
   }
 
-  private data class CourseTypeData(val language: Language, val courseType: String = EduNames.PYCHARM, val icon: Icon?) {
+  private data class CourseTypeData(val language: Language, val courseType: String, val icon: Icon?) {
   val displayName get(): String {
       return when (courseType) {
         EduNames.PYCHARM -> language.displayName
