@@ -211,7 +211,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
     val courseTypeData = if (course != null) {
       listOfNotNull(obtainCourseTypeData(course.languageID, course.courseType))
     } else {
-      EduConfiguratorManager.allExtensions().asSequence()
+      EduConfiguratorManager.allExtensions()
         .filter { it.courseCreatorEnabled }
         .mapNotNull { extension -> obtainCourseTypeData(extension.language, extension.courseType) }.toList()
     }
