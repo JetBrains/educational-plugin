@@ -8,6 +8,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.settings.CCSettings
 import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.isFrameworkTask
@@ -24,7 +25,9 @@ class EduFileEditorProvider : FileEditorProvider, DumbAware {
   override fun createEditor(project: Project, file: VirtualFile): FileEditor {
     val taskFile = EduUtils.getTaskFile(project, file) ?: error("Can't find task file for `$file`")
     val task = taskFile.task
-    if (task.isFrameworkTask && CCUtils.isCourseCreator(project) && Experiments.isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR)) {
+    if (task.isFrameworkTask && CCUtils.isCourseCreator(project) &&
+        Experiments.isFeatureEnabled(EduExperimentalFeatures.SPLIT_EDITOR) &&
+        CCSettings.getInstance().showSplitEditor()) {
       val prevTaskFile = task.lesson.getTaskList().getOrNull(task.index - 2)?.getTaskFile(taskFile.name)
       val taskDir = prevTaskFile?.task?.getTaskDir(project)
       if (prevTaskFile != null && taskDir != null) {
