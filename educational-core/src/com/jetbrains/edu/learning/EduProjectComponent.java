@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.KeyboardShortcut;
@@ -43,7 +44,6 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
-import org.fest.util.VisibleForTesting;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
