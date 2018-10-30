@@ -24,6 +24,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.io.ZipUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.actions.mixins.*;
 import com.jetbrains.edu.coursecreator.ui.CCCreateCourseArchiveDialog;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
@@ -217,6 +218,15 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   }
 
   public static void generateJson(VirtualFile parentDir, Course course) throws IOException {
+    ObjectMapper mapper = course.getId() == 0 ? getLocalCourseMapper() : getRemoteCourseMapper();
+    DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
+    prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
+
+    mapper.writer(prettyPrinter).writeValue(new File(new File(parentDir.getPath()), COURSE_META_FILE), course);
+  }
+
+  @NotNull
+  private static ObjectMapper getLocalCourseMapper() {
     JsonFactory factory = new JsonFactory();
     ObjectMapper mapper = new ObjectMapper(factory);
     mapper.addMixIn(EduCourse.class, LocalCourseMixin.class);
@@ -228,9 +238,22 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     mapper.addMixIn(FeedbackLink.class, FeedbackLinkMixin.class);
     mapper.enable(WRITE_ENUMS_USING_TO_STRING);
     mapper.enable(READ_ENUMS_USING_TO_STRING);
-    DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
-    prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
+    return mapper;
+  }
 
-    mapper.writer(prettyPrinter).writeValue(new File(new File(parentDir.getPath()), COURSE_META_FILE), course);
+  @NotNull
+  private static ObjectMapper getRemoteCourseMapper() {
+    JsonFactory factory = new JsonFactory();
+    ObjectMapper mapper = new ObjectMapper(factory);
+    mapper.addMixIn(EduCourse.class, LocalCourseMixin.class);
+    mapper.addMixIn(Section.class, LocalSectionMixin.class);
+    mapper.addMixIn(Lesson.class, LocalLessonMixin.class);
+    mapper.addMixIn(Task.class, LocalTaskMixin.class);
+    mapper.addMixIn(TaskFile.class, LocalTaskFileMixin.class);
+    mapper.addMixIn(AdditionalFile.class, AdditionalFileMixin.class);
+    mapper.addMixIn(FeedbackLink.class, FeedbackLinkMixin.class);
+    mapper.enable(WRITE_ENUMS_USING_TO_STRING);
+    mapper.enable(READ_ENUMS_USING_TO_STRING);
+    return mapper;
   }
 }

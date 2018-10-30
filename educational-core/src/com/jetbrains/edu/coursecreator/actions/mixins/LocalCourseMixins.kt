@@ -1,6 +1,6 @@
 @file:JvmName("LocalCourseMixins")
 
-package com.jetbrains.edu.coursecreator.actions
+package com.jetbrains.edu.coursecreator.actions.mixins
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonInclude
@@ -47,7 +47,10 @@ private const val LINK_TYPE = "link_type"
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder(VERSION, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, ITEMS)
+@JsonPropertyOrder(VERSION, SUMMARY,
+                   TITLE,
+                   PROGRAMMING_LANGUAGE,
+                   LANGUAGE, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalCourseMixin {
   @JsonProperty(TITLE)
@@ -166,11 +169,11 @@ abstract class AdditionalFileMixin {
   private lateinit var _text: String
 }
 
-private class ProgrammingLanguageConverter : StdConverter<String, String>() {
+class ProgrammingLanguageConverter : StdConverter<String, String>() {
   override fun convert(languageId: String): String = Language.findLanguageByID(languageId)!!.displayName
 }
 
-private class LanguageConverter : StdConverter<String, String>() {
+class LanguageConverter : StdConverter<String, String>() {
   override fun convert(languageCode: String): String = Locale(languageCode).displayName
 }
 
