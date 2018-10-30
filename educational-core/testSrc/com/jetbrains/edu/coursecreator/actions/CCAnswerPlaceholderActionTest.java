@@ -9,22 +9,19 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCTestCase;
 import com.jetbrains.edu.coursecreator.CCTestsUtil;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCAddAnswerPlaceholder;
+import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog;
 import com.jetbrains.edu.coursecreator.actions.placeholder.CCDeleteAnswerPlaceholder;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import com.jetbrains.edu.coursecreator.actions.placeholder.CCCreateAnswerPlaceholderDialog;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
 
 public class CCAnswerPlaceholderActionTest extends CCTestCase {
   static class CCTestAction extends CCAddAnswerPlaceholder {
     @Override
     protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {
       String placeholderText = answerPlaceholder.getPlaceholderText();
-      return new CCCreateAnswerPlaceholderDialog(project, placeholderText == null ? "type here" : placeholderText, answerPlaceholder.getHints()) {
+      return new CCCreateAnswerPlaceholderDialog(project, placeholderText == null ? "type here" : placeholderText) {
         @Override
         public boolean showAndGet() {
           return true;
@@ -34,11 +31,6 @@ public class CCAnswerPlaceholderActionTest extends CCTestCase {
         @NotNull
         public String getTaskText() {
           return "type here";
-        }
-
-        @Override
-        public List<String> getHints() {
-          return Collections.singletonList("Test hint");
         }
       };
     }

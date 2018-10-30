@@ -13,6 +13,10 @@ import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import java.util.ArrayList
+import kotlin.collections.HashSet
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 val Task.project: Project? get() = course.project
 
@@ -113,3 +117,34 @@ private fun TaskFile.canShowSolution() =
   answerPlaceholders.isNotEmpty() && answerPlaceholders.all { it.possibleAnswer.isNotEmpty() }
 
 fun Task.canShowSolution() = taskFiles.values.any { it.canShowSolution() }
+
+fun Task.taskDescriptionHintBlocks(): String {
+  val text = StringBuffer()
+  val hints = ArrayList<String>()
+  for (value in taskFiles.values) {
+    for (placeholder in value.answerPlaceholders) {
+      for (hint in placeholder.hints) {
+        if (!hint.isEmpty()) {
+          hints.add(hint)
+        }
+      }
+    }
+  }
+
+  if (hints.isEmpty()) {
+    return ""
+  }
+
+  text.append("<br>")
+  text.append("\n")
+  for (hint in hints) {
+    text.append("<div class='hint'>")
+      .append(hint)
+      .append("</div>")
+      .append("\n")
+  }
+  text.append("<br>")
+  text.append("\n")
+
+  return text.toString()
+}

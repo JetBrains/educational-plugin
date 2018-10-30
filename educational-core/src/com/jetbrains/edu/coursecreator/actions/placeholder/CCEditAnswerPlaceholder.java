@@ -11,8 +11,6 @@ import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   public CCEditAnswerPlaceholder() {
@@ -34,7 +32,7 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
   }
 
   public static void performEditPlaceholder(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
-    CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), answerPlaceholder.getHints());
+    CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText());
     dlg.setTitle("Edit Answer Placeholder");
     if (dlg.showAndGet()) {
       final String answerPlaceholderText = dlg.getTaskText();
@@ -44,20 +42,12 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
       answerPlaceholder.setPlaceholderText(answerPlaceholderText);
       answerPlaceholder.setLength(StringUtil
                                     .notNullize(answerPlaceholderText).length());
-      answerPlaceholder.setHints(dlg.getHints());
       YamlFormatSynchronizer.saveItem(answerPlaceholder.getTaskFile().getTask());
     }
   }
 
   private static boolean isChanged(@NotNull AnswerPlaceholder answerPlaceholder, @NotNull CCCreateAnswerPlaceholderDialog dialog) {
-    if (!dialog.getTaskText().equals(answerPlaceholder.getPlaceholderText())) {
-      return true;
-    }
-
-    List<String> newHints = dialog.getHints();
-    List<String> oldHints = answerPlaceholder.getHints();
-
-    return !newHints.equals(oldHints);
+    return !dialog.getTaskText().equals(answerPlaceholder.getPlaceholderText());
   }
 
   @Override
