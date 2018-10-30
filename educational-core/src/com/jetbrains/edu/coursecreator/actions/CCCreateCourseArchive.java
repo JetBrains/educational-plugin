@@ -233,7 +233,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     mapper.addMixIn(Section.class, LocalSectionMixin.class);
     mapper.addMixIn(Lesson.class, LocalLessonMixin.class);
     mapper.addMixIn(Task.class, LocalTaskMixin.class);
-    mapper.addMixIn(TaskFile.class, LocalTaskFileMixin.class);
+    mapper.addMixIn(TaskFile.class, TaskFileMixin.class);
     mapper.addMixIn(AdditionalFile.class, AdditionalFileMixin.class);
     mapper.addMixIn(FeedbackLink.class, FeedbackLinkMixin.class);
     mapper.enable(WRITE_ENUMS_USING_TO_STRING);
@@ -245,11 +245,11 @@ public class CCCreateCourseArchive extends DumbAwareAction {
   private static ObjectMapper getRemoteCourseMapper() {
     JsonFactory factory = new JsonFactory();
     ObjectMapper mapper = new ObjectMapper(factory);
-    mapper.addMixIn(EduCourse.class, LocalCourseMixin.class);
-    mapper.addMixIn(Section.class, LocalSectionMixin.class);
-    mapper.addMixIn(Lesson.class, LocalLessonMixin.class);
-    mapper.addMixIn(Task.class, LocalTaskMixin.class);
-    mapper.addMixIn(TaskFile.class, LocalTaskFileMixin.class);
+    mapper.addMixIn(EduCourse.class, RemoteCourseMixin.class);
+    mapper.addMixIn(Section.class, RemoteSectionMixin.class);
+    mapper.addMixIn(Lesson.class, RemoteLessonMixin.class);
+    mapper.addMixIn(Task.class, RemoteTaskMixin.class);
+    mapper.addMixIn(TaskFile.class, TaskFileMixin.class);
     mapper.addMixIn(AdditionalFile.class, AdditionalFileMixin.class);
     mapper.addMixIn(FeedbackLink.class, FeedbackLinkMixin.class);
     mapper.enable(WRITE_ENUMS_USING_TO_STRING);

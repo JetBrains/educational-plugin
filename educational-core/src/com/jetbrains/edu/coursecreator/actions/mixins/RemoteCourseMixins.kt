@@ -9,7 +9,6 @@ import java.util.*
 
 private const val UPDATE_DATE = "update_date"
 private const val ID = "id"
-private const val SECTIONS = "sections"
 private const val STEPIK_ID = "stepic_id"
 private const val UNIT_ID = "unit_id"
 
@@ -19,9 +18,6 @@ private const val UNIT_ID = "unit_id"
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class RemoteCourseMixin : LocalCourseMixin() {
-  @JsonProperty(SECTIONS)
-  lateinit var sectionIds: List<Int>
-
   @JsonProperty(ID)
   private var id: Int = 0
 
@@ -72,11 +68,4 @@ abstract class RemoteTaskMixin : LocalTaskMixin() {
   @JsonProperty(UPDATE_DATE)
   private lateinit var myUpdateDate: Date
 
-}
-
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
-abstract class RemoteTaskFileMixin : LocalTaskFileMixin() {
 }

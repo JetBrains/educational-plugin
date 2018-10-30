@@ -129,7 +129,7 @@ abstract class LocalTaskMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-abstract class LocalTaskFileMixin {
+abstract class TaskFileMixin {
   @JsonProperty(NAME)
   private lateinit var myName: String
 
