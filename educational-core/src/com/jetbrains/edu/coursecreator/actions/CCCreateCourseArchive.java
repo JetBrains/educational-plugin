@@ -40,6 +40,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
@@ -254,6 +255,7 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     mapper.addMixIn(FeedbackLink.class, FeedbackLinkMixin.class);
     mapper.enable(WRITE_ENUMS_USING_TO_STRING);
     mapper.enable(READ_ENUMS_USING_TO_STRING);
+    mapper.setDateFormat(new SimpleDateFormat("MMM dd, yyyy hh:mm:ss a"));
     return mapper;
   }
 }
