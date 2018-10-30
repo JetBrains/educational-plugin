@@ -1,8 +1,9 @@
-@file:JvmName("CourseYamlUtil")
+@file:JvmName("LocalCourseMixins")
 
 package com.jetbrains.edu.coursecreator.actions
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.core.JsonGenerator
@@ -35,14 +36,18 @@ private const val TASK_TYPE = "task_type"
 private const val DESCRIPTION_TEXT = "description_text"
 private const val DESCRIPTION_FORMAT = "description_format"
 private const val TEXT = "text"
+private const val IS_VISIBLE = "is_visible"
+private const val FEEDBACK_LINK = "feedback_link"
 private const val PLACEHOLDERS = "placeholders"
 private const val TYPE = "type"
+private const val LINK = "link"
+private const val LINK_TYPE = "link_type"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder(VERSION, TITLE, SUMMARY, PROGRAMMING_LANGUAGE, LANGUAGE, ITEMS)
+@JsonPropertyOrder(VERSION, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalCourseMixin {
   @JsonProperty(TITLE)
@@ -112,6 +117,9 @@ abstract class LocalTaskMixin {
 
   @JsonProperty(ADDITIONAL_FILES)
   protected lateinit var additionalFiles: MutableMap<String, AdditionalFile>
+
+  @JsonProperty(FEEDBACK_LINK)
+  private lateinit var myFeedbackLink: FeedbackLink
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
@@ -122,11 +130,40 @@ abstract class LocalTaskFileMixin {
   @JsonProperty(NAME)
   private lateinit var myName: String
 
-  @JsonProperty(TEXT)
-  private lateinit var _text: String
+  @JsonProperty(IS_VISIBLE)
+  var isVisible: Boolean = true
 
   @JsonProperty(PLACEHOLDERS)
   private lateinit var myAnswerPlaceholders: List<AnswerPlaceholder>
+
+  @JsonProperty(TEXT)
+  private lateinit var _text: String
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+abstract class FeedbackLinkMixin {
+  @JsonProperty(LINK_TYPE)
+  private lateinit var myType: FeedbackLink.LinkType
+
+  @JsonProperty(LINK)
+  private var myLink: String? = null
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonPropertyOrder(IS_VISIBLE, TEXT)
+abstract class AdditionalFileMixin {
+  @JsonProperty(IS_VISIBLE)
+  var isVisible: Boolean = true
+
+  @JsonProperty(TEXT)
+  private lateinit var _text: String
 }
 
 private class ProgrammingLanguageConverter : StdConverter<String, String>() {
@@ -140,9 +177,9 @@ private class LanguageConverter : StdConverter<String, String>() {
 class TaskSerializer : JsonSerializer<Task>() {
   override fun serialize(task: Task, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
-    generator.writeObjectField(TASK_TYPE, task.taskType)
     val serializer = getJsonSerializer(provider, Task::class.java)
     serializer.unwrappingSerializer(null).serialize(task, generator, provider)
+    generator.writeObjectField(TASK_TYPE, task.taskType)
     generator.writeEndObject()
   }
 }
@@ -150,9 +187,9 @@ class TaskSerializer : JsonSerializer<Task>() {
 open class StudyItemSerializer(private val clazz: Class<out StudyItem>) : JsonSerializer<StudyItem>() {
   override fun serialize(item: StudyItem, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
-    generator.writeObjectField(TYPE, itemType(item))
     val serializer = getJsonSerializer(provider, clazz)
     serializer.unwrappingSerializer(null).serialize(item, generator, provider)
+    generator.writeObjectField(TYPE, itemType(item))
     generator.writeEndObject()
   }
 
@@ -174,9 +211,9 @@ class SectionSerializer : StudyItemSerializer(Section::class.java)
 class CourseSerializer : JsonSerializer<EduCourse>() {
   override fun serialize(course: EduCourse, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
-    generator.writeObjectField(VERSION, JSON_FORMAT_VERSION)
     val serializer = getJsonSerializer(provider, EduCourse::class.java)
     serializer.unwrappingSerializer(null).serialize(course, generator, provider)
+    generator.writeObjectField(VERSION, JSON_FORMAT_VERSION)
     generator.writeEndObject()
   }
 }

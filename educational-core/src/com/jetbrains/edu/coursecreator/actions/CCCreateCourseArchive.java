@@ -1,6 +1,8 @@
 package com.jetbrains.edu.coursecreator.actions;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.util.PropertiesComponent;
@@ -41,6 +43,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.READ_ENUMS_USING_TO_STRING;
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_ENUMS_USING_TO_STRING;
 import static com.jetbrains.edu.learning.EduNames.COURSE_META_FILE;
 
 @SuppressWarnings("ComponentNotRegistered") //educational-core.xml
@@ -220,6 +224,13 @@ public class CCCreateCourseArchive extends DumbAwareAction {
     mapper.addMixIn(Lesson.class, LocalLessonMixin.class);
     mapper.addMixIn(Task.class, LocalTaskMixin.class);
     mapper.addMixIn(TaskFile.class, LocalTaskFileMixin.class);
-    mapper.writerWithDefaultPrettyPrinter().writeValue(new File(new File(parentDir.getPath()), COURSE_META_FILE), course);
+    mapper.addMixIn(AdditionalFile.class, AdditionalFileMixin.class);
+    mapper.addMixIn(FeedbackLink.class, FeedbackLinkMixin.class);
+    mapper.enable(WRITE_ENUMS_USING_TO_STRING);
+    mapper.enable(READ_ENUMS_USING_TO_STRING);
+    DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
+    prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE);
+
+    mapper.writer(prettyPrinter).writeValue(new File(new File(parentDir.getPath()), COURSE_META_FILE), course);
   }
 }
