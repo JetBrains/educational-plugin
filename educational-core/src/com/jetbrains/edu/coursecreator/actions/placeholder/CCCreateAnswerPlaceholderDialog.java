@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.List;
 
 public class CCCreateAnswerPlaceholderDialog extends DialogWrapper {
 
@@ -20,15 +19,12 @@ public class CCCreateAnswerPlaceholderDialog extends DialogWrapper {
     return myProject;
   }
 
-  public CCCreateAnswerPlaceholderDialog(@NotNull final Project project,
-                                         String placeholderText,
-                                         List<String> hints) {
+  public CCCreateAnswerPlaceholderDialog(@NotNull final Project project, String placeholderText) {
     super(project, true);
     
     myProject = project;
-    myPanel = new CCCreateAnswerPlaceholderPanel(placeholderText, hints);
+    myPanel = new CCCreateAnswerPlaceholderPanel(placeholderText);
     setTitle(TITLE);
-    setResizable(false);
     init();
     initValidation();
   }
@@ -36,10 +32,6 @@ public class CCCreateAnswerPlaceholderDialog extends DialogWrapper {
   @NotNull
   public String getTaskText() {
     return StringUtil.notNullize(myPanel.getAnswerPlaceholderText()).trim();
-  }
-
-  public List<String> getHints() {
-    return myPanel.getHints();
   }
 
   @Nullable

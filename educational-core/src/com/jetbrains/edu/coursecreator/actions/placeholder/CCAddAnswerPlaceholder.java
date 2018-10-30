@@ -62,7 +62,6 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     answerPlaceholder.setPossibleAnswer(model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText);
     answerPlaceholder.setPlaceholderText(answerPlaceholderText);
     answerPlaceholder.setLength(answerPlaceholderText.length());
-    answerPlaceholder.setHints(dlg.getHints());
 
     if (!model.hasSelection()) {
       DocumentUtil.writeInRunUndoTransparentAction(() -> document.insertString(offset, defaultPlaceholderText));
@@ -134,7 +133,6 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
 
   protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {
     String answerPlaceholderText = StringUtil.notNullize(answerPlaceholder.getPlaceholderText());
-    return new CCCreateAnswerPlaceholderDialog(project, answerPlaceholderText.isEmpty() ? "type here" : answerPlaceholderText,
-                                               answerPlaceholder.getHints());
+    return new CCCreateAnswerPlaceholderDialog(project, answerPlaceholderText.isEmpty() ? "type here" : answerPlaceholderText);
   }
 }

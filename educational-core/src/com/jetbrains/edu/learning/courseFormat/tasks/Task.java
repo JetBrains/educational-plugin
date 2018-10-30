@@ -197,36 +197,13 @@ public abstract class Task extends StudyItem {
     if (taskDir != null) {
       StringBuffer text = new StringBuffer(taskText);
       EduUtils.replaceActionIDsWithShortcuts(text);
-      addPlaceholderHints(text);
+      text.append(TaskExt.taskDescriptionHintBlocks(this));
       taskText = text.toString();
       if (descriptionFormat == DescriptionFormat.MD) {
         taskText = EduUtils.convertToHtml(taskText, taskDir);
       }
     }
     return taskText;
-  }
-
-  private void addPlaceholderHints(StringBuffer text) {
-    List<String> hints = new ArrayList<>();
-    for (TaskFile value : getTaskFiles().values()) {
-      for (AnswerPlaceholder placeholder : value.getAnswerPlaceholders()) {
-        for (String hint : placeholder.getHints()) {
-          if (!hint.isEmpty()) {
-            hints.add(hint);
-          }
-        }
-      }
-    }
-
-    if (hints.isEmpty()) {
-      return;
-    }
-
-    text.append("<br>");
-    for (String hint : hints) {
-      text.append("<div class='hint'>").append(hint).append("</div>");
-    }
-    text.append("<br>");
   }
 
   @Nullable

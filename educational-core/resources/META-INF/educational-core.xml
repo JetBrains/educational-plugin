@@ -1,4 +1,4 @@
-<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+<idea-plugin>
   <depends>com.intellij.modules.lang</depends>
   <!--<xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
 
@@ -77,9 +77,6 @@
     <action id="Educational.WatchInput" class="com.jetbrains.edu.learning.actions.EditInputAction"
             text="Watch Test Input"
             description="Watch test input "/>
-    <action id="Educational.ShowHint" class="com.jetbrains.edu.learning.actions.ShowHintAction"
-            text="Show Hint for Answer Placeholder"
-            description="Show hint for answer placeholder"/>
     <action id="Educational.Educator.EnablePluginAction" class="com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction"
             text="Enable Course Creator Features">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>

@@ -29,9 +29,12 @@ import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.*;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
@@ -40,13 +43,17 @@ import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import org.fest.util.VisibleForTesting;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
@@ -55,6 +62,7 @@ public class EduProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(EduProjectComponent.class.getName());
   private final Project myProject;
   private final Map<Keymap, List<Pair<String, String>>> myDeletedShortcuts = new HashMap<>();
+  private final String HINTS_IN_DESCRIPTION_PROPERTY = "HINTS_IN_TASK_DESCRIPTION";
   private MessageBusConnection myBusConnection;
 
   private EduProjectComponent(@NotNull final Project project) {
@@ -90,6 +98,12 @@ public class EduProjectComponent implements ProjectComponent {
           loadSolutionsFromStepik(course);
         }
 
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(myProject);
+        if (CCUtils.isCourseCreator(myProject) && !propertiesComponent.getBoolean(HINTS_IN_DESCRIPTION_PROPERTY)) {
+          moveHintsToTaskDescription(course);
+          propertiesComponent.setValue(HINTS_IN_DESCRIPTION_PROPERTY, true);
+        }
+
         if (EduGradleUtils.isConfiguredWithGradle(myProject)) {
           setupGradleProject(course);
         }
@@ -98,9 +112,9 @@ public class EduProjectComponent implements ProjectComponent {
         selectStep(course);
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-            registerShortcuts();
-            EduUsagesCollector.projectTypeOpened(course.getCourseMode());
-          }));
+          registerShortcuts();
+          EduUsagesCollector.projectTypeOpened(course.getCourseMode());
+        }));
       }
     );
 
@@ -183,6 +197,46 @@ public class EduProjectComponent implements ProjectComponent {
     }
   }
 
+  @VisibleForTesting
+  public void moveHintsToTaskDescription(@NotNull Course course) {
+    AtomicBoolean hasPlaceholderHints = new AtomicBoolean(false);
+    course.visitLessons(lesson -> {
+      for (Task task : lesson.getTaskList()) {
+        StringBuffer text = new StringBuffer(task.getDescriptionText());
+        String hintBlocks = TaskExt.taskDescriptionHintBlocks(task);
+        if (!hintBlocks.isEmpty()) {
+          hasPlaceholderHints.set(true);
+        }
+        text.append(hintBlocks);
+        task.setDescriptionText(text.toString());
+        VirtualFile file = TaskExt.getDescriptionFile(task, myProject);
+        if (file != null) {
+          ApplicationManager.getApplication().runWriteAction(() -> {
+            try {
+              VfsUtil.saveText(file, text.toString());
+            }
+            catch (IOException e) {
+              LOG.warn(e.getMessage());
+            }
+          });
+        }
+
+        for (TaskFile value : task.getTaskFiles().values()) {
+          for (AnswerPlaceholder placeholder : value.getAnswerPlaceholders()) {
+            placeholder.setHints(Collections.emptyList());
+          }
+        }
+      }
+
+      return true;
+    });
+
+    if (hasPlaceholderHints.get()) {
+      EduUsagesCollector.projectWithPlaceholderHintsAll();
+      EduUsagesCollector.projectWithPlaceholderHints(course.getId());
+    }
+  }
+
   private void addStepikWidget() {
     StepikUserWidget widget = getVisibleWidget(myProject);
     StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
@@ -202,7 +256,6 @@ public class EduProjectComponent implements ProjectComponent {
   private void registerShortcuts() {
     addShortcut(CheckAction.ACTION_ID, new String[]{CheckAction.SHORTCUT});
     addShortcut(RevertTaskAction.ACTION_ID, new String[]{RevertTaskAction.SHORTCUT});
-    addShortcut(ShowHintAction.ACTION_ID, new String[]{ShowHintAction.SHORTCUT});
     addShortcut(NextPlaceholderAction.ACTION_ID, new String[]{NextPlaceholderAction.SHORTCUT, NextPlaceholderAction.SHORTCUT2});
     addShortcut(PrevPlaceholderAction.ACTION_ID, new String[]{PrevPlaceholderAction.SHORTCUT});
     addShortcut(NextTaskAction.ACTION_ID, new String[]{NextTaskAction.SHORTCUT});
