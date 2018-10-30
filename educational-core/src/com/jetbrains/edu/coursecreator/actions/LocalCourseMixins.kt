@@ -67,7 +67,7 @@ abstract class LocalCourseMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonSerialize(using = StudyItemSerializer::class)
+@JsonSerialize(using = SectionSerializer::class)
 abstract class LocalSectionMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
@@ -80,7 +80,7 @@ abstract class LocalSectionMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonSerialize(using = StudyItemSerializer::class)
+@JsonSerialize(using = LessonSerializer::class)
 abstract class LocalLessonMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
@@ -147,11 +147,11 @@ class TaskSerializer : JsonSerializer<Task>() {
   }
 }
 
-class StudyItemSerializer : JsonSerializer<StudyItem>() {
+open class StudyItemSerializer(private val clazz: Class<out StudyItem>) : JsonSerializer<StudyItem>() {
   override fun serialize(item: StudyItem, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
     generator.writeObjectField(TYPE, itemType(item))
-    val serializer = getJsonSerializer(provider, StudyItem::class.java)
+    val serializer = getJsonSerializer(provider, clazz)
     serializer.unwrappingSerializer(null).serialize(item, generator, provider)
     generator.writeEndObject()
   }
@@ -168,11 +168,14 @@ class StudyItemSerializer : JsonSerializer<StudyItem>() {
   }
 }
 
-class CourseSerializer : JsonSerializer<Course>() {
-  override fun serialize(course: Course, generator: JsonGenerator, provider: SerializerProvider) {
+class LessonSerializer : StudyItemSerializer(Lesson::class.java)
+class SectionSerializer : StudyItemSerializer(Section::class.java)
+
+class CourseSerializer : JsonSerializer<EduCourse>() {
+  override fun serialize(course: EduCourse, generator: JsonGenerator, provider: SerializerProvider) {
     generator.writeStartObject()
     generator.writeObjectField(VERSION, JSON_FORMAT_VERSION)
-    val serializer = getJsonSerializer(provider, Course::class.java)
+    val serializer = getJsonSerializer(provider, EduCourse::class.java)
     serializer.unwrappingSerializer(null).serialize(course, generator, provider)
     generator.writeEndObject()
   }
