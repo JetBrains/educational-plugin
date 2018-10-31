@@ -4,7 +4,6 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduSettings.isLoggedIn
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -18,7 +17,7 @@ import java.util.*
 
 
 fun RemoteCourse.isUpToDate(): Boolean {
-  if (!isLoggedIn() || updateDate == null) {
+  if (updateDate == null || course.id == 0) {
     return true
   }
 
@@ -50,11 +49,11 @@ fun RemoteCourse.isUpToDate(courseFromStepik: RemoteCourse): Boolean {
          && lessons.all {it.isUpToDate(lessonsFromServer[it.id])}
 }
 
-fun Section.isUpToDate(sectionFromStepik: Section?): Boolean {
+private fun Section.isUpToDate(sectionFromStepik: Section?): Boolean {
   if (sectionFromStepik == null) {
     return false
   }
-  if (id == 0 || !isLoggedIn() || sectionFromStepik.updateDate == null || updateDate == null) {
+  if (id == 0 || sectionFromStepik.updateDate == null || updateDate == null) {
     return true
   }
 
@@ -65,12 +64,12 @@ fun Section.isUpToDate(sectionFromStepik: Section?): Boolean {
 }
 
 
-fun Lesson.isUpToDate(lessonFromStepik: Lesson?): Boolean {
+private fun Lesson.isUpToDate(lessonFromStepik: Lesson?): Boolean {
   if (lessonFromStepik == null) {
     return false
   }
 
-  if (id == 0 || !isLoggedIn() || lessonFromStepik.updateDate == null || updateDate == null) {
+  if (id == 0 || lessonFromStepik.updateDate == null || updateDate == null) {
     return true
   }
 
@@ -81,11 +80,11 @@ fun Lesson.isUpToDate(lessonFromStepik: Lesson?): Boolean {
 
 }
 
-fun Task.isUpToDate(tasksFromServer: Task?): Boolean {
+private fun Task.isUpToDate(tasksFromServer: Task?): Boolean {
   if (tasksFromServer == null) {
     return false
   }
-  if (id == 0 || !isLoggedIn() || tasksFromServer.updateDate == null || updateDate == null) {
+  if (id == 0 || tasksFromServer.updateDate == null || updateDate == null) {
     return true
   }
 
@@ -111,7 +110,7 @@ fun RemoteCourse.setUpdated() {
   }
 }
 
-fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
+internal fun Date.isSignificantlyAfter(otherDate: Date): Boolean {
   val diff = time - otherDate.time
   return diff > Time.MINUTE
 }
