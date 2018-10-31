@@ -53,6 +53,10 @@ open class GradleCourseProjectGenerator(
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
     setJdk(project, projectSettings)
+    setupGradleSettings(project)
+  }
+
+  protected open fun setupGradleSettings(project: Project) {
     EduGradleUtils.setGradleSettings(project, project.basePath!!)
   }
 

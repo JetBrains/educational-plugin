@@ -65,13 +65,14 @@ object EduGradleUtils {
     invokeAndWaitIfNeed { runWriteAction { VfsUtil.saveText(child, content) } }
   }
 
+  @JvmOverloads
   @JvmStatic
-  fun setGradleSettings(project: Project, location: String) {
+  fun setGradleSettings(project: Project, location: String, distributionType: DistributionType = DistributionType.WRAPPED) {
     val systemSettings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
     val existingProject = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).getLinkedProjectSettings(location)
     if (existingProject is GradleProjectSettings) {
       if (existingProject.distributionType == null) {
-        existingProject.distributionType = DistributionType.WRAPPED
+        existingProject.distributionType = distributionType
       }
       if (existingProject.externalProjectPath == null) {
         existingProject.externalProjectPath = location
@@ -80,7 +81,7 @@ object EduGradleUtils {
     }
 
     val gradleProjectSettings = GradleProjectSettings()
-    gradleProjectSettings.distributionType = DistributionType.WRAPPED
+    gradleProjectSettings.distributionType = distributionType
     gradleProjectSettings.isUseAutoImport = true
     gradleProjectSettings.externalProjectPath = location
 
