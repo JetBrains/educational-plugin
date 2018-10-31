@@ -8,7 +8,9 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
+import org.jetbrains.plugins.gradle.settings.DistributionType
 import java.io.IOException
 
 class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Course) : GradleCourseProjectGenerator(builder, course) {
@@ -23,6 +25,10 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
       .saveAsPropertyFile(baseDir, SdkConstants.FN_LOCAL_PROPERTIES)
     mapOf("org.gradle.jvmargs" to "-Xmx1536m")
       .saveAsPropertyFile(baseDir, SdkConstants.FN_GRADLE_PROPERTIES)
+  }
+
+  override fun setupGradleSettings(project: Project) {
+    EduGradleUtils.setGradleSettings(project, project.basePath!!, DistributionType.DEFAULT_WRAPPED)
   }
 
   companion object {
