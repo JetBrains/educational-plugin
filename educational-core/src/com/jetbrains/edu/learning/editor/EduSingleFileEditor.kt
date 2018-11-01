@@ -79,7 +79,7 @@ class EduSingleFileEditor(
 
   override fun selectNotify() {
     super.selectNotify()
-    PlaceholderDependencyManager.updateDependentPlaceholders(myProject, taskFile!!.task)
+    PlaceholderDependencyManager.updateDependentPlaceholders(myProject, taskFile.task)
   }
 
   override fun dispose() {

@@ -15,7 +15,6 @@ import static com.jetbrains.edu.learning.serialization.SerializationUtils.*;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.ADDITIONAL_HINTS;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.HINT;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.POSSIBLE_ANSWER;
 
 public class ToFourthVersionXmlConverter implements XmlConverter {
 
