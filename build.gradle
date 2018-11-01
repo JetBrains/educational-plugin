@@ -1,7 +1,7 @@
 buildscript {
     ext.pycharmSandbox = project.buildDir.absolutePath + File.separator + "pycharm-sandbox"
     ext.studioSandbox = project.buildDir.absolutePath + File.separator + "studio-sandbox"
-    ext.kotlinVersion = "1.2.41"
+    ext.kotlinVersion = "1.3.0"
     ext.jacksonVersion = "2.9.5"
     repositories {
         maven {
@@ -140,16 +140,16 @@ allprojects {
         destinationDir = compileJava.destinationDir
         kotlinOptions {
             jvmTarget = "1.8"
-            languageVersion = "1.1"
-            apiVersion = "1.1"
+            languageVersion = "1.2"
+            apiVersion = "1.2"
         }
     }
 
     compileTestKotlin {
         kotlinOptions {
             jvmTarget = "1.8"
-            languageVersion = "1.1"
-            apiVersion = "1.1"
+            languageVersion = "1.2"
+            apiVersion = "1.2"
         }
     }
 
@@ -181,7 +181,7 @@ allprojects {
 
         compileOnly fileTree(dir: "${rootProject.buildDir}/javafx/jre/lib/ext")
         
-        compile ('org.jetbrains:kotlin-css-jvm:1.0.0-pre.54-kotlin-1.2.70') {
+        compile ('org.jetbrains:kotlin-css-jvm:1.0.0-pre.58-kotlin-1.3.0') {
             exclude module: 'kotlin-runtime'
             exclude module: 'kotlin-stdlib'
         }
