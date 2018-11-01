@@ -120,10 +120,18 @@ allprojects {
     }
 
     intellij {
-        if (project.hasProperty("ideaVersion")) {
-            version ideaVersion
-        } else if (project.hasProperty("ideaPath")) {
-            localPath ideaPath
+        if (environmentName.startsWith("studio")) {
+            if (project.hasProperty("androidStudioPath")) {
+                localPath androidStudioPath
+            } else {
+                localPath downloadStudioIfNeededAndGetPath()
+            }
+        } else {
+            if (project.hasProperty("ideaVersion")) {
+                version ideaVersion
+            } else if (project.hasProperty("ideaPath")) {
+                localPath ideaPath
+            }
         }
     }
 
@@ -182,11 +190,6 @@ allprojects {
 
 
 intellij {
-    if (project.hasProperty("ideaVersion")) {
-        version ideaVersion
-    } else if (project.hasProperty("ideaPath")) {
-        localPath ideaPath
-    }
     if (project.hasProperty("customSinceBuild")) {
         patchPluginXml.sinceBuild = customSinceBuild
         patchPluginXml.untilBuild = customUntilBuild
