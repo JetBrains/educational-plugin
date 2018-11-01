@@ -55,6 +55,7 @@ public class EduNames {
   public static final String OUT = "out";
 
   public static final String STUDY_PROJECT_XML_PATH = "/.idea/study_project.xml";
+  public static final String STEPIK_IDS_JSON = "stepik_ids.json";
 
   // IDs of supported languages. They are the same that `Language#getID` returns
   // but in some cases we don't have corresponding Language in classpath to get its id via `getID` method
@@ -62,7 +63,6 @@ public class EduNames {
   public static final String KOTLIN = "kotlin";
   public static final String PYTHON = "Python";
   public static final String SCALA = "Scala";
-  public static final String STEPIK_IDS_JSON = "stepik_ids.json";
 
   private EduNames() {
   }

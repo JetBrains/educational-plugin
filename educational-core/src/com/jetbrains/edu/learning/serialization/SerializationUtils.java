@@ -11,7 +11,8 @@ import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.serialization.converter.json.JsonLocalCourseConverter;
-import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionLocalCourseConverter;
+import com.jetbrains.edu.learning.serialization.converter.json.local.To8VersionLocalCourseConverter;
+import com.jetbrains.edu.learning.serialization.converter.json.local.ToSeventhVersionLocalCourseConverter;
 import com.jetbrains.edu.learning.serialization.converter.xml.*;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jdom.Attribute;
@@ -427,6 +428,7 @@ public class SerializationUtils {
     public static final String DEPENDENCY_FILE = "file";
     public static final String TEST_FILES = "test_files";
     public static final String VERSION = "version";
+    public static final String COURSE_TYPE = "course_type";
     public static final String PROGRAMMING_LANGUAGE = "programming_language";
 
     private Json() {
@@ -510,7 +512,8 @@ public class SerializationUtils {
         while (version < EduVersions.JSON_FORMAT_VERSION) {
           JsonLocalCourseConverter converter = null;
           switch (version) {
-            case 6: converter = new ToSeventhVersionLocalCourseConverter();
+            case 6: converter = new ToSeventhVersionLocalCourseConverter(); break;
+            case 7: converter = new To8VersionLocalCourseConverter(); break;
           }
           if (converter != null) {
             jsonObject = converter.convert(jsonObject);
