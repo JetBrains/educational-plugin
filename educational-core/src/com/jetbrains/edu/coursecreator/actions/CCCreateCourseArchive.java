@@ -48,6 +48,7 @@ import java.util.zip.ZipOutputStream;
 
 import static com.jetbrains.edu.learning.EduNames.COURSE_META_FILE;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCCreateCourseArchive extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CCCreateCourseArchive.class.getName());
 
