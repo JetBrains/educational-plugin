@@ -25,8 +25,8 @@ class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials")
     })
   }
 
-  override fun update(e: AnActionEvent?) {
-    val presentation = e?.presentation ?: return
+  override fun update(e: AnActionEvent) {
+    val presentation = e.presentation
     presentation.isEnabledAndVisible = false
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return

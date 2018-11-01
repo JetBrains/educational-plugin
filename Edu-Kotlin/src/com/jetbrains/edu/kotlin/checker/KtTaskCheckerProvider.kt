@@ -49,7 +49,7 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
   override fun mainClassForFile(project: Project, file: VirtualFile): String? {
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
     val ktElements = PsiTreeUtil.findChildrenOfType(psiFile, KtElement::class.java)
-    val container = KotlinRunConfigurationProducer.getEntryPointContainer(ktElements.first())
+    val container = KotlinRunConfigurationProducer.getEntryPointContainer(ktElements.first()) ?: return null
     return KotlinRunConfigurationProducer.getStartClassFqName(container)
   }
 }
