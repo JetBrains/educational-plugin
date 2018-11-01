@@ -12,7 +12,7 @@ import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
 
 open class ImportLocalCourseAction(text: String = "Import Local Course") : DumbAwareAction(text) {
-  override fun actionPerformed(e: AnActionEvent?) {
+  override fun actionPerformed(e: AnActionEvent) {
     FileChooser.chooseFile(LocalCourseFileChooser, null, VfsUtil.getUserHomeDir()) { file ->
       val fileName = file.path
       val course = EduUtils.getLocalCourse(fileName)

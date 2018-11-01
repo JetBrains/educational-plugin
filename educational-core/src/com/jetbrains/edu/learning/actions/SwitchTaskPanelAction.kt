@@ -17,8 +17,8 @@ import javax.swing.JLabel
 
 class SwitchTaskPanelAction : DumbAwareAction() {
 
-  override fun actionPerformed(e: AnActionEvent?) {
-    val project = e?.project
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project
     val result = createDialog().showAndGet()
     if (result && project != null) {
       val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW)
@@ -61,9 +61,9 @@ class SwitchTaskPanelAction : DumbAwareAction() {
     }
   }
 
-  override fun update(e: AnActionEvent?) {
-    val place = e?.place
-    val project = e?.project
-    e?.presentation?.isEnabled = project != null && EduUtils.isStudyProject(project) || ACTION_SEARCH == place
+  override fun update(e: AnActionEvent) {
+    val place = e.place
+    val project = e.project
+    e.presentation.isEnabled = project != null && EduUtils.isStudyProject(project) || ACTION_SEARCH == place
   }
 }

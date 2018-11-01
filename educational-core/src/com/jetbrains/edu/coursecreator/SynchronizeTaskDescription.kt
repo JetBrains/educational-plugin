@@ -8,8 +8,8 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 
 class SynchronizeTaskDescription(val project: Project): DocumentListener {
-  override fun documentChanged(event: DocumentEvent?) {
-    val eventDocument = event?.document ?: return
+  override fun documentChanged(event: DocumentEvent) {
+    val eventDocument = event.document
     val editedFile = FileDocumentManager.getInstance().getFile(eventDocument) ?: return
     if (!EduUtils.isTaskDescriptionFile(editedFile.name)) {
       return

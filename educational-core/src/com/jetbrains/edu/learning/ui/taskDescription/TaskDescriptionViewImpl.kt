@@ -110,7 +110,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     taskTextTW.setTaskText(project, task)
   }
 
-  override fun getData(dataId: String?): Any? {
+  override fun getData(dataId: String): Any? {
     return if (PlatformDataKeys.HELP_ID.`is`(dataId)) {
       HELP_ID
     }

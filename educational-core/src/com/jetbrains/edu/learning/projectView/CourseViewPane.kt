@@ -116,20 +116,20 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
     return panel
   }
 
-  override fun addToolbarActions(actionGroup: DefaultActionGroup?) {
-    actionGroup?.removeAll()
+  override fun addToolbarActions(actionGroup: DefaultActionGroup) {
+    actionGroup.removeAll()
     val hideSolvedLessons = object: ToggleAction("Hide Solved Lessons"), DumbAware {
-      override fun isSelected(p0: AnActionEvent?): Boolean {
+      override fun isSelected(e: AnActionEvent): Boolean {
         return PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
       }
 
-      override fun setSelected(p0: AnActionEvent?, p1: Boolean) {
+      override fun setSelected(e: AnActionEvent, state: Boolean) {
         val hideSolved = PropertiesComponent.getInstance().getBoolean(HIDE_SOLVED_LESSONS, false)
         PropertiesComponent.getInstance().setValue(HIDE_SOLVED_LESSONS, !hideSolved)
         ProjectView.getInstance(myProject).refresh()
       }
     }
-    actionGroup?.add(hideSolvedLessons)
+    actionGroup.add(hideSolvedLessons)
   }
 
   fun updateCourseProgress() {
@@ -148,11 +148,11 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   fun getProgressBar(): JProgressBar = progressBar
 
   override fun createStructure(): ProjectAbstractTreeStructureBase = object : ProjectTreeStructure(myProject, ID) {
-    override fun createRoot(project: Project?, settings: ViewSettings?): AbstractTreeNode<*> {
+    override fun createRoot(project: Project, settings: ViewSettings): AbstractTreeNode<*> {
       return RootNode(myProject, settings)
     }
 
-    override fun getChildElements(element: Any?): Array<Any> {
+    override fun getChildElements(element: Any): Array<Any> {
       if (element !is AbstractTreeNode<*>) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY
       }
@@ -178,7 +178,7 @@ class CourseViewPane(project: Project) : AbstractProjectViewPSIPane(project) {
   override fun supportsFoldersAlwaysOnTop(): Boolean = false
   override fun supportsSortByType(): Boolean = false
 
-  override fun getData(dataId: String?): Any? {
+  override fun getData(dataId: String): Any? {
     if (myProject.isDisposed) return null
 
     if (CCUtils.isCourseCreator(myProject)) {

@@ -15,7 +15,7 @@ abstract class CourseViewTestBase : EduActionTestCase() {
     ProjectViewTestUtil.setupImpl(project, true)
   }
 
-  protected fun assertCourseView(structure: String, ignoreOrder: Boolean = false) {
+  protected fun assertCourseView(structure: String) {
     val projectView = ProjectView.getInstance(project)
     projectView.refresh()
     projectView.changeView(CourseViewPane.ID)
@@ -24,11 +24,7 @@ abstract class CourseViewTestBase : EduActionTestCase() {
     waitWhileBusy(tree)
     TreeUtil.expandAll(tree)
     waitWhileBusy(tree)
-    if (ignoreOrder) {
-      PlatformTestUtil.assertTreeEqualIgnoringNodesOrder(tree, structure + "\n")
-    } else {
-      PlatformTestUtil.assertTreeEqual(tree, structure + "\n")
-    }
+    PlatformTestUtil.assertTreeEqual(tree, structure + "\n")
   }
 
   protected fun waitWhileBusy(tree: JTree) {

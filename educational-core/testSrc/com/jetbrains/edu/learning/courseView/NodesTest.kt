@@ -159,7 +159,7 @@ class NodesTest: CourseViewTestBase() {
           additionalFile1.txt
           -DirectoryNode folder
            additionalFile3.txt
-    """.trimIndent(), ignoreOrder = true)
+    """.trimIndent())
   }
 
   fun `test invisible files in educator mode`() {
@@ -182,7 +182,7 @@ class NodesTest: CourseViewTestBase() {
            additionalFile3.txt
            CCStudentInvisibleFileNode additionalFile4.txt
           CCStudentInvisibleFileNode task.html
-    """.trimIndent(), ignoreOrder = true)
+    """.trimIndent())
   }
 
   fun `test non course files`() {
@@ -201,10 +201,10 @@ class NodesTest: CourseViewTestBase() {
           -CCNode folder1
            taskFile3.txt
            CCStudentInvisibleFileNode taskFile4.txt
+          CCStudentInvisibleFileNode non_course_file2.txt (excluded)
           CCStudentInvisibleFileNode task.html
           taskFile1.txt
           CCStudentInvisibleFileNode taskFile2.txt
-          CCStudentInvisibleFileNode non_course_file2.txt (excluded)
          -CCTaskNode task2
           additionalFile1.txt
           CCStudentInvisibleFileNode additionalFile2.txt
@@ -214,7 +214,7 @@ class NodesTest: CourseViewTestBase() {
            CCStudentInvisibleFileNode non_course_file3.txt (excluded)
           CCStudentInvisibleFileNode task.html
         CCStudentInvisibleFileNode non_course_file1.txt
-    """.trimIndent(), ignoreOrder = true)
+    """.trimIndent())
   }
 
   private fun courseWithInvisibleItems(courseMode: String) {

@@ -20,8 +20,8 @@ class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit)
     const val ACTION_ID = "Educational.CCEditTaskDescription"
   }
 
-  override fun actionPerformed(e: AnActionEvent?) {
-    val project = e?.project ?: return
+  override fun actionPerformed(e: AnActionEvent) {
+    val project = e.project ?: return
     val task = EduUtils.getCurrentTask(project) ?: return
     val descriptionFile = findOrCreateDescriptionFile(project, task)
     FileEditorManager.getInstance(project).openFile(descriptionFile, true)
@@ -40,8 +40,8 @@ class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit)
     return GeneratorUtils.createDescriptionFile(taskDir, task) ?: error("Failed to create description file in $taskDir")
   }
 
-  override fun update(e: AnActionEvent?) {
-    val project = e?.project ?: return
+  override fun update(e: AnActionEvent) {
+    val project = e.project ?: return
     if (!CCUtils.isCourseCreator(project)) {
       e.presentation.isEnabledAndVisible = false
       return
