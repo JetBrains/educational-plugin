@@ -7,6 +7,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import icons.EducationalCoreIcons
 
+@Suppress("ComponentNotRegistered")  // educational-core.xml
 class CCCreateFrameworkLesson :
   CCCreateLessonBase<FrameworkLesson>(StudyItemType.FRAMEWORK_LESSON, EducationalCoreIcons.Lesson) {
 
