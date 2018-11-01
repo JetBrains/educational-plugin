@@ -12,11 +12,11 @@ object ProgressUtil {
   fun countProgress(course: Course): Pair<Int, Int> {
     var taskNum = 0
     var taskSolved = 0
-    course.visitLessons({lesson ->
+    course.visitLessons { lesson ->
       taskNum += lesson.taskListForProgress.size
       taskSolved += getSolvedTasks(lesson)
       true
-    })
+    }
     return Pair(taskSolved, taskNum)
   }
 

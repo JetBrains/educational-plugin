@@ -94,16 +94,19 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
 
   @Nullable
   static String getBaseSdk(@NotNull final Course course) {
-    LanguageLevel baseLevel = LanguageLevel.PYTHON36;
+    LanguageLevel baseLevel;
     final String version = course.getLanguageVersion();
     if (PyConfigurator.PYTHON_2.equals(version)) {
       baseLevel = LanguageLevel.PYTHON27;
     }
     else if (PyConfigurator.PYTHON_3.equals(version)) {
-      baseLevel = LanguageLevel.PYTHON36;
+      baseLevel = LanguageLevel.PYTHON37;
     }
     else if (version != null) {
       baseLevel = LanguageLevel.fromPythonVersion(version);
+    }
+    else {
+      baseLevel = LanguageLevel.PYTHON37;
     }
     final PythonSdkFlavor flavor = PythonSdkFlavor.getApplicableFlavors(false).get(0);
     String baseSdk = null;

@@ -58,11 +58,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static com.jetbrains.edu.learning.EduUtils.*;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class EduProjectComponent implements ProjectComponent {
   private static final Logger LOG = Logger.getInstance(EduProjectComponent.class.getName());
   private final Project myProject;
   private final Map<Keymap, List<Pair<String, String>>> myDeletedShortcuts = new HashMap<>();
-  private final String HINTS_IN_DESCRIPTION_PROPERTY = "HINTS_IN_TASK_DESCRIPTION";
+  private static final String HINTS_IN_DESCRIPTION_PROPERTY = "HINTS_IN_TASK_DESCRIPTION";
   private MessageBusConnection myBusConnection;
 
   private EduProjectComponent(@NotNull final Project project) {
