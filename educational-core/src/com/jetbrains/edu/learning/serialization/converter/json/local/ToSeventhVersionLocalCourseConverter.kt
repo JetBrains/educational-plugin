@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.serialization.converter.json
+package com.jetbrains.edu.learning.serialization.converter.json.local
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -6,6 +6,8 @@ import com.google.gson.JsonPrimitive
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
+import com.jetbrains.edu.learning.serialization.converter.json.JsonLocalCourseConverter
+import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionJsonStepOptionConverter
 
 class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverter {
 
