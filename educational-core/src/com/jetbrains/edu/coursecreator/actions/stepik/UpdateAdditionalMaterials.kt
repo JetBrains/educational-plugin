@@ -9,8 +9,8 @@ import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 
-
-class UpdateAdditionalMaterials: DumbAwareAction("Update Additional Materials") {
+@Suppress("ComponentNotRegistered") // educational-core.xml
+class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials") {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
     val course = StudyTaskManager.getInstance(project).course ?: return
