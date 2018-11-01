@@ -95,47 +95,17 @@ index 5eca860..edce814 100644
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
 diff --git a/build.gradle b/build.gradle
-index 0a1716e..bf6f9ea 100644
+index 1e5e413..266e973 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -119,10 +119,10 @@ allprojects {
+@@ -154,7 +154,6 @@ allprojects {
      }
  
-     intellij {
--        if (project.hasProperty("ideaVersion")) {
--            version ideaVersion
--        } else if (project.hasProperty("ideaPath")) {
--            localPath ideaPath
-+        if (project.hasProperty("androidStudioPath")) {
-+            localPath androidStudioPath
-+        } else {
-+            localPath downloadStudioIfNeededAndGetPath()
-         }
-     }
- 
-@@ -276,11 +276,11 @@ configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'),
- }
- 
- configure([project(':educational-core'), project(':Edu-Java')]) {
--    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy'
-+    intellij.plugins 'junit', 'properties', 'gradle', 'Groovy', 'smali'
- }
- 
- configure(project(':Edu-Kotlin')) {
--    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
-+    intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy', 'smali'
- 
- 
-     task createTwitterProperties() {
-@@ -311,7 +311,7 @@ configure(project(':Edu-Python')) {
- }
- 
- configure(project(':Edu-Scala')) {
--    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy'
-+    intellij.plugins "org.intellij.scala:$scalaPluginVersion", 'junit', 'properties', 'gradle', 'Groovy', 'smali'
- }
- 
- configure(project(':Edu-Android')) {
+     dependencies {
+-        compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+         compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
+         compile 'org.jsoup:jsoup:1.11.2'
+         compile("org.jetbrains:markdown:0.1.28") {
 diff --git a/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt b/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt
 index 60e6044..a18728c 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt
@@ -172,10 +142,10 @@ index 8cbed83..583a754 100644
      }
    }
 diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
-index 68916af..e92f2eb 100644
+index 5ca76fb..c20d4f5 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
 +++ b/educational-core/src/icons/EducationalCoreIcons.java
-@@ -39,7 +39,7 @@ public class EducationalCoreIcons {
+@@ -38,7 +38,7 @@ public class EducationalCoreIcons {
  
    public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
    public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
@@ -184,12 +154,56 @@ index 68916af..e92f2eb 100644
  
    public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
    public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
+diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
+index d05af45..c4c78bd 100644
+--- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
++++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
+@@ -156,9 +156,9 @@ class NodesTest: CourseViewTestBase() {
+            taskFile3.txt
+           taskFile1.txt
+          -TaskNode task2
+-          additionalFile1.txt
+           -DirectoryNode folder
+            additionalFile3.txt
++          additionalFile1.txt
+     """.trimIndent())
+   }
+ 
+@@ -176,11 +176,11 @@ class NodesTest: CourseViewTestBase() {
+           taskFile1.txt
+           CCStudentInvisibleFileNode taskFile2.txt
+          -CCTaskNode task2
+-          additionalFile1.txt
+-          CCStudentInvisibleFileNode additionalFile2.txt
+           -CCNode folder
+            additionalFile3.txt
+            CCStudentInvisibleFileNode additionalFile4.txt
++          additionalFile1.txt
++          CCStudentInvisibleFileNode additionalFile2.txt
+           CCStudentInvisibleFileNode task.html
+     """.trimIndent())
+   }
+@@ -206,12 +206,12 @@ class NodesTest: CourseViewTestBase() {
+           taskFile1.txt
+           CCStudentInvisibleFileNode taskFile2.txt
+          -CCTaskNode task2
+-          additionalFile1.txt
+-          CCStudentInvisibleFileNode additionalFile2.txt
+           -CCNode folder
+            additionalFile3.txt
+            CCStudentInvisibleFileNode additionalFile4.txt
+            CCStudentInvisibleFileNode non_course_file3.txt (excluded)
++          additionalFile1.txt
++          CCStudentInvisibleFileNode additionalFile2.txt
+           CCStudentInvisibleFileNode task.html
+         CCStudentInvisibleFileNode non_course_file1.txt
+     """.trimIndent())
 diff --git a/gradle.properties b/gradle.properties
-index d808d78..cdeab02 100644
+index bb59a0e..cdeab02 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -1,4 +1,4 @@
--environmentName=182
+-environmentName=183
 +environmentName=studio-181
  
  # needed for twitting functionality available currently only for kotlin koans

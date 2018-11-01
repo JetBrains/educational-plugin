@@ -1,0 +1,10 @@
+diff --git a/gradle.properties b/gradle.properties
+index bb59a0e..d808d78 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,4 +1,4 @@
+-environmentName=183
++environmentName=182
+ 
+ # needed for twitting functionality available currently only for kotlin koans
+ consumerKey=
