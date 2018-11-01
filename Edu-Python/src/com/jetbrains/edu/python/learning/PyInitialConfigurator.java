@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NonNls;
 
 import java.io.File;
 
-@SuppressWarnings({"UtilityClassWithoutPrivateConstructor", "UtilityClassWithPublicConstructor"})
+@SuppressWarnings({"UtilityClassWithoutPrivateConstructor", "UtilityClassWithPublicConstructor", "ComponentNotRegistered"}) // Edu-Python.xml
 public class PyInitialConfigurator implements ApplicationComponent {
   @NonNls private static final String CONFIGURED_V40 = "StudyPyCharm.InitialConfiguration40";
 

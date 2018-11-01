@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.util.PlatformUtils;
 
+@SuppressWarnings("ComponentNotRegistered") // Edu-Python.xml
 public class PyShowTutorial extends AbstractProjectComponent {
 
   private static final String POPUP_SHOWN = "StudyShowPopup";
@@ -30,9 +31,9 @@ public class PyShowTutorial extends AbstractProjectComponent {
     ApplicationManager.getApplication().invokeLater((DumbAwareRunnable)() -> ApplicationManager.getApplication().runWriteAction(
       (DumbAwareRunnable)() -> {
         final String content = "<html>If you'd like to learn more about PyCharm Edu, " +
-          "click <a href=\"https://www.jetbrains.com/pycharm-edu/quickstart/\">here</a> to access tutorials</html>";
+                               "click <a href=\"https://www.jetbrains.com/pycharm-edu/quickstart/\">here</a> to access tutorials</html>";
         final Notification notification = new Notification("Watch Tutorials!", "", content, NotificationType.INFORMATION,
-          new NotificationListener.UrlOpeningListener(true));
+                                                           new NotificationListener.UrlOpeningListener(true));
         StartupManager.getInstance(myProject).registerPostStartupActivity(() -> {
           Notifications.Bus.notify(notification);
           PropertiesComponent.getInstance().setValue(POPUP_SHOWN, true);

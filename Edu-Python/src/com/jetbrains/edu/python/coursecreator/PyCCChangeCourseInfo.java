@@ -12,6 +12,7 @@ import javax.swing.*;
 import static com.jetbrains.edu.python.learning.PyConfigurator.PYTHON_2;
 import static com.jetbrains.edu.python.learning.PyConfigurator.PYTHON_3;
 
+@SuppressWarnings("ComponentNotRegistered") // Edu-Python.xml
 public class PyCCChangeCourseInfo extends CCChangeCourseInfo {
   public static final String ALL_VERSIONS = "All versions";
 
@@ -46,7 +47,8 @@ public class PyCCChangeCourseInfo extends CCChangeCourseInfo {
       final String version = course.getLanguageVersion();
       if (version != null) {
         languageLevelCombobox.setSelectedItem(version);
-      } else {
+      }
+      else {
         languageLevelCombobox.setSelectedItem(ALL_VERSIONS);
       }
     }
