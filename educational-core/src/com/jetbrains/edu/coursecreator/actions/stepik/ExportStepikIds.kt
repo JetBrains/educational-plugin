@@ -15,11 +15,10 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 
-
+@Suppress("ComponentNotRegistered") // educational-core.xml
 class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids as json", null) {
 
-
-  private fun <T>JsonObject.addChildren(propertyName: String, children: List<T>, serializeChild: (T) -> JsonElement){
+  private fun <T> JsonObject.addChildren(propertyName: String, children: List<T>, serializeChild: (T) -> JsonElement) {
     val jsonArray = JsonArray()
     for (childItem in children) {
       jsonArray.add(serializeChild(childItem))
@@ -36,7 +35,7 @@ class ExportStepikIds : DumbAwareAction("Export Stepik Ids", "Exports Stepik ids
       jsonObject.addProperty("title", item.name)
       jsonObject.addProperty("id", item.id)
 
-      val serializeStudyItem: (StudyItem) -> JsonElement =  {itemToSerialize -> context.serialize(itemToSerialize, StudyItem::class.java)}
+      val serializeStudyItem: (StudyItem) -> JsonElement = { itemToSerialize -> context.serialize(itemToSerialize, StudyItem::class.java) }
 
       if (item is ItemContainer) {
         jsonObject.addChildren("items", item.items, serializeStudyItem)

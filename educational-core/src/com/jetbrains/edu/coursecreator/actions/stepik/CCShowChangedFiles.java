@@ -16,10 +16,12 @@ import org.jsoup.helper.StringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCShowChangedFiles extends DumbAwareAction {
 
   public CCShowChangedFiles() {
-    super("Compare with Course on Stepik", "Show changed files comparing to the course on Stepik", null);
+    super("Compare with Course on Stepik",
+          "Show changed files comparing to the course on Stepik", null);
   }
 
   @Override

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushLesson extends DumbAwareAction {
   public CCPushLesson() {
     super("Update Lesson on Stepik", "Update Lesson on Stepik", null);
@@ -117,7 +118,7 @@ public class CCPushLesson extends DumbAwareAction {
       int result = Messages.showYesNoDialog(project, "Since you have sections, we'll have to wrap this lesson into section before upload",
                                             "Wrap Lesson Into Sections", "Wrap and Post", "Cancel", null);
       if (result == Messages.YES) {
-       Section section = CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
+        Section section = CCUtils.wrapIntoSection(project, course, Collections.singletonList(lesson), sectionToWrapIntoName(lesson));
         if (section != null) {
           CCPushSection.doPush(project, section, (RemoteCourse)course);
         }
@@ -208,7 +209,7 @@ public class CCPushLesson extends DumbAwareAction {
       }
       else {
         RemoteCourse course = (RemoteCourse)StudyTaskManager.getInstance(project).getCourse();
-        assert  course != null;
+        assert course != null;
         sectionId = CCStepikConnector.getTopLevelSectionId(project, course);
       }
       CCStepikConnector.updateLessonInfo(project, lesson, false, sectionId);
@@ -228,7 +229,7 @@ public class CCPushLesson extends DumbAwareAction {
         continue;
       }
 
-      position ++;
+      position++;
     }
 
     return position;

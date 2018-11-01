@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushTask extends DumbAwareAction {
   public CCPushTask() {
     super("Update Task on Stepik", "Update Task on Stepik", null);

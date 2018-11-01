@@ -30,6 +30,7 @@ import java.util.Collections;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
   private static Logger LOG = Logger.getInstance(CCPushCourse.class);
 
@@ -127,8 +128,8 @@ public class CCPushCourse extends DumbAwareAction {
     if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
       boolean hasUnpushedLessons = course.getLessons().stream().anyMatch(lesson -> lesson.getId() == 0);
       if (hasUnpushedLessons) {
-        int result = Messages
-          .showYesNoDialog(project, "Top-level lessons will be wrapped with sections as it's not allowed to have both top-level lessons and sections",
+        int result = Messages.showYesNoDialog(project,
+                           "Top-level lessons will be wrapped with sections as it's not allowed to have both top-level lessons and sections",
                            "Wrap Lessons Into Sections", "Wrap and Post", "Cancel", null);
         if (result == Messages.YES) {
           wrapUnpushedLessonsIntoSections(project, course);

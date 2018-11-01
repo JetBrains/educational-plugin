@@ -71,8 +71,8 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
   companion object {
     @JvmStatic
     fun doPush(project: Project,
-                       section: Section,
-                       course: RemoteCourse) {
+               section: Section,
+               course: RemoteCourse) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Uploading Section", true) {
         override fun run(indicator: ProgressIndicator) {
           indicator.text = "Uploading section to " + StepikNames.STEPIK_URL
@@ -142,6 +142,5 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       }
     }
   }
-
 
 }
