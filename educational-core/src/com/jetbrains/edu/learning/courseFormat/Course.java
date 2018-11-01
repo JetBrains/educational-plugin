@@ -37,7 +37,7 @@ public class Course extends ItemContainer {
 
   //this field is used to distinguish ordinary and CheckIO projects,
   //"PyCharm" is used here for historical reasons
-  private String courseType = EduNames.PYCHARM;
+  @Expose @SerializedName("course_type") private String courseType = EduNames.PYCHARM;
   protected String courseMode = EduNames.STUDY; //this field is used to distinguish study and course creator modes
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
