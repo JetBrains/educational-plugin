@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
 
-import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.project.Project
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLanguageDecorator
@@ -11,13 +10,15 @@ import kotlinx.css.*
 import kotlinx.css.properties.lh
 
 internal class StyleResourcesManager(project: Project, taskText: String) {
-  private fun decorator(project: Project): EduLanguageDecorator = EduLanguageDecorator.INSTANCE.forLanguage(
-    StudyTaskManager.getInstance(project).course?.languageById ?: PlainTextLanguage.INSTANCE)
+  private fun decorator(project: Project): EduLanguageDecorator? {
+    val language = StudyTaskManager.getInstance(project).course?.languageById
+    return language?.let { EduLanguageDecorator.INSTANCE.forLanguage(language) }
+  }
 
   // update style/template.html.ft in case of changing key names
   val resources = mapOf(
     "typography_color_style" to typographyAndColorStylesheet(),
-    "language_script" to decorator(project).languageScriptUrl,
+    "language_script" to (decorator(project)?.languageScriptUrl ?: ""),
     "content" to taskText,
     "highlight_code" to highlightScript(project),
     "base_css" to loadText("/style/browser.css"),
@@ -66,6 +67,6 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
 
   private fun highlightScript(project: Project): String {
     val loadText = loadText("/code-mirror/highlightCode.js.ft")
-    return loadText?.replace("\${default_mode}", decorator(project).defaultHighlightingMode) ?: ""
+    return loadText?.replace("\${default_mode}", (decorator(project)?.defaultHighlightingMode ?: "")) ?: ""
   }
 }
