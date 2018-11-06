@@ -1,9 +1,11 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.intellij.openapi.application.ApplicationManager;
+
 public class StepikNames {
   public static final String STEPIK = "Stepik";
   public static final String ARE_SOLUTIONS_UPDATED_PROPERTY = "Educational.StepikSolutionUpdated";
-  public static final String STEPIK_URL = "https://stepik.org";
+  public static final String STEPIK_URL = ApplicationManager.getApplication().isUnitTestMode() ? "https://release.stepik.org/" : "https://stepik.org" ;
   public static final String TOKEN_URL = STEPIK_URL + "/oauth2/token/";
   public static final String STEPIK_API_URL = STEPIK_URL + "/api";
 
