@@ -5,10 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOMissionListDeserializer;
-import com.jetbrains.edu.learning.checkio.api.adapters.CheckiOTokensDeserializer;
 import com.jetbrains.edu.learning.checkio.call.CheckiOCallAdapterFactory;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission;
 import com.jetbrains.edu.learning.checkio.utils.CheckiONames;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -29,7 +29,7 @@ public final class RetrofitUtils {
 
   private static Gson createOauthGson() {
     final GsonBuilder gsonBuilder = new GsonBuilder();
-    gsonBuilder.registerTypeAdapter(TokenInfo.class, new CheckiOTokensDeserializer());
+    gsonBuilder.registerTypeAdapter(TokenInfo.class, new SerializationUtils.TokenInfoDeserializer());
     return gsonBuilder.create();
   }
 
