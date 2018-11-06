@@ -7,10 +7,8 @@ public class StepikNames {
   public static final String TOKEN_URL = STEPIK_URL + "/oauth2/token/";
   public static final String STEPIK_API_URL = STEPIK_URL + "/api";
 
-  public static final String RECOMMENDATIONS_URL = "/recommendations";
   public static final String CONTENT_TYPE_APP_JSON = "application/json";
   public static final String LESSONS = "/lessons/";
-  public static final String RECOMMENDATION_REACTIONS_URL = "/recommendation-reactions";
   public static final String ATTEMPTS = "/attempts";
   public static final String SUBMISSIONS = "/submissions";
   public static final String UNITS = "/units";
