@@ -2,6 +2,7 @@
 
 package com.jetbrains.edu.learning.stepik
 
+import com.google.common.annotations.VisibleForTesting
 import com.intellij.util.Time
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -12,7 +13,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.stepik.StepikConnector.fillItems
 import com.jetbrains.edu.learning.stepik.StepikConnector.getCourseInfo
-import org.jetbrains.annotations.TestOnly
 import java.util.*
 
 
@@ -25,7 +25,7 @@ fun RemoteCourse.isUpToDate(): Boolean {
   return isUpToDate(courseInfo)
 }
 
-@TestOnly
+@VisibleForTesting
 fun RemoteCourse.isUpToDate(courseFromStepik: RemoteCourse): Boolean {
   val dateFromServer = courseFromStepik.updateDate ?: return true
 
