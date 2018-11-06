@@ -21,8 +21,6 @@ open class KtConfigurator : GradleConfiguratorBase() {
   }
   override fun getLogo(): Icon = KotlinIcons.SMALL_LOGO
 
-  override fun isCourseCreatorEnabled() = false
-
   companion object {
     const val TESTS_KT = "Tests.kt"
     const val TASK_KT = "Task.kt"
