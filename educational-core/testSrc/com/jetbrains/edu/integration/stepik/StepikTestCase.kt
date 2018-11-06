@@ -22,7 +22,7 @@ import java.util.regex.Pattern
 
 abstract class StepikTestCase : EduTestCase() {
   companion object {
-    private const val CLIENT_ID = "wHohrJv83oYoFYmgWYwEDW5ZNS1ntVRueWjMyQpm"
+    private const val CLIENT_ID = "CdBEN1zAyAO8FTgNQcOIKYENNDLSawKfx3Uqe71Z"
     private const val CSRF = "csrfmiddlewaretoken"
   }
 
