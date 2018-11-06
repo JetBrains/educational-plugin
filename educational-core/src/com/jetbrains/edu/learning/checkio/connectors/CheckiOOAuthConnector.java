@@ -7,11 +7,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.authUtils.OAuthUtils;
+import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.checkio.account.CheckiOAccount;
-import com.jetbrains.edu.learning.checkio.account.CheckiOTokensKt;
 import com.jetbrains.edu.learning.checkio.account.CheckiOUserInfo;
 import com.jetbrains.edu.learning.checkio.api.CheckiOOAuthInterface;
 import com.jetbrains.edu.learning.checkio.api.RetrofitUtils;
@@ -97,7 +96,7 @@ public abstract class CheckiOOAuthConnector {
     final CheckiOAccount currentAccount = requireUserLoggedIn();
 
     TokenInfo tokenInfo = currentAccount.getTokenInfo();
-    if (!CheckiOTokensKt.isUpToDate(tokenInfo)) {
+    if (!tokenInfo.isUpToDate()) {
       final String refreshToken = tokenInfo.getRefreshToken();
       final TokenInfo newTokens = refreshTokens(refreshToken);
       currentAccount.updateTokens(newTokens);

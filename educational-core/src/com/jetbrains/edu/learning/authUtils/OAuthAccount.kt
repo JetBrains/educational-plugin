@@ -59,4 +59,12 @@ class TokenInfo {
   var refreshToken: String = ""
   @JsonProperty("expires_in")
   var expiresIn: Long = -1
+
+  fun isUpToDate(): Boolean {
+    return currentTimeSeconds() < expiresIn - 600 // subtract 10 minutes to avoid boundary case
+  }
+
+  private fun currentTimeSeconds(): Long {
+    return System.currentTimeMillis() / 1000
+  }
 }

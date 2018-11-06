@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.serialization.converter.json.JsonLocalCourseConverter;
@@ -577,6 +578,26 @@ public class SerializationUtils {
       }
       LOG.warn("No task type found in json " + json.toString());
       return null;
+    }
+  }
+
+  public static class TokenInfoDeserializer implements JsonDeserializer<TokenInfo> {
+
+    @Override
+    public TokenInfo deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+      final JsonObject jsonObject = json.getAsJsonObject();
+
+      final String accessToken = jsonObject.get("access_token").getAsString();
+      final String refreshToken = jsonObject.get("refresh_token").getAsString();
+      final long expiresIn = jsonObject.get("expires_in").getAsLong();
+
+      final long expiringTime = expiresIn + (System.currentTimeMillis() / 1000);
+
+      TokenInfo tokenInfo = new TokenInfo();
+      tokenInfo.setRefreshToken(refreshToken);
+      tokenInfo.setAccessToken(accessToken);
+      tokenInfo.setExpiresIn(expiringTime);
+      return tokenInfo;
     }
   }
 }

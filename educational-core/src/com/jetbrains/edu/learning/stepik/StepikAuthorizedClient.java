@@ -7,6 +7,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -36,7 +37,7 @@ public class StepikAuthorizedClient {
   public static CloseableHttpClient getHttpClient() {
     StepikUser user = EduSettings.getInstance().getUser();
 
-    final boolean isUpToDate = user == null || StepikClient.isTokenUpToDate(user.getAccessToken());
+    final boolean isUpToDate = user == null || user.getTokenInfo().isUpToDate();
     if (ourClient != null && isUpToDate) {
       return ourClient;
     }
@@ -74,7 +75,7 @@ public class StepikAuthorizedClient {
    */
   @NotNull
   public static CloseableHttpClient getHttpClient(@NotNull final StepikUser user) {
-    final boolean isUpToDate = StepikClient.isTokenUpToDate(user.getAccessToken());
+    final boolean isUpToDate = user.getTokenInfo().isUpToDate();
 
     if (ourClient != null && isUpToDate) {
       return ourClient;
@@ -186,7 +187,10 @@ public class StepikAuthorizedClient {
 
   @Nullable
   public static TokenInfo getTokens(@NotNull final List<NameValuePair> parameters, @Nullable String credentials) {
-    final Gson gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
+    final Gson gson = new GsonBuilder()
+      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+      .registerTypeAdapter(TokenInfo.class, new SerializationUtils.TokenInfoDeserializer())
+      .create();
 
     final HttpPost request = new HttpPost(StepikNames.TOKEN_URL);
 
