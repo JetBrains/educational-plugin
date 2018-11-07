@@ -22,7 +22,6 @@ import java.util.regex.Pattern
 
 abstract class StepikTestCase : EduTestCase() {
   companion object {
-    private const val CLIENT_ID = "CdBEN1zAyAO8FTgNQcOIKYENNDLSawKfx3Uqe71Z"
     private const val CSRF = "csrfmiddlewaretoken"
   }
 
@@ -101,12 +100,19 @@ abstract class StepikTestCase : EduTestCase() {
 
   private fun getTokens(): TokenInfo? {
     val parameters = ArrayList<NameValuePair>(listOf(BasicNameValuePair ("grant_type", "client_credentials")))
+
     val clientSecret = System.getenv("STEPIK_TEST_CLIENT_SECRET")
     if (clientSecret == null || clientSecret.isEmpty()) {
       LOG.error("Test client secret is not provided")
       return null
     }
-    return StepikAuthorizedClient.getTokens(parameters,
-                                            "$CLIENT_ID:$clientSecret")
+
+    val clientId = System.getenv("STEPIK_TEST_CLIENT_ID")
+    if (clientId == null || clientId.isEmpty()) {
+      LOG.error("Test client id is not provided")
+      return null
+    }
+
+    return StepikAuthorizedClient.getTokens(parameters, "$clientId:$clientSecret")
   }
 }
