@@ -13,8 +13,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
 import com.jetbrains.edu.learning.EduState;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -27,11 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static com.jetbrains.edu.learning.ui.OutputToolWindowFactoryKt.*;
 
 public class CheckUtils {
   public static final String STUDY_PREFIX = "#educational_plugin";
@@ -94,16 +89,6 @@ public class CheckUtils {
         continue;
       }
       EduUtils.flushWindows(taskFile, virtualFile);
-    }
-  }
-
-  public static void hideCheckResultToolWindow(@NotNull Project project) {
-    List<String> ids = Arrays.asList(TEST_RESULTS_ID, COMPILATION_ERROR_ID, OUTPUT_TOOLWINDOW_ID);
-    for (String id : ids) {
-      ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(id);
-      if (toolWindow != null) {
-        toolWindow.setAvailable(false, null);
-      }
     }
   }
 

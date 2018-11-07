@@ -47,4 +47,11 @@ class CheckDetailsView(val project: Project) {
       toolWindow.show(null)
     }
   }
+
+  fun clear() {
+    val toolWindow = getToolWindow()
+    runInEdt {
+      toolWindow.contentManager.removeAllContents(true)
+    }
+  }
 }
