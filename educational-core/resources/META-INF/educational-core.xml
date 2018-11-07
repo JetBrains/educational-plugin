@@ -197,9 +197,6 @@
     <toolWindow id="Task Description" anchor="right"
                 factoryClass="com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory"
                 conditionClass="com.jetbrains.edu.learning.ui.taskDescription.EduCondition"/>
-    <toolWindow id="Educational.Output" anchor="bottom"
-                factoryClass="com.jetbrains.edu.learning.ui.OutputToolWindowFactory"
-                conditionClass="com.jetbrains.edu.learning.ui.OutputToolWindowCondition"/>
     <toolWindow id="Educational.CheckDetails" anchor="bottom" canCloseContents="true"
                 factoryClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowFactory"
                 conditionClass="com.jetbrains.edu.learning.checker.details.CheckDetailsToolWindowCondition"/>
