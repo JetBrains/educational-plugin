@@ -588,9 +588,9 @@ public class SerializationUtils {
       final JsonObject jsonObject = json.getAsJsonObject();
 
       final String accessToken = jsonObject.get("access_token").getAsString();
-      final String refreshToken = jsonObject.get("refresh_token").getAsString();
+      // we don't have refresh token in tests
+      final String refreshToken = jsonObject.get("refresh_token") == null ? "" : jsonObject.get("refresh_token").getAsString();
       final long expiresIn = jsonObject.get("expires_in").getAsLong();
-
       final long expiringTime = expiresIn + (System.currentTimeMillis() / 1000);
 
       TokenInfo tokenInfo = new TokenInfo();
