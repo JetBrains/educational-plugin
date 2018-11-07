@@ -285,6 +285,15 @@ configure(project(':educational-core')) {
         src 'https://raw.githubusercontent.com/ozh/github-colors/master/colors.json'
         dest "${projectDir}/resources/languageColors/colors.json"
     }
+
+    task createStepikProperties() {
+        createProperties(
+          "${projectDir}/resources/stepik/stepik.properties",
+          [
+            "clientId" : stepikClientId
+          ]
+        )
+    }
 }
 
 configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android')]) {
@@ -361,8 +370,12 @@ idea {
 
 allprojects {
     test {
-        if (rootProject.hasProperty("stepik_test_client_secret")) {
-            environment 'STEPIK_TEST_CLIENT_SECRET', stepik_test_client_secret
+        if (rootProject.hasProperty("stepikTestClientSecret")) {
+            environment 'STEPIK_TEST_CLIENT_SECRET', stepikTestClientSecret
+        }
+
+        if (rootProject.hasProperty("stepikTestClientId")) {
+            environment 'STEPIK_TEST_CLIENT_ID', stepikTestClientId
         }
         if (project.hasProperty('excludeTests')) {
             exclude project.property('excludeTests')
