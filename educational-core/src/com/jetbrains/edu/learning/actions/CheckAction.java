@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.*;
+import com.jetbrains.edu.learning.checker.details.CheckDetailsView;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
@@ -75,7 +76,7 @@ public class CheckAction extends DumbAwareAction {
       EduUtils.showBalloon("Checking is not available while indexing is in progress", MessageType.WARNING, project);
       return;
     }
-    CheckUtils.hideCheckResultToolWindow(project);
+    CheckDetailsView.getInstance(project).clear();
     FileDocumentManager.getInstance().saveAllDocuments();
     Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
     if (editor == null) {
