@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
+import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.coursera.CourseraNames
@@ -59,7 +60,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
   private class ShowFullOutputAction(private val project: Project, private val text: String): DumbAwareAction(null) {
     override fun actionPerformed(e: AnActionEvent) {
-      CheckUtils.showTestResultsToolWindow(project, text)
+      CheckDetailsView.getInstance(project).showOutput(text)
     }
   }
 
