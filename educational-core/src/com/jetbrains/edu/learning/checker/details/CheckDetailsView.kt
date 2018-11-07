@@ -11,16 +11,6 @@ import com.jetbrains.edu.learning.EduUtils
 
 class CheckDetailsView(val project: Project) {
 
-  companion object {
-    @JvmStatic
-    fun getInstance(project: Project): CheckDetailsView {
-      if (!EduUtils.isStudyProject(project)) {
-        error("Attempt to get CheckDetailsView for non-edu project")
-      }
-      return ServiceManager.getService(project, CheckDetailsView::class.java)
-    }
-  }
-
   fun showOutput(message: String) {
     printToConsole("Output", message, ConsoleViewContentType.NORMAL_OUTPUT)
   }
@@ -52,6 +42,16 @@ class CheckDetailsView(val project: Project) {
     val toolWindow = getToolWindow()
     runInEdt {
       toolWindow.contentManager.removeAllContents(true)
+    }
+  }
+
+  companion object {
+    @JvmStatic
+    fun getInstance(project: Project): CheckDetailsView {
+      if (!EduUtils.isStudyProject(project)) {
+        error("Attempt to get CheckDetailsView for non-edu project")
+      }
+      return ServiceManager.getService(project, CheckDetailsView::class.java)
     }
   }
 }
