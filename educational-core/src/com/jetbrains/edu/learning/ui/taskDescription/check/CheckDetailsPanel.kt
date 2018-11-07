@@ -40,7 +40,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
     val details = checkResult.details
     if (checkResult.message == CheckUtils.COMPILATION_FAILED_MESSAGE && details != null) {
-      CheckUtils.showCompilationErrorToolWindow(project, details)
+      CheckDetailsView.getInstance(project).showCompilationResults(details)
     }
     var message = checkResult.escapedMessage
     if (message.length > 400) {

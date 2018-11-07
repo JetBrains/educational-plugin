@@ -106,10 +106,6 @@ public class CheckUtils {
     showToolWindow(project, OUTPUT_TOOLWINDOW_ID, message, ConsoleViewContentType.NORMAL_OUTPUT);
   }
 
-  public static void showCompilationErrorToolWindow(@NotNull final Project project, @NotNull final String message) {
-    showToolWindow(project, COMPILATION_ERROR_ID, message, ConsoleViewContentType.ERROR_OUTPUT);
-  }
-
   private static void showToolWindow(
           @NotNull final Project project,
           @NotNull String id,

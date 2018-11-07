@@ -24,6 +24,10 @@ class CheckDetailsView(val project: Project) {
     printToConsole("Output", message, ConsoleViewContentType.ERROR_OUTPUT)
   }
 
+  fun showCompilationResults(message: String) {
+    printToConsole("Compilation Results", message, ConsoleViewContentType.ERROR_OUTPUT)
+  }
+
   private fun getToolWindow(): ToolWindow {
     return ToolWindowManager.getInstance(project).getToolWindow(CheckDetailsToolWindowFactory.ID)
            ?: error("CheckDetails tool window not found")
