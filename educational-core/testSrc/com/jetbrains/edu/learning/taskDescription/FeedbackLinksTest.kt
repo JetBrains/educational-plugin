@@ -13,7 +13,7 @@ class FeedbackLinksTest : EduTestCase() {
 
   fun testStepikLink() {
     val task = getRemoteEduTask()
-    assertEquals("Incorrect link", "https://stepik.org/lesson/0/step/1", LeaveFeedbackAction.getLink(task))
+    assertEquals("Incorrect link", "https://release.stepik.org/lesson/0/step/1", LeaveFeedbackAction.getLink(task))
   }
 
   fun testNoneLink() {
