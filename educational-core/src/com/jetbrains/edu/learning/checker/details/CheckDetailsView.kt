@@ -8,6 +8,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowManager
 import com.jetbrains.edu.learning.EduUtils
+import javafx.embed.swing.JFXPanel
+import javax.swing.JComponent
 
 class CheckDetailsView(val project: Project) {
 
@@ -24,17 +26,27 @@ class CheckDetailsView(val project: Project) {
            ?: error("CheckDetails tool window not found")
   }
 
-  private fun printToConsole(title: String, message: String, contentType: ConsoleViewContentType) {
+  private fun createContentAndShowToolWindow(component: JComponent, title: String) {
     val toolWindow = getToolWindow()
+    val contentManager = toolWindow.contentManager
+    contentManager.removeAllContents(true)
+    val content = contentManager.factory.createContent(component, title, false)
+    contentManager.addContent(content)
+    toolWindow.setAvailable(true, null)
+    toolWindow.show(null)
+  }
+
+  private fun printToConsole(title: String, message: String, contentType: ConsoleViewContentType) {
+    val consoleView = ConsoleViewImpl(project, true)
+    consoleView.print(message, contentType)
     runInEdt {
-      val contentManager = toolWindow.contentManager
-      contentManager.removeAllContents(true)
-      val consoleView = ConsoleViewImpl(project, true)
-      val content = contentManager.factory.createContent(consoleView.component, title, false)
-      contentManager.addContent(content)
-      consoleView.print(message, contentType)
-      toolWindow.setAvailable(true, null)
-      toolWindow.show(null)
+      createContentAndShowToolWindow(consoleView.component, title)
+    }
+  }
+
+  fun showJavaFXResult(title: String, panel: JFXPanel) {
+    runInEdt {
+      createContentAndShowToolWindow(panel, title)
     }
   }
 
