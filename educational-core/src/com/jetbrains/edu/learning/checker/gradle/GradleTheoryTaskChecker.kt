@@ -3,7 +3,11 @@ package com.jetbrains.edu.learning.checker.gradle
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.learning.checker.*
+import com.jetbrains.edu.learning.checker.CheckResult
+import com.jetbrains.edu.learning.checker.Err
+import com.jetbrains.edu.learning.checker.Ok
+import com.jetbrains.edu.learning.checker.TheoryTaskChecker
+import com.jetbrains.edu.learning.checker.details.CheckDetailsView
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 
@@ -20,7 +24,7 @@ class GradleTheoryTaskChecker(
       is Ok -> result.value
     }
 
-    CheckUtils.showOutputToolWindow(project, output)
+    CheckDetailsView.getInstance(project).showOutput(output)
     return CheckResult(CheckStatus.Solved, "")
   }
 }
