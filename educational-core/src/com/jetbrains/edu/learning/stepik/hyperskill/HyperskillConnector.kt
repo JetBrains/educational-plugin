@@ -64,8 +64,8 @@ object HyperskillConnector {
     return service.stages(projectId).execute().body()?.stages
   }
 
-  fun getProjects(): List<HyperskillProject>? {
-    return service.projects().execute().body()?.projects
+  fun getTopics(stageId: Int): List<HyperskillTopic>? {
+    return service.topics(stageId).execute().body()?.topics
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {
