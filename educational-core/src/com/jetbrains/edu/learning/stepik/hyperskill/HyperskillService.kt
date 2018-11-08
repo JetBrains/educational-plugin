@@ -19,6 +19,13 @@ interface HyperskillService {
     @Query("grant_type") grantType: String
   ): Call<TokenInfo>
 
+  @POST("oauth2/token/")
+  fun refreshTokens(
+    @Query("grant_type") grantType: String,
+    @Query("client_id") clientId: String,
+    @Query("refresh_token") refreshToken: String
+  ): Call<TokenInfo>
+
   @GET("api/users/{id}")
   fun getUserInfo(@Path("id") userId: Int): Call<UsersData>
 
