@@ -1,11 +1,9 @@
 package com.jetbrains.edu.integration.stepik
 
-import com.intellij.openapi.application.Experiments
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.course
@@ -17,11 +15,6 @@ import com.jetbrains.edu.learning.stepik.StepikConnector
 import junit.framework.TestCase
 
 class EventBasedUpdateTest: StepikTestCase() {
-
-  override fun setUp() {
-    super.setUp()
-    Experiments.setFeatureEnabled(StepikCourseUploader.FEATURE_ID, true)
-  }
 
   fun `test upload course with top level lessons`() {
     val courseToPost = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {

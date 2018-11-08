@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.application.Experiments;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -82,7 +82,7 @@ public class CCPushCourse extends DumbAwareAction {
           }
           indicator.setIndeterminate(false);
 
-          if (Experiments.isFeatureEnabled(StepikCourseUploader.FEATURE_ID)) {
+          if (ApplicationManager.getApplication().isInternal()) {
             new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
           }
           else {
