@@ -294,6 +294,14 @@ configure(project(':educational-core')) {
           ]
         )
     }
+    task createHyperskillProperties() {
+        createProperties(
+          "${projectDir}/resources/hyperskill/hyperskill-oauth.properties",
+          [
+            "clientId" : hyperskillClientId
+          ]
+        )
+    }
 }
 
 configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android')]) {
