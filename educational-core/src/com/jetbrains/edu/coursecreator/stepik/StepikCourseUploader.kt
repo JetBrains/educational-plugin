@@ -318,10 +318,6 @@ class StepikCourseUploader(val project: Project, val course: RemoteCourse) {
         && tasksToUpdate.isEmpty()
         && tasksToDelete.isEmpty()
   }
-
-  companion object {
-    const val FEATURE_ID = "edu.course.creator.event.based.update"
-  }
 }
 
 

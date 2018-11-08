@@ -249,9 +249,6 @@
     <experimentalFeature id="edu.course.creator.yaml" percentOfUsers="0">
       <description>Enables yaml config files in course creation projects</description>
     </experimentalFeature>
-    <experimentalFeature id="edu.course.creator.event.based.update" percentOfUsers="0">
-      <description>Enables event-based update for Stepik courses</description>
-    </experimentalFeature>
     <experimentalFeature id="edu.course.creator.split.editor" percentOfUsers="100" internalFeature="true">
       <description>Enables previous task view for framework lessons</description>
     </experimentalFeature>
