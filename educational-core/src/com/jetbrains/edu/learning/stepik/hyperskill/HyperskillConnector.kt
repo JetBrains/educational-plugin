@@ -13,6 +13,16 @@ object HyperskillConnector {
   private val authorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
                                                                                                HyperskillLoggedIn::class.java)
 
+  private val authorizationService: HyperskillService
+    get() {
+      val retrofit = Retrofit.Builder()
+        .baseUrl(HYPERSKILL_URL)
+        .addConverterFactory(JacksonConverterFactory.create())
+        .build()
+
+      return retrofit.create(HyperskillService::class.java)
+    }
+
   private val service: HyperskillService
     get() {
       val dispatcher = Dispatcher()
@@ -22,9 +32,13 @@ object HyperskillConnector {
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         .addInterceptor { chain ->
-          val tokenInfo = HyperskillSettings.INSTANCE.account?.tokenInfo
+          val account = HyperskillSettings.INSTANCE.account
+          val tokenInfo = account?.tokenInfo
           if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
 
+          if (!tokenInfo.isUpToDate()) {
+            account.refreshTokens()
+          }
           val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
             .build()
@@ -47,13 +61,21 @@ object HyperskillConnector {
   }
 
   fun login(code: String): Boolean {
-    val tokenInfo = service.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").execute().body() ?: return false
+    val tokenInfo = authorizationService.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").execute().body() ?: return false
     HyperskillSettings.INSTANCE.account = HyperskillAccount()
     HyperskillSettings.INSTANCE.account!!.tokenInfo = tokenInfo
     val currentUser = getCurrentUser() ?: return false
     HyperskillSettings.INSTANCE.account!!.userInfo = currentUser
     ApplicationManager.getApplication().messageBus.syncPublisher<HyperskillLoggedIn>(authorizationTopic).userLoggedIn()
     return true
+  }
+
+  private fun HyperskillAccount.refreshTokens() {
+    val refreshToken = tokenInfo.refreshToken
+    val tokens = authorizationService.refreshTokens("refresh_token", CLIENT_ID, refreshToken).execute().body()
+    if (tokens != null) {
+      updateTokens(tokens)
+    }
   }
 
   fun getCurrentUser(): HyperskillUserInfo? {

@@ -2,6 +2,11 @@ package com.jetbrains.edu.learning.authUtils
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.node.IntNode
 import com.intellij.util.ReflectionUtil
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
@@ -22,7 +27,7 @@ abstract class OAuthAccount<UserInfo : Any> {
     this.tokenInfo = tokenInfo
   }
 
-  fun serialize() : Element {
+  fun serialize(): Element {
     val accountClass = this.javaClass
     val accountElement = Element(accountClass.simpleName)
 
@@ -33,10 +38,10 @@ abstract class OAuthAccount<UserInfo : Any> {
   }
 }
 
-fun <Account: OAuthAccount<UserInfo>, UserInfo: Any> deserializeAccount(
+fun <Account : OAuthAccount<UserInfo>, UserInfo : Any> deserializeAccount(
   xmlAccount: Element,
   accountClass: Class<Account>,
-  userInfoClass: Class<UserInfo> ) : Account {
+  userInfoClass: Class<UserInfo>): Account {
 
   val account = ReflectionUtil.newInstance(accountClass)
 
@@ -58,6 +63,7 @@ class TokenInfo {
   @JsonProperty("refresh_token")
   var refreshToken: String = ""
   @JsonProperty("expires_in")
+  @JsonDeserialize(using = ExpiresDeserializer::class)
   var expiresIn: Long = -1
 
   fun isUpToDate(): Boolean {
@@ -66,5 +72,14 @@ class TokenInfo {
 
   private fun currentTimeSeconds(): Long {
     return System.currentTimeMillis() / 1000
+  }
+}
+
+class ExpiresDeserializer : StdDeserializer<Int>(Int::class.java) {
+  override fun deserialize(parser: JsonParser, ctxt: DeserializationContext?): Int {
+    val expiresInNode: IntNode = parser.codec.readTree(parser)
+    val currentTime: Int = (System.currentTimeMillis() / 1000).toInt()
+    val expiresIn = expiresInNode.numberValue() as Int
+    return expiresIn + currentTime
   }
 }
