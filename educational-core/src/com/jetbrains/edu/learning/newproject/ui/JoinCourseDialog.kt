@@ -25,12 +25,12 @@ class JoinCourseDialog(private val course: Course) : DialogWrapper(true) {
   override fun createCenterPanel(): JComponent = panel
 
   override fun doOKAction() {
+    close(OK_EXIT_CODE)
     val location = panel.locationString
     val projectSettings = panel.projectSettings
     course.configurator
             ?.courseBuilder
             ?.getCourseProjectGenerator(course)
             ?.doCreateCourseProject(location, projectSettings)
-    close(OK_EXIT_CODE)
   }
 }
