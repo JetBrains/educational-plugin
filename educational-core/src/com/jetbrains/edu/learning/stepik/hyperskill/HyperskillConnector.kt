@@ -25,6 +25,11 @@ object HyperskillConnector {
 
   private val service: HyperskillService
     get() {
+      val account = HyperskillSettings.INSTANCE.account
+      if (account != null && !account.tokenInfo.isUpToDate()) {
+        account.refreshTokens()
+      }
+
       val dispatcher = Dispatcher()
       dispatcher.maxRequests = 10
 
@@ -32,13 +37,9 @@ object HyperskillConnector {
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         .addInterceptor { chain ->
-          val account = HyperskillSettings.INSTANCE.account
           val tokenInfo = account?.tokenInfo
           if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
 
-          if (!tokenInfo.isUpToDate()) {
-            account.refreshTokens()
-          }
           val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
             .build()
