@@ -30,7 +30,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
         showBalloon(e, "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select project</a> ", false)
       }
       else {
-        val languageId = HYPERSKILL + "-" + EduNames.JAVA
+        val languageId = EduNames.JAVA
         val hyperskillCourse = HyperskillCourse(hyperskillProject.title, languageId)
         hyperskillCourse.courseType = HYPERSKILL
         val dialog = JoinCourseDialog(hyperskillCourse)

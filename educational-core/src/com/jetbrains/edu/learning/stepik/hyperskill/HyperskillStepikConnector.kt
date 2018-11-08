@@ -28,9 +28,9 @@ fun getLesson(lessonId: Int, language: Language, stages: List<HyperskillStage>):
 
 private fun EduTask.setDescription(baseDescription: String, stage: HyperskillStage, index: Int) {
   descriptionText = baseDescription
-  val topics = HyperskillConnector.getTopics(stage.id)
-  if (topics != null) {
-    descriptionText += "<br><br><h2>Learn topics for stage ${index + 1}</h2><br>"
+  val topics = HyperskillConnector.getTopics(stage.id)?.filter { it.children.isEmpty() }
+  if (topics != null && topics.isNotEmpty()) {
+    descriptionText += "<br><br><h2>Topics for stage ${index + 1}:</h2>"
     for (topic in topics) {
       descriptionText += topicLink(topic)
       descriptionText += "<br>"
