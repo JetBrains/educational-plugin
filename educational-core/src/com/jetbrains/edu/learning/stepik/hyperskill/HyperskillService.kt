@@ -47,5 +47,9 @@ class TopicsData {
 }
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class HyperskillTopic(var id: Int = -1, var title: String = "")
+class HyperskillTopic {
+  var id: Int = -1
+  var title: String = ""
+  lateinit var children: List<String>
+}
 
