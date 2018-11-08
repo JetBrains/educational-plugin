@@ -30,7 +30,7 @@ private fun EduTask.setDescription(baseDescription: String, stage: HyperskillSta
   descriptionText = baseDescription
   val topics = HyperskillConnector.getTopics(stage.id)?.filter { it.children.isEmpty() }
   if (topics != null && topics.isNotEmpty()) {
-    descriptionText += "<br><br><h2>Topics for stage ${index + 1}:</h2>"
+    descriptionText += "<h3>Topics for stage ${index + 1}:</h3>"
     for (topic in topics) {
       descriptionText += topicLink(topic)
       descriptionText += "<br>"
