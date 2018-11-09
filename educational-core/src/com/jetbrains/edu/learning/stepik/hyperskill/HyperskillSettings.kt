@@ -10,7 +10,7 @@ import com.jetbrains.edu.learning.authUtils.deserializeAccount
 import org.jdom.Element
 
 private const val serviceName = "HyperskillSettings"
-@State(name = serviceName, storages = arrayOf(Storage("other.xml")))
+@State(name = serviceName, storages = [Storage("other.xml")])
 class HyperskillSettings : PersistentStateComponent<Element> {
   @get:Transient
   @set:Transient

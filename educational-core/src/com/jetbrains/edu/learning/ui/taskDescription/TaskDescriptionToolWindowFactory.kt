@@ -22,7 +22,7 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
     toolWindow.icon = EducationalCoreIcons.CourseToolWindow
     val taskDescriptionToolWindow = TaskDescriptionView.getInstance(project)
     toolWindow.initTitleActions()
-    taskDescriptionToolWindow.init()
+    taskDescriptionToolWindow.init(toolWindow)
     val contentManager = toolWindow.contentManager
     val content = contentManager.factory.createContent(taskDescriptionToolWindow, null, false)
     content.isCloseable = false
@@ -38,6 +38,6 @@ class TaskDescriptionToolWindowFactory : ToolWindowFactory, DumbAware {
   }
 
   companion object {
-    const val STUDY_TOOL_WINDOW = "Task Description"
+    const val STUDY_TOOL_WINDOW = "Task"
   }
 }

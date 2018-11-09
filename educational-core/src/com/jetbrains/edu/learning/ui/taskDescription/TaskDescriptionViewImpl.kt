@@ -6,12 +6,17 @@ import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.content.ContentFactory
+import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
@@ -24,6 +29,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
   private val taskTextTW : TaskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
   private val taskTextPanel : JComponent = taskTextTW.createTaskInfoPanel(project)
   private lateinit var separator: JSeparator
+  private lateinit var contentManager: ContentManager
 
   override var currentTask: Task? = null
     set(value) {
@@ -37,9 +43,22 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       }
 
       taskTextTW.updateTaskSpecificPanel(value)
+      updateAdditionalTaskTab(value)
+
       UIUtil.setBackgroundRecursively(checkPanel, getTaskDescriptionBackgroundColor())
       field = value
     }
+
+  private fun updateAdditionalTaskTab(value: Task?) {
+    val additionalTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(value, project)
+    if (additionalTab != null) {
+      val content = contentManager.findContent(additionalTab.second)
+      content?.let { contentManager.removeContent(it, true) }
+      val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.first, additionalTab.second, false)
+      contentManager.addContent(topicsContent, 1)
+    }
+  }
+
   override fun updateTaskSpecificPanel() {
     taskTextTW.updateTaskSpecificPanel(currentTask)
   }
@@ -57,7 +76,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     checkPanel.readyToCheck()
   }
 
-  override fun init() {
+  override fun init(toolWindow: ToolWindow) {
+    contentManager = toolWindow.contentManager
     val panel = JPanel(BorderLayout())
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
@@ -82,10 +102,9 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
     panel.add(bottomPanel, BorderLayout.SOUTH)
     UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
-
-    setContent(panel)
-
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
+    val content = ContentFactory.SERVICE.getInstance().createContent(panel, "Description", false)
+    contentManager.addContent(content)
     currentTask = EduUtils.getCurrentTask(project)
 
     LafManager.getInstance().addLafManagerListener { UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor()) }
