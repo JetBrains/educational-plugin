@@ -62,34 +62,9 @@ public class CCPushCourse extends DumbAwareAction {
     if (course == null) {
       return;
     }
-    if (doPush(project, course)) return;
-    EduUsagesCollector.courseUploaded();
-  }
 
-  public static boolean doPush(Project project, Course course) {
     if (course instanceof RemoteCourse) {
       askToWrapTopLevelLessons(project, course);
-
-      ProgressManager.getInstance().run(new Modal(project, "Updating Course", true) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          if (getCourseInfo(String.valueOf(course.getId())) == null) {
-            String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
-            Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
-                                                         createPostCourseNotificationListener(project, (RemoteCourse)course));
-            notification.notify(project);
-            return;
-          }
-          indicator.setIndeterminate(false);
-
-          if (ApplicationManager.getApplication().isInternal()) {
-            new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
-          }
-          else {
-            pushInOldWay(indicator, project, course);
-          }
-        }
-      });
     }
     else {
       if (CourseExt.getHasSections(course) && CourseExt.getHasTopLevelLessons(course)) {
@@ -100,10 +75,42 @@ public class CCPushCourse extends DumbAwareAction {
           wrapUnpushedLessonsIntoSections(project, course);
         }
         else {
-          return true;
+          return;
         }
       }
-      postCourseWithProgress(project, course);
+    }
+
+    String title = course instanceof RemoteCourse ? "Updating Course" : "Uploading Course";
+    ProgressManager.getInstance().run(new Modal(project, title, true) {
+      @Override
+      public void run(@NotNull ProgressIndicator indicator) {
+        indicator.setIndeterminate(false);
+        doPush(project, course);
+      }
+    });
+    EduUsagesCollector.courseUploaded();
+  }
+
+  public static boolean doPush(Project project, Course course) {
+    if (course instanceof RemoteCourse) {
+      ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+      if (getCourseInfo(String.valueOf(course.getId())) == null) {
+        String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
+        Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
+                                                     createPostCourseNotificationListener(project, (RemoteCourse)course));
+        notification.notify(project);
+        return false;
+      }
+      if (ApplicationManager.getApplication().isInternal()) {
+        new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
+      }
+      else {
+        pushInOldWay(indicator, project, course);
+      }
+    }
+    else {
+
+      postCourse(project, course);
     }
     return false;
   }
@@ -129,8 +136,8 @@ public class CCPushCourse extends DumbAwareAction {
       boolean hasUnpushedLessons = course.getLessons().stream().anyMatch(lesson -> lesson.getId() == 0);
       if (hasUnpushedLessons) {
         int result = Messages.showYesNoDialog(project,
-                           "Top-level lessons will be wrapped with sections as it's not allowed to have both top-level lessons and sections",
-                           "Wrap Lessons Into Sections", "Wrap and Post", "Cancel", null);
+                                              "Top-level lessons will be wrapped with sections as it's not allowed to have both top-level lessons and sections",
+                                              "Wrap Lessons Into Sections", "Wrap and Post", "Cancel", null);
         if (result == Messages.YES) {
           wrapUnpushedLessonsIntoSections(project, course);
         }

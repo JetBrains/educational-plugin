@@ -53,7 +53,7 @@ class EventBasedUpdateTest: StepikTestCase() {
     }
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCStepikConnector.postCourseWithProgress(project, courseToPost)
+    CCStepikConnector.postCourse(project, courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course as RemoteCourse
     addNewLesson("lesson3", 3, localCourse, localCourse)
@@ -153,7 +153,7 @@ class EventBasedUpdateTest: StepikTestCase() {
     courseToPost.init(null, null, false)
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCStepikConnector.postCourseWithProgress(project, courseToPost)
+    CCStepikConnector.postCourse(project, courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course!! as RemoteCourse
 
@@ -184,7 +184,7 @@ class EventBasedUpdateTest: StepikTestCase() {
     courseToPost.init(null, null, false)
     StudyTaskManager.getInstance(project).course = courseToPost
 
-    CCStepikConnector.postCourseWithProgress(project, courseToPost)
+    CCStepikConnector.postCourse(project, courseToPost)
 
     val localCourse = StudyTaskManager.getInstance(project).course!! as RemoteCourse
 
