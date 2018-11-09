@@ -5,6 +5,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.SimpleToolWindowPanel
+import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -15,7 +16,7 @@ abstract class TaskDescriptionView : SimpleToolWindowPanel(true, true), Disposab
 
   abstract var currentTask: Task?
 
-  abstract fun init()
+  abstract fun init(toolWindow: ToolWindow)
 
   abstract fun updateTaskSpecificPanel()
   abstract fun updateTaskDescription(task: Task?)

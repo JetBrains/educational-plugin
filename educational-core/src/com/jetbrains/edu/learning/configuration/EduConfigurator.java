@@ -12,9 +12,12 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
+import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.SystemIndependent;
 
 import javax.swing.*;
@@ -160,5 +163,10 @@ public interface EduConfigurator<Settings> {
   @NotNull
   default Icon getLogo() {
     return EmptyIcon.ICON_16;
+  }
+
+  @Nullable
+  default Pair<JPanel, String> additionalTaskTab(@Nullable Task currentTask, Project project) {
+    return null;
   }
 }

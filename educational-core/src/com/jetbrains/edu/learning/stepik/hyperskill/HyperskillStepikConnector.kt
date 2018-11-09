@@ -6,10 +6,12 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-fun getLesson(lessonId: Int, language: Language, stages: List<HyperskillStage>): Lesson? {
+fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language, stages: List<HyperskillStage>): Lesson? {
   val progressIndicator = ProgressManager.getInstance().progressIndicator
   val lesson = StepikConnector.getLesson(lessonId)
+  lesson.course = course
   progressIndicator?.checkCanceled()
   progressIndicator?.text2 = "Loading project steps"
   val stepIds = lesson.steps.map { stepId -> stepId.toString() }.toTypedArray()
@@ -26,7 +28,8 @@ fun getLesson(lessonId: Int, language: Language, stages: List<HyperskillStage>):
 
     // TODO: extract as template or clone repository
     eduTask.addTaskFile(TaskFile("src/Task.java", ""))
-    eduTask.setDescription(task.descriptionText, stage, index)
+    eduTask.descriptionText = task.descriptionText
+    addTopics(stage, course, index)
     convertedTasks.add(eduTask)
   }
 
@@ -34,16 +37,10 @@ fun getLesson(lessonId: Int, language: Language, stages: List<HyperskillStage>):
   return lesson
 }
 
-private fun EduTask.setDescription(baseDescription: String, stage: HyperskillStage, index: Int) {
-  descriptionText = baseDescription
+private fun addTopics(stage: HyperskillStage, course: HyperskillCourse, index: Int) {
+
   val topics = HyperskillConnector.getTopics(stage.id)?.filter { it.children.isEmpty() }
   if (topics != null && topics.isNotEmpty()) {
-    descriptionText += "<h3>Topics for stage ${index + 1}:</h3>"
-    for (topic in topics) {
-      descriptionText += topicLink(topic)
-      descriptionText += "<br>"
-    }
+    course.taskToTopics[index] = topics
   }
 }
-
-private fun topicLink(topic: HyperskillTopic): String = "<a href=\"https://hyperskill.org/learn/topic/${topic.id}/\">${topic.title}</a>"

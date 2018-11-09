@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.*;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -88,6 +89,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.SystemIndependent;
 
 import javax.imageio.ImageIO;
+import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
@@ -203,7 +205,12 @@ public class EduUtils {
 
   public static void showBalloon(String text, MessageType messageType, @NotNull final Project project) {
     BalloonBuilder balloonBuilder =
-      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, messageType, null);
+      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, messageType,
+                                                                (HyperlinkEvent e) -> {
+                                                                  if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                                                                    BrowserUtil.browse(e.getURL());
+                                                                  }
+                                                                });
     final Balloon balloon = balloonBuilder.createBalloon();
     final EduEditor eduEditor = getSelectedEduEditor(project);
     Editor editor = eduEditor != null ? eduEditor.getEditor() : FileEditorManager.getInstance(project).getSelectedTextEditor();

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
+import com.intellij.openapi.wm.ToolWindow
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 
@@ -8,7 +9,7 @@ class MockTaskDescriptionView : TaskDescriptionView() {
     get() = null
     set(value) {}
 
-  override fun init() {}
+  override fun init(toolWindow: ToolWindow) {}
   override fun updateTaskSpecificPanel() {}
   override fun updateTaskDescription(task: Task?) {}
   override fun updateTaskDescription() {}
