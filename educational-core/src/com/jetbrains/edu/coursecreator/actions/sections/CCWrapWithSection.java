@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator.actions.sections;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -58,6 +59,11 @@ public class CCWrapWithSection extends DumbAwareAction {
     }
 
     Section section = CCUtils.wrapIntoSection(project, course, lessonsToWrap, sectionName);
+    synchronizeChanges(project, course, section);
+  }
+
+  @VisibleForTesting
+  public static void synchronizeChanges(Project project, Course course, Section section) {
     if (section == null) return;
     YamlFormatSynchronizer.saveItem(section);
     YamlFormatSynchronizer.saveItem(course);
