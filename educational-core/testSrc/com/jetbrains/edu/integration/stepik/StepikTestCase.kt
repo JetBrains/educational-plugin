@@ -113,6 +113,11 @@ abstract class StepikTestCase : EduTestCase() {
       return null
     }
 
+    // If we can't get tokens, there are might a problem with basic auth that used on Stepik by default
+    // and disabled for us as we use oauth2 in our tests.
+    // Check that:
+    // 1. Teamcity didn't change ips of agent
+    // 2. Stepik still have our server in whitelist
     return StepikAuthorizedClient.getTokens(parameters, "$clientId:$clientSecret")
   }
 }
