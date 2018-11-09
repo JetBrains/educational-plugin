@@ -4,6 +4,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
+import com.jetbrains.edu.coursecreator.actions.sections.CCWrapWithSection
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushCourse
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushLesson
 import com.jetbrains.edu.coursecreator.actions.stepik.CCPushSection
@@ -233,6 +234,8 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
 
     CCUtils.wrapIntoSection(project, localCourse, localCourse.lessons, "section1")
+    CCWrapWithSection.synchronizeChanges(project, localCourse, localCourse.sections.first())
+
     CCPushCourse.doPush(project, localCourse)
 
     checkSections(localCourse)
