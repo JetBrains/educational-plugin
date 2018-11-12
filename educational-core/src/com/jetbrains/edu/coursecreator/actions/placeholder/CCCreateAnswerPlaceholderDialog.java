@@ -11,20 +11,17 @@ import javax.swing.*;
 
 public class CCCreateAnswerPlaceholderDialog extends DialogWrapper {
 
-  private static final String TITLE = "Add Answer Placeholder";
+  private static final String TITLE_SUFFIX = " Answer Placeholder";
   private final CCCreateAnswerPlaceholderPanel myPanel;
-  private final Project myProject;
 
-  public Project getProject() {
-    return myProject;
-  }
-
-  public CCCreateAnswerPlaceholderDialog(@NotNull final Project project, String placeholderText) {
+  public CCCreateAnswerPlaceholderDialog(@NotNull final Project project, @NotNull String placeholderText, boolean isEdit) {
     super(project, true);
-    
-    myProject = project;
+
     myPanel = new CCCreateAnswerPlaceholderPanel(placeholderText);
-    setTitle(TITLE);
+    String title = (isEdit ? "Edit" : "Add") + TITLE_SUFFIX;
+    setTitle(title);
+    String buttonText = (isEdit ? "OK" : "Add");
+    setOKButtonText(buttonText);
     init();
     initValidation();
   }
