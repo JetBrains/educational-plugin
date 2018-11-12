@@ -149,7 +149,6 @@ public class CCStepikConnector {
       }
 
       postAdditionalFiles(course, project, courseOnRemote.getId(), sectionCount + 1);
-      courseOnRemote.init(null, null, true);
       StudyTaskManager.getInstance(project).setCourse(courseOnRemote);
       courseOnRemote.init(null, null, true);
       StepikUpdateDateExt.setUpdated(courseOnRemote);
