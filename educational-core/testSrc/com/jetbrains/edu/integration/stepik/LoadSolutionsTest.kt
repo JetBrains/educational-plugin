@@ -16,15 +16,15 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.PROGRESS_ID_PREFIX
-import org.junit.Test
+import java.util.concurrent.TimeUnit
+
 
 class LoadSolutionsTest : StepikTestCase() {
 
   private val taskStatusErrorMessage = "Wrong task status, expected Solved"
   private val fileUpdateErrorMessage = "File text weren't updated"
 
-  @Test
-  fun testTaskStatuses() {
+  fun `test task statuses`() {
     StudyTaskManager.getInstance(project).course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
@@ -38,15 +38,31 @@ class LoadSolutionsTest : StepikTestCase() {
 
     val task = firstTask(StudyTaskManager.getInstance(project).course)
     val progresses = Array(1) { PROGRESS_ID_PREFIX + task.stepId.toString() }
-    val taskStatuses = StepikConnector.taskStatuses(progresses)
-    assertTrue(taskNumberMismatchMessage(1, taskStatuses!!.size), taskStatuses.size == 1)
-    assertTrue(taskStatusErrorMessage, taskStatuses[0])
+
+    var isSolved = false
+
+    // we have to wait until stepik process our submission and set task status
+    val startTime = System.currentTimeMillis()
+    val waitTime: Long = 10000
+    val endTime = startTime + waitTime
+    while (System.currentTimeMillis() < endTime) {
+      val taskStatuses = StepikConnector.taskStatuses(progresses)
+      assertTrue(taskNumberMismatchMessage(1, taskStatuses!!.size), taskStatuses.size == 1)
+
+      if (taskStatuses.firstOrNull() == true) {
+        isSolved = true
+        break
+      }
+
+      TimeUnit.MILLISECONDS.sleep(500)
+    }
+
+    assertTrue(taskStatusErrorMessage, isSolved)
   }
 
   private fun taskNumberMismatchMessage(expected: Int, actual: Int?) = "Unexpected number of tasks, expected: $expected, actual: $actual"
 
-  @Test
-  fun testTasksToUpdate() {
+  fun `test tasks to update`() {
     StudyTaskManager.getInstance(project).course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
         eduTask {
@@ -70,7 +86,7 @@ class LoadSolutionsTest : StepikTestCase() {
     assert(taskToUpdate.taskFiles.size == 1)
   }
 
-  private fun doCheck(check: (TaskFile, TaskFile) -> Unit = {_, _ -> }) {
+  private fun doCheck(check: (TaskFile, TaskFile) -> Unit = { _, _ -> }) {
     val course = StudyTaskManager.getInstance(project).course!! as RemoteCourse
     val oldTask = firstTask(course)
     val oldTaskFile = oldTask.getTaskFile(getInitialFileName())
@@ -87,7 +103,7 @@ class LoadSolutionsTest : StepikTestCase() {
     check(oldTaskFile, taskFile)
   }
 
-  private fun firstTask(course: Course?) = course!!.lessons[0].taskList!![0]
+  private fun firstTask(course: Course?) = course!!.lessons.first().taskList.first()
 
   private fun createCourseFromStepik(course: RemoteCourse): RemoteCourse? {
     val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as RemoteCourse
