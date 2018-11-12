@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions.placeholder;
 
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,8 +14,10 @@ public class CCCreateAnswerPlaceholderPanel {
 
   private JPanel myPanel;
   private JTextArea myPlaceholderTextArea;
+  private JLabel myLabel;
 
   public CCCreateAnswerPlaceholderPanel(@Nullable String placeholderText) {
+    myPanel.setPreferredSize(new Dimension(JBUI.scale(400), JBUI.scale(70)));
     myPlaceholderTextArea.setBorder(BorderFactory.createLineBorder(JBColor.border()));
     myPlaceholderTextArea.setText(placeholderText);
     myPlaceholderTextArea.addFocusListener(new FocusAdapter() {
@@ -23,9 +26,8 @@ public class CCCreateAnswerPlaceholderPanel {
         myPlaceholderTextArea.selectAll();
       }
     });
-    myPlaceholderTextArea.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, null);
-    myPlaceholderTextArea.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, null);
     myPlaceholderTextArea.setFont(UIUtil.getLabelFont());
+    myLabel.setForeground(JBColor.GRAY);
   }
 
   public String getAnswerPlaceholderText() {

@@ -21,7 +21,7 @@ public class CCAnswerPlaceholderActionTest extends CCTestCase {
     @Override
     protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {
       String placeholderText = answerPlaceholder.getPlaceholderText();
-      return new CCCreateAnswerPlaceholderDialog(project, placeholderText == null ? "type here" : placeholderText) {
+      return new CCCreateAnswerPlaceholderDialog(project, placeholderText == null ? "type here" : placeholderText, false) {
         @Override
         public boolean showAndGet() {
           return true;

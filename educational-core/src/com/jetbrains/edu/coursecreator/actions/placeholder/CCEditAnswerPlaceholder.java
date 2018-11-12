@@ -32,8 +32,8 @@ public class CCEditAnswerPlaceholder extends CCAnswerPlaceholderAction {
   }
 
   public static void performEditPlaceholder(@NotNull Project project, @NotNull AnswerPlaceholder answerPlaceholder) {
-    CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText());
-    dlg.setTitle("Edit Answer Placeholder");
+    CCCreateAnswerPlaceholderDialog dlg = new CCCreateAnswerPlaceholderDialog(project, answerPlaceholder.getPlaceholderText(), true);
+
     if (dlg.showAndGet()) {
       final String answerPlaceholderText = dlg.getTaskText();
       if (isChanged(answerPlaceholder, dlg)) {
