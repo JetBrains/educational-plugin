@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
+import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.wm.ToolWindow
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -17,4 +18,5 @@ class MockTaskDescriptionView : TaskDescriptionView() {
   override fun checkStarted() {}
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
   override fun dispose() {}
+  override fun showBalloon(text: String, messageType: MessageType) {}
 }

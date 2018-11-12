@@ -73,7 +73,7 @@ public class CheckAction extends DumbAwareAction {
       return;
     }
     if (DumbService.isDumb(project)) {
-      EduUtils.showBalloon("Checking is not available while indexing is in progress", MessageType.WARNING, project);
+      TaskDescriptionView.getInstance(project).showBalloon("Checking is not available while indexing is in progress", MessageType.WARNING);
       return;
     }
     CheckDetailsView.getInstance(project).clear();

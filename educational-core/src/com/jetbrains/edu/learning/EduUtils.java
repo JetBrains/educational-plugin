@@ -2,7 +2,6 @@ package com.jetbrains.edu.learning;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.*;
-import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.SaveAndSyncHandler;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -37,11 +36,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.ui.popup.BalloonBuilder;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
@@ -54,7 +48,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.io.zip.JBZipEntry;
@@ -89,11 +82,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.SystemIndependent;
 
 import javax.imageio.ImageIO;
-import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
 import java.io.*;
 import java.net.URI;
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -201,30 +191,6 @@ public class EduUtils {
     catch (IOException e) {
       LOG.error(e);
     }
-  }
-
-  public static void showBalloon(String text, MessageType messageType, @NotNull final Project project) {
-    BalloonBuilder balloonBuilder =
-      JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, messageType,
-                                                                (HyperlinkEvent e) -> {
-                                                                  if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                                                                    BrowserUtil.browse(e.getURL());
-                                                                  }
-                                                                });
-    final Balloon balloon = balloonBuilder.createBalloon();
-    final EduEditor eduEditor = getSelectedEduEditor(project);
-    Editor editor = eduEditor != null ? eduEditor.getEditor() : FileEditorManager.getInstance(project).getSelectedTextEditor();
-    assert editor != null;
-    balloon.show(computeLocation(editor), Balloon.Position.above);
-    Disposer.register(project, balloon);
-  }
-
-  // TODO: choose better position for popup since we redesigned task description panel
-  public static RelativePoint computeLocation(Editor editor) {
-    final Rectangle visibleRect = editor.getComponent().getVisibleRect();
-    Point point = new Point(visibleRect.x + visibleRect.width + 10,
-                            visibleRect.y + 10);
-    return new RelativePoint(editor.getComponent(), point);
   }
 
   /**
