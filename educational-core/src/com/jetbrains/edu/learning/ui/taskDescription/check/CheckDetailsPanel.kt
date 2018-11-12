@@ -39,7 +39,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
 
     if (task.course is HyperskillCourse && checkResult.status == CheckStatus.Failed) {
-      val showMoreInfo = LightColoredActionLink("Review Tokens for the Stage...", SwitchTaskTabAction(project, 1))
+      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
