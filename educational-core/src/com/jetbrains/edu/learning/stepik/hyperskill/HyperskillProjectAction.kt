@@ -46,6 +46,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
     builder.setClickHandler(HSHyperlinkListener(authorize), true)
     val balloon = builder.createBalloon()
 
+    // TODO: wrong balloon position calling action from File menu
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
     if (component is JComponent) {
       balloon.showInCenterOf(component)
