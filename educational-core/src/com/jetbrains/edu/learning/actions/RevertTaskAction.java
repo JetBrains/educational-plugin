@@ -50,7 +50,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     });
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
     validateEditors(project);
-    EduUtils.showBalloon("You can start again now", MessageType.INFO, project);
+    TaskDescriptionView.getInstance(project).showBalloon("You can start again now", MessageType.INFO);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
     TaskDescriptionView.getInstance(project).readyToCheck();
