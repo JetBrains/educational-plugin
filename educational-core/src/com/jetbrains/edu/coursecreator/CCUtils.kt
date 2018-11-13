@@ -1,5 +1,6 @@
 package com.jetbrains.edu.coursecreator
 
+import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeAndWaitIfNeed
@@ -24,6 +25,7 @@ import com.intellij.openapi.vfs.*
 import com.intellij.psi.PsiDirectory
 import com.intellij.util.Function
 import com.intellij.util.PathUtil
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.*
 import com.jetbrains.edu.learning.courseFormat.*
@@ -315,7 +317,20 @@ object CCUtils {
 
     updateHigherElements(EduUtils.getCourseDir(project).children, Function { file ->  course.getItem(file.name) }, maxIndex, delta)
     course.addItem(section, section.index - 1)
+    synchronizeChanges(project, course, section)
     return section
+  }
+
+  private fun synchronizeChanges(project: Project, course: Course, section: Section) {
+    YamlFormatSynchronizer.saveItem(section)
+    YamlFormatSynchronizer.saveItem(course)
+    ProjectView.getInstance(project).refresh()
+    StepikCourseChangeHandler.contentChanged(course)
+    for (lesson in section.lessons) {
+      if (lesson.id != 0) {
+        StepikCourseChangeHandler.infoChanged(lesson)
+      }
+    }
   }
 
   private fun createSection(lessonsToWrap: List<Lesson>, sectionName: String, index: Int): Section {
