@@ -22,6 +22,7 @@ abstract class TaskDescriptionView : SimpleToolWindowPanel(true, true), Disposab
   abstract fun updateTaskSpecificPanel()
   abstract fun updateTaskDescription(task: Task?)
   abstract fun updateTaskDescription()
+  abstract fun updateAdditionalTaskTab()
 
   abstract fun readyToCheck()
   abstract fun checkStarted()

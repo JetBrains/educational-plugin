@@ -2,13 +2,23 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object HyperskillConnector {
+  private val LOG = Logger.getInstance(HyperskillConnector::class.java)
+
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
   private val authorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
                                                                                                HyperskillLoggedIn::class.java)
@@ -87,8 +97,25 @@ object HyperskillConnector {
     return service.stages(projectId).execute().body()?.stages
   }
 
-  fun getTopics(stageId: Int): List<HyperskillTopic>? {
-    return service.topics(stageId).execute().body()?.topics
+  fun fillTopics(course: HyperskillCourse, project: Project) {
+    for ((taskIndex, stage) in course.stages.withIndex()) {
+      val call = service.topics(stage.id)
+      call.enqueue(object: Callback<TopicsData> {
+        override fun onFailure(call: Call<TopicsData>, t: Throwable) {
+          LOG.warn("Failed to get topics for stage ${stage.id}")
+        }
+
+        override fun onResponse(call: Call<TopicsData>, response: Response<TopicsData>) {
+          val topics = response.body()?.topics?.filter { it.children.isEmpty() }
+          if (topics != null && topics.isNotEmpty()) {
+            course.taskToTopics[taskIndex] = topics
+            runInEdt {
+              TaskDescriptionView.getInstance(project).updateAdditionalTaskTab()
+            }
+          }
+        }
+      })
+    }
   }
 
   private fun createAuthorizationListener(vararg postLoginActions: Runnable) {

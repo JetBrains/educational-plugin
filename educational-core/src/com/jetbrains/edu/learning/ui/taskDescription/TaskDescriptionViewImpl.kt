@@ -55,6 +55,10 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
       field = value
     }
 
+  override fun updateAdditionalTaskTab() {
+    updateAdditionalTaskTab(currentTask)
+  }
+
   private fun updateAdditionalTaskTab(value: Task?) {
     val additionalTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(value, project)
     if (additionalTab != null) {
