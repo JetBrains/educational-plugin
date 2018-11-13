@@ -29,18 +29,9 @@ fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language, stage
     // TODO: extract as template or clone repository
     eduTask.addTaskFile(TaskFile("src/Task.java", ""))
     eduTask.descriptionText = task.descriptionText
-    addTopics(stage, course, index)
     convertedTasks.add(eduTask)
   }
 
   lesson.taskList.addAll(convertedTasks)
   return lesson
-}
-
-private fun addTopics(stage: HyperskillStage, course: HyperskillCourse, index: Int) {
-
-  val topics = HyperskillConnector.getTopics(stage.id)?.filter { it.children.isEmpty() }
-  if (topics != null && topics.isNotEmpty()) {
-    course.taskToTopics[index] = topics
-  }
 }

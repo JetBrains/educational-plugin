@@ -4,9 +4,11 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
+import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
@@ -39,6 +41,7 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
           val projectId = hyperskillProject.id
 
           val stages = HyperskillConnector.getStages(projectId) ?: return false
+          (myCourse as HyperskillCourse).stages = stages
           val lesson = getLesson(myCourse as HyperskillCourse, lessonId, language, stages) ?: return false
           lesson.name = hyperskillProject.title.removePrefix(PROJECT_PREFIX)
 
@@ -52,6 +55,11 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
       LOG.warn(e)
       false
     }
+  }
+
+  override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
+    super.afterProjectGenerated(project, projectSettings)
+    HyperskillConnector.fillTopics(myCourse as HyperskillCourse, project)
   }
 
   companion object {
