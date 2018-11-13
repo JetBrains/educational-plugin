@@ -71,10 +71,11 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
     final JPanel panel = new JPanel(new BorderLayout());
 
     myTaskTextPane = SwingTaskUtil.createTextPane();
-    panel.add(new JBScrollPane(myTaskTextPane), BorderLayout.CENTER);
+    JBScrollPane scrollPane = new JBScrollPane(myTaskTextPane);
+    scrollPane.setBorder(null);
+    panel.add(scrollPane, BorderLayout.CENTER);
     myTaskTextPane.setBorder(JBUI.Borders.empty(20, 0, 0, 10));
     myTaskTextPane.addHyperlinkListener(new EduHyperlinkListener(project));
-
 
     return panel;
   }
