@@ -1,6 +1,6 @@
-<idea-plugin>
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <depends>com.intellij.modules.lang</depends>
-  <!--<xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>-->
+  <xi:include href="/META-INF/Hyperskill.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <project-components>
     <component>
@@ -46,6 +46,7 @@
 
   <actions>
     <action id="Educational.StartCourseraAssignment" class="com.jetbrains.edu.learning.coursera.StartCourseraAssignment"/>
+    <action id="Educational.HyperskillProjectAction" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectAction"/>
     <action id="Educational.ImportCourseraAssignment" class="com.jetbrains.edu.learning.coursera.ImportCourseraAssignment"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
     <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction"/>
@@ -176,6 +177,7 @@
     <group id="Educational.LearnAndTeachFileMenu" class="com.jetbrains.edu.learning.newproject.LearnAndTeachFileMenuGroup" popup="true">
       <reference id="Educational.BrowseCourses"/>
       <reference id="Educational.StartCourseraAssignment"/>
+      <reference id="Educational.HyperskillProjectAction"/>
       <reference id="Educational.ImportLocalCourse"/>
       <reference id="Educational.StartStepikCourse"/>
       <reference id="Educational.Educator.NewCourse"/>
