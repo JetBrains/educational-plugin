@@ -59,12 +59,13 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     updateAdditionalTaskTab(currentTask)
   }
 
-  private fun updateAdditionalTaskTab(value: Task?) {
-    val additionalTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(value, project)
+  private fun updateAdditionalTaskTab(task: Task?) {
+    val additionalTab = StudyTaskManager.getInstance(project).course?.configurator?.additionalTaskTab(task, project)
     if (additionalTab != null) {
       val content = contentManager.findContent(additionalTab.second)
       content?.let { contentManager.removeContent(it, true) }
       val topicsContent = ContentFactory.SERVICE.getInstance().createContent(additionalTab.first, additionalTab.second, false)
+      topicsContent.isCloseable = false
       contentManager.addContent(topicsContent, 1)
     }
   }
@@ -114,6 +115,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
     val content = ContentFactory.SERVICE.getInstance().createContent(panel, "Description", false)
+    content.isCloseable = false
     contentManager.addContent(content)
     currentTask = EduUtils.getCurrentTask(project)
 
