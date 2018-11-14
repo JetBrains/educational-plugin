@@ -27,7 +27,7 @@ sealed class ErrorState(
   val courseCanBeStarted: Boolean
 ) {
 
-  object NothingSelected : ErrorState(0, null, Color.BLACK, true)
+  object NothingSelected : ErrorState(0, null, Color.BLACK, false)
   object None : ErrorState(1, null, Color.BLACK, true)
   object NotLoggedIn : ErrorState(2, ErrorMessage("", "Log in", " to Stepik to see more courses"), WARNING.titleForeground, true)
   abstract class LoginRequired(platformName: String) : ErrorState(3, ErrorMessage("", "Log in", " to $platformName to start this course"), ERROR.titleForeground, false)

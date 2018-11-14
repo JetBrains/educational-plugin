@@ -271,6 +271,7 @@ public class CoursesPanel extends JPanel {
         .ifPresent(newCourseToSelect -> myCoursesList.setSelectedValue(newCourseToSelect, true));
   }
 
+  @Nullable
   public Course getSelectedCourse() {
     return myCoursesList.getSelectedValue();
   }
