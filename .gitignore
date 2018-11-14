@@ -37,5 +37,6 @@ Edu-Python/classes/
 # oauth properties files
 Edu-Python/resources/checkio/py-checkio-oauth.properties
 Edu-JavaScript/resources/checkio/js-checkio-oauth.properties
-Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.propertieseducational-core/resources/stepik/stepik.properties
+Edu-Kotlin/resources/twitter/kotlin_koans/oauth_twitter.properties
+educational-core/resources/stepik/stepik.properties
 educational-core/resources/hyperskill/hyperskill-oauth.properties
