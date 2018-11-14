@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nls;
 
 public class JsCheckiOOptions extends CheckiOOptions {
   protected JsCheckiOOptions() {
-    super(JsCheckiONames.JS_CHECKIO, JsCheckiOOAuthConnector.getInstance());
+    super(JsCheckiOOAuthConnector.getInstance());
   }
 
   @Nls
   @Override
   public String getDisplayName() {
-    return JsCheckiONames.JS_CHECKIO + " options";
+    return JsCheckiONames.JS_CHECKIO;
   }
 }
