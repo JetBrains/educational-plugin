@@ -1,0 +1,16 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <experimentalFeature id="edu.checkio.js" percentOfUsers="0">
+      <description>Enables support for CheckiO JavaScript</description>
+    </experimentalFeature>
+    <httpRequestHandler implementation="com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthRestService"/>
+    <applicationService serviceImplementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOSettings"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOConfigurator" courseType="CheckiO" language="JavaScript"/>
+    <coursesProvider implementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOCourseProvider"/>
+    <optionsProvider instance="com.jetbrains.edu.javascript.learning.checkio.settings.JsCheckiOOptions"/>
+    <checkListener implementation="com.jetbrains.edu.javascript.learning.checkio.checker.JsCheckiOCheckListener"/>
+  </extensions>
+</idea-plugin>
