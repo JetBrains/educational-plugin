@@ -60,7 +60,7 @@ public class CheckiOMissionCheck implements Callable<CheckResult> {
     myTestFormTargetUrl = testFormTargetUrl;
 
     myResultHandler = new CheckiOTestResultHandler();
-    myBrowserWindow = new BrowserWindow(myProject, false, false);
+    myBrowserWindow = new BrowserWindow(myProject, false);
   }
 
   @NotNull

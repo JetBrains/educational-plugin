@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.checkio.checker.CheckiOCheckListener;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOApiConnector;
 import com.jetbrains.edu.python.learning.checkio.connectors.PyCheckiOOAuthConnector;
-import com.jetbrains.edu.python.learning.checkio.utils.PyCheckiONames;
 import com.jetbrains.python.PythonFileType;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +21,6 @@ public class PyCheckiOCheckListener extends CheckiOCheckListener {
 
   @Override
   protected boolean isEnabledForCourse(@NotNull CheckiOCourse course) {
-    return course.getLanguageID().equals(PyCheckiONames.PY_CHECKIO_LANGUAGE);
+    return true;
   }
 }
