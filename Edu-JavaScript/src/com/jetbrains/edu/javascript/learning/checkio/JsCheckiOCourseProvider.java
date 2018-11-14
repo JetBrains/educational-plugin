@@ -1,5 +1,6 @@
 package com.jetbrains.edu.javascript.learning.checkio;
 
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.application.Experiments;
 import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
 import com.jetbrains.edu.learning.CoursesProvider;
@@ -16,7 +17,7 @@ public class JsCheckiOCourseProvider implements CoursesProvider {
   @Override
   public List<Course> loadCourses() {
     return Experiments.isFeatureEnabled(EduExperimentalFeatures.JAVASCRIPT_COURSES)
-           ? Collections.singletonList(new CheckiOCourse(JsCheckiONames.JS_CHECKIO, JsCheckiONames.JS_CHECKIO_LANGUAGE))
+           ? Collections.singletonList(new CheckiOCourse(JsCheckiONames.JS_CHECKIO, JavascriptLanguage.INSTANCE.getID()))
            : Collections.emptyList();
   }
 }

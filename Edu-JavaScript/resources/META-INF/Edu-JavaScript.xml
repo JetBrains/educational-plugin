@@ -15,15 +15,15 @@
 
   <extensions defaultExtensionNs="Educational">
     <!-- CheckiO -->
-    <configurator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOConfigurator" language="CheckiO-JavaScript"/>
+    <configurator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOConfigurator" courseType="CheckiO" language="JavaScript"/>
     <coursesProvider implementation="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOCourseProvider"/>
     <optionsProvider instance="com.jetbrains.edu.javascript.learning.checkio.settings.JsCheckiOOptions"/>
     <checkListener implementation="com.jetbrains.edu.javascript.learning.checkio.checker.JsCheckiOCheckListener"/>
   </extensions>
 
-  <extensions defaultExtensionNs="educational">
+  <extensions defaultExtensionNs="Educational">
     <!-- CheckiO -->
-    <languageDecorator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOLanguageDecorator" language="CheckiO-JavaScript" />
+    <languageDecorator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOLanguageDecorator" language="JavaScript" />
   </extensions>
 
   <application-components>
