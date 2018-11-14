@@ -1,10 +1,7 @@
 package com.jetbrains.edu.javascript.learning.checkio;
 
 import com.jetbrains.edu.learning.EduLanguageDecorator;
-import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
 
 public class JsCheckiOLanguageDecorator implements EduLanguageDecorator {
   @NotNull
@@ -17,11 +14,5 @@ public class JsCheckiOLanguageDecorator implements EduLanguageDecorator {
   @Override
   public String getDefaultHighlightingMode() {
     return "javascript";
-  }
-
-  @NotNull
-  @Override
-  public Icon getLogo() {
-    return EducationalCoreIcons.JSCheckiO;
   }
 }

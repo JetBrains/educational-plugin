@@ -2,17 +2,16 @@ package com.jetbrains.edu.learning.checkio.checker;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ex.ApplicationUtil;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ui.JBUI;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.CheckResult;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
-import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindow;
 import javafx.embed.swing.JFXPanel;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +45,7 @@ public class CheckiOTaskChecker extends TaskChecker<EduTask> {
 
   @NotNull
   @Override
-  public CheckResult check() {
+  public CheckResult check(@NotNull ProgressIndicator indicator) {
     try {
       final CheckResult checkResult =
         ApplicationUtil.runWithCheckCanceled(myMissionCheck, ProgressManager.getInstance().getProgressIndicator());
@@ -64,17 +63,17 @@ public class CheckiOTaskChecker extends TaskChecker<EduTask> {
   }
 
   private void showTestResultPanel(@NotNull JFXPanel browserPanel) {
-    final JPanel testResultPanel = new JPanel(new BorderLayout());
-
-    testResultPanel.add(createBackButtonUI(), BorderLayout.PAGE_START);
-    testResultPanel.add(createBrowserWindowUI(browserPanel));
-
-    final TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
-
-    if (toolWindow != null) {
-      toolWindow.getContentPanel().add(TEST_RESULTS_ID, testResultPanel);
-      toolWindow.showPanelById(TEST_RESULTS_ID);
-    }
+    //final JPanel testResultPanel = new JPanel(new BorderLayout());
+    //
+    //testResultPanel.add(createBackButtonUI(), BorderLayout.PAGE_START);
+    //testResultPanel.add(createBrowserWindowUI(browserPanel));
+    //
+    //final TaskDescriptionToolWindow toolWindow = EduUtils.getStudyToolWindow(project);
+    //
+    //if (toolWindow != null) {
+    //  toolWindow.getContentPanel().add(TEST_RESULTS_ID, testResultPanel);
+    //  toolWindow.showPanelById(TEST_RESULTS_ID);
+    //}
   }
 
   private static JComponent createBrowserWindowUI(@NotNull JFXPanel browserPanel) {
@@ -105,9 +104,9 @@ public class CheckiOTaskChecker extends TaskChecker<EduTask> {
   }
 
   private void showTaskInfoPanel() {
-    final TaskDescriptionToolWindow descriptionToolWindow = EduUtils.getStudyToolWindow(project);
-    if (descriptionToolWindow != null) {
-      descriptionToolWindow.showPanelById(TaskDescriptionToolWindow.TASK_INFO_ID);
-    }
+    //final TaskDescriptionToolWindow descriptionToolWindow = EduUtils.getStudyToolWindow(project);
+    //if (descriptionToolWindow != null) {
+    //  descriptionToolWindow.showPanelById(TaskDescriptionToolWindow.TASK_INFO_ID);
+    //}
   }
 }
