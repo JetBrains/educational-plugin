@@ -8,6 +8,8 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
+import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import org.jetbrains.plugins.gradle.settings.DistributionType
@@ -22,9 +24,9 @@ class AndroidCourseProjectGenerator(builder: AndroidCourseBuilder, course: Cours
     // instead of `com.android.tools.idea.gradle.util.LocalProperties` and `com.android.tools.idea.gradle.util.LocalProperties`
     // because they work only with `java.io.File` but in tests we use in memory file system
     mapOf(SdkConstants.SDK_DIR_PROPERTY to (IdeSdks.getInstance().androidSdkPath?.path ?: ""))
-      .saveAsPropertyFile(baseDir, SdkConstants.FN_LOCAL_PROPERTIES)
+      .saveAsPropertyFile(baseDir, LOCAL_PROPERTIES)
     mapOf("org.gradle.jvmargs" to "-Xmx1536m")
-      .saveAsPropertyFile(baseDir, SdkConstants.FN_GRADLE_PROPERTIES)
+      .saveAsPropertyFile(baseDir, GRADLE_PROPERTIES)
   }
 
   override fun setupGradleSettings(project: Project) {

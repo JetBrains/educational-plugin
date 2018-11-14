@@ -58,6 +58,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
+import static com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX;
 import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
@@ -169,7 +170,7 @@ public class EduProjectComponent implements ProjectComponent {
     String projectBasePath = myProject.getBasePath();
     if (projectBasePath != null) {
       // Android Studio creates non executable `gradlew`
-      File gradlew = new File(FileUtil.toSystemDependentName(projectBasePath), "gradlew");
+      File gradlew = new File(FileUtil.toSystemDependentName(projectBasePath), GRADLE_WRAPPER_UNIX);
       if (gradlew.exists()) {
         gradlew.setExecutable(true);
       } else {
