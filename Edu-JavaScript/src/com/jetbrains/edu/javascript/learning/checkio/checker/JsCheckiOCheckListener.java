@@ -1,9 +1,9 @@
 package com.jetbrains.edu.javascript.learning.checkio.checker;
 
 import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOApiConnector;
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
-import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
 import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
 import com.jetbrains.edu.learning.checkio.checker.CheckiOCheckListener;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
@@ -22,6 +22,6 @@ public class JsCheckiOCheckListener extends CheckiOCheckListener {
 
   @Override
   protected boolean isEnabledForCourse(@NotNull CheckiOCourse course) {
-    return course.getLanguageID().equals(JsCheckiONames.JS_CHECKIO_LANGUAGE);
+    return course.getLanguageById() == JavascriptLanguage.INSTANCE;
   }
 }

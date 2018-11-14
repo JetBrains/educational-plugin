@@ -25,11 +25,4 @@
     <!-- CheckiO -->
     <languageDecorator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOLanguageDecorator" language="JavaScript" />
   </extensions>
-
-  <application-components>
-    <!-- CheckiO -->
-    <component>
-      <implementation-class>com.jetbrains.edu.javascript.learning.checkio.JsCheckiOApplicationComponent</implementation-class>
-    </component>
-  </application-components>
 </idea-plugin>
