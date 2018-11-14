@@ -30,14 +30,15 @@ import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.actions.*;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.gradle.GradleWrapperListener;
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
@@ -168,7 +169,12 @@ public class EduProjectComponent implements ProjectComponent {
     String projectBasePath = myProject.getBasePath();
     if (projectBasePath != null) {
       // Android Studio creates non executable `gradlew`
-      new File(FileUtil.toSystemDependentName(projectBasePath), "gradlew").setExecutable(true);
+      File gradlew = new File(FileUtil.toSystemDependentName(projectBasePath), "gradlew");
+      if (gradlew.exists()) {
+        gradlew.setExecutable(true);
+      } else {
+        VirtualFileManager.getInstance().addVirtualFileListener(new GradleWrapperListener(myProject), myProject);
+      }
     }
   }
 
@@ -303,7 +309,7 @@ public class EduProjectComponent implements ProjectComponent {
   @Override
   public void initComponent() {
     if (!OpenApiExtKt.isUnitTestMode() && isStudentProject(myProject)) {
-      VirtualFileManager.getInstance().addVirtualFileListener(new UserCreatedFileListener(myProject));
+      VirtualFileManager.getInstance().addVirtualFileListener(new UserCreatedFileListener(myProject), myProject);
     }
   }
 
