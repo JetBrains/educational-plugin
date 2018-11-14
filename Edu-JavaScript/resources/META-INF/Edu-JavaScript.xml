@@ -20,9 +20,4 @@
     <optionsProvider instance="com.jetbrains.edu.javascript.learning.checkio.settings.JsCheckiOOptions"/>
     <checkListener implementation="com.jetbrains.edu.javascript.learning.checkio.checker.JsCheckiOCheckListener"/>
   </extensions>
-
-  <extensions defaultExtensionNs="Educational">
-    <!-- CheckiO -->
-    <languageDecorator implementationClass="com.jetbrains.edu.javascript.learning.checkio.JsCheckiOLanguageDecorator" language="JavaScript" />
-  </extensions>
 </idea-plugin>
