@@ -22,9 +22,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+import static com.jetbrains.edu.learning.gradle.GradleConstants.*;
+
 public class CCCourseNode extends CourseNode {
   private static final Collection<String> NAMES_TO_IGNORE = ContainerUtil.newHashSet(
-    "settings.gradle", "local.properties", "gradlew", "gradlew.bat");
+    SETTINGS_GRADLE, LOCAL_PROPERTIES, GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN);
 
   public CCCourseNode(@NotNull Project project,
                       PsiDirectory value,

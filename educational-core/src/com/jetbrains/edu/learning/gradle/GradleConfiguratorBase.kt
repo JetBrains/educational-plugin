@@ -7,12 +7,18 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_JAR
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_PROPERTIES
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
+import com.jetbrains.edu.learning.gradle.GradleConstants.LOCAL_PROPERTIES
+import com.jetbrains.edu.learning.gradle.GradleConstants.SETTINGS_GRADLE
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
-import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.io.IOException
 
@@ -25,7 +31,7 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
     val name = file.name
     val path = file.path
     val pathSegments = path.split(VfsUtilCore.VFS_SEPARATOR_CHAR)
-    if (GradleConstants.SETTINGS_FILE_NAME == name) {
+    if (SETTINGS_GRADLE == name) {
       try {
         val settingsDefaultText = EduGradleUtils.getInternalTemplateText(courseBuilder.settingGradleTemplateName,
                                                                          courseBuilder.templateVariables(project))
@@ -53,8 +59,8 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
   companion object {
     private val NAMES_TO_EXCLUDE = ContainerUtil.newHashSet(
-      ".idea", "EduTestRunner.java", "gradlew", "gradlew.bat", "local.properties", "gradle.properties",
-      GradleConstants.SETTINGS_FILE_NAME, "gradle-wrapper.jar", "gradle-wrapper.properties")
+      ".idea", "EduTestRunner.java", GRADLE_WRAPPER_UNIX, GRADLE_WRAPPER_WIN, LOCAL_PROPERTIES, GRADLE_PROPERTIES,
+      SETTINGS_GRADLE, GRADLE_WRAPPER_JAR, GRADLE_WRAPPER_PROPERTIES)
 
     private val FOLDERS_TO_EXCLUDE = ContainerUtil.newHashSet(EduNames.OUT, EduNames.BUILD)
 

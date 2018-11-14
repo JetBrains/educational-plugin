@@ -29,11 +29,11 @@ import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.projectView.CourseViewPane
-import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 
 class AndroidCourseBuilder : GradleCourseBuilderBase() {
@@ -139,7 +139,7 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     private fun defaultAndroidCourseFiles(packageName: String): Map<String, FileInfo> {
       val packagePath = packageName.replace('.', VfsUtilCore.VFS_SEPARATOR_CHAR)
       return mapOf(
-        "android-task-build.gradle" to FileInfo(GradleConstants.DEFAULT_SCRIPT_NAME, ADDITIONAL_FILE),
+        "android-task-build.gradle" to FileInfo(BUILD_GRADLE, ADDITIONAL_FILE),
         "android-MainActivity.kt" to FileInfo("src/main/java/$packagePath/MainActivity.kt", TASK_FILE),
         "android-AndroidManifest.xml" to FileInfo("src/main/AndroidManifest.xml", TASK_FILE),
         "android-activity_main.xml" to FileInfo("src/main/res/layout/activity_main.xml", TASK_FILE),

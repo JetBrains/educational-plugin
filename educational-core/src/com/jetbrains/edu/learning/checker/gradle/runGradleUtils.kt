@@ -21,6 +21,8 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.dirName
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX
+import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_WIN
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
@@ -117,7 +119,7 @@ class GradleCommandLine private constructor(
       val cmd = GeneralCommandLine()
         .withEnvironment("JAVA_HOME", projectJdkPath)
         .withWorkDirectory(FileUtil.toSystemDependentName(basePath))
-        .withExePath(if (SystemInfo.isWindows) FileUtil.join(projectPath, "gradlew.bat") else "./gradlew")
+        .withExePath(if (SystemInfo.isWindows) FileUtil.join(projectPath, GRADLE_WRAPPER_WIN) else "./$GRADLE_WRAPPER_UNIX")
         .withParameters(command)
         .withParameters(*additionalParams)
 
