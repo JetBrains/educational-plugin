@@ -98,17 +98,17 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     val bottomPanel = JPanel(BorderLayout())
 
     val separatorPanel = JPanel(BorderLayout())
-    separatorPanel.border = JBUI.Borders.emptyRight(15)
+    separatorPanel.border = JBUI.Borders.emptyRight(RIGHT_BORDER)
     separator = JSeparator()
     separatorPanel.add(separator, BorderLayout.CENTER)
     bottomPanel.add(separatorPanel, BorderLayout.NORTH)
 
     val taskSpecificPanel = taskTextTW.createTaskSpecificPanel(currentTask)
-    taskSpecificPanel.border = JBUI.Borders.emptyRight(15)
+    taskSpecificPanel.border = JBUI.Borders.emptyRight(RIGHT_BORDER)
     bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
 
     checkPanel = CheckPanel(project)
-    checkPanel.border = JBUI.Borders.empty(2, 0, 0, 15)
+    checkPanel.border = JBUI.Borders.empty(2, 0, 0, RIGHT_BORDER)
     bottomPanel.add(checkPanel, BorderLayout.SOUTH)
 
     panel.add(bottomPanel, BorderLayout.SOUTH)
@@ -156,5 +156,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   companion object {
     private const val HELP_ID = "task.description"
+    const val RIGHT_BORDER: Int = 15
   }
 }

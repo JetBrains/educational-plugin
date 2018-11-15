@@ -121,10 +121,10 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
 
       if (outerHeight is Int) {
         ApplicationManager.getApplication().invokeLater {
-          val width = if (componentToAdjust.size.width == 0) componentToAdjust.preferredSize.width else componentToAdjust.size.width
+          val width = componentToAdjust.parent.size.width - TaskDescriptionViewImpl.RIGHT_BORDER
           var coef = (outerWidth as Int) / width.toFloat()
           coef = if (coef < 1) (1.toFloat()) else coef
-          val roundToInt = if (coef > 1) (outerHeight * coef).roundToInt() else outerHeight + 20
+          val roundToInt = if (coef > 1) (outerHeight * coef).roundToInt() else outerHeight
           componentToAdjust.preferredSize = Dimension(width,
                                                       JBUI.scale(roundToInt))
           LOG.warn("$outerHeight $outerWidth $width $coef $roundToInt")
