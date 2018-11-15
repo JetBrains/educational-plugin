@@ -10,7 +10,6 @@ import com.intellij.ui.components.labels.ActionLink
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckResult
-import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow
 import java.awt.BorderLayout
@@ -38,7 +37,7 @@ class JavaFxCheckDetailsPanel(project: Project, task: Task, checkResult: CheckRe
         LightColoredActionLink("Show Full Output...", ShowFullOutputAction(project, checkResult.details ?: checkResult.message)),
         BorderLayout.NORTH)
     }
-    browserWindow.loadContentAndAdjustHeight(message, this)
+    browserWindow.loadContentAndAdjustHeight(message, messagePanel)
   }
 
   private class LightColoredActionLink(text: String, action: AnAction) : ActionLink(text, action) {
@@ -50,7 +49,7 @@ class JavaFxCheckDetailsPanel(project: Project, task: Task, checkResult: CheckRe
 
   private class ShowFullOutputAction(private val project: Project, private val text: String) : DumbAwareAction(null) {
     override fun actionPerformed(e: AnActionEvent) {
-      CheckUtils.showTestResultsToolWindow(project, text)
+//      CheckUtils.showTestResultsToolWindow(project, text)
     }
   }
 }

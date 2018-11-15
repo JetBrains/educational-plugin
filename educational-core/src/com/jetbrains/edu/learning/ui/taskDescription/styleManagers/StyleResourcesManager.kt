@@ -42,6 +42,10 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
     val styleManager = StyleManager()
     return CSSBuilder().apply {
       body {
+        boxSizing = BoxSizing.borderBox
+        overflow = Overflow.hidden
+      }
+      body {
         fontFamily = styleManager.bodyFont
         fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
         lineHeight = styleManager.bodyLineHeight.px.lh

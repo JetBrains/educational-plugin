@@ -1,8 +1,12 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.DefaultLogger
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.ui.ColorUtil
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.navigation.NavigationUtils
@@ -17,19 +21,25 @@ import javafx.scene.Scene
 import javafx.scene.layout.StackPane
 import javafx.scene.web.WebEngine
 import javafx.scene.web.WebView
+import netscape.javascript.JSException
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.TestOnly
 import org.w3c.dom.Element
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
+import java.awt.Dimension
 import java.util.*
 import java.util.regex.Pattern
+import javax.swing.JComponent
+
 
 class BrowserWindow(private val myProject: Project, private val myLinkInNewBrowser: Boolean) {
   var panel: JFXPanel = JFXPanel()
   private lateinit var myWebComponent: WebView
   private lateinit var myPane: StackPane
   private lateinit var myEngine: WebEngine
+  private var LOG: Logger = DefaultLogger.getInstance(BrowserWindow.javaClass)
 
   val engine: WebEngine
     get() = myWebComponent.engine
@@ -90,6 +100,43 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       }
     }
   }
+
+  fun loadContentAndAdjustHeight(@NotNull content: String, @NotNull componentToAdjust: JComponent) {
+    ApplicationManager.getApplication().invokeLater { componentToAdjust.isVisible = false }
+    Platform.runLater {
+      myWebComponent.engine.loadWorker.stateProperty().addListener { arg0, oldState, newState ->
+        if (newState === Worker.State.SUCCEEDED) {
+          adjustHeight(componentToAdjust)
+        }
+      }
+    }
+    loadContent(content)
+  }
+
+  private fun adjustHeight(@NotNull componentToAdjust: JComponent) {
+    try {
+      val outerHeight = myEngine.executeScript("$(\"html\").outerHeight(true)")
+      val outerWidth = myEngine.executeScript("$(\"html\").outerWidth(true)")
+
+      if (outerHeight is Int) {
+        ApplicationManager.getApplication().invokeLater {
+          val width = if (componentToAdjust.size.width == 0) componentToAdjust.preferredSize.width else componentToAdjust.size.width
+          val coef = (outerWidth as Int) / width.toFloat()
+          componentToAdjust.preferredSize = Dimension(width,
+                                                      JBUI.scale((outerHeight * coef).toInt()))
+          componentToAdjust.size = Dimension(width,
+                                             JBUI.scale((outerHeight * coef).toInt()))
+          componentToAdjust.revalidate()
+          componentToAdjust.repaint()
+          componentToAdjust.isVisible = true
+        }
+      }
+    }
+    catch (e: JSException) {
+      LOG.warn(e.message)
+    }
+  }
+
 
   private fun makeHyperLinkListener(): EventListener {
     return object : EventListener {
