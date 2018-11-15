@@ -426,15 +426,18 @@ public class CoursesPanel extends JPanel {
                              file -> {
                                String fileName = file.getPath();
                                Course course = EduUtils.getLocalCourse(fileName);
-                               if (course != null) {
+                               if (course == null) {
+                                 ImportLocalCourseAction.showInvalidCourseDialog();
+                               }
+                               else if (CourseExt.getConfigurator(course) == null) {
+                                 ImportLocalCourseAction.showUnsupportedCourseDialog(course);
+                               }
+                               else {
                                  ImportLocalCourseAction.saveLastImportLocation(file);
                                  course.setFromZip(true);
                                  EduUsagesCollector.courseArchiveImported();
                                  myCourses.add(course);
                                  updateModel(myCourses, course.getName(), true);
-                               }
-                               else {
-                                 Messages.showErrorDialog("Selected archive doesn't contain a valid course", "Failed to Add Local Course");
                                }
                              });
     }
