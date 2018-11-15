@@ -32,6 +32,7 @@ import java.awt.Dimension
 import java.util.*
 import java.util.regex.Pattern
 import javax.swing.JComponent
+import kotlin.math.roundToInt
 
 
 class BrowserWindow(private val myProject: Project, private val myLinkInNewBrowser: Boolean) {
@@ -116,16 +117,19 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
   private fun adjustHeight(@NotNull componentToAdjust: JComponent) {
     try {
       val outerHeight = myEngine.executeScript("$(\"html\").outerHeight(true)")
-      val outerWidth = myEngine.executeScript("$(\"html\").outerWidth(true)")
+      val outerWidth = myEngine.executeScript("$(\".wrapper\").outerWidth()")
 
       if (outerHeight is Int) {
         ApplicationManager.getApplication().invokeLater {
           val width = if (componentToAdjust.size.width == 0) componentToAdjust.preferredSize.width else componentToAdjust.size.width
-          val coef = (outerWidth as Int) / width.toFloat()
+          var coef = (outerWidth as Int) / width.toFloat()
+          coef = if (coef < 1) (1.toFloat()) else coef
+          val roundToInt = if (coef > 1) (outerHeight * coef).roundToInt() else outerHeight + 20
           componentToAdjust.preferredSize = Dimension(width,
-                                                      JBUI.scale((outerHeight * coef).toInt()))
-          componentToAdjust.size = Dimension(width,
-                                             JBUI.scale((outerHeight * coef).toInt()))
+                                                      JBUI.scale(roundToInt))
+          LOG.warn("$outerHeight $outerWidth $width $coef $roundToInt")
+          componentToAdjust.minimumSize = Dimension(width,
+                                             JBUI.scale(roundToInt))
           componentToAdjust.revalidate()
           componentToAdjust.repaint()
           componentToAdjust.isVisible = true

@@ -44,6 +44,7 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
       body {
         boxSizing = BoxSizing.borderBox
         overflow = Overflow.hidden
+        display = Display.inlineBlock
       }
       body {
         fontFamily = styleManager.bodyFont
