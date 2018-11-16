@@ -232,6 +232,9 @@ public class EduProjectComponent implements ProjectComponent {
 
         for (TaskFile value : task.getTaskFiles().values()) {
           for (AnswerPlaceholder placeholder : value.getAnswerPlaceholders()) {
+            if (!placeholder.isVisible()) {
+              continue;
+            }
             placeholder.setHints(Collections.emptyList());
           }
         }

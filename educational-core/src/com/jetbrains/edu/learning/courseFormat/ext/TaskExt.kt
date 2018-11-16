@@ -123,6 +123,9 @@ fun Task.taskDescriptionHintBlocks(): String {
   val hints = ArrayList<String>()
   for (value in taskFiles.values) {
     for (placeholder in value.answerPlaceholders) {
+      if (!placeholder.isVisible) {
+        continue
+      }
       for (hint in placeholder.hints) {
         if (!hint.isEmpty()) {
           hints.add(hint)
