@@ -7,8 +7,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
@@ -18,21 +16,16 @@ import com.intellij.openapi.ui.Messages;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.StepikUpdateDateExt;
-import com.jetbrains.edu.learning.stepik.StepikUtils;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.Collections;
 
 import static com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushCourse extends DumbAwareAction {
-  private static Logger LOG = Logger.getInstance(CCPushCourse.class);
 
   public CCPushCourse() {
     super("&Upload Course to Stepik", "Upload Course to Stepik", null);
@@ -93,7 +86,6 @@ public class CCPushCourse extends DumbAwareAction {
 
   public static boolean doPush(Project project, Course course) {
     if (course instanceof RemoteCourse) {
-      ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       if (getCourseInfo(String.valueOf(course.getId())) == null) {
         String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
         Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
@@ -101,34 +93,14 @@ public class CCPushCourse extends DumbAwareAction {
         notification.notify(project);
         return false;
       }
-      if (ApplicationManager.getApplication().isInternal()) {
-        new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
-      }
-      else {
-        pushInOldWay(indicator, project, course);
-      }
+
+      new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
     }
     else {
 
       postCourse(project, course);
     }
     return false;
-  }
-
-  private static void pushInOldWay(@NotNull ProgressIndicator indicator, Project project, Course course) {
-    if (updateCourseInfo(project, (RemoteCourse)course)) {
-      updateCourseContent(indicator, course, project);
-      StepikUtils.setStatusRecursively(course, StepikChangeStatus.UP_TO_DATE);
-      try {
-        updateAdditionalMaterials(project, course.getId());
-      }
-      catch (IOException e1) {
-        LOG.warn(e1);
-      }
-
-      StepikUpdateDateExt.setUpdated((RemoteCourse)course);
-      showNotification(project, "Course is updated", openOnStepikAction("/course/" + course.getId()));
-    }
   }
 
   private static void askToWrapTopLevelLessons(Project project, Course course) {
@@ -141,35 +113,6 @@ public class CCPushCourse extends DumbAwareAction {
         if (result == Messages.YES) {
           wrapUnpushedLessonsIntoSections(project, course);
         }
-      }
-    }
-  }
-
-  private static void updateCourseContent(@NotNull ProgressIndicator indicator, Course course, Project project) {
-    if (!((RemoteCourse)course).getSectionIds().isEmpty() && course.getLessons().isEmpty()) {
-      deleteSection(((RemoteCourse)course).getSectionIds().get(0));
-      ((RemoteCourse)course).setSectionIds(Collections.emptyList());
-    }
-
-    int position = 1 + (CourseExt.getHasTopLevelLessons(course) ? 1 : 0);
-    for (Section section : course.getSections()) {
-      section.setPosition(position++);
-      if (section.getId() > 0) {
-        updateSection(project, section);
-      }
-      else {
-        postSection(project, section, indicator);
-        updateAdditionalSection(project);
-      }
-    }
-
-    for (Lesson lesson : course.getLessons()) {
-      Integer sectionId = ((RemoteCourse)course).getSectionIds().get(0);
-      if (lesson.getId() > 0) {
-        updateLesson(project, lesson, false, sectionId);
-      }
-      else {
-        postLesson(project, lesson, lesson.getIndex(), sectionId);
       }
     }
   }
