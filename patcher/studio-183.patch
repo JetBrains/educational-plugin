@@ -1,15 +1,69 @@
-diff --git a/gradle.properties b/gradle.properties
-index bb59a0e..2b79e4b 100644
---- a/gradle.properties
-+++ b/gradle.properties
-@@ -1,4 +1,4 @@
--environmentName=183
-+environmentName=studio-183
- 
- # needed for twitting functionality available currently only for kotlin koans
- consumerKey=
+diff --git a/build.gradle b/build.gradle
+index e3cb091cc..824ec3e56 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -209,7 +209,7 @@ intellij {
+     pluginName 'EduTools'
+     updateSinceUntilBuild true
+     downloadSources false
+-    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion", "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
++    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion"
+ }
+
+ task configurePyCharm {
+@@ -304,7 +304,7 @@ configure(project(':educational-core')) {
+     }
+ }
+
+-configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')]) {
++configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android')]) {
+     dependencies {
+         compile project(':educational-core')
+         testCompile project(':educational-core').sourceSets.test.output
+@@ -361,26 +361,26 @@ configure(project(':Edu-Android')) {
+     }
+ }
+
+-configure(project(':Edu-JavaScript')) {
+-  task createCheckiOOAuthProperties() {
+-    createProperties(
+-      "${projectDir}/resources/checkio/js-checkio-oauth.properties",
+-      [
+-        "jsCheckioClientId" : jsCheckioClientId,
+-        "jsCheckioClientSecret" : jsCheckioClientSecret
+-      ]
+-    )
+-  }
+-  processResources.dependsOn(createCheckiOOAuthProperties)
+-
+-  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
+-}
++//configure(project(':Edu-JavaScript')) {
++//  task createCheckiOOAuthProperties() {
++//    createProperties(
++//      "${projectDir}/resources/checkio/js-checkio-oauth.properties",
++//      [
++//        "jsCheckioClientId" : jsCheckioClientId,
++//        "jsCheckioClientSecret" : jsCheckioClientSecret
++//      ]
++//    )
++//  }
++//  processResources.dependsOn(createCheckiOOAuthProperties)
++//
++//  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
++//}
+
+ runIde.systemProperty("-Didea.is.internal", "true")
+ runIde.systemProperty("-ea", "")
+
+ dependencies {
+-    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')
++    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android')
+ }
+
+ idea {
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
-index 19b5272..cf649bc 100644
+index ae3188cb2..7d7d4a1e5 100644
 --- a/resources/META-INF/plugin.xml
 +++ b/resources/META-INF/plugin.xml
 @@ -8,6 +8,7 @@
@@ -17,6 +71,16 @@ index 19b5272..cf649bc 100644
      <change-notes/>
      <depends>com.intellij.modules.lang</depends>
 +    <depends>com.intellij.modules.androidstudio</depends>
- 
+
      <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
+diff --git a/settings.gradle b/settings.gradle
+index b120c4d1e..1d02a34bc 100644
+--- a/settings.gradle
++++ b/settings.gradle
+@@ -1,2 +1,2 @@
+ rootProject.name = 'educational-plugin'
+-include 'Edu-Java', 'Edu-Scala', 'Edu-Kotlin', 'Edu-Python', 'educational-core', 'Edu-Android', 'Edu-JavaScript'
+\ No newline at end of file
++include 'Edu-Java', 'Edu-Scala', 'Edu-Kotlin', 'Edu-Python', 'educational-core', 'Edu-Android'
+\ No newline at end of file
