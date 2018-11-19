@@ -3,21 +3,21 @@
  com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionHtml-->
 <html>
 <head>
-  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"/>
-  <script type="text/javascript" src="${jquery}"/>
-  <script type="text/javascript" src="${toggle_hint_script}"/>
-  <script type="text/x-mathjax-config" src="${mathjax_script}"/>
-  <script src="${codemirror}"/>
-  <script src="${colorize}"/>
-  <script src="${runmode}"/>
-  <script src="${javascript}"/>
-  <script src="${language_script}"/>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+  <script type="text/javascript" src="${jquery}"></script>
+  <script type="text/javascript" src="${toggle_hint_script}"></script>
+  <script type="text/x-mathjax-config" src="${mathjax_script}"></script>
+  <script src="${codemirror}"></script>
+  <script src="${colorize}"></script>
+  <script src="${runmode}"></script>
+  <script src="${javascript}"></script>
+  <script src="${language_script}"></script>
 
-  <link rel="stylesheet" type="text/css" href="${hint_base}">
-  <link rel="stylesheet" type="text/css" href="${hint_laf_specific}">
-  <link rel="stylesheet" type="text/css" href="${css_oldcodemirror}">
-  <link rel="stylesheet" type="text/css" href="${css_codemirror}">
-  <link rel="stylesheet" type="text/css" href="${stepik_link}"/>
+  <link rel="stylesheet" type="text/css" href="${hint_base}"></link>
+  <link rel="stylesheet" type="text/css" href="${hint_laf_specific}"></link>
+  <link rel="stylesheet" type="text/css" href="${css_oldcodemirror}"></link>
+  <link rel="stylesheet" type="text/css" href="${css_codemirror}"></link>
+  <link rel="stylesheet" type="text/css" href="${stepik_link}"></link>
 
   <style>
     ${typography_color_style}
