@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
   public static final String ACTION_ID = "Educational.RefreshTask";
-  public static final String SHORTCUT = "ctrl shift pressed X";
   private static final Logger LOG = Logger.getInstance(RevertTaskAction.class.getName());
   private static final String RESET_TASK = "Reset Task";
 

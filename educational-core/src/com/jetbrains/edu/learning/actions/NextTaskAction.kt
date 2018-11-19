@@ -22,6 +22,5 @@ class NextTaskAction : TaskNavigationAction("Next", "Navigate to the next task",
 
   companion object {
     const val ACTION_ID = "Educational.NextTask"
-    const val SHORTCUT = "ctrl pressed PERIOD"
   }
 }
