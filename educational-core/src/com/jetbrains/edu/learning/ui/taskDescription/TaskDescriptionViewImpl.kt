@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.ide.ui.LafManager
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -30,7 +29,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JSeparator
 
-class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), DataProvider, Disposable {
+class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), DataProvider {
   private lateinit var checkPanel: CheckPanel
   private val taskTextTW : TaskDescriptionToolWindow = if (EduUtils.hasJavaFx() && EduSettings.getInstance().shouldUseJavaFx()) JavaFxToolWindow() else SwingToolWindow()
   private val taskTextPanel : JComponent = taskTextTW.createTaskInfoPanel(project)
@@ -140,9 +139,6 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     balloon.show(RelativePoint (checkPanel, point), Balloon.Position.above)
   }
 
-  override fun dispose() {
-  }
-
   private fun setTaskText(task: Task?) {
     taskTextTW.setTaskText(project, task)
   }
@@ -151,7 +147,7 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     return if (PlatformDataKeys.HELP_ID.`is`(dataId)) {
       HELP_ID
     }
-    else super.getData(dataId)
+    else null
   }
 
   companion object {

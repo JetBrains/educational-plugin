@@ -1,11 +1,9 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
-import com.intellij.openapi.ui.SimpleToolWindowPanel
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
@@ -13,7 +11,7 @@ import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.awt.Color
 
-abstract class TaskDescriptionView : SimpleToolWindowPanel(true, true), Disposable {
+abstract class TaskDescriptionView {
 
   abstract var currentTask: Task?
 
