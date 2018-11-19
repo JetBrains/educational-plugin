@@ -81,4 +81,9 @@ public class JsCheckiOConfigurator implements EduConfigurator<JsNewProjectSettin
   public Icon getLogo() {
     return EducationalCoreIcons.JSCheckiO;
   }
+
+  @Override
+  public boolean isCourseCreatorEnabled() {
+    return false;
+  }
 }
