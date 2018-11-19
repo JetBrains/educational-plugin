@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.newproject.ui;
 
 import com.google.common.collect.Lists;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.DataManager;
 import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
@@ -23,7 +24,10 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.*;
+import com.jetbrains.edu.learning.CoursesProvider;
+import com.jetbrains.edu.learning.EduNames;
+import com.jetbrains.edu.learning.EduSettings;
+import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
@@ -44,8 +48,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static com.jetbrains.edu.learning.PluginUtils.enablePlugins;
 
@@ -108,7 +112,11 @@ public class CoursesPanel extends JPanel {
         StepikConnector.doAuthorize(EduUtils::showOAuthDialog);
       }
       else if (myErrorState instanceof ErrorState.CheckiOLoginRequired) {
-        addCheckiOLoginListener((CheckiOCourse) myCoursesList.getSelectedValue());}
+        addCheckiOLoginListener((CheckiOCourse)myCoursesList.getSelectedValue());
+      }
+      else if (myErrorState == ErrorState.JavaFXRequired.INSTANCE) {
+        invokeSwitchBootJdk();
+      }
       else if (myErrorState == ErrorState.HyperskillLoginRequired.INSTANCE) {
         addHyperskillLoginListener();
       }
@@ -122,6 +130,18 @@ public class CoursesPanel extends JPanel {
     });
 
     processSelectionChanged();
+  }
+
+  private void invokeSwitchBootJdk() {
+    String switchBootJdkId = "SwitchBootJdk";
+    AnAction action = ActionManager.getInstance().getAction(switchBootJdkId);
+    if (action == null) {
+      LOG.error(switchBootJdkId + " action not found");
+      return;
+    }
+    action.actionPerformed(
+      AnActionEvent.createFromAnAction(action, null, ActionPlaces.UNKNOWN, DataManager.getInstance().getDataContext(this))
+    );
   }
 
   private void addCheckiOLoginListener(@NotNull CheckiOCourse selectedCourse) {
