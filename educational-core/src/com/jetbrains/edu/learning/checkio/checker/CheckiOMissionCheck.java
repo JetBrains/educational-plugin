@@ -168,18 +168,31 @@ public class CheckiOMissionCheck implements Callable<CheckResult> {
         return;
       }
 
-      if (newState == Worker.State.SUCCEEDED && myBrowserWindow.getEngine().getLocation().contains("checkioTestForm.html")) {
-        final org.w3c.dom.Document documentWithForm = myBrowserWindow.getEngine().getDocument();
-        ((HTMLInputElement)documentWithForm.getElementById("access-token")).setValue(accessToken);
-        ((HTMLInputElement)documentWithForm.getElementById("task-id")).setValue(taskId);
-        ((HTMLInputElement)documentWithForm.getElementById("interpreter")).setValue(myInterpreterName);
-        ((HTMLTextAreaElement)documentWithForm.getElementById("code")).setValue(code);
+      if (newState != Worker.State.SUCCEEDED) {
+        return;
+      }
 
-        final HTMLFormElement testForm = (HTMLFormElement) documentWithForm.getElementById("test-form");
+      String location = myBrowserWindow.getEngine().getLocation();
+      final org.w3c.dom.Document document = myBrowserWindow.getEngine().getDocument();
+      if (location.contains("checkioTestForm.html")) {
+        ((HTMLInputElement)document.getElementById("access-token")).setValue(accessToken);
+        ((HTMLInputElement)document.getElementById("task-id")).setValue(taskId);
+        ((HTMLInputElement)document.getElementById("interpreter")).setValue(myInterpreterName);
+        ((HTMLTextAreaElement)document.getElementById("code")).setValue(code);
+
+        final HTMLFormElement testForm = (HTMLFormElement) document.getElementById("test-form");
         testForm.setAction(myTestFormTargetUrl);
         testForm.submit();
       }
+
+      if (location.contains("check-html-output")) {
+        applyCheckiOBackgroundColor(document);
+      }
     }));
+  }
+
+  private static void applyCheckiOBackgroundColor(@NotNull final org.w3c.dom.Document document) {
+    document.getDocumentElement().setAttribute("style", "background-color : #DEE7F6;");
   }
 
   private void setConnectionError() {
