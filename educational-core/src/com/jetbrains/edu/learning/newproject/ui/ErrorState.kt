@@ -5,8 +5,10 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.ui.MessageType.ERROR
 import com.intellij.openapi.ui.MessageType.WARNING
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
+import com.jetbrains.edu.learning.checkio.utils.CheckiONames
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
@@ -36,6 +38,7 @@ sealed class ErrorState(
   data class RequiredPluginsDisabled(val disabledPluginIds: List<String>) :
     ErrorState(3, errorMessage(disabledPluginIds), ERROR.titleForeground, false)
   class LanguageSettingsError(message: String) : ErrorState(3, ErrorMessage(message), ERROR.titleForeground, false)
+  object JavaFXRequired: ErrorState(4, ErrorMessage("No JavaFX found. Please ", "switch", " to JetBrains Runtime to start the course"), ERROR.titleForeground, false)
 
   fun merge(other: ErrorState): ErrorState = if (severity < other.severity) other else this
 
@@ -49,11 +52,18 @@ sealed class ErrorState(
         course.compatibility !== CourseCompatibility.COMPATIBLE -> IncompatibleVersion
         disabledPlugins.isNotEmpty() -> RequiredPluginsDisabled(disabledPlugins)
         course.courseType == CourseraNames.COURSE_TYPE -> None
-        isCheckiOLoginRequired(course) -> CheckiOLoginRequired(course.name)
+        course.courseType == CheckiONames.CHECKIO -> getCheckiOError(course)
         course is HyperskillCourse -> if (HyperskillSettings.INSTANCE.account == null) HyperskillLoginRequired else None
         !isLoggedInToStepik() -> if (isStepikLoginRequired(course)) StepikLoginRequired else NotLoggedIn
         else -> None
       }
+    }
+
+    private fun getCheckiOError(course: Course): ErrorState {
+      if (!EduUtils.hasJavaFx()) {
+        return JavaFXRequired
+      }
+      return if (isCheckiOLoginRequired(course)) CheckiOLoginRequired(course.name) else None
     }
 
     private fun getPluginRequirements(course: Course?): List<String> {
