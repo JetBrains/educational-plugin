@@ -14,8 +14,6 @@ import java.util.List;
  */
 public class NextPlaceholderAction extends PlaceholderNavigationAction {
   public static final String ACTION_ID = "Educational.NextPlaceholder";
-  public static final String SHORTCUT = "ctrl shift pressed PERIOD";
-  public static final String SHORTCUT2 = "ctrl pressed ENTER";
 
   public NextPlaceholderAction() {
     super("Navigate to the Next Answer Placeholder", "Navigate to the next answer placeholder", AllIcons.Actions.Forward);

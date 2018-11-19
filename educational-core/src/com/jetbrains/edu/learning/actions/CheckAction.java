@@ -38,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CheckAction extends DumbAwareAction {
-  public static final String SHORTCUT = "ctrl alt pressed ENTER";
   public static final String ACTION_ID = "Educational.Check";
   private static final String CHECK_TASK = "Check";
   private static final String RUN_TASK = "Run";

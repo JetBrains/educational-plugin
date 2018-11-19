@@ -10,6 +10,5 @@ class PreviousTaskAction : TaskNavigationAction("Previous Task", "Navigate to th
 
   companion object {
     const val ACTION_ID = "Educational.PreviousTask"
-    const val SHORTCUT = "ctrl pressed COMMA"
   }
 }
