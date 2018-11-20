@@ -20,7 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeAccount;
@@ -35,6 +37,8 @@ public class EduSettings implements PersistentStateComponent<Element> {
   private long myLastTimeChecked = 0;
   private boolean myShouldUseJavaFx = EduUtils.hasJavaFx();
 
+  private Set<Integer> myShownCourseIds = new HashSet<>();
+
   public EduSettings() {
   }
 
@@ -44,6 +48,14 @@ public class EduSettings implements PersistentStateComponent<Element> {
 
   public void setLastTimeChecked(long timeChecked) {
     myLastTimeChecked = timeChecked;
+  }
+
+  public Set<Integer> getShownCourseIds() {
+    return new HashSet<>(myShownCourseIds);
+  }
+
+  public void setShownCourseIds(@NotNull Set<Integer> shownCourseIds) {
+    myShownCourseIds = new HashSet<>(shownCourseIds);
   }
 
   @Nullable
