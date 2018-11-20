@@ -507,9 +507,6 @@ public class EduUtils {
   public static String convertToHtml(@Nullable final String content, @NotNull VirtualFile virtualFile) {
     if (content == null) return null;
 
-    if (isHtml(content)) {
-      return content;
-    }
     return generateMarkdownHtml(virtualFile, content);
   }
 
@@ -523,12 +520,6 @@ public class EduUtils {
       flavour.createHtmlGeneratingProviders(LinkMap.Builder.buildLinkMap(parsedTree, text), baseUri);
 
     return new HtmlGenerator(text, parsedTree, htmlGeneratingProviders, true).generateHtml();
-  }
-
-  private static boolean isHtml(@NotNull String content) {
-    return (content.contains("<h") && content.contains("</h")) ||
-           ((content.contains("<code>") || content.contains("<code ")) && content.contains("</code>") ||
-            content.contains("<b>") || content.contains("<p>") || content.contains("<div>") || content.contains("<br"));
   }
 
   public static boolean isTaskDescriptionFile(@NotNull final String fileName) {
