@@ -5,6 +5,7 @@ import com.intellij.openapi.util.ActionCallback
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.text.DateFormatUtil
 import com.jetbrains.edu.learning.CoursesProvider
+import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
@@ -13,6 +14,16 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 class NewCoursesNotifierTest : EduTestCase() {
+
+  override fun setUp() {
+    super.setUp()
+    EduSettings.getInstance().shownCourseIds = emptySet()
+  }
+
+  override fun tearDown() {
+    EduSettings.getInstance().shownCourseIds = emptySet()
+    super.tearDown()
+  }
 
   fun `test notification is shown`() {
     val course = createCourse(0)
@@ -29,6 +40,20 @@ class NewCoursesNotifierTest : EduTestCase() {
       when (it) {
         0 -> listOf(firstCourse)
         1 -> listOf(secondCourse, oldCourse)
+        else -> emptyList()
+      }
+    }
+  }
+
+  fun `test do not show notification about same course twice`() {
+    val firstCourse = createCourse(0)
+    val secondCourse = createCourse(1)
+    val thirdCourse = createCourse(0)
+
+    doTest(2, listOf(firstCourse, secondCourse)) {
+      when (it) {
+        0 -> listOf(firstCourse)
+        1 -> listOf(secondCourse, thirdCourse)
         else -> emptyList()
       }
     }

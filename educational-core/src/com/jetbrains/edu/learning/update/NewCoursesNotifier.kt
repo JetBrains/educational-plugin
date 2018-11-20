@@ -47,14 +47,19 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
   private fun updateCourseList(): ActionCallback {
     val callback = ActionCallback()
 
+    val ids = EduSettings.getInstance().shownCourseIds
+
     ApplicationManager.getApplication().executeOnPooledThread {
       val courses = CoursesProvider.loadAllCourses()
 
       val updated = courses.filterIsInstance<RemoteCourse>()
-        .filter {it.updateDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) }
+        .filter { it.id !in ids && it.updateDate.isSignificantlyAfter(Date(EduSettings.getInstance().lastTimeChecked)) }
       if (!updated.isEmpty()) {
         showNewCoursesNotification(updated)
+        updated.mapTo(ids) { it.id }
       }
+
+      EduSettings.getInstance().shownCourseIds = ids
       EduSettings.getInstance().lastTimeChecked = System.currentTimeMillis()
       if (isUnitTestMode) {
         INVOCATION_COUNTER.incrementAndGet()
