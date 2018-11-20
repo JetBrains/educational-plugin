@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -19,10 +20,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.jetbrains.edu.learning.authUtils.OAuthAccountKt.deserializeAccount;
@@ -34,12 +32,19 @@ public class EduSettings implements PersistentStateComponent<Element> {
   @Transient
   @Nullable
   private StepikUser myUser;
-  private long myLastTimeChecked = 0;
+  private long myLastTimeChecked;
   private boolean myShouldUseJavaFx = EduUtils.hasJavaFx();
 
-  private Set<Integer> myShownCourseIds = new HashSet<>();
+  private Set<Integer> myShownCourseIds;
 
   public EduSettings() {
+    init();
+  }
+
+  @VisibleForTesting
+  public void init() {
+    myLastTimeChecked = System.currentTimeMillis();
+    myShownCourseIds = Collections.emptySet();
   }
 
   public long getLastTimeChecked() {

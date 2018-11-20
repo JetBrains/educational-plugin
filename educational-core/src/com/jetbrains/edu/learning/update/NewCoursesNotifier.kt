@@ -22,6 +22,8 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
   private val checkRunnable = Runnable { updateCourseList().doWhenDone { queueNextCheck(checkInterval) } }
   private val checkForNotifyAlarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, parentDisposable)
 
+  private val invocationCounter: AtomicInteger = AtomicInteger()
+
   fun scheduleNotification() {
     ApplicationManager.getApplication().messageBus.connect().subscribe(AppLifecycleListener.TOPIC, object : AppLifecycleListener {
       override fun appFrameCreated(commandLineArgs: Array<String>?, willOpenProject: Ref<Boolean>) {
@@ -62,7 +64,7 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
       EduSettings.getInstance().shownCourseIds = ids
       EduSettings.getInstance().lastTimeChecked = System.currentTimeMillis()
       if (isUnitTestMode) {
-        INVOCATION_COUNTER.incrementAndGet()
+        invocationCounter.incrementAndGet()
       }
       callback.setDone()
     }
@@ -77,11 +79,9 @@ class NewCoursesNotifier(parentDisposable: Disposable) {
   }
 
   @TestOnly
-  fun invocationNumber(): Int = INVOCATION_COUNTER.get()
+  fun invocationNumber(): Int = invocationCounter.get()
 
   companion object {
     private var checkInterval = DateFormatUtil.DAY
-
-    private val INVOCATION_COUNTER: AtomicInteger = AtomicInteger()
   }
 }

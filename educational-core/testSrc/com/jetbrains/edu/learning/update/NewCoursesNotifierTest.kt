@@ -17,12 +17,7 @@ class NewCoursesNotifierTest : EduTestCase() {
 
   override fun setUp() {
     super.setUp()
-    EduSettings.getInstance().shownCourseIds = emptySet()
-  }
-
-  override fun tearDown() {
-    EduSettings.getInstance().shownCourseIds = emptySet()
-    super.tearDown()
+    EduSettings.getInstance().init()
   }
 
   fun `test notification is shown`() {
@@ -75,6 +70,8 @@ class NewCoursesNotifierTest : EduTestCase() {
         newCoursesNotifier.scheduleNotificationInternal()
         actionCallback
       }
+      Thread.sleep(500)
+      assertEquals(newCoursesNotifier.invocationNumber(), 0)
 
       Thread.sleep((1 + expectedCheckNumber) * DateFormatUtil.SECOND)
 
