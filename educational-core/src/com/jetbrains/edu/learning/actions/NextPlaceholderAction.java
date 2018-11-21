@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * move caret to next task window
+ * move caret to next answer placeholder
  */
 public class NextPlaceholderAction extends PlaceholderNavigationAction {
   public static final String ACTION_ID = "Educational.NextPlaceholder";
