@@ -70,12 +70,6 @@ import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
-  private static final String NOT_VERIFIED_NOTE = "\n\nNote: We’re sorry, but this course feels a little incomplete. " +
-                                                  "If you are the owner of the course please " +
-                                                  "<a href=\"mailto:intellij-support@jetbrains.com\">" +
-                                                  "get in touch with us</a>, " +
-                                                  "we would like to verify this with you; we think with improvement this can be listed as " +
-                                                  "a featured course in the future.";
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
   private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
@@ -97,7 +91,8 @@ public class StepikConnector {
     }
   };
 
-  private static final List<Integer> ourFeaturedCourses = getFeaturedCoursesIds();
+  public static final List<Integer> FEATURED_COURSES = getFeaturedCoursesIds();
+  public static final List<Integer> IN_PROGRESS_COURSES = getInProgressCoursesIds();
 
   private StepikConnector() {
   }
@@ -210,13 +205,12 @@ public class StepikConnector {
 
   private static List<RemoteCourse> getInProgressCourses(@Nullable StepikUser user) {
     List<RemoteCourse> result = ContainerUtil.newArrayList();
-    final List<Integer> inProgressCourses = getInProgressCoursesIds();
-    for (Integer courseId : inProgressCourses) {
+    for (Integer courseId : IN_PROGRESS_COURSES) {
       final RemoteCourse info = getCourseInfo(user, courseId, false);
       if (info == null) continue;
       CourseCompatibility compatibility = info.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
-      CourseVisibility visibility = new CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.getId()));
+      CourseVisibility visibility = new CourseVisibility.InProgressVisibility(IN_PROGRESS_COURSES.indexOf(info.getId()));
       info.setVisibility(visibility);
       result.add(info);
     }
@@ -346,9 +340,6 @@ public class StepikConnector {
       CourseCompatibility compatibility = info.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
 
-      if (info.isPublic() && !ourFeaturedCourses.contains(info.getId())) {
-        info.setDescription(info.getDescription() + NOT_VERIFIED_NOTE);
-      }
       info.setVisibility(getVisibility(info));
       result.add(info);
     }
@@ -358,10 +349,10 @@ public class StepikConnector {
     if (!course.isPublic()) {
       return CourseVisibility.PrivateVisibility.INSTANCE;
     }
-    if (ourFeaturedCourses.contains(course.getId())) {
-      return new CourseVisibility.FeaturedVisibility(ourFeaturedCourses.indexOf(course.getId()));
+    if (FEATURED_COURSES.contains(course.getId())) {
+      return new CourseVisibility.FeaturedVisibility(FEATURED_COURSES.indexOf(course.getId()));
     }
-    if (ourFeaturedCourses.isEmpty()) {
+    if (FEATURED_COURSES.isEmpty()) {
       return CourseVisibility.LocalVisibility.INSTANCE;
     }
     return CourseVisibility.PublicVisibility.INSTANCE;

@@ -19,6 +19,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
@@ -35,7 +36,16 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jetbrains.edu.learning.stepik.StepikConnector.FEATURED_COURSES;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.IN_PROGRESS_COURSES;
+
 public class CoursePanel extends JPanel {
+  private static final String ourNotVerifiedNote = "\n\nNote: We’re sorry, but this course feels a little incomplete. " +
+                                                   "If you are the owner of the course please " +
+                                                   "<a href=\"mailto:intellij-support@jetbrains.com\">" +
+                                                   "get in touch with us</a>, " +
+                                                   "we would like to verify this with you; we think with improvement this can be listed as " +
+                                                   "a featured course in the future.";
 
   private static final int HORIZONTAL_MARGIN = 10;
   private static final int LARGE_HORIZONTAL_MARGIN = 15;
@@ -170,6 +180,10 @@ public class CoursePanel extends JPanel {
   @NotNull
   private static String htmlDescription(@NotNull Course course) {
     String description = course.getDescription() != null ? course.getDescription() : "";
+    if (course instanceof RemoteCourse && ((RemoteCourse)course).isPublic() && !FEATURED_COURSES.contains(course.getId())
+        && !IN_PROGRESS_COURSES.contains(course.getId())) {
+      description += ourNotVerifiedNote;
+    }
     return UIUtil.toHtml(description.replace("\n", "<br>"));
   }
 
