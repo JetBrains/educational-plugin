@@ -71,8 +71,11 @@ public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
   private static final String NOT_VERIFIED_NOTE = "\n\nNote: We’re sorry, but this course feels a little incomplete. " +
-                                                  "If you are the owner of the course please <a href=\"mailto:Tatiana.Vasilyeva@jetbrains.com\">get in touch with us</a>, " +
-                                                  "we would like to verify this with you; we think with improvement this can be listed as a featured course in the future.";
+                                                  "If you are the owner of the course please " +
+                                                  "<a href=\"mailto:intellij-support@jetbrains.com\">" +
+                                                  "get in touch with us</a>, " +
+                                                  "we would like to verify this with you; we think with improvement this can be listed as " +
+                                                  "a featured course in the future.";
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
   private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
