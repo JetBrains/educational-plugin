@@ -12,12 +12,12 @@ import javax.swing.*;
 public class CCCreateAnswerPlaceholderDialog extends DialogWrapper {
 
   private static final String TITLE_SUFFIX = " Answer Placeholder";
-  private final CCCreateAnswerPlaceholderPanel myPanel;
+  private final CCAddAnswerPlaceholderPanel myPanel;
 
   public CCCreateAnswerPlaceholderDialog(@NotNull final Project project, @NotNull String placeholderText, boolean isEdit) {
     super(project, true);
 
-    myPanel = new CCCreateAnswerPlaceholderPanel(placeholderText);
+    myPanel = new CCAddAnswerPlaceholderPanel(placeholderText);
     String title = (isEdit ? "Edit" : "Add") + TITLE_SUFFIX;
     setTitle(title);
     String buttonText = (isEdit ? "OK" : "Add");
@@ -34,7 +34,7 @@ public class CCCreateAnswerPlaceholderDialog extends DialogWrapper {
   @Nullable
   @Override
   protected JComponent createCenterPanel() {
-    return myPanel.getMailPanel();
+    return myPanel;
   }
 
   @Nullable
