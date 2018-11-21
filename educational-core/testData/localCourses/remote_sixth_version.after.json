@@ -1,96 +1,10 @@
 {
   "summary": "Test Local Course",
   "title": "Test Local Course",
-  "programming_language": "edu-android",
+  "programming_language": "kotlin",
   "language": "en",
+  "id": 1,
   "items": [
-    {
-      "title": "section1",
-      "id": 0,
-      "update_date": "Jan 1, 1970 3:00:00 AM",
-      "items": [
-        {
-          "id": 0,
-          "update_date": "Jan 1, 1970 3:00:00 AM",
-          "title": "lesson1",
-          "task_list": [
-            {
-              "name": "task1",
-              "stepic_id": 0,
-              "task_files": {
-                "src/main/java/com/edu/example/Task.kt": {
-                  "name": "src/main/java/com/edu/example/Task.kt",
-                  "text": "fun foo(): String \u003d TODO()",
-                  "placeholders": [
-                    {
-                      "offset": 20,
-                      "length": 6,
-                      "hints": [],
-                      "possible_answer": "\"Foo\"",
-                      "placeholder_text": "TODO()"
-                    }
-                  ]
-                }
-              },
-              "test_files": {
-                "src/test/java/com/edu/example/Tests.kt": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
-              },
-              "description_text": "This is the markdown document.\n\nWrite your task text here",
-              "description_format": "md",
-              "additional_files": {
-                "additional_file.txt": {
-                  "text": ""
-                }
-              },
-              "update_date": "Jan 1, 1970 3:00:00 AM",
-              "feedback_link": {
-                "link_type": "STEPIK"
-              },
-              "task_type": "edu"
-            },
-            {
-              "name": "task2",
-              "stepic_id": 0,
-              "task_files": {
-                "src/main/java/com/edu/example/Task.kt": {
-                  "name": "src/main/java/com/edu/example/Task.kt",
-                  "text": "fun foo(): String \u003d TODO()\n",
-                  "placeholders": [
-                    {
-                      "offset": 20,
-                      "length": 6,
-                      "dependency": {
-                        "section": "section1",
-                        "lesson": "lesson1",
-                        "task": "task1",
-                        "file": "Task.kt",
-                        "placeholder": 0,
-                        "is_visible": false
-                      },
-                      "hints": [],
-                      "possible_answer": "\"Foo\"",
-                      "placeholder_text": "TODO()"
-                    }
-                  ]
-                }
-              },
-              "test_files": {
-                "src/test/java/com/edu/example/Tests.kt": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
-              },
-              "description_text": "This is the markdown document.\n\nWrite your task text here",
-              "description_format": "md",
-              "additional_files": {},
-              "update_date": "Jan 1, 1970 3:00:00 AM",
-              "feedback_link": {
-                "link_type": "STEPIK"
-              },
-              "task_type": "edu"
-            }
-          ]
-        }
-      ],
-      "type": "section"
-    },
     {
       "id": 0,
       "update_date": "Jan 1, 1970 3:00:00 AM",
@@ -100,14 +14,14 @@
           "name": "task1",
           "stepic_id": 0,
           "task_files": {
-            "src/main/java/com/edu/example/Task.kt": {
-              "name": "src/main/java/com/edu/example/Task.kt",
+            "src/Task.kt": {
+              "name": "src/Task.kt",
               "text": "// type your solution here",
               "placeholders": []
             }
           },
           "test_files": {
-            "src/test/java/com/edu/example/Tests.kt": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
+            "test/Tests.kt": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
           },
           "description_text": "This is the markdown document.\n\nWrite your task text here",
           "description_format": "md",
@@ -152,6 +66,5 @@
       ],
       "type": "lesson"
     }
-  ],
-  "version": 7
+  ]
 }

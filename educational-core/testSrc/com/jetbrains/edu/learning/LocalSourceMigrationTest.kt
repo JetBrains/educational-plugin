@@ -1,83 +1,35 @@
 package com.jetbrains.edu.learning
 
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
-import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
-import com.jetbrains.edu.learning.serialization.converter.TaskRoots
-import org.hamcrest.CoreMatchers.*
-import org.junit.Assert.assertThat
+import com.jetbrains.edu.learning.serialization.SerializationUtils
 import java.io.File
 
 class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
 
-  private val dataFileName: String get() = getTestName(true).trim().replace(" ", "_") + ".json"
+  private val beforeFileName: String get() = getTestName(true).trim().replace(" ", "_") + ".json"
+  private val afterFileName: String get() = getTestName(true).trim().replace(" ", "_") + ".after.json"
 
   override fun getTestDataPath(): String = "testData/localCourses"
 
-  fun `test to 8 version`() {
-    val course = EduUtils.deserializeLocalCourse(loadLocalCourseJsonText()) ?: error("Failed to load local course")
-    assert(course.courseType == "Android")
-    assert(course.languageID == "kotlin")
+  fun `test kotlin sixth version`() = doTest(7)
+  fun `test python sixth version`() = doTest(7)
+  fun `test remote sixth version`() = doTest(7)
+  fun `test to 8 version`() = doTest(8)
+
+  private fun doTest(maxVersion: Int) {
+    val before = loadJsonText(beforeFileName)
+    val afterExpected = loadJsonText(afterFileName)
+    val parser = JsonParser()
+    val jsonBefore = parser.parse(before).asJsonObject
+    val jsonAfter = SerializationUtils.Json.CourseAdapter.migrate(jsonBefore, maxVersion)
+
+    val gson = GsonBuilder().setPrettyPrinting().create()
+    val afterActual = gson.toJson(jsonAfter)
+    assertEquals(afterExpected, afterActual)
   }
 
-  fun `test kotlin sixth version`() {
-    val course = EduUtils.deserializeLocalCourse(loadLocalCourseJsonText()) ?: error("Failed to load local course")
-    val section = course.items[0] as Section
-    val kotlinTaskRoots = LANGUAGE_TASK_ROOTS[EduNames.KOTLIN]
-    section.lessons.forEach { it -> checkLesson(it, kotlinTaskRoots) }
-    checkLesson(course.items[1] as FrameworkLesson, kotlinTaskRoots)
-    checkLesson(course.items[2] as Lesson, kotlinTaskRoots)
-  }
-
-  fun `test python sixth version`() {
-    val course = EduUtils.deserializeLocalCourse(loadLocalCourseJsonText()) ?: error("Failed to load local course")
-    val section = course.items[0] as Section
-    val pythonTaskRoots = LANGUAGE_TASK_ROOTS[EduNames.PYTHON]
-    section.lessons.forEach { it -> checkLesson(it, pythonTaskRoots) }
-    checkLesson(course.items[1] as FrameworkLesson, pythonTaskRoots)
-    checkLesson(course.items[2] as Lesson, pythonTaskRoots)
-  }
-
-  fun `test remote sixth version`() {
-    EduUtils.deserializeLocalCourse(loadLocalCourseJsonText()) ?: error("Failed to load local course")
-  }
-
-  private fun checkLesson(lesson: Lesson, taskRoots: TaskRoots?) {
-    val (baseSrcPathMatcher, baseTestPathMatcher) = if (taskRoots != null) {
-      startsWith("${taskRoots.taskFilesRoot}/") to startsWith("${taskRoots.testFilesRoot}/")
-    } else {
-      not(containsString("/")) to not(containsString("/"))
-    }
-    val additionalPathMatcher = if (taskRoots != null) allOf(not(baseSrcPathMatcher), not(baseTestPathMatcher)) else allOf()
-    val (srcPathMatcher, testPathMatcher) = if (lesson.isAdditional) {
-      additionalPathMatcher to additionalPathMatcher
-    } else {
-      baseSrcPathMatcher to baseTestPathMatcher
-    }
-
-    for (task in lesson.taskList) {
-      for ((path, taskFile) in task.taskFiles) {
-        assertThat(path, srcPathMatcher)
-        assertThat(taskFile.name, srcPathMatcher)
-
-        for (placeholder in taskFile.answerPlaceholders) {
-          val dependency = placeholder.placeholderDependency ?: continue
-          assertThat(dependency.fileName, srcPathMatcher)
-        }
-      }
-
-      for ((path, _) in task.testsText) {
-        assertThat(path, testPathMatcher)
-      }
-
-      for ((path, _) in task.additionalFiles) {
-        assertThat(path, additionalPathMatcher)
-      }
-    }
-  }
-
-  private fun loadLocalCourseJsonText(): String = FileUtil.loadFile(File(testDataPath, dataFileName))
+  private fun loadJsonText(path: String): String = FileUtil.loadFile(File(testDataPath, path))
 }

@@ -1,7 +1,7 @@
 {
   "summary": "Test Local Course",
   "title": "Test Local Course",
-  "programming_language": "edu-android",
+  "programming_language": "kotlin",
   "language": "en",
   "items": [
     {
@@ -153,5 +153,6 @@
       "type": "lesson"
     }
   ],
-  "version": 7
+  "version": 7,
+  "course_type": "Android"
 }

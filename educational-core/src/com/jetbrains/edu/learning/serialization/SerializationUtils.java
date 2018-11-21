@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.serialization;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -501,7 +502,22 @@ public class SerializationUtils {
 
       @Override
       public Course deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        JsonObject jsonObject = json.getAsJsonObject();
+        JsonObject jsonObject = migrate(json.getAsJsonObject());
+        Gson gson = new GsonBuilder()
+          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
+          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
+          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+          .create();
+        return gson.fromJson(jsonObject, typeOfT);
+      }
+
+      private static JsonObject migrate(@NotNull JsonObject jsonObject) {
+        return migrate(jsonObject, EduVersions.JSON_FORMAT_VERSION);
+      }
+
+      @NotNull
+      @VisibleForTesting
+      public static JsonObject migrate(@NotNull JsonObject jsonObject, int maxVersion) {
         JsonPrimitive jsonVersion = jsonObject.getAsJsonPrimitive(VERSION);
         int version;
         if (jsonVersion == null) {
@@ -510,7 +526,7 @@ public class SerializationUtils {
           version = jsonVersion.getAsInt();
         }
 
-        while (version < EduVersions.JSON_FORMAT_VERSION) {
+        while (version < maxVersion) {
           JsonLocalCourseConverter converter = null;
           switch (version) {
             case 6: converter = new ToSeventhVersionLocalCourseConverter(); break;
@@ -521,12 +537,7 @@ public class SerializationUtils {
           }
           version++;
         }
-        Gson gson = new GsonBuilder()
-          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
-          .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-          .create();
-        return gson.fromJson(jsonObject, typeOfT);
+        return jsonObject;
       }
     }
 
