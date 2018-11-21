@@ -1,5 +1,5 @@
 diff --git a/Edu-Android/testResources/META-INF/plugin.xml b/Edu-Android/testResources/META-INF/plugin.xml
-index 42c32aa1a..9255cd7d4 100644
+index 42c32aa..9255cd7 100644
 --- a/Edu-Android/testResources/META-INF/plugin.xml
 +++ b/Edu-Android/testResources/META-INF/plugin.xml
 @@ -1,5 +1,6 @@
@@ -7,10 +7,10 @@ index 42c32aa1a..9255cd7d4 100644
      <id>com.jetbrains.edu.android</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Android.xml">org.jetbrains.android</depends>
-
+ 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Java/testResources/META-INF/plugin.xml b/Edu-Java/testResources/META-INF/plugin.xml
-index c09e7e73d..5278ba576 100644
+index c09e7e7..5278ba5 100644
 --- a/Edu-Java/testResources/META-INF/plugin.xml
 +++ b/Edu-Java/testResources/META-INF/plugin.xml
 @@ -1,5 +1,6 @@
@@ -18,10 +18,10 @@ index c09e7e73d..5278ba576 100644
      <id>com.jetbrains.edu.java</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
-
+ 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Kotlin/testResources/META-INF/plugin.xml b/Edu-Kotlin/testResources/META-INF/plugin.xml
-index 1f4d26990..c9fb71c71 100644
+index 1f4d269..c9fb71c 100644
 --- a/Edu-Kotlin/testResources/META-INF/plugin.xml
 +++ b/Edu-Kotlin/testResources/META-INF/plugin.xml
 @@ -1,5 +1,6 @@
@@ -29,10 +29,10 @@ index 1f4d26990..c9fb71c71 100644
      <id>com.jetbrains.edu.kotlin</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Kotlin.xml">com.intellij.modules.java</depends>
-
+ 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
-index 47d00037d..d17ba9143 100644
+index 47d0003..d17ba91 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 @@ -81,14 +81,14 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
@@ -51,9 +51,9 @@ index 47d00037d..d17ba9143 100644
 +      PySdkExtKt.associateWithProject(sdk, project, false);
      }
    }
-
+ 
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
-index 3f1a87520..ca30893a7 100644
+index 3f1a875..ca30893 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 @@ -17,7 +17,7 @@ internal open class PyLanguageSettings : PyLanguageSettings() {
@@ -67,7 +67,7 @@ index 3f1a87520..ca30893a7 100644
            }
 @@ -27,7 +27,7 @@ internal open class PyLanguageSettings : PyLanguageSettings() {
      }
-
+ 
      val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
 -    val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
 +    val sdkChooser = PythonSdkChooserCombo(null, sdks, null) { true }
@@ -75,7 +75,7 @@ index 3f1a87520..ca30893a7 100644
        mySettings.sdk = sdkChooser.comboBox.selectedItem as? Sdk
        notifyListeners()
 diff --git a/Edu-Python/testResources/META-INF/plugin.xml b/Edu-Python/testResources/META-INF/plugin.xml
-index 5c7158398..a20004f8c 100644
+index 5c71583..a20004f 100644
 --- a/Edu-Python/testResources/META-INF/plugin.xml
 +++ b/Edu-Python/testResources/META-INF/plugin.xml
 @@ -1,4 +1,5 @@
@@ -85,7 +85,7 @@ index 5c7158398..a20004f8c 100644
      <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
  </idea-plugin>
 diff --git a/Edu-Scala/testResources/META-INF/plugin.xml b/Edu-Scala/testResources/META-INF/plugin.xml
-index 5eca860a3..edce8141e 100644
+index 5eca860..edce814 100644
 --- a/Edu-Scala/testResources/META-INF/plugin.xml
 +++ b/Edu-Scala/testResources/META-INF/plugin.xml
 @@ -1,4 +1,5 @@
@@ -95,12 +95,12 @@ index 5eca860a3..edce8141e 100644
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
 diff --git a/build.gradle b/build.gradle
-index e3cb091cc..fc99977ab 100644
+index e3cb091..fc99977 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -154,7 +154,6 @@ allprojects {
      }
-
+ 
      dependencies {
 -        compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
          compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
@@ -113,12 +113,12 @@ index e3cb091cc..fc99977ab 100644
 -    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion", "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 +    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion"
  }
-
+ 
  task configurePyCharm {
 @@ -304,7 +303,7 @@ configure(project(':educational-core')) {
      }
  }
-
+ 
 -configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')]) {
 +configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android')]) {
      dependencies {
@@ -127,7 +127,7 @@ index e3cb091cc..fc99977ab 100644
 @@ -361,26 +360,27 @@ configure(project(':Edu-Android')) {
      }
  }
-
+ 
 -configure(project(':Edu-JavaScript')) {
 -  task createCheckiOOAuthProperties() {
 -    createProperties(
@@ -157,40 +157,40 @@ index e3cb091cc..fc99977ab 100644
 +//
 +//  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 +//}
-
+ 
  runIde.systemProperty("-Didea.is.internal", "true")
  runIde.systemProperty("-ea", "")
-
+ 
  dependencies {
 -    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')
 +    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android')
  }
-
+ 
  idea {
 diff --git a/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt b/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt
-index 635fe18f3..770bf0615 100644
+index 635fe18..770bf06 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt
 @@ -43,9 +43,9 @@ class EduSingleFileEditor(
      return EduEditorState(state, null)
    }
-
+ 
 -  override fun setState(state: FileEditorState, exactState: Boolean) {
 +  override fun setState(state: FileEditorState) {
      val realState = (state as? EduEditorState)?.mainEditorState ?: state
 -    super<PsiAwareTextEditorImpl>.setState(realState, exactState)
 +    super<PsiAwareTextEditorImpl>.setState(realState)
    }
-
+ 
    override fun validateTaskFile() {
 diff --git a/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt b/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt
-index 8cbed839c..583a754c2 100644
+index 8cbed83..583a754 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt
 @@ -55,11 +55,11 @@ class EduSplitEditor(
      return EduEditorState(mainEditorState.mainEditorState, secondaryEditor.getState(level))
    }
-
+ 
 -  override fun setState(state: FileEditorState, exactState: Boolean) {
 +  override fun setState(state: FileEditorState) {
      if (state is EduEditorState) {
@@ -203,20 +203,20 @@ index 8cbed839c..583a754c2 100644
      }
    }
 diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
-index fe572b2fa..e40220997 100644
+index fe572b2..e402209 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
 +++ b/educational-core/src/icons/EducationalCoreIcons.java
 @@ -39,7 +39,7 @@ public class EducationalCoreIcons {
-
+ 
    public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
    public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
 -  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 +  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
-
+ 
    public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
    public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
-index d05af4596..c4c78bd64 100644
+index d05af45..c4c78bd 100644
 --- a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
 +++ b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
 @@ -156,9 +156,9 @@ class NodesTest: CourseViewTestBase() {
@@ -229,7 +229,7 @@ index d05af4596..c4c78bd64 100644
 +          additionalFile1.txt
      """.trimIndent())
    }
-
+ 
 @@ -176,11 +176,11 @@ class NodesTest: CourseViewTestBase() {
            taskFile1.txt
            CCStudentInvisibleFileNode taskFile2.txt
@@ -259,8 +259,18 @@ index d05af4596..c4c78bd64 100644
            CCStudentInvisibleFileNode task.html
          CCStudentInvisibleFileNode non_course_file1.txt
      """.trimIndent())
+diff --git a/gradle.properties b/gradle.properties
+index 6a37f6f..8b802bf 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,4 +1,4 @@
+-environmentName=183
++environmentName=studio-181
+ 
+ # needed for twitting functionality available currently only for kotlin koans
+ consumerKey=
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
-index ae3188cb2..7d7d4a1e5 100644
+index ae3188c..7d7d4a1 100644
 --- a/resources/META-INF/plugin.xml
 +++ b/resources/META-INF/plugin.xml
 @@ -8,6 +8,7 @@
@@ -268,11 +278,11 @@ index ae3188cb2..7d7d4a1e5 100644
      <change-notes/>
      <depends>com.intellij.modules.lang</depends>
 +    <depends>com.intellij.modules.androidstudio</depends>
-
+ 
      <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
 diff --git a/settings.gradle b/settings.gradle
-index b120c4d1e..1d02a34bc 100644
+index b120c4d..1d02a34 100644
 --- a/settings.gradle
 +++ b/settings.gradle
 @@ -1,2 +1,2 @@
