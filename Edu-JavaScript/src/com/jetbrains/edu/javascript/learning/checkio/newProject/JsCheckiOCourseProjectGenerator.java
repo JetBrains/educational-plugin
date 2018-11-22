@@ -7,6 +7,8 @@ import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -19,9 +21,9 @@ import com.jetbrains.edu.learning.checkio.utils.CheckiOCourseGenerationUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNewProjectSettings> {
+  public static final Logger LOG = Logger.getInstance(JsCheckiOCourseProjectGenerator.class);
   private final CheckiOCourseContentGenerator myContentGenerator =
     new CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector.getInstance());
 
@@ -42,26 +44,19 @@ public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNe
 
   @Override
   protected void afterProjectGenerated(@NotNull Project project, @NotNull JsNewProjectSettings projectSettings) {
-    VirtualFile requestor = project.getBaseDir();
-    NodeJsInterpreter interpreter = NodeJsInterpreterManager.getInstance(project).getInterpreter();
-    if (interpreter == null) {
-      showSettings(project, requestor);
-    }
-    else {
-      ModalityState modalityState = ModalityState.current();
-      interpreter.provideCachedVersionOrFetch(version -> ApplicationManager.getApplication().invokeLater(() -> {
+    NodeJsInterpreter interpreter = projectSettings.getSelectedInterpreter();
+    NodeJsInterpreterManager.getInstance(project).setInterpreterRef(interpreter.toRef());
+    ModalityState modalityState = ModalityState.current();
+    interpreter.provideCachedVersionOrFetch(version -> ApplicationManager.getApplication().invokeLater(() -> {
         if (version != null) {
           NodeCoreLibraryConfigurator configurator = NodeCoreLibraryConfigurator.getInstance(project);
           configurator.configureAndAssociateWithProject(interpreter, version, null);
         }
         else {
-          showSettings(project, requestor);
+          LOG.warn("Couldn't retrieve Node interpreter version");
+          VirtualFile requestor = ModuleManager.getInstance(project).getModules()[0].getModuleFile();
+          ShowSettingsUtil.getInstance().editConfigurable(project, new NodeSettingsConfigurable(project, requestor, true));
         }
       }, modalityState, project.getDisposed()));
     }
-  }
-
-  private static void showSettings(@NotNull Project project, @Nullable VirtualFile requestor) {
-    ShowSettingsUtil.getInstance().editConfigurable(project, new NodeSettingsConfigurable(project, requestor, true));
-  }
 }
