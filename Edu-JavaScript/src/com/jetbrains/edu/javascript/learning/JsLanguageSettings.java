@@ -1,9 +1,6 @@
 package com.jetbrains.edu.javascript.learning;
 
-import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
+import com.intellij.javascript.nodejs.interpreter.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.LabeledComponent;
@@ -29,6 +26,12 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
         return true;
       }
     };
+    myInterpreterField.addChangeListener(new NodeJsInterpreterChangeListener() {
+      @Override
+      public void interpreterChanged(@Nullable NodeJsInterpreter interpreter) {
+        mySettings.setSelectedInterpreter(interpreter);
+      }
+    });
     myInterpreterField.setInterpreterRef(NodeJsInterpreterManager.getInstance(defaultProject).getInterpreterRef());
   }
 
@@ -41,7 +44,7 @@ public class JsLanguageSettings extends LanguageSettings<JsNewProjectSettings> {
   @NotNull
   @Override
   public List<LabeledComponent<JComponent>> getLanguageSettingsComponents(@NotNull Course course) {
-    return Collections.singletonList(LabeledComponent.create(myInterpreterField, "NodeJS", BorderLayout.WEST));
+    return Collections.singletonList(LabeledComponent.create(myInterpreterField, "Interpreter", BorderLayout.WEST));
   }
 
   @Nullable
