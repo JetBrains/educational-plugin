@@ -4,7 +4,6 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.library.core.NodeCoreLibraryConfigurator;
 import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
-import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -14,18 +13,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings;
 import com.jetbrains.edu.javascript.learning.checkio.JsCheckiOCourseBuilder;
-import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOApiConnector;
-import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
-import com.jetbrains.edu.learning.checkio.utils.CheckiOCourseGenerationUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 
 public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNewProjectSettings> {
   public static final Logger LOG = Logger.getInstance(JsCheckiOCourseProjectGenerator.class);
-  private final CheckiOCourseContentGenerator myContentGenerator =
-    new CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector.getInstance());
 
   public JsCheckiOCourseProjectGenerator(@NotNull JsCheckiOCourseBuilder builder,
                                          @NotNull Course course) {
@@ -39,7 +32,7 @@ public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNe
 
   @Override
   protected boolean beforeProjectGenerated() {
-    return CheckiOCourseGenerationUtils.getCourseFromServerUnderProgress(myContentGenerator, (CheckiOCourse) myCourse);
+    return true;
   }
 
   @Override

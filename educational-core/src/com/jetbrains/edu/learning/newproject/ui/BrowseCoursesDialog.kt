@@ -5,7 +5,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
 
 class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: DefaultActionGroup? = null) : OpenCourseDialogBase() {
-
   val panel = CoursesPanel(courses, customToolbarActions)
 
   init {
@@ -18,4 +17,8 @@ class BrowseCoursesDialog(val courses: List<Course>, customToolbarActions: Defau
     get() = CourseInfo(panel.selectedCourse, panel.locationString, panel.projectSettings)
 
   override fun createCenterPanel(): JComponent = panel
+
+  override fun setError(error: ErrorState) {
+    panel.updateErrorInfo(error)
+  }
 }
