@@ -39,6 +39,8 @@ sealed class ErrorState(
     ErrorState(3, errorMessage(disabledPluginIds), ERROR.titleForeground, false)
   class LanguageSettingsError(message: String) : ErrorState(3, ErrorMessage(message), ERROR.titleForeground, false)
   object JavaFXRequired: ErrorState(4, ErrorMessage("No JavaFX found. Please ", "switch", " to JetBrains Runtime to start the course"), ERROR.titleForeground, false)
+  class CustomSevereError(beforeLink: String, link: String = "", afterLink: String = "", val action: Runnable? = null):
+    ErrorState(3, ErrorMessage(beforeLink, link, afterLink), ERROR.titleForeground, false)
 
   fun merge(other: ErrorState): ErrorState = if (severity < other.severity) other else this
 

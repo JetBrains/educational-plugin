@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
 import kotlin.Pair;
@@ -149,6 +150,14 @@ public interface EduConfigurator<Settings> {
    */
   default List<String> pluginRequirements() {
     return Collections.emptyList();
+  }
+
+  /**
+   * Allows to perform heavy computations (ex.HTTP requests) before actual project is created
+   * @throws CourseCantBeStartedException if impossible to start course
+   */
+  default void beforeCourseStarted(@NotNull Course course) throws CourseCantBeStartedException {
+
   }
 
   /**

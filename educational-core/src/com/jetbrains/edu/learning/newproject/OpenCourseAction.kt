@@ -5,6 +5,7 @@ import com.intellij.openapi.ui.OptionAction
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction
 import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.newproject.ui.OpenCourseDialogBase
 import java.awt.event.ActionEvent
@@ -19,14 +20,20 @@ abstract class OpenCourseActionBase(
 
   override fun actionPerformed(e: ActionEvent) {
     val (course, location, projectSettings) = dialog.courseInfo
-    dialog.close(DialogWrapper.OK_EXIT_CODE)
     val configurator = course?.configurator
     if (configurator != null) {
-      course.courseMode = courseMode
-      val projectGenerator = configurator
-        .courseBuilder
-        .getCourseProjectGenerator(course)
-      projectGenerator?.doCreateCourseProject(location, projectSettings)
+      try {
+        configurator.beforeCourseStarted(course)
+        dialog.close(DialogWrapper.OK_EXIT_CODE)
+        course.courseMode = courseMode
+        val projectGenerator = configurator
+          .courseBuilder
+          .getCourseProjectGenerator(course)
+        projectGenerator?.doCreateCourseProject(location, projectSettings)
+      }
+      catch (e: CourseCantBeStartedException) {
+        dialog.setError(e.error)
+      }
     }
   }
 }

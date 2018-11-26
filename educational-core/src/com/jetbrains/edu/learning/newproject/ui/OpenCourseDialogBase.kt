@@ -14,4 +14,6 @@ abstract class OpenCourseDialogBase : DialogWrapper(true) {
   abstract val courseInfo: CourseInfo
 
   data class CourseInfo(val course: Course?, val location: String, val projectSettings: Any)
+
+  abstract fun setError(error: ErrorState)
 }
