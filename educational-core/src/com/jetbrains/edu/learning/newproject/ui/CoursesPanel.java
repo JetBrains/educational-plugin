@@ -106,6 +106,11 @@ public class CoursesPanel extends JPanel {
     myCourseListPanel.setBorder(JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 1, 1, 1));
     myCoursesList.setBackground(LIST_COLOR);
 
+    addErrorStateListener();
+    processSelectionChanged();
+  }
+
+  public void addErrorStateListener() {
     myErrorLabel.addHyperlinkListener(e -> {
       if (myErrorState == ErrorState.NotLoggedIn.INSTANCE || myErrorState == ErrorState.StepikLoginRequired.INSTANCE) {
         addLoginListener(this::updateCoursesList);
@@ -127,9 +132,13 @@ public class CoursesPanel extends JPanel {
         List<String> disabledPluginIds = ((ErrorState.RequiredPluginsDisabled)myErrorState).getDisabledPluginIds();
         enablePlugins(disabledPluginIds);
       }
+      else if (myErrorState instanceof ErrorState.CustomSevereError) {
+        Runnable action = ((ErrorState.CustomSevereError)myErrorState).getAction();
+        if (action != null) {
+          action.run();
+        }
+      }
     });
-
-    processSelectionChanged();
   }
 
   private void invokeSwitchBootJdk() {
@@ -224,12 +233,13 @@ public class CoursesPanel extends JPanel {
                       ? ErrorState.None.INSTANCE
                       : new ErrorState.LanguageSettingsError(languageSettingsMessage);
     }
-    myErrorState = ErrorState.forCourse(course).merge(languageError);
-    notifyListeners(myErrorState.getCourseCanBeStarted());
-    updateErrorInfo(myErrorState);
+    ErrorState errorState = ErrorState.forCourse(course).merge(languageError);
+    updateErrorInfo(errorState);
+    notifyListeners(errorState.getCourseCanBeStarted());
   }
 
-  private void updateErrorInfo(@NotNull ErrorState errorState) {
+  public void updateErrorInfo(@NotNull ErrorState errorState) {
+    myErrorState = errorState;
     ErrorMessage message = errorState.getMessage();
     if (message != null) {
       myErrorLabel.setVisible(true);

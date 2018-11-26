@@ -1,8 +1,10 @@
 package com.jetbrains.edu.javascript.learning.checkio;
 
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.javascript.learning.JsNewProjectSettings;
+import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOApiConnector;
 import com.jetbrains.edu.javascript.learning.checkio.connectors.JsCheckiOOAuthConnector;
 import com.jetbrains.edu.javascript.learning.checkio.utils.JsCheckiONames;
 import com.jetbrains.edu.learning.EduCourseBuilder;
@@ -10,9 +12,14 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskChecker;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checkio.CheckiOConnectorProvider;
+import com.jetbrains.edu.learning.checkio.CheckiOCourseContentGenerator;
 import com.jetbrains.edu.learning.checkio.checker.CheckiOTaskChecker;
 import com.jetbrains.edu.learning.checkio.connectors.CheckiOOAuthConnector;
+import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
+import com.jetbrains.edu.learning.checkio.utils.CheckiOCourseGenerationUtils;
+import com.jetbrains.edu.learning.configuration.CourseCantBeStartedException;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +30,8 @@ import java.util.List;
 
 public class JsCheckiOConfigurator implements EduConfigurator<JsNewProjectSettings>, CheckiOConnectorProvider {
   private final JsCheckiOCourseBuilder myCourseBuilder = new JsCheckiOCourseBuilder();
+  private final CheckiOCourseContentGenerator myContentGenerator =
+    new CheckiOCourseContentGenerator(JavaScriptFileType.INSTANCE, JsCheckiOApiConnector.getInstance());
 
   @NotNull
   @Override
@@ -79,5 +88,12 @@ public class JsCheckiOConfigurator implements EduConfigurator<JsNewProjectSettin
   @Override
   public boolean isCourseCreatorEnabled() {
     return false;
+  }
+
+  @Override
+  public void beforeCourseStarted(@NotNull Course course) throws CourseCantBeStartedException {
+    CheckiOCourseGenerationUtils.getCourseFromServerUnderProgress(myContentGenerator, (CheckiOCourse)course,
+                                                                  JsCheckiOSettings.getInstance().getAccount(),
+                                                                  JsCheckiONames.JS_CHECKIO_API_HOST);
   }
 }

@@ -59,9 +59,13 @@ class JoinCoursePanel : JPanel(BorderLayout()) {
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> "Can't create course at this location"
       else -> myCoursePanel.validateSettings()
     }
+    updateErrorText(message)
+    myValidationListener?.onInputDataValidated(message == null)
+  }
+
+  fun updateErrorText(message: String?) {
     myErrorLabel.text = message
     myErrorLabel.isVisible = message != null
-    myValidationListener?.onInputDataValidated(message == null)
   }
 
   interface ValidationListener {

@@ -4,7 +4,6 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import javax.swing.JComponent
 
 class JoinCourseDialog(private val course: Course) : OpenCourseDialogBase() {
-
   private val panel: JoinCoursePanel = JoinCoursePanel()
 
   init {
@@ -23,4 +22,9 @@ class JoinCourseDialog(private val course: Course) : OpenCourseDialogBase() {
     get() = CourseInfo(course, panel.locationString, panel.projectSettings)
 
   override fun createCenterPanel(): JComponent = panel
+
+  override fun setError(error: ErrorState) {
+    val message = error.message ?: return
+    panel.updateErrorText(message.beforeLink + message.link + message.afterLink)
+  }
 }

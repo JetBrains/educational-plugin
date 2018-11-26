@@ -11,7 +11,15 @@ import retrofit2.Response;
  * @see CheckiOCall#execute()
  * */
 public class HttpException extends ApiException {
+  @NotNull private final Response<?> myResponse;
+
   public HttpException(@NotNull Response<?> response) {
     super("HTTP " + response.code() + " " + response.message());
+    myResponse = response;
+  }
+
+  @NotNull
+  public Response<?> getResponse() {
+    return myResponse;
   }
 }
