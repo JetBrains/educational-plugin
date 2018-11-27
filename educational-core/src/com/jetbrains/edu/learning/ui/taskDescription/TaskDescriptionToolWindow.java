@@ -15,6 +15,7 @@
  */
 package com.jetbrains.edu.learning.ui.taskDescription;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.intellij.codeInsight.documentation.DocumentationManagerProtocol;
 import com.intellij.ide.actions.QualifiedNameProvider;
 import com.intellij.ide.ui.LafManager;
@@ -66,18 +67,24 @@ public abstract class TaskDescriptionToolWindow {
   protected abstract String wrapHint(@NotNull String hintText, int hintNumber);
 
   protected void setTaskText(@NotNull Project project, @Nullable Task task) {
-    if (task != null) {
-      String taskText = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task);
-      if (taskText != null) {
-        setText(taskText);
-      }
-    }
-    else {
-      setText(EMPTY_TASK_TEXT);
-    }
+    setText(getTaskDescriptionWithCodeHighlighting(project, task));
   }
 
   public abstract void setText(@NotNull String text);
+
+  protected abstract void updateLaf();
+
+  @VisibleForTesting
+  @NotNull
+  public static String getTaskDescriptionWithCodeHighlighting(@NotNull Project project, @Nullable Task task) {
+    if (task != null) {
+      String taskText = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task);
+      if (taskText != null) {
+        return EduCodeHighlighter.highlightCodeFragments(project, taskText, task.getCourse().getLanguageById());
+      }
+    }
+    return EMPTY_TASK_TEXT;
+  }
 
   public static void navigateToPsiElement(@NotNull Project project, @NotNull String url) {
     String qualifiedName = url.replace(PSI_ELEMENT_PROTOCOL, "");
@@ -97,11 +104,9 @@ public abstract class TaskDescriptionToolWindow {
     }));
   }
 
-  protected abstract void updateLaf();
-
   private class StudyLafManagerListener implements LafManagerListener {
     @Override
-    public void lookAndFeelChanged(LafManager manager) {
+    public void lookAndFeelChanged(@NotNull LafManager manager) {
       updateLaf();
     }
   }
