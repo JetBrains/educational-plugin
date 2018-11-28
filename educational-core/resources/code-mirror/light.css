@@ -1,19 +1,3 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 
 /* BASICS */
 .task-help pre code {
@@ -23,13 +7,6 @@
     padding: 5px 25px 5px 15px;
     display: inline-block;
     margin-right: 21px;
-}
-
-.CodeMirror {
-    /* Set height, width, borders, and global font properties here */
-    font-family: monospace;
-    height: 300px;
-    color: black;
 }
 
 /* PADDING */
@@ -119,50 +96,44 @@
 }
 
 /* DEFAULT THEME */
+/*copied from https://github.com/codemirror/CodeMirror/blob/master/theme/idea.css */
+.cm-s-default span.cm-meta { color: #808000; }
+.cm-s-default span.cm-number { color: #0000FF; }
+.cm-s-default span.cm-keyword { line-height: 1em; font-weight: bold; color: #000080; }
+.cm-s-default span.cm-atom { font-weight: bold; color: #000080; }
+.cm-s-default span.cm-def { color: #000000; }
+.cm-s-default span.cm-variable { color: black; }
+.cm-s-default span.cm-variable-2 { color: black; }
+.cm-s-default span.cm-variable-3, .cm-s-default span.cm-type { color: black; }
+.cm-s-default span.cm-property { color: black; }
+.cm-s-default span.cm-operator { color: black; }
+.cm-s-default span.cm-comment { color: #808080; }
+.cm-s-default span.cm-string { color: #008000; }
+.cm-s-default span.cm-string-2 { color: #008000; }
+.cm-s-default span.cm-qualifier { color: #555; }
+.cm-s-default span.cm-error { color: #FF0000; }
+.cm-s-default span.cm-attribute { color: #0000FF; }
+.cm-s-default span.cm-tag { color: #000080; }
+.cm-s-default span.cm-link { color: #0000FF; }
+.cm-s-default .CodeMirror-activeline-background { background: #FFFAE3; }
 
-.cm-s-default .cm-header {color: #589df6;}
-.cm-s-default .cm-quote {color: #6a864c;} 
-.cm-negative {color: #d44;}
-.cm-positive {color: #6a864c;}
-.cm-header, .cm-strong {font-weight: bold;}
-.cm-em {font-style: italic;}
-.cm-link {text-decoration: underline;}
-.cm-strikethrough {text-decoration: line-through;}
+.cm-s-default span.cm-builtin { color: #30a; }
+.cm-s-default span.cm-bracket { color: #cc7; }
+.cm-s-default  { font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;}
 
-.cm-s-default .cm-keyword {color: #774688;}
-.cm-s-default .cm-atom {color: #5fa2f6;}
-.cm-s-default .cm-number {color: #164;}
-.cm-s-default .cm-def {color: #589df6;}
-.cm-s-default .cm-variable,
-.cm-s-default .cm-punctuation,
-.cm-s-default .cm-property,
-.cm-s-default .cm-operator {}
-.cm-s-default .cm-variable-2 {color: #4c73aa;}
-.cm-s-default .cm-variable-3 {color: #085;}
-.cm-s-default .cm-comment {color: #aa7e3e;}
-.cm-s-default .cm-string {color: #aa3e3e;}
-.cm-s-default .cm-string-2 {color: #ff9e39;}
-.cm-s-default .cm-meta {color: #555;}
-.cm-s-default .cm-qualifier {color: #555;}
-.cm-s-default .cm-builtin {color: #6a5caa;}
-.cm-s-default .cm-bracket {color: #997;}
-.cm-s-default .cm-tag {color: #467734;}
-.cm-s-default .cm-attribute {color: #589df6;}
-.cm-s-default .cm-hr {color: #999;}
-.cm-s-default .cm-link {color: #589df6;}
 
-.cm-s-default .cm-error {color: #ff4641;}
-.cm-invalidchar {color: #ff4641;}
+.cm-s-default .CodeMirror-matchingbracket { outline:1px solid grey; color:black !important; }
 
-.CodeMirror-composing { border-bottom: 2px solid; }
+.CodeMirror-hints.idea {
+    font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
+    color: #616569;
+    background-color: #ebf3fd !important;
+}
 
-/* Default styles for common addons */
-
-div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}
-div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
-.CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }
-.CodeMirror-activeline-background {background: #e8f2ff;}
-
+.CodeMirror-hints.idea .CodeMirror-hint-active {
+    background-color: #a2b8c9 !important;
+    color: #5c6065 !important;
+}
 /* STOP */
 
 /* The rest of this file contains styles related to the mechanics of
