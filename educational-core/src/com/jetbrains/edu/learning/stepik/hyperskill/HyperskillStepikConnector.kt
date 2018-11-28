@@ -18,7 +18,7 @@ fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language, stage
   val allStepSources = StepikConnector.getStepSources(stepIds, language.baseLanguage?.id)
   progressIndicator?.checkCanceled()
   progressIndicator?.text2 = "Loading tasks"
-  val tasks = StepikConnector.getTasks(language, stepIds, allStepSources)
+  val tasks = StepikConnector.getTasks(language, lesson, stepIds, allStepSources)
   progressIndicator?.checkCanceled()
   progressIndicator?.text2 = "Loading topics"
   val convertedTasks = mutableListOf<EduTask>()

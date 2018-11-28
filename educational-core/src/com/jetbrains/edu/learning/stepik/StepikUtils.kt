@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.util.regex.Pattern
 
 object StepikUtils {
@@ -59,4 +60,10 @@ object StepikUtils {
       task.stepikChangeStatus = status
     }
   }
+
+  @JvmStatic
+  fun getStepikLink(task: Task, lesson: Lesson): String {
+    return "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${task.index}"
+  }
+
 }

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.StepikUtils.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
 
@@ -42,10 +42,6 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
   companion object {
     const val ACTION_ID = "Educational.LeaveFeedback"
 
-    private fun getStepikLink(task: Task): String {
-      return "${StepikNames.STEPIK_URL}/lesson/${task.lesson.id}/step/${task.index}"
-    }
-
     @JvmStatic
     @VisibleForTesting
     fun getLink(task: Task): String {
@@ -53,7 +49,7 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
       return when (feedbackLink.type) {
         FeedbackLink.LinkType.NONE -> error("LeaveFeedbackAction should be disabled for NONE links")
         FeedbackLink.LinkType.CUSTOM -> feedbackLink.link ?: error("Custom link doesn't contain an actual link")
-        FeedbackLink.LinkType.STEPIK -> getStepikLink(task)
+        FeedbackLink.LinkType.STEPIK -> getStepikLink(task, task.lesson)
       }
     }
   }

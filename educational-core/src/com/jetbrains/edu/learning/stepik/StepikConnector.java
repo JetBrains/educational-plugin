@@ -635,7 +635,7 @@ public class StepikConnector {
           lesson = new FrameworkLesson(lesson);
         }
       }
-      List<Task> tasks = getTasks(remoteCourse.getLanguageById(), stepIds, allStepSources);
+      List<Task> tasks = getTasks(remoteCourse.getLanguageById(), lesson, stepIds, allStepSources);
       lesson.taskList.addAll(tasks);
       lessons.add(lesson);
     }
@@ -650,13 +650,13 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Task> getTasks(Language language, String[] stepIds, List<StepSource> allStepSources) {
+  public static List<Task> getTasks(@NotNull Language language, @NotNull Lesson lesson, String[] stepIds, List<StepSource> allStepSources) {
     List<Task> tasks = new ArrayList<>();
     for (int i = 0; i < allStepSources.size(); i++) {
       StepSource step = allStepSources.get(i);
       Integer stepId = Integer.valueOf(stepIds[i]);
       StepikUser user = EduSettings.getInstance().getUser();
-      StepikTaskBuilder builder = new StepikTaskBuilder(language, step, stepId, user == null ? -1 : user.getId());
+      StepikTaskBuilder builder = new StepikTaskBuilder(language, lesson, step, stepId, user == null ? -1 : user.getId());
       if (builder.isSupported(step.block.name)) {
         final Task task = builder.createTask(step.block.name);
         if (task != null) {
