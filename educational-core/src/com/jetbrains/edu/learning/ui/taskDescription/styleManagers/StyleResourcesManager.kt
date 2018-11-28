@@ -28,9 +28,8 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
     resourcePair("colorize", "/code-mirror/colorize.js"),
     resourcePair("javascript", "/code-mirror/javascript.js"),
     resourcePair("hint_base", "/style/hint/base.css"),
-    resourcePair("hint_laf_specific", if (UIUtil.isUnderDarcula()) "/style/hint/darcula.css" else "/style/hint/light.css"),
-    resourcePair("css_oldcodemirror", if (UIUtil.isUnderDarcula()) "/code-mirror/codemirror-old-darcula.css" else "/code-mirror/codemirror-old.css"),
-    resourcePair("css_codemirror", if (UIUtil.isUnderDarcula()) "/code-mirror/codemirror-darcula.css" else "/code-mirror/codemirror.css"),
+    resourcePair("hint_laf_specific",  "/style/hint/${resourceFileName()}.css"),
+    resourcePair("css_codemirror", "/code-mirror/${resourceFileName()}.css"),
     resourcePair("toggle_hint_script", "/style/hint/toggleHint.js"),
     resourcePair("mathjax_script", "/style/mathjaxConfigure.js"),
     resourcePair("stepik_link", "/style/stepikLink.css")
