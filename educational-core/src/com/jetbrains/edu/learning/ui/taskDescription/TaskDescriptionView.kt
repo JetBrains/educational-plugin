@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.wm.ToolWindow
@@ -39,10 +38,7 @@ abstract class TaskDescriptionView {
 
     @JvmStatic
     fun getTaskDescriptionBackgroundColor(): Color {
-      return if (!UIUtil.isUnderDarcula()) {
-        EditorColorsManager.getInstance().globalScheme.defaultBackground
-      }
-      else Color(0x3c3f41)
+      return UIUtil.getListBackground()
     }
   }
 }

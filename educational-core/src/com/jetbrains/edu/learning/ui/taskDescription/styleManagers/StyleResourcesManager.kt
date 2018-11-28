@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
 
 import com.intellij.openapi.project.Project
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduLanguageDecorator
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -60,6 +59,10 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
 
       a {
         color = styleManager.linkColor
+      }
+
+      "::-webkit-scrollbar-corner" {
+        backgroundColor = styleManager.bodyBackground
       }
     }.toString()
   }
