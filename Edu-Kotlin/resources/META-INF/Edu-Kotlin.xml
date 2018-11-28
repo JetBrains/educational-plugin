@@ -15,7 +15,6 @@
     <twitterPluginConfigurator implementation="com.jetbrains.edu.kotlin.twitter.KtTwitterConfigurator"/>
     <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
     <coursesProvider implementation="com.jetbrains.edu.kotlin.KtBundledCoursesProvider"/>
-    <languageDecorator implementationClass="com.jetbrains.edu.kotlin.KtLanguageDecorator" language="kotlin"/>
 
     <!-- Coursera -->
     <configurator implementationClass="com.jetbrains.edu.kotlin.coursera.CourseraKtConfigurator" language="kotlin" courseType="Coursera" />
