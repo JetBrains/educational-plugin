@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning;
 
-import com.google.common.collect.Lists;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
@@ -18,14 +17,11 @@ import com.intellij.util.containers.hash.HashMap;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.UserTest;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.StudyUnrecognizedFormatException;
-import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import org.jetbrains.annotations.NotNull;
@@ -38,6 +34,7 @@ import java.util.Map;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE_ELEMENT_TYPES;
 
 /**
  * Implementation of class which contains all the information
@@ -52,9 +49,6 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   @Transient
   private Course myCourse;
   public int VERSION = EduVersions.XML_FORMAT_VERSION;
-  private static List<Class<? extends Course>> courseElementTypes = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
-                                                                                       HyperskillCourse.class, Course.class);
-
   public final Map<Task, List<UserTest>> myUserTests = new HashMap<>();
 
   @Transient @Nullable private final Project myProject;
@@ -223,7 +217,7 @@ public class StudyTaskManager implements PersistentStateComponent<Element>, Dumb
   }
 
   private static Course deserializeCourse(Element xmlCourse) {
-    for (Class<? extends Course> courseClass : courseElementTypes) {
+    for (Class<? extends Course> courseClass : COURSE_ELEMENT_TYPES) {
       final Element courseElement = xmlCourse.getChild(courseClass.getSimpleName());
       if (courseElement == null) {
         continue;
