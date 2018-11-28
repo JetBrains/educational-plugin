@@ -357,37 +357,6 @@ public class StepikConnector {
     return CourseVisibility.PublicVisibility.INSTANCE;
   }
 
-  public static RemoteCourse getCourseInfoByLink(@NotNull StepikUser user, @NotNull String link) {
-    int courseId;
-    try {
-      courseId = Integer.parseInt(link);
-    }
-    catch (NumberFormatException e) {
-      courseId = getCourseIdFromLink(link);
-    }
-    if (courseId != -1) {
-      return getCourseInfo(user, courseId, false);
-    }
-    return null;
-  }
-
-  public static int getCourseIdFromLink(@NotNull String link) {
-    try {
-      URL url = new URL(link);
-      String[] pathParts = url.getPath().split("/");
-      for (int i = 0; i < pathParts.length; i++) {
-        String part = pathParts[i];
-        if (part.equals("course") && i + 1 < pathParts.length) {
-          return Integer.parseInt(pathParts[i + 1]);
-        }
-      }
-    }
-    catch (MalformedURLException | NumberFormatException e) {
-      LOG.warn(e.getMessage());
-    }
-    return -1;
-  }
-
   public static boolean loadCourseStructure(@NotNull final RemoteCourse remoteCourse) {
     final List<StudyItem> items = remoteCourse.getItems();
     if (!items.isEmpty()) return true;
@@ -540,7 +509,7 @@ public class StepikConnector {
     return new ArrayList<>(getLessonsFromUnits(remoteCourse, unitIds, true));
   }
 
-  private static String[] getUnitsIds(RemoteCourse remoteCourse) throws IOException {
+  public static String[] getUnitsIds(RemoteCourse remoteCourse) throws IOException {
     String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
     List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
     Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
@@ -570,7 +539,7 @@ public class StepikConnector {
   }
 
   @NotNull
-  private static List<Lesson> getLessons(String[] unitIds) throws IOException {
+  public static List<Lesson> getLessons(String[] unitIds) throws IOException {
     List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitIds, UnitContainer.class);
     Stream<Unit> allUnits = unitContainers.stream().flatMap(container -> container.units.stream());
     String[] lessonIds = allUnits.map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
@@ -665,47 +634,6 @@ public class StepikConnector {
       }
     }
     return tasks;
-  }
-
-  public static List<Language> getSupportedLanguages(RemoteCourse remoteCourse) {
-    List<Language> languages = new ArrayList<>();
-    try {
-      Map<String, String> codeTemplates = getFirstCodeTemplates(remoteCourse);
-      for (String languageName : codeTemplates.keySet()) {
-        String id = StepikLanguages.langOfName(languageName).getId();
-        Language language = Language.findLanguageByID(id);
-        if (language != null) {
-          languages.add(language);
-        }
-      }
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-
-    return languages;
-  }
-
-  @NotNull
-  private static Map<String, String> getFirstCodeTemplates(@NotNull RemoteCourse remoteCourse) throws IOException {
-    String[] unitsIds = getUnitsIds(remoteCourse);
-    List<Lesson> lessons = getLessons(unitsIds);
-    for (Lesson lesson : lessons) {
-      String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
-      List<StepSource> allStepSources = getStepSources(stepIds, remoteCourse.getLanguageID());
-
-      for (StepSource stepSource : allStepSources) {
-        Step step = stepSource.block;
-        if (step != null && step.name.equals("code") && step.options != null) {
-          Map<String, String> codeTemplates = step.options.codeTemplates;
-          if (codeTemplates != null) {
-            return codeTemplates;
-          }
-        }
-      }
-    }
-
-    return Collections.emptyMap();
   }
 
   private static <T> T getFromStepik(String link, final Class<T> container) throws IOException {

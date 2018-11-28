@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.newproject.ui
+package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo

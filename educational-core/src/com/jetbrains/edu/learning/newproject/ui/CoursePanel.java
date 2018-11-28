@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
+import com.jetbrains.edu.learning.stepik.course.StepikCourse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,8 +181,8 @@ public class CoursePanel extends JPanel {
   @NotNull
   private static String htmlDescription(@NotNull Course course) {
     String description = course.getDescription() != null ? course.getDescription() : "";
-    if (course instanceof RemoteCourse && ((RemoteCourse)course).isPublic() && !FEATURED_COURSES.contains(course.getId())
-        && !IN_PROGRESS_COURSES.contains(course.getId())) {
+    if (course instanceof RemoteCourse && ((RemoteCourse)course).isPublic() && !FEATURED_COURSES.contains(course.getId()) &&
+        !(course instanceof StepikCourse) && !IN_PROGRESS_COURSES.contains(course.getId())) {
       description += ourNotVerifiedNote;
     }
     return UIUtil.toHtml(description.replace("\n", "<br>"));
