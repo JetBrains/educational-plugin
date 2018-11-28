@@ -103,7 +103,6 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
   }
 
   fun loadContentAndAdjustHeight(@NotNull content: String, @NotNull componentToAdjust: JComponent) {
-    ApplicationManager.getApplication().invokeLater { componentToAdjust.isVisible = false }
     Platform.runLater {
       myWebComponent.engine.loadWorker.stateProperty().addListener { arg0, oldState, newState ->
         if (newState === Worker.State.SUCCEEDED) {
@@ -121,18 +120,17 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
 
       if (outerHeight is Int) {
         ApplicationManager.getApplication().invokeLater {
-          val width = componentToAdjust.parent.size.width - TaskDescriptionViewImpl.RIGHT_BORDER
+          val initialWidth = componentToAdjust.parent.size.width
+          val width = (if (initialWidth == 0) componentToAdjust.parent.preferredSize.width else initialWidth)  - TaskDescriptionViewImpl.RIGHT_BORDER
           var coef = (outerWidth as Int) / width.toFloat()
           coef = if (coef < 1) (1.toFloat()) else coef
           val roundToInt = if (coef > 1) (outerHeight * coef).roundToInt() else outerHeight
           componentToAdjust.preferredSize = Dimension(width,
                                                       JBUI.scale(roundToInt))
           LOG.warn("$outerHeight $outerWidth $width $coef $roundToInt")
-          componentToAdjust.minimumSize = Dimension(width,
-                                             JBUI.scale(roundToInt))
+          componentToAdjust.minimumSize = Dimension(width, JBUI.scale(roundToInt))
           componentToAdjust.revalidate()
           componentToAdjust.repaint()
-          componentToAdjust.isVisible = true
         }
       }
     }

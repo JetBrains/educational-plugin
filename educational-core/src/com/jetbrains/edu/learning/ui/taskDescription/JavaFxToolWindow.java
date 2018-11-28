@@ -90,6 +90,6 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   @Override
   public void setText(@NotNull String text) {
     String wrappedText = wrapHints(text);
-    myBrowserWindow.loadContent(wrappedText);
+    myBrowserWindow.loadContentAndAdjustHeight(wrappedText, myBrowserWindow.getPanel());
   }
 }

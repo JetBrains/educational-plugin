@@ -12,6 +12,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.ui.awt.RelativePoint
+import com.intellij.ui.components.panels.VerticalLayout
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.content.ContentManager
 import com.intellij.util.ui.JBUI
@@ -89,29 +90,32 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
 
   override fun init(toolWindow: ToolWindow) {
     contentManager = toolWindow.contentManager
-    val panel = JPanel(BorderLayout())
+    val panel = JPanel()
+    panel.layout = VerticalLayout(1)
     panel.border = JBUI.Borders.empty(0, 15, 15, 0)
 
-    panel.add(taskTextPanel, BorderLayout.CENTER)
+    panel.add(taskTextPanel)
     taskTextPanel.border = JBUI.Borders.empty(0, 0, 10, 0)
 
-    val bottomPanel = JPanel(BorderLayout())
+    val bottomPanel = JPanel()
+
+    bottomPanel.layout = VerticalLayout(1)
 
     val separatorPanel = JPanel(BorderLayout())
     separatorPanel.border = JBUI.Borders.emptyRight(RIGHT_BORDER)
     separator = JSeparator()
     separatorPanel.add(separator, BorderLayout.CENTER)
-    bottomPanel.add(separatorPanel, BorderLayout.NORTH)
+    bottomPanel.add(separator)
 
     val taskSpecificPanel = taskTextTW.createTaskSpecificPanel(currentTask)
     taskSpecificPanel.border = JBUI.Borders.emptyRight(RIGHT_BORDER)
-    bottomPanel.add(taskSpecificPanel, BorderLayout.CENTER)
+    bottomPanel.add(taskSpecificPanel)
 
     checkPanel = CheckPanel(project)
     checkPanel.border = JBUI.Borders.empty(2, 0, 0, RIGHT_BORDER)
-    bottomPanel.add(checkPanel, BorderLayout.SOUTH)
+    bottomPanel.add(checkPanel)
 
-    panel.add(bottomPanel, BorderLayout.SOUTH)
+    panel.add(bottomPanel)
     UIUtil.setBackgroundRecursively(panel, getTaskDescriptionBackgroundColor())
     project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, EduFileEditorManagerListener(project))
     val content = ContentFactory.SERVICE.getInstance().createContent(panel, "Description", false)
