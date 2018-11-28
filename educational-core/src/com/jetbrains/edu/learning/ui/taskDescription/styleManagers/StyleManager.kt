@@ -65,3 +65,13 @@ internal fun resourceUrl(name: String): String {
     ""
   }
 }
+
+internal fun resourceFileName(): String {
+  return when {
+    isHighcontrast() -> "highcontrast"
+    UIUtil.isUnderDarcula() -> "darcula"
+    else -> "light"
+  }
+}
+
+internal fun isHighcontrast() = LafManager.getInstance().currentLookAndFeel is UIThemeBasedLookAndFeelInfo

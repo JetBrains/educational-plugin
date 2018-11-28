@@ -12,11 +12,10 @@
   <script src="${runmode}"></script>
   <script src="${javascript}"></script>
   <script src="${language_script}"></script>
+  <link rel="stylesheet" type="text/css" href="${css_codemirror}"></link>
 
   <link rel="stylesheet" type="text/css" href="${hint_base}"></link>
   <link rel="stylesheet" type="text/css" href="${hint_laf_specific}"></link>
-  <link rel="stylesheet" type="text/css" href="${css_oldcodemirror}"></link>
-  <link rel="stylesheet" type="text/css" href="${css_codemirror}"></link>
   <link rel="stylesheet" type="text/css" href="${stepik_link}"></link>
 
   <style>
