@@ -97,8 +97,8 @@ public class StepikConnector {
   private StepikConnector() {
   }
 
-  public static boolean enrollToCourse(final int courseId, @Nullable final StepikUser user) {
-    if (user == null) return false;
+  public static void enrollToCourse(final int courseId, @Nullable final StepikUser user) {
+    if (user == null) return;
     HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ENROLLMENTS);
     try {
       final EnrollmentWrapper enrollment = new EnrollmentWrapper(String.valueOf(courseId));
@@ -106,12 +106,11 @@ public class StepikConnector {
       final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient(user);
       CloseableHttpResponse response = client.execute(post);
       StatusLine line = response.getStatusLine();
-      return line.getStatusCode() == HttpStatus.SC_CREATED;
+      line.getStatusCode();
     }
     catch (IOException e) {
       LOG.warn(e.getMessage());
     }
-    return false;
   }
 
   public static boolean isEnrolledToCourse(final int courseId, @Nullable final StepikUser user) {
@@ -257,7 +256,7 @@ public class StepikConnector {
   }
 
   public static int getTaskPosition(final int taskId) {
-    final String url = StepikNames.STEPS + String.valueOf(taskId);
+    final String url = StepikNames.STEPS + taskId;
     try {
       StepContainer container = StepikAuthorizedClient.getFromStepik(url, StepContainer.class);
       if (container == null) {
@@ -530,7 +529,7 @@ public class StepikConnector {
   }
 
   public static List<Lesson> getLessons(RemoteCourse remoteCourse, int sectionId) throws IOException {
-    final SectionContainer sectionContainer = getFromStepik(StepikNames.SECTIONS + "/" + String.valueOf(sectionId),
+    final SectionContainer sectionContainer = getFromStepik(StepikNames.SECTIONS + "/" + sectionId,
             SectionContainer.class);
     if (sectionContainer.sections.isEmpty()) {
       return Collections.emptyList();
@@ -1021,7 +1020,7 @@ public class StepikConnector {
   public static Unit getUnit(int unitId) {
     try {
       List<Unit> units =
-        getFromStepik(StepikNames.UNITS + "/" + String.valueOf(unitId), UnitContainer.class).units;
+        getFromStepik(StepikNames.UNITS + "/" + unitId, UnitContainer.class).units;
       if (!units.isEmpty()) {
         return units.get(0);
       }
@@ -1036,7 +1035,7 @@ public class StepikConnector {
   public static Section getSection(int sectionId) {
     try {
       List<Section> sections =
-        getFromStepik(StepikNames.SECTIONS + "/" + String.valueOf(sectionId), SectionContainer.class).getSections();
+        getFromStepik(StepikNames.SECTIONS + "/" + sectionId, SectionContainer.class).getSections();
       if (!sections.isEmpty()) {
         return sections.get(0);
       }
@@ -1050,7 +1049,7 @@ public class StepikConnector {
   public static Lesson getLesson(int lessonId) {
     try {
       List<Lesson> lessons =
-        getFromStepik(StepikNames.LESSONS + "/" + String.valueOf(lessonId), LessonContainer.class).lessons;
+        getFromStepik(StepikNames.LESSONS + "/" + lessonId, LessonContainer.class).lessons;
       if (!lessons.isEmpty()) {
         return lessons.get(0);
       }
