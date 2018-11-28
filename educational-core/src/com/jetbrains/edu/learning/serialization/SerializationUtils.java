@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.serialization.converter.json.local.To8VersionL
 import com.jetbrains.edu.learning.serialization.converter.json.local.ToSeventhVersionLocalCourseConverter;
 import com.jetbrains.edu.learning.serialization.converter.xml.*;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.course.StepikCourse;
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -55,7 +56,8 @@ public class SerializationUtils {
 
   public static class Xml {
     public static final List<Class<? extends Course>> COURSE_ELEMENT_TYPES = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
-                                                                                                HyperskillCourse.class, Course.class);
+                                                                                                HyperskillCourse.class, Course.class,
+                                                                                                StepikCourse.class);
 
     public final static String COURSE_ELEMENT = "courseElement";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
@@ -120,6 +122,7 @@ public class SerializationUtils {
     public static final String VISIBLE = "visible";
     public static final String TEST_FILES = "testsText";
     public static final String LANGUAGE = "language";
+    public static final String SECTION_IDS = "sectionIds";
     public static final String PLACEHOLDER_DEPENDENCY = "placeholderDependency";
     public static final String DEPENDENCY_FILE_NAME = "fileName";
     public static final String SETTINGS_NAME = "EduSettings";
@@ -204,6 +207,11 @@ public class SerializationUtils {
     public static Element convertToEleventhVersion(@NotNull Project project,
                                                    @NotNull Element element) throws StudyUnrecognizedFormatException {
       return new ToEleventhVersionXmlConverter().convert(project, element);
+    }
+
+    @NotNull
+    public static Element convertTo12Version(@NotNull Project project,@NotNull Element element) throws StudyUnrecognizedFormatException {
+      return new To12VersionXmlConverter().convert(project, element);
     }
 
     @Nullable
