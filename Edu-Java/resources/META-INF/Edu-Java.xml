@@ -6,7 +6,6 @@
 
   <extensions defaultExtensionNs="Educational">
     <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
-    <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.JLanguageDecorator"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
