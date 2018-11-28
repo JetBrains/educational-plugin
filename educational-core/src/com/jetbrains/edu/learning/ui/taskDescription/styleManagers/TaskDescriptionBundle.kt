@@ -16,8 +16,7 @@ internal object TaskDescriptionBundle {
   fun getFloatParameter(@PropertyKey(resourceBundle = BUNDLE_NAME) key: String) = message(
     if (SystemInfo.isMac) "mac.$key" else key).toFloat()
 
-  fun getOsDependentParameter(key: String) = message(
-    parameterNameWithOSPrefix(key))
+  fun getOsDependentParameter(key: String) = message(parameterNameWithOSPrefix(key))
 
   private fun parameterNameWithOSPrefix(name: String): String {
     return when {
