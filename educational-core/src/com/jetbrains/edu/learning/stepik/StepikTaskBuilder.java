@@ -10,12 +10,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
@@ -36,6 +37,7 @@ public class StepikTaskBuilder {
   private int myUserId;
   @NonNls private String myName;
   private final Language myLanguage;
+  private final Lesson myLesson;
   @Nullable
   private final EduConfigurator<?> myConfigurator;
   private StepikWrappers.Step myStep;
@@ -81,14 +83,14 @@ public class StepikTaskBuilder {
     .build();
   private static final String EMPTY_NAME = "";
 
-  public StepikTaskBuilder(@NotNull Language language,
-                           @NotNull StepikWrappers.StepSource stepSource,
+  public StepikTaskBuilder(@NotNull Language language, @NotNull Lesson lesson, @NotNull StepikWrappers.StepSource stepSource,
                            int stepId, int userId) {
-    this(language, EMPTY_NAME, stepSource, stepId, userId);
+    this(language, lesson, EMPTY_NAME, stepSource, stepId, userId);
   }
 
 
   public StepikTaskBuilder(@NotNull Language language,
+                           @NotNull Lesson lesson,
                            @NotNull String name,
                            @NotNull StepikWrappers.StepSource stepSource,
                            int stepId, int userId) {
@@ -98,6 +100,7 @@ public class StepikTaskBuilder {
     myStepId = stepId;
     myUserId = userId;
     myLanguage = language;
+    myLesson = lesson;
     myConfigurator = EduConfiguratorManager.forLanguageAndCourseType(EduNames.PYCHARM, myLanguage);
     if (myConfigurator == null) {
       LOG.warn("Cannot get configurator for a language: " + myLanguage);
@@ -197,7 +200,8 @@ public class StepikTaskBuilder {
     task.setStepId(myStepId);
     task.setIndex(myStepSource.position);
     task.setUpdateDate(myStepSource.update_date);
-    final String stepText = "This is " + myName.toLowerCase() + " task.";
+    final String stepText = StringUtil.capitalize(myName.toLowerCase()) + " tasks are not supported yet. <br>" +
+                            "View this step on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) +"\">Stepik</a>.";
     task.setDescriptionText(stepText);
 
     createMockTaskFile(task, "this is a " + myName.toLowerCase() + " task. You can use this editor as a playground\n");
