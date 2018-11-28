@@ -1,8 +1,7 @@
-package com.jetbrains.edu.learning.newproject.ui;
+package com.jetbrains.edu.learning.stepik.course;
 
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +49,6 @@ public class ImportStepikCoursePanel {
   }
 
   private static boolean isValidStepikLink(@NotNull String text) {
-    return StepikConnector.getCourseIdFromLink(text) != -1;
+    return StepikCourseConnector.getCourseIdFromLink(text) != -1;
   }
 }

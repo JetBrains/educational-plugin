@@ -39,7 +39,7 @@ import com.jetbrains.edu.learning.courseLoading.CourseLoader;
 import com.jetbrains.edu.learning.newproject.LocalCourseFileChooser;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
-import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction;
+import com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import kotlin.collections.SetsKt;

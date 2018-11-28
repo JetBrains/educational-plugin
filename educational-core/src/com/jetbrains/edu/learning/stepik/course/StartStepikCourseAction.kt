@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.stepik.actions
+package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -11,16 +11,18 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.RemoteCourse
-import com.jetbrains.edu.learning.newproject.ui.ChooseStepikCourseLanguageDialog
-import com.jetbrains.edu.learning.newproject.ui.ImportStepikCourseDialog
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikConnector
 
 class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
+
   override fun actionPerformed(e: AnActionEvent) {
-    if (!EduSettings.isLoggedIn()) {
-      val result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik", "Log in", "Cancel",
-                                               null)
+    if (EduSettings.isLoggedIn()) {
+      doImport()
+    }
+    else {
+      val result = Messages.showOkCancelDialog("Stepik authorization is required to import courses", "Log in to Stepik",
+                                               "Log in", "Cancel", null)
       if (result == Messages.OK) {
         val myBusConnection = ApplicationManager.getApplication().messageBus.connect()
         myBusConnection.subscribe(EduSettings.SETTINGS_CHANGED, EduSettings.StudySettingsListener {
@@ -32,9 +34,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
         })
         StepikConnector.doAuthorize { EduUtils.showOAuthDialog() }
       }
-      return
     }
-    doImport()
   }
 
   private fun doImport() {
@@ -49,15 +49,15 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     }
     val courseLink = dialog.courseLink()
     val user = EduSettings.getInstance().user!!
-    val course = StepikConnector.getCourseInfoByLink(user, courseLink)
+    val course = StepikCourseConnector.getCourseInfoByLink(user, courseLink)
+    if (course == null) {
+      showFailedToAddCourseNotification()
+      return null
+    }
     val languages = getLanguagesUnderProgress(course)
 
     if (languages.isEmpty()) {
       Messages.showErrorDialog("No supported languages available for the course", "Failed to Import Course")
-      return null
-    }
-    if (course == null) {
-      showFailedToAddCourseNotification()
       return null
     }
     val language = chooseLanguageIfNeeded(languages, course) ?: return null
@@ -66,8 +66,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     return course
   }
 
-  private fun chooseLanguageIfNeeded(languages: List<Language>,
-                                     course: RemoteCourse): Language? {
+  private fun chooseLanguageIfNeeded(languages: List<Language>, course: RemoteCourse): Language? {
     return if (languages.size == 1) {
       languages[0]
     }
@@ -83,16 +82,15 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
   }
 
   private fun showFailedToAddCourseNotification() {
-    Messages.showErrorDialog("Cannot add course from Stepik, please check if link is correct", "Failed to Add Stepik Course")
+    Messages.showErrorDialog("Cannot find course on Stepik, please check if link is correct", "Failed to Load Stepik Course")
   }
 
-  private fun getLanguagesUnderProgress(course: RemoteCourse): List<Language> {
+  private fun getLanguagesUnderProgress(course: StepikCourse): List<Language> {
     return ProgressManager.getInstance().runProcessWithProgressSynchronously<List<Language>, RuntimeException>(
       {
         ProgressManager.getInstance().progressIndicator.isIndeterminate = true
         EduUtils.execCancelable {
-          StepikConnector.getSupportedLanguages(
-            course)
+          StepikCourseConnector.getSupportedLanguages(course)
         }
       }, "Getting Available Languages", true, null)
   }
