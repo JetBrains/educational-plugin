@@ -1,15 +1,17 @@
 package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
 
+import com.intellij.ide.ui.LafManager
+import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.ColorUtil
+import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import kotlinx.css.Color
 
 class StyleManager {
-  private val lafPrefix = if (UIUtil.isUnderDarcula()) "darcula" else "light"
   private val typographyManager = TypographyManager()
 
   val bodyFontSize = typographyManager.bodyFontSize
@@ -19,11 +21,11 @@ class StyleManager {
   val bodyFont = typographyManager.bodyFont
   val codeFont = typographyManager.codeFont
 
-  val bodyColor = getCSSColor("$lafPrefix.body.color")
-  val linkColor = getCSSColor("$lafPrefix.link.color")
-  val bodyBackground = getCSSColor("$lafPrefix.body.background")
+  val bodyColor = bodyColor()
+  val linkColor = JBColor.link().asCssColor()
+  val bodyBackground = JBColor.background().asCssColor()
   val codeBackground = if (EduSettings.getInstance().shouldUseJavaFx()) bodyBackground
-  else Color("#${ColorUtil.toHex(ColorUtil.dimmer(UIUtil.getPanelBackground()))}")
+  else ColorUtil.dimmer(UIUtil.getPanelBackground()).asCssColor()
 
   val scrollBarStylesheets = getScrollBarStylesheetsUrls()
   val baseStylesheet = resourceUrl("/style/browser.css")
@@ -33,21 +35,20 @@ class StyleManager {
                                         resourceUrl(
                                           "/style/javafxButtons/buttonsDarcula.css").takeIf { UIUtil.isUnderDarcula() })
 
-  fun resources(project: Project, content: String) = StyleResourcesManager(
-    project, content).resources
+  fun resources(project: Project, content: String) = StyleResourcesManager(project, content).resources
 
   private fun getScrollBarStylesheetsUrls(): List<String> {
     return listOf(resourceUrl("/style/scrollbars/base.css"),
                   if (SystemInfo.isWindows) resourceUrl(
                     "/style/scrollbars/winShape.css")
                   else resourceUrl("/style/scrollbars/macLinuxShape.css"),
-                  if (UIUtil.isUnderDarcula()) resourceUrl(
-                    "/style/scrollbars/darcula.css")
-                  else resourceUrl("/style/scrollbars/light.css"))
+                  resourceUrl("/style/scrollbars/${resourceFileName()}.css"))
   }
 
-  private fun getCSSColor(s: String): Color {
-    return Color((TaskDescriptionBundle.message(s)))
+  private fun java.awt.Color.asCssColor(): Color = Color("#${ColorUtil.toHex(this)}")
+
+  private fun bodyColor(): Color {
+    return if (UIUtil.isUnderDarcula()) Color((TaskDescriptionBundle.message("darcula.body.color"))) else JBColor.foreground().asCssColor()
   }
 
   companion object {

@@ -41,6 +41,7 @@ import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction;
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector;
+import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,6 @@ import java.util.*;
 import static com.jetbrains.edu.learning.PluginUtils.enablePlugins;
 
 public class CoursesPanel extends JPanel {
-  private static final JBColor LIST_COLOR = new JBColor(Gray.xFF, Gray.x39);
   private static final Logger LOG = Logger.getInstance(CoursesPanel.class);
   private static final String NO_COURSES = "No courses found";
 
@@ -104,7 +104,7 @@ public class CoursesPanel extends JPanel {
     myCoursesList.setBorder(null);
     myCourseListPanel.add(toolbarDecoratorPanel, BorderLayout.CENTER);
     myCourseListPanel.setBorder(JBUI.Borders.customLine(OnePixelDivider.BACKGROUND, 1, 1, 1, 1));
-    myCoursesList.setBackground(LIST_COLOR);
+    myCoursesList.setBackground(TaskDescriptionView.getTaskDescriptionBackgroundColor());
 
     addErrorStateListener();
     processSelectionChanged();

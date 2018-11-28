@@ -2,8 +2,6 @@ package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.project.Project
-import com.intellij.ui.ColorUtil
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector
@@ -61,7 +59,7 @@ class BrowserWindow(private val myProject: Project, private val myLinkInNewBrows
       panel.scene.stylesheets.clear()
       panel.scene.stylesheets.add(baseStylesheet)
       panel.scene.stylesheets.addAll(styleManager.scrollBarStylesheets)
-      myPane.style = "-fx-background-color: #${ColorUtil.toHex(UIUtil.getPanelBackground())};"
+      myPane.style = "-fx-background-color: ${StyleManager().bodyBackground};"
       myEngine.reload()
     }
   }
