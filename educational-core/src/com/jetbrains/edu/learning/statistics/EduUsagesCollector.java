@@ -40,10 +40,6 @@ public class EduUsagesCollector extends ProjectUsagesCollector {
     advanceKey("checkTask");
   }
 
-  public static void hintShown() {
-    advanceKey("showHint");
-  }
-
   public static void taskNavigation() {
     advanceKey("navigateToTask");
   }
