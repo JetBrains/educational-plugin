@@ -1,10 +1,32 @@
+diff --git a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
+index 1d2bf2c..9e09873 100644
+--- a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
++++ b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
+@@ -2,7 +2,7 @@ package com.jetbrains.edu.javascript.learning.checkio.newProject;
+
+ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
+-import com.intellij.javascript.nodejs.library.core.NodeCoreLibraryConfigurator;
++import com.intellij.javascript.nodejs.library.core.NodeJsCoreLibraryConfigurator;
+ import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
+ import com.intellij.lang.javascript.JavaScriptFileType;
+ import com.intellij.openapi.application.ApplicationManager;
+@@ -49,7 +49,7 @@ public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNe
+     ModalityState modalityState = ModalityState.current();
+     interpreter.provideCachedVersionOrFetch(version -> ApplicationManager.getApplication().invokeLater(() -> {
+         if (version != null) {
+-          NodeCoreLibraryConfigurator configurator = NodeCoreLibraryConfigurator.getInstance(project);
++          NodeJsCoreLibraryConfigurator configurator = NodeJsCoreLibraryConfigurator.getInstance(project);
+           configurator.configureAndAssociateWithProject(interpreter, version, null);
+         }
+         else {
 diff --git a/gradle.properties b/gradle.properties
-index bb59a0e..d808d78 100644
+index 6a37f6f..fa7a471 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -1,4 +1,4 @@
 -environmentName=183
 +environmentName=182
- 
+
  # needed for twitting functionality available currently only for kotlin koans
  consumerKey=
