@@ -26,11 +26,6 @@ public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNe
   }
 
   @Override
-  protected void createAdditionalFiles(@NotNull Project project, @NotNull VirtualFile baseDir) {
-
-  }
-
-  @Override
   protected boolean beforeProjectGenerated() {
     return true;
   }
