@@ -10,6 +10,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduUtils;
+import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -22,6 +23,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+/**
+ * To introduce new course it's required to:
+ *  - Extend Course class
+ *  - Update {@link SerializationUtils.Xml.COURSE_ELEMENT_TYPES} to handle xml migrations and deserialization
+ *  - Introduce unique courseType, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
+ */
 public class Course extends ItemContainer {
   transient private List<StepikUserInfo> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;

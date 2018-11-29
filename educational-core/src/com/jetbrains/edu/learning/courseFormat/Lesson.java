@@ -20,6 +20,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * To introduce new lesson type it's required to:
+ *  - Extend Lesson class
+ *  - Go to {@link ItemContainer#items} and update elementTypes in AbstractCollection annotation. Needed for proper xml serialization
+ *  - Handle xml migration in {@link com.jetbrains.edu.learning.serialization.converter.xml.BaseXmlConverter#convert}
+ */
 public class Lesson extends StudyItem {
   @Expose @SerializedName("id") private int myId;
   @Transient public List<Integer> steps;

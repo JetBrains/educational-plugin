@@ -25,7 +25,8 @@ abstract class BaseXmlConverter : XmlConverter {
           }
         }
         SerializationUtils.Xml.LESSON,
-        SerializationUtils.Xml.FRAMEWORK_LESSON -> convertLesson(item)
+        SerializationUtils.Xml.FRAMEWORK_LESSON,
+        CHECKIO_STATION -> convertLesson(item)
         else -> throw StudyUnrecognizedFormatException("Unknown item name `${item.name}` in\n${JDOMUtil.write(courseElement, "\n")}")
       }
     }
