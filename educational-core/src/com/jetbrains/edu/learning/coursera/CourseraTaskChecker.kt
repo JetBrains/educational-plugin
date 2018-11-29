@@ -33,7 +33,7 @@ import org.apache.http.impl.client.HttpClientBuilder
 class CourseraTaskChecker : RemoteTaskChecker {
   private val checkWithoutCredentials = CheckResult(CheckStatus.Unchecked, "Can't check on remote without credentials")
   override fun canCheck(project: Project, task: Task) =
-    EduUtils.isStudentProject(project) && CourseraNames.COURSE_TYPE == task.course.courseType
+    EduUtils.isStudentProject(project) && task.course is CourseraCourse
 
 
   override fun check(project: Project, task: Task, indicator: ProgressIndicator): CheckResult {

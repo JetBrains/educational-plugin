@@ -49,7 +49,7 @@
     <action id="Educational.HyperskillProjectAction" class="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProjectAction"/>
     <action id="Educational.ImportCourseraAssignment" class="com.jetbrains.edu.learning.coursera.ImportCourseraAssignment"/>
     <action id="Educational.ImportLocalCourse" class="com.jetbrains.edu.learning.actions.ImportLocalCourseAction"/>
-    <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.actions.StartStepikCourseAction"/>
+    <action id="Educational.StartStepikCourse" class="com.jetbrains.edu.learning.stepik.course.StartStepikCourseAction"/>
     <action id="Educational.Check" class="com.jetbrains.edu.learning.actions.CheckAction"/>
     <action id="Educational.PrevPlaceholder" class="com.jetbrains.edu.learning.actions.PrevPlaceholderAction"
             text="Previous Answer Placeholder"

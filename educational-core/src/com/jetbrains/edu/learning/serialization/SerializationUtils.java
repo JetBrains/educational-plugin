@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.*;
+import com.jetbrains.edu.learning.coursera.CourseraCourse;
 import com.jetbrains.edu.learning.serialization.converter.json.JsonLocalCourseConverter;
 import com.jetbrains.edu.learning.serialization.converter.json.local.To8VersionLocalCourseConverter;
 import com.jetbrains.edu.learning.serialization.converter.json.local.ToSeventhVersionLocalCourseConverter;
@@ -57,7 +58,7 @@ public class SerializationUtils {
   public static class Xml {
     public static final List<Class<? extends Course>> COURSE_ELEMENT_TYPES = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
                                                                                                 HyperskillCourse.class, Course.class,
-                                                                                                StepikCourse.class);
+                                                                                                StepikCourse.class, CourseraCourse.class);
 
     public final static String COURSE_ELEMENT = "courseElement";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
@@ -66,6 +67,7 @@ public class SerializationUtils {
     public static final String SECTION = "Section";
     public static final String LESSON = "Lesson";
     public static final String FRAMEWORK_LESSON = "FrameworkLesson";
+    public static final String CHECKIO_STATION = "CheckiOStation";
     public static final String MAP = "map";
     public static final String KEY = "key";
     public static final String VALUE = "value";
@@ -130,6 +132,7 @@ public class SerializationUtils {
     public static final String LAST_TIME_CHECKED = "lastTimeChecked";
     public static final String USE_JAVA_FX = "shouldUseJavaFx";
     public static final String STEPIK_USER = "StepikUser";
+    public static final String COURSE_TYPE = "courseType";
 
     private Xml() {
     }
@@ -345,7 +348,7 @@ public class SerializationUtils {
           return list.getChildren();
         }
       }
-      return Collections.emptyList();
+      return optional ? null : Collections.emptyList();
     }
 
     public static Element getChildWithName(Element parent, String name) throws StudyUnrecognizedFormatException {

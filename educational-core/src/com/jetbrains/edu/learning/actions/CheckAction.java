@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
+import com.jetbrains.edu.learning.coursera.CourseraCourse;
 import com.jetbrains.edu.learning.coursera.CourseraNames;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
@@ -58,7 +59,7 @@ public class CheckAction extends DumbAwareAction {
     if (task instanceof TheoryTask) {
       return new CheckAction(RUN_TASK, RUN_DESCRIPTION);
     }
-    if (task != null && CourseraNames.COURSE_TYPE.equals(task.getCourse().getCourseType())) {
+    if (task != null && task.getCourse() instanceof CourseraCourse) {
       return new CheckAction(CourseraNames.SUBMIT_TO_COURSERA, CourseraNames.SUBMIT_TO_COURSERA);
     }
     return new CheckAction(CHECK_TASK, CHECK_DESCRIPTION);

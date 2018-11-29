@@ -15,11 +15,11 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.actions.CompareWithAnswerAction
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.CheckUtils
-import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView
+import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.ext.canShowSolution
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.coursera.CourseraNames
+import com.jetbrains.edu.learning.coursera.CourseraCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory
 import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
@@ -43,7 +43,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
       linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
     }
 
-    if (EduUtils.isStudentProject(project) && CourseraNames.COURSE_TYPE != task.course.courseType && task.canShowSolution()) {
+    if (EduUtils.isStudentProject(project) && task.course !is CourseraCourse && task.canShowSolution()) {
       val peekSolution = LightColoredActionLink("Peek Solution...",
                                                 ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
       linksPanel.add(peekSolution, BorderLayout.CENTER)
