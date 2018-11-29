@@ -2,7 +2,6 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.FileSetKind.*
 import com.jetbrains.edu.coursecreator.`in`
 import com.jetbrains.edu.coursecreator.notIn
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
@@ -14,8 +13,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
   fun `test exclude single src file`() = doAvailableTest("lesson1/task1/src/folder1/taskFile1.txt") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
-      listOf("src/folder1/taskFile2.txt" to TASK_FILES `in` task),
-      listOf("src/folder1/taskFile1.txt" to TASK_FILES notIn task)
+      listOf("src/folder1/taskFile2.txt" `in` task),
+      listOf("src/folder1/taskFile1.txt" notIn task)
     )
   }
 
@@ -27,8 +26,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
     Pair(
       listOf(),
       listOf(
-        "src/folder1/taskFile1.txt" to TASK_FILES notIn task,
-        "src/folder1/taskFile2.txt" to TASK_FILES notIn task
+        "src/folder1/taskFile1.txt" notIn task,
+        "src/folder1/taskFile2.txt" notIn task
       )
     )
   }
@@ -38,8 +37,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
     Pair(
       listOf(),
       listOf(
-        "src/folder1/taskFile1.txt" to TASK_FILES notIn task,
-        "src/folder1/taskFile2.txt" to TASK_FILES notIn task
+        "src/folder1/taskFile1.txt" notIn task,
+        "src/folder1/taskFile2.txt" notIn task
       )
     )
   }
@@ -47,8 +46,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
   fun `test exclude single test file`() = doAvailableTest("lesson1/task1/test/folder2/testFile1.txt") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
-      listOf("test/folder2/testFile2.txt" to TEST_FILES `in` task),
-      listOf("test/folder2/testFile1.txt" to TEST_FILES notIn task)
+      listOf("test/folder2/testFile2.txt" `in` task),
+      listOf("test/folder2/testFile1.txt" notIn task)
     )
   }
 
@@ -60,8 +59,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
     Pair(
       listOf(),
       listOf(
-        "test/folder2/testFile1.txt" to TEST_FILES notIn task,
-        "test/folder2/testFile2.txt" to TEST_FILES notIn task
+        "test/folder2/testFile1.txt" notIn task,
+        "test/folder2/testFile2.txt" notIn task
       )
     )
   }
@@ -71,8 +70,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
     Pair(
       listOf(),
       listOf(
-        "test/folder2/testFile1.txt" to TEST_FILES notIn task,
-        "test/folder2/testFile2.txt" to TEST_FILES notIn task
+        "test/folder2/testFile1.txt" notIn task,
+        "test/folder2/testFile2.txt" notIn task
       )
     )
   }
@@ -80,8 +79,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
   fun `test exclude single additional file`() = doAvailableTest("lesson1/task1/folder3/additionalFile1.txt") { course ->
     val task = course.findTask("lesson1", "task1")
     Pair(
-      listOf("folder3/additionalFile2.txt" to ADDITIONAL_FILES `in` task),
-      listOf("folder3/additionalFile1.txt" to ADDITIONAL_FILES notIn task)
+      listOf("folder3/additionalFile2.txt" `in` task),
+      listOf("folder3/additionalFile1.txt" notIn task)
     )
   }
 
@@ -93,8 +92,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
     Pair(
       listOf(),
       listOf(
-        "folder3/additionalFile1.txt" to ADDITIONAL_FILES notIn task,
-        "folder3/additionalFile2.txt" to ADDITIONAL_FILES notIn task
+        "folder3/additionalFile1.txt" notIn task,
+        "folder3/additionalFile2.txt" notIn task
       )
     )
   }
@@ -104,8 +103,8 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
     Pair(
       listOf(),
       listOf(
-        "folder3/additionalFile1.txt" to ADDITIONAL_FILES notIn task,
-        "folder3/additionalFile2.txt" to ADDITIONAL_FILES notIn task
+        "folder3/additionalFile1.txt" notIn task,
+        "folder3/additionalFile2.txt" notIn task
       )
     )
   }
@@ -118,14 +117,14 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
     val task = course.findTask("lesson1", "task1")
     Pair(
       listOf(
-        "src/folder1/taskFile2.txt" to TASK_FILES `in` task,
-        "test/folder2/testFile2.txt" to TEST_FILES `in` task,
-        "folder3/additionalFile2.txt" to ADDITIONAL_FILES `in` task
+        "src/folder1/taskFile2.txt" `in` task,
+        "test/folder2/testFile2.txt" `in` task,
+        "folder3/additionalFile2.txt" `in` task
       ),
       listOf(
-        "src/folder1/taskFile1.txt" to TASK_FILES notIn task,
-        "test/folder2/testFile1.txt" to TEST_FILES notIn task,
-        "folder3/additionalFile1.txt" to ADDITIONAL_FILES notIn task
+        "src/folder1/taskFile1.txt" notIn task,
+        "test/folder2/testFile1.txt" notIn task,
+        "folder3/additionalFile1.txt" notIn task
       )
     )
   }
@@ -147,12 +146,12 @@ class CCExcludeFromTaskTest : CCChangeFileOwnerTestBase(CCExcludeFromTask()) {
             taskFile("taskFile2.txt")
           }
           dir("test/folder2") {
-            testFile("testFile1.txt")
-            testFile("testFile2.txt")
+            taskFile("testFile1.txt")
+            taskFile("testFile2.txt")
           }
           dir("folder3") {
-            additionalFile("additionalFile1.txt")
-            additionalFile("additionalFile2.txt")
+            taskFile("additionalFile1.txt")
+            taskFile("additionalFile2.txt")
           }
         }
       }

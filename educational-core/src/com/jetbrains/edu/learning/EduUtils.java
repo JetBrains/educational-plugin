@@ -214,9 +214,7 @@ public class EduUtils {
     Task task = getTaskForFile(project, file);
     if (task == null) return false;
     String relativePath = pathRelativeToTask(project, file);
-    return task.getTaskFile(relativePath) != null ||
-           task.getTestsText().get(relativePath) != null ||
-           task.getAdditionalFiles().get(relativePath) != null;
+    return task.getTaskFile(relativePath) != null;
   }
 
   public static boolean isTestsFile(@NotNull Project project, @NotNull VirtualFile file) {

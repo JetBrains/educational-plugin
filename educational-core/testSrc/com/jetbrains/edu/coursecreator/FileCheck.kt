@@ -38,3 +38,6 @@ data class FileCheck(
 
 infix fun Pair<String, FileSetKind>.`in`(task: Task): FileCheck = FileCheck(task, first, second, true)
 infix fun Pair<String, FileSetKind>.notIn(task: Task): FileCheck = FileCheck(task, first, second, false)
+
+infix fun String.`in`(task: Task): FileCheck = FileCheck(task, this, FileSetKind.ALL_FILES, true)
+infix fun String.notIn(task: Task): FileCheck = FileCheck(task, this, FileSetKind.ALL_FILES, false)
