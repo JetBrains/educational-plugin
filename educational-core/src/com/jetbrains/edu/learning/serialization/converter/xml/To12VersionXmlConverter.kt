@@ -7,8 +7,8 @@ import org.jdom.Element
 class To12VersionXmlConverter : BaseXmlConverter() {
 
   override fun convertCourseElement(course: Element) {
-    val sectionIds = SerializationUtils.Xml.getChildList(course, SECTION_IDS)
-    if (sectionIds.isEmpty()) {
+    val sectionIds = SerializationUtils.Xml.getChildList(course, SECTION_IDS, true)
+    if (sectionIds != null && sectionIds.isEmpty()) { // TODO: write test for the migration
       course.name = "StepikCourse"
     }
   }
