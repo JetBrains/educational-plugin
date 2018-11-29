@@ -7,7 +7,7 @@ index 42c32aa..9255cd7 100644
      <id>com.jetbrains.edu.android</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Android.xml">org.jetbrains.android</depends>
-
+ 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Java/testResources/META-INF/plugin.xml b/Edu-Java/testResources/META-INF/plugin.xml
 index c09e7e7..5278ba5 100644
@@ -18,7 +18,7 @@ index c09e7e7..5278ba5 100644
      <id>com.jetbrains.edu.java</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
-
+ 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/JsLanguageSettings.java b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/JsLanguageSettings.java
 index 0fdd315..6bd8dee 100644
@@ -26,7 +26,7 @@ index 0fdd315..6bd8dee 100644
 +++ b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/JsLanguageSettings.java
 @@ -1,6 +1,7 @@
  package com.jetbrains.edu.javascript.learning;
-
+ 
  import com.intellij.javascript.nodejs.interpreter.*;
 +import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
  import com.intellij.openapi.project.Project;
@@ -41,28 +41,28 @@ index 0fdd315..6bd8dee 100644
    }
  }
 diff --git a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
-index 1d2bf2c..fc70475 100644
+index 30c8560..23a3a53 100644
 --- a/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
 +++ b/Edu-JavaScript/src/com/jetbrains/edu/javascript/learning/checkio/newProject/JsCheckiOCourseProjectGenerator.java
 @@ -2,8 +2,6 @@ package com.jetbrains.edu.javascript.learning.checkio.newProject;
-
+ 
  import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
  import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 -import com.intellij.javascript.nodejs.library.core.NodeCoreLibraryConfigurator;
 -import com.intellij.javascript.nodejs.settings.NodeSettingsConfigurable;
- import com.intellij.lang.javascript.JavaScriptFileType;
  import com.intellij.openapi.application.ApplicationManager;
  import com.intellij.openapi.application.ModalityState;
-@@ -20,6 +18,8 @@ import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse;
- import com.jetbrains.edu.learning.checkio.utils.CheckiOCourseGenerationUtils;
+ import com.intellij.openapi.diagnostic.Logger;
+@@ -15,6 +13,8 @@ import com.jetbrains.edu.javascript.learning.JsNewProjectSettings;
+ import com.jetbrains.edu.javascript.learning.checkio.JsCheckiOCourseBuilder;
  import com.jetbrains.edu.learning.courseFormat.Course;
  import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 +import com.jetbrains.nodejs.library.NodeJsCoreLibraryConfigurator;
 +import com.jetbrains.nodejs.settings.NodeSettingsConfigurable;
  import org.jetbrains.annotations.NotNull;
-
+ 
  public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNewProjectSettings> {
-@@ -49,7 +49,7 @@ public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNe
+@@ -37,7 +37,7 @@ public class JsCheckiOCourseProjectGenerator extends CourseProjectGenerator<JsNe
      ModalityState modalityState = ModalityState.current();
      interpreter.provideCachedVersionOrFetch(version -> ApplicationManager.getApplication().invokeLater(() -> {
          if (version != null) {
@@ -80,7 +80,7 @@ index 1f4d269..c9fb71c 100644
      <id>com.jetbrains.edu.kotlin</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Kotlin.xml">com.intellij.modules.java</depends>
-
+ 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 index 47d0003..d17ba91 100644
@@ -102,7 +102,7 @@ index 47d0003..d17ba91 100644
 +      PySdkExtKt.associateWithProject(sdk, project, false);
      }
    }
-
+ 
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 index 3f1a875..ca30893 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
@@ -118,7 +118,7 @@ index 3f1a875..ca30893 100644
            }
 @@ -27,7 +27,7 @@ internal open class PyLanguageSettings : PyLanguageSettings() {
      }
-
+ 
      val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
 -    val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
 +    val sdkChooser = PythonSdkChooserCombo(null, sdks, null) { true }
@@ -151,7 +151,7 @@ index e3cb091..fc01c33 100644
 +++ b/build.gradle
 @@ -154,7 +154,6 @@ allprojects {
      }
-
+ 
      dependencies {
 -        compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
          compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
@@ -164,14 +164,14 @@ index 635fe18..770bf06 100644
 @@ -43,9 +43,9 @@ class EduSingleFileEditor(
      return EduEditorState(state, null)
    }
-
+ 
 -  override fun setState(state: FileEditorState, exactState: Boolean) {
 +  override fun setState(state: FileEditorState) {
      val realState = (state as? EduEditorState)?.mainEditorState ?: state
 -    super<PsiAwareTextEditorImpl>.setState(realState, exactState)
 +    super<PsiAwareTextEditorImpl>.setState(realState)
    }
-
+ 
    override fun validateTaskFile() {
 diff --git a/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt b/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt
 index 8cbed83..583a754 100644
@@ -180,7 +180,7 @@ index 8cbed83..583a754 100644
 @@ -55,11 +55,11 @@ class EduSplitEditor(
      return EduEditorState(mainEditorState.mainEditorState, secondaryEditor.getState(level))
    }
-
+ 
 -  override fun setState(state: FileEditorState, exactState: Boolean) {
 +  override fun setState(state: FileEditorState) {
      if (state is EduEditorState) {
@@ -197,12 +197,12 @@ index fe572b2..e402209 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
 +++ b/educational-core/src/icons/EducationalCoreIcons.java
 @@ -39,7 +39,7 @@ public class EducationalCoreIcons {
-
+ 
    public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
    public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
 -  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 +  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
-
+ 
    public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
    public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
@@ -219,7 +219,7 @@ index d05af45..c4c78bd 100644
 +          additionalFile1.txt
      """.trimIndent())
    }
-
+ 
 @@ -176,11 +176,11 @@ class NodesTest: CourseViewTestBase() {
            taskFile1.txt
            CCStudentInvisibleFileNode taskFile2.txt
@@ -256,6 +256,6 @@ index 6a37f6f..224fe4f 100644
 @@ -1,4 +1,4 @@
 -environmentName=183
 +environmentName=181
-
+ 
  # needed for twitting functionality available currently only for kotlin koans
  consumerKey=
