@@ -43,7 +43,10 @@ public class ToFourthVersionXmlConverter implements XmlConverter {
             Element firstHint = new Element(OPTION).setAttribute(VALUE, hint.getAttributeValue(VALUE));
             List<Element> newHints = new ArrayList<>();
             newHints.add(firstHint);
-            newHints.addAll(ContainerUtil.map(getChildList(placeholder, ADDITIONAL_HINTS, true), Element::clone));
+            List<Element> additionalHints = getChildList(placeholder, ADDITIONAL_HINTS, true);
+            if (additionalHints != null) {
+              newHints.addAll(ContainerUtil.map(additionalHints, Element::clone));
+            }
             addChildList(valueElement, "hints", newHints);
           }
         }

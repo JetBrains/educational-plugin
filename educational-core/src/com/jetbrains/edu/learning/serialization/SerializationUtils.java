@@ -345,7 +345,7 @@ public class SerializationUtils {
           return list.getChildren();
         }
       }
-      return Collections.emptyList();
+      return optional ? null : Collections.emptyList();
     }
 
     public static Element getChildWithName(Element parent, String name) throws StudyUnrecognizedFormatException {

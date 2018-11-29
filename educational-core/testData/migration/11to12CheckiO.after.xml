@@ -1,0 +1,981 @@
+<component name="StudySettings">
+  <StudyTaskManager>
+    <option name="VERSION" value="11" />
+    <option name="myUserTests">
+      <map />
+    </option>
+    <option name="course">
+      <CheckiOCourse>
+        <option name="authors">
+          <list />
+        </option>
+        <option name="courseMode" value="Study" />
+        <option name="courseType" value="CheckiO" />
+        <option name="customPresentableName" />
+        <option name="description" value="CheckiO is a game where you code in Python or JavaScript.&#10;Progress in the game by solving code challenges and compete for the most elegant and creative solutions.&#10;&lt;a href=&quot;http://www.checkio.org/&quot;&gt;http://www.checkio.org/&lt;/a&gt;" />
+        <option name="fromZip" value="false" />
+        <option name="index" value="-1" />
+        <option name="language" value="Python" />
+        <option name="languageCode" value="en" />
+        <option name="name" value="Py CheckiO" />
+        <option name="stepikChangeStatus" value="Up to date" />
+        <option name="items">
+          <list>
+            <CheckiOStation>
+              <option name="customPresentableName" />
+              <option name="id" value="1" />
+              <option name="index" value="1" />
+              <option name="name" value="Home" />
+              <option name="stepikChangeStatus" value="Up to date" />
+              <option name="updateDate" value="0" />
+              <option name="taskList">
+                <list>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def checkio(data: str) -&gt; bool:&#13;&#10;&#13;&#10;    #replace this for solution&#13;&#10;    return True or False&#13;&#10;&#13;&#10;#Some hints&#13;&#10;#Just check all conditions&#13;&#10;&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert checkio('A1213pokl') == False, &quot;1st example&quot;&#13;&#10;    assert checkio('bAse730onE4') == True, &quot;2nd example&quot;&#13;&#10;    assert checkio('asasasasasasasaas') == False, &quot;3rd example&quot;&#13;&#10;    assert checkio('QWERTYqwerty') == False, &quot;4th example&quot;&#13;&#10;    assert checkio('123456123456') == False, &quot;5th example&quot;&#13;&#10;    assert checkio('QwErTy911poqqqq') == True, &quot;6th example&quot;&#13;&#10;    print(&quot;Coding complete? Click 'Check' to review your tests and earn cool rewards!&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;img class=&quot;for_info_only half&quot; src=&quot;https://static.checkio.org/media/task/media/bbf378a0bdb1406599f44f1de07b07e6/house_password_v1_400.png&quot; style=&quot;max-height: 400px; float: left&quot;&gt;&#10;&#10;&lt;p&gt;&#10;    Stephan and Sophia forget about security and use simple passwords for everything.&#10;    Help Nikola develop a password security check module.&#10;    The password will be considered strong enough if its length is greater than or equal to 10 symbols,&#10;    it has at least one digit, as well as containing one uppercase letter and one lowercase letter in it.&#10;    The password contains only ASCII latin letters or digits.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&lt;strong&gt;Input: &lt;/strong&gt;A password as a string.&lt;/p&gt;&#10;&lt;p&gt;&lt;strong&gt;Output: &lt;/strong&gt; Is the password safe or not as a boolean or any data type that can be&#10;    converted and processed as a boolean. In the results you will see the converted results.&lt;/p&gt;&#10;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;&lt;strong&gt;Example:&lt;/strong&gt;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;checkio('A1213pokl') == False&#10;checkio('bAse730onE') == True&#10;checkio('asasasasasasasaas') == False&#10;checkio('QWERTYqwerty') == False&#10;checkio('123456123456') == False&#10;checkio('QwErTy911poqqqq') == True&#10;&lt;/pre&gt;&#10;&#10;&lt;/p&gt;&#10;&#10;&lt;br&gt;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    If you are worried about the security of your app or service, you can check your users' passwords for complexity.&#10;    You can use these skills to require that your users passwords meet more conditions (punctuations or unicode).&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&lt;strong&gt;Precondition&lt;/strong&gt;:&lt;br&gt;&#10;    re.match(&quot;[a-zA-Z0-9]+&quot;, password)&lt;br&gt;&#10;    0 &amp;lt; len(password) &amp;le; 64&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="1" />
+                    <option name="name" value="House Password" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="85" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def checkio(data: str) -&gt; bool:&#10;&#10;    #replace this for solution&#10;    return True or False&#10;&#10;#Some hints&#10;#Just check all conditions&#10;&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert checkio('A1213pokl') == False, &quot;1st example&quot;&#10;    assert checkio('bAse730onE4') == True, &quot;2nd example&quot;&#10;    assert checkio('asasasasasasasaas') == False, &quot;3rd example&quot;&#10;    assert checkio('QWERTYqwerty') == False, &quot;4th example&quot;&#10;    assert checkio('123456123456') == False, &quot;5th example&quot;&#10;    assert checkio('QwErTy911poqqqq') == True, &quot;6th example&quot;&#10;    print(&quot;Coding complete? Click 'Check' to review your tests and earn cool rewards!&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="#Your optional code here&#10;#You can import some modules or create additional functions&#10;&#10;&#10;def checkio(data: list) -&gt; list:&#10;    #Your code here&#10;    #It's main function. Don't remove this function&#10;    #It's used for auto-testing and must return a result for check.  &#10;&#10;    #replace this for solution&#10;    return data&#10;&#10;#Some hints&#10;#You can use list.count(element) method for counting.&#10;#Create new list with non-unique elements&#10;#Loop over original list&#10;&#10;&#10;if __name__ == &quot;__main__&quot;:&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert list(checkio([1, 2, 3, 1, 3])) == [1, 3, 1, 3], &quot;1st example&quot;&#10;    assert list(checkio([1, 2, 3, 4, 5])) == [], &quot;2nd example&quot;&#10;    assert list(checkio([5, 5, 5, 5, 5])) == [5, 5, 5, 5, 5], &quot;3rd example&quot;&#10;    assert list(checkio([10, 9, 10, 10, 9, 8])) == [10, 9, 10, 10, 9], &quot;4th example&quot;&#10;    print(&quot;It is all good. Let's check it now&quot;)&#10;" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;div class=&quot;story&quot;&gt;&#10;    &lt;div style=&quot;text-align: center&quot;&gt;&#10;        &lt;img src=&quot;https://static.checkio.org/media/task/media/115c9e71decd4329a8df694808fa74d0/robots.png&quot; style=&quot;max-height: 350px&quot;&gt;&#10;    &lt;/div&gt;&#10;    &lt;p&gt;&#10;        If you have 50 different plug types, appliances wouldn't be available and would be very&#10;        expensive. But once an electric outlet becomes standardized, many companies can design&#10;        appliances, and competition ensues, creating variety and better prices for consumers.&#10;        &lt;br&gt;&#10;        -- Bill Gates&#10;&#10;    &lt;/p&gt;&#10;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;    You are given a non-empty list of integers (X).&#10;    For this task, you should return a list consisting of only the non-unique elements in this list.&#10;    To do so you will need to remove all unique elements (elements which are contained in a given&#10;    list only once).&#10;    When solving this task, do not change the order of the list.&#10;    Example: [1, 2, 3, 1, 3] 1 and 3 non-unique elements and result will be [1, 3, 1, 3].&#10;&#10;&lt;/p&gt;&#10;&#10;&lt;p style=&quot;text-align: center;&quot;&gt;&#10;    &lt;img title=&quot;non-unique-elements&quot;&#10;         src=&quot;https://static.checkio.org/media/task/media/115c9e71decd4329a8df694808fa74d0/non-unique-elements.png&quot;&#10;         alt=&quot;non-unique-elements&quot;&#10;         style=&quot;max-height: 160px&quot;/&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&lt;strong&gt;Input: &lt;/strong&gt;A list of integers.&lt;/p&gt;&#10;&#10;&lt;p&gt;&lt;strong&gt;Output: &lt;/strong&gt;An iterable of integers.&lt;/p&gt;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt;&lt;/p&gt;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;checkio([1, 2, 3, 1, 3]) == [1, 3, 1, 3]&#10;checkio([1, 2, 3, 4, 5]) == []&#10;checkio([5, 5, 5, 5, 5]) == [5, 5, 5, 5, 5]&#10;checkio([10, 9, 10, 10, 9, 8]) == [10, 9, 10, 10, 9]&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;&lt;br&gt;&#10;&lt;p&gt;&#10;    &lt;strong&gt;How it is used:&lt;/strong&gt;&#10;    This mission will help you to understand how to manipulate arrays,&#10;    something that is the basis for solving more complex tasks.&#10;    The concept can be easily generalized for real world tasks.&#10;    For example: if you need to clarify statistics by removing low frequency elements (noise).&#10;&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    You can find out more about Python arrays in &lt;a href=&quot;https://py.checkio.org/blog/arrays-for-python/&quot;&gt;one of our articles featuring lists, tuples, array.array and numpy.array&lt;/a&gt;. &#10;&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&lt;strong&gt;Precondition:&lt;/strong&gt;&lt;br&gt;&#10;    0 &amp;lt; len(data) &amp;lt; 1000&lt;br&gt;&#10;&lt;/p&gt;&#10;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="2" />
+                    <option name="name" value="Non-unique Elements" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="179" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="#Your optional code here&#10;#You can import some modules or create additional functions&#10;&#10;&#10;def checkio(data: list) -&gt; list:&#10;    #Your code here&#10;    #It's main function. Don't remove this function&#10;    #It's used for auto-testing and must return a result for check.  &#10;&#10;    #replace this for solution&#10;    return data&#10;&#10;#Some hints&#10;#You can use list.count(element) method for counting.&#10;#Create new list with non-unique elements&#10;#Loop over original list&#10;&#10;&#10;if __name__ == &quot;__main__&quot;:&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert list(checkio([1, 2, 3, 1, 3])) == [1, 3, 1, 3], &quot;1st example&quot;&#10;    assert list(checkio([1, 2, 3, 4, 5])) == [], &quot;2nd example&quot;&#10;    assert list(checkio([5, 5, 5, 5, 5])) == [5, 5, 5, 5, 5], &quot;3rd example&quot;&#10;    assert list(checkio([10, 9, 10, 10, 9, 8])) == [10, 9, 10, 10, 9], &quot;4th example&quot;&#10;    print(&quot;It is all good. Let's check it now&quot;)&#10;" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def checkio(text: str) -&gt; str:&#13;&#10;&#13;&#10;    #replace this for solution&#13;&#10;    return 'a'&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    print(&quot;Example:&quot;)&#13;&#10;    print(checkio(&quot;Hello World!&quot;))&#13;&#10;&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert checkio(&quot;Hello World!&quot;) == &quot;l&quot;, &quot;Hello test&quot;&#13;&#10;    assert checkio(&quot;How do you do?&quot;) == &quot;o&quot;, &quot;O is most wanted&quot;&#13;&#10;    assert checkio(&quot;One&quot;) == &quot;e&quot;, &quot;All letter only once.&quot;&#13;&#10;    assert checkio(&quot;Oops!&quot;) == &quot;o&quot;, &quot;Don't forget about lower case.&quot;&#13;&#10;    assert checkio(&quot;AAaooo!!!!&quot;) == &quot;a&quot;, &quot;Only letters.&quot;&#13;&#10;    assert checkio(&quot;abe&quot;) == &quot;a&quot;, &quot;The First.&quot;&#13;&#10;    print(&quot;Start the long test&quot;)&#13;&#10;    assert checkio(&quot;a&quot; * 9000 + &quot;b&quot; * 1000) == &quot;a&quot;, &quot;Long.&quot;&#13;&#10;    print(&quot;The local tests are done.&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;div style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/0a271e6be5594c78919b29d4c0e58145/title.png&quot; style=&quot;max-height: 350px&quot;&gt;&#10;&lt;/div&gt;&#10;&lt;p&gt;&#10;    You are given a text, which contains different english letters and punctuation symbols.&#10;    You should find the most frequent letter in the text. The letter returned must be in lower case.&lt;br&gt;&#10;    While checking for the most wanted letter, casing does not matter, so for the purpose of your search,&#10;    &quot;A&quot;&amp;nbsp;==&amp;nbsp;&quot;a&quot;.&#10;    Make sure you do not count punctuation symbols, digits and whitespaces, only letters.&#10;&lt;/p&gt;&#10;&lt;p&gt;&#10;    If you have &lt;strong&gt;two or more letters with the same frequency&lt;/strong&gt;,&#10;    then return the letter which comes first in the latin alphabet.&#10;    For example -- &quot;one&quot; contains &quot;o&quot;, &quot;n&quot;, &quot;e&quot; only once for each, thus we choose &quot;e&quot;.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; A text for analysis as a string.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; The most frequent letter in lower case as a string.&#10;&lt;/p&gt;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;    &lt;pre class=&quot;brush: python&quot;&gt;&#10;checkio(&quot;Hello World!&quot;) == &quot;l&quot;&#10;checkio(&quot;How do you do?&quot;) == &quot;o&quot;&#10;checkio(&quot;One&quot;) == &quot;e&quot;&#10;checkio(&quot;Oops!&quot;) == &quot;o&quot;&#10;checkio(&quot;AAaooo!!!!&quot;) == &quot;a&quot;&#10;checkio(&quot;abe&quot;) == &quot;a&quot;&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    For most decryption tasks you need to know the frequency of occurrence for various letters in a section of text.&#10;    For example: we can easily crack a simple addition or substitution cipher if we know the frequency in which letters appear.&#10;    This is interesting stuff for language experts!&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;&lt;strong&gt;Precondition&lt;/strong&gt;:&lt;br&gt;&#10;    A text contains only ASCII symbols.&lt;br&gt;&#10;    0 &amp;lt; len(text) &amp;le; 10&lt;sup&gt;5&lt;/sup&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;!--&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How to use TryIt: &lt;/strong&gt;&lt;br&gt;&#10;    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;//www.youtube.com/embed/yJUA5qN898E&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;&#10;&lt;/p&gt;&#10;--&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="3" />
+                    <option name="name" value="The Most Wanted Letter" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="218" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def checkio(text: str) -&gt; str:&#10;&#10;    #replace this for solution&#10;    return 'a'&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(checkio(&quot;Hello World!&quot;))&#10;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert checkio(&quot;Hello World!&quot;) == &quot;l&quot;, &quot;Hello test&quot;&#10;    assert checkio(&quot;How do you do?&quot;) == &quot;o&quot;, &quot;O is most wanted&quot;&#10;    assert checkio(&quot;One&quot;) == &quot;e&quot;, &quot;All letter only once.&quot;&#10;    assert checkio(&quot;Oops!&quot;) == &quot;o&quot;, &quot;Don't forget about lower case.&quot;&#10;    assert checkio(&quot;AAaooo!!!!&quot;) == &quot;a&quot;, &quot;Only letters.&quot;&#10;    assert checkio(&quot;abe&quot;) == &quot;a&quot;, &quot;The First.&quot;&#10;    print(&quot;Start the long test&quot;)&#10;    assert checkio(&quot;a&quot; * 9000 + &quot;b&quot; * 1000) == &quot;a&quot;, &quot;Long.&quot;&#10;    print(&quot;The local tests are done.&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="from typing import List&#13;&#10;&#13;&#10;def checkio(game_result: List[str]) -&gt; str:&#13;&#10;    return &quot;D&quot; or &quot;X&quot; or &quot;O&quot;&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    print(&quot;Example:&quot;)&#13;&#10;    print(checkio([&quot;X.O&quot;,&#13;&#10;                   &quot;XX.&quot;,&#13;&#10;                   &quot;XOO&quot;]))&#13;&#10;&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert checkio([&#13;&#10;        &quot;X.O&quot;,&#13;&#10;        &quot;XX.&quot;,&#13;&#10;        &quot;XOO&quot;]) == &quot;X&quot;, &quot;Xs wins&quot;&#13;&#10;    assert checkio([&#13;&#10;        &quot;OO.&quot;,&#13;&#10;        &quot;XOX&quot;,&#13;&#10;        &quot;XOX&quot;]) == &quot;O&quot;, &quot;Os wins&quot;&#13;&#10;    assert checkio([&#13;&#10;        &quot;OOX&quot;,&#13;&#10;        &quot;XXO&quot;,&#13;&#10;        &quot;OXX&quot;]) == &quot;D&quot;, &quot;Draw&quot;&#13;&#10;    assert checkio([&#13;&#10;        &quot;O.X&quot;,&#13;&#10;        &quot;XX.&quot;,&#13;&#10;        &quot;XOO&quot;]) == &quot;X&quot;, &quot;Xs wins again&quot;&#13;&#10;    print(&quot;Coding complete? Click 'Check' to review your tests and earn cool rewards!&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;div style=&quot;text-align: center&quot;&gt;&#10;        &lt;img src=&quot;https://static.checkio.org/media/task/media/4abe068a7ce44b3a86828a8e17cad1b4/title.png&quot; style=&quot;max-height: 530px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;    Tic-Tac-Toe, sometimes also known as Xs and Os, is a game for two players&#10;    (X and O) who take turns marking the spaces in a 3×3 grid.&#10;    The player who succeeds in placing three respective marks in a horizontal, vertical, or diagonal rows (NW-SE and&#10;    NE-SW) wins the game.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    But we will not be playing this game. You will be the referee for this games results. You are given a result of a&#10;    game and you must determine if the game ends in a win or a draw as well as who will be the winner. Make sure to&#10;    return &quot;X&quot;&#10;    if the X-player wins and &quot;O&quot; if the O-player wins. If the game is a draw, return &quot;D&quot;.&#10;&lt;/p&gt;&#10;&#10;&lt;p style=&quot;text-align: center;&quot;&gt;&#10;    &lt;img title=&quot;x-o-referee&quot; src=&quot;https://static.checkio.org/media/task/media/4abe068a7ce44b3a86828a8e17cad1b4/x-o-referee.png&quot; alt=&quot;x-o-referee&quot; style=&quot;max-height: 325px&quot;/&gt;&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;&#10;    A game's result is presented as a list of strings, where &quot;X&quot; and &quot;O&quot; are players' marks and &quot;.&quot; is the empty cell.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; A game result as a list of strings (unicode).&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; &quot;X&quot;, &quot;O&quot; or &quot;D&quot; as a string.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;checkio([&#10;    &quot;X.O&quot;,&#10;    &quot;XX.&quot;,&#10;    &quot;XOO&quot;]) == &quot;X&quot;&#10;checkio([&#10;    &quot;OO.&quot;,&#10;    &quot;XOX&quot;,&#10;    &quot;XOX&quot;]) == &quot;O&quot;&#10;checkio([&#10;    &quot;OOX&quot;,&#10;    &quot;XXO&quot;,&#10;    &quot;OXX&quot;]) == &quot;D&quot;&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    The concepts in this task will help you when iterating data types.&#10;    They can  also be used in game algorithms, allowing you to know how to check results.&#10;&#10;&lt;/p&gt;&#10;&#10;&lt;!--&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How to use TryIt: &lt;/strong&gt;&lt;br&gt;&#10;    &lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;//www.youtube.com/embed/fUFgb_LU2z4&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;&#10;&lt;/p&gt;&#10;--&gt;&#10;&#10;&lt;p&gt;&lt;strong&gt;Precondition:&lt;/strong&gt;&lt;br&gt;&#10;    There is either one winner or a draw.&lt;br&gt;&#10;    len(game_result) == 3&lt;br&gt;&#10;    all(len(row) == 3 for row in game_result)&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="4" />
+                    <option name="name" value="Xs and Os Referee" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="219" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="from typing import List&#10;&#10;def checkio(game_result: List[str]) -&gt; str:&#10;    return &quot;D&quot; or &quot;X&quot; or &quot;O&quot;&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(checkio([&quot;X.O&quot;,&#10;                   &quot;XX.&quot;,&#10;                   &quot;XOO&quot;]))&#10;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert checkio([&#10;        &quot;X.O&quot;,&#10;        &quot;XX.&quot;,&#10;        &quot;XOO&quot;]) == &quot;X&quot;, &quot;Xs wins&quot;&#10;    assert checkio([&#10;        &quot;OO.&quot;,&#10;        &quot;XOX&quot;,&#10;        &quot;XOX&quot;]) == &quot;O&quot;, &quot;Os wins&quot;&#10;    assert checkio([&#10;        &quot;OOX&quot;,&#10;        &quot;XXO&quot;,&#10;        &quot;OXX&quot;]) == &quot;D&quot;, &quot;Draw&quot;&#10;    assert checkio([&#10;        &quot;O.X&quot;,&#10;        &quot;XX.&quot;,&#10;        &quot;XOO&quot;]) == &quot;X&quot;, &quot;Xs wins again&quot;&#10;    print(&quot;Coding complete? Click 'Check' to review your tests and earn cool rewards!&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def safe_pawns(pawns: set) -&gt; int:&#13;&#10;    return 0&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert safe_pawns({&quot;b4&quot;, &quot;d4&quot;, &quot;f4&quot;, &quot;c3&quot;, &quot;e3&quot;, &quot;g5&quot;, &quot;d2&quot;}) == 6&#13;&#10;    assert safe_pawns({&quot;b4&quot;, &quot;c4&quot;, &quot;d4&quot;, &quot;e4&quot;, &quot;f4&quot;, &quot;g4&quot;, &quot;e5&quot;}) == 1&#13;&#10;    print(&quot;Coding complete? Click 'Check' to review your tests and earn cool rewards!&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/aea94b197081464ca1748e4562b8fbae/title.png&quot; style=&quot;max-height: 350px&quot;&gt;&#10;&lt;/div&gt;&#10;&lt;p&gt;&#10;    Almost everyone in the world knows about the ancient game &lt;a href=&quot;http://en.wikipedia.org/wiki/Chess&quot;&gt;Chess&lt;/a&gt;&#10;    and has at least a basic understanding of its rules.&#10;    It has various units with a wide range of movement patterns allowing&#10;    for a huge number of possible different game positions (for example&#10;    &lt;a href=&quot;http://oeis.org/A048987&quot;&gt;Number of possible chess games at the end of the n-th plies.&lt;/a&gt;)&#10;    For this mission, we will examine the movements and behavior of chess pawns.&#10;&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;&#10;    Chess is a two-player strategy game played on a checkered game board laid out in eight rows&#10;    (called ranks and denoted with numbers 1 to 8) and&#10;    eight columns (called files and denoted with letters a to h) of squares.&#10;    Each square of the chessboard is identified by a unique coordinate pair&#10;    — a letter and a number (ex, &quot;a1&quot;, &quot;h8&quot;, &quot;d6&quot;).&#10;    For this mission we only need to concern ourselves with pawns.&#10;    A pawn may capture an opponent's piece on a square diagonally in front of it on an adjacent file,&#10;    by moving to that square. For white pawns the front squares are squares with greater row number &#10;    than the square they currently occupy.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    A pawn is generally a weak unit, but we have 8 of them which we can use to build a pawn defense wall.&#10;    With this strategy, one pawn defends the others.&#10;    A pawn is safe if another pawn can capture a unit on that square.&#10;    We have several white pawns on the chess board and only white pawns.&#10;    You should design your code to find how many pawns are safe.&#10;&lt;/p&gt;&#10;&#10;&lt;p style=&quot;text-align: center;&quot;&gt;&#10;    &lt;img class=&quot;for_info_only&quot; title=&quot;pawns&quot; src=&quot;https://static.checkio.org/media/task/media/aea94b197081464ca1748e4562b8fbae/pawns.png&quot; alt=&quot;pawns&quot; style=&quot;max-height:260px&quot;/&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    You are given a set of square coordinates where we have placed white pawns.&#10;    You should count how many pawns are safe.&#10;&lt;/p&gt;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Placed pawns coordinates as a set of strings.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; The number of safe pawns as a integer.&#10;&lt;/p&gt;&#10;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;    &lt;pre class=&quot;brush: python&quot;&gt;&#10;safe_pawns({&quot;b4&quot;, &quot;d4&quot;, &quot;f4&quot;, &quot;c3&quot;, &quot;e3&quot;, &quot;g5&quot;, &quot;d2&quot;}) == 6&#10;safe_pawns({&quot;b4&quot;, &quot;c4&quot;, &quot;d4&quot;, &quot;e4&quot;, &quot;f4&quot;, &quot;g4&quot;, &quot;e5&quot;}) == 1&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    For a game AI one of the important tasks is the ability to estimate game state.&#10;    This concept will show how you can do this on the simple chess figures positions.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Precondition:&lt;/strong&gt;&lt;br&gt;&#10;    0 &amp;lt; pawns &amp;le; 8&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="5" />
+                    <option name="name" value="Pawn Brotherhood" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="343" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def safe_pawns(pawns: set) -&gt; int:&#10;    return 0&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert safe_pawns({&quot;b4&quot;, &quot;d4&quot;, &quot;f4&quot;, &quot;c3&quot;, &quot;e3&quot;, &quot;g5&quot;, &quot;d2&quot;}) == 6&#10;    assert safe_pawns({&quot;b4&quot;, &quot;c4&quot;, &quot;d4&quot;, &quot;e4&quot;, &quot;f4&quot;, &quot;g4&quot;, &quot;e5&quot;}) == 1&#10;    print(&quot;Coding complete? Click 'Check' to review your tests and earn cool rewards!&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def count_words(text: str, words: set) -&gt; int:&#13;&#10;    return 0&#13;&#10;&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert count_words(&quot;How aresjfhdskfhskd you?&quot;, {&quot;how&quot;, &quot;are&quot;, &quot;you&quot;, &quot;hello&quot;}) == 3, &quot;Example&quot;&#13;&#10;    assert count_words(&quot;Bananas, give me bananas!!!&quot;, {&quot;banana&quot;, &quot;bananas&quot;}) == 2, &quot;BANANAS!&quot;&#13;&#10;    assert count_words(&quot;Lorem ipsum dolor sit amet, consectetuer adipiscing elit.&quot;,&#13;&#10;                       {&quot;sum&quot;, &quot;hamlet&quot;, &quot;infinity&quot;, &quot;anything&quot;}) == 1, &quot;Weird text&quot;&#13;&#10;    print(&quot;Coding complete? Click 'Check' to review your tests and earn cool rewards!&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;style&gt;&#10;    p.quote-source {&#10;        float: right;&#10;        font-size: 10px;&#10;    }&#10;&lt;/style&gt;&#10;&#10;&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/3ccf7a239cbd4b528be6faea21394a4e/title.png&quot; style=&quot;max-height: 600px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;div class=&quot;story&quot;&gt;&#10;    &lt;p&gt;&#10;        ... If I let my fingers wander idly over the keys of a typewriter it might happen that my screed made an&#10;        intelligible sentence. If an army of monkeys were strumming on typewriters they might write all the books in the&#10;        British Museum. The chance of their doing so is decidedly more favourable than the chance of the molecules&#10;        returning to one half of the vessel.&#10;    &lt;/p&gt;&#10;&#10;    &lt;p class=&quot;quote-source&quot;&gt;&#10;        A. S. Eddington. The Nature of the Physical World: The Gifford Lectures, 1927.&#10;    &lt;/p&gt;&#10;&#10;    &lt;div style=&quot;clear: right;&quot;&gt;&lt;/div&gt;&#10;    &lt;p&gt;&lt;/p&gt;&#10;&#10;    &lt;p&gt;&quot;Ford!&quot; he said, &quot;there's an infinite number of monkeys outside who want to talk to us about this script for&#10;        Hamlet they've worked out.&quot;&lt;/p&gt;&#10;&#10;    &lt;p class=&quot;quote-source&quot;&gt;&#10;        Douglas Adams. The Hitchhikers' Guide to the Galaxy.&#10;    &lt;/p&gt;&#10;&#10;&lt;/div&gt;&#10;&lt;p&gt;&#10;    &lt;a href=&quot;http://en.wikipedia.org/wiki/Infinite_monkey_theorem&quot;&gt;The infinite monkey theorem&lt;/a&gt;&#10;    states that a monkey hitting keys at random on a typewriter keyboard for an infinite&#10;    length of time will almost surely type out a given text, such as the complete works of&#10;    &lt;a href=&quot;http://en.wikipedia.org/wiki/John_Wallis&quot;&gt;John Wallis&lt;/a&gt;, or more likely,&#10;    a &lt;a href=&quot;http://en.wikipedia.org/wiki/Dan_brown&quot;&gt;Dan Brown&lt;/a&gt; novel.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    Let's suppose our monkeys are typing, typing and typing,&#10;    and have produced a wide variety of short text segments. Let's try to check them for sensible word inclusions.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    You are given some text potentially including sensible words. You should count how many words are included in the&#10;    given text. A word should be whole and may be a part of other word. Text letter case does not matter. Words are&#10;    given in lowercase and don't repeat. If a word appears several times in the text, it should be counted only once.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;&#10;    For example,&#10;    text - &quot;&lt;em&gt;How&lt;/em&gt; &lt;em&gt;are&lt;/em&gt;sjfhdskfhskd &lt;em&gt;you&lt;/em&gt;?&quot;, words - (&quot;how&quot;, &quot;are&quot;, &quot;you&quot;, &quot;hello&quot;).&#10;    The result will be 3.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Two arguments.&#10;    A text as a string (unicode for py2) and words as a set of strings (unicode for py2).&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; The number of words in the text as an integer.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;&lt;strong&gt;Example:&lt;/strong&gt;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;count_words(&quot;How aresjfhdskfhskd you?&quot;, {&quot;how&quot;, &quot;are&quot;, &quot;you&quot;, &quot;hello&quot;}) == 3&#10;count_words(&quot;Bananas, give me bananas!!!&quot;, {&quot;banana&quot;, &quot;bananas&quot;}) == 2&#10;count_words(&quot;Lorem ipsum dolor sit amet, consectetuer adipiscing elit.&quot;,&#10;            {&quot;sum&quot;, &quot;hamlet&quot;, &quot;infinity&quot;, &quot;anything&quot;}) == 1&#10;&lt;/pre&gt;&#10;&#10;&lt;/p&gt;&#10;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    Python is a useful and powerful language for text processing.&#10;    This mission is only a simple example of the kind of text searching tools you could build.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Precondition:&lt;/strong&gt;&lt;br&gt;&#10;    0 &amp;lt; len(text) &amp;le; 256&lt;br&gt;&#10;    all(3 &amp;le; len(w) and w.islower() and w.isalpha for w in words)&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="6" />
+                    <option name="name" value="Monkey Typing" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="346" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def count_words(text: str, words: set) -&gt; int:&#10;    return 0&#10;&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert count_words(&quot;How aresjfhdskfhskd you?&quot;, {&quot;how&quot;, &quot;are&quot;, &quot;you&quot;, &quot;hello&quot;}) == 3, &quot;Example&quot;&#10;    assert count_words(&quot;Bananas, give me bananas!!!&quot;, {&quot;banana&quot;, &quot;bananas&quot;}) == 2, &quot;BANANAS!&quot;&#10;    assert count_words(&quot;Lorem ipsum dolor sit amet, consectetuer adipiscing elit.&quot;,&#10;                       {&quot;sum&quot;, &quot;hamlet&quot;, &quot;infinity&quot;, &quot;anything&quot;}) == 1, &quot;Weird text&quot;&#10;    print(&quot;Coding complete? Click 'Check' to review your tests and earn cool rewards!&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def long_repeat(line):&#13;&#10;    &quot;&quot;&quot;&#13;&#10;        length the longest substring that consists of the same char&#13;&#10;    &quot;&quot;&quot;&#13;&#10;    # your code here&#13;&#10;    return 0&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert long_repeat('sdsffffse') == 4, &quot;First&quot;&#13;&#10;    assert long_repeat('ddvvrwwwrggg') == 3, &quot;Second&quot;&#13;&#10;    assert long_repeat('abababaab') == 2, &quot;Third&quot;&#13;&#10;    assert long_repeat('') == 0, &quot;Empty&quot;&#13;&#10;    print('&quot;Run&quot; is good. How is &quot;Check&quot;?')" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;p&gt;&lt;i&gt;&lt;a href=&quot;https://py.checkio.org/forum/post/11382/4-mission-ideas-substrings/&quot;&gt;There are four substring missions&lt;/a&gt; that were born all in one day and you shouldn’t be needed more than one day to solve them. All of those mission can be simply solved by brute force, but is it always the best way to go? (you might not have access to all of those missions yet, but they are going to be available with more opened islands on the map).&lt;/i&gt;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    This mission is the first one of the series. Here you should find the length of the longest substring that consists of the same letter. For example, line &quot;aaabbcaaaa&quot; contains four substrings with the same letters &quot;aaa&quot;, &quot;bb&quot;,&quot;c&quot; and &quot;aaaa&quot;. The last substring is the longest one which makes it an answer.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; String.&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; Int. &#10;&lt;/p&gt;&#10;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;long_repeat('sdsffffse') == 4&#10;long_repeat('ddvvrwwwrggg') == 3&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="7" />
+                    <option name="name" value="Long Repeat" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="494" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def long_repeat(line):&#10;    &quot;&quot;&quot;&#10;        length the longest substring that consists of the same char&#10;    &quot;&quot;&quot;&#10;    # your code here&#10;    return 0&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert long_repeat('sdsffffse') == 4, &quot;First&quot;&#10;    assert long_repeat('ddvvrwwwrggg') == 3, &quot;Second&quot;&#10;    assert long_repeat('abababaab') == 2, &quot;Third&quot;&#10;    assert long_repeat('') == 0, &quot;Empty&quot;&#10;    print('&quot;Run&quot; is good. How is &quot;Check&quot;?')" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="from typing import List, Any&#13;&#10;&#13;&#10;&#13;&#10;def all_the_same(elements: List[Any]) -&gt; bool:&#13;&#10;    # your code here&#13;&#10;    return True&#13;&#10;&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    print(&quot;Example:&quot;)&#13;&#10;    print(all_the_same([1, 1, 1]))&#13;&#10;    &#13;&#10;    # These &quot;asserts&quot; are used for self-checking and not for an auto-testing&#13;&#10;    assert all_the_same([1, 1, 1]) == True&#13;&#10;    assert all_the_same([1, 2, 1]) == False&#13;&#10;    assert all_the_same(['a', 'a', 'a']) == True&#13;&#10;    assert all_the_same([]) == True&#13;&#10;    assert all_the_same([1]) == True&#13;&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;!-- Describe task in general --&gt;&#10;&#10;&lt;p&gt;&#10;    In this mission you should check if all elements in the given list are equal.&#10;&lt;/p&gt;&#10;&#10;&lt;!-- Explain input and output values --&gt;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; List.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; Bool. &#10;&lt;/p&gt;&#10;&#10;&#10;&lt;!-- Put some usage examples --&gt;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;all_the_same([1, 1, 1]) == True&#10;all_the_same([1, 2, 1]) == False&#10;all_the_same(['a', 'a', 'a']) == True&#10;all_the_same([]) == True&#10;&lt;/pre&gt;&#10;&#10;&lt;/div&gt;&#10;&lt;p&gt;&lt;i&gt;The idea for this mission was found on &lt;a href=&quot;https://dbader.org/&quot;&gt;Python Tricks series by Dan Bader&lt;/a&gt;&lt;/i&gt;&lt;/p&gt;&#10;&lt;!-- Here you can explain how it can be used in development and what is usage of this. --&gt;&#10;&lt;!-- The section is optional --&gt;&#10;&#10;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Precondition:&lt;/strong&gt;&#10;    &lt;i&gt;all elements of the input list are hashable&lt;/i&gt;&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="8" />
+                    <option name="name" value="All the Same" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="520" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="from typing import List, Any&#10;&#10;&#10;def all_the_same(elements: List[Any]) -&gt; bool:&#10;    # your code here&#10;    return True&#10;&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(all_the_same([1, 1, 1]))&#10;    &#10;    # These &quot;asserts&quot; are used for self-checking and not for an auto-testing&#10;    assert all_the_same([1, 1, 1]) == True&#10;    assert all_the_same([1, 2, 1]) == False&#10;    assert all_the_same(['a', 'a', 'a']) == True&#10;    assert all_the_same([]) == True&#10;    assert all_the_same([1]) == True&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def to_encrypt(text, delta):&#13;&#10;    #replace this for solution&#13;&#10;    return text&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    print(&quot;Example:&quot;)&#13;&#10;    print(to_encrypt('abc', 10))&#13;&#10;&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert to_encrypt(&quot;a b c&quot;, 3) == &quot;d e f&quot;&#13;&#10;    assert to_encrypt(&quot;a b c&quot;, -3) == &quot;x y z&quot;&#13;&#10;    assert to_encrypt(&quot;simple text&quot;, 16) == &quot;iycfbu junj&quot;&#13;&#10;    assert to_encrypt(&quot;important text&quot;, 10) == &quot;swzybdkxd dohd&quot;&#13;&#10;    assert to_encrypt(&quot;state secret&quot;, -13) == &quot;fgngr frperg&quot;&#13;&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;!-- Describe task in general --&gt;&#10;&#10;&lt;p&gt;&#10;This mission is the part of the set. Another one - &lt;a href='https://py.checkio.org/en/mission/caesar-cipher-decryptor/'&gt;Caesar cipher decriptor&lt;/a&gt;.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    Your mission is to encrypt a secret message (text only, without special chars like &quot;!&quot;, &quot;&amp;&quot;, &quot;?&quot; etc.) using Caesar cipher where each letter of input text is replaced by another that stands at a fixed distance. For example (&quot;a b c&quot;, 3) == &quot;d e f&quot;&#10;&lt;/p&gt;&#10;&#10;&lt;p style=&quot;text-align: center;&quot;&gt;&#10;    &lt;img  title=&quot;Caesar encryptor&quot; src=&quot;https://static.checkio.org/media/task/media/4732ed3675884800a345142a7d3607ba/drawing.png&quot; alt=&quot;example&quot; style=&quot;max-height: 80px&quot;/&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;!-- Explain input and output values --&gt;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; A secret message as a string (lowercase letters only and white spaces)&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; The same string, but encrypted&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;!-- Put some usage examples --&gt;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;&lt;p&gt;&#10;&lt;strong&gt;Example:&lt;/strong&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;to_encrypt(&quot;a b c&quot;, 3) == &quot;d e f&quot;&#10;to_encrypt(&quot;a b c&quot;, -3) == &quot;x y z&quot;&#10;to_encrypt(&quot;simple text&quot;, 16) == &quot;iycfbu junj&quot;&#10;to_encrypt(&quot;important text&quot;, 10) == &quot;swzybdkxd dohd&quot;&#10;to_encrypt(&quot;state secret&quot;, -13) == &quot;fgngr frperg&quot;&#10;&lt;/pre&gt;&#10;&#10;&lt;/div&gt;&#10;&#10;&lt;!-- Here you can explain how it can be used in development and what is usage of this. --&gt;&#10;&lt;!-- The section is optional --&gt;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    For cryptography and to save important information.&#10;&lt;/p&gt;&#10;&#10;&lt;!-- Here you can explain some constraints for input--&gt;&#10;&lt;!-- The section is optional --&gt;&#10;&lt;p&gt;&lt;strong&gt;Precondition&lt;/strong&gt;:&lt;br&gt;&#10;    0 &lt; len(text) &lt; 50&lt;br&gt;&#10;    -26 &lt; delta &lt; 26&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="9" />
+                    <option name="name" value="Caesar Cipher (encryptor)" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="531" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def to_encrypt(text, delta):&#10;    #replace this for solution&#10;    return text&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(to_encrypt('abc', 10))&#10;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert to_encrypt(&quot;a b c&quot;, 3) == &quot;d e f&quot;&#10;    assert to_encrypt(&quot;a b c&quot;, -3) == &quot;x y z&quot;&#10;    assert to_encrypt(&quot;simple text&quot;, 16) == &quot;iycfbu junj&quot;&#10;    assert to_encrypt(&quot;important text&quot;, 10) == &quot;swzybdkxd dohd&quot;&#10;    assert to_encrypt(&quot;state secret&quot;, -13) == &quot;fgngr frperg&quot;&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def sun_angle(time):&#13;&#10;    #replace this for solution&#13;&#10;    return time&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    print(&quot;Example:&quot;)&#13;&#10;    print(sun_angle(&quot;07:00&quot;))&#13;&#10;&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert sun_angle(&quot;07:00&quot;) == 15&#13;&#10;    assert sun_angle(&quot;01:23&quot;) == &quot;I don't see the sun!&quot;&#13;&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;!-- Describe task in general --&gt;&#10;&#10;&lt;p&gt;&#10;    Every true traveler must know how to do 3 things: fix the fire, find the water and extract useful information from the nature around him. Programming won't help you with the fire and water, but when it comes to the information extraction - it might be just the thing you need.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    Your task is to find the angle of the sun above the horizon knowing the time of the day. Input data: the sun rises in the East at 6:00 AM, which corresponds to the angle of 0 degrees. At 12:00 PM the sun reaches its zenith, which means that the angle equals 90 degrees. 6:00 PM is the time of the sunset so the angle is 180 degrees. If the input will be the time of the night (before 6:00 AM or after 6:00 PM), your function should return - &quot;I don't see the sun!&quot;.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p style=&quot;text-align: center;&quot;&gt;&#10;    &lt;img  title=&quot;Sun angle&quot; src=&quot;https://static.checkio.org/media/task/media/70b4ef56a4f948218c1c218f08f77063/sun.png&quot; alt=&quot;example&quot; style=&quot;max-height: 400px&quot;&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;!-- Explain input and output values --&gt;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; The time of the day.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; The angle of the sun, rounded to 2 decimal places.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;!-- Put some usage examples --&gt;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;&lt;p&gt;&#10;&lt;strong&gt;Example:&lt;/strong&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;sun_angle(&quot;07:00&quot;) == 15&#10;sun_angle(&quot;12:15&quot;] == 93.75&#10;sun_angle(&quot;01:23&quot;) == &quot;I don't see the sun!&quot;&lt;/pre&gt;&#10;&#10;&lt;/div&gt;&#10;&#10;&lt;!-- Here you can explain how it can be used in development and what is usage of this. --&gt;&#10;&lt;!-- The section is optional --&gt;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    One day it can save your life, if you'll be lost far away from civilization.&#10;&lt;/p&gt;&#10;&#10;&lt;!-- Here you can explain some constraints for input--&gt;&#10;&lt;!-- The section is optional --&gt;&#10;&lt;p&gt;&lt;strong&gt;Precondition&lt;/strong&gt;:&lt;br&gt;&#10;    00:00 &lt;= time &lt;= 23:59&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="10" />
+                    <option name="name" value="Sun Angle" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="539" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def sun_angle(time):&#10;    #replace this for solution&#10;    return time&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(sun_angle(&quot;07:00&quot;))&#10;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert sun_angle(&quot;07:00&quot;) == 15&#10;    assert sun_angle(&quot;01:23&quot;) == &quot;I don't see the sun!&quot;&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="class Warrior:&#13;&#10;    pass&#13;&#10;&#13;&#10;class Knight(Warrior):&#13;&#10;    pass&#13;&#10;&#13;&#10;def fight(unit_1, unit_2):&#13;&#10;    return 0&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;&#13;&#10;    chuck = Warrior()&#13;&#10;    bruce = Warrior()&#13;&#10;    carl = Knight()&#13;&#10;    dave = Warrior()&#13;&#10;    mark = Warrior()&#13;&#10;&#13;&#10;    assert fight(chuck, bruce) == True&#13;&#10;    assert fight(dave, carl) == False&#13;&#10;    assert chuck.is_alive == True&#13;&#10;    assert bruce.is_alive == False&#13;&#10;    assert carl.is_alive == True&#13;&#10;    assert dave.is_alive == False&#13;&#10;    assert fight(carl, mark) == False&#13;&#10;    assert carl.is_alive == False&#13;&#10;&#13;&#10;    print(&quot;Coding complete? Let's try tests!&quot;)" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;div class=&quot;story for_info_only&quot;&gt;&#10;One day, on a typical spring afternoon, Sir Ronald has been looking around his land, riding a horse. Nothing foretold troubles, when suddenly Sir Ronald heard a scream for help, coming from somewhere nearby: &lt;br&gt;&#10;- &quot;Help! Help!&quot; - shouted a piercing young girl's voice. &lt;br&gt;&#10;As a true knight, Sir Ronald couldn’t stay away and went to the lady’s rescue. Rushing in the direction from which the cry came, he saw a carriage. The girl peered out the window hoping to see someone who could help her. &lt;br&gt;&#10;- &quot;Stop!&quot;- ordered Sir Ronald to the coachman. - &quot;By what right are you on my land?&quot; &lt;br&gt;&#10;The coachman didn’t get a chance to open his mouth, as his master came out of the carriage. &lt;br&gt;&#10;- &quot;My respects, noble sir. I had no idea that this land is yours. My bride and I were just going to my estate, not wanting to give anyone any trouble. &quot;&lt;br&gt;&#10;- &quot;A flat-out lie! I'm not his bride!&quot; - the girl exclaimed from the window. &lt;br&gt;&#10;- &quot;Explain yourself, Sir. What does that mean?&quot;,- said Sir Ronald. &lt;br&gt;&#10;- &quot;Of course. The king of a neighboring country has promised his daughter and half his kingdom to the one who’ll save her from the outlaws who took her. I’ve defeated those bastards and now I’m taking the princess to her father. &quot;&lt;br&gt;&#10;- &quot;It's not true! They were in on it together They’ve kidnapped me on his order! I saw how he paid them a bag of gold!&quot; - The princess didn’t stop taking for a second, trying to quickly describe the situation to the miraculously appeared savior. &lt;br&gt;&#10;- &quot;Such behavior is unworthy of a knight! Prepare to die!&quot;,- exclaimed Sir Ronald, drawing his sword.&#10;- &quot;Ha-ha-ha, simple-hearted nobleman! We’ll see about that...&quot;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;I'm sure that many of you have some experience with computer games. But have you ever wanted to change the game so that the characters or a game world would be more consistent with your idea of the perfect game? Probably, yes.&lt;br&gt;&#10;In this mission (and in several subsequent ones, related to it) you’ll have a chance &quot;to sit in the developer's chair&quot; and create the logic of a simple game about battles.&lt;br&gt;&#10;Let's start with the simple task - one-on-one duel. You need to create the class &lt;strong&gt;Warrior&lt;/strong&gt;, the instances of which will have 2 parameters - health (equal to 50 points) and attack (equal to 5 points), and 1 property - is_alive, which can be True (if warrior's health is &gt; 0) or False (in the other case). In addition you have to create the second unit type - Knight, which should be the subclass of the Warrior but have the increased attack - 7. Also you have to create a function &lt;strong&gt;fight()&lt;/strong&gt;, which will initiate the duel between 2 warriors and define the strongest of them. The duel occurs according to the following principle:&lt;br&gt;&#10;every turn one of the warriors will hit another one and the last will lose his health in the same value as the attack of the first warrior. After that, the second warrior will do the same to the first one.&lt;br&gt;&#10;If in the end of the turn the first warrior has &gt; 0 health and the other one doesn’t, the function should return &lt;strong&gt;True&lt;/strong&gt;, in the other case it should return &lt;strong&gt;False&lt;/strong&gt;.&#10;&lt;/p&gt;&#10;&#10;&lt;p class=&quot;for_info_only&quot; style=&quot;text-align: center;&quot;&gt;&#10;    &lt;img  title=&quot;fight&quot; src=&quot;https://static.checkio.org/media/task/media/4e0dd625813446a595c6f45e5033d355/warrior.png&quot; alt=&quot;example&quot; style=&quot;max-height: 600px&quot;/&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;&lt;p&gt;&#10;&lt;strong&gt;Example&lt;/strong&gt;:&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;chuck = Warrior()&#10;bruce = Warrior()&#10;carl = Knight()&#10;dave = Warrior()&#10;&#10;fight(chuck, bruce) == True&#10;fight(dave, carl) == False&#10;chuck.is_alive == True&#10;bruce.is_alive == False&#10;carl.is_alive == True&#10;dave.is_alive == False&#10;&lt;/pre&gt;&#10;&lt;/p&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt;The warriors.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt;The result of the duel (True or False).&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    For computer games development.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Precondition:&lt;/strong&gt;&#10;    2 types of units&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="11" />
+                    <option name="name" value="The Warriors" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="566" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="class Warrior:&#10;    pass&#10;&#10;class Knight(Warrior):&#10;    pass&#10;&#10;def fight(unit_1, unit_2):&#10;    return 0&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;&#10;    chuck = Warrior()&#10;    bruce = Warrior()&#10;    carl = Knight()&#10;    dave = Warrior()&#10;    mark = Warrior()&#10;&#10;    assert fight(chuck, bruce) == True&#10;    assert fight(dave, carl) == False&#10;    assert chuck.is_alive == True&#10;    assert bruce.is_alive == False&#10;    assert carl.is_alive == True&#10;    assert dave.is_alive == False&#10;    assert fight(carl, mark) == False&#10;    assert carl.is_alive == False&#10;&#10;    print(&quot;Coding complete? Let's try tests!&quot;)" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                </list>
+              </option>
+              <option name="unitId" value="0" />
+            </CheckiOStation>
+            <CheckiOStation>
+              <option name="customPresentableName" />
+              <option name="id" value="2" />
+              <option name="index" value="2" />
+              <option name="name" value="Elementary" />
+              <option name="stepikChangeStatus" value="Up to date" />
+              <option name="updateDate" value="0" />
+              <option name="taskList">
+                <list>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def mult_two(a, b):&#10;    # your code here&#10;    return None&#10;&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(mult_two(3, 2))&#10;    &#10;    # These &quot;asserts&quot; are used for self-checking and not for an auto-testing&#10;    assert mult_two(3, 2) == 6&#10;    assert mult_two(1, 0) == 0&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)&#10;" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;p&gt;&lt;i&gt;(at the top right of the mission description there always is a list of available translations)&lt;/i&gt;&lt;/p&gt;&#10;&#10;&lt;p&gt;This is an into mission, the purpose of which is to explain how to solve missions on CheckiO and how to get the most out of solving them. When the mission is solved, one more station become available for you, containing more complex missions.&lt;/p&gt;&#10;&#10;&lt;p&gt;So this mission is the easiest one. Write a function that will receive 2 numbers as input and it should return the multiplication of these 2 numbers.&lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Two arguments. Both are int&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; Int. &#10;&lt;/p&gt;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;mult_two(2, 3) == 6&#10;mult_two(1, 0) == 0&#10;&lt;/pre&gt;&#10;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&lt;b&gt;How does it work?:&lt;/b&gt;&lt;/p&gt;&#10;&#10;&lt;p&gt;When you start solving the initial code is always consists of an “empty” function (which you need to fill in as the solution) and asserts under this function. You should pay attention to is that your function should return values, and not to print them. &#10;&#10;&#10;That is, use the return command instead of the print function. &lt;a target=&quot;_blank&quot; target=&quot;_blank&quot; href=&quot;https://stackoverflow.com/questions/7129285/what-is-the-purpose-of-the-return-statement&quot;&gt;Check this short explanation.&lt;/a&gt;&#10;&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;The asserts after your function you can use in order to check yourself  by pressing the “Run” button (&lt;img style=&quot;height: 31px;vertical-align: bottom;&quot; src=&quot;https://static.checkio.org/media/task/media/02c64951715744de9e54c959e3d98def/btn_run.png&quot; /&gt;). CheckiO also uses several additional tests in order to check your solution when you click the “Check” button (&lt;img style=&quot;height: 31px;vertical-align: bottom;&quot; src=&quot;https://static.checkio.org/media/task/media/02c64951715744de9e54c959e3d98def/btn_check.png&quot; /&gt;).&lt;/p&gt;&#10;&#10;&lt;p&gt;If the solution didn’t pass the internal tests, the right panel will display an error message containing 3 items.&lt;/p&gt;&#10;&#10;&lt;ul&gt;&#10;&lt;li&gt;&lt;b&gt;Fail:&lt;/b&gt; - shows how your function was called.&lt;/li&gt;&#10;&lt;li&gt;&lt;b&gt;Your Result:&lt;/b&gt; - shows what it returned.&lt;/li&gt;&#10;&lt;li&gt;&lt;b&gt;Right Result:&lt;/b&gt; - what it should’ve returned.&lt;/li&gt;&#10;&lt;/ul&gt;&#10;&#10;&lt;p&gt;To solve the task the “empty” function must be replaced with the following code.&lt;/p&gt;&#10;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;def mult_two(a: int, b: int) -&gt; int:&#10;    return a*b&#10;&lt;/pre&gt;&#10;&#10;&#10;&lt;p&gt;Try to click “Check” button now. &lt;/p&gt;&#10;&#10;&#10;&lt;p&gt;If the solution passes all the tests, the congratulations should appear on the right panel along with a suggestion for the following action. (Yes, this is not the end of the story).&lt;/p&gt;&#10;&#10;&lt;ul&gt;&#10;&lt;li&gt;&lt;b&gt;View other solutions&lt;/b&gt; - when the task is solved, you can access the solutions of other players, which are divided into categories.&lt;/li&gt;&#10;&lt;li&gt;&lt;b&gt;Publish your solution&lt;/b&gt; - publish your own solution.&lt;/li&gt;&#10;&lt;li&gt;&lt;b&gt;Next Mission&lt;/b&gt; - go to the next mission.&lt;/li&gt;&#10;&lt;/ul&gt;&#10;&#10;&lt;p&gt;I’d recommend to go through the solutions of other players before publishing your own.&lt;/p&gt;&#10;&#10;&lt;p&gt;The last but not the least, some tasks at the end have a list of hints for solving. But since in this task we’ve already described how to solve, then in hints we’ll add some interesting facts about CheckiO&lt;/p&gt;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="1" />
+                    <option name="name" value="Multiply (Intro)" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="607" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def mult_two(a, b):&#10;    # your code here&#10;    return None&#10;&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(mult_two(3, 2))&#10;    &#10;    # These &quot;asserts&quot; are used for self-checking and not for an auto-testing&#10;    assert mult_two(3, 2) == 6&#10;    assert mult_two(1, 0) == 0&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)&#10;" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                </list>
+              </option>
+              <option name="unitId" value="0" />
+            </CheckiOStation>
+            <CheckiOStation>
+              <option name="customPresentableName" />
+              <option name="id" value="32" />
+              <option name="index" value="3" />
+              <option name="name" value="SendGrid" />
+              <option name="stepikChangeStatus" value="Up to date" />
+              <option name="updateDate" value="0" />
+              <option name="taskList">
+                <list>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def is_stressful(subj):&#13;&#10;    &quot;&quot;&quot;&#13;&#10;        recoognise stressful subject&#13;&#10;    &quot;&quot;&quot;&#13;&#10;    return False&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert is_stressful(&quot;Hi&quot;) == False, &quot;First&quot;&#13;&#10;    assert is_stressful(&quot;I neeed HELP&quot;) == True, &quot;Second&quot;&#13;&#10;    print('Done! Go Check it!')" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/59ce692dcb1e480abc9cf269cab468ec/title.png&quot; style=&quot;max-height: 296px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&lt;i&gt;Sofia has had a very stressful month and decided to take a vacation for a week. To avoid any stress during her vacation she wants to forward emails with a stressful subject line to Stephen.&lt;/i&gt;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    The function should recognise if a subject line is stressful. A stressful subject line means that all letters are in uppercase, and/or ends by at least 3 exclamation marks, and/or contains at least one of the following “red” words: &quot;help&quot;, &quot;asap&quot;, &quot;urgent&quot;. Any of those &quot;red&quot; words can be spelled in different ways - &quot;HELP&quot;, &quot;help&quot;, &quot;HeLp&quot;, &quot;H!E!L!P!&quot;, &quot;H-E-L-P&quot;, even in a very loooong way &quot;HHHEEEEEEEEELLP&quot;&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Subject line as a string.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; Boolean. &#10;&lt;/p&gt;&#10;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;is_stressful(&quot;Hi&quot;) == False&#10;is_stressful(&quot;I neeed HELP&quot;) == True&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Precondition:&lt;/strong&gt;&#10;    &lt;i&gt;Subject can be up to 100 letters&lt;/i&gt;&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="1" />
+                    <option name="name" value="Stressful Subject" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="474" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def is_stressful(subj):&#10;    &quot;&quot;&quot;&#10;        recoognise stressful subject&#10;    &quot;&quot;&quot;&#10;    return False&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert is_stressful(&quot;Hi&quot;) == False, &quot;First&quot;&#10;    assert is_stressful(&quot;I neeed HELP&quot;) == True, &quot;Second&quot;&#10;    print('Done! Go Check it!')" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def disconnected_users(net, users, source, crushes):&#13;&#10;    return 0&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    assert disconnected_users([&#13;&#10;        ['A', 'B'],&#13;&#10;        ['B', 'C'],&#13;&#10;        ['C', 'D']&#13;&#10;    ], {&#13;&#10;        'A': 10,&#13;&#10;        'B': 20,&#13;&#10;        'C': 30,&#13;&#10;        'D': 40&#13;&#10;    },&#13;&#10;        'A', ['C']) == 70, &quot;First&quot;&#13;&#10;&#13;&#10;    assert disconnected_users([&#13;&#10;        ['A', 'B'],&#13;&#10;        ['B', 'D'],&#13;&#10;        ['A', 'C'],&#13;&#10;        ['C', 'D']&#13;&#10;    ], {&#13;&#10;        'A': 10,&#13;&#10;        'B': 0,&#13;&#10;        'C': 0,&#13;&#10;        'D': 40&#13;&#10;    },&#13;&#10;        'A', ['B']) == 0, &quot;Second&quot;&#13;&#10;&#13;&#10;    assert disconnected_users([&#13;&#10;        ['A', 'B'],&#13;&#10;        ['A', 'C'],&#13;&#10;        ['A', 'D'],&#13;&#10;        ['A', 'E'],&#13;&#10;        ['A', 'F']&#13;&#10;    ], {&#13;&#10;        'A': 10,&#13;&#10;        'B': 10,&#13;&#10;        'C': 10,&#13;&#10;        'D': 10,&#13;&#10;        'E': 10,&#13;&#10;        'F': 10&#13;&#10;    },&#13;&#10;        'C', ['A']) == 50, &quot;Third&quot;&#13;&#10;&#13;&#10;    print('Done. Try to check now. There are a lot of other tests')" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/856915a43ad64d2ca04c28c441d8b6b6/title.png&quot; style=&quot;max-height: 294px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;Welcome to the GridLand. All the citizens here are connected through the global internal network because the main way for communication here is via email. Every new district of the city starts with building a node – center of the district. All citizens are connected to this node in order to send and receive emails. All nodes of GridLand are connected so one node can send emails between the connected nodes. In such a way, no matter how big the city is all users can send messages to each other as long as all of the nodes are connected.&lt;/p&gt;&#10; &#10;&lt;p&gt;The Mayor of GridLand is using this network to quickly send emergency emails to all citizens when necessary. But the system is not perfect. When one of city nodes gets crushed it may leave the citizens of this node district disconnected from these emergency emails. It may also leave districts around the crushed node disconnected if their nodes do not have other ways to connect. To resolve this occurrence, the Mayor uses mail-pigeons – an old method of sending mail that was invented before the global internal network. All of the citizens still connected to the network receive the emergency emails, but the disconnected citizens receive their messages from these pigeons.&lt;/p&gt;&#10; &#10;&lt;p&gt;Your mission is to figure out how many pigeons you need when some of the nodes are crushed.&lt;/p&gt;&#10;&#10;&lt;/p&gt;&#10;&#10;&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/856915a43ad64d2ca04c28c441d8b6b6/example.png&quot; style=&quot;max-height: 302px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Four arguments: network structure (as a list of connections between the nodes), users of each node (as dict where keys are the node-names and values are the amounts of users), name of the node that sends email, and the list of crashed nodes.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; Int. The amount of users that won't receive an email.&#10;&lt;/p&gt;&#10;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;disconnected_users([&#10;    ['A', 'B'],&#10;    ['B', 'C'],&#10;    ['C', 'D']&#10;], {&#10;    'A': 10,&#10;    'B': 20,&#10;    'C': 30,&#10;    'D': 40&#10;},&#10;    'A', ['C']) == 70&#10;&#10;disconnected_users([&#10;    ['A', 'B'],&#10;    ['B', 'D'],&#10;    ['A', 'C'],&#10;    ['C', 'D']&#10;], {&#10;    'A': 10,&#10;    'B': 0,&#10;    'C': 0,&#10;    'D': 40&#10;},&#10;    'A', ['B']) == 0&#10;&#10;disconnected_users([&#10;    ['A', 'B'],&#10;    ['A', 'C'],&#10;    ['A', 'D'],&#10;    ['A', 'E'],&#10;    ['A', 'F']&#10;], {&#10;    'A': 10,&#10;    'B': 10,&#10;    'C': 10,&#10;    'D': 10,&#10;    'E': 10,&#10;    'F': 10&#10;},&#10;    'C', ['A']) == 50&#10;&#10;&lt;/pre&gt;&#10;&#10;&lt;/div&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="2" />
+                    <option name="name" value="Node Disconnected Users" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="476" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def disconnected_users(net, users, source, crushes):&#10;    return 0&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert disconnected_users([&#10;        ['A', 'B'],&#10;        ['B', 'C'],&#10;        ['C', 'D']&#10;    ], {&#10;        'A': 10,&#10;        'B': 20,&#10;        'C': 30,&#10;        'D': 40&#10;    },&#10;        'A', ['C']) == 70, &quot;First&quot;&#10;&#10;    assert disconnected_users([&#10;        ['A', 'B'],&#10;        ['B', 'D'],&#10;        ['A', 'C'],&#10;        ['C', 'D']&#10;    ], {&#10;        'A': 10,&#10;        'B': 0,&#10;        'C': 0,&#10;        'D': 40&#10;    },&#10;        'A', ['B']) == 0, &quot;Second&quot;&#10;&#10;    assert disconnected_users([&#10;        ['A', 'B'],&#10;        ['A', 'C'],&#10;        ['A', 'D'],&#10;        ['A', 'E'],&#10;        ['A', 'F']&#10;    ], {&#10;        'A': 10,&#10;        'B': 10,&#10;        'C': 10,&#10;        'D': 10,&#10;        'E': 10,&#10;        'F': 10&#10;    },&#10;        'C', ['A']) == 50, &quot;Third&quot;&#10;&#10;    print('Done. Try to check now. There are a lot of other tests')" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def subnetworks(net, crushes):&#10;    return 0&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert subnetworks([&#10;            ['A', 'B'],&#10;            ['B', 'C'],&#10;            ['C', 'D']&#10;        ], ['B']) == 2, &quot;First&quot;&#10;    assert subnetworks([&#10;            ['A', 'B'],&#10;            ['A', 'C'],&#10;            ['A', 'D'],&#10;            ['D', 'F']&#10;        ], ['A']) == 3, &quot;Second&quot;&#10;    assert subnetworks([&#10;            ['A', 'B'],&#10;            ['B', 'C'],&#10;            ['C', 'D']&#10;        ], ['C', 'D']) == 1, &quot;Third&quot;&#10;    print('Done! Check button is waiting for you!')&#10;" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;p&gt;&#10;    Sometimes damaged nodes are unrecoverable. In that case, people that were connected to the crushed node must migrate to another district while administration attempts to fix the node.&lt;/p&gt;&#10; &#10;&lt;p&gt;But if a crushed node disconnects multiple districts from one another, then the network splits into two sub-networks and every sub-network should have their own Mayor. And Mayors must use pigeons for mailing between each other. In that case, when the network is split you don’t need hundreds of pigeons.&lt;/p&gt;&#10; &#10;&lt;p&gt;Your mission is to figure out how many Mayors you need to control the entire city when some nodes are crushed. In other words, you need to figure out how many sub-networks will be formed after some nodes are crush and not recovered.&lt;/p&gt;&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/5d8b680383864c0c8cb10aa5afc70bca/example.png&quot; style=&quot;max-height: 302px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Two arguments: the network structure (as a list of connections between the nodes) and the list of crashed nodes.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; Int. The amount of sub-networks formed after some nodes were crushed.&#10;&lt;/p&gt;&#10;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;subnetworks([&#10;        ['A', 'B'],&#10;        ['B', 'C'],&#10;        ['C', 'D']&#10;    ], ['B']) == 2&#10;subnetworks([&#10;        ['A', 'B'],&#10;        ['A', 'C'],&#10;        ['A', 'D'],&#10;        ['D', 'F']&#10;    ], ['A']) == 3&#10;subnetworks([&#10;        ['A', 'B'],&#10;        ['B', 'C'],&#10;        ['C', 'D']&#10;    ], ['C', 'D']) == 1&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="3" />
+                    <option name="name" value="New Cities" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="477" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def subnetworks(net, crushes):&#10;    return 0&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert subnetworks([&#10;            ['A', 'B'],&#10;            ['B', 'C'],&#10;            ['C', 'D']&#10;        ], ['B']) == 2, &quot;First&quot;&#10;    assert subnetworks([&#10;            ['A', 'B'],&#10;            ['A', 'C'],&#10;            ['A', 'D'],&#10;            ['D', 'F']&#10;        ], ['A']) == 3, &quot;Second&quot;&#10;    assert subnetworks([&#10;            ['A', 'B'],&#10;            ['B', 'C'],&#10;            ['C', 'D']&#10;        ], ['C', 'D']) == 1, &quot;Third&quot;&#10;    print('Done! Check button is waiting for you!')&#10;" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="import sendgrid&#13;&#10;from sendgrid.helpers.mail import Email,  Mail, Content&#13;&#10;&#13;&#10;API_KEY = 'Registrate your own key'&#13;&#10;SUBJECT = 'Welcome'&#13;&#10;BODY = 'Hi {}'&#13;&#10;&#13;&#10;sg = sendgrid.SendGridAPIClient(apikey=API_KEY)&#13;&#10;&#13;&#10;def send_email(email, name):&#13;&#10;    pass&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    send_email('somebody@gmail.com', 'Some Body')&#13;&#10;    print('Done')" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;p&gt;&lt;i&gt;To solve this mission you must use the &lt;a href=&quot;https://py.checkio.org/projects/open/sendgrid/settings-api-key/&quot;&gt;SendGrid API Key&lt;/a&gt; (&lt;a href=&quot;https://py.checkio.org/projects/open/sendgrid/youtube-how-to-api/&quot;&gt;this video will explain&lt;/a&gt; how to create your own API Key). Check out these &lt;a href=&quot;https://py.checkio.org/projects/open/sendgrid/docs-mail/&quot;&gt;Python examples&lt;/a&gt;.&lt;/i&gt;&lt;/p&gt;&#10;&#10;&lt;p&gt;It all starts with your first email. Let’s try to send one.&lt;/p&gt;&#10; &#10;&lt;p&gt;Your mission is to create a function that sends a welcome email to a user. The function gets two arguments: email and the name of the user.&lt;/p&gt;&#10; &#10;&lt;p&gt;Subject of the email should be &quot;Welcome&quot; and body simply &quot;Hi, {name}&quot; ({name} should be replaced by a user's name)&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Two arguments: email and a username.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; None. You should send an email. You don’t need to return anything.&#10;&lt;/p&gt;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;send_email('a.lyabah@checkio.org', 'oduvan')&#10;send_email('somebody@gmail.com', 'Some Body')&#10;&lt;/pre&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="4" />
+                    <option name="name" value="Welcome Email by SendGrid" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="478" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="import sendgrid&#10;from sendgrid.helpers.mail import Email,  Mail, Content&#10;&#10;API_KEY = 'Registrate your own key'&#10;SUBJECT = 'Welcome'&#10;BODY = 'Hi {}'&#10;&#10;sg = sendgrid.SendGridAPIClient(apikey=API_KEY)&#10;&#10;def send_email(email, name):&#10;    pass&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    send_email('somebody@gmail.com', 'Some Body')&#10;    print('Done')" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def most_crucial(net, users):&#10;    return ['B']&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert most_crucial([&#10;            ['A', 'B'],&#10;            ['B', 'C']&#10;        ],{&#10;            'A': 10,&#10;            'B': 10,&#10;            'C': 10&#10;        }) == ['B'], 'First'&#10;&#10;    assert most_crucial([&#10;            ['A', 'B']&#10;        ],{&#10;            'A': 20,&#10;            'B': 10&#10;        }) == ['A'], 'Second'&#10;&#10;    assert most_crucial([&#10;            ['A', 'B'],&#10;            ['A', 'C'],&#10;            ['A', 'D'],&#10;            ['A', 'E']&#10;        ],{&#10;            'A': 0,&#10;            'B': 10,&#10;            'C': 10,&#10;            'D': 10,&#10;            'E': 10&#10;        }) == ['A'], 'Third'&#10;&#10;    assert most_crucial([&#10;            ['A', 'B'],&#10;            ['B', 'C'],&#10;            ['C', 'D']&#10;        ],{&#10;            'A': 10,&#10;            'B': 20,&#10;            'C': 10,&#10;            'D': 20&#10;        }) == ['B'], 'Forth'&#10;&#10;    print('Nobody expected that, but you did it! It is time to share it!')&#10;" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/65f32cbe77a54923b2607d69c89d4028/title.png&quot; style=&quot;max-height: 337px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;    Citizens of GridLand are sending emails to each other all the time. They send everything - what they just ate, a funny picture, questions or thoughts that are bothering them right now. All the citizens are happy because they have such a wonderful network that keeps them connected.&lt;/p&gt;&#10; &#10;&lt;p&gt;The main goal of the Mayor is to control the city's happiness. The city's happiness is a sum of all citizens' happiness. And the happiness of each citizen is equal to the number of citizens (always including oneself) that one can send emails to.&lt;/p&gt;&#10; &#10;&lt;p&gt;Because the city is growing, the citizens have decided that the Mayor needs an assistant to focus on the node protection.&lt;/p&gt;&#10; &#10;&lt;p&gt;Your mission is to figure out what will be the first nodes to investigate and protect for the new assistant. Remember, you should choose the most important node in the network. If several nodes have the maximal importance, find all of them&lt;/p&gt;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/65f32cbe77a54923b2607d69c89d4028/example.png&quot; style=&quot;max-height: 711px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Two arguments: the network structure (as a list of connections between the nodes), users on each node (as dict where keys are the node-names and values are the amounts of users).&#10;&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; List of the most cruсial nodes.&#10;&lt;/p&gt;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;most_crucial([&#10;    ['A', 'B'],&#10;    ['B', 'C']&#10;],{&#10;    'A': 10,&#10;    'B': 10,&#10;    'C': 10&#10;}) == ['B']&#10;&#10;most_crucial([&#10;    ['A', 'B']&#10;],{&#10;    'A': 20,&#10;    'B': 10&#10;}) == ['A']&#10;&#10;most_crucial([&#10;    ['A', 'B'],&#10;    ['A', 'C'],&#10;    ['A', 'D'],&#10;    ['A', 'E']&#10;],{&#10;    'A': 0,&#10;    'B': 10,&#10;    'C': 10,&#10;    'D': 10,&#10;    'E': 10&#10;}) == ['A']&#10;&#10;most_crucial([&#10;    ['A', 'B'],&#10;    ['B', 'C'],&#10;    ['C', 'D']&#10;],{&#10;    'A': 10,&#10;    'B': 20,&#10;    'C': 10,&#10;    'D': 20&#10;}) == ['B']&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="5" />
+                    <option name="name" value="City's Happiness" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="479" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def most_crucial(net, users):&#10;    return ['B']&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert most_crucial([&#10;            ['A', 'B'],&#10;            ['B', 'C']&#10;        ],{&#10;            'A': 10,&#10;            'B': 10,&#10;            'C': 10&#10;        }) == ['B'], 'First'&#10;&#10;    assert most_crucial([&#10;            ['A', 'B']&#10;        ],{&#10;            'A': 20,&#10;            'B': 10&#10;        }) == ['A'], 'Second'&#10;&#10;    assert most_crucial([&#10;            ['A', 'B'],&#10;            ['A', 'C'],&#10;            ['A', 'D'],&#10;            ['A', 'E']&#10;        ],{&#10;            'A': 0,&#10;            'B': 10,&#10;            'C': 10,&#10;            'D': 10,&#10;            'E': 10&#10;        }) == ['A'], 'Third'&#10;&#10;    assert most_crucial([&#10;            ['A', 'B'],&#10;            ['B', 'C'],&#10;            ['C', 'D']&#10;        ],{&#10;            'A': 10,&#10;            'B': 20,&#10;            'C': 10,&#10;            'D': 20&#10;        }) == ['B'], 'Forth'&#10;&#10;    print('Nobody expected that, but you did it! It is time to share it!')&#10;" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="import sendgrid&#13;&#10;&#13;&#10;API_KEY = 'Registrate your own key'&#13;&#10;&#13;&#10;sg = sendgrid.SendGridAPIClient(apikey=API_KEY)&#13;&#10;&#13;&#10;def how_spammed(str_date):&#13;&#10;    return 1&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    print('You had {} spam reports in 2016-01-01'.format(how_spammed('2016-01-01')))&#13;&#10;    print('Check your results')" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;p&gt;&lt;i&gt;To solve this mission you must use the &lt;a href=&quot;https://py.checkio.org/projects/open/sendgrid/settings-api-key/&quot;&gt;SendGrid API Key&lt;/a&gt;. When you click &quot;Run&quot; you will see the results of using your API key with your data, but if you click &quot;Check&quot; your solution will be tested using our data.&lt;/i&gt;&lt;/p&gt;&#10;&#10;&lt;p&gt;You are massively sending thousands and thousands emails every day, meanwhile experimenting with subject lines and the message itself. &lt;a href=&quot;https://py.checkio.org/projects/open/sendgrid/main/&quot;&gt;SendGrid&lt;/a&gt; allows you to see statistics of your spam reports.&lt;/p&gt;&#10;&#10;&lt;p&gt;Your mission is to figure out how many spam reports you receive on a specific day.&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Day as a string in format 'YYYY-MM-DD'&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; Int. The amount of spam reports&#10;&lt;/p&gt;&#10;&#10;&#10;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;    &lt;p&gt;&#10;        &lt;strong&gt;Example:&lt;/strong&gt;&#10;    &lt;/p&gt;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;how_spammed('2014-5-5') == 16&#10;&lt;/pre&gt;&#10;&lt;/div&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="6" />
+                    <option name="name" value="SendGrid Spam Reports" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="481" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="import sendgrid&#10;&#10;API_KEY = 'Registrate your own key'&#10;&#10;sg = sendgrid.SendGridAPIClient(apikey=API_KEY)&#10;&#10;def how_spammed(str_date):&#10;    return 1&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    print('You had {} spam reports in 2016-01-01'.format(how_spammed('2016-01-01')))&#10;    print('Check your results')" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="import sendgrid&#13;&#10;&#13;&#10;API_KEY = 'Registrate your own key'&#13;&#10;&#13;&#10;sg = sendgrid.SendGridAPIClient(apikey=API_KEY)&#13;&#10;&#13;&#10;def best_country(str_date):&#13;&#10;    return 'UA'&#13;&#10;&#13;&#10;if __name__ == '__main__':&#13;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#13;&#10;    print('Your best country in 2016-01-01 was ' + best_country('2016-01-01'))&#13;&#10;    print('Check your results')" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;p&gt;&lt;i&gt;To solve this mission you must use the &lt;a href=&quot;https://py.checkio.org/projects/open/sendgrid/settings-api-key/&quot;&gt;SendGrid API Key&lt;/a&gt;. When you click &quot;Run&quot; you will see the results of using your API key with your data, but if you click &quot;Check&quot; your solution will be tested using our data.&lt;/i&gt;&lt;/p&gt;&#10;&#10;&lt;p&gt;You should be able to operate with your statistical email data and SendGrid has a lot of APIs that provide information you may need.&lt;/p&gt;&#10; &#10;&lt;p&gt;Your mission is to figure out which country opens your emails the most. You can use this information in order to focus on a specific segment.&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input:&lt;/strong&gt; Day as a string in format 'YYYY-MM-DD'&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output:&lt;/strong&gt; String, Two-digit country code of country that has more unique clicks.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Example:&lt;/strong&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;&#10;best_country('2016-01-01') == 'UA'&#10;&lt;/pre&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="7" />
+                    <option name="name" value="SendGrid Geo Stats" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="482" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="import sendgrid&#10;&#10;API_KEY = 'Registrate your own key'&#10;&#10;sg = sendgrid.SendGridAPIClient(apikey=API_KEY)&#10;&#10;def best_country(str_date):&#10;    return 'UA'&#10;&#10;if __name__ == '__main__':&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    print('Your best country in 2016-01-01 was ' + best_country('2016-01-01'))&#10;    print('Check your results')" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                </list>
+              </option>
+              <option name="unitId" value="0" />
+            </CheckiOStation>
+            <CheckiOStation>
+              <option name="customPresentableName" />
+              <option name="id" value="33" />
+              <option name="index" value="4" />
+              <option name="name" value="Escher" />
+              <option name="stepikChangeStatus" value="Up to date" />
+              <option name="updateDate" value="0" />
+              <option name="taskList">
+                <list>
+                  <CheckiOMission>
+                    <option name="additionalFiles">
+                      <map />
+                    </option>
+                    <option name="code" value="def two_teams(sailors):&#10;    #replace this for solution&#10;    return [&#10;        [],&#10;        []&#10;    ]&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(two_teams({'Smith': 34, 'Wesson': 22, 'Coleman': 45, 'Abrahams': 19}))&#10;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert two_teams({&#10;        'Smith': 34, &#10;        'Wesson': 22, &#10;        'Coleman': 45, &#10;        'Abrahams': 19}) == [&#10;            ['Abrahams', 'Coleman'], &#10;            ['Smith', 'Wesson']&#10;            ]&#10;&#10;    assert two_teams({&#10;        'Fernandes': 18,&#10;        'Johnson': 22,&#10;        'Kale': 41,&#10;        'McCortney': 54}) == [&#10;            ['Fernandes', 'Kale', 'McCortney'], &#10;            ['Johnson']&#10;            ]&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)&#10;" />
+                    <option name="customPresentableName" />
+                    <option name="descriptionFormat" value="HTML" />
+                    <option name="descriptionText" value="&lt;!-- Describe task in general --&gt;&#10;&#10;&#10;&lt;img class=&quot;for_info_only half&quot; src=&quot;https://static.checkio.org/media/task/media/f65ed6e516db4925a494ea30acad7cc8/ships.jpg&quot; style=&quot;float:left;max-height: 400px&quot;&gt;&#10;&#10;&lt;div class=&quot;story for_info_only&quot;&gt;&#10;Greetings, adventurer! You are now at the beginning of a dangerous but at the same time a very exciting journey, during which you’ll have to solve many riddles, neutralize several traps, and outrun your pursuers… And all this for the sole purpose of finding one of the most valuable artifacts in the universe, the source of the infinite energy - the Hypercube.&lt;br&gt;&#10;&lt;br&gt;&#10;The Hypercube is located in the very center of the castle, built by the eccentric Lord Escher a couple of centuries ago. This man built his castle on the island due to his high appreciation for the solitude. Ever since he died (under the very mysterious circumstances), and his servants who have returned to the continent told the world about the strange things and phenomena happening there, many of the research expeditions and groups of treasure hunters went there. But none of them have ever returned...&lt;br&gt;&#10;&lt;br&gt;&#10;Good luck, buddy! Perhaps you are bound to have more luck than others.&lt;br&gt;&#10;&lt;br&gt;&#10;So, the things are packed, equipment gathered and it's high time to hit the road.&#10;Currently you are on the continent, standing in the port. Foreseeing the danger you might be facing on the island, you’ve decided not to go there alone, but to recruit a team and equip 2 ships. Your only goal is to get hold of a Cube, the other treasures that you are hoping to find will be considered the payment for the team.&lt;br&gt; &#10;&lt;br&gt;&#10;And the first task is simple - you have to divide all your crew members into 2 teams (for the 2 ships).&#10;&lt;/div&gt;&#10;&#10;&lt;p&gt;&#10;You have to divide all your crew members into 2 teams with the next rules: those who are elder than 40 y.o. or younger than 20, should be on the first ship and all the others - on the second. It will helps the young sailors gain the experience of the elder collegues.&#10;The input data will be the dictionary where keys will be the surnames of the sailors and the values will be their ages. After the crew formating, you should sort all of the sailors in the alphabetical order in the each list of surnames.&#10;&lt;/p&gt;&#10;&#10;&lt;div class=&quot;for_info_only&quot; style=&quot;text-align: center&quot;&gt;&#10;    &lt;img src=&quot;https://static.checkio.org/media/task/media/f65ed6e516db4925a494ea30acad7cc8/2_crews.jpg&quot; style=&quot;max-height: 500px&quot;&gt;&#10;&lt;/div&gt;&#10;&#10;&lt;!-- Explain input and output values --&gt;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Input: &lt;/strong&gt; Dictionary with the sailors and their ages.&#10;&lt;/p&gt;&#10;&#10;&lt;p&gt;&#10;    &lt;strong&gt;Output: &lt;/strong&gt; List of the lists with 2 teams.&#10;&lt;/p&gt;&#10;&#10;&#10;&lt;!-- Put some usage examples --&gt;&#10;&lt;div class=&quot;for_info_only&quot;&gt;&#10;&lt;p&gt;&#10;&lt;strong&gt;Example:&lt;/strong&gt;&#10;&lt;/p&gt;&#10;&#10;&lt;pre class=&quot;brush: python&quot;&gt;two_teams({&#10;&#9;'Smith': 34,&#10;&#9;'Wesson': 22,&#10;&#9;'Coleman': 45,&#10;&#9;'Abrahams': 19}) == [&#10;&#9;&#9;['Abrahams', 'Coleman'],&#10;&#9;&#9;['Smith', 'Wesson']&#10;&#9;]&#10;&lt;/pre&gt;&#10;&#10;&lt;/div&gt;&#10;&#10;&lt;!-- Here you can explain how it can be used in development and what is usage of this. --&gt;&#10;&lt;!-- The section is optional --&gt;&#10;&lt;p class=&quot;for_info_only&quot;&gt;&#10;    &lt;strong&gt;How it is used: &lt;/strong&gt;&#10;    For splitting objects to the few roughly equivalent groups.&#10;&lt;/p&gt;&#10;&#10;&lt;!-- Here you can explain some constraints for input--&gt;&#10;&lt;!-- The section is optional --&gt;&#10;&lt;p&gt;&lt;strong&gt;Precondition&lt;/strong&gt;:&lt;br&gt;&#10;    1 &lt;= amount of the sailors &lt;= 100&#10;&lt;/p&gt;&#10;" />
+                    <option name="feedbackLink">
+                      <FeedbackLink>
+                        <option name="link" />
+                        <option name="type" value="STEPIK" />
+                      </FeedbackLink>
+                    </option>
+                    <option name="index" value="1" />
+                    <option name="name" value="The Ship Teams" />
+                    <option name="secondsFromLastChangeOnServer" value="9223372036854775807" />
+                    <option name="status" value="Unchecked" />
+                    <option name="stepId" value="585" />
+                    <option name="stepikChangeStatus" value="Up to date" />
+                    <option name="taskFiles">
+                      <map>
+                        <entry key="mission.py">
+                          <value>
+                            <TaskFile>
+                              <option name="answerPlaceholders">
+                                <list />
+                              </option>
+                              <option name="highlightErrors" value="true" />
+                              <option name="name" value="mission.py" />
+                              <option name="text" value="def two_teams(sailors):&#10;    #replace this for solution&#10;    return [&#10;        [],&#10;        []&#10;    ]&#10;&#10;if __name__ == '__main__':&#10;    print(&quot;Example:&quot;)&#10;    print(two_teams({'Smith': 34, 'Wesson': 22, 'Coleman': 45, 'Abrahams': 19}))&#10;&#10;    #These &quot;asserts&quot; using only for self-checking and not necessary for auto-testing&#10;    assert two_teams({&#10;        'Smith': 34, &#10;        'Wesson': 22, &#10;        'Coleman': 45, &#10;        'Abrahams': 19}) == [&#10;            ['Abrahams', 'Coleman'], &#10;            ['Smith', 'Wesson']&#10;            ]&#10;&#10;    assert two_teams({&#10;        'Fernandes': 18,&#10;        'Johnson': 22,&#10;        'Kale': 41,&#10;        'McCortney': 54}) == [&#10;            ['Fernandes', 'Kale', 'McCortney'], &#10;            ['Johnson']&#10;            ]&#10;    print(&quot;Coding complete? Click 'Check' to earn cool rewards!&quot;)&#10;" />
+                              <option name="trackChanges" value="true" />
+                              <option name="trackLengths" value="true" />
+                              <option name="userCreated" value="false" />
+                              <option name="visible" value="true" />
+                            </TaskFile>
+                          </value>
+                        </entry>
+                      </map>
+                    </option>
+                    <option name="testsText">
+                      <map />
+                    </option>
+                    <option name="updateDate" value="0" />
+                  </CheckiOMission>
+                </list>
+              </option>
+              <option name="unitId" value="0" />
+            </CheckiOStation>
+          </list>
+        </option>
+      </CheckiOCourse>
+    </option>
+  </StudyTaskManager>
+</component>
