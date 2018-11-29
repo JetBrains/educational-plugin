@@ -41,7 +41,12 @@ class KtTaskCheckerProvider : GradleTaskCheckerProvider() {
           tests ?: emptyList()
         }
 
-        return GradleTask(TEST_TASK_NAME, testClasses.flatMap { listOf(TESTS_ARG, it) })
+        return if (testClasses.isEmpty()) {
+          LOG.warn("Can't find any test class. Check course project is compilable")
+          GradleTask(ASSEMBLE_TASK_NAME)
+        } else {
+          GradleTask(TEST_TASK_NAME, testClasses.flatMap { listOf(TESTS_ARG, it) })
+        }
       }
     }
   }

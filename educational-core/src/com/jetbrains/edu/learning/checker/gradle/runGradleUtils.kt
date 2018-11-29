@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
 
 const val MAIN_CLASS_PROPERTY_PREFIX = "-PmainClass="
 
+const val ASSEMBLE_TASK_NAME = "assemble"
 const val TEST_TASK_NAME = "test"
 
 const val TESTS_ARG = "--tests"
