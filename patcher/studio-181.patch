@@ -291,3 +291,29 @@ index b120c4d..1d02a34 100644
 \ No newline at end of file
 +include 'Edu-Java', 'Edu-Scala', 'Edu-Kotlin', 'Edu-Python', 'educational-core', 'Edu-Android'
 \ No newline at end of file
+diff --git a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleManager.kt b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleManager.kt
+index d4d4fd13c..21bf9397c 100644
+--- a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleManager.kt
++++ b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleManager.kt
+@@ -1,7 +1,5 @@
+ package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
+
+-import com.intellij.ide.ui.LafManager
+-import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
+ import com.intellij.openapi.diagnostic.Logger
+ import com.intellij.openapi.project.Project
+ import com.intellij.openapi.util.SystemInfo
+@@ -69,10 +67,7 @@ internal fun resourceUrl(name: String): String {
+
+ internal fun resourceFileName(): String {
+   return when {
+-    isHighcontrast() -> "highcontrast"
+     UIUtil.isUnderDarcula() -> "darcula"
+     else -> "light"
+   }
+-}
+-
+-internal fun isHighcontrast() = LafManager.getInstance().currentLookAndFeel is UIThemeBasedLookAndFeelInfo
+\ No newline at end of file
++}
+\ No newline at end of file
