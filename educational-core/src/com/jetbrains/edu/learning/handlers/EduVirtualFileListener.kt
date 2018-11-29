@@ -5,7 +5,6 @@ import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileInfo
-import com.jetbrains.edu.learning.FileKind
 import com.jetbrains.edu.learning.fileInfo
 
 abstract class EduVirtualFileListener(protected val project: Project) : VirtualFileListener {
@@ -32,25 +31,11 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
    * with empty (without placeholders, hints, etc.) one.
    */
   protected open fun fileInTaskCreated(fileInfo: FileInfo.FileInTask) {
-    val (task, pathInTask, kind) = fileInfo
-    when (kind) {
-      FileKind.TASK_FILE -> {
-        if (task.getTaskFile(pathInTask) == null) {
-          val taskFile = task.addTaskFile(pathInTask)
-          if (EduUtils.isStudentProject(project)) {
-            taskFile.isUserCreated = true
-          }
-        }
-      }
-      FileKind.TEST_FILE -> {
-        if (pathInTask !in task.testsText) {
-          task.addTestsTexts(pathInTask, "")
-        }
-      }
-      FileKind.ADDITIONAL_FILE -> {
-        if (pathInTask !in task.additionalFiles) {
-          task.addAdditionalFile(pathInTask, "")
-        }
+    val (task, pathInTask) = fileInfo
+    if (task.getTaskFile(pathInTask) == null) {
+      val taskFile = task.addTaskFile(pathInTask)
+      if (EduUtils.isStudentProject(project)) {
+        taskFile.isUserCreated = true
       }
     }
   }

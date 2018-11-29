@@ -1,16 +1,13 @@
 package com.jetbrains.edu.coursecreator.handlers
 
-import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.undo.UndoManager
-import com.intellij.openapi.util.BuildNumber
 import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.FileCheck
-import com.jetbrains.edu.coursecreator.FileSetKind.*
 import com.jetbrains.edu.coursecreator.`in`
 import com.jetbrains.edu.coursecreator.notIn
 import com.jetbrains.edu.learning.EduTestCase
@@ -137,25 +134,25 @@ class CCVirtualFileListenerTest : EduTestCase() {
 
   fun `test add task file`() {
     val filePath = "src/taskFile.txt"
-    doAddFileTest(filePath) { task -> listOf(filePath to TASK_FILES `in` task) }
+    doAddFileTest(filePath) { task -> listOf(filePath `in` task) }
   }
 
   fun `test add test file`() {
     doAddFileTest("test/${FakeGradleConfigurator.TEST_FILE_NAME}") { task ->
-      listOf("test/${FakeGradleConfigurator.TEST_FILE_NAME}" to TEST_FILES `in` task)
+      listOf("test/${FakeGradleConfigurator.TEST_FILE_NAME}" `in` task)
     }
   }
 
   fun `test add additional file`() {
     val fileName = "additionalFile.txt"
-    doAddFileTest(fileName) { task -> listOf(fileName to ADDITIONAL_FILES `in` task) }
+    doAddFileTest(fileName) { task -> listOf(fileName `in` task) }
   }
 
   fun `test remove task file`() {
     val filePath = "src/TaskFile.kt"
     doRemoveFileTest("lesson1/task1/$filePath") { course ->
       val task = course.findTask("lesson1", "task1")
-      listOf(filePath to TASK_FILES notIn task)
+      listOf(filePath notIn task)
     }
   }
 
@@ -163,7 +160,7 @@ class CCVirtualFileListenerTest : EduTestCase() {
     val filePath = "test/${FakeGradleConfigurator.TEST_FILE_NAME}"
     doRemoveFileTest("lesson1/task1/$filePath") { course ->
       val task = course.findTask("lesson1", "task1")
-      listOf(filePath to TEST_FILES notIn task)
+      listOf(filePath notIn task)
     }
   }
 
@@ -171,7 +168,7 @@ class CCVirtualFileListenerTest : EduTestCase() {
     val fileName = "additionalFile.txt"
     doRemoveFileTest("lesson1/task1/$fileName") { course ->
       val task = course.findTask("lesson1", "task1")
-      listOf(fileName to ADDITIONAL_FILES notIn task)
+      listOf(fileName notIn task)
     }
   }
 
@@ -179,8 +176,8 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRemoveFileTest("lesson1/task1/src/packageName") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "src/packageName/TaskFile2.kt" to TASK_FILES notIn task,
-        "src/packageName/TaskFile3.kt" to TASK_FILES notIn task
+        "src/packageName/TaskFile2.kt" notIn task,
+        "src/packageName/TaskFile3.kt" notIn task
       )
     }
   }
@@ -189,8 +186,8 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRemoveFileTest("lesson1/task1/test/packageName") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "test/packageName/Tests2.kt" to TEST_FILES notIn task,
-        "test/packageName/Tests3.kt" to TEST_FILES notIn task
+        "test/packageName/Tests2.kt" notIn task,
+        "test/packageName/Tests3.kt" notIn task
       )
     }
   }
@@ -199,8 +196,8 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRemoveFileTest("lesson1/task1/additional_files") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "additional_files/additional_file2.txt" to ADDITIONAL_FILES notIn task,
-        "additional_files/additional_file2.txt" to ADDITIONAL_FILES notIn task
+        "additional_files/additional_file2.txt" notIn task,
+        "additional_files/additional_file2.txt" notIn task
       )
     }
   }
@@ -209,8 +206,8 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRenameFileTest("lesson1/task1/src/packageName/Task1.kt", "Task3.kt") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "src/packageName/Task1.kt" to TASK_FILES notIn task,
-        "src/packageName/Task3.kt" to TASK_FILES `in` task
+        "src/packageName/Task1.kt" notIn task,
+        "src/packageName/Task3.kt" `in` task
       )
     }
   }
@@ -219,10 +216,10 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRenameFileTest("lesson1/task1/src/packageName", "packageName2") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "src/packageName/Task1.kt" to TASK_FILES notIn task,
-        "src/packageName/Task2.kt" to TASK_FILES notIn task,
-        "src/packageName2/Task1.kt" to TASK_FILES `in` task,
-        "src/packageName2/Task2.kt" to TASK_FILES `in` task
+        "src/packageName/Task1.kt" notIn task,
+        "src/packageName/Task2.kt" notIn task,
+        "src/packageName2/Task1.kt" `in` task,
+        "src/packageName2/Task2.kt" `in` task
       )
     }
   }
@@ -231,8 +228,8 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRenameFileTest("lesson1/task1/test/packageName/Test1.kt", "Test3.kt") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "test/packageName/Test1.kt" to TEST_FILES notIn task,
-        "test/packageName/Test3.kt" to TEST_FILES `in` task
+        "test/packageName/Test1.kt" notIn task,
+        "test/packageName/Test3.kt" `in` task
       )
     }
   }
@@ -241,10 +238,10 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRenameFileTest("lesson1/task1/test/packageName", "packageName2") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "test/packageName/Test1.kt" to TEST_FILES notIn task,
-        "test/packageName/Test2.kt" to TEST_FILES notIn task,
-        "test/packageName2/Test1.kt" to TEST_FILES `in` task,
-        "test/packageName2/Test2.kt" to TEST_FILES `in` task
+        "test/packageName/Test1.kt" notIn task,
+        "test/packageName/Test2.kt" notIn task,
+        "test/packageName2/Test1.kt" `in` task,
+        "test/packageName2/Test2.kt" `in` task
       )
     }
   }
@@ -253,8 +250,8 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRenameFileTest("lesson1/task1/additional_files/additional_file1.txt", "additional_file3.txt") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "additional_files/additional_file1.txt" to ADDITIONAL_FILES notIn task,
-        "additional_files/additional_file3.txt" to ADDITIONAL_FILES `in` task
+        "additional_files/additional_file1.txt" notIn task,
+        "additional_files/additional_file3.txt" `in` task
       )
     }
   }
@@ -263,10 +260,10 @@ class CCVirtualFileListenerTest : EduTestCase() {
     doRenameFileTest("lesson1/task1/additional_files", "additional_files2") { course ->
       val task = course.findTask("lesson1", "task1")
       listOf(
-        "additional_files/additional_file1.txt" to ADDITIONAL_FILES notIn task,
-        "additional_files/additional_file2.txt" to ADDITIONAL_FILES notIn task,
-        "additional_files2/additional_file1.txt" to ADDITIONAL_FILES `in` task,
-        "additional_files2/additional_file2.txt" to ADDITIONAL_FILES `in` task
+        "additional_files/additional_file1.txt" notIn task,
+        "additional_files/additional_file2.txt" notIn task,
+        "additional_files2/additional_file1.txt" `in` task,
+        "additional_files2/additional_file2.txt" `in` task
       )
     }
   }
@@ -274,122 +271,122 @@ class CCVirtualFileListenerTest : EduTestCase() {
   fun `test move task file`() = doMoveTest("lesson1/task1/src/Task1.kt", "lesson1/task1/src/foo") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "src/Task1.kt" to TASK_FILES notIn task,
-      "src/foo/Task1.kt" to TASK_FILES `in` task
+      "src/Task1.kt" notIn task,
+      "src/foo/Task1.kt" `in` task
     )
   }
 
   fun `test move dir with task files`() = doMoveTest("lesson1/task1/src/foo", "lesson1/task1/src/bar") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "src/foo/Task2.kt" to TASK_FILES notIn task,
-      "src/foo/Task3.kt" to TASK_FILES notIn task,
-      "src/bar/foo/Task2.kt" to TASK_FILES `in` task,
-      "src/bar/foo/Task3.kt" to TASK_FILES `in` task,
-      "src/bar/Task4.kt" to TASK_FILES `in` task
+      "src/foo/Task2.kt" notIn task,
+      "src/foo/Task3.kt" notIn task,
+      "src/bar/foo/Task2.kt" `in` task,
+      "src/bar/foo/Task3.kt" `in` task,
+      "src/bar/Task4.kt" `in` task
     )
   }
 
   fun `test move test file`() = doMoveTest("lesson1/task1/test/Tests1.kt", "lesson1/task1/test/foo") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "test/Tests1.kt" to TEST_FILES notIn task,
-      "test/foo/Tests1.kt" to TEST_FILES `in` task
+      "test/Tests1.kt" notIn task,
+      "test/foo/Tests1.kt" `in` task
     )
   }
 
   fun `test move dir with tests`() = doMoveTest("lesson1/task1/test/foo", "lesson1/task1/test/bar") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "test/foo/Tests2.kt" to TEST_FILES notIn task,
-      "test/foo/Tests3.kt" to TEST_FILES notIn task,
-      "test/bar/foo/Tests2.kt" to TEST_FILES `in` task,
-      "test/bar/foo/Tests3.kt" to TEST_FILES `in` task,
-      "test/bar/Tests4.kt" to TEST_FILES `in` task
+      "test/foo/Tests2.kt" notIn task,
+      "test/foo/Tests3.kt" notIn task,
+      "test/bar/foo/Tests2.kt" `in` task,
+      "test/bar/foo/Tests3.kt" `in` task,
+      "test/bar/Tests4.kt" `in` task
     )
   }
 
   fun `test move additional file 1`() = doMoveTest("lesson1/task1/additional_file1.txt", "lesson1/task1/foo") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "additional_file1.txt" to ADDITIONAL_FILES notIn task,
-      "foo/additional_file1.txt" to ADDITIONAL_FILES `in` task
+      "additional_file1.txt" notIn task,
+      "foo/additional_file1.txt" `in` task
     )
   }
 
   fun `test move additional file 2`() = doMoveTest("lesson1/task1/foo/additional_file2.txt", "lesson1/task1") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "foo/additional_file2.txt" to ADDITIONAL_FILES notIn task,
-      "additional_file2.txt" to ADDITIONAL_FILES `in` task
+      "foo/additional_file2.txt" notIn task,
+      "additional_file2.txt" `in` task
     )
   }
 
   fun `test move dir with additional files`() = doMoveTest("lesson1/task1/foo", "lesson1/task1/bar") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "foo/additional_file2.txt" to ADDITIONAL_FILES notIn task,
-      "foo/additional_file3.txt" to ADDITIONAL_FILES notIn task,
-      "bar/foo/additional_file2.txt" to ADDITIONAL_FILES `in` task,
-      "bar/foo/additional_file3.txt" to ADDITIONAL_FILES `in` task,
-      "bar/additional_file4.txt" to ADDITIONAL_FILES `in` task
+      "foo/additional_file2.txt" notIn task,
+      "foo/additional_file3.txt" notIn task,
+      "bar/foo/additional_file2.txt" `in` task,
+      "bar/foo/additional_file3.txt" `in` task,
+      "bar/additional_file4.txt" `in` task
     )
   }
 
   fun `test move additional file into test folder`() = doMoveTest("lesson1/task1/additional_file1.txt", "lesson1/task1/test") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "additional_file1.txt" to ADDITIONAL_FILES notIn task,
-      "test/additional_file1.txt" to TEST_FILES `in` task
+      "additional_file1.txt" notIn task,
+      "test/additional_file1.txt" `in` task
     )
   }
 
   fun `test move test package into src folder`() = doMoveTest("lesson1/task1/test/bar", "lesson1/task1/src/foo") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "test/bar/Tests4.kt" to TEST_FILES notIn task,
-      "src/foo/bar/Tests4.kt" to TASK_FILES `in` task,
-      "src/foo/Task2.kt" to TASK_FILES `in` task,
-      "src/foo/Task3.kt" to TASK_FILES `in` task
+      "test/bar/Tests4.kt" notIn task,
+      "src/foo/bar/Tests4.kt" `in` task,
+      "src/foo/Task2.kt" `in` task,
+      "src/foo/Task3.kt" `in` task
     )
   }
 
   fun `test move non course file as src file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1/src") { course ->
     val task = course.findTask("lesson1", "task1")
-    listOf("src/non_course_file1.txt" to TASK_FILES `in` task)
+    listOf("src/non_course_file1.txt" `in` task)
   }
 
   fun `test move non course file as test file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1/test") { course ->
     val task = course.findTask("lesson1", "task1")
-    listOf("test/non_course_file1.txt" to TEST_FILES `in` task)
+    listOf("test/non_course_file1.txt" `in` task)
   }
 
   fun `test move non course file as additional file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1") { course ->
     val task = course.findTask("lesson1", "task1")
-    listOf("non_course_file1.txt" to ADDITIONAL_FILES `in` task)
+    listOf("non_course_file1.txt" `in` task)
   }
 
   fun `test move non course folder to src folder`() = doMoveTest("non_course_dir", "lesson1/task1/src") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "src/non_course_dir/non_course_file1.txt" to TASK_FILES `in` task,
-      "src/non_course_dir/non_course_file2.txt" to TASK_FILES `in` task
+      "src/non_course_dir/non_course_file1.txt" `in` task,
+      "src/non_course_dir/non_course_file2.txt" `in` task
     )
   }
 
   fun `test move non course folder to test folder`() = doMoveTest("non_course_dir", "lesson1/task1/test") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "test/non_course_dir/non_course_file1.txt" to TEST_FILES `in` task,
-      "test/non_course_dir/non_course_file2.txt" to TEST_FILES `in` task
+      "test/non_course_dir/non_course_file1.txt" `in` task,
+      "test/non_course_dir/non_course_file2.txt" `in` task
     )
   }
 
   fun `test move non course folder to task root folder`() = doMoveTest("non_course_dir", "lesson1/task1") { course ->
     val task = course.findTask("lesson1", "task1")
     listOf(
-      "non_course_dir/non_course_file1.txt" to ADDITIONAL_FILES `in` task,
-      "non_course_dir/non_course_file2.txt" to ADDITIONAL_FILES `in` task
+      "non_course_dir/non_course_file1.txt" `in` task,
+      "non_course_dir/non_course_file2.txt" `in` task
     )
   }
 
@@ -422,19 +419,19 @@ class CCVirtualFileListenerTest : EduTestCase() {
       lesson("lesson1") {
         eduTask("task1") {
           taskFile("src/TaskFile.kt")
-          additionalFile("additionalFile.txt")
-          testFile("test/${FakeGradleConfigurator.TEST_FILE_NAME}")
+          taskFile("additionalFile.txt")
+          taskFile("test/${FakeGradleConfigurator.TEST_FILE_NAME}")
           dir("src/packageName") {
             taskFile("TaskFile2.kt")
             taskFile("TaskFile3.kt")
           }
           dir("additional_files") {
-            additionalFile("additional_file2.txt")
-            additionalFile("additional_file3.txt")
+            taskFile("additional_file2.txt")
+            taskFile("additional_file3.txt")
           }
           dir("test/packageName") {
-            testFile("Tests2.kt")
-            testFile("Tests3.kt")
+            taskFile("Tests2.kt")
+            taskFile("Tests3.kt")
           }
         }
       }
@@ -462,12 +459,12 @@ class CCVirtualFileListenerTest : EduTestCase() {
           }
 
           dir("additional_files") {
-            additionalFile("additional_file1.txt")
-            additionalFile("additional_file2.txt")
+            taskFile("additional_file1.txt")
+            taskFile("additional_file2.txt")
           }
           dir("test/packageName") {
-            testFile("Test1.kt")
-            testFile("Test2.kt")
+            taskFile("Test1.kt")
+            taskFile("Test2.kt")
           }
         }
       }
@@ -483,10 +480,6 @@ class CCVirtualFileListenerTest : EduTestCase() {
     val checks = checksProducer(course)
     checks.forEach(FileCheck::check)
 
-    // at 173 platform version `UndoManager.undo(null)` doesn't revert result of `myFixture.renameElement`
-    // so skip next checks
-    // TODO: drop this condition when 173 becomes unsupported
-    if (ApplicationInfo.getInstance().build < BuildNumber.fromString("181.0")) return
     val dialog = EduTestDialog()
     withTestDialog(dialog) {
       UndoManager.getInstance(project).undo(null)
@@ -515,20 +508,20 @@ class CCVirtualFileListenerTest : EduTestCase() {
             taskFile("bar/Task4.kt")
           }
 
-          additionalFile("additional_file1.txt")
+          taskFile("additional_file1.txt")
           dir("foo") {
-            additionalFile("additional_file2.txt")
-            additionalFile("additional_file3.txt")
+            taskFile("additional_file2.txt")
+            taskFile("additional_file3.txt")
           }
-          additionalFile("bar/additional_file4.txt")
+          taskFile("bar/additional_file4.txt")
 
           dir("test") {
-            testFile("Tests1.kt")
+            taskFile("Tests1.kt")
             dir("foo") {
-              testFile("Tests2.kt")
-              testFile("Tests3.kt")
+              taskFile("Tests2.kt")
+              taskFile("Tests3.kt")
             }
-            testFile("bar/Tests4.kt")
+            taskFile("bar/Tests4.kt")
           }
         }
       }
