@@ -32,9 +32,6 @@ import java.util.Map;
 
 public class SerializationUtils {
   private static final Logger LOG = Logger.getInstance(SerializationUtils.class);
-  public static final List<Class<? extends Course>> COURSE_ELEMENT_TYPES = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
-                                                                                              HyperskillCourse.class, Course.class);
-
 
   public static final String LINE = "line";
   public static final String START = "start";
@@ -57,6 +54,9 @@ public class SerializationUtils {
   }
 
   public static class Xml {
+    public static final List<Class<? extends Course>> COURSE_ELEMENT_TYPES = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
+                                                                                                HyperskillCourse.class, Course.class);
+
     public final static String COURSE_ELEMENT = "courseElement";
     public final static String MAIN_ELEMENT = "StudyTaskManager";
     public final static String REMOTE_COURSE = "RemoteCourse";
@@ -397,7 +397,8 @@ public class SerializationUtils {
           return courseElement;
         }
       }
-      throw new StudyUnrecognizedFormatException();
+      throw new StudyUnrecognizedFormatException("Failed to find course element type. CourseHolder is:\n" +
+                                                 new XMLOutputter().outputString(courseHolder));
     }
   }
 

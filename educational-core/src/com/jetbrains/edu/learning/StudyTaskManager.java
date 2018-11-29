@@ -34,7 +34,6 @@ import java.util.Map;
 
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE;
 import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.*;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.COURSE_ELEMENT_TYPES;
 
 /**
  * Implementation of class which contains all the information
