@@ -5,7 +5,7 @@
       <map />
     </option>
     <option name="course">
-      <Course>
+      <EduCourse>
         <option name="authors">
           <list />
         </option>
@@ -81,7 +81,7 @@
             </Lesson>
           </list>
         </option>
-      </Course>
+      </EduCourse>
     </option>
   </StudyTaskManager>
 </component>

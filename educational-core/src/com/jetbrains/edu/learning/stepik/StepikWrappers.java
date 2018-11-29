@@ -137,7 +137,7 @@ public class StepikWrappers {
   }
 
   public static class CoursesContainer {
-    public List<RemoteCourse> courses;
+    public List<EduCourse> courses;
     public Map meta;
   }
 
@@ -151,17 +151,17 @@ public class StepikWrappers {
   }
 
   public static class CourseWrapper {
-    RemoteCourse course;
+    EduCourse course;
 
     public CourseWrapper(@NotNull Course course) {
-      this.course = new RemoteCourse();
+      this.course = new EduCourse();
       this.course.setName(course.getName());
       this.course.setLanguage(course.getLanguageID());
       this.course.setDescription(course.getDescription());
       this.course.setAuthors(course.getAuthors());
-      if (course instanceof RemoteCourse) {
-        this.course.setInstructors(((RemoteCourse)course).getInstructors());
-        this.course.setPublic(((RemoteCourse)course).isPublic());
+      if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
+        this.course.setInstructors(((EduCourse)course).getInstructors());
+        this.course.setPublic(((EduCourse)course).isPublic());
       }
     }
   }

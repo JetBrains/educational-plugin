@@ -17,7 +17,7 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseUploader;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +38,7 @@ public class CCPushCourse extends DumbAwareAction {
     presentation.setEnabledAndVisible(project != null && CCUtils.isCourseCreator(project));
     if (project != null) {
       final Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course instanceof RemoteCourse) {
+      if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
         presentation.setText("Update Course on Stepik");
       }
     }
@@ -56,7 +56,7 @@ public class CCPushCourse extends DumbAwareAction {
       return;
     }
 
-    if (course instanceof RemoteCourse) {
+    if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
       askToWrapTopLevelLessons(project, course);
     }
     else {
@@ -73,7 +73,7 @@ public class CCPushCourse extends DumbAwareAction {
       }
     }
 
-    String title = course instanceof RemoteCourse ? "Updating Course" : "Uploading Course";
+    String title = course instanceof EduCourse && ((EduCourse)course).isRemote() ? "Updating Course" : "Uploading Course";
     ProgressManager.getInstance().run(new Modal(project, title, true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
@@ -85,16 +85,16 @@ public class CCPushCourse extends DumbAwareAction {
   }
 
   public static boolean doPush(Project project, Course course) {
-    if (course instanceof RemoteCourse) {
+    if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
       if (getCourseInfo(String.valueOf(course.getId())) == null) {
         String message = "Cannot find course on Stepik. <br> <a href=\"upload\">Upload to Stepik as New Course</a>";
         Notification notification = new Notification("update.course", "Failed ot update", message, NotificationType.ERROR,
-                                                     createPostCourseNotificationListener(project, (RemoteCourse)course));
+                                                     createPostCourseNotificationListener(project, (EduCourse)course));
         notification.notify(project);
         return false;
       }
 
-      new StepikCourseUploader(project, (RemoteCourse)course).updateCourse();
+      new StepikCourseUploader(project, (EduCourse)course).updateCourse();
     }
     else {
 

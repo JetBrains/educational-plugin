@@ -28,7 +28,7 @@ import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
 
-class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
+class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private val LOG = Logger.getInstance(this.javaClass)
 
   private val oldLessonDirectories = HashMap<Int, VirtualFile>()
@@ -55,7 +55,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   }
 
   @VisibleForTesting
-  fun doUpdate(courseFromServer: RemoteCourse) {
+  fun doUpdate(courseFromServer: EduCourse) {
     courseFromServer.items.withIndex().forEach { (index, item) -> item.index = index + 1 }
 
     setCourseInfo(courseFromServer)
@@ -135,7 +135,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     return lessonsUpdated
   }
 
-  private fun updateSections(courseFromServer: RemoteCourse) {
+  private fun updateSections(courseFromServer: EduCourse) {
     val sectionIds = course.sections.map { it.id }
 
     processNewSections(courseFromServer, sectionIds)
@@ -153,7 +153,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     return newSections
   }
 
-  private fun processDeletedSections(courseFromServer: RemoteCourse) {
+  private fun processDeletedSections(courseFromServer: EduCourse) {
     val sectionsFromServerIds = courseFromServer.sections.map { it.id }
     val sectionsToDelete = course.sections.filter { it.id !in sectionsFromServerIds }
     if (!sectionsToDelete.isEmpty()) {
@@ -171,7 +171,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
   }
 
   @Throws(URISyntaxException::class, IOException::class)
-  private fun processModifiedSections(courseFromServer: RemoteCourse, sectionIds: List<Int>) {
+  private fun processModifiedSections(courseFromServer: EduCourse, sectionIds: List<Int>) {
     val sectionsFromServer = courseFromServer.sections.filter { section -> section.id in sectionIds }
     val sectionsById = course.sections.associateBy { it.id }
     for (sectionFromServer in sectionsFromServer) {
@@ -404,7 +404,7 @@ class StepikCourseUpdater(val course: RemoteCourse, val project: Project) {
     }
   }
 
-  private fun courseFromServer(currentCourse: RemoteCourse): RemoteCourse? {
+  private fun courseFromServer(currentCourse: EduCourse): EduCourse? {
     try {
       val remoteCourse = getCourseInfo(EduSettings.getInstance().user, currentCourse.id, true)
       if (remoteCourse != null && loadCourseStructure(remoteCourse)) {

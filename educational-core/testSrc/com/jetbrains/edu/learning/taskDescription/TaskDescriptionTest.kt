@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.ui.taskDescription.BrowserWindow
 import org.jsoup.Jsoup
 import java.awt.event.InputEvent
@@ -94,7 +94,7 @@ class TaskDescriptionTest : EduTestCase() {
   @Throws(IOException::class)
   override fun createCourse() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1")
-    val course = Course()
+    val course = EduCourse()
     course.name = "Edu test course"
     course.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(myFixture.project).course = course

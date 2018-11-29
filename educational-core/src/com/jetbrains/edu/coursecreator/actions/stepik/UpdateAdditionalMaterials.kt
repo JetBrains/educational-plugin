@@ -7,14 +7,14 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 
 @Suppress("ComponentNotRegistered") // educational-core.xml
 class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials") {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-    val course = StudyTaskManager.getInstance(project).course ?: return
-    if (course !is RemoteCourse) {
+    val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
+    if (!course.isRemote) {
       return
     }
     ProgressManager.getInstance().run(object : Task.Modal(project, "Updating Additional Materials", false) {
@@ -29,8 +29,8 @@ class UpdateAdditionalMaterials : DumbAwareAction("Update Additional Materials")
     val presentation = e.presentation
     presentation.isEnabledAndVisible = false
     val project = e.project ?: return
-    val course = StudyTaskManager.getInstance(project).course ?: return
-    if (course !is RemoteCourse || course.isStudy) {
+    val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
+    if (!course.isRemote || course.isStudy) {
       return
     }
     presentation.isEnabledAndVisible = true

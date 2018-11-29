@@ -6,8 +6,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction
 import com.intellij.openapi.project.DumbAwareAction
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikUtils.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -32,10 +32,11 @@ class LeaveFeedbackAction : DumbAwareAction(ACTION_TEXT, ACTION_TEXT, Educationa
     }
     val task = EduUtils.getCurrentTask(project) ?: return
     val feedbackLink = task.feedbackLink
+    val course = task.course
     presentation.isEnabledAndVisible = when (feedbackLink.type) {
       FeedbackLink.LinkType.NONE -> false
       FeedbackLink.LinkType.CUSTOM -> feedbackLink.link != null
-      FeedbackLink.LinkType.STEPIK -> task.course is RemoteCourse || task.course is HyperskillCourse
+      FeedbackLink.LinkType.STEPIK -> (course is EduCourse && course.isRemote) || course is HyperskillCourse
     }
   }
 

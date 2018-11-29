@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
@@ -34,8 +34,8 @@ public class ResetCourseAction extends DumbAwareAction {
 
     StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
     Course course = studyTaskManager.getCourse();
-    assert course != null;
-    ((RemoteCourse)course).setLoadSolutions(false);
+    assert course instanceof EduCourse;
+    ((EduCourse)course).setLoadSolutions(false);
 
     ApplicationManager.getApplication().runWriteAction(() -> course.visitLessons((lesson) -> {
       for (Task task : lesson.getTaskList()) {
@@ -66,7 +66,7 @@ public class ResetCourseAction extends DumbAwareAction {
     Project project = e.getProject();
     if (project != null) {
       Course course = StudyTaskManager.getInstance(project).getCourse();
-      if (course instanceof RemoteCourse) {
+      if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
         e.getPresentation().setEnabledAndVisible(true);
         return;
       }

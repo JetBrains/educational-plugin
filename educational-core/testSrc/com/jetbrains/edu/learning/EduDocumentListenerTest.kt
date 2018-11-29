@@ -3,7 +3,7 @@ package com.jetbrains.edu.learning
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileTypes.PlainTextLanguage
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import java.io.IOException
 
 class EduDocumentListenerTest : EduTestCase() {
@@ -296,7 +296,7 @@ class EduDocumentListenerTest : EduTestCase() {
   @Throws(IOException::class)
   override fun createCourse() {
     myFixture.copyDirectoryToProject("lesson1", "lesson1")
-    val course = Course()
+    val course = EduCourse()
     course.name = "Edu test course"
     course.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(myFixture.project).course = course

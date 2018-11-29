@@ -70,7 +70,7 @@ abstract class LessonOwnerBuilder(val course: Course) {
   }
 }
 
-class CourseBuilder : LessonOwnerBuilder(Course()) {
+class CourseBuilder : LessonOwnerBuilder(EduCourse()) {
 
   override val nextLessonIndex: Int get() = course.lessons.size + 1
 

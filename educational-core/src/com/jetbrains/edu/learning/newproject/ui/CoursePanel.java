@@ -19,7 +19,7 @@ import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
@@ -181,11 +181,15 @@ public class CoursePanel extends JPanel {
   @NotNull
   private static String htmlDescription(@NotNull Course course) {
     String description = course.getDescription() != null ? course.getDescription() : "";
-    if (course instanceof RemoteCourse && ((RemoteCourse)course).isPublic() && !FEATURED_COURSES.contains(course.getId()) &&
-        !(course instanceof StepikCourse) && !IN_PROGRESS_COURSES.contains(course.getId())) {
+    if (needsVerification(course)) {
       description += ourNotVerifiedNote;
     }
     return UIUtil.toHtml(description.replace("\n", "<br>"));
+  }
+
+  private static boolean needsVerification(@NotNull Course course) {
+    return course instanceof EduCourse && ((EduCourse)course).isRemote() && ((EduCourse)course).isPublic() &&
+           !FEATURED_COURSES.contains(course.getId()) && !(course instanceof StepikCourse) && !IN_PROGRESS_COURSES.contains(course.getId());
   }
 
   private void updateTags(@NotNull Course course) {

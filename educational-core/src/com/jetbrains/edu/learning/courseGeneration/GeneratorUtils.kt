@@ -226,7 +226,7 @@ object GeneratorUtils {
   }
 
   private fun updateTaskFilesNeeded(course: Course): Boolean {
-    return course is RemoteCourse && course.isStudy() && EduNames.JAVA == course.getLanguageID()
+    return course is EduCourse && course.isRemote && course.isStudy() && EduNames.JAVA == course.getLanguageID()
   }
 
   private fun updateJavaCodeTaskFileNames(project: Project, course: Course) {

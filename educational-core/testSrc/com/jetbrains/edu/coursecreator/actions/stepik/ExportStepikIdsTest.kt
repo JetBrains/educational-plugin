@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import org.intellij.lang.annotations.Language
 
 class ExportStepikIdsTest : EduTestCase() {
@@ -89,15 +89,15 @@ class ExportStepikIdsTest : EduTestCase() {
     assertEquals(expectedFileContent, actualFileContent)
   }
 
-  private fun convertToRemoteCourse(course: Course): RemoteCourse {
-    val remoteCourse = RemoteCourse()
+  private fun convertToRemoteCourse(course: Course): EduCourse {
+    val remoteCourse = EduCourse()
     remoteCourse.name = course.name
     remoteCourse.courseMode = CCUtils.COURSE_MODE
     remoteCourse.items = course.items
     return remoteCourse
   }
 
-  private fun RemoteCourse.generateUniqueIds() {
+  private fun EduCourse.generateUniqueIds() {
     id = 1
     sections[0].id = 2
     visitLessons { lesson ->

@@ -910,18 +910,7 @@ public class EduUtils {
       .registerTypeHierarchyAdapter(Course.class, new SerializationUtils.Json.CourseAdapter())
       .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
       .create();
-    JsonParser parser = new JsonParser();
-    JsonObject object = parser.parse(courseJsonText).getAsJsonObject();
-    JsonElement id = object.get("id");
-    try {
-      if (id != null && 0 != id.getAsInt()) {
-        return gson.fromJson(object, RemoteCourse.class);
-      }
-      return gson.fromJson(object, Course.class);
-    } catch (Exception e) {
-      LOG.error("Failed to deserialize course json", e);
-    }
-    return null;
+    return gson.fromJson(courseJsonText, EduCourse.class);
   }
 
   public static boolean isTaskDirectory(@NotNull Project project, @NotNull VirtualFile virtualFile) {

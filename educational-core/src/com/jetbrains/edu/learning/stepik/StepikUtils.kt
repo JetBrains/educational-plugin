@@ -20,7 +20,7 @@ package com.jetbrains.edu.learning.stepik
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.util.regex.Pattern
@@ -30,7 +30,7 @@ object StepikUtils {
   private val PYCHARM_COURSE_TYPE = Pattern.compile(String.format("%s(\\d*) (\\w+)", StepikNames.PYCHARM_PREFIX))
 
   @JvmStatic
-  fun setCourseLanguage(info: RemoteCourse) {
+  fun setCourseLanguage(info: EduCourse) {
     val courseType = info.type
     val matcher = PYCHARM_COURSE_TYPE.matcher(courseType)
     if (matcher.matches()) {
