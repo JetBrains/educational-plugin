@@ -10,7 +10,7 @@ import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikConnector
 
@@ -66,7 +66,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
     return course
   }
 
-  private fun chooseLanguageIfNeeded(languages: List<Language>, course: RemoteCourse): Language? {
+  private fun chooseLanguageIfNeeded(languages: List<Language>, course: EduCourse): Language? {
     return if (languages.size == 1) {
       languages[0]
     }

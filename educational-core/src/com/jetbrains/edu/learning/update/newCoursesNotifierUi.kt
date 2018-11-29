@@ -9,7 +9,7 @@ import com.intellij.openapi.util.ActionCallback
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.isUnitTestMode
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel
@@ -19,7 +19,7 @@ import javax.swing.JComponent
 @Volatile
 private var MOCK: NewCoursesNotifierUi? = null
 
-fun showNewCoursesNotification(courses: List<RemoteCourse>) {
+fun showNewCoursesNotification(courses: List<EduCourse>) {
   val ui = if (isUnitTestMode) {
     MOCK ?: error("You should set mock ui via `withMockNewCoursesNotifierUi`")
   } else {
@@ -40,12 +40,12 @@ fun withMockNewCoursesNotifierUi(mockUi: NewCoursesNotifierUi, action: () -> Act
 }
 
 interface NewCoursesNotifierUi {
-  fun showNotification(courses: List<RemoteCourse>)
+  fun showNotification(courses: List<EduCourse>)
 }
 
 object NotificationNewCourseNotifierUi : NewCoursesNotifierUi {
 
-  override fun showNotification(courses: List<RemoteCourse>) {
+  override fun showNotification(courses: List<EduCourse>) {
     check(courses.isNotEmpty()) { "course list should be not empty" }
     for (course in courses) {
       Notification("New.course", "New course available", "New course \"${course.name}\" is available", NotificationType.INFORMATION)

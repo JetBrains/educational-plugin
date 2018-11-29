@@ -4,6 +4,7 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import org.jetbrains.annotations.NotNull;
 
@@ -91,7 +92,7 @@ public class NavigatePlaceholderTest extends EduTestCase {
   protected void createCourse() throws IOException {
     myFixture.copyDirectoryToProject("lesson1", "lesson1");
     myFixture.copyDirectoryToProject("lesson2", "lesson2");
-    Course course = new Course();
+    Course course = new EduCourse();
     course.setName("Edu test course");
     course.setLanguage(PlainTextLanguage.INSTANCE.getID());
     StudyTaskManager.getInstance(myFixture.getProject()).setCourse(course);

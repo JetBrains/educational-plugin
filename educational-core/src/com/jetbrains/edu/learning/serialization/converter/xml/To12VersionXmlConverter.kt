@@ -12,6 +12,9 @@ class To12VersionXmlConverter : BaseXmlConverter() {
     if (sectionIds != null && sectionIds.isEmpty() && course.name == REMOTE_COURSE) {
       course.name = "StepikCourse"
     }
+    if (course.name == SerializationUtils.COURSE_TITLED || course.name == REMOTE_COURSE) {
+      course.name = "EduCourse"
+    }
     val courseType = SerializationUtils.Xml.getAsString(course, SerializationUtils.Xml.COURSE_TYPE)
     if (courseType == CourseraNames.COURSE_TYPE) {
       course.name = "CourseraCourse"

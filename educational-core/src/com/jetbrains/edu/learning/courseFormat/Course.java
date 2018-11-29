@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 /**
  * To introduce new course it's required to:
  *  - Extend Course class
- *  - Update {@link SerializationUtils.Xml.COURSE_ELEMENT_TYPES} to handle xml migrations and deserialization
+ *  - Update {@link SerializationUtils.Xml#COURSE_ELEMENT_TYPES} to handle xml migrations and deserialization
  *  - Introduce unique courseType, that's how we find appropriate {@link com.jetbrains.edu.learning.configuration.EduConfigurator}
  */
-public class Course extends ItemContainer {
+public abstract class Course extends ItemContainer {
   transient private List<StepikUserInfo> authors = new ArrayList<>();
   @Expose @SerializedName("summary") private String description;
   @Expose @SerializedName("title") private String name;
@@ -49,8 +49,6 @@ public class Course extends ItemContainer {
 
   protected CourseVisibility myVisibility = CourseVisibility.LocalVisibility.INSTANCE;
   protected CourseCompatibility myCompatibility = CourseCompatibility.COMPATIBLE;
-
-  public Course() {}
 
   public void init(@Nullable Course course, @Nullable StudyItem parentItem, boolean isRestarted) {
     for (int i = 0; i < items.size(); i++) {

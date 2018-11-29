@@ -198,7 +198,7 @@ public class CourseFormatTest extends EduTestCase {
         .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create();
-    return gson.fromJson(courseJson, Course.class);
+    return gson.fromJson(courseJson, EduCourse.class);
   }
 
   @NotNull

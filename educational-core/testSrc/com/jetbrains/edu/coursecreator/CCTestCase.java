@@ -34,10 +34,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.NewPlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
+import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +117,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
     myOldManager = ((ComponentManagerImpl)myFixture.getProject()).registerComponentInstance(FileEditorManager.class, myManager);
     ((FileEditorProviderManagerImpl)FileEditorProviderManager.getInstance()).clearSelectedProviders();
 
-    Course course = new Course();
+    Course course = new EduCourse();
     course.setName("test course");
     course.setLanguage(PlainTextLanguage.INSTANCE.getID());
     StudyTaskManager.getInstance(getProject()).setCourse(course);

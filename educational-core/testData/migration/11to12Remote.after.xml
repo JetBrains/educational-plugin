@@ -5,7 +5,7 @@
       <map />
     </option>
     <option name="course">
-      <RemoteCourse>
+      <EduCourse>
         <option name="additionalMaterialsUpdateDate" value="1532616891000" />
         <option name="authors">
           <list>
@@ -4804,7 +4804,7 @@
             </Lesson>
           </list>
         </option>
-      </RemoteCourse>
+      </EduCourse>
     </option>
   </StudyTaskManager>
 </component>

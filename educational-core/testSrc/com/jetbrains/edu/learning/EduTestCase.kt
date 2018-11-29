@@ -188,8 +188,8 @@ abstract class EduTestCase : LightPlatformCodeInsightFixtureTestCase() {
     }
   }
 
-  protected fun Course.asRemote(): RemoteCourse {
-    val remoteCourse = RemoteCourse()
+  protected fun Course.asRemote(): EduCourse {
+    val remoteCourse = EduCourse()
     remoteCourse.id = 1
     remoteCourse.name = name
     remoteCourse.courseMode = CCUtils.COURSE_MODE

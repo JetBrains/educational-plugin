@@ -56,7 +56,7 @@ public class SerializationUtils {
   }
 
   public static class Xml {
-    public static final List<Class<? extends Course>> COURSE_ELEMENT_TYPES = Lists.newArrayList(RemoteCourse.class, CheckiOCourse.class,
+    public static final List<Class<? extends Course>> COURSE_ELEMENT_TYPES = Lists.newArrayList(EduCourse.class, CheckiOCourse.class,
                                                                                                 HyperskillCourse.class, Course.class,
                                                                                                 StepikCourse.class, CourseraCourse.class);
 
@@ -407,6 +407,15 @@ public class SerializationUtils {
         if (courseElement != null) {
           return courseElement;
         }
+      }
+      // compatibility with old courses
+      Element courseElement = courseHolder.getChild(COURSE_TITLED);
+      if (courseElement != null) {
+        return courseElement;
+      }
+      courseElement = courseHolder.getChild(REMOTE_COURSE);
+      if (courseElement != null) {
+        return courseElement;
       }
       throw new StudyUnrecognizedFormatException("Failed to find course element type. CourseHolder is:\n" +
                                                  new XMLOutputter().outputString(courseHolder));

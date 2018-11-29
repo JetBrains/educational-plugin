@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RemoteCourse extends Course {
+public class EduCourse extends Course {
 
   private static final Logger LOG = Logger.getInstance(Course.class);
 
@@ -155,7 +155,7 @@ public class RemoteCourse extends Course {
   }
 
   @NotNull
-  private static CourseCompatibility courseCompatibility(@NotNull RemoteCourse courseInfo) {
+  private static CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
     final List<String> supportedLanguages = getSupportedLanguages();
 
     String courseType = courseInfo.getType();
@@ -181,5 +181,9 @@ public class RemoteCourse extends Course {
       LOG.info("Wrong version format", e);
       return CourseCompatibility.UNSUPPORTED;
     }
+  }
+
+  public boolean isRemote() {
+    return id != 0;
   }
 }

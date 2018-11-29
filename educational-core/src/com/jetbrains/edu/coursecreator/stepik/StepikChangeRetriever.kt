@@ -20,10 +20,10 @@ data class StepikChangesInfo(var isCourseInfoChanged: Boolean = false,
                              var tasksToUpdateByLessonIndex: Map<Int, List<Task>> = HashMap(),
                              var tasksToPostByLessonIndex: Map<Int, List<Task>> = HashMap())
 
-class StepikChangeRetriever(val project: Project, private val courseFromServer: RemoteCourse) {
+class StepikChangeRetriever(val project: Project, private val courseFromServer: EduCourse) {
 
   fun getChangedItems(): StepikChangesInfo {
-    val course = StudyTaskManager.getInstance(project).course as RemoteCourse
+    val course = StudyTaskManager.getInstance(project).course as EduCourse
     if (!isUnitTestMode) {
       setTaskFileTextFromDocuments()
     }
@@ -56,10 +56,10 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     return stepikChanges
   }
 
-  private fun allLessons(course: RemoteCourse) = course.lessons.plus(course.sections.flatMap { it.lessons })
+  private fun allLessons(course: EduCourse) = course.lessons.plus(course.sections.flatMap { it.lessons })
 
   fun setStepikChangeStatuses() {
-    val course = StudyTaskManager.getInstance(project).course as RemoteCourse
+    val course = StudyTaskManager.getInstance(project).course as EduCourse
     val stepikChanges = getChangedItems()
 
     if (stepikChanges.isCourseInfoChanged) {
@@ -98,7 +98,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
 
 
   private fun setTaskFileTextFromDocuments() {
-    val course = StudyTaskManager.getInstance(project).course as RemoteCourse
+    val course = StudyTaskManager.getInstance(project).course as EduCourse
     runInEdtAndWait {
       runReadAction {
         course.lessons
@@ -116,11 +116,11 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     return updateCandidate.taskList.filter { task -> !onServerTaskIds.contains(task.stepId) }
   }
 
-  private fun lessonIds(latestCourseFromServer: RemoteCourse) = latestCourseFromServer.lessons
+  private fun lessonIds(latestCourseFromServer: EduCourse) = latestCourseFromServer.lessons
     .plus(latestCourseFromServer.sections.flatMap { it.lessons })
     .map { lesson -> lesson.id }
 
-  private fun courseInfoChanged(course: RemoteCourse, latestCourseFromServer: RemoteCourse): Boolean {
+  private fun courseInfoChanged(course: EduCourse, latestCourseFromServer: EduCourse): Boolean {
     return course.name != latestCourseFromServer.name ||
            course.description != latestCourseFromServer.description ||
            course.humanLanguage != latestCourseFromServer.humanLanguage ||
@@ -137,7 +137,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
 
   private fun lessonsInfoToUpdate(course: Course,
                                   serverLessonIds: List<Int>,
-                                  latestCourseFromServer: RemoteCourse): List<Lesson> {
+                                  latestCourseFromServer: EduCourse): List<Lesson> {
     return course.lessons
       .filter { lesson -> serverLessonIds.contains(lesson.id) }
       .filter { updateCandidate ->
@@ -148,9 +148,9 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
       }
   }
 
-  private fun sectionsInfoToUpdate(course: RemoteCourse,
+  private fun sectionsInfoToUpdate(course: EduCourse,
                                    sectionIdsFromServer: List<Int>,
-                                   latestCourseFromServer: RemoteCourse): List<Section> {
+                                   latestCourseFromServer: EduCourse): List<Section> {
     val sectionsById = latestCourseFromServer.sections.associateBy({ it.id }, { it })
     return course.sections
       .filter { sectionIdsFromServer.contains(it.id) }

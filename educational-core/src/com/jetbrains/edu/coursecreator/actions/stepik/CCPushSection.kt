@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.learning.StudyTaskManager
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
@@ -27,7 +27,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
     if (view == null || project == null) {
       return
     }
-    val course = StudyTaskManager.getInstance(project).course as? RemoteCourse ?: return
+    val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     if (course.courseMode != CCUtils.COURSE_MODE) return
     val directories = view.directories
     if (directories.isEmpty() || directories.size > 1) {
@@ -53,7 +53,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
     if (view == null || project == null) {
       return
     }
-    val course = StudyTaskManager.getInstance(project).course as? RemoteCourse ?: return
+    val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
     val directories = view.directories
     if (directories.isEmpty() || directories.size > 1) {
       return
@@ -72,7 +72,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
     @JvmStatic
     fun doPush(project: Project,
                section: Section,
-               course: RemoteCourse) {
+               course: EduCourse) {
       ProgressManager.getInstance().run(object : Task.Modal(project, "Uploading Section", true) {
         override fun run(indicator: ProgressIndicator) {
           indicator.text = "Uploading section to " + StepikNames.STEPIK_URL
@@ -114,7 +114,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       })
     }
 
-    private fun sectionPosition(course: RemoteCourse,
+    private fun sectionPosition(course: EduCourse,
                                 sectionName: String): Int {
       var position = 1 + if (course.hasTopLevelLessons) 1 else 0
       for (s in course.sections) {

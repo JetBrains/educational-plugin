@@ -28,7 +28,7 @@ import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.RemoteCourse;
+import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
 import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
@@ -57,7 +57,7 @@ public class EduBuiltInServerUtils {
         StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
         if (studyTaskManager != null) {
           Course course = studyTaskManager.getCourse();
-          RemoteCourse remoteCourse = course instanceof RemoteCourse ? (RemoteCourse)course : null;
+          EduCourse remoteCourse = course instanceof EduCourse && ((EduCourse)course).isRemote() ? (EduCourse)course : null;
           if (remoteCourse != null && remoteCourse.getId() == courseId) {
             ApplicationManager.getApplication().invokeLater(() -> {
               requestFocus(project);
@@ -143,7 +143,7 @@ public class EduBuiltInServerUtils {
       studyTaskManager.loadState(component);
       Course course = studyTaskManager.getCourse();
 
-      if (course instanceof RemoteCourse) {
+      if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
         return course.getId();
       }
     }
@@ -157,7 +157,7 @@ public class EduBuiltInServerUtils {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       execCancelable(() -> {
         StepikUser user = EduSettings.getInstance().getUser();
-        RemoteCourse course = StepikConnector.getCourseInfo(user, courseId, true);
+        EduCourse course = StepikConnector.getCourseInfo(user, courseId, true);
         showDialog(course, stepId);
         return null;
       });
