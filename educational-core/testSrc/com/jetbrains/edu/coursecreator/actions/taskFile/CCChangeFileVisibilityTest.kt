@@ -16,16 +16,14 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task
 class CCChangeFileVisibilityTest : EduActionTestCase() {
 
   fun `test single task file`() = doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1")
-  fun `test single additional file`() = doAvailableTest(false, "additionalFile1.txt", pathPrefix = "lesson1/task1")
-  fun `test multiple files with same visibility`() = doAvailableTest(false, "TaskFile1.kt", "additionalFile1.txt", pathPrefix = "lesson1/task1")
+  fun `test single additional file`() = doAvailableTest(false, "TaskFile3.kt", pathPrefix = "lesson1/task1")
+  fun `test multiple files with same visibility`() = doAvailableTest(false, "TaskFile1.kt", "TaskFile3.kt", pathPrefix = "lesson1/task1")
   fun `test directory 1`() = doAvailableTest(true, "lesson1/task1/folder1")
   fun `test directory 2`() = doAvailableTest(true, "lesson1/task1/folder2")
   fun `test save stepik change status after undo`() =
     doAvailableTest(false, "TaskFile1.kt", pathPrefix = "lesson1/task1", status = StepikChangeStatus.INFO_AND_CONTENT)
   fun `test in student mode`() = doUnavailableTest("TaskFile1.kt", pathPrefix = "lesson1/task1", courseMode = EduNames.STUDY)
-  fun `test single test file`() = doUnavailableTest("testFile.kt", pathPrefix = "lesson1/task1")
-  fun `test multiple files with different visibility`() = doUnavailableTest("TaskFile2.kt", "additionalFile1.txt", pathPrefix = "lesson1/task1")
-  fun `test multiple files with test file`() = doUnavailableTest("TaskFile1.kt", "testFile.kt", pathPrefix = "lesson1/task1")
+  fun `test multiple files with different visibility`() = doUnavailableTest("TaskFile1.kt", "TaskFile2.kt", pathPrefix = "lesson1/task1")
   fun `test file outside of task`() = doUnavailableTest("lesson1")
 
   private fun doAvailableTest(
@@ -70,17 +68,11 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
           affectedCourseFiles += VfsUtil.collectChildrenRecursively(file).mapNotNull {
             if (it.isDirectory) return@mapNotNull null
             val pathInTask = FileUtil.getRelativePath(taskDir.path, it.path, VfsUtilCore.VFS_SEPARATOR_CHAR)!!
-            task.getTaskFile(pathInTask) ?: task.additionalFiles[pathInTask]
+            task.getTaskFile(pathInTask)
           }
         } else {
-          val visibleFile = task.getTaskFile(path) ?: task.additionalFiles[path]
-          if (visibleFile == null) {
-            if (task.testsText[path] == null) {
-              error("Can't find `$fullPath` in course")
-            }
-          } else {
-            affectedCourseFiles += visibleFile
-          }
+          val visibleFile = task.getTaskFile(path) ?: error("Can't find `$fullPath` in course")
+          affectedCourseFiles += visibleFile
         }
       }
     }
@@ -109,15 +101,14 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
         task.stepikChangeStatus = taskStepikStatus
         taskFile("TaskFile1.kt", "<p>some text</p>")
         taskFile("TaskFile2.kt", visible = false)
-        additionalFile("additionalFile1.txt")
-        testFile("testFile.kt")
+        taskFile("TaskFile3.kt")
         dir("folder1") {
-          taskFile("TaskFile3.kt")
-          additionalFile("additionalFile2.txt")
+          taskFile("TaskFile4.kt")
+          taskFile("TaskFile5.kt")
         }
         dir("folder2") {
-          taskFile("TaskFile4.kt", visible = false)
-          additionalFile("additionalFile3.txt")
+          taskFile("TaskFile6.kt", visible = false)
+          taskFile("TaskFile7.kt")
         }
       }
     }

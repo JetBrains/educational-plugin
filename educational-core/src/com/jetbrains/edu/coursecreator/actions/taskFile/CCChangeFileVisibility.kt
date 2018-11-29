@@ -5,7 +5,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.PlaceholderPainter
-import com.jetbrains.edu.learning.courseFormat.AdditionalFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -19,37 +18,19 @@ abstract class CCChangeFileVisibility(val name: String, val requiredVisibility: 
     val taskRelativePath = EduUtils.pathRelativeToTask(project, file)
     val taskFile = task.getTaskFile(taskRelativePath)
     if (taskFile != null) {
-      return TaskFileState(taskFile, file, requiredVisibility)
-    } else {
-      val additionalFile = task.additionalFiles[taskRelativePath]
-      if (additionalFile != null) {
-        return AdditionalFileState(additionalFile, requiredVisibility)
-      }
+      return FileState(taskFile, file, requiredVisibility)
     }
     return null
   }
 
   override fun isAvailableForSingleFile(project: Project, task: Task, file: VirtualFile): Boolean {
     val path = EduUtils.pathRelativeToTask(project, file)
-    val visibleFile = task.getTaskFile(path) ?: task.additionalFiles[path]
+    val visibleFile = task.getTaskFile(path)
     return visibleFile?.isVisible == !requiredVisibility
   }
 }
 
-private class AdditionalFileState(val file: AdditionalFile, val visibility: Boolean) : State {
-
-  val initialVisibility: Boolean = file.isVisible
-
-  override fun changeState(project: Project) {
-    file.isVisible = visibility
-  }
-
-  override fun restoreState(project: Project) {
-    file.isVisible = initialVisibility
-  }
-}
-
-private class TaskFileState(
+private class FileState(
   val taskFile: TaskFile,
   val file: VirtualFile,
   val visibility: Boolean
