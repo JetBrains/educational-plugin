@@ -42,11 +42,12 @@ class StartCourseraAssignment : DumbAwareAction("Start Coursera Assignment") {
           LOG.error("Failed to get local course from $link")
           continue
         }
-        localCourse.courseType = CourseraNames.COURSE_TYPE
-        if (localCourse.configurator == null) {
+
+        val courseraCourse = courseraCourseFromLocal(localCourse)
+        if (courseraCourse.configurator == null) {
           continue
         }
-        courses.add(localCourse)
+        courses.add(courseraCourse)
       }
       return courses
     }
