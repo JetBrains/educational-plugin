@@ -22,9 +22,4 @@ public abstract class CheckiOApiConnector {
     final String accessToken = myOauthConnector.getAccessToken();
     return myCheckiOApiInterface.getMissionList(accessToken).execute();
   }
-
-  @NotNull
-  public CheckiOOAuthConnector getOAuthConnector() {
-    return myOauthConnector;
-  }
 }
