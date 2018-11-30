@@ -4,6 +4,13 @@ body {
     height: auto;
 }
 
+img {
+    display: block;
+    float: none !important;
+    max-width: 100%;
+    height: auto;
+}
+
 a {
     text-decoration: none;
     position: relative;
