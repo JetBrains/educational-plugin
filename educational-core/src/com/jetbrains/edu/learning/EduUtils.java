@@ -229,25 +229,6 @@ public class EduUtils {
     return configurator.isTestFile(project, file);
   }
 
-  public static List<VirtualFile> getTestFiles(@NotNull Project project, @NotNull Task task) {
-    final VirtualFile taskDir = task.getTaskDir(project);
-    if (taskDir == null) {
-      LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
-      return Collections.emptyList();
-    }
-
-    List<VirtualFile> testFiles = new ArrayList<>();
-    for (String testFilePath : task.getTestsText().keySet()) {
-      VirtualFile testFile = taskDir.findFileByRelativePath(testFilePath);
-      if (testFile == null) {
-        LOG.warn(String.format("Can't find test file by `%s` path", testFilePath));
-      } else {
-        testFiles.add(testFile);
-      }
-    }
-    return testFiles;
-  }
-
   @Nullable
   public static TaskFile getTaskFile(@NotNull final Project project, @NotNull final VirtualFile file) {
     Task task = getTaskForFile(project, file);

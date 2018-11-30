@@ -1,36 +1,18 @@
 package com.jetbrains.edu.coursecreator;
 
-import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.module.ModifiableModuleModel;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ui.configuration.actions.ModuleDeleteProvider;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener;
-import com.jetbrains.edu.learning.*;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
+import com.jetbrains.edu.learning.CourseSetListener;
+import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase;
-import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class CCProjectComponent extends AbstractProjectComponent {
   private static final Logger LOG = Logger.getInstance(CCProjectComponent.class);
@@ -41,82 +23,6 @@ public class CCProjectComponent extends AbstractProjectComponent {
   protected CCProjectComponent(Project project) {
     super(project);
     myProject = project;
-  }
-
-  public void migrateIfNeeded() {
-    Course studyCourse = StudyTaskManager.getInstance(myProject).getCourse();
-    if (studyCourse != null) {
-      EduConfigurator<?> configurator = CourseExt.getConfigurator(studyCourse);
-      if (configurator == null) return;
-      EduCourseBuilder<?> courseBuilder = configurator.getCourseBuilder();
-      if (courseBuilder instanceof GradleCourseBuilderBase && !EduGradleUtils.isConfiguredWithGradle(myProject)) {
-        GradleCourseBuilderBase gradleCourseBuilder = (GradleCourseBuilderBase)courseBuilder;
-        convertToGradleProject(studyCourse,
-                               gradleCourseBuilder.getTemplates(),
-                               gradleCourseBuilder.templateVariables(myProject));
-      }
-    }
-  }
-
-  private void convertToGradleProject(@NotNull Course course,
-                                      @NotNull Map<String, String> templates,
-                                      @NotNull Map<String, Object> templateVariables) {
-    VirtualFile baseDir = myProject.getBaseDir();
-    if (baseDir == null) {
-      return;
-    }
-
-    ModuleManager moduleManager = ModuleManager.getInstance(myProject);
-    Module[] modules = moduleManager.getModules();
-    final ModifiableModuleModel modifiableModuleModel = moduleManager.getModifiableModel();
-    for (Module module : modules) {
-      ModuleDeleteProvider.removeModule(module, Collections.emptyList(), modifiableModuleModel);
-      ModuleBuilder.deleteModuleFile(module.getModuleFilePath());
-    }
-
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      modifiableModuleModel.commit();
-
-      try {
-        EduGradleUtils.createProjectGradleFiles(baseDir, templates, templateVariables);
-
-        StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> transformCourseStructure(course, myProject));
-
-      } catch (IOException e) {
-        LOG.error(e);
-      }
-    });
-
-    EduGradleUtils.setGradleSettings(myProject, baseDir.getPath());
-    EduGradleUtils.importGradleProject(myProject, baseDir.getPath());
-  }
-
-  private static void transformCourseStructure(Course course, Project project) {
-    List<VirtualFile> files = getAllTestFiles(course, project);
-    for (VirtualFile testFile : files) {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        VirtualFile parent = testFile.getParent().getParent();
-        try {
-          VirtualFile testDir = parent.findChild(EduNames.TEST);
-          if (testDir == null) {
-            testDir = parent.createChildDirectory(CCProjectComponent.class, EduNames.TEST);
-          }
-          testFile.move(CCProjectComponent.class, testDir);
-        } catch (IOException e) {
-          LOG.error(e);
-        }
-      });
-    }
-  }
-
-  private static List<VirtualFile> getAllTestFiles(@NotNull Course course, @NotNull Project project) {
-    List<VirtualFile> result = new ArrayList<>();
-    for (Lesson lesson : course.getLessons()) {
-      for (Task task : lesson.getTaskList()) {
-        result.addAll(EduUtils.getTestFiles(project, task));
-      }
-    }
-    return result;
   }
 
   private void startTaskDescriptionFilesSynchronization() {
@@ -133,8 +39,6 @@ public class CCProjectComponent extends AbstractProjectComponent {
   }
 
   public void projectOpened() {
-    migrateIfNeeded();
-
     if (StudyTaskManager.getInstance(myProject).getCourse() != null) {
       initCCProject();
     } else {
