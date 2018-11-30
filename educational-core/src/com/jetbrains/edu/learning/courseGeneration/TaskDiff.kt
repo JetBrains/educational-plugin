@@ -20,10 +20,6 @@ interface TaskDiff {
   fun revert(project: Project, baseDir: VirtualFile)
 }
 
-fun addFile(path: String, text: String): TaskDiff = FileAdded(path, text)
-fun removeFile(path: String, text: String): TaskDiff = FileRemoved(path, text)
-fun changeFile(path: String, prevText: String, nextText: String): TaskDiff = FileChanged(path, prevText, nextText)
-
 fun addTaskFile(path: String, taskFile: TaskFile): TaskDiff = TaskFileAdded(path, taskFile)
 fun removeTaskFile(path: String, taskFile: TaskFile): TaskDiff = TaskFileRemoved(path, taskFile)
 fun changeTaskFile(path: String, prevTaskFile: TaskFile, nextTaskFile: TaskFile): TaskDiff = TaskFileChanged(path, prevTaskFile, nextTaskFile)

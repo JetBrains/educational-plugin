@@ -64,49 +64,17 @@ class FrameworkLesson() : Lesson() {
   }
 
   private fun calculateDiffs(prevTask: Task, nextTask: Task): List<TaskDiff> {
-    val diffs = mutableListOf<TaskDiff>()
-    diffs += calculateDiffs(
-      prevTask.taskFiles,
-      nextTask.taskFiles,
-      add = ::addTaskFile,
-      remove = ::removeTaskFile,
-      change = ::changeTaskFile
-    )
-    diffs += calculateDiffs(
-      prevTask.testsText,
-      nextTask.testsText,
-      add = ::addFile,
-      remove = ::removeFile,
-      change = ::changeFile
-    )
-    diffs += calculateDiffs(
-      prevTask.additionalFiles.mapValues { (_, file) -> file.getText() },
-      nextTask.additionalFiles.mapValues { (_, file) -> file.getText() },
-      add = ::addFile,
-      remove = ::removeFile,
-      change = ::changeFile
-    )
-    return diffs
-  }
-}
-
-private inline fun <T> calculateDiffs(
-  prevItems: Map<String, T>,
-  nextItems: Map<String, T>,
-  add: (String, T) -> TaskDiff,
-  remove: (String, T) -> TaskDiff,
-  change: (String, T, T) -> TaskDiff
-): List<TaskDiff> {
-  val allItems = prevItems.keys + nextItems.keys
-  return allItems.mapNotNull { path ->
-    val prevItem = prevItems[path]
-    val nextItem = nextItems[path]
-    when {
-      prevItem == null && nextItem != null -> add(path, nextItem)
-      prevItem != null && nextItem == null -> remove(path, prevItem)
-      // TODO: implement `equals` for `TaskFile`
-      prevItem != null && nextItem != null && prevItem != nextItem -> change(path, prevItem, nextItem)
-      else -> null
+    val allItems = prevTask.taskFiles.keys + nextTask.taskFiles.keys
+    return allItems.mapNotNull { path ->
+      val prevItem = prevTask.taskFiles[path]
+      val nextItem = nextTask.taskFiles[path]
+      when {
+        prevItem == null && nextItem != null -> addTaskFile(path, nextItem)
+        prevItem != null && nextItem == null -> removeTaskFile(path, prevItem)
+        // TODO: implement `equals` for `TaskFile`
+        prevItem != null && nextItem != null && prevItem != nextItem -> changeTaskFile(path, prevItem, nextItem)
+        else -> null
+      }
     }
   }
 }

@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
+import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import icons.EducationalCoreIcons
@@ -77,11 +78,16 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
       // We can't just copy text from course objects because they can contain outdated text
       // in reason that we don't synchronize them with files system
       // So we need to load actual files text from filesystem
-      newTask.taskFiles = prevTask.taskFiles.mapValuesTo(LinkedHashMap()) { (_, taskFile) -> taskFile.copyForNewTask(prevTaskDir, newTask) }
-      newTask.additionalFiles = prevTask.additionalFiles.mapValuesTo(HashMap()) { (path, oldAdditionalFile) ->
-        val file = prevTaskDir.findFileByRelativePath(path) ?: return@mapValuesTo oldAdditionalFile
-        AdditionalFile(CCUtils.loadText(file), oldAdditionalFile.isVisible)
+      val newTaskFiles = LinkedHashMap<String, TaskFile>()
+      val testDirs = course.testDirs
+      val defaultTestFileName = course.configurator?.testFileName ?: ""
+      for ((path, file) in prevTask.taskFiles) {
+        // We don't want to copy test files
+        if (testDirs.none { path.startsWith(it) } && path != defaultTestFileName) {
+          newTaskFiles[path] = file.copyForNewTask(prevTaskDir, newTask)
+        }
       }
+      newTask.taskFiles = newTaskFiles
 
       // If we insert new task between `task1` and `task2`
       // we should change target of all placeholder dependencies of `task2` from task file of `task1`
@@ -117,6 +123,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
       ""
     }
     newTaskFile.setText(text)
+    newTaskFile.isVisible = isVisible
     newTaskFile.answerPlaceholders = answerPlaceholders.map { it.copyForNewTaskFile(newTaskFile) }
     return newTaskFile
   }

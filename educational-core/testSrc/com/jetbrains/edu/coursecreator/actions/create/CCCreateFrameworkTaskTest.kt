@@ -53,6 +53,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
           taskFile("Task.kt", "fun foo(): String = <p>TODO()</p>") {
             placeholder(0, "\"Foo\"")
           }
+          taskFile("build.gradle")
         }
       }
     }
@@ -70,10 +71,12 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
       dir(lessonName) {
         dir("task1") {
           file("Task.kt", "fun foo(): String = \"Foo\"")
+          file("build.gradle")
           file("task.html")
         }
         dir(newTaskName) {
           file("Task.kt", "fun foo(): String = \"Foo\"")
+          file("build.gradle")
           file("task.html")
         }
       }
@@ -81,9 +84,9 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
 
     assertEquals(2, course.lessons[0].taskList.size)
     val createdTask = course.lessons[0].taskList[1]
-    assertEquals(1, createdTask.taskFiles.size)
-    val prevTaskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"] ?: error("")
-    val taskFile = createdTask.taskFiles.values.single()
+    assertEquals(2, createdTask.taskFiles.size)
+    val prevTaskFile = course.lessons[0].taskList[0].taskFiles["Task.kt"] ?: error("Can't find `Task.kt` file")
+    val taskFile = createdTask.taskFiles["Task.kt"] ?: error("Can't find `Task.kt` file")
     assertEquals(prevTaskFile.name, taskFile.name)
     assertEquals(1, taskFile.answerPlaceholders.size)
     val placeholder = taskFile.answerPlaceholders[0]
@@ -137,42 +140,6 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
     assertEquals(taskFile.answerPlaceholders[1], task2.getTaskFile("Bar.kt")?.answerPlaceholders?.get(0)?.placeholderDependency?.resolve(course))
   }
 
-  fun `test copy additional files`() {
-    val lessonName = "lesson1"
-
-    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
-      frameworkLesson(lessonName) {
-        eduTask {
-          taskFile("Task.kt")
-          additionalFile("build.gradle")
-        }
-      }
-    }
-    val newTaskName = "task2"
-    val lessonFile = findFile(lessonName)
-
-    withMockCreateStudyItemUi(MockNewStudyItemUi(newTaskName)) {
-      withVirtualFileListener(course) {
-        testAction(dataContext(lessonFile), CCCreateTask())
-      }
-    }
-
-    fileTree {
-      dir(lessonName) {
-        dir("task1") {
-          file("Task.kt")
-          file("build.gradle")
-          file("task.html")
-        }
-        dir(newTaskName) {
-          file("Task.kt")
-          file("build.gradle")
-          file("task.html")
-        }
-      }
-    }.assertEquals(root)
-  }
-
   fun `test copy images`() {
     val lessonName = "lesson1"
     val imageName = "image.png"
@@ -223,7 +190,7 @@ class CCCreateFrameworkTaskTest : EduActionTestCase() {
       frameworkLesson(lessonName) {
         eduTask("task1") {
           taskFile("Task.kt", "fun foo(): String = TODO()")
-          additionalFile("build.gradle", "apply plugin: \"kotlin\"")
+          taskFile("build.gradle", "apply plugin: \"kotlin\"")
         }
       }
     }
