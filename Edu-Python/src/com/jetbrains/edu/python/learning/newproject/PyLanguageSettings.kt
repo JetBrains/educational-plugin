@@ -1,5 +1,6 @@
 package com.jetbrains.edu.python.learning.newproject
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.SdkModel
@@ -20,7 +21,6 @@ import com.jetbrains.python.newProject.PyNewProjectSettings
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
-import icons.PythonIcons
 import java.awt.BorderLayout
 import javax.swing.JComponent
 
@@ -36,7 +36,7 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     if (SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
       combo.putClientProperty("JButton.buttonType", null)
     }
-    combo.setButtonIcon(PythonIcons.Python.InterpreterGear)
+    combo.setButtonIcon(AllIcons.General.GearPlain)
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(combo, "Interpreter", BorderLayout.WEST))
   }
 
