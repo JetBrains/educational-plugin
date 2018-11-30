@@ -461,24 +461,7 @@ public class SerializationUtils {
     private Json() {
     }
 
-    public static class LessonSectionAdapter implements JsonDeserializer<StudyItem>, JsonSerializer<StudyItem> {
-
-      @Override
-      public JsonElement serialize(StudyItem item, Type type, JsonSerializationContext context) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(Task.class, new TaskAdapter())
-          .excludeFieldsWithoutExposeAnnotation().create();
-        JsonElement tree = gson.toJsonTree(item);
-        final JsonObject jsonItem = tree.getAsJsonObject();
-        String itemType = EduNames.LESSON;
-        if (item instanceof FrameworkLesson) {
-          itemType = FRAMEWORK_TYPE;
-        }
-        else if (item instanceof Section) {
-          itemType = EduNames.SECTION;
-        }
-        jsonItem.add(ITEM_TYPE, new JsonPrimitive(itemType));
-        return jsonItem;
-      }
+    public static class LessonSectionAdapter implements JsonDeserializer<StudyItem> {
 
       @Override
       public StudyItem deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
@@ -508,22 +491,7 @@ public class SerializationUtils {
       }
     }
 
-    public static class CourseAdapter implements JsonSerializer<Course>, JsonDeserializer<Course> {
-
-      @Override
-      public JsonElement serialize(Course src, Type typeOfSrc, JsonSerializationContext context) {
-        final Gson gson = new GsonBuilder()
-          .setPrettyPrinting()
-          .excludeFieldsWithoutExposeAnnotation()
-          .registerTypeAdapter(StudyItem.class, new SerializationUtils.Json.LessonSectionAdapter())
-          .registerTypeAdapter(Task.class, new SerializationUtils.Json.TaskAdapter())
-          .create();
-        JsonElement element = gson.toJsonTree(src, typeOfSrc);
-        if (element.isJsonObject()) {
-          element.getAsJsonObject().addProperty(VERSION, EduVersions.JSON_FORMAT_VERSION);
-        }
-        return element;
-      }
+    public static class CourseAdapter implements JsonDeserializer<Course> {
 
       @Override
       public Course deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -556,13 +524,7 @@ public class SerializationUtils {
       }
     }
 
-    public static class TaskAdapter implements JsonSerializer<Task>, JsonDeserializer<Task> {
-
-      @Override
-      public JsonElement serialize(Task src, Type typeOfSrc, JsonSerializationContext context) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-        return serializeWithTaskType(src, gson);
-      }
+    public static class TaskAdapter implements JsonDeserializer<Task> {
 
       @Override
       public Task deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

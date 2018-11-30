@@ -9,4 +9,9 @@ enum class DescriptionFormat(val descriptionFileName: String) {
   @SerializedName("md") MD(EduNames.TASK_MD);
 
   val fileExtension: String = FileUtilRt.getExtension(descriptionFileName)
+
+  override fun toString(): String {
+    return name
+  }
+
 }
