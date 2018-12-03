@@ -20,6 +20,7 @@ import org.junit.Assert
 class CourseViewTest : CourseViewTestBase() {
 
   fun testCoursePane() {
+    createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val pane = createPane()
 
@@ -34,6 +35,7 @@ class CourseViewTest : CourseViewTestBase() {
   }
 
   fun testProjectOpened() {
+    createStudyCourse()
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
     val pane = projectView.currentProjectViewPane
@@ -53,6 +55,7 @@ class CourseViewTest : CourseViewTestBase() {
   }
 
   fun testExpandAfterNavigation() {
+    createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -71,6 +74,7 @@ class CourseViewTest : CourseViewTestBase() {
   }
 
   fun testCourseProgress() {
+    createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -80,12 +84,14 @@ class CourseViewTest : CourseViewTestBase() {
   }
 
   fun testSwitchingPane() {
+    createStudyCourse()
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
     TestCase.assertEquals(CourseViewPane.ID, projectView.currentViewId)
   }
 
   fun testCheckTask() {
+    createStudyCourse()
     configureByTaskFile(1, 1, "taskFile1.txt")
     val projectView = ProjectView.getInstance(project)
     projectView.changeView(CourseViewPane.ID)
@@ -105,7 +111,7 @@ class CourseViewTest : CourseViewTestBase() {
     launchAction(taskFile, refreshTaskFileAction)
   }
 
-  override fun createCourse() {
+  private fun createStudyCourse() {
     courseWithFiles("Edu test course") {
       lesson {
         eduTask {
