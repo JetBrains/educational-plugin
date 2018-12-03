@@ -274,10 +274,6 @@ public class StepikConnector {
     return -1;
   }
 
-  private static CoursesContainer getCourseContainers(@Nullable StepikUser user, @NotNull URI url) throws IOException {
-    return getCourseContainers(user, url.toString());
-  }
-
   public static CoursesContainer getCourseContainers(@Nullable StepikUser user, @NotNull String url) throws IOException {
     final CoursesContainer coursesContainer;
     if (user != null) {
@@ -304,7 +300,7 @@ public class StepikConnector {
       LOG.error(e.getMessage());
       return false;
     }
-    final CoursesContainer coursesContainer = getCourseContainers(user, url);
+    final CoursesContainer coursesContainer = getCourseContainers(user, url.toString());
     addAvailableCourses(result, coursesContainer);
     return coursesContainer.meta.containsKey("has_next") && coursesContainer.meta.get("has_next") == Boolean.TRUE;
   }
@@ -317,7 +313,7 @@ public class StepikConnector {
       url = new URIBuilder(StepikNames.COURSES + "/" + courseId)
         .addParameter("is_idea_compatible", String.valueOf(isIdeaCompatible))
         .build();
-      coursesContainer = getCourseContainers(user, url);
+      coursesContainer = getCourseContainers(user, url.toString());
     }
     catch (URISyntaxException | IOException e) {
       LOG.warn(e.getMessage());
