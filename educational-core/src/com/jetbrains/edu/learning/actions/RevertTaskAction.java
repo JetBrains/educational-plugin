@@ -102,7 +102,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
   }
 
   @Override
-  public void update(AnActionEvent event) {
+  public void update(@NotNull AnActionEvent event) {
     EduUtils.updateAction(event);
     final Project project = event.getProject();
     if (project == null) {
