@@ -25,6 +25,7 @@ public class CheckiOUserInfo {
     myUid = uid;
   }
 
+  @SuppressWarnings("unused") // used for deserialization
   @NotNull
   public String getUsername() {
     return myUsername;
