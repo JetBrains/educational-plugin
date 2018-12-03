@@ -36,6 +36,7 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
 
     val linksPanel = JPanel(BorderLayout())
     add(linksPanel, BorderLayout.SOUTH)
+    linksPanel.border = JBUI.Borders.emptyLeft(2)
 
 
     if (task.course is HyperskillCourse && checkResult.status == CheckStatus.Failed) {
