@@ -9,6 +9,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import java.awt.Color
+import java.awt.event.InputEvent
 
 abstract class TaskDescriptionView {
 
@@ -24,7 +25,7 @@ abstract class TaskDescriptionView {
   abstract fun readyToCheck()
   abstract fun checkStarted()
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
-  abstract fun showBalloon(text: String, messageType: MessageType)
+  abstract fun showBalloon(text: String, messageType: MessageType, inputEvent: InputEvent?)
 
   companion object {
 

@@ -4,6 +4,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.wm.ToolWindow
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import java.awt.event.InputEvent
 
 class MockTaskDescriptionView : TaskDescriptionView() {
   override var currentTask: Task?
@@ -18,5 +19,5 @@ class MockTaskDescriptionView : TaskDescriptionView() {
   override fun readyToCheck() {}
   override fun checkStarted() {}
   override fun checkFinished(task: Task, checkResult: CheckResult) {}
-  override fun showBalloon(text: String, messageType: MessageType) {}
+  override fun showBalloon(text: String, messageType: MessageType, inputEvent: InputEvent?) {}
 }

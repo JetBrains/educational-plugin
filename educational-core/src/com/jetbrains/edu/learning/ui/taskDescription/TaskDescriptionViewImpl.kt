@@ -24,7 +24,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
-import java.awt.Point
+import java.awt.event.InputEvent
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JSeparator
@@ -132,11 +132,25 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
-  override fun showBalloon(text: String, messageType: MessageType) {
-    val balloonBuilder = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, messageType, BrowserHyperlinkListener.INSTANCE)
-    val balloon = balloonBuilder.createBalloon()
-    val point = Point(checkPanel.x + checkPanel.width - 10, checkPanel.y + checkPanel.height)
-    balloon.show(RelativePoint (checkPanel, point), Balloon.Position.above)
+  override fun showBalloon(text: String, messageType: MessageType, inputEvent: InputEvent?) {
+    val color = if (messageType == MessageType.INFO) UIUtil.getToolTipActionBackground() else messageType.popupBackground
+    val factory = JBPopupFactory.getInstance()
+    val balloon = factory.createHtmlTextBalloonBuilder(text, null, color, BrowserHyperlinkListener.INSTANCE).createBalloon()
+
+    balloon.show(relativePointForAction(inputEvent), Balloon.Position.above)
+  }
+
+  private fun relativePointForAction(inputEvent: InputEvent?): RelativePoint {
+    val inputEventComponent = inputEvent?.component as? JComponent
+    if (inputEventComponent != null) {
+      val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(inputEventComponent)
+
+      // calculated position is in the center of action button, so we're moving it to top left corner
+      relativePoint.point.translate(JBUI.scale(-5), JBUI.scale(-7))
+      return relativePoint
+    }
+
+    return checkPanel.tooltipPosition()
   }
 
   private fun setTaskText(task: Task?) {

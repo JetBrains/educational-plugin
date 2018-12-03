@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.placeholderDependencies
 
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
@@ -153,7 +154,7 @@ class PlaceholderDependencyTest : EduTestCase() {
     val virtualFile = findFileInTask(1, 0, "task.txt")
     myFixture.openFileInEditor(virtualFile)
 
-    RevertTaskAction.revert(project)
+    RevertTaskAction.revert(project, DataContext.EMPTY_CONTEXT)
 
     checkPlaceholderContent("placeholder", findPlaceholder(1, 0, "task.txt", 0))
     checkPlaceholderContent("type here", findPlaceholder(1, 0, "task.txt", 1))

@@ -28,6 +28,8 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.event.InputEvent;
+
 
 public class RevertTaskAction extends DumbAwareAction implements RightAlignedToolbarAction {
   public static final String ACTION_ID = "Educational.RefreshTask";
@@ -38,7 +40,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     super(RESET_TASK, "Revert current task to the initial state", EducationalCoreIcons.ResetTask);
   }
 
-  public static void revert(@NotNull final Project project) {
+  public static void revert(@NotNull final Project project, @NotNull InputEvent inputEvent) {
     final Task currentTask = EduUtils.getCurrentTask(project);
     if (currentTask == null) return;
 
@@ -49,7 +51,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     });
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
     validateEditors(project);
-    TaskDescriptionView.getInstance(project).showBalloon("You can start again now", MessageType.INFO);
+    TaskDescriptionView.getInstance(project).showBalloon("You can start again now", MessageType.INFO, inputEvent);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
     TaskDescriptionView.getInstance(project).readyToCheck();
@@ -98,7 +100,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     if (project == null) {
       return;
     }
-    revert(project);
+    revert(project, event.getInputEvent());
   }
 
   @Override
