@@ -101,11 +101,18 @@ class CourseViewTest : CourseViewTestBase() {
     val action = CheckAction()
     launchAction(taskFile, action)
 
-    val pane = projectView.currentProjectViewPane
     val structure = "-Project\n" +
-                          " +CourseNode Edu test course  1/4\n"
-    waitWhileBusy(pane.tree)
-    PlatformTestUtil.assertTreeEqual(pane.tree, structure)
+                    " -CourseNode Edu test course  1/4\n" +
+                    "  -LessonNode lesson1\n" +
+                    "   -TaskNode task1\n" +
+                    "    taskFile1.txt\n" +
+                    "   -TaskNode task2\n" +
+                    "    taskFile2.txt\n" +
+                    "   -TaskNode task3\n" +
+                    "    taskFile3.txt\n" +
+                    "   -TaskNode task4\n" +
+                    "    taskFile4.txt\n"
+    assertCourseView(structure)
 
     val refreshTaskFileAction = RevertTaskAction()
     launchAction(taskFile, refreshTaskFileAction)
