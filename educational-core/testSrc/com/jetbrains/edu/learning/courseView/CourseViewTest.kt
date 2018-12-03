@@ -111,7 +111,7 @@ class CourseViewTest : CourseViewTestBase() {
                     "   -TaskNode task3\n" +
                     "    taskFile3.txt\n" +
                     "   -TaskNode task4\n" +
-                    "    taskFile4.txt\n"
+                    "    taskFile4.txt"
     assertCourseView(structure)
 
     val refreshTaskFileAction = RevertTaskAction()
