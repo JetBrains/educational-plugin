@@ -9,7 +9,7 @@
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <experimentalFeature id="com.jetbrains.edu.android" percentOfUsers="100" internalFeature="true">
+        <experimentalFeature id="com.jetbrains.edu.android" percentOfUsers="100" internalFeature="false">
             <description>Enables support of Android courses</description>
         </experimentalFeature>
     </extensions>
