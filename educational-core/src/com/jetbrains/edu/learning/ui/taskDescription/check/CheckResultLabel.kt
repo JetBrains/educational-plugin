@@ -6,9 +6,12 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import icons.EducationalCoreIcons
 
-class CheckResultLabel(checkResult: CheckResult) : JBLabel() {
+class CheckResultLabel(checkResult: CheckResult, task: Task) : JBLabel() {
   init {
     val status = checkResult.status
     iconTextGap = JBUI.scale(4)
@@ -25,7 +28,10 @@ class CheckResultLabel(checkResult: CheckResult) : JBLabel() {
 
     text = when (status) {
       CheckStatus.Failed -> "Incorrect"
-      CheckStatus.Solved -> "Correct"
+      CheckStatus.Solved -> when (task) {
+        is IdeTask, is TheoryTask -> "Done"
+        else -> "Correct"
+      }
       else -> ""
     }
     border = JBUI.Borders.empty(8, 16, 0, 0)

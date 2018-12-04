@@ -7,6 +7,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.IdeTask
 
 class IdeTaskChecker(task: IdeTask, project: Project): TaskChecker<IdeTask>(task, project) {
   override fun check(indicator: ProgressIndicator): CheckResult {
-    return CheckResult(CheckStatus.Solved, "Task marked as completed")
+    return CheckResult(CheckStatus.Solved, "")
   }
 }
