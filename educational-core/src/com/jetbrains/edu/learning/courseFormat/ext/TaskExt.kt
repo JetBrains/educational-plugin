@@ -138,7 +138,6 @@ fun Task.taskDescriptionHintBlocks(): String {
     return ""
   }
 
-  text.append("<br>")
   text.append("\n")
   for (hint in hints) {
     text.append("<div class='hint'>")
@@ -146,7 +145,6 @@ fun Task.taskDescriptionHintBlocks(): String {
       .append("</div>")
       .append("\n")
   }
-  text.append("<br>")
   text.append("\n")
 
   return text.toString()
