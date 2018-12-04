@@ -79,7 +79,7 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
 
   fun checkFinished(task: Task, result: CheckResult) {
     checkFinishedPanel.removeAll()
-    val resultPanel = getResultPanel(result)
+    val resultPanel = getResultPanel(task, result)
     checkFinishedPanel.add(resultPanel, BorderLayout.WEST)
     checkFinishedPanel.add(JPanel(), BorderLayout.CENTER)
     checkDetailsPlaceholder.add(CheckDetailsPanel(project, task, result))
@@ -90,8 +90,8 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
     UIUtil.setBackgroundRecursively(this, TaskDescriptionView.getTaskDescriptionBackgroundColor())
   }
 
-  private fun getResultPanel(result: CheckResult): JComponent {
-    val resultLabel = CheckResultLabel(result)
+  private fun getResultPanel(task: Task, result: CheckResult): JComponent {
+    val resultLabel = CheckResultLabel(task, result)
     if (result.status != CheckStatus.Solved) {
       return resultLabel
     }
