@@ -44,7 +44,8 @@ class AndroidNewTaskDialog(
 
   override fun createAdditionalFields(builder: LayoutBuilder) {
     val androidVersionsInfo = AndroidVersionsInfo()
-    androidVersionsInfo.loadTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel) { items ->
+    androidVersionsInfo.loadLocalVersions()
+    androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel) { items ->
       val maxSdkVersion = items.map { it.minApiLevel }.max() ?: FormFactor.MOBILE.maxOfflineApiLevel
       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
       comboBox.init(FormFactor.MOBILE, items)

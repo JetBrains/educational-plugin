@@ -1,3 +1,17 @@
+diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
+index b008fcf..38e0487 100644
+--- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
++++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
+@@ -44,8 +44,7 @@ class AndroidNewTaskDialog(
+ 
+   override fun createAdditionalFields(builder: LayoutBuilder) {
+     val androidVersionsInfo = AndroidVersionsInfo()
+-    androidVersionsInfo.loadLocalVersions()
+-    androidVersionsInfo.loadRemoteTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel) { items ->
++    androidVersionsInfo.loadTargetVersions(FormFactor.MOBILE, FormFactor.MOBILE.minOfflineApiLevel) { items ->
+       val maxSdkVersion = items.map { it.minApiLevel }.max() ?: FormFactor.MOBILE.maxOfflineApiLevel
+       compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
+       comboBox.init(FormFactor.MOBILE, items)
 diff --git a/Edu-Java/resources/META-INF/Edu-Java.xml b/Edu-Java/resources/META-INF/Edu-Java.xml
 index df4d8c1..a1de788 100644
 --- a/Edu-Java/resources/META-INF/Edu-Java.xml
