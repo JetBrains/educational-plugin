@@ -29,11 +29,11 @@ import javax.swing.*;
 
 public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   private BrowserWindow myBrowserWindow;
-  private static final String HINT_BLOCK_TEMPLATE = "<div class='hint_header'>Hint %d</div>" +
+  private static final String HINT_BLOCK_TEMPLATE = "<div class='hint_header'>Hint %s</div>" +
                                                     "  <div class='hint_content'>" +
                                                     " %s" +
                                                     "  </div>";
-  private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "<div class='hint_header checked'>Hint %d</div>" +
+  private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "<div class='hint_header checked'>Hint %s</div>" +
                                                              "  <div class='hint_content'>" +
                                                              " %s" +
                                                              "  </div>";
@@ -67,18 +67,18 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
-  protected String wrapHint(@NotNull String hintText, int hintNumber) {
+  protected String wrapHint(@NotNull String hintText, @NotNull String displayedHintNumber) {
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
     if (course == null) {
-      return String.format(HINT_BLOCK_TEMPLATE, hintNumber, hintText);
+      return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText);
     }
 
     boolean study = course.isStudy();
     if (study) {
-      return String.format(HINT_BLOCK_TEMPLATE, hintNumber, hintText);
+      return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText);
     }
     else {
-      return String.format(HINT_EXPANDED_BLOCK_TEMPLATE, hintNumber, hintText);
+      return String.format(HINT_EXPANDED_BLOCK_TEMPLATE, displayedHintNumber, hintText);
     }
   }
 

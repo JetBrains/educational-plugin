@@ -103,17 +103,17 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
-  protected String wrapHint(@NotNull String hintText, int hintNumber) {
+  protected String wrapHint(@NotNull String hintText, @NotNull String displayedHintNumber) {
     String bulbIcon = getIconFullPath("style/hint/swing_icons/retina_bulb.png", "/style/hint/swing_icons/bulb.png");
 
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
     if (course != null && !course.isStudy()) {
       String downIcon = getIconFullPath("/style/hint/swing_icons/retina_down.png", "/style/hint/swing_icons/down.png");
-      return String.format(HINT_EXPANDED_BLOCK_TEMPLATE, bulbIcon, hintNumber, hintText, hintNumber, downIcon, hintText);
+      return String.format(HINT_EXPANDED_BLOCK_TEMPLATE, bulbIcon, displayedHintNumber, hintText, displayedHintNumber, downIcon, hintText);
     }
     else {
       String leftIcon = getIconFullPath("/style/hint/swing_icons/retina_right.png", "/style/hint/swing_icons/right.png");
-      return String.format(HINT_BLOCK_TEMPLATE, bulbIcon, hintNumber, hintText, hintNumber, leftIcon);
+      return String.format(HINT_BLOCK_TEMPLATE, bulbIcon, displayedHintNumber, hintText, displayedHintNumber, leftIcon);
     }
   }
 
