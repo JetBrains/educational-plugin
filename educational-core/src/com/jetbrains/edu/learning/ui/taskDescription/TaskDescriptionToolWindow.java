@@ -56,6 +56,12 @@ public abstract class TaskDescriptionToolWindow {
   protected String wrapHints(@NotNull String text) {
     Document document = Jsoup.parse(text);
     Elements hints = document.getElementsByClass("hint");
+    if (hints.size() == 1) {
+      Element hint = hints.get(0);
+      String hintText = wrapHint(hint.html(), -1);
+      hint.html(hintText);
+      return document.html();
+    }
     for (int i = 0; i < hints.size(); i++) {
       Element hint = hints.get(i);
       String hintText = wrapHint(hint.html(), i + 1);
