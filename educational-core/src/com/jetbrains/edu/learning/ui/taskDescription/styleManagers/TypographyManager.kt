@@ -18,9 +18,9 @@ internal class TypographyManager {
   val codeFont = TaskDescriptionBundle.getOsDependentParameter("code.font")
 
   private fun fontScaleFactor(parameterName: String): Float {
-    val fontSize = TaskDescriptionBundle.getFloatParameter(parameterName)
+    val fontSize = TaskDescriptionBundle.getOsDependentParameter(parameterName)
     val fontFactor = PropertiesComponent.getInstance().getInt(StyleManager.FONT_FACTOR_PROPERTY, FontPreferences.DEFAULT_FONT_SIZE)
-    return fontSize / fontFactor
+    return fontSize.toFloat() / fontFactor
   }
 
   private fun lineHeightScaleFactor(parameterName: String): Float {
