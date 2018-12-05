@@ -1,8 +1,6 @@
 package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.edu.learning.EduLanguageDecorator
-import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.ui.taskDescription.loadText
 import kotlinx.css.*
@@ -36,13 +34,14 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
         backgroundColor = styleManager.bodyBackground
       }
 
-      code {
+      ".code" {
         fontFamily = styleManager.codeFont
         backgroundColor = styleManager.codeBackground
+        fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.codeFontSize.px else styleManager.codeFontSize.pt
       }
 
-      "pre code" {
-        fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.codeFontSize.px else styleManager.codeFontSize.pt
+      ".code-block" {
+        fontSize = if (EduSettings.getInstance().shouldUseJavaFx()) styleManager.bodyFontSize.px else styleManager.bodyFontSize.pt
         lineHeight = styleManager.codeLineHeight.px.lh
       }
 

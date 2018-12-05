@@ -32,11 +32,11 @@ class EduCodeHighlighter {
         // because in case of incomplete code `parent.parent()` can be null
         // and in this case `parent.after(codeText)` throws `IllegalArgumentException`
         if (parent.tagName() == "pre" && parent.parent() != null) {
-          parent.after(codeText)
+          parent.after("<span class='code-block'>$codeText</span>")
           parent.remove()
         } else {
           val inlineCodeText = codeText.trim().removeSurrounding("<pre>", "</pre>")
-          codeElement.after(inlineCodeText)
+          codeElement.after("<span class='code'>$inlineCodeText</span>")
           codeElement.remove()
         }
       }
