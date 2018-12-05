@@ -22,11 +22,13 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     e.getPresentation().setEnabledAndVisible(false);
     CCState state = getState(e);
     if (state == null) return;
-    e.getPresentation().setEnabledAndVisible(true);
+    if (!state.getTaskFile().getAnswerPlaceholders().isEmpty()) {
+      e.getPresentation().setEnabledAndVisible(true);
+    }
     super.update(e);
   }
 
