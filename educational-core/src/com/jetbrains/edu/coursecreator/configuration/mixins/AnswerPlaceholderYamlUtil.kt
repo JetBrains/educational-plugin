@@ -49,7 +49,7 @@ private class AnswerPlaceholderBuilder(@JsonProperty(OFFSET) val offset: Int,
                                        @JsonProperty(LENGTH) val length: Int,
                                        @JsonProperty(PLACEHOLDER_TEXT) val placeholderText: String,
                                        @JsonProperty(HINTS) val hints: List<String> = mutableListOf(),
-                                       @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency) {
+                                       @JsonProperty(DEPENDENCY) val dependency: AnswerPlaceholderDependency?) {
   @Suppress("unused") // deserialization
   private fun build(): AnswerPlaceholder {
     val placeholder = AnswerPlaceholder()
