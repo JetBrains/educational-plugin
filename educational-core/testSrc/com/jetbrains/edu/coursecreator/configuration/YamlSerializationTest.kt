@@ -3,6 +3,7 @@ package com.jetbrains.edu.coursecreator.configuration
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.course
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.StudyItem
 import org.junit.Test
 
@@ -139,6 +140,20 @@ class YamlSerializationTest : EduTestCase() {
       |- Advanced Lesson
       |
     """.trimMargin("|"))
+  }
+
+  fun `test feedback link`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask { }
+      }
+    }.findTask("lesson1", "task1")
+    task.feedbackLink = FeedbackLink()
+    task.feedbackLink.link = "example.com"
+    doTest(task, """
+    |type: edu
+    |feedback_link: example.com
+    |""".trimMargin("|"))
   }
 
   private fun doTest(item: StudyItem, expected: String) {
