@@ -1,6 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.diagnostic.Logger;
@@ -19,6 +19,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -77,16 +79,7 @@ public class StepikCheckerConnector {
     return attempt == null ? null : attempt.attempts;
   }
 
-  private static void setTimeout(HttpGet request) {
-    final RequestConfig requestConfig = RequestConfig.custom()
-      .setConnectionRequestTimeout(CONNECTION_TIMEOUT)
-      .setConnectTimeout(CONNECTION_TIMEOUT)
-      .setSocketTimeout(CONNECTION_TIMEOUT)
-      .build();
-    request.setConfig(requestConfig);
-  }
-
-  private static void setTimeout(HttpPost request) {
+  private static void setTimeout(HttpRequestBase request) {
     final RequestConfig requestConfig = RequestConfig.custom()
       .setConnectionRequestTimeout(CONNECTION_TIMEOUT)
       .setConnectTimeout(CONNECTION_TIMEOUT)
@@ -267,9 +260,22 @@ public class StepikCheckerConnector {
     EntityUtils.consume(entity);
     if (statusCode == HttpStatus.SC_CREATED) {
       final StepikWrappers.AttemptContainer container =
-        new Gson().fromJson(entityString, StepikWrappers.AttemptContainer.class);
+        new GsonBuilder().registerTypeAdapter(StepikWrappers.AttemptWrapper.Dataset.class, new DatasetAdapter())
+          .create().fromJson(entityString, StepikWrappers.AttemptContainer.class);
       return (container.attempts != null && !container.attempts.isEmpty()) ? container.attempts.get(0).id : -1;
     }
     return -1;
+  }
+
+  public static class DatasetAdapter implements JsonDeserializer<StepikWrappers.AttemptWrapper.Dataset> {
+    @Override
+    public StepikWrappers.AttemptWrapper.Dataset deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      throws JsonParseException {
+      Gson gson = new Gson();
+      if (json instanceof JsonPrimitive) {
+        return null;
+      }
+      return gson.fromJson(json, StepikWrappers.AttemptWrapper.Dataset.class);
+    }
   }
 }
