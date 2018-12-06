@@ -13,6 +13,7 @@ import com.intellij.openapi.roots.ui.configuration.actions.ModuleDeleteProvider;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.handlers.CCVirtualFileListener;
 import com.jetbrains.edu.learning.*;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
@@ -153,6 +154,7 @@ public class CCProjectComponent extends AbstractProjectComponent {
       }
       EduUsagesCollector.projectTypeOpened(CCUtils.COURSE_MODE);
       startTaskDescriptionFilesSynchronization();
+      YamlFormatSynchronizer.saveAll(myProject);
     }
   }
 
