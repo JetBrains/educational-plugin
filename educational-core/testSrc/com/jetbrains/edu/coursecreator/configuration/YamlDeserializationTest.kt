@@ -92,4 +92,21 @@ class YamlDeserializationTest: EduTestCase() {
     assertEquals(3, answerPlaceholder.possibleAnswer.length)
     assertEquals("lesson1#task1#Test.java#1", answerPlaceholder.placeholderDependency.toString())
   }
+
+  fun `test edu task without dependency`() {
+    val yamlContent = """
+    |type: edu
+    |task_files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 3
+    |    placeholder_text: type here
+    |""".trimMargin("|")
+    val task = YamlFormatSynchronizer.deserializeTask(yamlContent)
+    assertTrue(task is EduTask)
+    val answerPlaceholder = task.taskFiles["Test.java"]!!.answerPlaceholders[0]
+    assertEquals(9, answerPlaceholder.length)
+    assertEquals(3, answerPlaceholder.possibleAnswer.length)
+  }
 }
