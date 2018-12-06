@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
@@ -38,9 +37,7 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
       LOG.info("Failed to get configurator for " + course.languageID)
       return null
     }
-    val taskDir = configurator.courseBuilder.createTaskContent(project, item, parentDirectory)
-    YamlFormatSynchronizer.saveItem(item)
-    return taskDir
+    return configurator.courseBuilder.createTaskContent(project, item, parentDirectory)
   }
 
   override fun getSiblingsSize(course: Course, parentItem: StudyItem?): Int =
