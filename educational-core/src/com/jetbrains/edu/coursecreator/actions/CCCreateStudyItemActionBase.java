@@ -12,10 +12,11 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
+import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
-import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.StudyItem;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
@@ -118,7 +119,10 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
     CCUtils.updateHigherElements(parentDir.getChildren(), getStudyOrderable(item, course), item.getIndex() - 1, 1);
     addItem(course, item);
     sortSiblings(course, parentItem);
-    return createItemDir(project, item, parentDir, course);
+    VirtualFile virtualFile = createItemDir(project, item, parentDir, course);
+    YamlFormatSynchronizer.saveItem(item);
+    YamlFormatSynchronizer.saveItem(item.getParent());
+    return virtualFile;
   }
 
   protected abstract void addItem(@NotNull final Course course, @NotNull final Item item);
