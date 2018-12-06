@@ -9,9 +9,11 @@ import com.intellij.openapi.ui.DialogBuilder
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
+import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker
@@ -117,7 +119,10 @@ class CourseraTaskChecker : RemoteTaskChecker {
     val tokenField = JBTextField(courseraSettings.token)
     val credentialsPanel = panel {
       if (message != null) {
-        row { JBLabel(message)() }
+        val messageLabel = JBLabel(message)
+        messageLabel.foreground = JBColor.RED
+        messageLabel.withFont(JBUI.Fonts.label().asBold())
+        row { messageLabel() }
       }
       row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
       row("Token:") { tokenField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
