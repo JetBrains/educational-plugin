@@ -180,7 +180,9 @@ public class CheckAction extends DumbAwareAction {
       String message = myResult.getMessage();
       CheckStatus status = myResult.getStatus();
       final String details = myResult.getDetails();
-      myTask.setStatus(status);
+      if (myTask.getCourse().isStudy()) {
+        myTask.setStatus(status);
+      }
       if (status == CheckStatus.Failed) {
         if (myChecker != null) {
           myChecker.onTaskFailed(message, details);
