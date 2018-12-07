@@ -229,11 +229,11 @@ class NodesTest: CourseViewTestBase() {
           }
         }
         eduTask {
-          additionalFile("additionalFile1.txt")
-          additionalFile("additionalFile2.txt", visible = false)
+          taskFile("additionalFile1.txt")
+          taskFile("additionalFile2.txt", visible = false)
           dir("folder") {
-            additionalFile("additionalFile3.txt")
-            additionalFile("additionalFile4.txt", visible = false)
+            taskFile("additionalFile3.txt")
+            taskFile("additionalFile4.txt", visible = false)
           }
         }
       }

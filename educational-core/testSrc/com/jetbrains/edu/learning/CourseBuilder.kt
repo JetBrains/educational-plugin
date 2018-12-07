@@ -245,10 +245,6 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     }
   }
 
-  fun additionalFile(name: String, text: String = "", visible: Boolean = true) {
-    task.addAdditionalFile(name, AdditionalFile(text, visible))
-  }
-
   fun dir(dirName: String, buildTask: TaskBuilder.() -> Unit) {
     val tmpTask = EduTask()
     val innerBuilder = TaskBuilder(lesson, tmpTask)

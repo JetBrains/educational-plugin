@@ -9,7 +9,7 @@ import com.intellij.psi.PsiManager
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
-import com.jetbrains.edu.learning.courseFormat.ext.hasTaskFilesNotInsideSourceDir
+import com.jetbrains.edu.learning.courseFormat.ext.hasVisibleTaskFilesNotInsideSourceDir
 import com.jetbrains.edu.learning.courseFormat.ext.sourceDir
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.generation.EduGradleUtils
@@ -29,13 +29,13 @@ object CourseViewUtils {
         val dirName = value.name
         if (dirName == EduNames.BUILD || dirName == EduNames.OUT) return null
         val sourceDir = task.sourceDir
-        if (dirName != sourceDir || task.hasTaskFilesNotInsideSourceDir(project)) directoryNodeFactory(value) else null
+        if (dirName != sourceDir || task.hasVisibleTaskFilesNotInsideSourceDir(project)) directoryNodeFactory(value) else null
       }
       is PsiElement -> {
         val psiFile = value.containingFile ?: return null
         val virtualFile = psiFile.virtualFile ?: return null
         val path = EduUtils.pathRelativeToTask(project, virtualFile)
-        val visibleFile = task.getTaskFile(path) ?: task.additionalFiles[path]
+        val visibleFile = task.getTaskFile(path)
         if (visibleFile?.isVisible == true) childNode else null
       }
       else -> null
@@ -51,7 +51,7 @@ object CourseViewUtils {
     val vFile = baseDir.virtualFile
     val sourceVFile = vFile.findFileByRelativePath(sourceDirName!!) ?: return baseDir
 
-    if (task.hasTaskFilesNotInsideSourceDir(project)) {
+    if (task.hasVisibleTaskFilesNotInsideSourceDir(project)) {
       return baseDir
     }
     return PsiManager.getInstance(project).findDirectory(sourceVFile)

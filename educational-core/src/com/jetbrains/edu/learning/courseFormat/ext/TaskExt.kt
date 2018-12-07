@@ -100,15 +100,17 @@ fun Task.getDescriptionFile(project: Project): VirtualFile? {
   return taskDir.findChild(descriptionFormat.descriptionFileName)
 }
 
-fun Task.hasTaskFilesNotInsideSourceDir(project: Project): Boolean {
+fun Task.hasVisibleTaskFilesNotInsideSourceDir(project: Project): Boolean {
   val taskDir = getDir(project) ?: error("Directory for task $name not found")
   val sourceDir = findSourceDir(taskDir) ?: return false
   return taskFiles.values.any {
+    if (!it.isVisible) return@any false
     val virtualFile = it.getVirtualFile(project)
     if (virtualFile == null) {
       Logger.getInstance(Task::class.java).error("VirtualFile for ${it.name} not found")
       return@any false
     }
+
     !VfsUtil.isAncestor(sourceDir, virtualFile, true)
   }
 }
