@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.codec.binary.Base64
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.atomic.AtomicReference
 
 object GeneratorUtils {
@@ -104,21 +103,16 @@ object GeneratorUtils {
 
   @Throws(IOException::class)
   private fun createTaskContent(task: Task, taskDir: VirtualFile) {
-    for ((_, taskFileContent) in task.taskFiles) {
-      createTaskFile(taskDir, taskFileContent)
+    for ((path, file) in task.taskFiles) {
+      if (taskDir.findFileByRelativePath(path) == null) {
+        createChildFile(taskDir, path, file.getText())
+      }
     }
-    createFiles(taskDir, task.testsText)
-    createFiles(taskDir, task.additionalFiles.mapValues { (_, file) -> file.getText() })
+
     val course = task.course
     if (CCUtils.COURSE_MODE == course.courseMode) {
       createDescriptionFile(taskDir, task)
     }
-  }
-
-  @Throws(IOException::class)
-  @JvmStatic
-  private fun createTaskFile(taskDir: VirtualFile, taskFile: TaskFile) {
-    createChildFile(taskDir, taskFile.name, taskFile.getText())
   }
 
   @Throws(IOException::class)
@@ -158,10 +152,7 @@ object GeneratorUtils {
     }
 
     val task = lesson.taskList.singleOrNull() ?: return emptyMap()
-    val filesToCreate = HashMap(task.testsText)
-    task.taskFiles.mapValuesTo(filesToCreate) { entry -> entry.value.getText() }
-    filesToCreate.putAll(task.additionalFiles.mapValues { (_, file) -> file.getText() })
-    return filesToCreate
+    return task.taskFiles.mapValues { it.value.getText() }
   }
 
   @Throws(IOException::class)

@@ -12,10 +12,13 @@
               "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
               "placeholders": []
+            },
+            "test/Test.java": {
+              "name": "test/Test.java",
+              "text": "class Test {\n    // put your test here\n}",
+              "placeholders": [],
+              "is_visible": false
             }
-          },
-          "test_files": {
-            "test/Test.java": "class Test {\n    // put your test here\n}"
           },
           "description_text": "Write task description here using markdown or html",
           "description_format": "html",
@@ -29,10 +32,13 @@
               "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
               "placeholders": []
+            },
+            "test/Test.java": {
+              "name": "test/Test.java",
+              "text": "class Test {\n    // put your test here\n}",
+              "placeholders": [],
+              "is_visible": false
             }
-          },
-          "test_files": {
-            "test/Test.java": "class Test {\n    // put your test here\n}"
           },
           "description_text": "Write task description here using markdown or html",
           "description_format": "html",
@@ -52,10 +58,13 @@
               "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
               "placeholders": []
+            },
+            "test/Test.java": {
+              "name": "test/Test.java",
+              "text": "class Test {\n    // put your test here\n}",
+              "placeholders": [],
+              "is_visible": false
             }
-          },
-          "test_files": {
-            "test/Test.java": "class Test {\n    // put your test here\n}"
           },
           "description_text": "Write task description here using markdown or html",
           "description_format": "html",

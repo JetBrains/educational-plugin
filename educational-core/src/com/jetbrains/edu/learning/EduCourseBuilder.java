@@ -138,9 +138,7 @@ public interface EduCourseBuilder<Settings> {
         taskFile.setText(taskFileProperties.getText());
       }
       task.addTaskFile(taskFile);
-    }
 
-    if (task.getTestsText().isEmpty()) {
       List<String> testDirs = TaskExt.getTestDirs(task);
       String testDir = "";
       if (!testDirs.isEmpty()) {
@@ -148,7 +146,13 @@ public interface EduCourseBuilder<Settings> {
       }
       String testTemplateName = getTestTemplateName();
       if (testTemplateName != null) {
-        task.getTestsText().put(GeneratorUtils.joinPaths(testDir, testTemplateName), EduUtils.getTextFromInternalTemplate(testTemplateName));
+        String testText = EduUtils.getTextFromInternalTemplate(testTemplateName);
+        if (testText != null) {
+          TaskFile test =
+            new TaskFile(GeneratorUtils.joinPaths(testDir, testTemplateName), testText);
+          test.setVisible(false);
+          task.addTaskFile(test);
+        }
       }
     }
   }
