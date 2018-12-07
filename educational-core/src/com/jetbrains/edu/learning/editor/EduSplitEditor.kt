@@ -7,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileEditorState
 import com.intellij.openapi.fileEditor.FileEditorStateLevel
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.JBUI
@@ -21,8 +22,8 @@ import javax.swing.JPanel
 
 class EduSplitEditor(
   private val project: Project,
-  private val mainEditor: EduEditor,
-  private val secondaryEditor: FileEditor,
+  val mainEditor: EduEditor,
+  val secondaryEditor: FileEditor,
   private val secondaryTaskFile: TaskFile
 ) : EduEditor by mainEditor {
 
@@ -49,6 +50,8 @@ class EduSplitEditor(
       component = this
     }
   }
+
+  override fun getFile(): VirtualFile? = mainEditor.file
 
   override fun getState(level: FileEditorStateLevel): EduEditorState {
     val mainEditorState = mainEditor.getState(level)

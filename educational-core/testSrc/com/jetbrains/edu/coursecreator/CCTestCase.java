@@ -18,7 +18,6 @@ import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl;
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl;
 import com.intellij.openapi.fileEditor.impl.text.TextEditorPsiDataProvider;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
-import com.intellij.openapi.ui.AbstractPainter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -31,7 +30,6 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.ui.docking.DockContainer;
 import com.intellij.ui.docking.DockManager;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.NewPlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -41,12 +39,13 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,28 +57,23 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   private FileEditorManager myOldManager;
   private Set<DockContainer> myOldDockContainers;
 
-  @Nullable
-  public static AbstractPainter getPainter(AnswerPlaceholder placeholder) {
-    final HashMap<AnswerPlaceholder, AbstractPainter> painters = NewPlaceholderPainter.getPlaceholderPainters();
-    final AbstractPainter painter = painters.get(placeholder);
-    if (painter == null) {
-      for (Map.Entry<AnswerPlaceholder, AbstractPainter> entry : painters.entrySet()) {
-        final AnswerPlaceholder placeholder1 = entry.getKey();
-        if (placeholder1.getOffset() == placeholder.getOffset() &&
-            placeholder1.getLength() == placeholder.getLength()) {
-          return entry.getValue();
-        }
+  public static void checkPainters(@NotNull AnswerPlaceholder placeholder) {
+    final Set<AnswerPlaceholder> paintedPlaceholders = NewPlaceholderPainter.getPaintedPlaceholder();
+    if (paintedPlaceholders.contains(placeholder)) return;
+    for (AnswerPlaceholder paintedPlaceholder : paintedPlaceholders) {
+      if (paintedPlaceholder.getOffset() == placeholder.getOffset() &&
+          paintedPlaceholder.getLength() == placeholder.getLength()) {
+        return;
       }
     }
-    return painter;
+    throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(placeholder));
   }
 
-  protected static void checkPainters(TaskFile taskFile) {
-    final HashMap<AnswerPlaceholder, AbstractPainter> painters = NewPlaceholderPainter.getPlaceholderPainters();
+  protected static void checkPainters(@NotNull TaskFile taskFile) {
+    final Set<AnswerPlaceholder> paintedPlaceholders = NewPlaceholderPainter.getPaintedPlaceholder();
 
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-      final AbstractPainter painter = painters.get(answerPlaceholder);
-      if (painter == null) {
+      if (!paintedPlaceholders.contains(answerPlaceholder)) {
         throw new AssertionError("No highlighter for placeholder: " + CCTestsUtil.getPlaceholderPresentation(answerPlaceholder));
       }
     }
@@ -189,7 +183,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
       taskFile.addAnswerPlaceholder(placeholder);
     }
     taskFile.sortAnswerPlaceholders();
-    EduUtils.drawAllAnswerPlaceholders(myFixture.getEditor(), taskFile);
+    NewPlaceholderPainter.showPlaceholders(myFixture.getProject(), taskFile);
     return file;
   }
 

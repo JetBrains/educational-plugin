@@ -22,7 +22,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -59,7 +58,6 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduEditor;
-import com.jetbrains.edu.learning.handlers.AnswerPlaceholderDeleteHandler;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
@@ -256,19 +254,6 @@ public class EduUtils {
   public static TaskFile getTaskFile(@NotNull final Project project, @NotNull final VirtualFile file) {
     Task task = getTaskForFile(project, file);
     return task == null ? null : task.getTaskFile(pathRelativeToTask(project, file));
-  }
-
-  public static void drawAllAnswerPlaceholders(Editor editor, TaskFile taskFile) {
-    final Project project = editor.getProject();
-    if (project == null) return;
-    if (!taskFile.isValid(editor.getDocument().getText())) return;
-    for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
-      NewPlaceholderPainter.paintPlaceholder(editor, answerPlaceholder);
-    }
-
-    final Document document = editor.getDocument();
-    EditorActionManager.getInstance()
-      .setReadonlyFragmentModificationHandler(document, new AnswerPlaceholderDeleteHandler(editor));
   }
 
   @Nullable

@@ -136,8 +136,8 @@ public class CCShowPreview extends DumbAwareAction {
     Disposer.register(project, () -> factory.releaseEditor(createdEditor));
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
       answerPlaceholder.setUseLength(true);
-      NewPlaceholderPainter.paintPlaceholder(createdEditor, answerPlaceholder);
     }
+    NewPlaceholderPainter.showPlaceholders(project, taskFile, createdEditor);
     JPanel header = new JPanel();
     header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
     header.setBorder(JBUI.Borders.empty(10));

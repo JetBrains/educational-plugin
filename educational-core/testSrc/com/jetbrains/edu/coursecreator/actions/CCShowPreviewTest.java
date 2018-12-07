@@ -12,9 +12,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.testFramework.MapDataContext;
 import com.jetbrains.edu.coursecreator.CCTestCase;
+import com.jetbrains.edu.coursecreator.CCTestsUtil;
 import com.jetbrains.edu.coursecreator.actions.taskFile.CCShowPreview;
 import com.jetbrains.edu.learning.EduTestDialog;
-import com.jetbrains.edu.coursecreator.CCTestsUtil;
 import com.jetbrains.edu.learning.EduTestDialogKt;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import kotlin.Unit;
@@ -51,8 +51,7 @@ public class CCShowPreviewTest extends CCTestCase {
       Pair<Document, List<AnswerPlaceholder>> pair = getPlaceholders(name + CCTestsUtil.AFTER_POSTFIX);
       assertEquals("Files don't match", pair.getFirst().getText(), editor.getDocument().getText());
       for (AnswerPlaceholder placeholder : pair.getSecond()) {
-        assertNotNull("No highlighter for placeholder:" + CCTestsUtil.getPlaceholderPresentation(placeholder),
-                      getPainter(placeholder));
+        checkPainters(placeholder);
       }
     }
     finally {
