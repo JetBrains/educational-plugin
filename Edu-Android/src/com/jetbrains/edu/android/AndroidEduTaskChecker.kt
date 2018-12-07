@@ -42,7 +42,7 @@ class AndroidChecker(task: EduTask, project: Project) : GradleEduTaskChecker(tas
     val unitTestResult = GradleCommandLine.create(project, unitTestTask)?.launchAndCheck() ?: CheckResult.FAILED_TO_CHECK
     if (unitTestResult.status != CheckStatus.Solved) return unitTestResult
 
-    val hasInstrumentedTests = task.testsText.any { (path, _) -> path.startsWith("src/androidTest") && !path.endsWith("AndroidEduTestRunner.kt") }
+    val hasInstrumentedTests = task.taskFiles.any { (path, _) -> path.startsWith("src/androidTest") && !path.endsWith("AndroidEduTestRunner.kt") }
     if (!hasInstrumentedTests) return unitTestResult
 
     indicator.text = "Launching emulator..."

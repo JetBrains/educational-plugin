@@ -22,8 +22,8 @@ import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
-import com.jetbrains.edu.learning.*
-import com.jetbrains.edu.learning.FileKind.*
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -33,6 +33,8 @@ import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.kotlinVersion
 import com.jetbrains.edu.learning.projectView.CourseViewPane
 import java.io.File
 
@@ -88,23 +90,9 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       "TEST_RUNNER_VERSION" to getLibraryRevision(GoogleMavenArtifactId.TEST_RUNNER, sdkLocation, "1.0.2")
     )
 
-    for ((templateName, fileInfo) in defaultAndroidCourseFiles(packageName)) {
-      val template = FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName)
-      if (template == null) {
-        LOG.warn("Failed to obtain internal template: `$templateName`")
-        continue
-      }
-      val text = template.getText(attributes)
-      when (fileInfo.type) {
-        TASK_FILE -> {
-          val taskFile = TaskFile()
-          taskFile.name = fileInfo.path
-          taskFile.setText(text)
-          task.addTaskFile(taskFile)
-        }
-        TEST_FILE -> task.addTestsTexts(fileInfo.path, text)
-        ADDITIONAL_FILE -> task.addAdditionalFile(fileInfo.path, text)
-      }
+    for (templateInfo in defaultAndroidCourseFiles(packageName)) {
+      val taskFile = templateInfo.toTaskFile(attributes) ?: continue
+      task.addTaskFile(taskFile)
     }
   }
 
@@ -136,18 +124,18 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     private val LOG: Logger = Logger.getInstance(AndroidCourseBuilder::class.java)
 
     // TODO: reuse AS project template to create all default files
-    private fun defaultAndroidCourseFiles(packageName: String): Map<String, FileInfo> {
+    private fun defaultAndroidCourseFiles(packageName: String): List<TemplateFileInfo> {
       val packagePath = packageName.replace('.', VfsUtilCore.VFS_SEPARATOR_CHAR)
-      return mapOf(
-        "android-task-build.gradle" to FileInfo(BUILD_GRADLE, ADDITIONAL_FILE),
-        "android-MainActivity.kt" to FileInfo("src/main/java/$packagePath/MainActivity.kt", TASK_FILE),
-        "android-AndroidManifest.xml" to FileInfo("src/main/AndroidManifest.xml", TASK_FILE),
-        "android-activity_main.xml" to FileInfo("src/main/res/layout/activity_main.xml", TASK_FILE),
-        "android-styles.xml" to FileInfo("src/main/res/values/styles.xml", TASK_FILE),
-        "android-strings.xml" to FileInfo("src/main/res/values/strings.xml", TASK_FILE),
-        "android-colors.xml" to FileInfo("src/main/res/values/colors.xml", TASK_FILE),
-        "android-ExampleUnitTest.kt" to FileInfo("src/test/java/$packagePath/ExampleUnitTest.kt", TEST_FILE),
-        "android-AndroidEduTestRunner.kt" to FileInfo("src/androidTest/java/$packagePath/AndroidEduTestRunner.kt", TEST_FILE)
+      return listOf(
+        TemplateFileInfo("android-task-build.gradle", BUILD_GRADLE, true),
+        TemplateFileInfo("android-MainActivity.kt", "src/main/java/$packagePath/MainActivity.kt", true),
+        TemplateFileInfo("android-AndroidManifest.xml", "src/main/AndroidManifest.xml", true),
+        TemplateFileInfo("android-activity_main.xml", "src/main/res/layout/activity_main.xml", true),
+        TemplateFileInfo("android-styles.xml", "src/main/res/values/styles.xml", true),
+        TemplateFileInfo("android-strings.xml", "src/main/res/values/strings.xml", true),
+        TemplateFileInfo("android-colors.xml", "src/main/res/values/colors.xml", true),
+        TemplateFileInfo("android-ExampleUnitTest.kt", "src/test/java/$packagePath/ExampleUnitTest.kt", false),
+        TemplateFileInfo("android-AndroidEduTestRunner.kt", "src/androidTest/java/$packagePath/AndroidEduTestRunner.kt", false)
       )
     }
   }
@@ -168,5 +156,18 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     ) ?: defaultVersion
   }
 
-  private data class FileInfo(val path: String, val type: FileKind)
+  private data class TemplateFileInfo(val templateName: String, val path: String, val isVisible: Boolean)
+
+  private fun TemplateFileInfo.toTaskFile(params: Map<String, String>): TaskFile? {
+    val template = FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName)
+    if (template == null) {
+      LOG.warn("Failed to obtain internal template: `$templateName`")
+      return null
+    }
+    val taskFile = TaskFile()
+    taskFile.name = path
+    taskFile.setText(template.getText(params))
+    taskFile.isVisible = isVisible
+    return taskFile
+  }
 }
