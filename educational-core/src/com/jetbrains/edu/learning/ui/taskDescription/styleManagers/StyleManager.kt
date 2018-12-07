@@ -53,6 +53,7 @@ class StyleManager {
 
   companion object {
     internal val LOG = Logger.getInstance(this::class.java)
+    const val FONT_FACTOR_PROPERTY = "edu.task.description.font.factor"
   }
 }
 

@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
 
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.FontPreferences
 import com.jetbrains.edu.learning.EduSettings
@@ -18,8 +19,8 @@ internal class TypographyManager {
 
   private fun fontScaleFactor(parameterName: String): Float {
     val fontSize = TaskDescriptionBundle.getFloatParameter(parameterName)
-
-    return fontSize / FontPreferences.DEFAULT_FONT_SIZE
+    val fontFactor = PropertiesComponent.getInstance().getInt(StyleManager.FONT_FACTOR_PROPERTY, FontPreferences.DEFAULT_FONT_SIZE)
+    return fontSize / fontFactor
   }
 
   private fun lineHeightScaleFactor(parameterName: String): Float {
