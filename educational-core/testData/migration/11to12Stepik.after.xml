@@ -5,7 +5,7 @@
       <map />
     </option>
     <option name="course">
-      <StepikCourse>
+      <EduCourse>
         <option name="additionalMaterialsUpdateDate" value="0" />
         <option name="authors">
           <list />
@@ -10842,7 +10842,7 @@
             </Section>
           </list>
         </option>
-      </StepikCourse>
+      </EduCourse>
     </option>
   </StudyTaskManager>
 </component>
