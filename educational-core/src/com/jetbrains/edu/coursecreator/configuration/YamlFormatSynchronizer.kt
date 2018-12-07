@@ -54,6 +54,7 @@ object YamlFormatSynchronizer {
     mapper.addMixIn(Course::class.java, CourseYamlMixin::class.java)
     mapper.addMixIn(Section::class.java, SectionYamlMixin::class.java)
     mapper.addMixIn(Lesson::class.java, LessonYamlMixin::class.java)
+    mapper.addMixIn(FrameworkLesson::class.java, FrameworkLessonYamlUtil::class.java)
     mapper.addMixIn(Task::class.java, TaskYamlMixin::class.java)
     mapper.addMixIn(EduTask::class.java, EduTaskYamlMixin::class.java)
     mapper.addMixIn(TaskFile::class.java, TaskFileYamlMixin::class.java)
@@ -139,6 +140,17 @@ object YamlFormatSynchronizer {
       "theory" -> TheoryTask::class.java
       "null" -> throw InvalidYamlFormatException(typeNotSpecifiedMessage)
       else -> throw InvalidYamlFormatException("Unsupported task type '$type'")
+    }
+    return MAPPER.treeToValue(treeNode, clazz)
+  }
+
+  @VisibleForTesting
+  fun deserializeLesson(lessonYaml: String): Lesson {
+    val treeNode = MAPPER.readTree(lessonYaml)
+    val type = treeNode.get("type")?.asText()
+    val clazz = when (type) {
+      "framework" -> FrameworkLesson::class.java
+      else -> Lesson::class.java
     }
     return MAPPER.treeToValue(treeNode, clazz)
   }

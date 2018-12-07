@@ -126,6 +126,23 @@ class YamlSerializationTest : EduTestCase() {
   }
 
   @Test
+  fun `test framework lesson`() {
+    val lesson = course {
+      frameworkLesson {
+        eduTask("Introduction Task")
+        eduTask("Advanced Task")
+      }
+    }.items[0]
+    doTest(lesson, """
+      |type: framework
+      |content:
+      |- Introduction Task
+      |- Advanced Task
+      |
+    """.trimMargin("|"))
+  }
+
+  @Test
   fun `test section`() {
     val section = course {
       section {

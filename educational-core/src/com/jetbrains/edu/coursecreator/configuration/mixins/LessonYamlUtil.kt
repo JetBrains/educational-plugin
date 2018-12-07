@@ -25,17 +25,20 @@ abstract class LessonYamlMixin {
 }
 
 @JsonPOJOBuilder(withPrefix = "")
-private class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?>) {
+open class LessonBuilder(@JsonProperty(CONTENT) val content: List<String?>) {
   @Suppress("unused") //used for deserialization
   private fun build(): Lesson {
-    val lesson = Lesson()
-    val items = content.map {
+    val lesson = createLesson()
+    val taskList = content.map {
       if (it == null) {
         throw InvalidYamlFormatException("Unnamed item")
       }
       TaskWithType(it)
     }
-    lesson.updateTaskList(items)
+    lesson.updateTaskList(taskList)
     return lesson
   }
+
+  open fun createLesson() = Lesson()
 }
+
