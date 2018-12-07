@@ -1,68 +1,46 @@
-package com.jetbrains.edu.coursecreator.actions.placeholder;
+package com.jetbrains.edu.coursecreator.actions.placeholder
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.command.undo.UndoManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCTestCase;
-import com.jetbrains.edu.coursecreator.CCTestsUtil;
-import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.TaskFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.command.undo.UndoManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.project.Project
+import com.jetbrains.edu.coursecreator.CCTestCase
+import com.jetbrains.edu.coursecreator.CCTestsUtil
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 
-public class CCAnswerPlaceholderActionTest extends CCTestCase {
-  static class CCTestAction extends CCAddAnswerPlaceholder {
-    @Override
-    protected CCCreateAnswerPlaceholderDialog createDialog(Project project, AnswerPlaceholder answerPlaceholder) {
-      String placeholderText = answerPlaceholder.getPlaceholderText();
-      return new CCCreateAnswerPlaceholderDialog(project, placeholderText == null ? "type here" : placeholderText, false) {
-        @Override
-        public boolean showAndGet() {
-          return true;
-        }
+class CCAnswerPlaceholderActionTest : CCTestCase() {
 
-        @Override
-        @NotNull
-        public String getTaskText() {
-          return "type here";
-        }
-      };
+  fun testPlaceholderWithSelection() = doTest("onePlaceholder", CCTestAction())
+  fun testPlaceholderWithoutSelection() = doTest("withoutSelection", CCTestAction())
+
+  fun testPlaceholderIntersection() {
+    configureByTaskFile("placeholderIntersection.txt")
+    val presentation = myFixture.testAction(CCTestAction())
+    assertTrue(presentation.isVisible && !presentation.isEnabled)
+  }
+
+  fun testPlaceholderDeleted() = doTest("deletePlaceholder", CCDeleteAnswerPlaceholder())
+
+  private fun doTest(name: String, action: AnAction) {
+    val virtualFile = configureByTaskFile(name + CCTestsUtil.BEFORE_POSTFIX)
+    myFixture.testAction(action)
+    val taskFile = EduUtils.getTaskFile(project, virtualFile) ?: error("Failed to find task file for $virtualFile")
+    checkByFile(taskFile, name + CCTestsUtil.AFTER_POSTFIX, false)
+    CCTestCase.checkPainters(taskFile)
+    UndoManager.getInstance(project).undo(FileEditorManager.getInstance(project).getSelectedEditor(virtualFile))
+    checkByFile(taskFile, name + CCTestsUtil.BEFORE_POSTFIX, false)
+  }
+
+  override fun getBasePath(): String = super.getBasePath() + "/actions/addPlaceholder"
+
+  private class CCTestAction : CCAddAnswerPlaceholder() {
+    override fun createDialog(project: Project, answerPlaceholder: AnswerPlaceholder): CCCreateAnswerPlaceholderDialog {
+      val placeholderText = answerPlaceholder.placeholderText
+      return object : CCCreateAnswerPlaceholderDialog(project, placeholderText ?: "type here", false) {
+        override fun showAndGet(): Boolean = true
+        override fun getTaskText(): String = "type here"
+      }
     }
-  }
-
-  public void testPlaceholderWithSelection() {
-    doTest("onePlaceholder", new CCTestAction());
-  }
-
-  public void testPlaceholderWithoutSelection() {
-    doTest("withoutSelection", new CCTestAction());
-  }
-
-  public void testPlaceholderIntersection() {
-    configureByTaskFile("placeholderIntersection.txt");
-    Presentation presentation = myFixture.testAction(new CCTestAction());
-    assertTrue(presentation.isVisible() && !presentation.isEnabled());
-  }
-
-  public void testPlaceholderDeleted() {
-    doTest("deletePlaceholder", new CCDeleteAnswerPlaceholder());
-  }
-
-  private void doTest(String name, AnAction action) {
-    VirtualFile virtualFile = configureByTaskFile(name + CCTestsUtil.BEFORE_POSTFIX);
-    myFixture.testAction(action);
-    TaskFile taskFile = EduUtils.getTaskFile(getProject(), virtualFile);
-    checkByFile(taskFile, name + CCTestsUtil.AFTER_POSTFIX, false);
-    checkPainters(taskFile);
-    UndoManager.getInstance(getProject()).undo(FileEditorManager.getInstance(getProject()).getSelectedEditor(virtualFile));
-    checkByFile(taskFile, name + CCTestsUtil.BEFORE_POSTFIX, false);
-  }
-
-  @Override
-  protected String getBasePath() {
-    return super.getBasePath()  + "/actions/addPlaceholder";
   }
 }
