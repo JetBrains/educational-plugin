@@ -135,8 +135,8 @@ public abstract class Task extends StudyItem {
     this.additionalFiles = additionalFiles;
   }
 
-  public void addTestsTexts(String name, String text) {
-    testsText.put(name, text);
+  public void addTestsTexts(String path, String text) {
+    testsText.put(path, text);
   }
 
   public void addAdditionalFile(@NotNull String name, @NotNull String text) {

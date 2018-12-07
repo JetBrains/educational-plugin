@@ -74,15 +74,15 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun getGeneratedFilesFolder(project: Project, module: Module): VirtualFile? {
-    val baseDir = project.baseDir
+  fun getGeneratedFilesFolder(module: Module): VirtualFile? {
+    val baseDir = module.project.baseDir
     val folder = baseDir.findChild(GENERATED_FILES_FOLDER)
     if (folder != null) return folder
     return runWriteAction {
       try {
         val generatedRoot = baseDir.createChildDirectory(this, GENERATED_FILES_FOLDER)
         val contentRootForFile = ProjectRootManager.getInstance(module.project).fileIndex.getContentRootForFile(generatedRoot)
-                                 ?: return@runWriteAction null
+                                 ?: return@runWriteAction generatedRoot
         ModuleRootModificationUtil.updateExcludedFolders(module, contentRootForFile, emptyList(), listOf(generatedRoot.url))
         generatedRoot
       } catch (e: IOException) {
@@ -93,8 +93,8 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun generateFolder(project: Project, module: Module, name: String): VirtualFile? {
-    val generatedRoot = getGeneratedFilesFolder(project, module) ?: return null
+  fun generateFolder(module: Module, name: String): VirtualFile? {
+    val generatedRoot = getGeneratedFilesFolder(module) ?: return null
 
     var folder = generatedRoot.findChild(name)
     //need to delete old folder
@@ -123,8 +123,7 @@ object CCUtils {
   }
 
   @JvmStatic
-  fun createAdditionalLesson(course: Course, project: Project,
-                             name: String): Lesson? {
+  fun createAdditionalLesson(course: Course, project: Project, name: String): Lesson? {
     ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
 
     val baseDir = project.baseDir

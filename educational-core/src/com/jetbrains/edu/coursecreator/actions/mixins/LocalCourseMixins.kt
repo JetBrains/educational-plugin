@@ -42,15 +42,18 @@ private const val PLACEHOLDERS = "placeholders"
 private const val TYPE = "type"
 private const val LINK = "link"
 private const val LINK_TYPE = "link_type"
+private const val OFFSET = "offset"
+private const val LENGTH = "length"
+private const val PLACEHOLDER_TEXT = "placeholder_text"
+private const val POSSIBLE_ANSWER = "possible_answer"
+private const val DEPENDENCY = "dependency"
+private const val COURSE_TYPE = "course_type"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder(VERSION, SUMMARY,
-                   TITLE,
-                   PROGRAMMING_LANGUAGE,
-                   LANGUAGE, ITEMS)
+@JsonPropertyOrder(VERSION, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalCourseMixin {
   @JsonProperty(TITLE)
@@ -66,6 +69,9 @@ abstract class LocalCourseMixin {
   @JsonSerialize(converter = LanguageConverter::class)
   @JsonProperty(LANGUAGE)
   private lateinit var myLanguageCode: String
+
+  @JsonProperty(COURSE_TYPE)
+  private lateinit var courseType: String
 
   @JsonProperty(ITEMS)
   private lateinit var items: List<StudyItem>
@@ -129,18 +135,67 @@ abstract class LocalTaskMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonPropertyOrder(NAME, PLACEHOLDERS, IS_VISIBLE, TEXT)
 abstract class TaskFileMixin {
   @JsonProperty(NAME)
   private lateinit var myName: String
 
-  @JsonProperty(IS_VISIBLE)
-  var isVisible: Boolean = true
-
   @JsonProperty(PLACEHOLDERS)
   private lateinit var myAnswerPlaceholders: List<AnswerPlaceholder>
 
+  @JsonProperty(IS_VISIBLE)
+  var isVisible: Boolean = true
+
   @JsonProperty(TEXT)
   private lateinit var _text: String
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
+abstract class AnswerPlaceholderMixin {
+  @JsonProperty(OFFSET)
+  private var myOffset: Int = -1
+
+  @JsonProperty(LENGTH)
+  private var myLength: Int = -1
+
+  @JsonProperty(DEPENDENCY)
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
+
+  @JsonProperty(POSSIBLE_ANSWER)
+  private lateinit var myPossibleAnswer: String
+
+  @JsonProperty(PLACEHOLDER_TEXT)
+  private lateinit var myPlaceholderText: String
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+abstract class AnswerPlaceholderDependencyMixin {
+  @JsonProperty("section")
+  private lateinit var mySectionName: String
+
+  @JsonProperty("lesson")
+  private lateinit var myLessonName: String
+
+  @JsonProperty("task")
+  private lateinit var myTaskName: String
+
+  @JsonProperty("file")
+  private lateinit var myFileName: String
+
+  @JsonProperty("placeholder")
+  private var myPlaceholderIndex: Int = -1
+
+  @JsonProperty("is_visible")
+  private var myIsVisible = true
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
