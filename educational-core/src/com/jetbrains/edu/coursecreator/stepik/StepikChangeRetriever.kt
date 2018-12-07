@@ -200,9 +200,7 @@ class StepikChangeRetriever(val project: Project, private val courseFromServer: 
     return descriptionText == otherTask.descriptionText
            && index == otherTask.index
            && name == otherTask.name
-           && testsText == otherTask.testsText
            && compareFiles(taskFiles, otherTask.taskFiles)
-           && compareFiles(additionalFiles, otherTask.additionalFiles)
   }
 
   private fun compareFiles(files: Map<String, Any>, otherFiles: Map<String, Any>): Boolean {

@@ -221,23 +221,6 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(courseFromServer, expectedInfo)
   }
 
-  fun `test add additional file`() {
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask { }
-        outputTask { }
-        theoryTask { }
-      }
-    }.asRemote()
-
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList[0]
-    changedTask.additionalFiles["file.txt"] = AdditionalFile("additional file", false)
-
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
-  }
-
   fun `test change task file name`() {
     val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
@@ -429,56 +412,6 @@ class StepikCompareCourseTest : EduTestCase() {
     checkChangedItems(courseFromServer, expectedInfo)
   }
 
-  fun `test tests text size`() {
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask {
-        }
-      }
-    }.asRemote()
-
-    localCourse.lessons.single().taskList.single().testsText = mapOf("test1" to "test text")
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList.single()
-    changedTask.testsText = mapOf("test1" to "test text", "test2" to "test text")
-
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
-  }
-
-  fun `test tests texts`() {
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask {
-        }
-      }
-    }.asRemote()
-
-    localCourse.lessons.single().taskList.single().testsText = mapOf("test1" to "text text")
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList.single()
-    changedTask.testsText = mapOf("test1" to "text text changed")
-
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
-  }
-
-  fun `test tests names`() {
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask {
-        }
-      }
-    }.asRemote()
-
-    localCourse.lessons.single().taskList.single().testsText = mapOf("test1" to "text text")
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList.single()
-    changedTask.testsText = mapOf("test1-changed" to "text text")
-
-    val expectedInfo = StepikChangesInfo(tasksToUpdateByLessonIndex = mapOf(1 to listOf(changedTask)))
-    checkChangedItems(courseFromServer, expectedInfo)
-  }
   private fun checkChangedItems(courseFromServer: EduCourse, expected: StepikChangesInfo) {
     val actual = StepikChangeRetriever(project, courseFromServer).getChangedItems()
     assertEquals(expected, actual)

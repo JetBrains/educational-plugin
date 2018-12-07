@@ -222,23 +222,6 @@ class StepikStatusesForImportedCourseTest : EduTestCase() {
     checkStatus(changedTask, INFO_AND_CONTENT)
   }
 
-  fun `test add additional file`() {
-    val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
-      lesson("lesson1") {
-        eduTask { }
-        outputTask { }
-        theoryTask { }
-      }
-    }.asRemote()
-
-    val courseFromServer = localCourse.copy() as EduCourse
-    val changedTask = localCourse.lessons.single().taskList[0]
-    changedTask.additionalFiles["file.txt"] = AdditionalFile("additional file", false)
-
-    StepikChangeRetriever(project, courseFromServer).setStepikChangeStatuses()
-    checkStatus(changedTask, INFO_AND_CONTENT)
-  }
-
   fun `test change task file name`() {
     val localCourse = course(courseMode = CCUtils.COURSE_MODE) {
       lesson("lesson1") {
