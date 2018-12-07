@@ -245,15 +245,6 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     }
   }
 
-  fun testFile(name: String, text: String = "") {
-    task.addTestsTexts(name, text)
-  }
-
-  fun kotlinTestFile(name: String, @Language("kotlin") text: String = "") = testFile(name, text)
-  fun javaTestFile(name: String, @Language("JAVA") text: String = "") = testFile(name, text)
-  fun pythonTestFile(name: String, @Language("Python") text: String = "") = testFile(name, text)
-  fun scalaTestFile(name: String, @Language("Scala") text: String = "") = testFile(name, text)
-
   fun additionalFile(name: String, text: String = "", visible: Boolean = true) {
     task.addAdditionalFile(name, AdditionalFile(text, visible))
   }
@@ -266,8 +257,6 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
       taskFile.name = "$dirName/${taskFile.name}"
       task.addTaskFile(taskFile)
     }
-    task.additionalFiles.plusAssign(tmpTask.additionalFiles.mapKeys { (path, _) -> "$dirName/$path"})
-    task.testsText.plusAssign(tmpTask.testsText.mapKeys { (path, _) -> "$dirName/$path"})
   }
 
   private fun extractPlaceholdersFromText(text: StringBuilder): List<AnswerPlaceholder> {

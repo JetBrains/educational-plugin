@@ -17,7 +17,7 @@ class KtCheckersTest : KtCheckersTestBase() {
         kotlinTaskFile("src/Task.kt", """
           fun foo() = 42
         """)
-        kotlinTestFile("test/Tests.kt", """
+        kotlinTaskFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -43,7 +43,7 @@ class KtCheckersTest : KtCheckersTestBase() {
               println("OK")
           }
         """)
-        testFile("test/output.txt", "OK")
+        taskFile("test/output.txt", "OK")
       }
       outputTask("OutputTaskWithSeveralFiles") {
         kotlinTaskFile("src/utils.kt", """
@@ -54,7 +54,7 @@ class KtCheckersTest : KtCheckersTestBase() {
               println(ok())
           }
         """)
-        testFile("test/output.txt", "OK")
+        taskFile("test/output.txt", "OK")
       }
       outputTask("OutputTask:With;Special&Symbols?") {
         kotlinTaskFile("src/Task.kt", """
@@ -62,7 +62,7 @@ class KtCheckersTest : KtCheckersTestBase() {
               println("OK")
           }
         """)
-        testFile("test/output.txt", "OK")
+        taskFile("test/output.txt", "OK")
       }
     }
   }

@@ -16,7 +16,7 @@ class JCheckErrorsTest : JCheckersTestBase() {
             public static final String STRING;
           }
         """)
-        javaTestFile("test/Test.java", """
+        javaTaskFile("test/Test.java", """
             class Test {}
         """)
       }
@@ -28,7 +28,7 @@ class JCheckErrorsTest : JCheckersTestBase() {
             }
           }
         """)
-        javaTestFile("test/Test.java", """
+        javaTaskFile("test/Test.java", """
           import org.junit.Assert;
 
           public class Test {

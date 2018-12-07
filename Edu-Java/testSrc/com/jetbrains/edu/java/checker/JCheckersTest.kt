@@ -21,7 +21,7 @@ class JCheckersTest : JCheckersTestBase() {
             }
           }
         """)
-        javaTestFile("test/Test.java", """
+        javaTaskFile("test/Test.java", """
           import org.junit.Assert;
 
           public class Test {
@@ -49,7 +49,7 @@ class JCheckersTest : JCheckersTestBase() {
             }
           }
         """)
-        testFile("test/output.txt", "OK")
+        taskFile("test/output.txt", "OK")
       }
       outputTask("OutputTaskWithSeveralFiles") {
         javaTaskFile("src/Utils.java", """
@@ -66,7 +66,7 @@ class JCheckersTest : JCheckersTestBase() {
             }
           }
         """)
-        testFile("test/output.txt", "OK")
+        taskFile("test/output.txt", "OK")
       }
     }
   }

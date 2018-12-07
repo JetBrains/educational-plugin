@@ -243,9 +243,9 @@ open class StepikIntegrationTest : StepikTestCase() {
     val localCourse = courseWithFiles {
       lesson("lesson1") {
         eduTask("task1") {
-          taskFile("Task.kt")
-          testFile("Tests.kt")
-          additionalFile("additional_file.txt")
+          taskFile("src/Task.kt")
+          taskFile("test/Tests.kt")
+          taskFile("build.gradle")
         }
       }
     }
@@ -254,9 +254,9 @@ open class StepikIntegrationTest : StepikTestCase() {
     val testText = "// test text"
     val additionalText = "// additional text"
 
-    setText("lesson1/task1/Task.kt", taskText)
-    setText("lesson1/task1/Tests.kt", testText)
-    setText("lesson1/task1/additional_file.txt", additionalText)
+    setText("lesson1/task1/src/Task.kt", taskText)
+    setText("lesson1/task1/test/Tests.kt", testText)
+    setText("lesson1/task1/build.gradle", additionalText)
 
     CCPushCourse.doPush(project, localCourse)
 
@@ -266,9 +266,9 @@ open class StepikIntegrationTest : StepikTestCase() {
     val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
 
     val taskFromStepik = lessonsFromUnits[0].getTask("task1") ?: error("Can't find `task1`")
-    assertEquals(taskText, taskFromStepik.getTaskFile("Task.kt")?.getText())
-    assertEquals(testText, taskFromStepik.testsText["Tests.kt"])
-    assertEquals(additionalText, taskFromStepik.additionalFiles["additional_file.txt"]?.getText())
+    assertEquals(taskText, taskFromStepik.getTaskFile("src/Task.kt")?.getText())
+    assertEquals(testText, taskFromStepik.getTaskFile("test/Tests.kt")?.getText())
+    assertEquals(additionalText, taskFromStepik.getTaskFile("build.gradle")?.getText())
   }
 
   fun `test course with language version`() {

@@ -18,7 +18,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
     lesson {
       eduTask("kotlinCompilationError") {
         kotlinTaskFile("src/Task.kt", "fun foo(): Int = aaa")
-        kotlinTestFile("test/Tests.kt", """
+        kotlinTaskFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -39,7 +39,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         kotlinTaskFile("src/Task.kt", """
           fun foo() = JavaClass.i
         """)
-        kotlinTestFile("test/Tests.kt", """
+        kotlinTaskFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -55,7 +55,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         kotlinTaskFile("src/Task.kt", """
           fun foo(): Int = 43
         """)
-        kotlinTestFile("test/Tests.kt", """
+        kotlinTaskFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -71,7 +71,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         kotlinTaskFile("src/Task.kt", """
           fun foo(): Int = 43
         """)
-        kotlinTestFile("test/Tests.kt", """
+        kotlinTaskFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -87,7 +87,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         kotlinTaskFile("src/Task.kt", """
           fun foo(): Int = 43
         """)
-        kotlinTestFile("test/Tests.kt", """
+        kotlinTaskFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -103,7 +103,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
         kotlinTaskFile("src/Task.kt", """
           fun foo(): String = "Hello\nWorld!"
         """)
-        kotlinTestFile("test/Tests.kt", """
+        kotlinTaskFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -125,7 +125,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
               override fun toString(): String = "(${'$'}x, ${'$'}y)"
           }
         """)
-        kotlinTestFile("test/Tests.kt", """
+        kotlinTaskFile("test/Tests.kt", """
           import org.junit.Assert
           import org.junit.Test
 
@@ -142,7 +142,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
               println("OK")
           }
         """)
-        testFile("test/output.txt", "OK!")
+        taskFile("test/output.txt", "OK!")
       }
       outputTask("multilineOutputTaskFail") {
         kotlinTaskFile("src/Task.kt", """
@@ -151,7 +151,7 @@ class KtCheckErrorsTest : KtCheckersTestBase() {
               println("World")
           }
         """)
-        testFile("test/output.txt", "Hello,\nWorld!")
+        taskFile("test/output.txt", "Hello,\nWorld!")
       }
     }
   }
