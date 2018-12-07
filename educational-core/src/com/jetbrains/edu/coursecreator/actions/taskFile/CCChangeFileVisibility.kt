@@ -3,8 +3,8 @@ package com.jetbrains.edu.coursecreator.actions.taskFile
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.NewPlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.AdditionalFile
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -73,9 +73,9 @@ private class TaskFileState(
   private fun onVisibilityChange(project: Project, taskFile: TaskFile, file: VirtualFile, visibility: Boolean) {
     if (taskFile.answerPlaceholders.isEmpty() || !FileEditorManager.getInstance(project).isFileOpen(file)) return
     if (visibility) {
-      CCUtils.showPlaceholders(project, taskFile, file)
+      NewPlaceholderPainter.showPlaceholders(project, taskFile)
     } else {
-      CCUtils.hidePlaceholders(project, taskFile, file)
+      NewPlaceholderPainter.hidePlaceholders(taskFile)
     }
   }
 }

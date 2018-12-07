@@ -32,11 +32,8 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFa
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.List;
 
 public class EduEditorFactoryListener implements EditorFactoryListener {
-
-  private TaskFile myTaskFile;
 
   private static class WindowSelectionListener extends EditorMouseAdapter {
     private final TaskFile myTaskFile;
@@ -46,7 +43,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     }
 
     @Override
-    public void mouseClicked(EditorMouseEvent e) {
+    public void mouseClicked(@NotNull EditorMouseEvent e) {
       final Editor editor = e.getEditor();
       final Point point = e.getMouseEvent().getPoint();
       final LogicalPosition pos = editor.xyToLogicalPosition(point);
@@ -71,8 +68,8 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
     final Document document = editor.getDocument();
     final VirtualFile openedFile = FileDocumentManager.getInstance().getFile(document);
     if (openedFile != null) {
-      myTaskFile = EduUtils.getTaskFile(project, openedFile);
-      if (myTaskFile != null) {
+      TaskFile taskFile = EduUtils.getTaskFile(project, openedFile);
+      if (taskFile != null) {
         WolfTheProblemSolver.getInstance(project).clearProblems(openedFile);
         final ToolWindow studyToolWindow = ToolWindowManager.getInstance(project).getToolWindow(TaskDescriptionToolWindowFactory.STUDY_TOOL_WINDOW);
         if (studyToolWindow != null) {
@@ -84,19 +81,19 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
           return;
         }
 
-        Task task = myTaskFile.getTask();
+        Task task = taskFile.getTask();
         if (task instanceof TheoryTask && task.getStatus() != CheckStatus.Solved) {
           task.setStatus(CheckStatus.Solved);
           StepikConnector.postTheory(task, project);
         }
 
         boolean isStudyProject = course.isStudy();
-        if (!myTaskFile.getAnswerPlaceholders().isEmpty() && myTaskFile.isValid(editor.getDocument().getText())) {
+        if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
           PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
-          NavigationUtils.navigateToFirstAnswerPlaceholder(editor, myTaskFile);
-          EduUtils.drawAllAnswerPlaceholders(editor, myTaskFile);
+          NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
+          NewPlaceholderPainter.showPlaceholders(project, taskFile, editor);
           if (isStudyProject) {
-            editor.addEditorMouseListener(new WindowSelectionListener(myTaskFile));
+            editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
           }
         }
         EduLaunchesReporter.INSTANCE.sendStats(isStudyProject, CCPluginToggleAction.isCourseCreatorFeaturesEnabled());
@@ -106,13 +103,6 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
 
   @Override
   public void editorReleased(@NotNull EditorFactoryEvent event) {
-    final Editor editor = event.getEditor();
-    if (myTaskFile != null) {
-      final List<AnswerPlaceholder> placeholders = myTaskFile.getAnswerPlaceholders();
-      for (AnswerPlaceholder placeholder : placeholders) {
-        NewPlaceholderPainter.getPlaceholderPainters().remove(placeholder);
-      }
-    }
-    editor.getSelectionModel().removeSelection();
+    event.getEditor().getSelectionModel().removeSelection();
   }
 }

@@ -9,10 +9,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -27,10 +24,12 @@ import com.intellij.util.Function
 import com.intellij.util.PathUtil
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
-import com.jetbrains.edu.learning.*
+import com.jetbrains.edu.learning.EduDocumentTransformListener
+import com.jetbrains.edu.learning.EduNames
+import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
-import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import org.apache.commons.codec.binary.Base64
@@ -410,34 +409,5 @@ object CCUtils {
       LOG.warn("Can't find file by `$relativePath` path")
     }
     return null
-  }
-
-  @JvmOverloads
-  @JvmStatic
-  fun hidePlaceholders(project: Project, taskFile: TaskFile, file: VirtualFile? = null) {
-    @Suppress("NAME_SHADOWING")
-    val file = file ?: (taskFile.getVirtualFile(project) ?: return)
-    for (editor in getEditors(project, file)) {
-      for (placeholder in taskFile.answerPlaceholders) {
-        NewPlaceholderPainter.removePainter(editor, placeholder)
-      }
-    }
-  }
-
-  @JvmOverloads
-  @JvmStatic
-  fun showPlaceholders(project: Project, taskFile: TaskFile, file: VirtualFile? = null) {
-    @Suppress("NAME_SHADOWING")
-    val file = file ?: (taskFile.getVirtualFile(project) ?: return)
-    for (editor in getEditors(project, file)) {
-      EduUtils.drawAllAnswerPlaceholders(editor, taskFile)
-    }
-  }
-
-  @JvmStatic
-  private fun getEditors(project: Project, file: VirtualFile): List<Editor> {
-    return FileEditorManager.getInstance(project).getEditors(file)
-      .filterIsInstance<TextEditor>()
-      .map { it.editor }
   }
 }

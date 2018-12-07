@@ -68,15 +68,18 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
     }
 
     answerPlaceholder.setPossibleAnswer(model.hasSelection() ? model.getSelectedText() : defaultPlaceholderText);
-    AddAction action = new AddAction(answerPlaceholder, taskFile, editor);
+    AddAction action = new AddAction(project, answerPlaceholder, taskFile, editor);
     EduUtils.runUndoableAction(project, "Add Answer Placeholder", action);
   }
 
   static class AddAction extends TaskFileUndoableAction {
     private final AnswerPlaceholder myPlaceholder;
+    private final Project myProject;
 
-    public AddAction(AnswerPlaceholder placeholder, TaskFile taskFile, Editor editor) {
+    public AddAction(@NotNull Project project, @NotNull AnswerPlaceholder placeholder,
+                     @NotNull TaskFile taskFile, @NotNull Editor editor) {
       super(taskFile, editor);
+      myProject = project;
       myPlaceholder = placeholder;
     }
 
@@ -85,14 +88,14 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
       final List<AnswerPlaceholder> answerPlaceholders = getTaskFile().getAnswerPlaceholders();
       if (answerPlaceholders.contains(myPlaceholder)) {
         answerPlaceholders.remove(myPlaceholder);
-        NewPlaceholderPainter.removePainter(getEditor(), myPlaceholder);
+        NewPlaceholderPainter.hidePlaceholder(myPlaceholder);
       }
     }
 
     @Override
     public void performRedo(){
       getTaskFile().addAnswerPlaceholder(myPlaceholder);
-      NewPlaceholderPainter.paintPlaceholder(getEditor(), myPlaceholder);
+      NewPlaceholderPainter.showPlaceholder(myProject, myPlaceholder);
     }
   }
 

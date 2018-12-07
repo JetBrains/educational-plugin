@@ -25,7 +25,7 @@ public class CCDeleteAnswerPlaceholder extends CCAnswerPlaceholderAction {
     TaskFile taskFile = state.getTaskFile();
     AnswerPlaceholder answerPlaceholder = state.getAnswerPlaceholder();
     EduUtils.runUndoableAction(project, "Delete Answer Placeholder",
-                               new CCAddAnswerPlaceholder.AddAction(answerPlaceholder, taskFile, state.getEditor()) {
+                               new CCAddAnswerPlaceholder.AddAction(project, answerPlaceholder, taskFile, state.getEditor()) {
                                  @Override
                                  public void undo() {
                                    super.redo();
