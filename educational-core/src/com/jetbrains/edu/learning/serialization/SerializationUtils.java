@@ -82,6 +82,7 @@ public class SerializationUtils {
     public static final String ANSWER_PLACEHOLDERS = "answerPlaceholders";
     public static final String TASK_LIST = "taskList";
     public static final String TASK_FILES = "taskFiles";
+    public static final String TASK_FILE = "TaskFile";
     public static final String INITIAL_STATE = "initialState";
     public static final String MY_INITIAL_STATE = "MyInitialState";
     public static final String MY_LINE = "myLine";
@@ -212,9 +213,14 @@ public class SerializationUtils {
       return new ToEleventhVersionXmlConverter().convert(project, element);
     }
 
-    @NotNull
-    public static Element convertTo12Version(@NotNull Project project,@NotNull Element element) throws StudyUnrecognizedFormatException {
+    public static Element convertTo12Version(@NotNull Project project,
+                                             @NotNull Element element) throws StudyUnrecognizedFormatException {
       return new To12VersionXmlConverter().convert(project, element);
+    }
+
+    public static Element convertTo13Version(@NotNull Project project,
+                                             @NotNull Element element) throws StudyUnrecognizedFormatException {
+      return new To13VersionXmlConverter().convert(project, element);
     }
 
     @Nullable

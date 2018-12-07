@@ -54,6 +54,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
   fun test11to12Coursera() = doTest(11)
   fun test11to12CheckiO() = doTest(11)
   fun test11to12Local() = doTest(11)
+  fun test12to13() = doTest(12)
 
   private fun doTest(version: Int) {
     val name = getTestName(true)
@@ -69,6 +70,7 @@ class StudyMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
       9 -> converted = SerializationUtils.Xml.convertToTenthVersion(project, element)
       10 -> converted = SerializationUtils.Xml.convertToEleventhVersion(project, element)
       11 -> converted = SerializationUtils.Xml.convertTo12Version(project, element)
+      12 -> converted = SerializationUtils.Xml.convertTo13Version(project, element)
     }
     checkEquals(loadElement(after), converted)
   }
