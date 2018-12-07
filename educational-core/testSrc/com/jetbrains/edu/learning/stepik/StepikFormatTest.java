@@ -53,7 +53,7 @@ public class StepikFormatTest extends EduTestCase {
     AdditionalFile file = options.additionalFiles.get("additional_file.txt");
     assertNotNull(file);
     assertEquals("some text", file.getText());
-    assertEquals(true, file.isVisible());
+    assertTrue(file.isVisible());
   }
 
   public void testSixthVersion() throws IOException {
@@ -287,6 +287,20 @@ public class StepikFormatTest extends EduTestCase {
     assertEquals(50, statuses.length);
   }
 
+  public void testAttempts() throws IOException {
+    final StepikWrappers.AttemptContainer container =
+      new GsonBuilder().registerTypeAdapter(StepikWrappers.AttemptWrapper.Dataset.class, new StepikCheckerConnector.DatasetAdapter())
+        .create().fromJson(loadJsonText(), StepikWrappers.AttemptContainer.class);
+    assertNotNull(container);
+    List<StepikWrappers.AttemptWrapper.Attempt> attempts = container.attempts;
+    assertNotNull(attempts);
+    assertEquals(20, attempts.size());
+    StepikWrappers.AttemptWrapper.Attempt attempt1 = attempts.get(0);
+    assertNull(attempt1.dataset);
+    StepikWrappers.AttemptWrapper.Attempt attempt2 = attempts.get(11);
+    assertNotNull(attempt2.dataset);
+  }
+
   public void testLastSubmission() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
@@ -356,7 +370,7 @@ public class StepikFormatTest extends EduTestCase {
     return FileUtil.loadFile(new File(getTestDataPath(), getTestFile()));
   }
 
-  private StepikWrappers.StepOptions doStepOptionsCreationTest() throws IOException {
+  private void doStepOptionsCreationTest() throws IOException {
     String responseString = loadJsonText();
     StepikWrappers.StepSource stepSource =
         StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class, responseString, null).steps.get(0);
@@ -369,7 +383,6 @@ public class StepikFormatTest extends EduTestCase {
     assertEquals(Collections.singletonList("Type your name here."), placeholder.getHints());
     assertEquals("Liana", placeholder.getPossibleAnswer());
     assertEquals("Description", options.descriptionText);
-    return options;
   }
 
   @NotNull
