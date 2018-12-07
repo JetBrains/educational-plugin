@@ -201,6 +201,54 @@
     </EduTask>
     ```
 
+12. Extract Coursera course, Unify local and remote courses
+
+    Before:
+    ```xml
+    <RemoteCourse>
+      <option name="courseType" value="Coursera" />
+      <!-- other fields -->
+    </RemoteCourse>
+    ```
+
+    After:
+    ```xml
+    <CourseraCourse>
+      <option name="courseType" value="Coursera" />
+      <!-- other fields -->
+    </CourseraCourse>
+
+    ```
+    and
+
+    Before:
+    ```xml
+    <Course>
+      <!-- other fields -->
+    </Course>
+    ```
+
+    After:
+    ```xml
+    <EduCourse>
+      <!-- other fields -->
+    </EduCourse>
+
+    and
+
+    Before:
+    ```xml
+    <RemoteCourse>
+      <!-- other fields -->
+    </RemoteCourse>
+    ```
+
+    After:
+    ```xml
+    <EduCourse>
+      <!-- other fields -->
+    </EduCourse>
+
 ### JSON format version
 
 4.  Skipped. 
