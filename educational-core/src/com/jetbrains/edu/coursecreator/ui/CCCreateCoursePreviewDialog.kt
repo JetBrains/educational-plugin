@@ -3,26 +3,24 @@ package com.jetbrains.edu.coursecreator.ui
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.ui.JBUI
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.actions.CCCreateCourseArchive
-import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.configuration.EduConfigurator
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.CoursePanel
 import java.io.IOException
 import javax.swing.JComponent
 
 class CCCreateCoursePreviewDialog(
-        private val myProject: Project,
-        private val myModule: Module,
-        private val myCourse: Course,
-        private val myConfigurator: EduConfigurator<*>
+  private val myModule: Module,
+  private val myCourse: Course,
+  private val myConfigurator: EduConfigurator<*>
 ) : DialogWrapper(true) {
 
   private val myPanel: CoursePanel = CoursePanel(true, false).apply {
@@ -40,7 +38,7 @@ class CCCreateCoursePreviewDialog(
   override fun createCenterPanel(): JComponent = myPanel
 
   override fun doOKAction() {
-    val folder = CCUtils.getGeneratedFilesFolder(myProject, myModule)
+    val folder = CCUtils.getGeneratedFilesFolder(myModule)
     if (folder == null) {
       showErrorMessage()
       return
@@ -49,7 +47,7 @@ class CCCreateCoursePreviewDialog(
     val archiveName = if (courseName.isNullOrEmpty()) EduNames.COURSE else FileUtil.sanitizeFileName(courseName)
     val locationDir = folder.path
     close(OK_EXIT_CODE)
-    val isSuccessful = CCCreateCourseArchive.createCourseArchive(myProject, myModule, archiveName, locationDir, false)
+    val isSuccessful = CCCreateCourseArchive.createCourseArchive(myModule, archiveName, locationDir, false)
 
     if (isSuccessful) {
       val archivePath = FileUtil.join(FileUtil.toSystemDependentName(folder.path), "$archiveName.zip")
@@ -60,14 +58,17 @@ class CCCreateCoursePreviewDialog(
           val location = FileUtil.createTempDirectory(PREVIEW_FOLDER_PREFIX, null)
           val settings = myPanel.projectSettings
           myConfigurator.courseBuilder.getCourseProjectGenerator(course)?.doCreateCourseProject(location.absolutePath, settings)
-        } catch (e: IOException) {
+        }
+        catch (e: IOException) {
           LOG.error("Failed to create tmp dir for course preview", e)
           showErrorMessage()
-        } finally {
+        }
+        finally {
           RecentProjectsManager.getInstance().lastProjectCreationLocation = lastProjectCreationLocation
         }
       }
-    } else {
+    }
+    else {
       showErrorMessage()
     }
   }

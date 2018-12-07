@@ -19,7 +19,7 @@ class CCCreateCoursePreview : DumbAwareAction("&Create Course Preview") {
     val currentCourse = StudyTaskManager.getInstance(project).course ?: return
     val configurator = currentCourse.configurator ?: return
 
-    CCCreateCoursePreviewDialog(project, module, currentCourse, configurator).show()
+    CCCreateCoursePreviewDialog(module, currentCourse, configurator).show()
   }
 
   override fun update(e: AnActionEvent) {
