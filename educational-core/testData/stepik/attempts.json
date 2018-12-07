@@ -1,0 +1,289 @@
+{
+  "meta": {
+    "page": 1,
+    "has_next": true,
+    "has_previous": false
+  },
+  "attempts": [
+    {
+      "id": 74744589,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T14:39:05Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 74594744,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:12:53Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 74594743,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:12:41Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 73697257,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:12:25Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294512,
+      "user": 17813950
+    },
+    {
+      "id": 73697256,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:12:17Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294512,
+      "user": 17813950
+    },
+    {
+      "id": 74591602,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:12:10Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 74591601,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:11:26Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 74582237,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:11:04Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 74582236,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:10:46Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 74527743,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:10:10Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 74527742,
+      "dataset": "",
+      "dataset_url": null,
+      "time": "2018-12-06T11:09:30Z",
+      "status": "cleanedup",
+      "time_left": null,
+      "step": 294511,
+      "user": 17813950
+    },
+    {
+      "id": 74527243,
+      "dataset": {
+        "is_multiple_choice": true,
+        "options": [
+          "char",
+          "the name of a primitive type (for example, int)",
+          "the value of a primitive type (for example, 42)",
+          "the name of an enum (for example, DayOfWeek)",
+          "String",
+          "the name of a class (for example, Object)",
+          "the name of an interface (for example, CharSequence)",
+          "it's possible to omit the value and use the class as non-generic"
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:56Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294761,
+      "user": 17813950
+    },
+    {
+      "id": 73812526,
+      "dataset": {
+        "is_multiple_choice": true,
+        "options": [
+          "Generics provide type safety by shifting more type checking responsibilities to the compiler.",
+          "Generics make a possible code that can work with objects of different classes without casting. ",
+          "Generics make code more fast."
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:52Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294758,
+      "user": 17813950
+    },
+    {
+      "id": 74527236,
+      "dataset": {
+        "is_multiple_choice": true,
+        "options": [
+          " An anonymous class is declared and instantiated in a single statement.",
+          "An anonymous class can have fields and constructors.",
+          " An anonymous class always implement an interface or extends a class.",
+          "An anonymous class cannot be passed to a method as an argument.",
+          "An anonymous class can capture local variables which can change.",
+          " An anonymous class can capture members of its enclosing class (an outer class)."
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:42Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294755,
+      "user": 17813950
+    },
+    {
+      "id": 73805447,
+      "dataset": {
+        "is_multiple_choice": true,
+        "options": [
+          "It's impossible to create an instance of the <b>Object</b> class.",
+          "Your custom classes does not inherit <b>Object</b>.",
+          "All objects including arrays have methods of this class.",
+          "The class is the root of the class hierarchy in Java."
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:39Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294752,
+      "user": 17813950
+    },
+    {
+      "id": 74212938,
+      "dataset": {
+        "is_multiple_choice": false,
+        "options": [
+          "An interface can contain abstract, default and static methods.",
+          "Interface can have methods with access modifier \"protected\".",
+          "A class can implement multiple interfaces.",
+          "It's impossible to create an instance of an interface.",
+          "A class that implements an interface must implement all the methods declared in the interface."
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:34Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294746,
+      "user": 17813950
+    },
+    {
+      "id": 74122801,
+      "dataset": {
+        "is_multiple_choice": false,
+        "options": [
+          "An abstract class can't have default methods.",
+          "A class can extends only one abstract class.",
+          "By default, all methods in abstract class have access modifier \"public\".",
+          "Non-abstract classes can't contain abstract methods.",
+          "It's impossible to create an instance of abstract class."
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:31Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294749,
+      "user": 17813950
+    },
+    {
+      "id": 74211970,
+      "dataset": {
+        "is_multiple_choice": false,
+        "options": [
+          "It outputs two lines. The first one is \"Derived class\". The second one is \"Base class\".",
+          "It outputs one line \"Base class\".",
+          "It outputs two lines. The first one is \"Base class\". The second one is \"Derived class\".",
+          "It outputs one line \"Derived class\"."
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:27Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294742,
+      "user": 17813950
+    },
+    {
+      "id": 73940428,
+      "dataset": {
+        "is_multiple_choice": false,
+        "options": [
+          "Declaring generic types",
+          "Static polymorphism",
+          "Dynamic method dispatch",
+          "Inheritance",
+          "Type casting"
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:23Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294745,
+      "user": 17813950
+    },
+    {
+      "id": 73848201,
+      "dataset": {
+        "is_multiple_choice": true,
+        "options": [
+          "Method overriding is a kind of dynamic polymorphism",
+          "Method overriding is a kind of static polymorphism",
+          "Method overloading is a kind of static polymorphism",
+          "Method overloading is a kind of dynamic polymorphism"
+        ]
+      },
+      "dataset_url": null,
+      "time": "2018-12-06T11:08:20Z",
+      "status": "active",
+      "time_left": null,
+      "step": 294744,
+      "user": 17813950
+    }
+  ]
+}
