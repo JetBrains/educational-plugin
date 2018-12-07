@@ -28,7 +28,7 @@ class CCPushSection : DumbAwareAction("Update Section on Stepik", "Update Sectio
       return
     }
     val course = StudyTaskManager.getInstance(project).course as? EduCourse ?: return
-    if (course.courseMode != CCUtils.COURSE_MODE) return
+    if (course.courseMode != CCUtils.COURSE_MODE || !course.isRemote) return
     val directories = view.directories
     if (directories.isEmpty() || directories.size > 1) {
       return
