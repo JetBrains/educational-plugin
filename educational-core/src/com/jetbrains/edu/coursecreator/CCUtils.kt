@@ -160,20 +160,17 @@ object CCUtils {
         return true
       }
     })
-    if (taskIsEmpty(task)) return null
+    if (task.taskFiles.isEmpty()) return null
     lesson.addTask(task)
     lesson.index = course.items.size + 1
     return lesson
   }
 
-  private fun taskIsEmpty(task: Task): Boolean = task.taskFiles.isEmpty() &&
-                                                 task.testsText.isEmpty() &&
-                                                 task.additionalFiles.isEmpty()
-
   private fun addFileInAdditionalTask(additionalTask: Task, baseDir: VirtualFile, file: VirtualFile) {
     val path = VfsUtilCore.getRelativePath(file, baseDir) ?: return
+    val taskFile = TaskFile(path, loadText(file))
     try {
-      additionalTask.addAdditionalFile(path, AdditionalFile(loadText(file), false))
+      additionalTask.addTaskFile(taskFile)
     } catch (e: IOException) {
       LOG.error(e)
     }
@@ -378,35 +375,5 @@ object CCUtils {
       val section = course.getSection(sectionDir.name) ?: return null
       return section.getLesson(lessonDir.name)
     }
-  }
-
-  @JvmStatic
-  fun loadTestTextsToTask(task: Task, taskDir: VirtualFile) {
-    for ((path, _) in task.testsText) {
-      val text = loadTextByPath(taskDir, path) ?: continue
-      task.addTestsTexts(path, text)
-    }
-  }
-
-  @JvmStatic
-  fun loadAdditionalFileTextsToTask(task: Task, taskDir: VirtualFile) {
-    for ((path, additionalFile) in task.additionalFiles) {
-      val text = loadTextByPath(taskDir, path) ?: continue
-      additionalFile.setText(text)
-    }
-  }
-
-  private fun loadTextByPath(dir: VirtualFile, relativePath: String): String? {
-    val file = dir.findFileByRelativePath(relativePath)
-    if (file != null) {
-      try {
-        return loadText(file)
-      } catch (e: IOException) {
-        LOG.warn("Failed to load text for `$file`")
-      }
-    } else {
-      LOG.warn("Can't find file by `$relativePath` path")
-    }
-    return null
   }
 }

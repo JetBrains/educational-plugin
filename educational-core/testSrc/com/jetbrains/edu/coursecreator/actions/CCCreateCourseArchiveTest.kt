@@ -65,9 +65,9 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
         lesson {
           eduTask {
             taskFile("taskFile1.txt")
-            testFile("test.py", "some test")
-            additionalFile("additional.py", "my test", visible = false)
-            additionalFile("visibleAdditional.py", "my test")
+            taskFile("test.py", "some test")
+            taskFile("additional.py", "my test", visible = false)
+            taskFile("visibleAdditional.py", "my test")
           }
         }
       }

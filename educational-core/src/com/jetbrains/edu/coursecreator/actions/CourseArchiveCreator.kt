@@ -31,10 +31,12 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-internal class CourseArchiveCreator(private val project: Project,
-                                    private val jsonFolder: VirtualFile,
-                                    private val zipFile: File,
-                                    private val showMessage: Boolean) : Computable<Boolean> {
+class CourseArchiveCreator(
+  private val project: Project,
+  private val jsonFolder: VirtualFile,
+  private val zipFile: File,
+  private val showMessage: Boolean
+) : Computable<Boolean> {
 
   override fun compute(): Boolean? {
     val course = StudyTaskManager.getInstance(project).course ?: return false
@@ -70,8 +72,6 @@ internal class CourseArchiveCreator(private val project: Project,
       for (task in lesson.taskList) {
         val taskDir = task.getTaskDir(project) ?: continue
         convertToStudentTaskFiles(task, taskDir)
-        CCUtils.loadTestTextsToTask(task, taskDir)
-        CCUtils.loadAdditionalFileTextsToTask(task, taskDir)
         addDescriptions(task)
       }
       true
