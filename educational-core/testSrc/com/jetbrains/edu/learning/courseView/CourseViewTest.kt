@@ -37,6 +37,7 @@ class CourseViewTest : CourseViewTestBase() {
   fun testProjectOpened() {
     createStudyCourse()
     val projectView = ProjectView.getInstance(project)
+    projectView.refresh()
     projectView.changeView(CourseViewPane.ID)
     val pane = projectView.currentProjectViewPane
     waitWhileBusy(pane.tree)
