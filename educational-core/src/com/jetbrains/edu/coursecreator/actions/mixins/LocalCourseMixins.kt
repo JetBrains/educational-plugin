@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
+import com.jetbrains.edu.coursecreator.configuration.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
@@ -42,6 +43,10 @@ private const val PLACEHOLDERS = "placeholders"
 private const val TYPE = "type"
 private const val LINK = "link"
 private const val LINK_TYPE = "link_type"
+private const val OFFSET = "offset"
+private const val LENGTH = "length"
+private const val PLACEHOLDER_TEXT = "text"
+private const val DEPENDENCY = "dependency"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
@@ -141,6 +146,52 @@ abstract class TaskFileMixin {
 
   @JsonProperty(TEXT)
   private lateinit var _text: String
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE)
+abstract class AnswerPlaceholderMixin {
+  @JsonProperty(OFFSET)
+  private var myOffset: Int? = -1
+
+  @JsonProperty(LENGTH)
+  private fun getRealLength(): Int {
+    throw NotImplementedInMixin()
+  }
+
+  @JsonProperty(PLACEHOLDER_TEXT)
+  private fun getPlaceholderText(): String {
+    throw NotImplementedInMixin()
+  }
+
+  @JsonProperty(DEPENDENCY)
+  private var myPlaceholderDependency: AnswerPlaceholderDependency? = null
+}
+
+@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE)
+abstract class AnswerPlaceholderDependencyMixin {
+  @JsonProperty("section")
+  private var mySectionName: String? = null
+
+  @JsonProperty("lesson")
+  private lateinit var myLessonName: String
+
+  @JsonProperty("task")
+  private lateinit var myTaskName: String
+
+  @JsonProperty("file")
+  private lateinit var myFileName: String
+
+  @JsonProperty("placeholder")
+  private var myPlaceholderIndex: Int = -1
+
+  @JsonProperty("is_visible")
+  private var myIsVisible = true
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

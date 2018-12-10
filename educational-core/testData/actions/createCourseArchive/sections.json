@@ -1,0 +1,40 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "items" : [
+    {
+      "items" : [
+        {
+          "title" : "lesson1",
+          "task_list" : [
+            {
+              "name" : "task1",
+              "task_files" : {
+                "taskFile1.txt" : {
+                  "name" : "taskFile1.txt",
+                  "text" : "",
+                  "is_visible" : true,
+                  "placeholders" : [ ]
+                }
+              },
+              "test_files" : { },
+              "description_text" : "solve task",
+              "description_format" : "HTML",
+              "additional_files" : { },
+              "feedback_link" : {
+                "link_type" : "STEPIK"
+              },
+              "task_type" : "edu"
+            }
+          ],
+          "type" : "lesson"
+        }
+      ],
+      "title" : "section1",
+      "type" : "section"
+    }
+  ],
+  "version" : 8
+}

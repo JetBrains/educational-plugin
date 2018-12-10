@@ -30,23 +30,23 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-internal class CourseArchiveCreator(private val myProject: Project,
-                                    private val myJsonFolder: VirtualFile,
-                                    private val myZipFile: File,
+internal class CourseArchiveCreator(private val project: Project,
+                                    private val jsonFolder: VirtualFile,
+                                    private val zipFile: File,
                                     private val showMessage: Boolean) : Computable<Boolean> {
 
   override fun compute(): Boolean? {
-    val course = StudyTaskManager.getInstance(myProject).course ?: return false
-    myJsonFolder.refresh(false, true)
+    val course = StudyTaskManager.getInstance(project).course ?: return false
+    jsonFolder.refresh(false, true)
     val courseCopy = course.copy()
     loadActualTexts(courseCopy)
     courseCopy.sortItems()
     createAdditionalFiles(courseCopy)
     return try {
-      val json = generateJson(myJsonFolder, courseCopy)
+      val json = generateJson(jsonFolder, courseCopy)
       VirtualFileManager.getInstance().refreshWithoutFileWatcher(false)
-      packCourse(json, myZipFile, showMessage)
-      synchronize(myProject)
+      packCourse(json, zipFile, showMessage)
+      synchronize(project)
       true
     }
     catch (e: IOException) {
@@ -56,7 +56,7 @@ internal class CourseArchiveCreator(private val myProject: Project,
   }
 
   private fun createAdditionalFiles(course: Course) {
-    val lesson = CCUtils.createAdditionalLesson(course, myProject, EduNames.ADDITIONAL_MATERIALS)
+    val lesson = CCUtils.createAdditionalLesson(course, project, EduNames.ADDITIONAL_MATERIALS)
     if (lesson != null) {
       course.addLesson(lesson)
     }
@@ -64,10 +64,10 @@ internal class CourseArchiveCreator(private val myProject: Project,
 
   private fun loadActualTexts(courseCopy: Course) {
     courseCopy.visitLessons { lesson ->
-      val lessonDir = lesson.getLessonDir(myProject)
+      val lessonDir = lesson.getLessonDir(project)
       if (lessonDir == null) return@visitLessons true
       for (task in lesson.taskList) {
-        val taskDir = task.getTaskDir(myProject) ?: continue
+        val taskDir = task.getTaskDir(project) ?: continue
         convertToStudentTaskFiles(task, taskDir)
         CCUtils.loadTestTextsToTask(task, taskDir)
         CCUtils.loadAdditionalFileTextsToTask(task, taskDir)
@@ -81,7 +81,7 @@ internal class CourseArchiveCreator(private val myProject: Project,
     val studentTaskFiles = LinkedHashMap<String, TaskFile>()
     for ((key, value) in task.taskFiles) {
       val answerFile = EduUtils.findTaskFileInDir(value, taskDir) ?: continue
-      val studentFile = EduUtils.createStudentFile(myProject, answerFile, task)
+      val studentFile = EduUtils.createStudentFile(project, answerFile, task)
       if (studentFile != null) {
         studentTaskFiles[key] = studentFile
       }
@@ -90,7 +90,7 @@ internal class CourseArchiveCreator(private val myProject: Project,
   }
 
   private fun addDescriptions(task: Task) {
-    val descriptionFile = task.getDescriptionFile(myProject)
+    val descriptionFile = task.getDescriptionFile(project)
 
     if (descriptionFile != null) {
       try {
@@ -150,6 +150,8 @@ internal class CourseArchiveCreator(private val myProject: Project,
         mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
         mapper.addMixIn(AdditionalFile::class.java, AdditionalFileMixin::class.java)
         mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
+        mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
+        mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
         mapper.enable(WRITE_ENUMS_USING_TO_STRING)
         mapper.enable(READ_ENUMS_USING_TO_STRING)
         return mapper

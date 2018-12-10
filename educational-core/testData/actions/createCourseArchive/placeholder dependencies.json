@@ -1,0 +1,93 @@
+{
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "language" : "en",
+  "items" : [
+    {
+      "title" : "lesson1",
+      "task_list" : [
+        {
+          "name" : "task1",
+          "task_files" : {
+            "fizz.kt" : {
+              "name" : "fizz.kt",
+              "text" : "fn fizzz() = TODO()\nfn buzz() = TODO()",
+              "is_visible" : true,
+              "placeholders" : [
+                {
+                  "length" : 0,
+                  "offset" : 13,
+                  "dependency" : null,
+                  "text" : "TODO()"
+                },
+                {
+                  "length" : 0,
+                  "offset" : 32,
+                  "dependency" : null,
+                  "text" : "TODO()"
+                }
+              ]
+            }
+          },
+          "test_files" : { },
+          "description_text" : "solve task",
+          "description_format" : "HTML",
+          "additional_files" : { },
+          "feedback_link" : {
+            "link_type" : "STEPIK"
+          },
+          "task_type" : "edu"
+        },
+        {
+          "name" : "task2",
+          "task_files" : {
+            "fizz.kt" : {
+              "name" : "fizz.kt",
+              "text" : "fn fizzz() = TODO()\nfn buzz() = TODO()",
+              "is_visible" : true,
+              "placeholders" : [
+                {
+                  "length" : 0,
+                  "offset" : 13,
+                  "dependency" : {
+                    "section" : null,
+                    "lesson" : "lesson1",
+                    "task" : "task1",
+                    "file" : "fizz.kt",
+                    "placeholder" : 0,
+                    "is_visible" : true
+                  },
+                  "text" : "TODO()"
+                },
+                {
+                  "length" : 0,
+                  "offset" : 32,
+                  "dependency" : {
+                    "section" : null,
+                    "lesson" : "lesson1",
+                    "task" : "task1",
+                    "file" : "fizz.kt",
+                    "placeholder" : 1,
+                    "is_visible" : true
+                  },
+                  "text" : "TODO()"
+                }
+              ]
+            }
+          },
+          "test_files" : { },
+          "description_text" : "solve task",
+          "description_format" : "HTML",
+          "additional_files" : { },
+          "feedback_link" : {
+            "link_type" : "STEPIK"
+          },
+          "task_type" : "edu"
+        }
+      ],
+      "type" : "framework"
+    }
+  ],
+  "version" : 8
+}
