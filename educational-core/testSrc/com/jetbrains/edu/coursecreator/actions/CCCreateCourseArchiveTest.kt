@@ -57,6 +57,25 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
     TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
   }
 
+  fun `test custom files`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
+      section {
+        lesson {
+          eduTask {
+            taskFile("taskFile1.txt")
+            testFile("test.py", "some test")
+            additionalFile("additional.py", "my test", visible = false)
+            additionalFile("visibleAdditional.py", "my test")
+          }
+        }
+      }
+    }
+    course.description = "my summary"
+    val generatedJsonFile = generateJson()
+    val expectedCourseJson = loadExpectedJson()
+    TestCase.assertEquals(expectedCourseJson, generatedJsonFile)
+  }
+
   fun `test remote course archive`() {
     val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {
       lesson {

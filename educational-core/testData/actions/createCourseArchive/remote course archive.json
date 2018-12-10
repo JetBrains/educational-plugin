@@ -1,9 +1,7 @@
 {
-  "summary" : "my summary",
-  "title" : "Test Course",
-  "programming_language" : "TEXT",
+  "id" : 1,
+  "update_date" : "Jan 01, 1970 03:00:00 AM",
   "language" : "en",
-  "course_type" : "PyCharm",
   "items" : [
     {
       "id" : 1,
@@ -36,7 +34,9 @@
       "type" : "lesson"
     }
   ],
-  "id" : 1,
-  "update_date" : "Jan 01, 1970 03:00:00 AM",
+  "summary" : "my summary",
+  "title" : "Test Course",
+  "programming_language" : "TEXT",
+  "course_type" : "PyCharm",
   "version" : 8
 }

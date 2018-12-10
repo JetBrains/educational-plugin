@@ -16,7 +16,7 @@
               "placeholders" : [
                 {
                   "offset" : 20,
-                  "length" : 5,
+                  "length" : 6,
                   "possible_answer" : "\"Foo\"",
                   "placeholder_text" : "TODO()"
                 }

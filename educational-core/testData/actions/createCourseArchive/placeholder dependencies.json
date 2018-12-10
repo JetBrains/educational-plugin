@@ -16,13 +16,13 @@
               "placeholders" : [
                 {
                   "offset" : 13,
-                  "length" : 0,
+                  "length" : 6,
                   "possible_answer" : "",
                   "placeholder_text" : "TODO()"
                 },
                 {
                   "offset" : 32,
-                  "length" : 0,
+                  "length" : 6,
                   "possible_answer" : "",
                   "placeholder_text" : "TODO()"
                 }
@@ -48,7 +48,7 @@
               "placeholders" : [
                 {
                   "offset" : 13,
-                  "length" : 0,
+                  "length" : 6,
                   "dependency" : {
                     "lesson" : "lesson1",
                     "task" : "task1",
@@ -61,7 +61,7 @@
                 },
                 {
                   "offset" : 32,
-                  "length" : 0,
+                  "length" : 6,
                   "dependency" : {
                     "lesson" : "lesson1",
                     "task" : "task1",
