@@ -3,7 +3,7 @@ index b008fcf..38e0487 100644
 --- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
 +++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
 @@ -44,8 +44,7 @@ class AndroidNewTaskDialog(
- 
+
    override fun createAdditionalFields(builder: LayoutBuilder) {
      val androidVersionsInfo = AndroidVersionsInfo()
 -    androidVersionsInfo.loadLocalVersions()
@@ -21,19 +21,19 @@ index 42c32aa..9255cd7 100644
      <id>com.jetbrains.edu.android</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Android.xml">org.jetbrains.android</depends>
- 
+
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Java/resources/META-INF/Edu-Java.xml b/Edu-Java/resources/META-INF/Edu-Java.xml
 index df4d8c1..a1de788 100644
 --- a/Edu-Java/resources/META-INF/Edu-Java.xml
 +++ b/Edu-Java/resources/META-INF/Edu-Java.xml
 @@ -6,6 +6,7 @@
- 
+
    <extensions defaultExtensionNs="Educational">
      <configurator language="JAVA" implementationClass="com.jetbrains.edu.java.JConfigurator"/>
 +    <languageDecorator language="JAVA" implementationClass="com.jetbrains.edu.java.JLanguageDecorator"/>
    </extensions>
- 
+
    <extensions defaultExtensionNs="com.intellij">
 diff --git a/Edu-Java/src/com/jetbrains/edu/java/JLanguageDecorator.kt b/Edu-Java/src/com/jetbrains/edu/java/JLanguageDecorator.kt
 new file mode 100644
@@ -58,7 +58,7 @@ index c09e7e7..5278ba5 100644
      <id>com.jetbrains.edu.java</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Java.xml">com.intellij.modules.java</depends>
- 
+
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Kotlin/resources/META-INF/Edu-Kotlin.xml b/Edu-Kotlin/resources/META-INF/Edu-Kotlin.xml
 index a9e2bf8..591a12f 100644
@@ -69,7 +69,7 @@ index a9e2bf8..591a12f 100644
      <optionsProvider instance="com.jetbrains.edu.kotlin.twitter.KtOptionsProvider"/>
      <coursesProvider implementation="com.jetbrains.edu.kotlin.KtBundledCoursesProvider"/>
 +    <languageDecorator implementationClass="com.jetbrains.edu.kotlin.KtLanguageDecorator" language="kotlin"/>
- 
+
      <!-- Coursera -->
      <configurator implementationClass="com.jetbrains.edu.kotlin.coursera.CourseraKtConfigurator" language="kotlin" courseType="Coursera" />
 diff --git a/Edu-Kotlin/src/com/jetbrains/edu/kotlin/KtLanguageDecorator.kt b/Edu-Kotlin/src/com/jetbrains/edu/kotlin/KtLanguageDecorator.kt
@@ -95,7 +95,7 @@ index 1f4d269..c9fb71c 100644
      <id>com.jetbrains.edu.kotlin</id>
 +    <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Kotlin.xml">com.intellij.modules.java</depends>
- 
+
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Python/resources/META-INF/Edu-Python.xml b/Edu-Python/resources/META-INF/Edu-Python.xml
 index ce9b989..73f99d7 100644
@@ -107,7 +107,7 @@ index ce9b989..73f99d7 100644
      <coursesProvider implementation="com.jetbrains.edu.python.learning.PyBundledCoursesProvider"/>
 +    <languageDecorator implementationClass="com.jetbrains.edu.python.learning.PyLanguageDecorator" language="Python" />
    </extensions>
- 
+
    <actions>
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/PyLanguageDecorator.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/PyLanguageDecorator.kt
 new file mode 100644
@@ -143,7 +143,7 @@ index 47d0003..d17ba91 100644
 +      PySdkExtKt.associateWithProject(sdk, project, false);
      }
    }
- 
+
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
 index 3f1a875..ca30893 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/pycharm/PyLanguageSettings.kt
@@ -159,7 +159,7 @@ index 3f1a875..ca30893 100644
            }
 @@ -27,7 +27,7 @@ internal open class PyLanguageSettings : PyLanguageSettings() {
      }
- 
+
      val sdks = if (fakeSdk != null) ContainerUtil.prepend(registeredSdks, fakeSdk) else registeredSdks
 -    val sdkChooser = PythonSdkChooserCombo(null, null, sdks, null) { true }
 +    val sdkChooser = PythonSdkChooserCombo(null, sdks, null) { true }
@@ -181,12 +181,12 @@ index 815bd92..a1fdadc 100644
 --- a/Edu-Scala/resources/META-INF/Edu-Scala.xml
 +++ b/Edu-Scala/resources/META-INF/Edu-Scala.xml
 @@ -5,6 +5,7 @@
- 
+
    <extensions defaultExtensionNs="Educational">
      <configurator language="Scala" implementationClass="com.jetbrains.edu.scala.ScalaConfigurator"/>
 +    <languageDecorator language="Scala" implementationClass="com.jetbrains.edu.scala.ScalaLanguageDecorator"/>
    </extensions>
- 
+
  </idea-plugin>
 diff --git a/Edu-Scala/src/com/jetbrains/edu/scala/ScalaLanguageDecorator.kt b/Edu-Scala/src/com/jetbrains/edu/scala/ScalaLanguageDecorator.kt
 new file mode 100644
@@ -218,7 +218,7 @@ index 65627a7..f028076 100644
 +++ b/build.gradle
 @@ -154,7 +154,6 @@ allprojects {
      }
- 
+
      dependencies {
 -        compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
          compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
@@ -231,12 +231,12 @@ index 65627a7..f028076 100644
 -    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion", "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 +    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion"
  }
- 
+
  task configurePyCharm {
 @@ -304,7 +303,7 @@ configure(project(':educational-core')) {
      }
  }
- 
+
 -configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')]) {
 +configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android')]) {
      dependencies {
@@ -245,7 +245,7 @@ index 65627a7..f028076 100644
 @@ -361,26 +360,27 @@ configure(project(':Edu-Android')) {
      }
  }
- 
+
 -configure(project(':Edu-JavaScript')) {
 -  task createCheckiOOAuthProperties() {
 -    createProperties(
@@ -275,15 +275,15 @@ index 65627a7..f028076 100644
 +//
 +//  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 +//}
- 
+
  runIde.systemProperty("-Didea.is.internal", "true")
  runIde.systemProperty("-ea", "")
- 
+
  dependencies {
 -    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')
 +    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android')
  }
- 
+
  idea {
 diff --git a/educational-core/resources/style/template.html.ft b/educational-core/resources/style/template.html.ft
 index dc5b095..2a6dfa3 100644
@@ -299,13 +299,13 @@ index dc5b095..2a6dfa3 100644
 +  <script src="${javascript}"></script>
 +  <script src="${language_script}"></script>
 +  <link rel="stylesheet" type="text/css" href="${css_codemirror}"></link>
- 
+
    <link rel="stylesheet" type="text/css" href="${hint_base}"></link>
    <link rel="stylesheet" type="text/css" href="${hint_laf_specific}"></link>
 @@ -21,5 +27,6 @@
      ${content}
  </div>
- 
+
 +<script>${highlight_code}</script>
  </body>
  </html>
@@ -315,16 +315,16 @@ index df00d84..2d85601 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java
 @@ -2,6 +2,7 @@ package com.jetbrains.edu.learning;
- 
+
  import com.intellij.lang.LanguageExtension;
  import com.intellij.ui.JBColor;
 +import org.jetbrains.annotations.NotNull;
  import org.jetbrains.annotations.Nullable;
- 
+
  public interface EduLanguageDecorator {
 @@ -10,6 +11,27 @@ public interface EduLanguageDecorator {
    LanguageExtension<EduLanguageDecorator> INSTANCE = new LanguageExtension<>(EP_NAME);
- 
+
    /**
 +   * Used for code highlighting in Task Description tool window.
 +   * Scripts for different languages can be found <a href="https://codemirror.net">here</a>.
@@ -350,6 +350,19 @@ index df00d84..2d85601 100644
     * Gets tag color for decorator language.
     *
     * If it returns null then color for language will be taken
+diff --git a/educational-core/src/com/jetbrains/edu/learning/coursera/CourseraTaskChecker.kt b/educational-core/src/com/jetbrains/edu/learning/coursera/CourseraTaskChecker.kt
+index 19d31e5..bc59a33 100644
+--- a/educational-core/src/com/jetbrains/edu/learning/coursera/CourseraTaskChecker.kt
++++ b/educational-core/src/com/jetbrains/edu/learning/coursera/CourseraTaskChecker.kt
+@@ -121,7 +121,7 @@ class CourseraTaskChecker : RemoteTaskChecker {
+       if (message != null) {
+         val messageLabel = JBLabel(message)
+         messageLabel.foreground = JBColor.RED
+-        messageLabel.withFont(JBUI.Fonts.label().asBold())
++        messageLabel.font = JBUI.Fonts.label().asBold()
+         row { messageLabel() }
+       }
+       row("Email:") { emailField(growPolicy = GrowPolicy.MEDIUM_TEXT) }
 diff --git a/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt b/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt
 index 635fe18..770bf06 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/editor/EduSingleFileEditor.kt
@@ -357,14 +370,14 @@ index 635fe18..770bf06 100644
 @@ -43,9 +43,9 @@ class EduSingleFileEditor(
      return EduEditorState(state, null)
    }
- 
+
 -  override fun setState(state: FileEditorState, exactState: Boolean) {
 +  override fun setState(state: FileEditorState) {
      val realState = (state as? EduEditorState)?.mainEditorState ?: state
 -    super<PsiAwareTextEditorImpl>.setState(realState, exactState)
 +    super<PsiAwareTextEditorImpl>.setState(realState)
    }
- 
+
    override fun validateTaskFile() {
 diff --git a/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt b/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt
 index 8cbed83..583a754 100644
@@ -373,7 +386,7 @@ index 8cbed83..583a754 100644
 @@ -55,11 +55,11 @@ class EduSplitEditor(
      return EduEditorState(mainEditorState.mainEditorState, secondaryEditor.getState(level))
    }
- 
+
 -  override fun setState(state: FileEditorState, exactState: Boolean) {
 +  override fun setState(state: FileEditorState) {
      if (state is EduEditorState) {
@@ -463,19 +476,19 @@ index 64500f1..bf276d7 100644
      }
      return EMPTY_TASK_TEXT;
 diff --git a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleManager.kt b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleManager.kt
-index d4d4fd1..21bf939 100644
+index e798a17..a9af820 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleManager.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleManager.kt
 @@ -1,7 +1,5 @@
  package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
- 
+
 -import com.intellij.ide.ui.LafManager
 -import com.intellij.ide.ui.laf.UIThemeBasedLookAndFeelInfo
  import com.intellij.openapi.diagnostic.Logger
  import com.intellij.openapi.project.Project
  import com.intellij.openapi.util.SystemInfo
-@@ -69,10 +67,7 @@ internal fun resourceUrl(name: String): String {
- 
+@@ -70,10 +68,7 @@ internal fun resourceUrl(name: String): String {
+
  internal fun resourceFileName(): String {
    return when {
 -    isHighcontrast() -> "highcontrast"
@@ -493,7 +506,7 @@ index f317331..f2f6409 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt
 @@ -2,22 +2,33 @@ package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
- 
+
  import com.intellij.openapi.project.Project
  import com.jetbrains.edu.learning.EduLanguageDecorator
 -import com.intellij.util.ui.UIUtil
@@ -502,13 +515,13 @@ index f317331..f2f6409 100644
  import com.jetbrains.edu.learning.ui.taskDescription.loadText
  import kotlinx.css.*
  import kotlinx.css.properties.lh
- 
+
  internal class StyleResourcesManager(project: Project, taskText: String) {
 +  private fun decorator(project: Project): EduLanguageDecorator? {
 +    val language = StudyTaskManager.getInstance(project).course?.languageById
 +    return language?.let { EduLanguageDecorator.INSTANCE.forLanguage(language) }
 +  }
- 
+
    // update style/template.html.ft in case of changing key names
    val resources = mapOf(
      "typography_color_style" to typographyAndColorStylesheet(),
@@ -543,12 +556,12 @@ index fe572b2..e402209 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
 +++ b/educational-core/src/icons/EducationalCoreIcons.java
 @@ -39,7 +39,7 @@ public class EducationalCoreIcons {
- 
+
    public static final Icon CourseAction = load("/icons/com/jetbrains/edu/eduCourseAction.png"); // 16x16
    public static final Icon CourseTree = load("/icons/com/jetbrains/edu/eduCourseTree.png"); // 16x16
 -  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask.svg"); // 13x13
 +  public static final Icon CourseToolWindow = load("/icons/com/jetbrains/edu/eduCourseTask181.png"); // 13x13
- 
+
    public static final Icon ResultCorrect = load("/icons/com/jetbrains/edu/learning/resultCorrect.svg"); // 16x16
    public static final Icon ResetTask = load("/icons/com/jetbrains/edu/learning/resetTask.svg"); // 16x16
 diff --git a/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt b/educational-core/testSrc/com/jetbrains/edu/learning/courseView/NodesTest.kt
@@ -565,7 +578,7 @@ index d05af45..c4c78bd 100644
 +          additionalFile1.txt
      """.trimIndent())
    }
- 
+
 @@ -176,11 +176,11 @@ class NodesTest: CourseViewTestBase() {
            taskFile1.txt
            CCStudentInvisibleFileNode taskFile2.txt
@@ -602,7 +615,7 @@ index 6a37f6f..8b802bf 100644
 @@ -1,4 +1,4 @@
 -environmentName=183
 +environmentName=studio-181
- 
+
  # needed for twitting functionality available currently only for kotlin koans
  consumerKey=
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
@@ -614,7 +627,7 @@ index ae3188c..7d7d4a1 100644
      <change-notes/>
      <depends>com.intellij.modules.lang</depends>
 +    <depends>com.intellij.modules.androidstudio</depends>
- 
+
      <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
 diff --git a/settings.gradle b/settings.gradle
