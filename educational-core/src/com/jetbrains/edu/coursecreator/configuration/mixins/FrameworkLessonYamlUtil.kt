@@ -26,11 +26,7 @@ abstract class FrameworkLessonYamlUtil : LessonYamlMixin() {
 
 // adding framework lesson type property
 private class FrameworkLessonSerializer : StdSerializer<FrameworkLesson>(FrameworkLesson::class.java) {
-  override fun serialize(value: FrameworkLesson?, gen: JsonGenerator, provider: SerializerProvider) {
-    if (value == null) {
-      return
-    }
-
+  override fun serialize(value: FrameworkLesson, gen: JsonGenerator, provider: SerializerProvider) {
     gen.writeStartObject()
     gen.writeObjectField(TYPE, "framework")
     val type = provider.constructType(Lesson::class.java)
