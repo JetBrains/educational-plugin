@@ -3,10 +3,11 @@ package com.jetbrains.edu.coursecreator.configuration
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
-import com.jetbrains.edu.learning.courseFormat.Lesson
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.OutputTask
+import junit.framework.TestCase
 
 
 class YamlDeserializationTest: EduTestCase() {
@@ -55,7 +56,21 @@ class YamlDeserializationTest: EduTestCase() {
       |- $firstTask
       |- $secondTask
     """.trimMargin("|")
-    val lesson = YamlFormatSynchronizer.MAPPER.readValue(yamlContent, Lesson::class.java)
+    val lesson = YamlFormatSynchronizer.deserializeLesson(yamlContent)
+    assertEquals(listOf(firstTask, secondTask), lesson.getTaskList().map { it.name })
+  }
+
+  fun `test framework lesson`() {
+    val firstTask = "Introduction Task"
+    val secondTask = "Advanced Task"
+    val yamlContent = """
+      |type: framework
+      |content:
+      |- $firstTask
+      |- $secondTask
+    """.trimMargin("|")
+    val lesson = YamlFormatSynchronizer.deserializeLesson(yamlContent)
+    TestCase.assertTrue(lesson is FrameworkLesson)
     assertEquals(listOf(firstTask, secondTask), lesson.getTaskList().map { it.name })
   }
 
