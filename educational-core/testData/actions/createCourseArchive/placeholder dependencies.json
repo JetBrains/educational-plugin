@@ -18,13 +18,13 @@
                   "offset" : 13,
                   "length" : 0,
                   "possible_answer" : "",
-                  "text" : "TODO()"
+                  "placeholder_text" : "TODO()"
                 },
                 {
                   "offset" : 32,
                   "length" : 0,
                   "possible_answer" : "",
-                  "text" : "TODO()"
+                  "placeholder_text" : "TODO()"
                 }
               ],
               "is_visible" : true,
@@ -57,7 +57,7 @@
                     "is_visible" : true
                   },
                   "possible_answer" : "",
-                  "text" : "TODO()"
+                  "placeholder_text" : "TODO()"
                 },
                 {
                   "offset" : 32,
@@ -70,7 +70,7 @@
                     "is_visible" : true
                   },
                   "possible_answer" : "",
-                  "text" : "TODO()"
+                  "placeholder_text" : "TODO()"
                 }
               ],
               "is_visible" : true,

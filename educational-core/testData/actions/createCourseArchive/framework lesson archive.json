@@ -18,7 +18,7 @@
                   "offset" : 20,
                   "length" : 5,
                   "possible_answer" : "\"Foo\"",
-                  "text" : "TODO()"
+                  "placeholder_text" : "TODO()"
                 }
               ],
               "is_visible" : true,
