@@ -206,4 +206,8 @@ public class Lesson extends StudyItem {
   public VirtualFile getDir(@NotNull Project project) {
     return getLessonDir(project);
   }
+
+  public String getType() {
+    return "plain";
+  }
 }
