@@ -169,16 +169,18 @@ abstract class AnswerPlaceholderMixin {
   }
 
   @JsonProperty(DEPENDENCY)
-  private var myPlaceholderDependency: AnswerPlaceholderDependency? = null
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 abstract class AnswerPlaceholderDependencyMixin {
   @JsonProperty("section")
-  private var mySectionName: String? = null
+  private lateinit var mySectionName: String
 
   @JsonProperty("lesson")
   private lateinit var myLessonName: String

@@ -17,13 +17,11 @@
                 {
                   "length" : 0,
                   "offset" : 13,
-                  "dependency" : null,
                   "text" : "TODO()"
                 },
                 {
                   "length" : 0,
                   "offset" : 32,
-                  "dependency" : null,
                   "text" : "TODO()"
                 }
               ],
@@ -50,7 +48,6 @@
                   "length" : 0,
                   "offset" : 13,
                   "dependency" : {
-                    "section" : null,
                     "lesson" : "lesson1",
                     "task" : "task1",
                     "file" : "fizz.kt",
@@ -63,7 +60,6 @@
                   "length" : 0,
                   "offset" : 32,
                   "dependency" : {
-                    "section" : null,
                     "lesson" : "lesson1",
                     "task" : "task1",
                     "file" : "fizz.kt",
