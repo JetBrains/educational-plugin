@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.databind.ser.BeanSerializerFactory
 import com.fasterxml.jackson.databind.util.StdConverter
 import com.intellij.lang.Language
-import com.jetbrains.edu.coursecreator.configuration.mixins.NotImplementedInMixin
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
@@ -158,12 +157,10 @@ abstract class TaskFileMixin {
 @JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
-  private var myOffset: Int? = -1
+  private var myOffset: Int = -1
 
   @JsonProperty(LENGTH)
-  private fun getRealLength(): Int {
-    throw NotImplementedInMixin()
-  }
+  private var myLength: Int = -1
 
   @JsonProperty(DEPENDENCY)
   @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -4,6 +4,7 @@ package com.jetbrains.edu.coursecreator.actions.mixins
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import java.util.*
 
@@ -17,6 +18,7 @@ private const val UNIT_ID = "unit_id"
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonSerialize(using = CourseSerializer::class)
+@JsonPropertyOrder(ID, UPDATE_DATE)
 abstract class RemoteCourseMixin : LocalCourseMixin() {
   @JsonProperty(ID)
   private var id: Int = 0
