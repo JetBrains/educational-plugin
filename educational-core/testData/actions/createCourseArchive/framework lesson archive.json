@@ -15,8 +15,9 @@
               "name" : "Task.kt",
               "placeholders" : [
                 {
-                  "length" : 5,
                   "offset" : 20,
+                  "length" : 5,
+                  "possible_answer" : "\"Foo\"",
                   "text" : "TODO()"
                 }
               ],

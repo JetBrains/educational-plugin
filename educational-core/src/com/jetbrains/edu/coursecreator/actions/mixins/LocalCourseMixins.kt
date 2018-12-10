@@ -46,6 +46,7 @@ private const val LINK_TYPE = "link_type"
 private const val OFFSET = "offset"
 private const val LENGTH = "length"
 private const val PLACEHOLDER_TEXT = "text"
+private const val POSSIBLE_ANSWER = "possible_answer"
 private const val DEPENDENCY = "dependency"
 private const val COURSE_TYPE = "course_type"
 
@@ -154,6 +155,7 @@ abstract class TaskFileMixin {
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonPropertyOrder(OFFSET, LENGTH, DEPENDENCY, POSSIBLE_ANSWER, PLACEHOLDER_TEXT)
 abstract class AnswerPlaceholderMixin {
   @JsonProperty(OFFSET)
   private var myOffset: Int? = -1
@@ -163,14 +165,15 @@ abstract class AnswerPlaceholderMixin {
     throw NotImplementedInMixin()
   }
 
-  @JsonProperty(PLACEHOLDER_TEXT)
-  private fun getPlaceholderText(): String {
-    throw NotImplementedInMixin()
-  }
-
   @JsonProperty(DEPENDENCY)
   @JsonInclude(JsonInclude.Include.NON_NULL)
   private lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
+
+  @JsonProperty(POSSIBLE_ANSWER)
+  private lateinit var myPossibleAnswer: String
+
+  @JsonProperty(PLACEHOLDER_TEXT)
+  private lateinit var myPlaceholderText: String
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
