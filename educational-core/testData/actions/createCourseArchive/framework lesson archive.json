@@ -3,6 +3,7 @@
   "title" : "Test Course",
   "programming_language" : "TEXT",
   "language" : "en",
+  "course_type" : "PyCharm",
   "items" : [
     {
       "title" : "my lesson",

@@ -147,11 +147,7 @@ internal class CourseArchiveCreator(private val project: Project,
         mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
-        mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
-        mapper.addMixIn(AdditionalFile::class.java, AdditionalFileMixin::class.java)
-        mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
-        mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
-        mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+        addCommonMixins(mapper)
         mapper.enable(WRITE_ENUMS_USING_TO_STRING)
         mapper.enable(READ_ENUMS_USING_TO_STRING)
         return mapper
@@ -165,13 +161,19 @@ internal class CourseArchiveCreator(private val project: Project,
         mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
-        mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
-        mapper.addMixIn(AdditionalFile::class.java, AdditionalFileMixin::class.java)
-        mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
+        addCommonMixins(mapper)
         mapper.enable(WRITE_ENUMS_USING_TO_STRING)
         mapper.enable(READ_ENUMS_USING_TO_STRING)
         mapper.dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a")
         return mapper
       }
+
+    private fun addCommonMixins(mapper: ObjectMapper) {
+      mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
+      mapper.addMixIn(AdditionalFile::class.java, AdditionalFileMixin::class.java)
+      mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
+      mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
+      mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
+    }
   }
 }

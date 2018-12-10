@@ -47,15 +47,13 @@ private const val OFFSET = "offset"
 private const val LENGTH = "length"
 private const val PLACEHOLDER_TEXT = "text"
 private const val DEPENDENCY = "dependency"
+private const val COURSE_TYPE = "course_type"
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder(VERSION, SUMMARY,
-                   TITLE,
-                   PROGRAMMING_LANGUAGE,
-                   LANGUAGE, ITEMS)
+@JsonPropertyOrder(VERSION, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
 abstract class LocalCourseMixin {
   @JsonProperty(TITLE)
@@ -71,6 +69,9 @@ abstract class LocalCourseMixin {
   @JsonSerialize(converter = LanguageConverter::class)
   @JsonProperty(LANGUAGE)
   private lateinit var myLanguageCode: String
+
+  @JsonProperty(COURSE_TYPE)
+  private lateinit var courseType: String
 
   @JsonProperty(ITEMS)
   private lateinit var items: List<StudyItem>
