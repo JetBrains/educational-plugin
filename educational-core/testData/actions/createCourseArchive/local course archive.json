@@ -13,9 +13,9 @@
           "task_files" : {
             "taskFile1.txt" : {
               "name" : "taskFile1.txt",
-              "text" : "",
+              "placeholders" : [ ],
               "is_visible" : true,
-              "placeholders" : [ ]
+              "text" : ""
             }
           },
           "test_files" : { },

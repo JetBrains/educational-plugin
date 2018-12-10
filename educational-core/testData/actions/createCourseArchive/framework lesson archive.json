@@ -13,8 +13,6 @@
           "task_files" : {
             "Task.kt" : {
               "name" : "Task.kt",
-              "text" : "fun foo(): String = TODO()",
-              "is_visible" : true,
               "placeholders" : [
                 {
                   "length" : 5,
@@ -22,7 +20,9 @@
                   "dependency" : null,
                   "text" : "TODO()"
                 }
-              ]
+              ],
+              "is_visible" : true,
+              "text" : "fun foo(): String = TODO()"
             }
           },
           "test_files" : { },
