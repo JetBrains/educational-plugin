@@ -1,43 +1,15 @@
 package com.jetbrains.edu.learning.serialization.converter.json.local
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.*
 import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
-import com.jetbrains.edu.learning.serialization.converter.json.JsonLocalCourseConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionJsonStepOptionConverter
 
-class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverter {
+class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
-  override fun convert(localCourse: JsonObject): JsonObject {
-    val language = localCourse.getAsJsonPrimitive(PROGRAMMING_LANGUAGE)?.asString ?: ""
-
-    for (item in localCourse.getJsonObjectList(ITEMS)) {
-      val type = item.getAsJsonPrimitive(ITEM_TYPE)?.asString
-      when (type) {
-        null, EduNames.LESSON, FRAMEWORK_TYPE -> convertLesson(item, language)
-        EduNames.SECTION -> convertSection(item, language)
-      }
-    }
-
-    return localCourse
-  }
-
-  private fun convertSection(sectionObject: JsonObject, language: String) {
-    for (lesson in sectionObject.getJsonObjectList(ITEMS)) {
-      convertLesson(lesson, language)
-    }
-  }
-
-  private fun convertLesson(lessonObject: JsonObject, language: String) {
-    for (task in lessonObject.getJsonObjectList(TASK_LIST)) {
-      convertTask(task, language)
-    }
-  }
-  
-  private fun convertTask(taskObject: JsonObject, language: String) {
+  override fun convertTaskObject(taskObject: JsonObject, language: String) {
     val taskName = taskObject.getAsJsonPrimitive(NAME)?.asString ?: return
     val taskRoots = LANGUAGE_TASK_ROOTS[language]
     if (taskRoots != null && taskName != EduNames.ADDITIONAL_MATERIALS) {
@@ -64,19 +36,5 @@ class ToSeventhVersionLocalCourseConverter : JsonLocalCourseConverter {
       additionalFiles.add(path, additionalFile)
     }
     taskObject.add(ADDITIONAL_FILES, additionalFiles)
-  }
-
-  private fun JsonObject.getJsonObjectList(name: String): List<JsonObject> {
-    val array = getAsJsonArray(name) ?: return emptyList()
-    return array.filterIsInstance<JsonObject>()
-  }
-  
-  private inline fun <reified T : JsonElement> JsonObject.getJsonObjectMap(name: String): Map<String, T> {
-    val jsonObject = getAsJsonObject(name) ?: return emptyMap()
-    @Suppress("UNCHECKED_CAST")
-    return jsonObject.entrySet().asSequence()
-      .map { e -> e.key to e.value }
-      .filter { it.second is T }
-      .toMap() as Map<String, T>
   }
 }

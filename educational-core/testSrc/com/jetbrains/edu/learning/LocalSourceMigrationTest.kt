@@ -18,6 +18,7 @@ class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
   fun `test python sixth version`() = doTest(7)
   fun `test remote sixth version`() = doTest(7)
   fun `test to 8 version`() = doTest(8)
+  fun `test to 9 version`() = doTest(9)
 
   private fun doTest(maxVersion: Int) {
     val before = loadJsonText(beforeFileName)

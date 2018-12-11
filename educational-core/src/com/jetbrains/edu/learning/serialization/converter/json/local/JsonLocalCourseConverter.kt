@@ -1,4 +1,4 @@
-package com.jetbrains.edu.learning.serialization.converter.json
+package com.jetbrains.edu.learning.serialization.converter.json.local
 
 import com.google.gson.JsonObject
 

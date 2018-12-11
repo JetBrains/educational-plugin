@@ -1,0 +1,162 @@
+{
+  "summary": "Test Local Course",
+  "title": "Test Local Course",
+  "programming_language": "kotlin",
+  "language": "en",
+  "version": 8,
+  "items": [
+    {
+      "title": "section1",
+      "id": 0,
+      "update_date": "Jan 1, 1970 3:00:00 AM",
+      "items": [
+        {
+          "id": 0,
+          "update_date": "Jan 1, 1970 3:00:00 AM",
+          "title": "lesson1",
+          "task_list": [
+            {
+              "name": "task1",
+              "stepic_id": 0,
+              "task_files": {
+                "src/Task.kt": {
+                  "name": "src/Task.kt",
+                  "text": "fun foo(): String \u003d TODO()",
+                  "placeholders": [
+                    {
+                      "offset": 20,
+                      "length": 6,
+                      "hints": [],
+                      "possible_answer": "\"Foo\"",
+                      "placeholder_text": "TODO()"
+                    }
+                  ]
+                }
+              },
+              "test_files": {
+                "test/Tests.kt": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
+              },
+              "description_text": "This is the markdown document.\n\nWrite your task text here",
+              "description_format": "md",
+              "additional_files": {
+                "visible_additional_file.txt": {
+                  "text": "some text",
+                  "is_visible": true
+                },
+                "invisible_additional_file.txt": {
+                  "text": "some text",
+                  "is_visible": false
+                }
+              },
+              "update_date": "Jan 1, 1970 3:00:00 AM",
+              "feedback_link": {
+                "link_type": "STEPIK"
+              },
+              "task_type": "edu"
+            },
+            {
+              "name": "task2",
+              "stepic_id": 0,
+              "task_files": {
+                "src/Task.kt": {
+                  "name": "src/Task.kt",
+                  "text": "fun foo(): String \u003d TODO()\n",
+                  "placeholders": [
+                    {
+                      "offset": 20,
+                      "length": 6,
+                      "dependency": {
+                        "section": "section1",
+                        "lesson": "lesson1",
+                        "task": "task1",
+                        "file": "src/Task.kt",
+                        "placeholder": 0,
+                        "is_visible": false
+                      },
+                      "hints": [],
+                      "possible_answer": "\"Foo\"",
+                      "placeholder_text": "TODO()"
+                    }
+                  ]
+                }
+              },
+              "test_files": {
+                "test/Tests.kt": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
+              },
+              "description_text": "This is the markdown document.\n\nWrite your task text here",
+              "description_format": "md",
+              "additional_files": {},
+              "update_date": "Jan 1, 1970 3:00:00 AM",
+              "feedback_link": {
+                "link_type": "STEPIK"
+              },
+              "task_type": "edu"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    },
+    {
+      "id": 0,
+      "update_date": "Jan 1, 1970 3:00:00 AM",
+      "title": "lesson2",
+      "task_list": [
+        {
+          "name": "task1",
+          "stepic_id": 0,
+          "task_files": {
+            "src/Task.kt": {
+              "name": "src/Task.kt",
+              "text": "// type your solution here",
+              "placeholders": []
+            }
+          },
+          "test_files": {
+            "test/Tests.kt": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
+          },
+          "description_text": "This is the markdown document.\n\nWrite your task text here",
+          "description_format": "md",
+          "additional_files": {},
+          "update_date": "Jan 1, 1970 3:00:00 AM",
+          "feedback_link": {
+            "link_type": "STEPIK"
+          },
+          "task_type": "edu"
+        }
+      ],
+      "type": "framework"
+    },
+    {
+      "id": 0,
+      "update_date": "Jan 1, 1970 3:00:00 AM",
+      "title": "Edu additional materials",
+      "task_list": [
+        {
+          "name": "Edu additional materials",
+          "stepic_id": 0,
+          "task_files": {
+            "util/src/testUtils.kt": {
+              "name": "util/src/testUtils.kt",
+              "text": "",
+              "placeholders": []
+            }
+          },
+          "test_files": {},
+          "description_format": "md",
+          "additional_files": {
+            "build.gradle": {
+              "text": "buildscript {\n    ext.kotlin_version \u003d \u00271.2.71\u0027\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"\n    }\n}\n\ndef printOutput(def output) {\n    return tasks.create(\"printOutput\") {\n        for (line in output.toString().readLines()) {\n            println \"#educational_plugin\" + line\n        }\n    }\n}\n\nsubprojects {\n    apply plugin: \u0027application\u0027\n    apply plugin: \u0027java\u0027\n    apply plugin: \u0027kotlin\u0027\n\n    sourceCompatibility \u003d 1.8\n\n    repositories {\n        mavenCentral()\n    }\n\n    dependencies {\n        compile \"org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version\"\n        testCompile group: \u0027junit\u0027, name: \u0027junit\u0027, version: \u00274.12\u0027\n    }\n\n    compileKotlin.destinationDir \u003d compileJava.destinationDir\n\n    compileKotlin {\n        kotlinOptions.jvmTarget \u003d \"1.8\"\n    }\n    compileTestKotlin {\n        kotlinOptions.jvmTarget \u003d \"1.8\"\n    }\n\n    sourceSets {\n        main {\n            kotlin.srcDir \u0027src\u0027\n            java.srcDir \u0027src\u0027\n        }\n        test {\n            kotlin.srcDir \u0027test\u0027\n            java.srcDir \u0027test\u0027\n        }\n    }\n\n    mainClassName \u003d project.hasProperty(\"mainClass\") ? project.getProperty(\"mainClass\") : \"\"\n\n    test {\n        outputs.upToDateWhen { false }\n        afterTest { TestDescriptor test, TestResult result -\u003e\n            if (result.resultType \u003d\u003d TestResult.ResultType.FAILURE) {\n                def message \u003d result.exception?.message ?: \"Wrong answer\"\n                def lines \u003d message.readLines()\n                println \"#educational_plugin FAILED + \" + lines[0]\n                lines[1..-1].forEach { line -\u003e\n                    println \"#educational_plugin\" + line\n                }\n                // we need this to separate output of different tests\n                println\n            }\n        }\n    }\n\n    def runOutput \u003d new ByteArrayOutputStream()\n    tasks.run.setStandardOutput(runOutput)\n    tasks.run.doLast { printOutput(runOutput) }\n}\n\nproject(\u0027:util\u0027) {\n    dependencies {\n        compile group: \u0027junit\u0027, name: \u0027junit\u0027, version: \u00274.12\u0027\n    }\n}\n\nconfigure(subprojects.findAll {it.name !\u003d \u0027util\u0027}) {\n  dependencies {\n    compile project(\u0027:util\u0027).sourceSets.main.output\n    testCompile project(\u0027:util\u0027).sourceSets.test.output\n  }\n}\n\ntask wrapper(type: Wrapper) {\n  gradleVersion \u003d \u00274.10\u0027\n}\n"
+            }
+          },
+          "update_date": "Jan 1, 1970 3:00:00 AM",
+          "feedback_link": {
+            "link_type": "STEPIK"
+          },
+          "task_type": "edu"
+        }
+      ],
+      "type": "lesson"
+    }
+  ]
+}

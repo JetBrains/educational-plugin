@@ -4,7 +4,6 @@ import com.google.gson.JsonObject
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.COURSE_TYPE
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.PROGRAMMING_LANGUAGE
-import com.jetbrains.edu.learning.serialization.converter.json.JsonLocalCourseConverter
 
 class To8VersionLocalCourseConverter : JsonLocalCourseConverter {
 
