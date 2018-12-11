@@ -71,9 +71,7 @@ public class StepikWrappers {
       source.descriptionText = task.getDescriptionText();
       source.descriptionFormat = task.getDescriptionFormat();
 
-      setTests(project, task, source);
       setTaskFiles(project, task, source);
-      setAdditionalFiles(project, task, source);
 
       source.taskType = task.getTaskType();
       source.lessonType = task.getLesson() instanceof FrameworkLesson ? "framework" : null;
@@ -101,39 +99,6 @@ public class StepikWrappers {
         }
       }
     }
-
-    private static void setTests(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
-      source.test = new ArrayList<>();
-      if (task.getLesson().isAdditional()) {
-        return;
-      }
-
-      final VirtualFile taskDir = task.getTaskDir(project);
-      if (taskDir == null) {
-        LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
-      } else {
-        CCUtils.loadTestTextsToTask(task, taskDir);
-      }
-
-      for (Map.Entry<String, String> entry : task.getTestsText().entrySet()) {
-        source.test.add(new FileWrapper(entry.getKey(), entry.getValue()));
-      }
-    }
-  }
-
-  private static void setAdditionalFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
-    // We don't need to load text for files from additional materials lesson
-    // because they are already loaded by `CCUtils#createAdditionalLesson`
-    if (!task.getLesson().isAdditional()) {
-      final VirtualFile taskDir = task.getTaskDir(project);
-      if (taskDir == null) {
-        LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
-      } else {
-        CCUtils.loadAdditionalFileTextsToTask(task, taskDir);
-      }
-    }
-
-    source.additionalFiles = new HashMap<>(task.getAdditionalFiles());
   }
 
   public static class CoursesContainer {

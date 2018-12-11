@@ -221,12 +221,6 @@ public class StepikTaskBuilder {
     task.setName(stepOptions != null ? stepOptions.title : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 
     if (stepOptions != null) {
-      for (StepikWrappers.FileWrapper wrapper : stepOptions.test) {
-        task.addTestsTexts(wrapper.name, wrapper.text);
-      }
-      if (stepOptions.additionalFiles != null) {
-        task.setAdditionalFiles(stepOptions.additionalFiles);
-      }
       if (stepOptions.descriptionText != null) {
         task.setDescriptionText(stepOptions.descriptionText);
       } else {
@@ -353,6 +347,8 @@ public class StepikTaskBuilder {
     String testText = "from test_helper import check_samples\n\n" +
                       "if __name__ == '__main__':\n" +
                       "    check_samples(samples=" + new GsonBuilder().create().toJson(samples) + ")";
-    task.addTestsTexts("tests.py", testText);
+    TaskFile test = new TaskFile("tests.py", testText);
+    test.setVisible(false);
+    task.addTaskFile(test);
   }
 }

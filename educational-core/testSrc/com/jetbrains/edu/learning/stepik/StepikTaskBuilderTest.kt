@@ -45,12 +45,10 @@ class StepikTaskBuilderTest : EduTestCase() {
 
       assertTrue(task.taskFiles.isNotEmpty())
       for ((path, taskFile) in task.taskFiles) {
-        val pathMatcher = createPathMatcher("${EduNames.SRC}/", language)
+        val pathPrefix = if (path.contains(TEST_FILE_PATTERN)) EduNames.TEST else EduNames.SRC
+        val pathMatcher = createPathMatcher("${pathPrefix}/", language)
         assertThat(path, pathMatcher)
         assertThat(taskFile.name, pathMatcher)
-      }
-      for ((path, _) in task.testsText) {
-        assertThat(path, createPathMatcher("${EduNames.TEST}/", language))
       }
     }
   }
@@ -64,4 +62,8 @@ class StepikTaskBuilderTest : EduTestCase() {
   }
 
   private fun loadResponse(): String = FileUtil.loadFile(File(testDataPath, dataFileName))
+
+  companion object {
+    private val TEST_FILE_PATTERN: Regex = Regex("""Tests?\.\w*""")
+  }
 }
