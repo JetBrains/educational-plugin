@@ -10,6 +10,7 @@ import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
+import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import kotlin.collections.CollectionsKt;
 import org.hamcrest.Matcher;
@@ -22,10 +23,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class StepikFormatTest extends EduTestCase {
 
@@ -36,46 +38,26 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testFirstVersion() throws IOException {
-    doStepOptionsCreationTest();
+    doStepOptionMigrationTest(2);
   }
 
   public void testSecondVersion() throws IOException {
-    doStepOptionsCreationTest();
+    doStepOptionMigrationTest(3);
   }
 
   public void testThirdVersion() throws IOException {
-    doStepOptionsCreationTest();
+    doStepOptionMigrationTest(4);
   }
 
   public void testFifthVersion() throws IOException {
-    StepikWrappers.StepOptions options = getStepOptions();
-    assertEquals(1, options.additionalFiles.size());
-    AdditionalFile file = options.additionalFiles.get("additional_file.txt");
-    assertNotNull(file);
-    assertEquals("some text", file.getText());
-    assertTrue(file.isVisible());
+    doStepOptionMigrationTest(6);
   }
 
   public void testSixthVersion() throws IOException {
     for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
-      checkSixthVersion(entry.getKey(), startsWith(entry.getValue().getTaskFilesRoot()), startsWith(entry.getValue().getTestFilesRoot()));
+      doStepOptionMigrationTest(7, entry.getKey(), getTestName(true) + ".gradle.after.json");
     }
-    Matcher<String> pathMatcher = not(containsString("/"));
-    checkSixthVersion(EduNames.PYTHON, pathMatcher, pathMatcher);
-  }
-
-  private void checkSixthVersion(@NotNull String language,
-                                 @NotNull Matcher<String> srcPathMatcher,
-                                 @NotNull Matcher<String> testPathMatcher) throws IOException {
-    StepikWrappers.StepOptions options = getStepOptions(language);
-    assertEquals(3, options.files.size());
-    TaskFile taskFile = options.files.get(0);
-    assertThat(taskFile.getName(), srcPathMatcher);
-    assertEquals(1, taskFile.getAnswerPlaceholders().size());
-    AnswerPlaceholderDependency dependency = taskFile.getAnswerPlaceholders().get(0).getPlaceholderDependency();
-    assertThat(dependency.getFileName(), srcPathMatcher);
-    assertEquals(1, options.test.size());
-    assertThat(options.test.get(0).name, testPathMatcher);
+    doStepOptionMigrationTest(7, EduNames.PYTHON, getTestName(true) + ".python.after.json");
   }
 
   public void testAdditionalMaterialsLesson() throws IOException {
@@ -367,22 +349,39 @@ public class StepikFormatTest extends EduTestCase {
 
   @NotNull
   private String loadJsonText() throws IOException {
-    return FileUtil.loadFile(new File(getTestDataPath(), getTestFile()));
+    return loadJsonText(getTestFile());
   }
 
-  private void doStepOptionsCreationTest() throws IOException {
+  @NotNull
+  private String loadJsonText(@NotNull String fileName) throws IOException {
+    return FileUtil.loadFile(new File(getTestDataPath(), fileName));
+  }
+
+  private void doStepOptionMigrationTest(int maxVersion) throws IOException {
+    doStepOptionMigrationTest(maxVersion, null, null);
+  }
+
+  private void doStepOptionMigrationTest(int maxVersion, @Nullable String language, @Nullable String afterFileName) throws IOException {
+    doMigrationTest(afterFileName, jsonBefore -> StepikStepOptionsAdapter.migrate(jsonBefore, maxVersion, language));
+  }
+
+  private void doMigrationTest(@Nullable String afterFileName,
+                               @NotNull Function<JsonObject, JsonObject> migrationAction) throws IOException {
     String responseString = loadJsonText();
-    StepikWrappers.StepSource stepSource =
-        StepikClient.deserializeStepikResponse(StepikWrappers.StepContainer.class, responseString, null).steps.get(0);
-    StepikWrappers.StepOptions options = stepSource.block.options;
-    List<TaskFile> files = options.files;
-    assertEquals("Wrong number of task files", 1, files.size());
-    List<AnswerPlaceholder> placeholders = files.get(0).getAnswerPlaceholders();
-    assertEquals("Wrong number of placeholders", 1, placeholders.size());
-    AnswerPlaceholder placeholder = placeholders.get(0);
-    assertEquals(Collections.singletonList("Type your name here."), placeholder.getHints());
-    assertEquals("Liana", placeholder.getPossibleAnswer());
-    assertEquals("Description", options.descriptionText);
+    String afterExpected;
+    if (afterFileName != null) {
+      afterExpected = loadJsonText(afterFileName);
+    } else {
+      afterExpected = loadJsonText(getTestName(true) + ".after.json");
+    }
+
+    JsonParser parser = new JsonParser();
+    JsonObject jsonBefore = parser.parse(responseString).getAsJsonObject();
+    JsonObject jsonAfter = migrationAction.apply(jsonBefore);
+
+    Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    String afterActual = gson.toJson(jsonAfter);
+    assertEquals(afterExpected, afterActual);
   }
 
   @NotNull

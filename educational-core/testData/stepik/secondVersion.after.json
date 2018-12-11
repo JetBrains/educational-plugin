@@ -12,11 +12,14 @@
           "hint": "[\"Type your name here.\"]",
           "offset": 32,
           "length": 14,
-          "subtask_infos": [{
-            "index" : 0,
-            "hints": ["Type your name here."],
-            "possible_answer": "Liana"
-          }
+          "subtask_infos": [
+            {
+              "index": 0,
+              "hints": [
+                "Type your name here."
+              ],
+              "possible_answer": "Liana"
+            }
           ]
         }
       ],

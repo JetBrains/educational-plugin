@@ -16,11 +16,11 @@
       "placeholders": []
     }
   ],
-  "additional_files": [
-    {
-      "name": "additional_file.txt",
-      "text": "some text"
+  "format_version": 6,
+  "additional_files": {
+    "additional_file.txt": {
+      "text": "some text",
+      "is_visible": true
     }
-  ],
-  "format_version": 5
+  }
 }

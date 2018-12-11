@@ -9,14 +9,21 @@
     {
       "placeholders": [
         {
-          "hint": "[\"Type your name here.\"]",
-          "offset": 32,
+          "hint": "Type your name here.",
+          "start": 32,
           "length": 14,
-          "subtask_infos": [{
-            "index" : 0,
-            "hints": ["Type your name here."],
-            "possible_answer": "Liana"
-          }
+          "possible_answer": "Liana",
+          "line": -1,
+          "offset": 32,
+          "additional_hints": [],
+          "subtask_infos": [
+            {
+              "index": 0,
+              "hints": [
+                "Type your name here."
+              ],
+              "possible_answer": "Liana"
+            }
           ]
         }
       ],
@@ -31,6 +38,5 @@
     }
   ],
   "title": "Our first program",
-  "format_version": 3,
-  "last_subtask_index": 0
+  "format_version": 2
 }

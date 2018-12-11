@@ -2,7 +2,7 @@
   "task_type": "edu",
   "test": [
     {
-      "name": "Tests.kt",
+      "name": "test/Tests.kt",
       "text": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}"
     }
   ],
@@ -11,7 +11,7 @@
   "description_format": "html",
   "files": [
     {
-      "name": "Task.kt",
+      "name": "src/Task.kt",
       "text": "// type your solution here",
       "placeholders": [
         {
@@ -21,7 +21,7 @@
             "section": "section1",
             "lesson": "framework lesson2",
             "task": "task1",
-            "file": "Task.kt",
+            "file": "src/Task.kt",
             "placeholder": 0,
             "is_visible": false
           },
@@ -32,7 +32,7 @@
       ]
     },
     {
-      "name": "Task2.kt",
+      "name": "src/Task2.kt",
       "placeholders": [
         {
           "offset": 20,
@@ -46,7 +46,7 @@
       "text": "fun foo(): String = TODO()"
     },
     {
-      "name": "Task3.kt",
+      "name": "src/Task3.kt",
       "placeholders": [],
       "is_visible": true,
       "text": "fun foo(): String = \"Foo\""
@@ -58,5 +58,5 @@
       "is_visible": true
     }
   },
-  "format_version": 6
+  "format_version": 7
 }
