@@ -4,6 +4,9 @@ import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.Experiments
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.JBPopupFactory
@@ -28,10 +31,14 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
       showBalloon(e, "Please, <a href=\"\">login to Hyperskill</a> and select project.", true)
     }
     else {
-      val currentUser = HyperskillConnector.getCurrentUser()
-      if (currentUser != null) {
-        account.userInfo = currentUser
-      }
+      ProgressManager.getInstance().run(object : Task.Modal(null, "Loading Selected Project", false) {
+        override fun run(indicator: ProgressIndicator) {
+          val currentUser = HyperskillConnector.getCurrentUser()
+          if (currentUser != null) {
+            account.userInfo = currentUser
+          }
+        }
+      })
 
       val hyperskillProject = account.userInfo.hyperskillProject
       if (hyperskillProject == null) {
