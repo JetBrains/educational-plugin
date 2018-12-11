@@ -3,9 +3,11 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
+import com.intellij.openapi.application.Experiments
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -14,6 +16,12 @@ import java.awt.event.ActionListener
 import javax.swing.JComponent
 
 class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
+
+  override fun update(e: AnActionEvent) {
+    super.update(e)
+    e.presentation.isEnabledAndVisible = Experiments.isFeatureEnabled(EduExperimentalFeatures.HYPERSKILL)
+  }
+
   override fun actionPerformed(e: AnActionEvent) {
     val account = HyperskillSettings.INSTANCE.account
     if (account == null) {
