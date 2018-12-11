@@ -35,7 +35,7 @@ private class RemoveFileFromTask(
       FileKind.TASK_FILE -> {
         val taskFile = info.task.taskFiles.remove(info.pathInTask)
         if (taskFile != null) {
-          NewPlaceholderPainter.hidePlaceholders(taskFile)
+          PlaceholderPainter.hidePlaceholders(taskFile)
         }
       }
       FileKind.TEST_FILE -> info.task.testsText.remove(info.pathInTask)
@@ -47,7 +47,7 @@ private class RemoveFileFromTask(
     when (info.kind) {
       FileKind.TASK_FILE -> {
         info.task.addTaskFile(initialValue as TaskFile)
-        NewPlaceholderPainter.showPlaceholders(project, initialValue)
+        PlaceholderPainter.showPlaceholders(project, initialValue)
       }
       FileKind.TEST_FILE -> info.task.addTestsTexts(info.pathInTask, initialValue as String)
       FileKind.ADDITIONAL_FILE -> info.task.addAdditionalFile(info.pathInTask, initialValue as AdditionalFile)

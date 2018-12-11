@@ -5,7 +5,7 @@ import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.NewPlaceholderPainter;
+import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -54,12 +54,12 @@ public class CCDeleteAllAnswerPlaceholdersAction extends CCAnswerPlaceholderActi
     @Override
     public void performUndo() {
       myTaskFile.getAnswerPlaceholders().addAll(myPlaceholders);
-      NewPlaceholderPainter.showPlaceholders(myProject, myTaskFile);
+      PlaceholderPainter.showPlaceholders(myProject, myTaskFile);
     }
 
     @Override
     public void performRedo() {
-      NewPlaceholderPainter.hidePlaceholders(myTaskFile);
+      PlaceholderPainter.hidePlaceholders(myTaskFile);
       myTaskFile.getAnswerPlaceholders().clear();
     }
 

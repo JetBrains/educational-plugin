@@ -38,7 +38,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.NewPlaceholderPainter;
+import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -137,7 +137,7 @@ public class CCShowPreview extends DumbAwareAction {
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
       answerPlaceholder.setUseLength(true);
     }
-    NewPlaceholderPainter.showPlaceholders(project, taskFile, createdEditor);
+    PlaceholderPainter.showPlaceholders(project, taskFile, createdEditor);
     JPanel header = new JPanel();
     header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
     header.setBorder(JBUI.Borders.empty(10));

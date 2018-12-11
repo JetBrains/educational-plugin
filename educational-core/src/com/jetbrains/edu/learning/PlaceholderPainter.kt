@@ -22,7 +22,7 @@ import java.awt.Component
 import java.awt.Graphics2D
 import java.awt.Shape
 
-object NewPlaceholderPainter {
+object PlaceholderPainter {
 
   private val disposables: MutableMap<AnswerPlaceholder, MutableSet<Disposable>> = HashMap()
 
@@ -116,7 +116,7 @@ object NewPlaceholderPainter {
   @JvmStatic
   fun hidePlaceholders(taskFile: TaskFile) {
     for (placeholder in taskFile.answerPlaceholders) {
-      NewPlaceholderPainter.hidePlaceholder(placeholder)
+      PlaceholderPainter.hidePlaceholder(placeholder)
     }
   }
 

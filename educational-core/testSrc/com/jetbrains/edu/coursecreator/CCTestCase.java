@@ -30,7 +30,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.ui.docking.DockContainer;
 import com.intellij.ui.docking.DockManager;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.edu.learning.NewPlaceholderPainter;
+import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -58,7 +58,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   private Set<DockContainer> myOldDockContainers;
 
   public static void checkPainters(@NotNull AnswerPlaceholder placeholder) {
-    final Set<AnswerPlaceholder> paintedPlaceholders = NewPlaceholderPainter.getPaintedPlaceholder();
+    final Set<AnswerPlaceholder> paintedPlaceholders = PlaceholderPainter.getPaintedPlaceholder();
     if (paintedPlaceholders.contains(placeholder)) return;
     for (AnswerPlaceholder paintedPlaceholder : paintedPlaceholders) {
       if (paintedPlaceholder.getOffset() == placeholder.getOffset() &&
@@ -70,7 +70,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
   }
 
   protected static void checkPainters(@NotNull TaskFile taskFile) {
-    final Set<AnswerPlaceholder> paintedPlaceholders = NewPlaceholderPainter.getPaintedPlaceholder();
+    final Set<AnswerPlaceholder> paintedPlaceholders = PlaceholderPainter.getPaintedPlaceholder();
 
     for (AnswerPlaceholder answerPlaceholder : taskFile.getAnswerPlaceholders()) {
       if (!paintedPlaceholders.contains(answerPlaceholder)) {
@@ -183,7 +183,7 @@ public abstract class CCTestCase extends LightPlatformCodeInsightFixtureTestCase
       taskFile.addAnswerPlaceholder(placeholder);
     }
     taskFile.sortAnswerPlaceholders();
-    NewPlaceholderPainter.showPlaceholders(myFixture.getProject(), taskFile);
+    PlaceholderPainter.showPlaceholders(myFixture.getProject(), taskFile);
     return file;
   }
 
