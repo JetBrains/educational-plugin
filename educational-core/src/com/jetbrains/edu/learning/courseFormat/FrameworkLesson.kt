@@ -34,11 +34,6 @@ class FrameworkLesson() : Lesson() {
 
   fun currentTask(): Task = taskList[currentTaskIndex]
 
-  // used im yaml serialization/deserialization
-  override fun getType(): String {
-    return "framework"
-  }
-
   override fun init(course: Course?, section: StudyItem?, isRestarted: Boolean) {
     super.init(course, section, isRestarted)
     // We don't need calculate diffs in CC mode because we don't use them
