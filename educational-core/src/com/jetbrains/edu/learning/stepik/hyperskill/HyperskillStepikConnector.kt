@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.lang.Language
 import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -27,7 +26,7 @@ fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language, stage
     val eduTask = EduTask(stage.title)
 
     // TODO: extract as template or clone repository
-    eduTask.addTaskFile(TaskFile("src/Task.java", ""))
+    eduTask.taskFiles = task.taskFiles
     eduTask.descriptionText = task.descriptionText
     convertedTasks.add(eduTask)
   }
