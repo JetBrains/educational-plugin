@@ -10,7 +10,7 @@ import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.FileKind.*
-import com.jetbrains.edu.learning.NewPlaceholderPainter
+import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.AdditionalFile
 import com.jetbrains.edu.learning.courseFormat.StudyFile
@@ -40,7 +40,7 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
       for (path in oldPaths) {
         val fileObject = data.remove(path) as? Any ?: continue
         if (fileObject is TaskFile && newParentKind != TASK_FILE) {
-          NewPlaceholderPainter.hidePlaceholders(fileObject)
+          PlaceholderPainter.hidePlaceholders(fileObject)
         }
         affectedFiles += path to fileObject
       }

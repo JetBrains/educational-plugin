@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.DocumentUtil;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.NewPlaceholderPainter;
+import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import org.jetbrains.annotations.NotNull;
@@ -88,14 +88,14 @@ public class CCAddAnswerPlaceholder extends CCAnswerPlaceholderAction {
       final List<AnswerPlaceholder> answerPlaceholders = getTaskFile().getAnswerPlaceholders();
       if (answerPlaceholders.contains(myPlaceholder)) {
         answerPlaceholders.remove(myPlaceholder);
-        NewPlaceholderPainter.hidePlaceholder(myPlaceholder);
+        PlaceholderPainter.hidePlaceholder(myPlaceholder);
       }
     }
 
     @Override
     public void performRedo(){
       getTaskFile().addAnswerPlaceholder(myPlaceholder);
-      NewPlaceholderPainter.showPlaceholder(myProject, myPlaceholder);
+      PlaceholderPainter.showPlaceholder(myProject, myPlaceholder);
     }
   }
 

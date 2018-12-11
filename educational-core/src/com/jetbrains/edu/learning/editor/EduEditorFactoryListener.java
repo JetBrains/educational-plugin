@@ -16,7 +16,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.problems.WolfTheProblemSolver;
 import com.jetbrains.edu.coursecreator.actions.CCPluginToggleAction;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.NewPlaceholderPainter;
+import com.jetbrains.edu.learning.PlaceholderPainter;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.CheckStatus;
@@ -91,7 +91,7 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
         if (!taskFile.getAnswerPlaceholders().isEmpty() && taskFile.isValid(editor.getDocument().getText())) {
           PlaceholderDependencyManager.updateDependentPlaceholders(project, task);
           NavigationUtils.navigateToFirstAnswerPlaceholder(editor, taskFile);
-          NewPlaceholderPainter.showPlaceholders(project, taskFile, editor);
+          PlaceholderPainter.showPlaceholders(project, taskFile, editor);
           if (isStudyProject) {
             editor.addEditorMouseListener(new WindowSelectionListener(taskFile));
           }
