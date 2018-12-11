@@ -36,6 +36,7 @@ class StepikStepOptionsAdapter(val language: String?) : JsonDeserializer<StepikW
           4 -> ToFifthVersionJsonStepOptionsConverter()
           5 -> ToSixthVersionJsonStepOptionConverter()
           6 -> ToSeventhVersionJsonStepOptionConverter(language)
+          8 -> To9VersionJsonStepOptionConverter()
           else -> null
         }
         if (converter != null) {

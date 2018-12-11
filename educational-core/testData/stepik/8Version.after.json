@@ -1,0 +1,33 @@
+{
+  "task_type": "edu",
+  "title": "task1",
+  "description_text": "<html>\nWrite your task text here.\n<br>\n<br>\n<div class=\"hint\">\n  You can add hints anywhere in task text. Copy all hint div block and change its content.\n</div>\n</html>",
+  "description_format": "html",
+  "feedback_link": {
+    "link_type": "STEPIK"
+  },
+  "files": [
+    {
+      "name": "src/Task.kt",
+      "placeholders": [],
+      "is_visible": true,
+      "text": "// type your solution here"
+    },
+    {
+      "name": "test/Tests.kt",
+      "text": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}",
+      "is_visible": false
+    },
+    {
+      "is_visible": true,
+      "text": "some text",
+      "name": "visible_additional_file.txt"
+    },
+    {
+      "is_visible": false,
+      "text": "some text",
+      "name": "invisible_additional_file.txt"
+    }
+  ],
+  "format_version": 9
+}

@@ -60,6 +60,10 @@ public class StepikFormatTest extends EduTestCase {
     doStepOptionMigrationTest(7, EduNames.PYTHON, getTestName(true) + ".python.after.json");
   }
 
+  public void test8Version() throws Exception {
+    doStepOptionMigrationTest(9);
+  }
+
   public void testAdditionalMaterialsLesson() throws IOException {
     String responseString = loadJsonText();
     Lesson lesson =
@@ -75,7 +79,7 @@ public class StepikFormatTest extends EduTestCase {
                                                                               createParams(language)).steps.get(0);
       assertEquals(EduNames.ADDITIONAL_MATERIALS, step.block.options.title);
       assertEquals("task_file.py", step.block.options.files.get(0).getName());
-      assertEquals("test_helperq.py", step.block.options.test.get(0).name);
+      assertEquals("test_helperq.py", step.block.options.files.get(1).getName());
     }
   }
 
@@ -192,15 +196,6 @@ public class StepikFormatTest extends EduTestCase {
     assertEquals("Our first program", options.title);
   }
 
-  public void testOptionsTest() throws IOException {
-    final StepikWrappers.StepOptions options = getStepOptions();
-    final List<StepikWrappers.FileWrapper> testWrapper = options.test;
-    assertNotNull(testWrapper);
-    assertEquals(1, testWrapper.size());
-    assertEquals("tests.py", testWrapper.get(0).name);
-    assertNotNull(testWrapper.get(0).text);
-  }
-
   public void testOptionsDescription() throws IOException {
     final StepikWrappers.StepOptions options = getStepOptions();
 
@@ -224,10 +219,24 @@ public class StepikFormatTest extends EduTestCase {
     final StepikWrappers.StepOptions options = getStepOptions();
 
     final List<TaskFile> files = options.files;
-    assertEquals(1, files.size());
-    final TaskFile taskFile = files.get(0);
-    assertEquals("hello_world.py", taskFile.getName());
-    assertEquals("print(\"Hello, world! My name is type your name\")\n", taskFile.getText());
+    assertEquals(2, files.size());
+    final TaskFile taskFile1 = files.get(0);
+    assertEquals("hello_world.py", taskFile1.getName());
+    assertEquals("print(\"Hello, world! My name is type your name\")\n", taskFile1.getText());
+
+    final TaskFile taskFile2 = files.get(1);
+    assertEquals("tests.py", taskFile2.getName());
+    assertEquals("from test_helper import run_common_tests, failed, passed, get_answer_placeholders\n" +
+                 "\n" +
+                 "\n" +
+                 "def test_ASCII():\n" +
+                 "    windows = get_answer_placeholders()\n" +
+                 "    for window in windows:\n" +
+                 "        all_ascii = all(ord(c) < 128 for c in window)\n" +
+                 "        if not all_ascii:\n" +
+                 "            failed(\"Please use only English characters this time.\")\n" +
+                 "            return\n" +
+                 "    passed()\n", taskFile2.getText());
   }
 
   private StepikWrappers.StepOptions getStepOptions() throws IOException {
