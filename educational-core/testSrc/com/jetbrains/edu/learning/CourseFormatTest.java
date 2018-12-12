@@ -14,10 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
-
 
 public class CourseFormatTest extends EduTestCase {
+
   public void testAdditionalMaterialsLesson() throws IOException {
     final Course course = getCourseFromJson();
     final List<Lesson> lessons = course.getLessons(true);
@@ -128,30 +127,6 @@ public class CourseFormatTest extends EduTestCase {
   public void testCourseDescription() throws IOException {
     final Course course = getCourseFromJson();
     assertEquals("Best course ever", course.getDescription());
-  }
-
-  public void testTestFiles() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    final Task task = taskList.get(0);
-    assertEquals(1, task.getTestsText().size());
-  }
-
-  public void testTestFilesCustomName() throws IOException {
-    final Course course = getCourseFromJson();
-    final List<Lesson> lessons = course.getLessons();
-    assertFalse("No lessons found", lessons.isEmpty());
-    final Lesson lesson = lessons.get(0);
-    final List<Task> taskList = lesson.getTaskList();
-    assertFalse("No tasks found", taskList.isEmpty());
-    final Task task = taskList.get(0);
-    final Map<String, String> testsText = task.getTestsText();
-    assertEquals(2, testsText.size());
-    assertTrue(testsText.containsKey("super_test.py"));
   }
 
   public void testStudentTaskText() throws IOException {
