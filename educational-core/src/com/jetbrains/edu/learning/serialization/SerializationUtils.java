@@ -465,6 +465,8 @@ public class SerializationUtils {
     public static final String VERSION = "version";
     public static final String COURSE_TYPE = "course_type";
     public static final String PROGRAMMING_LANGUAGE = "programming_language";
+    public static final String EDU_TASK = "edu_task";
+    public static final String TASK = "task";
 
     private Json() {
     }

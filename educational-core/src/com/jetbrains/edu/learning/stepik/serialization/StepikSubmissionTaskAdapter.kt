@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik.serialization
 
+import com.google.common.annotations.VisibleForTesting
 import com.google.gson.*
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder
@@ -12,6 +13,7 @@ import com.jetbrains.edu.learning.serialization.converter.LANGUAGE_TASK_ROOTS
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots
 import com.jetbrains.edu.learning.serialization.converter.json.ToFifthVersionJsonStepOptionsConverter
 import com.jetbrains.edu.learning.serialization.converter.json.ToSeventhVersionJsonStepOptionConverter
+import com.jetbrains.edu.learning.serialization.converter.json.local.To9VersionLocalCourseConverter
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.lang.reflect.Type
 
@@ -20,27 +22,33 @@ class StepikReplyAdapter(private val language: String?) : JsonDeserializer<Stepi
   @Throws(JsonParseException::class)
   override fun deserialize(json: JsonElement, type: Type, context: JsonDeserializationContext): StepikWrappers.Reply {
     val jsonObject = json.asJsonObject
-    val version = jsonObject.getAsJsonPrimitive("version")?.asInt ?: 1
-    jsonObject.migrate(version, language)
+    val initialVersion = jsonObject.migrate(JSON_FORMAT_VERSION, language)
 
     val gson = GsonBuilder().setPrettyPrinting().create()
     return gson.fromJson<StepikWrappers.Reply>(jsonObject).apply {
       // We need to save original version of reply object
       // to correct deserialize StepikWrappers.Reply#edu_task
-      this.version = version
+      this.version = initialVersion
     }
   }
 
   companion object {
-    private fun JsonObject.migrate(version: Int, language: String?) {
-      @Suppress("NAME_SHADOWING")
-      var version = version
-      while (version < JSON_FORMAT_VERSION) {
+    /**
+     * Return object version before migration
+     */
+    @VisibleForTesting
+    @JvmStatic
+    fun JsonObject.migrate(maxVersion: Int, language: String?): Int {
+      val initialVersion = getAsJsonPrimitive(VERSION)?.asInt ?: 1
+      var version = initialVersion
+      while (version < maxVersion) {
         when (version) {
           6 -> toSeventhVersion(language)
         }
         version++
       }
+      addProperty(VERSION, maxVersion)
+      return initialVersion
     }
 
     private fun JsonObject.toSeventhVersion(language: String?) {
@@ -77,19 +85,22 @@ class StepikSubmissionTaskAdapter @JvmOverloads constructor(
       .registerTypeAdapter(AnswerPlaceholder::class.java, placeholderAdapter)
       .create()
 
-    json.asJsonObject.migrate(replyVersion, language)
+    json.asJsonObject.migrate(replyVersion, JSON_FORMAT_VERSION, language)
     return doDeserialize(json, gson)
   }
 
   companion object {
 
-    private fun JsonObject.migrate(version: Int, language: String?) {
+    @VisibleForTesting
+    @JvmStatic
+    fun JsonObject.migrate(version: Int, maxVersion: Int, language: String?) {
       @Suppress("NAME_SHADOWING")
       var version = version
-      while (version < JSON_FORMAT_VERSION) {
+      while (version < maxVersion) {
         when (version) {
           1 -> toFifthVersion()
           6 -> toSeventhVersion(language)
+          8 -> to9Version()
         }
         version++
       }
@@ -121,11 +132,15 @@ class StepikSubmissionTaskAdapter @JvmOverloads constructor(
         val testFiles = getAsJsonObject(TEST_FILES)
         val convertedTestFiles = JsonObject()
         for ((path, testFile) in testFiles.entrySet()) {
-          convertedTestFiles.add("${taskRoots.taskFilesRoot}/$path", testFile)
+          convertedTestFiles.add("${taskRoots.testFilesRoot}/$path", testFile)
         }
 
         add(TEST_FILES, convertedTestFiles)
       }
+    }
+
+    private fun JsonObject.to9Version() {
+      To9VersionLocalCourseConverter.convertTaskObject(this)
     }
   }
 }

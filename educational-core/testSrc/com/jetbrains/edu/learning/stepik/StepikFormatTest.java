@@ -7,13 +7,11 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.courseFormat.*;
-import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
+import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
-import kotlin.collections.CollectionsKt;
-import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.EDU_TASK;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TASK;
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
 
 public class StepikFormatTest extends EduTestCase {
 
@@ -307,34 +305,16 @@ public class StepikFormatTest extends EduTestCase {
     assertEquals("print(\"Hello, world! My name is type your name\")\n", solutionFiles.get(0).text);
   }
 
-  public void testReplyMigration() throws IOException {
-    String jsonText = loadJsonText();
+  public void testReplyTo7Version() throws IOException {
     for (Map.Entry<String, TaskRoots> entry : TaskRootsKt.LANGUAGE_TASK_ROOTS.entrySet()) {
-      Matcher<String> pathMatcher = startsWith(entry.getValue().getTaskFilesRoot());
-      checkReply(jsonText, entry.getKey(), pathMatcher);
+      doReplyMigrationTest(7, getTestName(true) + ".gradle.after.json", entry.getKey());
     }
 
-    checkReply(jsonText, EduNames.PYTHON, not(containsString("/")));
+    doReplyMigrationTest(7, getTestName(true) + ".python.after.json", EduNames.PYTHON);
   }
 
-  private static void checkReply(@NotNull String jsonText, @NotNull String language, @NotNull Matcher<String> pathMatcher) {
-    Gson gson = getGson(createParams(language));
-    StepikWrappers.Reply reply = gson.fromJson(jsonText, StepikWrappers.Reply.class);
-    assertEquals(1, reply.solution.size());
-    assertThat(reply.solution.get(0).name, pathMatcher);
-
-    Gson taskGson = new GsonBuilder()
-      .registerTypeAdapter(Task.class, new StepikSubmissionTaskAdapter(reply.version, language))
-      .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .create();
-
-    StepikWrappers.TaskWrapper taskWrapper = taskGson.fromJson(reply.edu_task, StepikWrappers.TaskWrapper.class);
-    Map.Entry<String, TaskFile> taskFileEntry = CollectionsKt.first(taskWrapper.task.getTaskFiles().entrySet());
-    assertThat(taskFileEntry.getKey(), pathMatcher);
-    TaskFile taskFile = taskFileEntry.getValue();
-    assertThat(taskFile.getName(), pathMatcher);
-    AnswerPlaceholderDependency dependency = taskFile.getAnswerPlaceholders().get(0).getPlaceholderDependency();
-    assertThat(dependency.getFileName(), pathMatcher);
+  public void testReplyTo9Version() throws IOException {
+    doReplyMigrationTest(9);
   }
 
   public void testNonEduTasks() throws IOException {
@@ -372,6 +352,27 @@ public class StepikFormatTest extends EduTestCase {
 
   private void doStepOptionMigrationTest(int maxVersion, @Nullable String language, @Nullable String afterFileName) throws IOException {
     doMigrationTest(afterFileName, jsonBefore -> StepikStepOptionsAdapter.migrate(jsonBefore, maxVersion, language));
+  }
+
+  private void doReplyMigrationTest(int maxVersion) throws IOException {
+    doReplyMigrationTest(maxVersion, null, null);
+  }
+
+  private void doReplyMigrationTest(int maxVersion, @Nullable String afterFileName, @Nullable String language) throws IOException {
+    doMigrationTest(afterFileName, replyObject -> {
+      int initialVersion = StepikReplyAdapter.migrate(replyObject, maxVersion, language);
+
+      String eduTaskWrapperString = replyObject.get(EDU_TASK).getAsString();
+
+      JsonParser parser = new JsonParser();
+      JsonObject eduTaskWrapperObject = parser.parse(eduTaskWrapperString).getAsJsonObject();
+      JsonObject eduTaskObject = eduTaskWrapperObject.getAsJsonObject(TASK);
+      StepikSubmissionTaskAdapter.migrate(eduTaskObject, initialVersion, maxVersion, language);
+      Gson gson = new Gson();
+      String eduTaskWrapperStringAfter = gson.toJson(eduTaskWrapperObject);
+      replyObject.addProperty(EDU_TASK, eduTaskWrapperStringAfter);
+      return replyObject;
+    });
   }
 
   private void doMigrationTest(@Nullable String afterFileName,

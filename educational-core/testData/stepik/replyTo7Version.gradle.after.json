@@ -1,0 +1,11 @@
+{
+  "score": "1",
+  "solution": [
+    {
+      "name": "src/Task.kt",
+      "text": "fun foo(): String = <placeholder>\"Bar\"</placeholder>"
+    }
+  ],
+  "edu_task": "{\"task\":{\"name\":\"task2\",\"stepic_id\":446118,\"task_files\":{\"src/Task.kt\":{\"name\":\"src/Task.kt\",\"text\":\"fun foo(): String \\u003d TODO()\",\"placeholders\":[{\"offset\":20,\"length\":5,\"dependency\":{\"lesson\":\"lesson1\",\"task\":\"task1\",\"file\":\"Task.kt\",\"placeholder\":0,\"is_visible\":true},\"hints\":[],\"possible_answer\":\"\\\"Foo\\\"\",\"placeholder_text\":\"TODO()\",\"selected\":true,\"status\":\"Solved\"}]}},\"test_files\":{\"test/Tests.kt\":\"import org.junit.Assert\\nimport org.junit.Test\\n\\nclass Test {\\n    @Test fun testSolution() {\\n        //TODO: implement your test here\\n        Assert.assertTrue(\\\"Tests not implemented for the task\\\", true)\\n    }\\n}\"},\"description_text\":\"This is the markdown document.\\n\\nWrite your task text here\",\"description_format\":\"md\",\"additional_files\":{},\"update_date\":\"Sep 6, 2018 2:11:51 PM\",\"feedback_link\":{\"link_type\":\"STEPIK\"},\"task_type\":\"edu\"}}",
+  "version": 7
+}
