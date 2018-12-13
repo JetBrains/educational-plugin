@@ -403,5 +403,7 @@ allprojects {
         if (project.hasProperty('excludeTests')) {
             exclude project.property('excludeTests')
         }
+
+        ignoreFailures true
     }
 }
