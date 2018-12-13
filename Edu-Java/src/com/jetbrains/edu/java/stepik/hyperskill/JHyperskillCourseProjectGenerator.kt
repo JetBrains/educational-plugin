@@ -6,7 +6,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
@@ -42,10 +41,10 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
 
           val stages = HyperskillConnector.getStages(projectId) ?: return false
           (myCourse as HyperskillCourse).stages = stages
-          val lesson = getLesson(myCourse as HyperskillCourse, lessonId, language, stages) ?: return false
+          val lesson = getLesson(myCourse as HyperskillCourse, lessonId, language) ?: return false
           lesson.name = hyperskillProject.title.removePrefix(PROJECT_PREFIX)
 
-          myCourse.addLesson(FrameworkLesson(lesson))
+          myCourse.addLesson(lesson)
           return true
         }
       })
