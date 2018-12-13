@@ -46,17 +46,11 @@ public abstract class Task extends StudyItem {
   @SerializedName("task_files")
   @Expose private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
 
-  @SerializedName("test_files")
-  @Expose protected Map<String, String> testsText = new HashMap<>();
-
   @SerializedName("description_text")
   @Expose private String descriptionText;
 
   @SerializedName("description_format")
   @Expose private DescriptionFormat descriptionFormat = EduUtils.getDefaultTaskDescriptionFormat();
-
-  @SerializedName("additional_files")
-  @Expose protected Map<String, AdditionalFile> additionalFiles = new HashMap<>();
 
   @Transient private Lesson myLesson;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
@@ -112,39 +106,6 @@ public abstract class Task extends StudyItem {
 
   public void setDescriptionFormat(DescriptionFormat descriptionFormat) {
     this.descriptionFormat = descriptionFormat;
-  }
-
-  public Map<String, String> getTestsText() {
-    return testsText;
-  }
-
-  @SuppressWarnings("unused")
-  //used for deserialization
-  public void setTestsText(Map<String, String> testsText) {
-    this.testsText = testsText;
-  }
-
-  @NotNull
-  public Map<String, AdditionalFile> getAdditionalFiles() {
-    return additionalFiles;
-  }
-
-  @SuppressWarnings("unused")
-  //used for deserialization
-  public void setAdditionalFiles(@NotNull Map<String, AdditionalFile> additionalFiles) {
-    this.additionalFiles = additionalFiles;
-  }
-
-  public void addTestsTexts(String path, String text) {
-    testsText.put(path, text);
-  }
-
-  public void addAdditionalFile(@NotNull String name, @NotNull String text) {
-    additionalFiles.put(name, new AdditionalFile(text, true));
-  }
-
-  public void addAdditionalFile(@NotNull String name, @NotNull AdditionalFile file) {
-    additionalFiles.put(name, file);
   }
 
   @Nullable
@@ -227,7 +188,6 @@ public abstract class Task extends StudyItem {
     if (myTaskFiles != null ? !myTaskFiles.equals(task.myTaskFiles) : task.myTaskFiles != null) return false;
     if (descriptionText != null ? !descriptionText.equals(task.descriptionText) : task.descriptionText != null) return false;
     if (descriptionFormat != null ? !descriptionFormat.equals(task.descriptionFormat) : task.descriptionFormat != null) return false;
-    if (testsText != null ? !testsText.equals(task.testsText) : task.testsText != null) return false;
 
     return true;
   }
@@ -239,7 +199,6 @@ public abstract class Task extends StudyItem {
     result = 31 * result + (myTaskFiles != null ? myTaskFiles.hashCode() : 0);
     result = 31 * result + (descriptionText != null ? descriptionText.hashCode() : 0);
     result = 31 * result + (descriptionFormat != null ? descriptionFormat.hashCode() : 0);
-    result = 31 * result + (testsText != null ? testsText.hashCode() : 0);
     return result;
   }
 

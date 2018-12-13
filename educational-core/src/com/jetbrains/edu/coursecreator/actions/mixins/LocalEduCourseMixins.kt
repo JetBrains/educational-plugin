@@ -30,8 +30,6 @@ private const val ITEMS = "items"
 private const val NAME = "name"
 private const val TASK_LIST = "task_list"
 private const val TASK_FILES = "task_files"
-private const val TEST_FILES = "test_files"
-private const val ADDITIONAL_FILES = "additional_files"
 private const val TASK_TYPE = "task_type"
 private const val DESCRIPTION_TEXT = "description_text"
 private const val DESCRIPTION_FORMAT = "description_format"
@@ -115,17 +113,11 @@ abstract class LocalTaskMixin {
   @JsonProperty(TASK_FILES)
   private lateinit var myTaskFiles: MutableMap<String, TaskFile>
 
-  @JsonProperty(TEST_FILES)
-  private lateinit var testsText: MutableMap<String, String>
-
   @JsonProperty(DESCRIPTION_TEXT)
   private lateinit var descriptionText: String
 
   @JsonProperty(DESCRIPTION_FORMAT)
   private lateinit var descriptionFormat: DescriptionFormat
-
-  @JsonProperty(ADDITIONAL_FILES)
-  protected lateinit var additionalFiles: MutableMap<String, AdditionalFile>
 
   @JsonProperty(FEEDBACK_LINK)
   private lateinit var myFeedbackLink: FeedbackLink

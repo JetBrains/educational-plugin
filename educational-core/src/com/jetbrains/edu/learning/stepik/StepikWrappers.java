@@ -7,7 +7,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.*;
@@ -45,7 +44,6 @@ public class StepikWrappers {
     @Expose public String taskType;
     @SerializedName("lesson_type")
     @Expose public String lessonType;
-    @Expose public List<FileWrapper> test;
     @Expose public String title;
     @SerializedName(SerializationUtils.Json.DESCRIPTION_TEXT)
     @Expose public String descriptionText;
@@ -57,8 +55,6 @@ public class StepikWrappers {
     public FeedbackLink myFeedbackLink = new FeedbackLink();
     @Expose public List<TaskFile> files;
     @Expose public List<List<String>> samples;
-    @SerializedName("additional_files")
-    @Expose public Map<String, AdditionalFile> additionalFiles;
     @Expose public Integer executionMemoryLimit;
     @Expose public Integer executionTimeLimit;
     @Expose public Map<String, String> codeTemplates;
@@ -162,16 +158,6 @@ public class StepikWrappers {
       if (task.getLesson().isAdditional()) {
         cost = 0;
       }
-    }
-  }
-
-  public static class FileWrapper {
-    @Expose public final String name;
-    @Expose public final String text;
-
-    public FileWrapper(String name, String text) {
-      this.name = name;
-      this.text = text;
     }
   }
 
