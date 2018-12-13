@@ -79,15 +79,6 @@ static String studioPath(File studioFolder) {
     }
 }
 
-void createProperties(CharSequence propFilePath, Map<String, String> properties) {
-    def propFile = file("${propFilePath}")
-    propFile.getParentFile().mkdirs()
-    propFile.createNewFile()
-    def props = new Properties()
-    props.putAll(properties)
-    props.store(propFile.newWriter(), null)
-}
-
 task downloadJavaFx(type: Download) {
     overwrite true
     src javafx
@@ -285,23 +276,6 @@ configure(project(':educational-core')) {
         src 'https://raw.githubusercontent.com/ozh/github-colors/master/colors.json'
         dest "${projectDir}/resources/languageColors/colors.json"
     }
-
-    task createStepikProperties() {
-        createProperties(
-          "${projectDir}/resources/stepik/stepik.properties",
-          [
-            "clientId" : stepikClientId
-          ]
-        )
-    }
-    task createHyperskillProperties() {
-        createProperties(
-          "${projectDir}/resources/hyperskill/hyperskill-oauth.properties",
-          [
-            "clientId" : hyperskillClientId
-          ]
-        )
-    }
 }
 
 configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')]) {
@@ -317,31 +291,9 @@ configure([project(':educational-core'), project(':Edu-Java')]) {
 
 configure(project(':Edu-Kotlin')) {
     intellij.plugins 'junit', 'Kotlin', 'properties','gradle', 'Groovy'
-
-
-    task createTwitterProperties() {
-        createProperties(
-          "${projectDir}/resources/twitter/kotlin_koans/oauth_twitter.properties",
-          [
-            "consumerKey" : consumerKey,
-            "consumerSecret" : consumerSecret
-          ]
-        )
-    }
-    processResources.dependsOn(createTwitterProperties)
 }
 
 configure(project(':Edu-Python')) {
-    task createCheckiOOAuthProperties() {
-        createProperties(
-          "${projectDir}/resources/checkio/py-checkio-oauth.properties",
-          [
-            "pyCheckioClientId" : pyCheckioClientId,
-            "pyCheckioClientSecret" : pyCheckioClientSecret
-          ]
-        )
-    }
-    processResources.dependsOn(createCheckiOOAuthProperties)
 
     intellij.plugins "PythonCore:$pythonPluginVersion"
 }
@@ -362,17 +314,6 @@ configure(project(':Edu-Android')) {
 }
 
 configure(project(':Edu-JavaScript')) {
-  task createCheckiOOAuthProperties() {
-    createProperties(
-      "${projectDir}/resources/checkio/js-checkio-oauth.properties",
-      [
-        "jsCheckioClientId" : jsCheckioClientId,
-        "jsCheckioClientSecret" : jsCheckioClientSecret
-      ]
-    )
-  }
-  processResources.dependsOn(createCheckiOOAuthProperties)
-
   intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 }
 
