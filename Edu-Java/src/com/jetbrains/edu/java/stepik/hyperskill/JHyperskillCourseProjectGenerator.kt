@@ -41,7 +41,11 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
 
           val stages = HyperskillConnector.getStages(projectId) ?: return false
           (myCourse as HyperskillCourse).stages = stages
-          val lesson = getLesson(myCourse as HyperskillCourse, lessonId, language) ?: return false
+          val lesson = getLesson(myCourse as HyperskillCourse, lessonId, language)
+          if (lesson == null) {
+            LOG.warn("Project doesn't contain framework lesson")
+            return false
+          }
           lesson.name = hyperskillProject.title.removePrefix(PROJECT_PREFIX)
 
           myCourse.addLesson(lesson)
