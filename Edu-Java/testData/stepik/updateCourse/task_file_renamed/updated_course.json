@@ -12,14 +12,17 @@
           "stepic_id": 1,
           "update_date": "Apr 18, 2018 3:09:23 PM",
           "task_files": {
-            "src/Task.java": {
+            "src/Task_renamed.java": {
               "name": "src/Task_renamed.java",
               "text": "class Task {\n  //put your task here\n}",
               "placeholders": []
+            },
+            "test/Test.java": {
+              "name": "test/Test.java",
+              "text": "class Test {\n    // put your test here\n}",
+              "placeholders": [],
+              "is_visible": false
             }
-          },
-          "test_files": {
-            "test/Test.java": "class Test {\n    // put your test here\n}"
           },
           "task_texts": {
             "task": "Write task description here using markdown or html"

@@ -627,12 +627,6 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
                             "Task \"${task.name}\". \n" +
                             "Expected task files number: ${newTask.taskFiles.size}. Actual: ${task.taskFiles.size}",
                             task.taskFiles.size == newTask.taskFiles.size)
-        TestCase.assertTrue("Test files number mismatch.\n" +
-                            "Lesson \"${lesson.name}\". \n" +
-                            "Task \"${task.name}\". \n" +
-                            "Expected test files number: ${newTask.testsText.size}. Actual: ${task.testsText.size}",
-                            task.testsText.size == newTask.testsText.size)
-
 
         TestCase.assertTrue("Task text mismatch.\n" +
                             "Lesson \"${lesson.name}\". \n" +
