@@ -19,7 +19,7 @@ private const val UNIT_ID = "unit_id"
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonSerialize(using = CourseSerializer::class)
 @JsonPropertyOrder(ID, UPDATE_DATE)
-abstract class RemoteCourseMixin : LocalCourseMixin() {
+abstract class RemoteEduCourseMixin : LocalEduCourseMixin() {
   @JsonProperty(ID)
   private var id: Int = 0
 

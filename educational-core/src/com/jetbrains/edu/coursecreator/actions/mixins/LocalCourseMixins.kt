@@ -55,7 +55,7 @@ private const val COURSE_TYPE = "course_type"
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonPropertyOrder(VERSION, SUMMARY, TITLE, PROGRAMMING_LANGUAGE, LANGUAGE, COURSE_TYPE, ITEMS)
 @JsonSerialize(using = CourseSerializer::class)
-abstract class LocalCourseMixin {
+abstract class LocalEduCourseMixin {
   @JsonProperty(TITLE)
   private lateinit var name: String
 

@@ -143,7 +143,7 @@ internal class CourseArchiveCreator(private val project: Project,
       get() {
         val factory = JsonFactory()
         val mapper = ObjectMapper(factory)
-        mapper.addMixIn(EduCourse::class.java, LocalCourseMixin::class.java)
+        mapper.addMixIn(EduCourse::class.java, LocalEduCourseMixin::class.java)
         mapper.addMixIn(Section::class.java, LocalSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, LocalLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, LocalTaskMixin::class.java)
@@ -157,7 +157,7 @@ internal class CourseArchiveCreator(private val project: Project,
       get() {
         val factory = JsonFactory()
         val mapper = ObjectMapper(factory)
-        mapper.addMixIn(EduCourse::class.java, RemoteCourseMixin::class.java)
+        mapper.addMixIn(EduCourse::class.java, RemoteEduCourseMixin::class.java)
         mapper.addMixIn(Section::class.java, RemoteSectionMixin::class.java)
         mapper.addMixIn(Lesson::class.java, RemoteLessonMixin::class.java)
         mapper.addMixIn(Task::class.java, RemoteTaskMixin::class.java)
