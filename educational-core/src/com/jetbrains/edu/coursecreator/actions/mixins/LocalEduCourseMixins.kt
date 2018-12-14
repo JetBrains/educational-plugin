@@ -1,4 +1,4 @@
-@file:JvmName("LocalCourseMixins")
+@file:JvmName("LocalEduCourseMixins")
 
 package com.jetbrains.edu.coursecreator.actions.mixins
 
