@@ -45,11 +45,7 @@ object CourseViewUtils {
   @JvmStatic
   fun findTaskDirectory(project: Project, baseDir: PsiDirectory, task: Task): PsiDirectory? {
     val sourceDirName = task.sourceDir
-    if (sourceDirName.isNullOrEmpty()) {
-      return baseDir
-    }
-    val isCourseCreatorGradleProject = EduGradleUtils.isConfiguredWithGradle(project) && CCUtils.isCourseCreator(project)
-    if (isCourseCreatorGradleProject) {
+    if (sourceDirName.isNullOrEmpty() || CCUtils.isCourseCreator(project)) {
       return baseDir
     }
     val vFile = baseDir.virtualFile

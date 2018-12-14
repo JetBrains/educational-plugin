@@ -204,7 +204,8 @@ intellij {
     pluginName 'EduTools'
     updateSinceUntilBuild true
     downloadSources false
-    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion", "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
+    plugins 'junit', 'Kotlin', "PythonCore:$pythonPluginVersion", "org.intellij.scala:$scalaPluginVersion", 
+            "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "org.rust.lang:$rustPluginVersion"
 }
 
 task configurePyCharm {
@@ -282,7 +283,13 @@ configure(project(':educational-core')) {
     }
 }
 
-configure([project(':Edu-Python'), project(':Edu-Java'), project(':Edu-Kotlin'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')]) {
+configure([project(':Edu-Python'), 
+           project(':Edu-Java'), 
+           project(':Edu-Kotlin'), 
+           project(':Edu-Scala'), 
+           project(':Edu-Android'), 
+           project(':Edu-JavaScript'),
+           project(':Edu-Rust')]) {
     dependencies {
         compile project(':educational-core')
         testCompile project(':educational-core').sourceSets.test.output
@@ -321,11 +328,16 @@ configure(project(':Edu-JavaScript')) {
   intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 }
 
+configure(project(':Edu-Rust')) {
+    intellij.plugins "org.rust.lang:$rustPluginVersion"  
+}
+
 runIde.systemProperty("-Didea.is.internal", "true")
 runIde.systemProperty("-ea", "")
 
 dependencies {
-    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript')
+    compile project(':educational-core'), project(':Edu-Python'), project(':Edu-Kotlin'), project(':Edu-Java'), 
+            project(':Edu-Scala'), project(':Edu-Android'), project(':Edu-JavaScript'), project(':Edu-Rust')
 }
 
 idea {
