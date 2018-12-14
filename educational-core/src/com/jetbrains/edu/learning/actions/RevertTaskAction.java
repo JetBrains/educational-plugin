@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.actions;
 
 import com.intellij.ide.projectView.ProjectView;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.RightAlignedToolbarAction;
@@ -11,9 +13,9 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.problems.WolfTheProblemSolver;
+import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
@@ -49,7 +51,9 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
     });
     PlaceholderDependencyManager.updateDependentPlaceholders(project, currentTask);
     validateEditors(project);
-    TaskDescriptionView.getInstance(project).showBalloon("You can start again now", MessageType.INFO);
+    String message = String.format("<b>%s</b> task  of <b>%s</b> lesson is reset.", currentTask.getName(), currentTask.getLesson().getName());
+    Notification notification = new Notification("reset.task", EmptyIcon.ICON_16, "", "", message, NotificationType.INFORMATION, null);
+    notification.notify(project);
     ProjectView.getInstance(project).refresh();
     TaskDescriptionView.getInstance(project).updateTaskSpecificPanel();
     TaskDescriptionView.getInstance(project).readyToCheck();
