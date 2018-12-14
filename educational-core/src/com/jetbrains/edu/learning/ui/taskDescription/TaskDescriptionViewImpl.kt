@@ -5,11 +5,7 @@ import com.intellij.openapi.actionSystem.DataProvider
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.MessageType
-import com.intellij.openapi.ui.popup.Balloon
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.wm.ToolWindow
-import com.intellij.ui.BrowserHyperlinkListener
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.content.ContentManager
@@ -24,7 +20,6 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.ui.taskDescription.check.CheckPanel
 import java.awt.BorderLayout
-import java.awt.Point
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.JSeparator
@@ -132,11 +127,8 @@ class TaskDescriptionViewImpl(val project: Project) : TaskDescriptionView(), Dat
     }
   }
 
-  override fun showBalloon(text: String, messageType: MessageType) {
-    val balloonBuilder = JBPopupFactory.getInstance().createHtmlTextBalloonBuilder(text, messageType, BrowserHyperlinkListener.INSTANCE)
-    val balloon = balloonBuilder.createBalloon()
-    val point = Point(checkPanel.x + checkPanel.width - 10, checkPanel.y + checkPanel.height)
-    balloon.show(RelativePoint (checkPanel, point), Balloon.Position.above)
+  override fun checkTooltipPosition(): RelativePoint {
+    return checkPanel.checkTooltipPosition()
   }
 
   private fun setTaskText(task: Task?) {

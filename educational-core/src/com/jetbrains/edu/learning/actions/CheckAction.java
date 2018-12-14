@@ -14,12 +14,18 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.Balloon;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.BrowserHyperlinkListener;
+import com.intellij.util.ui.UIUtil;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
-import com.jetbrains.edu.learning.checker.*;
+import com.jetbrains.edu.learning.checker.CheckListener;
+import com.jetbrains.edu.learning.checker.CheckResult;
+import com.jetbrains.edu.learning.checker.TaskChecker;
+import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.details.CheckDetailsView;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskChecker;
 import com.jetbrains.edu.learning.checker.remote.RemoteTaskCheckerManager;
@@ -73,7 +79,7 @@ public class CheckAction extends DumbAwareAction {
       return;
     }
     if (DumbService.isDumb(project)) {
-      TaskDescriptionView.getInstance(project).showBalloon("Checking is not available while indexing is in progress", MessageType.WARNING);
+      showCheckUnavailablePopup(project);
       return;
     }
     CheckDetailsView.getInstance(project).clear();
@@ -94,6 +100,18 @@ public class CheckAction extends DumbAwareAction {
       listener.beforeCheck(project, task);
     }
     ProgressManager.getInstance().run(new StudyCheckTask(project, task));
+  }
+
+  private static void showCheckUnavailablePopup(Project project) {
+    Balloon balloon = JBPopupFactory.getInstance()
+      .createHtmlTextBalloonBuilder(
+        "Checking is not available while indexing is in progress",
+        null,
+        UIUtil.getToolTipActionBackground(),
+        BrowserHyperlinkListener.INSTANCE)
+      .createBalloon();
+
+    balloon.show(TaskDescriptionView.getInstance(project).checkTooltipPosition(), Balloon.Position.above);
   }
 
   @Override

@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.panels.HorizontalLayout
 import com.intellij.util.ui.AsyncProcessIcon
 import com.intellij.util.ui.JBUI
@@ -106,6 +108,10 @@ class CheckPanel(val project: Project): JPanel(BorderLayout()) {
   fun updateCheckButton(task: Task) {
     checkButtonWrapper.removeAll()
     checkButtonWrapper.add(createButtonToolbar(CheckAction.createCheckAction(task)), BorderLayout.WEST)
+  }
+
+  fun checkTooltipPosition(): RelativePoint {
+    return JBPopupFactory.getInstance().guessBestPopupLocation(checkButtonWrapper)
   }
 
   companion object {

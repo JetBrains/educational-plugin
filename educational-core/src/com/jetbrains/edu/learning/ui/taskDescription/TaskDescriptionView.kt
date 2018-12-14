@@ -2,8 +2,8 @@ package com.jetbrains.edu.learning.ui.taskDescription
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.awt.RelativePoint
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.checker.CheckResult
@@ -24,7 +24,7 @@ abstract class TaskDescriptionView {
   abstract fun readyToCheck()
   abstract fun checkStarted()
   abstract fun checkFinished(task: Task, checkResult: CheckResult)
-  abstract fun showBalloon(text: String, messageType: MessageType)
+  abstract fun checkTooltipPosition(): RelativePoint
 
   companion object {
 
