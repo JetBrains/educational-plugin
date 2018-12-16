@@ -48,6 +48,13 @@ public abstract class LanguageSettings<Settings> {
   @NotNull
   public abstract Settings getSettings();
 
+  /**
+   * Returns string representations of all possible language versions to be shown to a user
+   */
+  public List<String> getLanguageVersions() {
+    return Collections.emptyList();
+  }
+
   protected void notifyListeners() {
     for (SettingsChangeListener listener : myListeners) {
       listener.settingsChanged();

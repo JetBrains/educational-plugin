@@ -136,7 +136,7 @@ public class CoursePanel extends JPanel {
   }
 
   @Nullable
-  public String validateSettings() {
+  public String validateSettings(@Nullable Course course) {
     String message = myLanguageSettings.validate();
     if (message != null) {
       myAdvancedSettings.setOn(true);

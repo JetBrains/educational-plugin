@@ -36,28 +36,28 @@ class JoinCoursePanel : JPanel(BorderLayout()) {
   val projectSettings: Any get() = myCoursePanel.projectSettings
 
   fun bindCourse(course: Course) {
-    myCoursePanel.bindCourse(course).addSettingsChangeListener { doValidation() }
+    myCoursePanel.bindCourse(course).addSettingsChangeListener { doValidation(course) }
   }
 
-  fun setValidationListener(listener: ValidationListener?) {
+  fun setValidationListener(course: Course, listener: ValidationListener?) {
     myValidationListener = listener
-    doValidation()
+    doValidation(course)
   }
 
   private fun setupValidation() {
     val validator = object : DocumentAdapter() {
       override fun textChanged(e: DocumentEvent) {
-        doValidation()
+        doValidation(null)
       }
     }
     myCoursePanel.addLocationFieldDocumentListener(validator)
   }
 
-  private fun doValidation() {
+  private fun doValidation(course: Course?) {
     val message = when {
       locationString.isBlank() -> "Enter course location"
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> "Can't create course at this location"
-      else -> myCoursePanel.validateSettings()
+      else -> myCoursePanel.validateSettings(course)
     }
     updateErrorText(message)
     myValidationListener?.onInputDataValidated(message == null)

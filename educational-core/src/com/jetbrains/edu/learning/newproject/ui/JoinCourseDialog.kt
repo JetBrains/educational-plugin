@@ -9,7 +9,7 @@ class JoinCourseDialog(private val course: Course) : OpenCourseDialogBase() {
   init {
     title = course.name
     panel.bindCourse(course)
-    panel.setValidationListener(object : JoinCoursePanel.ValidationListener {
+    panel.setValidationListener(course, object : JoinCoursePanel.ValidationListener {
       override fun onInputDataValidated(isInputDataComplete: Boolean) {
         isOKActionEnabled = isInputDataComplete
       }

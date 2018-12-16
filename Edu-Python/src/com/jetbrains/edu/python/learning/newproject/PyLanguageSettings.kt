@@ -18,6 +18,7 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.python.learning.newproject.PyCourseProjectGenerator.getBaseSdk
 import com.jetbrains.python.newProject.PyNewProjectSettings
+import com.jetbrains.python.psi.LanguageLevel
 import com.jetbrains.python.sdk.PyDetectedSdk
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.flavors.PythonSdkFlavor
@@ -41,6 +42,12 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
   }
 
   override fun getSettings(): PyNewProjectSettings = mySettings
+
+  override fun getLanguageVersions(): List<String> {
+    val pythonVersions = mutableListOf(ALL_VERSIONS, PYTHON_3, PYTHON_2)
+    pythonVersions.addAll(LanguageLevel.values().map { it.toString() }.reversed())
+    return pythonVersions
+  }
 
   protected open fun getInterpreterComboBox(fakeSdk: Sdk?): ComboboxWithBrowseButton {
     val project = ProjectManager.getInstance().defaultProject
@@ -99,5 +106,9 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
       val name = "new virtual env $pythonVersion"
       return ProjectJdkImpl(name, PyFakeSdkType, "", pythonVersion)
     }
+
+    private const val ALL_VERSIONS = "All versions"
+    private const val PYTHON_3  = "3.x"
+    private const val PYTHON_2 = "2.x"
   }
 }
