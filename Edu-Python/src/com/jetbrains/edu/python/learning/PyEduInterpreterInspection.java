@@ -28,6 +28,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.python.learning.newproject.PyLanguageSettings;
 import com.jetbrains.python.inspections.PyInspection;
 import com.jetbrains.python.inspections.PyInspectionVisitor;
 import com.jetbrains.python.psi.LanguageLevel;
@@ -83,12 +84,12 @@ public class PyEduInterpreterInspection extends PyInspection {
           final LanguageLevel projectLanguageLevel = LanguageLevel.fromPythonVersion(versionString.substring(prefix.length()));
 
           final String version = course.getLanguageVersion();
-          if (PyConfigurator.PYTHON_2.equals(version)) {
+          if (PyLanguageSettings.PYTHON_2.equals(version)) {
             if (projectLanguageLevel.isPy3K()) {
               registerProblem(node, "Course is available for Python 2, but Python 3 is selected as project interpreter", new ConfigureInterpreterFix());
             }
           }
-          else if (PyConfigurator.PYTHON_3.equals(version)) {
+          else if (PyLanguageSettings.PYTHON_3.equals(version)) {
             if (!projectLanguageLevel.isPy3K()) {
               registerProblem(node, "Course is available for Python 3, but Python 2 is selected as project interpreter", new ConfigureInterpreterFix());
             }

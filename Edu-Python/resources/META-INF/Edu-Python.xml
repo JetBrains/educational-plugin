@@ -28,9 +28,6 @@
     <action id="Educational.WatchTutorial" class="com.jetbrains.edu.python.learning.actions.PyWatchTutorialAction">
       <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="HelpTopics"/>
     </action>
-
-    <action class="com.jetbrains.edu.python.coursecreator.PyCCChangeCourseInfo" id="Educational.Educator.ChangeCourseInfo" overrides="true"/>
-
   </actions>
 
   <project-components>

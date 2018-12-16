@@ -7,19 +7,24 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager;
 import com.intellij.psi.PsiDirectory;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
-import com.jetbrains.edu.coursecreator.ui.CCCourseInfoPanel;
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler;
+import com.jetbrains.edu.coursecreator.ui.CCCourseInfoPanel;
+import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
+import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class CCChangeCourseInfo extends DumbAwareAction {
   private static final String ACTION_TEXT = "&Edit Course Information";
@@ -78,9 +83,37 @@ public class CCChangeCourseInfo extends DumbAwareAction {
     }
   }
 
-  protected void setVersion(Course course, CCCourseInfoPanel panel) {}
+  private static void setVersion(@NotNull final Course course, @NotNull final CCCourseInfoPanel panel) {
+    String version = panel.getLanguageVersion();
+    if (version == null) {
+      return;
+    }
+    course.setLanguage(course.getLanguageID() + " " + version);
+  }
 
-  protected void setupLanguageLevels(Course course, CCCourseInfoPanel panel) {}
+  private static void setupLanguageLevels(@NotNull final Course course, @NotNull final CCCourseInfoPanel panel) {
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
+    if (configurator == null) {
+      return;
+    }
+    LanguageSettings<?> languageSettings = configurator.getCourseBuilder().getLanguageSettings();
+    List<String> languageVersions = languageSettings.getLanguageVersions();
+    if (languageVersions.size() < 2) {
+      return;
+    }
+    JLabel languageLevelLabel = panel.getLanguageLevelLabel();
+    languageLevelLabel.setText(course.getLanguageById().getDisplayName() + ":");
+    languageLevelLabel.setVisible(true);
+    ComboBox<String> languageLevelCombobox = panel.getLanguageLevelCombobox();
+    for (String version : languageVersions) {
+      languageLevelCombobox.addItem(version);
+    }
+    languageLevelCombobox.setVisible(true);
+    final String version = course.getLanguageVersion();
+    if (version != null) {
+      languageLevelCombobox.setSelectedItem(version);
+    }
+  }
 
   private static DialogBuilder createChangeInfoDialog(Project project, @NotNull CCCourseInfoPanel panel) {
     DialogBuilder builder = new DialogBuilder(project);

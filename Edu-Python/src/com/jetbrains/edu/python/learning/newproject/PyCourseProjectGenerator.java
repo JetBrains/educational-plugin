@@ -18,7 +18,6 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
-import com.jetbrains.edu.python.learning.PyConfigurator;
 import com.jetbrains.edu.python.learning.PyCourseBuilder;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyPackageManager;
@@ -96,10 +95,10 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
   static String getBaseSdk(@NotNull final Course course) {
     LanguageLevel baseLevel;
     final String version = course.getLanguageVersion();
-    if (PyConfigurator.PYTHON_2.equals(version)) {
+    if (PyLanguageSettings.PYTHON_2.equals(version)) {
       baseLevel = LanguageLevel.PYTHON27;
     }
-    else if (PyConfigurator.PYTHON_3.equals(version)) {
+    else if (PyLanguageSettings.PYTHON_3.equals(version)) {
       baseLevel = LanguageLevel.PYTHON37;
     }
     else if (version != null) {

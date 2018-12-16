@@ -108,7 +108,8 @@ internal open class PyLanguageSettings : LanguageSettings<PyNewProjectSettings>(
     }
 
     private const val ALL_VERSIONS = "All versions"
-    private const val PYTHON_3  = "3.x"
-    private const val PYTHON_2 = "2.x"
+
+    const val PYTHON_3  = "3.x"
+    const val PYTHON_2 = "2.x"
   }
 }

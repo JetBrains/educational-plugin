@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class PyConfigurator implements EduConfigurator<PyNewProjectSettings> {
-  public static final String PYTHON_3 = "3.x";
-  public static final String PYTHON_2 = "2.x";
   public static final String TESTS_PY = "tests.py";
   public static final String TASK_PY = "task.py";
 
