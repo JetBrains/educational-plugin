@@ -154,7 +154,7 @@ class CCNewCoursePanel(course: Course? = null) : JPanel() {
       !FileUtil.ensureCanCreateFile(File(FileUtil.toSystemDependentName(locationString))) -> ErrorMessage("Can't create course at this location")
       myRequiredAndDisabledPlugins.isNotEmpty() -> ErrorState.errorMessage(myRequiredAndDisabledPlugins)
       else -> {
-        val errorMessage = myLanguageSettings.validate()
+        val errorMessage = myLanguageSettings.validate(null)
         if (errorMessage != null) {
           myAdvancedSettings.setOn(true)
           ErrorMessage(errorMessage)

@@ -35,7 +35,7 @@ public abstract class LanguageSettings<Settings> {
   }
 
   @Nullable
-  public String validate() {
+  public String validate(@Nullable Course course) {
     return null;
   }
 
