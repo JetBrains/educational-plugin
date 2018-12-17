@@ -51,6 +51,7 @@ public abstract class LanguageSettings<Settings> {
   /**
    * Returns string representations of all possible language versions to be shown to a user
    */
+  @NotNull
   public List<String> getLanguageVersions() {
     return Collections.emptyList();
   }
