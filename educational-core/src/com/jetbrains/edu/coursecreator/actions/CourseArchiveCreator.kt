@@ -1,6 +1,7 @@
 package com.jetbrains.edu.coursecreator.actions
 
 import com.fasterxml.jackson.core.JsonFactory
+import com.fasterxml.jackson.core.PrettyPrinter
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.DeserializationFeature.READ_ENUMS_USING_TO_STRING
@@ -128,16 +129,24 @@ internal class CourseArchiveCreator(private val project: Project,
 
   private fun generateJson(parentDir: VirtualFile, course: Course): File {
     val mapper = if (course.id == 0) localCourseMapper else remoteCourseMapper
-    val prettyPrinter = DefaultPrettyPrinter()
-    prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
 
     val jsonFile = File(File(parentDir.path), COURSE_META_FILE)
-    mapper.writer(prettyPrinter).writeValue(jsonFile, course)
+    mapper.writer(printer).writeValue(jsonFile, course)
     return jsonFile
   }
 
   companion object {
     private val LOG = Logger.getInstance(CourseArchiveCreator::class.java.name)
+
+    private val printer: PrettyPrinter?
+      get() {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+          return null
+        }
+        val prettyPrinter = DefaultPrettyPrinter()
+        prettyPrinter.indentArraysWith(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
+        return prettyPrinter
+      }
 
     private val localCourseMapper: ObjectMapper
       get() {
