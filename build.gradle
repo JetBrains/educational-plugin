@@ -79,10 +79,14 @@ static String studioPath(File studioFolder) {
     }
 }
 
-task downloadJavaFx(type: Download) {
-    overwrite true
-    src javafx
-    dest "${project.buildDir}/javafx.zip"
+task downloadJavaFx() {
+    doLast {
+        download {
+            overwrite true
+            src "http://download.jetbrains.com/idea/open-jfx/javafx-sdk-overlay.zip"
+            dest "${project.buildDir}/javafx.zip"
+        }
+    }
 }
 
 task prepareJavaFx(type: Copy) {
