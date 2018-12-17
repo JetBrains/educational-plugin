@@ -173,7 +173,9 @@ internal class CourseArchiveCreator(private val project: Project,
         addCommonMixins(mapper)
         mapper.enable(WRITE_ENUMS_USING_TO_STRING)
         mapper.enable(READ_ENUMS_USING_TO_STRING)
-        mapper.dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a")
+        val dateFormat = SimpleDateFormat("MMM dd, yyyy hh:mm:ss a")
+        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+        mapper.dateFormat = dateFormat
         return mapper
       }
 
