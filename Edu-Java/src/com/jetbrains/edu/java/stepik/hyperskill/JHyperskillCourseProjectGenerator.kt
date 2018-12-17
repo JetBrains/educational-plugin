@@ -6,13 +6,12 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillConnector
-import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings
+import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
-import com.jetbrains.edu.learning.stepik.hyperskill.getLesson
 
 private const val PROJECT_PREFIX = "Project # "
 
@@ -46,6 +45,14 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
             LOG.warn("Project doesn't contain framework lesson")
             return false
           }
+          if (lesson.taskList.size != stages.size) {
+            LOG.warn("Course has ${stages.size} stages, but ${lesson.taskList.size} tasks")
+            return false
+          }
+
+          lesson.taskList.forEachIndexed { index, task ->
+            task.feedbackLink = feedbackLink(projectId, stages[index])
+          }
           lesson.name = hyperskillProject.title.removePrefix(PROJECT_PREFIX)
 
           myCourse.addLesson(lesson)
@@ -58,6 +65,10 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
       LOG.warn(e)
       false
     }
+  }
+
+  fun feedbackLink(project: Int, stage: HyperskillStage): FeedbackLink {
+    return FeedbackLink("$HYPERSKILL_PROJECTS_URL/$project/stages/${stage.id}/implement")
   }
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {

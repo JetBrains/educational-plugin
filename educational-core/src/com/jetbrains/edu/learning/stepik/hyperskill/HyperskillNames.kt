@@ -4,7 +4,7 @@ import org.jetbrains.ide.BuiltInServerManager
 
 const val HYPERSKILL = "Hyperskill"
 const val HYPERSKILL_URL = "https://hyperskill.org/"
-const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects/"
+const val HYPERSKILL_PROJECTS_URL = "https://hyperskill.org/projects"
 private val port = BuiltInServerManager.getInstance().port
 val REDIRECT_URI = "http://localhost:$port/api/edu/hyperskill/oauth"
 
