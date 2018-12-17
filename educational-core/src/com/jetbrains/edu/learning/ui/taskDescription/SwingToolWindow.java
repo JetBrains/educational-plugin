@@ -50,13 +50,12 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   // we have to add hint number to href
   private static final String HINT_BLOCK_TEMPLATE = "  <img src='%s' width='16' height='16' >" +
                                                     "  <span><a href='hint://%s', value='%s'>Hint %s</a>" +
-                                                    "  <img src='%s' width='16' height='16' >" +
-                                                    "  <br><br>";
+                                                    "  <img src='%s' width='16' height='16' >";
   private static final String HINT_EXPANDED_BLOCK_TEMPLATE = "  <img src='%s' width='16' height='16' >" +
                                                              "  <span><a href='hint://%s', value='%s'>Hint %s</a>" +
                                                              "  <img src='%s' width='16' height='16' >" +
-                                                             "  <div class='hint_text'>%s<br><br></div>";
-  private static final String HINT_TEXT_PATTERN = "<div class='hint_text'>%s<br><br></div>";
+                                                             "  <div class='hint_text'>%s</div>";
+  private static final String HINT_TEXT_PATTERN = "<div class='hint_text'>%s</div>";
   private JTextPane myTaskTextPane;
   private JPanel myTaskSpecificPanel;
   private Project myProject;
@@ -103,8 +102,12 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
-  protected String wrapHint(@NotNull String hintText, @NotNull String displayedHintNumber) {
+  protected String wrapHint(@NotNull org.jsoup.nodes.Element hintElement, @NotNull String displayedHintNumber) {
     String bulbIcon = getIconFullPath("style/hint/swing/swing_icons/retina_bulb.png", "/style/hint/swing/swing_icons/bulb.png");
+    String hintText = hintElement.html();
+    if (displayedHintNumber.isEmpty() || displayedHintNumber.equals("1")) {
+      hintElement.wrap("<div class='top'></div>");
+    }
 
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
     if (course != null && !course.isStudy()) {
@@ -171,14 +174,14 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
 
         Element hintTextElement = getHintTextElement(parent);
         if (hintTextElement == null) {
-          String downPath = UIUtil.isRetina() ? "style/hint/swing_icons/retina_down.png" : "style/hint/swing_icons/down.png";
+          String downPath = UIUtil.isRetina() ? "style/hint/swing/swing_icons/retina_down.png" : "style/hint/swing/swing_icons/down.png";
           changeArrowIcon(sourceElement, document, downPath);
 
           Object hintText = ((SimpleAttributeSet)sourceElement.getAttributes().getAttribute(HTML.Tag.A)).getAttribute(HTML.Attribute.VALUE);
           document.insertBeforeEnd(parent.getParentElement(), String.format(HINT_TEXT_PATTERN, hintText));
         }
         else {
-          String leftPath = UIUtil.isRetina() ? "style/hint/swing_icons/retina_right.png" : "style/hint/swing_icons/right.png";
+          String leftPath = UIUtil.isRetina() ? "style/hint/swing/swing_icons/retina_right.png" : "style/hint/swing/swing_icons/right.png";
           changeArrowIcon(sourceElement, document, leftPath);
           document.removeElement(hintTextElement);
         }
@@ -208,6 +211,7 @@ public class SwingToolWindow extends TaskDescriptionToolWindow {
         if (child == null) {
           continue;
         }
+
         AttributeSet attributes = child.getAttributes();
         if (attributes == null) {
           continue;

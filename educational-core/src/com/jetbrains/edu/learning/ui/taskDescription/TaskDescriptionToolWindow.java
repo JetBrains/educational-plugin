@@ -58,19 +58,19 @@ public abstract class TaskDescriptionToolWindow {
     Elements hints = document.getElementsByClass("hint");
     if (hints.size() == 1) {
       Element hint = hints.get(0);
-      String hintText = wrapHint(hint.html(),  "");
+      String hintText = wrapHint(hint,  "");
       hint.html(hintText);
       return document.html();
     }
     for (int i = 0; i < hints.size(); i++) {
       Element hint = hints.get(i);
-      String hintText = wrapHint(hint.html(), String.valueOf(i + 1));
+      String hintText = wrapHint(hint, String.valueOf(i + 1));
       hint.html(hintText);
     }
     return document.html();
   }
 
-  protected abstract String wrapHint(@NotNull String hintText, @NotNull String displayedHintNumber);
+  protected abstract String wrapHint(@NotNull Element hintText, @NotNull String displayedHintNumber);
 
   protected void setTaskText(@NotNull Project project, @Nullable Task task) {
     setText(getTaskDescriptionWithCodeHighlighting(project, task));

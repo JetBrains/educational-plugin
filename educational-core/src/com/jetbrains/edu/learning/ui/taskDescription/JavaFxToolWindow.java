@@ -24,6 +24,7 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jsoup.nodes.Element;
 
 import javax.swing.*;
 
@@ -67,8 +68,9 @@ public class JavaFxToolWindow extends TaskDescriptionToolWindow {
   }
 
   @Override
-  protected String wrapHint(@NotNull String hintText, @NotNull String displayedHintNumber) {
+  protected String wrapHint(@NotNull Element hintElement, @NotNull String displayedHintNumber) {
     Course course = StudyTaskManager.getInstance(myProject).getCourse();
+    String hintText = hintElement.html();
     if (course == null) {
       return String.format(HINT_BLOCK_TEMPLATE, displayedHintNumber, hintText);
     }
