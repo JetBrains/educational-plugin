@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.EduActionTestCase
 import com.jetbrains.edu.learning.EduNames
 import junit.framework.TestCase
 import java.io.File
+import java.util.*
 
 class CCCreateCourseArchiveTest : EduActionTestCase() {
 
@@ -84,6 +85,7 @@ class CCCreateCourseArchiveTest : EduActionTestCase() {
         }
       }
     }.asRemote()
+    course.updateDate = Date("Jan 01, 1970 03:00:00 AM")
     course.description = "my summary"
     val generatedJsonFile = generateJson()
     val expectedCourseJson = loadExpectedJson()
