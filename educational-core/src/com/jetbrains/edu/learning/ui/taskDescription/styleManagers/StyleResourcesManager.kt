@@ -13,13 +13,24 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
     "typography_color_style" to typographyAndColorStylesheet(),
     "content" to taskText,
     "base_css" to loadText("/style/browser.css"),
-    resourcePair("jquery", ("/style/hint/jquery-1.9.1.js")),
-    resourcePair("hint_base", "/style/hint/base.css"),
-    resourcePair("hint_laf_specific",  "/style/hint/${resourceFileName()}.css"),
-    resourcePair("toggle_hint_script", "/style/hint/toggleHint.js"),
     resourcePair("mathjax_script", "/style/mathjaxConfigure.js"),
-    resourcePair("stepik_link", "/style/stepikLink.css")
+    resourcePair("stepik_link", "/style/stepikLink.css"),
+    *panelSpecificHintFiles()
   )
+
+  private fun panelSpecificHintFiles(): Array<Pair<String, String>> {
+    val isJavaFx = EduSettings.getInstance().shouldUseJavaFx()
+    return if (isJavaFx) {
+      arrayOf(
+        resourcePair("jquery", ("/style/hint/javafx/jquery-1.9.1.js")),
+        resourcePair("hint_base", "/style/hint/javafx/base.css"),
+        resourcePair("hint_laf_specific", "/style/hint/javafx/${resourceFileName()}.css"),
+        resourcePair("toggle_hint_script", "/style/hint/javafx/toggleHint.js"))
+    }
+    else {
+      arrayOf(resourcePair("hint_base", "/style/hint/swing/base.css"))
+    }
+  }
 
   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
 
