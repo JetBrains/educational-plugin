@@ -1,0 +1,4 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <id>com.jetbrains.edu.rust</id>
+    <depends optional="true" config-file="Edu-Rust.xml">org.rust.lang</depends>
+</idea-plugin>
