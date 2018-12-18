@@ -13,12 +13,12 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.cargoProjects
 
-class RsCourseBuilder : EduCourseBuilder<RsEduSettings> {
+class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
-    override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<RsEduSettings>? =
+    override fun getCourseProjectGenerator(course: Course): CourseProjectGenerator<RsProjectSettings>? =
         RsCourseProjectGenerator(this, course)
 
-    override fun getLanguageSettings(): LanguageSettings<RsEduSettings> = RsLanguageSettings()
+    override fun getLanguageSettings(): LanguageSettings<RsProjectSettings> = RsLanguageSettings()
 
     override fun refreshProject(project: Project) {
         project.cargoProjects.refreshAllProjects()

@@ -7,7 +7,7 @@ import com.jetbrains.edu.rust.checker.RsTaskCheckerProvider
 import org.rust.ide.icons.RsIcons
 import javax.swing.Icon
 
-class RsConfigurator : EduConfigurator<RsEduSettings> {
+class RsConfigurator : EduConfigurator<RsProjectSettings> {
 
     private val builder: RsCourseBuilder = RsCourseBuilder()
     private val taskCheckerProvider: RsTaskCheckerProvider = RsTaskCheckerProvider()
@@ -16,7 +16,7 @@ class RsConfigurator : EduConfigurator<RsEduSettings> {
 
     override fun getTestFileName(): String = ""
 
-    override fun getCourseBuilder(): EduCourseBuilder<RsEduSettings> = builder
+    override fun getCourseBuilder(): EduCourseBuilder<RsProjectSettings> = builder
 
     override fun getTestDirs(): List<String> = listOf("tests")
     override fun getSourceDir(): String = "src"
