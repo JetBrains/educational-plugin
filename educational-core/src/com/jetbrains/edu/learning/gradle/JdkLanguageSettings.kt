@@ -29,6 +29,7 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
     val sdkTypeFilter = Condition<SdkTypeId> { sdkTypeId -> sdkTypeId is JavaSdkType && !(sdkTypeId as JavaSdkType).isDependent }
     val sdkFilter = Condition<Sdk> { sdk -> sdkTypeFilter.value(sdk.sdkType) }
     val jdkComboBox = JdkComboBox(myModel, sdkTypeFilter, sdkFilter, sdkTypeFilter, true)
+    preselectJdk(course, jdkComboBox, myModel)
     val comboboxWithBrowseButton = ComboboxWithBrowseButton(jdkComboBox)
     val setupButton = comboboxWithBrowseButton.button
     jdkComboBox.setSetupButton(setupButton, null, myModel, jdkComboBox.selectedItem, null, false)
@@ -38,6 +39,10 @@ open class JdkLanguageSettings : LanguageSettings<JdkProjectSettings>() {
       notifyListeners()
     }
     return listOf<LabeledComponent<JComponent>>(LabeledComponent.create(comboboxWithBrowseButton, "Jdk", BorderLayout.WEST))
+  }
+
+  protected open fun preselectJdk(course: Course, jdkComboBox: JdkComboBox, sdksModel: ProjectSdksModel) {
+
   }
 
   override fun getSettings(): JdkProjectSettings = myJdkSettings
