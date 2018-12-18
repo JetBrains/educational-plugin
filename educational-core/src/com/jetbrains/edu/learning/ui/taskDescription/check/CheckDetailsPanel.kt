@@ -25,31 +25,27 @@ import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFa
 import com.jetbrains.edu.learning.ui.taskDescription.createTextPane
 import java.awt.BorderLayout
 import javax.swing.Icon
+import javax.swing.JEditorPane
 import javax.swing.JPanel
+import javax.swing.JTextPane
 
 class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) : JPanel(BorderLayout()) {
   init {
+    val linksPanel = createLinksPanel(task, checkResult, project)
+    val messagePanel = createMessagePanel(checkResult, project, linksPanel)
+
+    // hack to hide empty border if there are no check details to show
+    isVisible = !messagePanel.plainText().isEmpty() || !linksPanel.components.isEmpty()
     border = JBUI.Borders.empty(20, 0, 0, 0)
+    add(messagePanel, BorderLayout.CENTER)
+    add(linksPanel, BorderLayout.SOUTH)
+  }
+
+  private fun createMessagePanel(checkResult: CheckResult,
+                                 project: Project,
+                                 linksPanel: JPanel): JTextPane {
     val messagePanel = createTextPane()
     messagePanel.addHyperlinkListener(BrowserHyperlinkListener.INSTANCE)
-    add(messagePanel, BorderLayout.CENTER)
-
-    val linksPanel = JPanel(BorderLayout())
-    add(linksPanel, BorderLayout.SOUTH)
-    linksPanel.border = JBUI.Borders.emptyLeft(2)
-
-
-    if (task.course is HyperskillCourse && checkResult.status == CheckStatus.Failed) {
-      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
-      linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
-    }
-
-    if (EduUtils.isStudentProject(project) && task.course !is CourseraCourse && task.canShowSolution()) {
-      val peekSolution = LightColoredActionLink("Peek Solution...",
-                                                ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
-      linksPanel.add(peekSolution, BorderLayout.CENTER)
-    }
-
     val details = checkResult.details
     if (checkResult.message == CheckUtils.COMPILATION_FAILED_MESSAGE && details != null) {
       CheckDetailsView.getInstance(project).showCompilationResults(details)
@@ -62,7 +58,29 @@ class CheckDetailsPanel(project: Project, task: Task, checkResult: CheckResult) 
     }
     messagePanel.text = message.replace("\n", "<br>")
     messagePanel.margin.left = JBUI.scale(FOCUS_BORDER_WIDTH)
+    return messagePanel
   }
+
+  private fun createLinksPanel(task: Task,
+                               checkResult: CheckResult,
+                               project: Project): JPanel {
+    val linksPanel = JPanel(BorderLayout())
+    linksPanel.border = JBUI.Borders.emptyLeft(2)
+
+    if (task.course is HyperskillCourse && checkResult.status == CheckStatus.Failed) {
+      val showMoreInfo = LightColoredActionLink("Review Topics for the Stage...", SwitchTaskTabAction(project, 1))
+      linksPanel.add(showMoreInfo, BorderLayout.SOUTH)
+    }
+
+    if (EduUtils.isStudentProject(project) && task.course !is CourseraCourse && task.canShowSolution()) {
+      val peekSolution = LightColoredActionLink("Peek Solution...",
+                                                ActionManager.getInstance().getAction(CompareWithAnswerAction.ACTION_ID))
+      linksPanel.add(peekSolution, BorderLayout.CENTER)
+    }
+    return linksPanel
+  }
+
+  private fun JEditorPane.plainText() = document.getText(0, document.length)
 
   class LightColoredActionLink(text: String, action: AnAction, icon: Icon? = null): ActionLink(text, icon, action) {
     init {
