@@ -27,13 +27,13 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
         if (task.taskFiles.isNotEmpty()) return
         val templateManager = FileTemplateManager.getDefaultInstance()
-        val taskFile = TaskFile("src/${LIB_RS}", templateManager.getInternalTemplate(LIB_RS).text)
+        val taskFile = TaskFile("src/$LIB_RS", templateManager.getInternalTemplate(LIB_RS).text)
         task.addTaskFile(taskFile)
         val testText = templateManager.getInternalTemplate(TESTS_RS).text
         task.addTestsTexts("tests/$TESTS_RS", testText)
+        val packageName = lesson.course.name.toPackageName()
         val additionalText = templateManager.getInternalTemplate(CargoConstants.MANIFEST_FILE)
-            // TODO: sanitize name
-            .getText(mapOf("PROJECT_NAME" to lesson.course.name))
+            .getText(mapOf("PACKAGE_NAME" to packageName))
         task.addAdditionalFile(CargoConstants.MANIFEST_FILE, additionalText)
     }
 

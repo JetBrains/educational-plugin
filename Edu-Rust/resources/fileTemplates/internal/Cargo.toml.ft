@@ -1,5 +1,4 @@
 [package]
-name = "${PROJECT_NAME}"
+name = "${PACKAGE_NAME}"
 version = "0.1.0"
-authors = ["Author <author@example.com>"]
 edition = "2018"
