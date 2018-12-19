@@ -2,7 +2,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillSettings"/>
-    <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillOAuthRestService"/>
+    <httpRequestHandler implementation="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillRestService"/>
   </extensions>
   <extensions defaultExtensionNs="Educational">
     <optionsProvider instance="com.jetbrains.edu.learning.stepik.hyperskill.HyperskillOptions"/>
