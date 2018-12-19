@@ -35,20 +35,20 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
      <head></head>
      <body md-src-pos="0..354">
       <p md-src-pos="0..33">Code block with default language:</p>
-      <pre>  <span style="...">class </span>Main {
+      <span class="code-block"><pre>  <span style="...">class </span>Main {
           <span style="...">public static void </span>main(String[] args) {
             System.out.println(<span style="...">"Hello!"</span>);
           }
       }
-    </pre>
+    </pre> </span>
       <p md-src-pos="155..189">Code block with specific language:</p>
-      <pre>  <span style="...">class </span>Main {
+      <span class="code-block"><pre>  <span style="...">class </span>Main {
           <span style="...">public static void </span>main(String[] args) {
             System.out.println(<span style="...">"Hello!"</span>);
           }
       }
-    </pre>
-      <p md-src-pos="315..354">Inline code <span style="...">if </span>(condition) {} <span style="...">else </span>{}</p>
+    </pre> </span>
+      <p md-src-pos="315..354">Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
      </body>
     </html>
   """)
@@ -78,22 +78,22 @@ class JTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() {
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <pre>
+      <span class="code-block"><pre>
       <span style="...">class </span>Main {
           <span style="...">public static void </span>main(String[] args) {
             System.out.println(<span style="...">"Hello!"</span>);
           }
       }
-    </pre>
+    </pre> </span>
       <p>Code block with specific language:</p>
-      <pre>
+      <span class="code-block"><pre>
       <span style="...">class </span>Main {
           <span style="...">public static void </span>main(String[] args) {
             System.out.println(<span style="...">"Hello!"</span>);
           }
       }
-    </pre>
-      <p>Inline code <span style="...">if </span>(condition) {} <span style="...">else </span>{}</p>
+    </pre> </span>
+      <p>Inline code <span class="code"><span style="...">if </span>(condition) {} <span style="...">else </span>{}</span></p>
      </body>
     </html>
   """)

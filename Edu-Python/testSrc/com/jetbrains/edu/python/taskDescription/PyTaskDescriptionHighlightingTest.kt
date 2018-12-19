@@ -29,14 +29,14 @@ class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body md-src-pos="0..200">
       <p md-src-pos="0..33">Code block with default language:</p>
-      <pre>  <span style="...">def </span>foo():
+      <span class="code-block"><pre>  <span style="...">def </span>foo():
           <span style="...">print </span><span style="...">"Hello!"</span>
-    </pre>
+    </pre> </span>
       <p md-src-pos="77..111">Code block with specific language:</p>
-      <pre>  <span style="...">def </span>foo():
+      <span class="code-block"><pre>  <span style="...">def </span>foo():
           <span style="...">print </span><span style="...">"Hello!"</span>
-    </pre>
-      <p md-src-pos="161..200">Inline code <span style="...">if </span>__name__ == <span style="...">"__main__"</span></p>
+    </pre> </span>
+      <p md-src-pos="161..200">Inline code <span class="code"><span style="...">if </span>__name__ == <span style="...">"__main__"</span></span></p>
      </body>
     </html>
   """)
@@ -60,16 +60,16 @@ class PyTaskDescriptionHighlightingTest : TaskDescriptionHighlightingTestBase() 
      <head></head>
      <body>
       <p>Code block with default language:</p>
-      <pre>
+      <span class="code-block"><pre>
       <span style="...">def </span>foo():
           <span style="...">print </span><span style="...">"Hello!"</span>
-    </pre>
+    </pre> </span>
       <p>Code block with specific language:</p>
-      <pre>
+      <span class="code-block"><pre>
       <span style="...">def </span>foo():
           <span style="...">print </span><span style="...">"Hello!"</span>
-    </pre>
-      <p>Inline code <span style="...">if </span>__name__ == <span style="...">"__main__"</span></p>
+    </pre> </span>
+      <p>Inline code <span class="code"><span style="...">if </span>__name__ == <span style="...">"__main__"</span></span></p>
      </body>
     </html>
   """)
