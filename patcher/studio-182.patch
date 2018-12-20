@@ -117,10 +117,10 @@ index 000000000..ddcf55829
 +  override fun getDefaultHighlightingMode(): String = "text/x-scala"
 +}
 diff --git a/build.gradle b/build.gradle
-index 5fa7b4181..74d8ce5e5 100644
+index 12c10cddf..77056dd99 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -209,7 +209,7 @@ intellij {
+@@ -204,7 +204,7 @@ intellij {
      pluginName 'EduTools'
      updateSinceUntilBuild true
      downloadSources false
@@ -129,7 +129,7 @@ index 5fa7b4181..74d8ce5e5 100644
  }
 
  task configurePyCharm {
-@@ -304,7 +304,7 @@ configure(project(':educational-core')) {
+@@ -282,7 +282,7 @@ configure(project(':educational-core')) {
      }
  }
 
@@ -138,37 +138,15 @@ index 5fa7b4181..74d8ce5e5 100644
      dependencies {
          compile project(':educational-core')
          testCompile project(':educational-core').sourceSets.test.output
-@@ -361,26 +361,27 @@ configure(project(':Edu-Android')) {
+@@ -317,15 +317,16 @@ configure(project(':Edu-Android')) {
      }
  }
 
 -configure(project(':Edu-JavaScript')) {
--  task createCheckiOOAuthProperties() {
--    createProperties(
--      "${projectDir}/resources/checkio/js-checkio-oauth.properties",
--      [
--        "jsCheckioClientId" : jsCheckioClientId,
--        "jsCheckioClientSecret" : jsCheckioClientSecret
--      ]
--    )
--  }
--  processResources.dependsOn(createCheckiOOAuthProperties)
--
 -  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 -}
 +//no JS support in Android Studio
 +//configure(project(':Edu-JavaScript')) {
-+//  task createCheckiOOAuthProperties() {
-+//    createProperties(
-+//      "${projectDir}/resources/checkio/js-checkio-oauth.properties",
-+//      [
-+//        "jsCheckioClientId" : jsCheckioClientId,
-+//        "jsCheckioClientSecret" : jsCheckioClientSecret
-+//      ]
-+//    )
-+//  }
-+//  processResources.dependsOn(createCheckiOOAuthProperties)
-+//
 +//  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 +//}
 
@@ -316,15 +294,15 @@ index c1b18c035..9bf70476d 100644
  }
 \ No newline at end of file
 diff --git a/gradle.properties b/gradle.properties
-index 6a37f6f3a..f98a47af1 100644
+index b93498065..34e59d9fc 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -1,4 +1,4 @@
 -environmentName=183
 +environmentName=studio-182
 
- # needed for twitting functionality available currently only for kotlin koans
- consumerKey=
+ stepikTestClientId=
+ stepikTestClientSecret=
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
 index ae3188cb2..7d7d4a1e5 100644
 --- a/resources/META-INF/plugin.xml
