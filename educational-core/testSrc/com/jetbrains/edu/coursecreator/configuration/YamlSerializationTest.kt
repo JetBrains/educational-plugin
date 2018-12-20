@@ -36,6 +36,64 @@ class YamlSerializationTest : EduTestCase() {
     |""".trimMargin("|"))
   }
 
+  fun `test edu task with test files`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("Test.java", "<p>type here\nand here</p>") {
+            placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
+          }
+          testFile("Test.java", "")
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+    |type: edu
+    |task_files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 16
+    |    placeholder_text: |-
+    |      type here
+    |      and here
+    |    hints:
+    |    - hint 1
+    |    - hint 2
+    |test_files:
+    |- name: Test.java
+    |""".trimMargin("|"))
+  }
+
+  fun `test edu task with additional files`() {
+    val task = course(courseMode = CCUtils.COURSE_MODE) {
+      lesson {
+        eduTask {
+          taskFile("Test.java", "<p>type here\nand here</p>") {
+            placeholder(0, "42 is the answer", hints = listOf("hint 1", "hint 2"))
+          }
+          additionalFile("Additional.java", "")
+        }
+      }
+    }.findTask("lesson1", "task1")
+    doTest(task, """
+    |type: edu
+    |task_files:
+    |- name: Test.java
+    |  placeholders:
+    |  - offset: 0
+    |    length: 16
+    |    placeholder_text: |-
+    |      type here
+    |      and here
+    |    hints:
+    |    - hint 1
+    |    - hint 2
+    |additional_files:
+    |- name: Additional.java
+    |""".trimMargin("|"))
+  }
+
   @Test
   fun `test edu task with dependency`() {
     val task = course(courseMode = CCUtils.COURSE_MODE) {
