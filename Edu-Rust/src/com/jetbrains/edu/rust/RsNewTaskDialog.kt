@@ -14,5 +14,5 @@ class RsNewTaskDialog(
 
   init { init() }
 
-  override fun performCustomNameValidation(name: String): String? = RsPackageNameValidator.validate(name.toPackageName(), false)
+  override fun performCustomNameValidation(name: String): String? = RsPackageNameValidator.validate(name.toPackageName(), true)
 }

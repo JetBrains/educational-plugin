@@ -16,6 +16,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
       dir("lesson1/task1") {
         dir("src") {
           file("lib.rs")
+          file("main.rs")
         }
         dir("tests") {
           file("tests.rs")

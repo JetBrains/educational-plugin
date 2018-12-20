@@ -20,6 +20,7 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
 import org.rust.cargo.project.model.CargoProject
 import org.rust.cargo.project.model.cargoProjects
+import org.rust.lang.RsConstants
 import org.rust.openapiext.pathAsPath
 import java.nio.file.Path
 
@@ -80,8 +81,10 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
         if (task.taskFiles.isNotEmpty()) return
         val templateManager = FileTemplateManager.getDefaultInstance()
-        val taskFile = TaskFile("src/$LIB_RS", templateManager.getInternalTemplate(LIB_RS).text)
-        task.addTaskFile(taskFile)
+        val libRs = TaskFile("src/$LIB_RS", templateManager.getInternalTemplate(LIB_RS).text)
+        task.addTaskFile(libRs)
+        val mainRs = TaskFile("src/$MAIN_RS", templateManager.getInternalTemplate(MAIN_RS).text)
+        task.addTaskFile(mainRs)
         val testText = templateManager.getInternalTemplate(TESTS_RS).text
         task.addTestsTexts("tests/$TESTS_RS", testText)
         val packageName = info.name.toPackageName()
@@ -91,7 +94,8 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
     }
 
     companion object {
-        private const val LIB_RS = "lib.rs"
+        private const val LIB_RS = RsConstants.LIB_RS_FILE
+        private const val MAIN_RS = RsConstants.MAIN_RS_FILE
         private const val TESTS_RS = "tests.rs"
     }
 }
