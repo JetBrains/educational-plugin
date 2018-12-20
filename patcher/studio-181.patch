@@ -1,5 +1,5 @@
 diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-index b008fcf9e..1fce7cf64 100644
+index b008fcf9e..38e0487f4 100644
 --- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
 +++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
 @@ -44,8 +44,7 @@ class AndroidNewTaskDialog(
@@ -24,7 +24,7 @@ index 42c32aa1a..9255cd7d4 100644
 
      <extensions defaultExtensionNs="Educational">
 diff --git a/Edu-Java/resources/META-INF/Edu-Java.xml b/Edu-Java/resources/META-INF/Edu-Java.xml
-index df4d8c1..a1de788 100644
+index 4aedd4ea8..e23007420 100644
 --- a/Edu-Java/resources/META-INF/Edu-Java.xml
 +++ b/Edu-Java/resources/META-INF/Edu-Java.xml
 @@ -6,6 +6,7 @@
@@ -127,7 +127,7 @@ diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCours
 index 2473351b8..bbc496b39 100644
 --- a/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/newproject/PyCourseProjectGenerator.java
-@@ -81,14 +81,14 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
+@@ -80,14 +80,14 @@ public class PyCourseProjectGenerator extends CourseProjectGenerator<PyNewProjec
            final PyPackageManager packageManager = PyPackageManager.getInstance(baseSdk);
            return packageManager.createVirtualEnv(virtualEnvPath, false);
          }
@@ -177,7 +177,7 @@ index 5c7158398..a20004f8c 100644
      <depends optional="true" config-file="Edu-Python.xml">com.intellij.modules.python</depends>
  </idea-plugin>
 diff --git a/Edu-Scala/resources/META-INF/Edu-Scala.xml b/Edu-Scala/resources/META-INF/Edu-Scala.xml
-index 815bd92..a1fdadc 100644
+index 815bd924d..a1fdadcf2 100644
 --- a/Edu-Scala/resources/META-INF/Edu-Scala.xml
 +++ b/Edu-Scala/resources/META-INF/Edu-Scala.xml
 @@ -5,6 +5,7 @@
@@ -213,10 +213,10 @@ index 5eca860a3..edce8141e 100644
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
  </idea-plugin>
 diff --git a/build.gradle b/build.gradle
-index 5fa7b4181..f0dfb67a2 100644
+index 12c10cddf..f6533b4e6 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -154,7 +154,6 @@ allprojects {
+@@ -149,7 +149,6 @@ allprojects {
      }
 
      dependencies {
@@ -224,7 +224,7 @@ index 5fa7b4181..f0dfb67a2 100644
          compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.1'
          compile 'org.jsoup:jsoup:1.11.2'
          compile("org.jetbrains:markdown:0.1.28") {
-@@ -209,7 +208,7 @@ intellij {
+@@ -204,7 +203,7 @@ intellij {
      pluginName 'EduTools'
      updateSinceUntilBuild true
      downloadSources false
@@ -233,7 +233,7 @@ index 5fa7b4181..f0dfb67a2 100644
  }
 
  task configurePyCharm {
-@@ -304,7 +303,7 @@ configure(project(':educational-core')) {
+@@ -282,7 +281,7 @@ configure(project(':educational-core')) {
      }
  }
 
@@ -242,37 +242,15 @@ index 5fa7b4181..f0dfb67a2 100644
      dependencies {
          compile project(':educational-core')
          testCompile project(':educational-core').sourceSets.test.output
-@@ -361,26 +360,27 @@ configure(project(':Edu-Android')) {
+@@ -317,15 +316,16 @@ configure(project(':Edu-Android')) {
      }
  }
 
 -configure(project(':Edu-JavaScript')) {
--  task createCheckiOOAuthProperties() {
--    createProperties(
--      "${projectDir}/resources/checkio/js-checkio-oauth.properties",
--      [
--        "jsCheckioClientId" : jsCheckioClientId,
--        "jsCheckioClientSecret" : jsCheckioClientSecret
--      ]
--    )
--  }
--  processResources.dependsOn(createCheckiOOAuthProperties)
--
 -  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 -}
 +//no JS support in Android Studio
 +//configure(project(':Edu-JavaScript')) {
-+//  task createCheckiOOAuthProperties() {
-+//    createProperties(
-+//      "${projectDir}/resources/checkio/js-checkio-oauth.properties",
-+//      [
-+//        "jsCheckioClientId" : jsCheckioClientId,
-+//        "jsCheckioClientSecret" : jsCheckioClientSecret
-+//      ]
-+//    )
-+//  }
-+//  processResources.dependsOn(createCheckiOOAuthProperties)
-+//
 +//  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
 +//}
 
@@ -286,7 +264,7 @@ index 5fa7b4181..f0dfb67a2 100644
 
  idea {
 diff --git a/educational-core/resources/style/template.html.ft b/educational-core/resources/style/template.html.ft
-index dc5b0950f..8c0012c7d 100644
+index dc5b0950f..2a6dfa3e5 100644
 --- a/educational-core/resources/style/template.html.ft
 +++ b/educational-core/resources/style/template.html.ft
 @@ -7,6 +7,12 @@
@@ -311,7 +289,7 @@ index dc5b0950f..8c0012c7d 100644
  </html>
 \ No newline at end of file
 diff --git a/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java b/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java
-index df00d84b5..739146bac 100644
+index df00d84b5..2d8560113 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java
 @@ -2,6 +2,7 @@ package com.jetbrains.edu.learning;
@@ -322,10 +300,11 @@ index df00d84b5..739146bac 100644
  import org.jetbrains.annotations.Nullable;
 
  public interface EduLanguageDecorator {
-@@ -10,6 +11,27 @@ public interface EduLanguageDecorator {
+@@ -9,6 +10,27 @@ public interface EduLanguageDecorator {
+   String EP_NAME = "Educational.languageDecorator";
    LanguageExtension<EduLanguageDecorator> INSTANCE = new LanguageExtension<>(EP_NAME);
 
-   /**
++  /**
 +   * Used for code highlighting in Task Description tool window.
 +   * Scripts for different languages can be found <a href="https://codemirror.net">here</a>.
 +   *
@@ -346,10 +325,9 @@ index df00d84b5..739146bac 100644
 +    return "";
 +  }
 +
-+  /**
+   /**
     * Gets tag color for decorator language.
     *
-    * If it returns null then color for language will be taken
 diff --git a/educational-core/src/com/jetbrains/edu/learning/coursera/CourseraTaskChecker.kt b/educational-core/src/com/jetbrains/edu/learning/coursera/CourseraTaskChecker.kt
 index 59be968f9..2dc37badf 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/coursera/CourseraTaskChecker.kt
@@ -383,7 +361,7 @@ diff --git a/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEdit
 index f431779c6..5707d0a6c 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/editor/EduSplitEditor.kt
-@@ -55,11 +55,11 @@ class EduSplitEditor(
+@@ -58,11 +58,11 @@ class EduSplitEditor(
      return EduEditorState(mainEditorState.mainEditorState, secondaryEditor.getState(level))
    }
 
@@ -466,7 +444,7 @@ diff --git a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/
 index 063994fce..cc777f480 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java
-@@ -80,7 +80,7 @@ public abstract class TaskDescriptionToolWindow {
+@@ -86,7 +86,7 @@ public abstract class TaskDescriptionToolWindow {
      if (task != null) {
        String taskText = EduUtils.getTaskTextFromTask(task.getTaskDir(project), task);
        if (taskText != null) {
@@ -553,7 +531,7 @@ index c1b18c035..7dd9e796b 100644
  }
 \ No newline at end of file
 diff --git a/educational-core/src/icons/EducationalCoreIcons.java b/educational-core/src/icons/EducationalCoreIcons.java
-index fe572b2..e402209 100644
+index fe572b2fa..e40220997 100644
 --- a/educational-core/src/icons/EducationalCoreIcons.java
 +++ b/educational-core/src/icons/EducationalCoreIcons.java
 @@ -39,7 +39,7 @@ public class EducationalCoreIcons {
@@ -610,15 +588,15 @@ index d05af4596..c4c78bd64 100644
          CCStudentInvisibleFileNode non_course_file1.txt
      """.trimIndent())
 diff --git a/gradle.properties b/gradle.properties
-index 6a37f6f3a..8b802bfbc 100644
+index b93498065..0b0eae6d4 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -1,4 +1,4 @@
 -environmentName=183
 +environmentName=studio-181
 
- # needed for twitting functionality available currently only for kotlin koans
- consumerKey=
+ stepikTestClientId=
+ stepikTestClientSecret=
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
 index ae3188cb2..7d7d4a1e5 100644
 --- a/resources/META-INF/plugin.xml
