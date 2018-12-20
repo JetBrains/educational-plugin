@@ -5,6 +5,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.exists
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.actions.StudyItemType
+import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
+import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -65,6 +69,14 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
         cargoProjects.refreshAllProjects()
     }
 
+    override fun showNewStudyItemUi(project: Project, model: NewStudyItemUiModel, positionPanel: CCItemPositionPanel?): NewStudyItemInfo? {
+        return if (model.itemType != StudyItemType.TASK) {
+            super.showNewStudyItemUi(project, model, positionPanel)
+        } else {
+            showNewStudyItemDialog(project, model, positionPanel, ::RsNewTaskDialog)
+        }
+    }
+
     override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
         if (task.taskFiles.isNotEmpty()) return
         val templateManager = FileTemplateManager.getDefaultInstance()
@@ -72,7 +84,7 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
         task.addTaskFile(taskFile)
         val testText = templateManager.getInternalTemplate(TESTS_RS).text
         task.addTestsTexts("tests/$TESTS_RS", testText)
-        val packageName = lesson.course.name.toPackageName()
+        val packageName = info.name.toPackageName()
         val additionalText = templateManager.getInternalTemplate(CargoConstants.MANIFEST_FILE)
             .getText(mapOf("PACKAGE_NAME" to packageName))
         task.addAdditionalFile(CargoConstants.MANIFEST_FILE, additionalText)

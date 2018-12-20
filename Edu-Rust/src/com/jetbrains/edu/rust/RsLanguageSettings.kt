@@ -8,7 +8,6 @@ import com.intellij.ui.DocumentAdapter
 import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import org.rust.cargo.toolchain.RustToolchain
-import org.rust.ide.newProject.RsPackageNameValidator
 import java.awt.BorderLayout
 import java.nio.file.Paths
 import javax.swing.JComponent
@@ -48,9 +47,7 @@ class RsLanguageSettings : LanguageSettings<RsProjectSettings>() {
 
     override fun validate(course: Course?): String? {
         val toolchain = rustToolchain
-        val courseNameError = RsPackageNameValidator.validate(course?.name?.toPackageName() ?: "", false)
         return when {
-            courseNameError != null -> courseNameError
             toolchain == null -> "Specify Rust toolchain location"
             !toolchain.looksLikeValidToolchain() -> "Can't find `rustup` in specified location"
             else -> null

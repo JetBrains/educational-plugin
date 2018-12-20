@@ -30,7 +30,7 @@ abstract class CCCreateStudyItemDialogBase(
       when {
         text.isNullOrEmpty() -> "Empty name"
         !validator.checkInput(text) -> validator.getErrorText(text)
-        else -> null
+        else -> performCustomNameValidation(text!!) // text is not null here because of the first check
       }
     }
     return panel {
@@ -46,6 +46,7 @@ abstract class CCCreateStudyItemDialogBase(
     if (showAndGet()) NewStudyItemInfo(nameField.text, model.baseIndex + (positionPanel?.indexDelta ?: 0)) else null
 
   protected open fun createAdditionalFields(builder: LayoutBuilder) {}
+  protected open fun performCustomNameValidation(name: String): String? = null
 }
 
 class CCCreateStudyItemDialog(
