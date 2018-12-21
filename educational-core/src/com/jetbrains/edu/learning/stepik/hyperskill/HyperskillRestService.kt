@@ -27,7 +27,8 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   override fun isHostTrusted(request: FullHttpRequest): Boolean {
     val uri = request.uri()
     val codeMatcher = OAUTH_CODE_PATTERN.matcher(uri)
-    return if (request.method() === HttpMethod.GET && codeMatcher.matches()) {
+    val openCourseMatcher = OPEN_COURSE_PATTERN.matcher(uri)
+    return if (request.method() === HttpMethod.GET && (codeMatcher.matches() || openCourseMatcher.matches())) {
       true
     }
     else super.isHostTrusted(request)
