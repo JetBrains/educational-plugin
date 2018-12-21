@@ -30,4 +30,5 @@ data class HyperskillProject(@JsonProperty("id") var id: Int = -1,
                              @JsonProperty("title") var title: String = "",
                              @JsonProperty("description") var description: String = "",
                              @JsonProperty("lesson_stepik_id") var lesson: Int = -1,
-                             @JsonProperty("repo_url") var repoUrl: String = "")
+                             @JsonProperty("repo_url") var repoUrl: String = "",
+                             @JsonProperty("use_ide") var useIde: Boolean = false)

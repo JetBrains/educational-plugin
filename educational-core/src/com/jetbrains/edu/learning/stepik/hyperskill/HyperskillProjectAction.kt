@@ -44,6 +44,10 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
       if (hyperskillProject == null) {
         showBalloon(e, "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select project</a> ", false)
       }
+      else if (!hyperskillProject.useIde) {
+        showBalloon(e, "Selected project is not supported yet. " +
+                       "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> ", false)
+      }
       else {
         val languageId = EduNames.JAVA
         val hyperskillCourse = HyperskillCourse(hyperskillProject.title, languageId)

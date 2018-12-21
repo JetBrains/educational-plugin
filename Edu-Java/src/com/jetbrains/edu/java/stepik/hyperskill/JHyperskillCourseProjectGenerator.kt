@@ -35,6 +35,10 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
             LOG.error("User didn't choose project on hyperskill")
             return false
           }
+          else if (!hyperskillProject.useIde) {
+            LOG.error("Selected project is not supported")
+            return false
+          }
           val lessonId = hyperskillProject.lesson
           val projectId = hyperskillProject.id
 

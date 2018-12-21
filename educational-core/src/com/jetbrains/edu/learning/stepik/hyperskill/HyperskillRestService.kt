@@ -80,6 +80,10 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
           val account = HyperskillSettings.INSTANCE.account ?: return null
           val hyperskillProject = stages[0].hyperskillProject ?: return null
           account.userInfo.hyperskillProject = hyperskillProject
+          if (!hyperskillProject.useIde) {
+            // TODO: show notification
+            return null
+          }
           val languageId = EduNames.JAVA
           val hyperskillCourse = HyperskillCourse(hyperskillProject.title, languageId)
           hyperskillCourse.stages = stages
