@@ -32,6 +32,11 @@
                     }
                   ]
                 },
+                "test/VisibleTest.kt": {
+                  "name": "test/VisibleTest.kt",
+                  "text": "fun foo(): String \u003d TODO()",
+                  "placeholders": []
+                },
                 "test/Tests.kt": {
                   "name": "test/Tests.kt",
                   "text": "import org.junit.Assert\nimport org.junit.Test\n\nclass Test {\n    @Test fun testSolution() {\n        //TODO: implement your test here\n        Assert.assertTrue(\"Tests not implemented for the task\", false)\n    }\n}",

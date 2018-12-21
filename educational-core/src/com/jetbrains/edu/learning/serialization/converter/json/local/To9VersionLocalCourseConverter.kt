@@ -17,6 +17,7 @@ class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
       val files = taskObject.getAsJsonObject(TASK_FILES)
       val tests = taskObject.remove(TEST_FILES)?.asJsonObject
       for ((path, testText) in tests?.entrySet().orEmpty()) {
+        if (files.has(path)) continue
         if (testText !is JsonPrimitive) continue
         val testObject = JsonObject()
         testObject.addProperty(NAME, path)
@@ -27,6 +28,7 @@ class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
       val additionalFiles = taskObject.remove(ADDITIONAL_FILES)?.asJsonObject
       for ((path, fileObject) in additionalFiles?.entrySet().orEmpty()) {
+        if (files.has(path)) continue
         if (fileObject !is JsonObject) continue
         fileObject.addProperty(NAME, path)
         files.add(path, fileObject)
