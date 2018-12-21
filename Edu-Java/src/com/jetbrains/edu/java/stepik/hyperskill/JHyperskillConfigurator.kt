@@ -47,7 +47,7 @@ class JHyperskillConfigurator : GradleConfiguratorBase() {
       textPane.text = descriptionText
       topicsPanel.add(textPane)
       topicsPanel.add(CheckDetailsPanel.LightColoredActionLink(
-        "Back to the task description",
+        "Back to the stage description",
         CheckDetailsPanel.SwitchTaskTabAction(project, 0),
         AllIcons.Actions.Back))
 
