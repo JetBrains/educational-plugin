@@ -196,10 +196,9 @@ public abstract class Course extends ItemContainer {
   }
 
   /**
-   * This method should be used by serialized only
-   * Use {@link #getLanguageID()} and {@link #getLanguageVersion()} methods instead
+   * This method is needed to serialize language and its version as one property
+   * Consider using {@link #getLanguageID()} and {@link #getLanguageVersion()} methods instead
    */
-  @Deprecated
   public String getLanguage() {
     return myProgrammingLanguage;
   }

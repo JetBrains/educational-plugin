@@ -19,23 +19,20 @@ package com.jetbrains.edu.learning.stepik
 
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.Course
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import java.util.regex.Pattern
 
 object StepikUtils {
   private val LOG = Logger.getInstance(StepikUtils::class.java)
-  private val PYCHARM_COURSE_TYPE = Pattern.compile(String.format("%s(\\d*) (\\w+)", StepikNames.PYCHARM_PREFIX))
 
   @JvmStatic
   fun setCourseLanguage(info: EduCourse) {
     val courseType = info.type
-    val matcher = PYCHARM_COURSE_TYPE.matcher(courseType)
-    if (matcher.matches()) {
-      val language = matcher.group(2)
-      info.language = language
+    val separatorIndex = courseType.indexOf(" ")
+    if (separatorIndex != -1) {
+      info.language = courseType.substring(separatorIndex + 1)
     }
     else {
       LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",

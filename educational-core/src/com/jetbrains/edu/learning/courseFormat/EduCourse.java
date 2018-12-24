@@ -22,7 +22,7 @@ public class EduCourse extends Course {
 
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
-    String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguageID());
+    String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
   @SerializedName("is_idea_compatible") private boolean isCompatible = true;
 
   // in CC mode is used to store top-level lessons section id

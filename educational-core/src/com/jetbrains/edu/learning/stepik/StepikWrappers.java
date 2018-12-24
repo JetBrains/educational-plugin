@@ -156,7 +156,7 @@ public class StepikWrappers {
     public CourseWrapper(@NotNull Course course) {
       this.course = new EduCourse();
       this.course.setName(course.getName());
-      this.course.setLanguage(course.getLanguageID());
+      this.course.setLanguage(course.getLanguage());
       this.course.setDescription(course.getDescription());
       this.course.setAuthors(course.getAuthors());
       if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {

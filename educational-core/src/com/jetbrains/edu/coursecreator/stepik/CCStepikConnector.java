@@ -134,7 +134,7 @@ public class CCStepikConnector {
         !it.getName().equals(StepikNames.PYCHARM_ADDITIONAL)).collect(Collectors.toList())));
       courseOnRemote.setAuthors(course.getAuthors());
       courseOnRemote.setCourseMode(CCUtils.COURSE_MODE);
-      courseOnRemote.setLanguage(course.getLanguageID());
+      courseOnRemote.setLanguage(course.getLanguage());
 
       if (!ApplicationManager.getApplication().isInternal() && !isTestAccount(currentUser)) {
         addJetBrainsUserAsAdmin(client, getAdminsGroupId(responseString));
