@@ -85,7 +85,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
             return null
           }
           val languageId = EduNames.JAVA
-          val hyperskillCourse = HyperskillCourse(hyperskillProject.title, languageId)
+          val hyperskillCourse = HyperskillCourse(hyperskillProject.title, hyperskillProject.description, languageId)
           hyperskillCourse.stages = stages
           return hyperskillCourse
         }

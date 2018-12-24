@@ -12,15 +12,14 @@ class HyperskillCourse : Course {
   var taskToTopics: MutableMap<Int, List<HyperskillTopic>> = ConcurrentHashMap()
   var stages: List<HyperskillStage> = mutableListOf()
 
-  constructor(name: String, languageID: String) {
+  constructor(name: String, description: String, languageID: String) {
     setName(name)
-    description = COURSE_DESCRIPTION
+    setDescription(description + HYPERSKILL_NOTE)
     language = languageID
     courseType = HYPERSKILL
   }
 
   companion object {
-    private const val COURSE_DESCRIPTION = "This is a Hyperskill course.<br/><br/>" +
-                                           "Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org</a>"
+    private const val HYPERSKILL_NOTE = "<br/><br/>Learn more at <a href=\"https://hyperskill.org\">https://hyperskill.org</a>"
   }
 }
