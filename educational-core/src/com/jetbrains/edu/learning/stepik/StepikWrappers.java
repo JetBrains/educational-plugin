@@ -317,9 +317,7 @@ public class StepikWrappers {
       }
 
 
-      interface Reply {
-
-      }
+      interface Reply {}
 
       static class CodeReply implements Reply {
         String language;

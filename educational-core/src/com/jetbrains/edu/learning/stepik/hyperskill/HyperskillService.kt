@@ -1,12 +1,11 @@
+@file:Suppress("unused")
+
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.authUtils.TokenInfo
 import com.jetbrains.edu.learning.stepik.StepikSteps
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 @Suppress("unused")
 interface HyperskillService {
@@ -30,13 +29,19 @@ interface HyperskillService {
   fun getUserInfo(@Path("id") userId: Int): Call<UsersData>
 
   @GET("api/stages")
-  fun stages(@Query("project") projectId: Int): Call<StagesData>
+  fun stages(@Query("project") projectId: Int): Call<StagesList>
 
   @GET("api/topics")
-  fun topics(@Query("stage") stageId: Int): Call<TopicsData>
+  fun topics(@Query("stage") stageId: Int): Call<TopicsList>
 
   @GET("api/steps")
   fun steps(@Query("lesson") lessonId: Int): Call<StepikSteps.StepsList>
+
+  @POST("api/attempts")
+  fun attempt(@Query("step") stepId: Int): Call<AttemptsList>
+
+  @POST("api/submissions/")
+  fun submission(@Body submission: Submission): Call<Any>
 
 }
 
@@ -45,12 +50,12 @@ class UsersData {
   lateinit var users: List<HyperskillUserInfo>
 }
 
-class StagesData {
+class StagesList {
   lateinit var meta: Any
   lateinit var stages: List<HyperskillStage>
 }
 
-class TopicsData {
+class TopicsList {
   lateinit var topics: List<HyperskillTopic>
 }
 
@@ -60,3 +65,18 @@ class HyperskillTopic {
   lateinit var children: List<String>
 }
 
+class AttemptsList {
+  lateinit var meta: Any
+  lateinit var attempts: List<Attempt>
+}
+
+class Attempt {
+  var step: Int = 0
+  var id: Int = 0
+}
+
+class SolutionFile(var name: String, var text: String)
+
+class Submission(var attempt: Int, var reply: Reply)
+
+class Reply(var score: String, var solution: ArrayList<SolutionFile>)
