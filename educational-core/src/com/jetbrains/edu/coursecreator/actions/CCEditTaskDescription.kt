@@ -7,7 +7,6 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCUtils
-import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
 import com.jetbrains.edu.learning.courseFormat.ext.getDescriptionFile
@@ -25,8 +24,6 @@ class CCEditTaskDescription : DumbAwareAction(TEXT, TEXT, AllIcons.Modules.Edit)
     val task = EduUtils.getCurrentTask(project) ?: return
     val descriptionFile = findOrCreateDescriptionFile(project, task)
     FileEditorManager.getInstance(project).openFile(descriptionFile, true)
-
-    StepikCourseChangeHandler.changed(task)
   }
 
   private fun findOrCreateDescriptionFile(project: Project, task: Task): VirtualFile {
