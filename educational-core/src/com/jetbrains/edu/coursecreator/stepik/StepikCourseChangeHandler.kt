@@ -23,12 +23,6 @@ object StepikCourseChangeHandler {
   }
 
   @JvmStatic
-  fun notChanged(task: Task) {
-    if (task.stepId == 0) return
-    task.stepikChangeStatus = UP_TO_DATE
-  }
-
-  @JvmStatic
   fun contentChanged(studyItem: StudyItem) {
     when (studyItem) {
       is Course -> studyItem.stepikChangeStatus = if (studyItem.stepikChangeStatus == INFO) INFO_AND_CONTENT else CONTENT
