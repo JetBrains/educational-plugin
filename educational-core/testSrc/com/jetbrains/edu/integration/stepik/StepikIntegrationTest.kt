@@ -82,7 +82,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     }
 
     val newLesson = addNewLesson("lesson3", 3, localCourse, localCourse,
-                                                                      EduUtils.getCourseDir(project))
+                                 EduUtils.getCourseDir(project))
     CCPushLesson.doPush(newLesson, project, localCourse)
 
     checkTopLevelLessons(localCourse)
@@ -271,6 +271,16 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertEquals(additionalText, taskFromStepik.additionalFiles["additional_file.txt"]?.getText())
   }
 
+  fun `test course with language version`() {
+    val course = courseWithFiles(courseMode = CCUtils.COURSE_MODE) {}
+    course.language = course.language + " 2"
+    val expectedLanguage = course.language
+    CCPushCourse.doPush(project, course)
+    val uploadedCourse = StudyTaskManager.getInstance(project).course as EduCourse
+    val remoteCourse = getCourseFromStepik(uploadedCourse.id)
+    assertEquals(expectedLanguage, remoteCourse.language)
+  }
+
   private fun setText(path: String, text: String) {
     val file = findFile(path)
     runWriteAction { VfsUtil.saveText(file, text) }
@@ -316,7 +326,8 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   private fun getCourseFromStepik(courseId: Int): EduCourse =
-    StepikConnector.getCourseInfo(user, courseId, true) ?: error("Uploaded courses not found among courses available to instructor")
+    StepikConnector.getCourseInfo(user, courseId, true) ?: error(
+      "Uploaded course `$courseId` not found among courses available to instructor")
 }
 
 internal fun addNewLesson(name: String,
