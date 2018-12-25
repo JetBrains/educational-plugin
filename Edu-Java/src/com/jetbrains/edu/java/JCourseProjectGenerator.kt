@@ -8,12 +8,13 @@ import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
+import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 class JCourseProjectGenerator(builder: GradleCourseBuilderBase,course: Course) : GradleCourseProjectGenerator(builder, course) {
 
   override fun afterProjectGenerated(project: Project, projectSettings: JdkProjectSettings) {
     super.afterProjectGenerated(project, projectSettings)
-    if (!ApplicationManager.getApplication().isUnitTestMode) {
+    if (!ApplicationManager.getApplication().isUnitTestMode && myCourse !is HyperskillCourse) {
       // BACKCOMPAT: 2017.3
       @Suppress("DEPRECATION")
       val indentOptions = CodeStyleSettingsManager.getInstance().currentSettings.getCommonSettings(JavaLanguage.INSTANCE).indentOptions
