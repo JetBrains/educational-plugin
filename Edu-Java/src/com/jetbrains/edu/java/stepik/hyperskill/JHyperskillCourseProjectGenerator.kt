@@ -1,6 +1,5 @@
 package com.jetbrains.edu.java.stepik.hyperskill
 
-import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -11,7 +10,6 @@ import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
 import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
-import com.jetbrains.edu.learning.navigation.NavigationUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
@@ -83,16 +81,7 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
     super.afterProjectGenerated(project, projectSettings)
     HyperskillConnector.fillTopics(myCourse as HyperskillCourse, project)
 
-    val stageId = PropertiesComponent.getInstance().getInt(HYPERSKILL_STAGE, 0)
-    if (stageId > 0) {
-      val index = (myCourse as HyperskillCourse).stages.indexOfFirst { stage -> stage.id == stageId }
-      if (myCourse.lessons.isNotEmpty()) {
-        val taskList = myCourse.lessons[0].taskList
-        if (taskList.size > index) {
-          NavigationUtils.navigateToTask(project, taskList[index], taskList[0])
-        }
-      }
-    }
+    openSelectedStage(myCourse, project)
   }
 
   companion object {

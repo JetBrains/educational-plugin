@@ -24,15 +24,16 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.xmlb.XmlSerializationException;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog;
-import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikUser;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.jetbrains.edu.learning.EduNames.STUDY_PROJECT_XML_PATH;
 import static com.jetbrains.edu.learning.EduUtils.execCancelable;
@@ -50,25 +52,35 @@ import static com.jetbrains.edu.learning.EduUtils.navigateToStep;
 
 public class EduBuiltInServerUtils {
 
-  public static boolean focusOpenProject(int courseId, int stepId) {
+  public static boolean focusOpenEduProject(int courseId, int stepId) {
+    final Pair<Course, Project> courseProject = focusOpenProject(
+      course -> course instanceof EduCourse && ((EduCourse)course).isRemote() && course.getId() == courseId);
+    if (courseProject != null) {
+      ApplicationManager.getApplication().invokeLater(() -> navigateToStep(courseProject.second, courseProject.first, stepId));
+      return true;
+    }
+    return false;
+  }
+
+  public static Pair<Course, Project> focusOpenProject(Predicate<Course> coursePredicate) {
     Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
     for (Project project : openProjects) {
       if (!project.isDefault()) {
         StudyTaskManager studyTaskManager = StudyTaskManager.getInstance(project);
         if (studyTaskManager != null) {
           Course course = studyTaskManager.getCourse();
-          EduCourse remoteCourse = course instanceof EduCourse && ((EduCourse)course).isRemote() ? (EduCourse)course : null;
-          if (remoteCourse != null && remoteCourse.getId() == courseId) {
-            ApplicationManager.getApplication().invokeLater(() -> {
-              requestFocus(project);
-              navigateToStep(project, course, stepId);
-            });
-            return true;
+          if (course == null) {
+            return null;
+          }
+          Course selectedCourse = coursePredicate.test(course) ? course : null;
+          if (selectedCourse != null) {
+            ApplicationManager.getApplication().invokeLater(() -> requestFocus(project));
+            return Pair.create(course, project);
           }
         }
       }
     }
-    return false;
+    return null;
   }
 
   @Nullable
@@ -82,25 +94,22 @@ public class EduBuiltInServerUtils {
     return project[0];
   }
 
-  private static void requestFocus(@NotNull Project project) {
+  public static void requestFocus(@NotNull Project project) {
     ProjectUtil.focusProjectWindow(project, false);
   }
 
-  public static boolean openRecentProject(int targetCourseId, int stepId) {
+  public static Project openRecentProject(Predicate<Course> coursePredicate) {
     RecentProjectsManagerBase recentProjectsManager = RecentProjectsManagerBase.getInstanceEx();
-
     if (recentProjectsManager == null) {
-      return false;
+      return null;
     }
 
     RecentProjectsManagerBase.State state = recentProjectsManager.getState();
-
     if (state == null) {
-      return false;
+      return null;
     }
 
     List<String> recentPaths = state.recentPaths;
-
     SAXBuilder parser = new SAXBuilder();
 
     for (String projectPath : recentPaths) {
@@ -108,15 +117,20 @@ public class EduBuiltInServerUtils {
       if (component == null) {
         continue;
       }
-      int courseId = getCourseId(component);
-
-      if (courseId == targetCourseId) {
-        PropertiesComponent.getInstance().setValue(StepikNames.STEP_ID, stepId, 0);
-        Project project = openProject(projectPath);
-        if (project != null) {
-          return true;
-        }
+      final Course course = getCourse(component);
+      if (coursePredicate.test(course)) {
+        return openProject(projectPath);
       }
+    }
+    return null;
+  }
+
+  public static boolean openRecentEduCourse(int courseId, int stepId) {
+    final Project project =
+      openRecentProject(course -> course instanceof EduCourse && ((EduCourse)course).isRemote() && course.getId() == courseId);
+    if (project != null) {
+      PropertiesComponent.getInstance().setValue(StepikNames.STEP_ID, stepId, 0);
+      return true;
     }
     return false;
   }
@@ -137,22 +151,18 @@ public class EduBuiltInServerUtils {
     return component;
   }
 
-  private static int getCourseId(@NotNull Element component) {
+  private static Course getCourse(@NotNull Element component) {
     try {
       final StudyTaskManager studyTaskManager = new StudyTaskManager();
       studyTaskManager.loadState(component);
-      Course course = studyTaskManager.getCourse();
-
-      if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
-        return course.getId();
-      }
+      return studyTaskManager.getCourse();
     }
     catch (IllegalStateException | XmlSerializationException ignored) {
     }
-    return 0;
+    return null;
   }
 
-  public static boolean createProject(int courseId, int stepId) {
+  public static boolean createEduCourse(int courseId, int stepId) {
     ApplicationManager.getApplication().invokeLater(() -> ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
       ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
       execCancelable(() -> {

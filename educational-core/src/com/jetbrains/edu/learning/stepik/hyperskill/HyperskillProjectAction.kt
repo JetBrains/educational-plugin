@@ -53,7 +53,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
       }
       else {
         val languageId = EduNames.JAVA
-        val hyperskillCourse = HyperskillCourse(hyperskillProject.title, hyperskillProject.description, languageId)
+        val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
         val dialog = JoinCourseDialog(hyperskillCourse)
         dialog.show()
       }

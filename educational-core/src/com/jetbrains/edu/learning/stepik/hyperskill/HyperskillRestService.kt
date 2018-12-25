@@ -4,6 +4,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -11,6 +12,7 @@ import com.intellij.openapi.progress.Task
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
+import com.jetbrains.edu.learning.stepik.builtInServer.EduBuiltInServerUtils
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.*
@@ -50,11 +52,15 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
         Notification(HYPERSKILL, HYPERSKILL, "Please, <a href=\"\">login to Hyperskill</a> and select project.",
                      NotificationType.INFORMATION, HSHyperlinkListener(true)).notify(null)
       }
-      //TODO: try to find existing project
-      createProject(projectId, stageId)
-      RestService.sendOk(request, context)
-      LOG.info("Hyperskill project opened: $projectId")
-      return null
+      if (focusOpenProject(projectId, stageId) || openRecentProject(projectId, stageId) || createProject(projectId, stageId)) {
+        RestService.sendOk(request, context)
+        LOG.info("Hyperskill project opened: $projectId")
+        return null
+      }
+      RestService.sendStatus(HttpResponseStatus.NOT_FOUND, false, context.channel())
+      val message = "A project wasn't found or created"
+      LOG.info(message)
+      return message
     }
 
     if (OAUTH_CODE_PATTERN.matcher(uri).matches()) {
@@ -74,7 +80,26 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     return "Unknown command: $uri"
   }
 
-  private fun createProject(projectId: Int, stageId: Int) {
+  private fun focusOpenProject(courseId: Int, stageId: Int): Boolean {
+    val courseProject = EduBuiltInServerUtils.focusOpenProject { it is HyperskillCourse && it.hyperskillId == courseId }
+    if (courseProject != null) {
+      PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
+      ApplicationManager.getApplication().invokeLater { openSelectedStage(courseProject.first, courseProject.second)}
+      return true
+    }
+    return false
+  }
+
+  private fun openRecentProject(courseId: Int, stageId: Int): Boolean {
+    val project = EduBuiltInServerUtils.openRecentProject { it is HyperskillCourse && it.hyperskillId == courseId }
+    if (project != null) {
+      PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
+      return true
+    }
+    return false
+  }
+
+  private fun createProject(projectId: Int, stageId: Int) : Boolean {
     runInEdt {
       val hyperskillCourse = ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
                                                                         (null, "Loading project", true) {
@@ -90,7 +115,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
             return null
           }
           val languageId = EduNames.JAVA
-          val hyperskillCourse = HyperskillCourse(hyperskillProject.title, hyperskillProject.description, languageId)
+          val hyperskillCourse = HyperskillCourse(hyperskillProject, languageId)
           hyperskillCourse.stages = stages
           return hyperskillCourse
         }
@@ -100,6 +125,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       dialog.show()
       PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
     }
+    return true
   }
 
   companion object {

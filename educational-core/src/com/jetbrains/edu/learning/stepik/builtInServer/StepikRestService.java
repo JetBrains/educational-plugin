@@ -145,7 +145,7 @@ public class StepikRestService extends OAuthRestService {
 
       LOG.info(String.format("Try to open a course: courseId=%s, stepId=%s", courseId, stepId));
 
-      if (focusOpenProject(courseId, stepId) || openRecentProject(courseId, stepId) || createProject(courseId, stepId)) {
+      if (focusOpenEduProject(courseId, stepId) || openRecentEduCourse(courseId, stepId) || createEduCourse(courseId, stepId)) {
         RestService.sendOk(request, context);
         LOG.info("Course opened: " + courseId);
         return null;

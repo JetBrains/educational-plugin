@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.stepik.hyperskill.courseFormat
 
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.stepik.hyperskill.HYPERSKILL
+import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillProject
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillStage
 import com.jetbrains.edu.learning.stepik.hyperskill.HyperskillTopic
 import java.util.concurrent.ConcurrentHashMap
@@ -11,10 +12,12 @@ class HyperskillCourse : Course {
 
   var taskToTopics: MutableMap<Int, List<HyperskillTopic>> = ConcurrentHashMap()
   var stages: List<HyperskillStage> = mutableListOf()
+  var hyperskillId: Int = 0
 
-  constructor(name: String, description: String, languageID: String) {
-    setName(name)
-    setDescription(description + HYPERSKILL_NOTE)
+  constructor(hyperskillProject: HyperskillProject, languageID: String) {
+    name = hyperskillProject.title
+    description = hyperskillProject.description + HYPERSKILL_NOTE
+    hyperskillId = hyperskillProject.id
     language = languageID
     courseType = HYPERSKILL
   }
