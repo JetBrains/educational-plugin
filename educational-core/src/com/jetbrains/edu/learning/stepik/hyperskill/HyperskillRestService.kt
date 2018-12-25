@@ -1,6 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
+import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -67,7 +68,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun createProject(projectId: Int, stageId: Int) {
-    // TODO: open stage with stageId
     // TODO: handle not logged in users
     runInEdt {
       val hyperskillCourse = ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
@@ -90,6 +90,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
 
       val dialog = JoinCourseDialog(hyperskillCourse)
       dialog.show()
+      PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, stageId, 0)
     }
   }
 

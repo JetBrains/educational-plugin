@@ -12,3 +12,4 @@ var CLIENT_ID = HyperskillOAuthBundle.valueOrDefault("clientId", "")
 val AUTHORISATION_CODE_URL = "https://hyperskill.org/oauth2/authorize/?" +
                              "client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&grant_type=code&scope=read+write&response_type=code"
 
+const val HYPERSKILL_STAGE = "hyperskill-stage"
