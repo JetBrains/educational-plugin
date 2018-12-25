@@ -55,7 +55,10 @@ import javax.swing.event.HyperlinkEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -258,11 +261,11 @@ public class StepikConnector {
   public static int getTaskPosition(final int taskId) {
     final String url = StepikNames.STEPS + taskId;
     try {
-      StepContainer container = StepikAuthorizedClient.getFromStepik(url, StepContainer.class);
+      StepikSteps.StepsList container = StepikAuthorizedClient.getFromStepik(url, StepikSteps.StepsList.class);
       if (container == null) {
-        container = StepikClient.getFromStepik(url, StepContainer.class);
+        container = StepikClient.getFromStepik(url, StepikSteps.StepsList.class);
       }
-      List<StepSource> steps = container.steps;
+      List<StepikSteps.StepSource> steps = container.steps;
       if (!steps.isEmpty()) {
         return steps.get(0).position;
       }
@@ -591,16 +594,16 @@ public class StepikConnector {
         progressIndicator.setFraction((double)readableIndex / lessonCount);
       }
       String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
-      List<StepSource> allStepSources = getStepSources(stepIds, remoteCourse.getLanguageID());
+      List<StepikSteps.StepSource> allStepSources = getStepSources(stepIds, remoteCourse.getLanguageID());
 
       if (!allStepSources.isEmpty()) {
-        final StepOptions options = allStepSources.get(0).block.options;
+        final StepikSteps.StepOptions options = allStepSources.get(0).block.options;
         if (options != null && options.lessonType != null) {
           // TODO: find a better way to get framework lessons from stepik
           lesson = new FrameworkLesson(lesson);
         }
       }
-      List<Task> tasks = getTasks(remoteCourse.getLanguageById(), lesson, stepIds, allStepSources);
+      List<Task> tasks = getTasks(remoteCourse.getLanguageById(), lesson, allStepSources);
       lesson.taskList.addAll(tasks);
       lessons.add(lesson);
     }
@@ -608,20 +611,18 @@ public class StepikConnector {
     return lessons;
   }
 
-  public static List<StepSource> getStepSources(String[] stepIds, String language) throws IOException {
+  public static List<StepikSteps.StepSource> getStepSources(String[] stepIds, String language) throws IOException {
     Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
-    List<StepContainer> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepContainer.class, params);
+    List<StepikSteps.StepsList> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepikSteps.StepsList.class, params);
     return stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
   }
 
   @NotNull
-  public static List<Task> getTasks(@NotNull Language language, @NotNull Lesson lesson, String[] stepIds, List<StepSource> allStepSources) {
+  public static List<Task> getTasks(@NotNull Language language, @NotNull Lesson lesson, List<StepikSteps.StepSource> allStepSources) {
     List<Task> tasks = new ArrayList<>();
-    for (int i = 0; i < allStepSources.size(); i++) {
-      StepSource step = allStepSources.get(i);
-      Integer stepId = Integer.valueOf(stepIds[i]);
+    for (StepikSteps.StepSource step : allStepSources) {
       StepikUser user = EduSettings.getInstance().getUser();
-      StepikTaskBuilder builder = new StepikTaskBuilder(language, lesson, step, stepId, user == null ? -1 : user.getId());
+      StepikTaskBuilder builder = new StepikTaskBuilder(language, lesson, step, step.id, user == null ? -1 : user.getId());
       if (builder.isSupported(step.block.name)) {
         final Task task = builder.createTask(step.block.name);
         if (task != null) {
@@ -748,9 +749,9 @@ public class StepikConnector {
     return taskFileToText;
   }
 
-  public static StepSource getStep(int step) throws IOException {
+  public static StepikSteps.StepSource getStep(int step) throws IOException {
     return getFromStepik(StepikNames.STEPS + step,
-                         StepContainer.class).steps.get(0);
+                         StepikSteps.StepsList.class).steps.get(0);
   }
 
   @Nullable

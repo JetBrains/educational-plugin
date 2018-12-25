@@ -1,10 +1,19 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer
+import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
+import com.jetbrains.edu.learning.stepik.StepikSteps
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import okhttp3.Dispatcher
@@ -22,12 +31,21 @@ object HyperskillConnector {
   private var authorizationBusConnection = ApplicationManager.getApplication().messageBus.connect()
   private val authorizationTopic = com.intellij.util.messages.Topic.create<HyperskillLoggedIn>("Edu.hyperskillLoggedIn",
                                                                                                HyperskillLoggedIn::class.java)
+  private val converterFactory: JacksonConverterFactory
+
+  init {
+    val module = SimpleModule()
+    module.addDeserializer(StepikSteps.FileWrapper::class.java, FileWrapperDeserializer())
+    val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    objectMapper.registerModule(module)
+    converterFactory = JacksonConverterFactory.create(objectMapper)
+  }
 
   private val authorizationService: HyperskillService
     get() {
       val retrofit = Retrofit.Builder()
         .baseUrl(HYPERSKILL_URL)
-        .addConverterFactory(JacksonConverterFactory.create())
+        .addConverterFactory(converterFactory)
         .build()
 
       return retrofit.create(HyperskillService::class.java)
@@ -59,7 +77,7 @@ object HyperskillConnector {
         .build()
       val retrofit = Retrofit.Builder()
         .baseUrl(HYPERSKILL_URL)
-        .addConverterFactory(JacksonConverterFactory.create())
+        .addConverterFactory(converterFactory)
         .client(okHttpClient)
         .build()
 
@@ -97,6 +115,10 @@ object HyperskillConnector {
     return service.stages(projectId).execute().body()?.stages
   }
 
+  fun getStepSources(lessonId: Int): List<StepikSteps.StepSource>? {
+    return service.steps(lessonId).execute().body()?.steps
+  }
+
   fun fillTopics(course: HyperskillCourse, project: Project) {
     for ((taskIndex, stage) in course.stages.withIndex()) {
       val call = service.topics(stage.id)
@@ -132,5 +154,15 @@ object HyperskillConnector {
 
   private interface HyperskillLoggedIn {
     fun userLoggedIn()
+  }
+}
+
+class FileWrapperDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StepikSteps.FileWrapper>(vc) {
+
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): StepikSteps.FileWrapper {
+    val node: JsonNode = jp.codec.readTree(jp)
+    val name = node.get("name").asText()
+    val text = StringUtil.convertLineSeparators(node.get("text").asText())
+    return StepikSteps.FileWrapper(name, text)
   }
 }

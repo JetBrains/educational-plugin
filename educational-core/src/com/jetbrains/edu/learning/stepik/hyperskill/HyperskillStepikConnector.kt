@@ -13,17 +13,12 @@ fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language): Less
   lesson.course = course
   progressIndicator?.checkCanceled()
   progressIndicator?.text2 = "Loading project steps"
-  val stepIds = lesson.steps.map { stepId -> stepId.toString() }.toTypedArray()
-  val allStepSources = StepikConnector.getStepSources(stepIds, language.baseLanguage?.id)
-  if (allStepSources.isEmpty()) {
-    return null
-  }
-  allStepSources[0].block.options?.lessonType ?: return null
+  val stepSources = HyperskillConnector.getStepSources(lessonId) ?: return null
   lesson = FrameworkLesson(lesson)
 
   progressIndicator?.checkCanceled()
   progressIndicator?.text2 = "Loading tasks"
-  val tasks = StepikConnector.getTasks(language, lesson, stepIds, allStepSources)
+  val tasks = StepikConnector.getTasks(language, lesson, stepSources)
   lesson.taskList.addAll(tasks)
   return lesson
 }

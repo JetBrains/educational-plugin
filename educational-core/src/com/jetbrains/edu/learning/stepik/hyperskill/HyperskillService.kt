@@ -1,7 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.jetbrains.edu.learning.authUtils.TokenInfo
+import com.jetbrains.edu.learning.stepik.StepikSteps
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -34,26 +34,26 @@ interface HyperskillService {
 
   @GET("api/topics")
   fun topics(@Query("stage") stageId: Int): Call<TopicsData>
+
+  @GET("api/steps")
+  fun steps(@Query("lesson") lessonId: Int): Call<StepikSteps.StepsList>
+
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 class UsersData {
   lateinit var meta: Any
   lateinit var users: List<HyperskillUserInfo>
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 class StagesData {
   lateinit var meta: Any
   lateinit var stages: List<HyperskillStage>
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 class TopicsData {
   lateinit var topics: List<HyperskillTopic>
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 class HyperskillTopic {
   var id: Int = -1
   var title: String = ""

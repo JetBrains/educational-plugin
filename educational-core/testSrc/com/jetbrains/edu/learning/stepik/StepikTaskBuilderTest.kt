@@ -7,10 +7,9 @@ import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.EduTestCase
 import com.jetbrains.edu.learning.configurators.FakeGradleBasedLanguage
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.tasks.*
-import com.jetbrains.edu.learning.stepik.StepikWrappers.StepContainer
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Matcher
 import org.junit.Assert.assertThat
@@ -34,7 +33,7 @@ class StepikTaskBuilderTest : EduTestCase() {
     for (language in listOf(PlainTextLanguage.INSTANCE, FakeGradleBasedLanguage)) {
       val response = loadResponse()
       val params: Map<Key<*>, Any> = mapOf(StepikConnector.COURSE_LANGUAGE to language.id)
-      val stepSource = StepikClient.deserializeStepikResponse(StepContainer::class.java, response, params).steps[0]
+      val stepSource = StepikClient.deserializeStepikResponse(StepikSteps.StepsList::class.java, response, params).steps[0]
 
       val course = EduCourse()
       course.language = language.id

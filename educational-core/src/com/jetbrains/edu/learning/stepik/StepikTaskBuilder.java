@@ -32,7 +32,7 @@ import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 public class StepikTaskBuilder {
   private static final String TASK_NAME = "task";
   private static final Logger LOG = Logger.getInstance(StepikTaskBuilder.class);
-  private final StepikWrappers.StepSource myStepSource;
+  private final StepikSteps.StepSource myStepSource;
   private int myStepId;
   private int myUserId;
   @NonNls private String myName;
@@ -40,7 +40,7 @@ public class StepikTaskBuilder {
   private final Lesson myLesson;
   @Nullable
   private final EduConfigurator<?> myConfigurator;
-  private StepikWrappers.Step myStep;
+  private StepikSteps.Step myStep;
   private final Map<String, Computable<Task>> stepikTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
     .put("code", this::codeTask)
     .put("choice", this::choiceTask)
@@ -83,7 +83,7 @@ public class StepikTaskBuilder {
     .build();
   private static final String EMPTY_NAME = "";
 
-  public StepikTaskBuilder(@NotNull Language language, @NotNull Lesson lesson, @NotNull StepikWrappers.StepSource stepSource,
+  public StepikTaskBuilder(@NotNull Language language, @NotNull Lesson lesson, @NotNull StepikSteps.StepSource stepSource,
                            int stepId, int userId) {
     this(language, lesson, EMPTY_NAME, stepSource, stepId, userId);
   }
@@ -92,7 +92,7 @@ public class StepikTaskBuilder {
   public StepikTaskBuilder(@NotNull Language language,
                            @NotNull Lesson lesson,
                            @NotNull String name,
-                           @NotNull StepikWrappers.StepSource stepSource,
+                           @NotNull StepikSteps.StepSource stepSource,
                            int stepId, int userId) {
     myName = name;
     myStepSource = stepSource;
@@ -217,7 +217,7 @@ public class StepikTaskBuilder {
     Task task = createPluginTask();
     task.setStepId(myStepId);
     task.setUpdateDate(myStepSource.update_date);
-    StepikWrappers.StepOptions stepOptions = myStep.options;
+    StepikSteps.StepOptions stepOptions = myStep.options;
     task.setName(stepOptions != null ? stepOptions.title : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 
     if (stepOptions != null) {

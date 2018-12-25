@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.edu.learning.EduUtils;
@@ -15,13 +14,14 @@ import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class StepikWrappers {
-  private static final Logger LOG = Logger.getInstance(StepOptions.class);
-
   static class StepContainer {
-    List<StepSource> steps;
+    List<StepikSteps.StepSource> steps;
   }
 
   public static class Step {
@@ -102,15 +102,6 @@ public class StepikWrappers {
     public Map meta;
   }
 
-  public static class StepSourceWrapper {
-    @Expose
-    StepSource stepSource;
-
-    public StepSourceWrapper(Project project, Task task, int lessonId) {
-      stepSource = new StepSource(project, task, lessonId);
-    }
-  }
-
   public static class CourseWrapper {
     EduCourse course;
 
@@ -141,24 +132,6 @@ public class StepikWrappers {
 
   public static class LessonContainer {
     public List<Lesson> lessons;
-  }
-
-  public static class StepSource {
-    @Expose public Step block;
-    @Expose public int position;
-    @Expose public int lesson;
-    @Expose public String progress;
-    @Expose public int cost = 1;
-    public Date update_date;
-
-    public StepSource(Project project, Task task, int lesson) {
-      this.lesson = lesson;
-      position = task.getIndex();
-      block = Step.fromTask(project, task);
-      if (task.getLesson().isAdditional()) {
-        cost = 0;
-      }
-    }
   }
 
   public static class SectionWrapper {

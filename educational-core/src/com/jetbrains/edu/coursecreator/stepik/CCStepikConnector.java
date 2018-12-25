@@ -530,7 +530,7 @@ public class CCStepikConnector {
     final String[] requestBody = new String[1];
     ApplicationManager.getApplication().invokeAndWait(() -> {
       FileDocumentManager.getInstance().saveAllDocuments();
-      requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
+      requestBody[0] = gson.toJson(new StepikSteps.StepSourceWrapper(project, task, lessonId));
     });
     request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
 
@@ -943,7 +943,7 @@ public class CCStepikConnector {
     ApplicationManager.getApplication().invokeAndWait(
       () -> ApplicationManager.getApplication().runWriteAction(() -> {
         FileDocumentManager.getInstance().saveAllDocuments();
-        requestBody[0] = gson.toJson(new StepikWrappers.StepSourceWrapper(project, task, lessonId));
+        requestBody[0] = gson.toJson(new StepikSteps.StepSourceWrapper(project, task, lessonId));
       }));
 
     request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));

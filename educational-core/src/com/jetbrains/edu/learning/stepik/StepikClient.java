@@ -107,7 +107,7 @@ public class StepikClient {
   public static Gson createGson(@Nullable Map<Key, Object> params) {
     String language = StepikConnector.COURSE_LANGUAGE.get(params);
     return new GsonBuilder()
-        .registerTypeAdapter(StepikWrappers.StepOptions.class, new StepikStepOptionsAdapter(language))
+        .registerTypeAdapter(StepikSteps.StepOptions.class, new StepikStepOptionsAdapter(language))
         .registerTypeAdapter(Lesson.class, new StepikLessonAdapter(language))
         .registerTypeAdapter(StepikWrappers.Reply.class, new StepikReplyAdapter(language))
         .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")

@@ -104,7 +104,7 @@ public class StepikCheckerConnector {
       if (result.getStatus() == CheckStatus.Failed) {
         try {
           createNewAttempt(task.getStepId());
-          StepikWrappers.StepSource step = StepikConnector.getStep(task.getStepId());
+          StepikSteps.StepSource step = StepikConnector.getStep(task.getStepId());
           Course course = task.getLesson().getCourse();
           StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), task.getName(),
                                                                 step, task.getStepId(), user.getId());

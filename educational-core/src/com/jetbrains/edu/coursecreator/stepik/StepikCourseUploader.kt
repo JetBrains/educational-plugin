@@ -4,8 +4,8 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.*
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -253,7 +253,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
     val stringIds = deleteCandidates.map { it.toString() }.toTypedArray()
     val stepSources = StepikConnector.getStepSources(stringIds, lesson.course.languageID)
-    val tasksFromStep = StepikConnector.getTasks(course.languageById, lesson, stringIds, stepSources)
+    val tasksFromStep = StepikConnector.getTasks(course.languageById, lesson, stepSources)
     tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.stepId })
   }
 
