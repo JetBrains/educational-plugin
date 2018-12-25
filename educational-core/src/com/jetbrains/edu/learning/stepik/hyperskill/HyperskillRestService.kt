@@ -2,6 +2,9 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.util.PropertiesComponent
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
@@ -78,7 +81,9 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
           val hyperskillProject = stages[0].hyperskillProject ?: return null
           account.userInfo.hyperskillProject = hyperskillProject
           if (!hyperskillProject.useIde) {
-            // TODO: show notification
+            LOG.warn("Project in not supported yet $projectId")
+            Notification(HYPERSKILL, HYPERSKILL, HYPERSKILL_PROJECT_NOT_SUPPORTED, NotificationType.WARNING,
+                         NotificationListener.URL_OPENING_LISTENER).notify(project)
             return null
           }
           val languageId = EduNames.JAVA

@@ -12,4 +12,6 @@ var CLIENT_ID = HyperskillOAuthBundle.valueOrDefault("clientId", "")
 val AUTHORISATION_CODE_URL = "https://hyperskill.org/oauth2/authorize/?" +
                              "client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&grant_type=code&scope=read+write&response_type=code"
 
+const val HYPERSKILL_PROJECT_NOT_SUPPORTED = "Selected project is not supported yet. " +
+                             "Please, <a href=\"$HYPERSKILL_PROJECTS_URL\">select another project</a> "
 const val HYPERSKILL_STAGE = "hyperskill-stage"
