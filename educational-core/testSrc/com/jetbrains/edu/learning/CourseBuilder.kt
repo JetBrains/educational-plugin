@@ -228,6 +228,13 @@ class TaskBuilder(val lesson: Lesson, val task: Task) {
     buildTaskFile: TaskFileBuilder.() -> Unit = {}
   ) = taskFile(name, text, visible, buildTaskFile)
 
+  fun rustTaskFile(
+    name: String,
+    @Language("Rust") text: String = "",
+    visible: Boolean = true,
+    buildTaskFile: TaskFileBuilder.() -> Unit = {}
+  ) = taskFile(name, text, visible, buildTaskFile)
+
   fun taskFileFromResources(
     name: String,
     path: String,
