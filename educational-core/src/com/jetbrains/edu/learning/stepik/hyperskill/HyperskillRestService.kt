@@ -3,7 +3,6 @@ package com.jetbrains.edu.learning.stepik.hyperskill
 import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
-import com.intellij.notification.NotificationListener
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
@@ -46,6 +45,11 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
       val stageId = RestService.getStringParameter("stage_id", decoder)?.toInt() ?: return "The stage_id parameter was not found"
       val projectId = RestService.getStringParameter("project_id", decoder)?.toInt() ?: return "The project_id parameter was not found"
       LOG.info("Opening a stage $stageId from project $projectId")
+      val account = HyperskillSettings.INSTANCE.account
+      if (account == null) {
+        Notification(HYPERSKILL, HYPERSKILL, "Please, <a href=\"\">login to Hyperskill</a> and select project.",
+                     NotificationType.INFORMATION, HSHyperlinkListener(true)).notify(null)
+      }
       //TODO: try to find existing project
       createProject(projectId, stageId)
       RestService.sendOk(request, context)
@@ -71,7 +75,6 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
   }
 
   private fun createProject(projectId: Int, stageId: Int) {
-    // TODO: handle not logged in users
     runInEdt {
       val hyperskillCourse = ProgressManager.getInstance().run(object : Task.WithResult<HyperskillCourse?, Exception>
                                                                         (null, "Loading project", true) {
@@ -83,7 +86,7 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
           if (!hyperskillProject.useIde) {
             LOG.warn("Project in not supported yet $projectId")
             Notification(HYPERSKILL, HYPERSKILL, HYPERSKILL_PROJECT_NOT_SUPPORTED, NotificationType.WARNING,
-                         NotificationListener.URL_OPENING_LISTENER).notify(project)
+                         HSHyperlinkListener(false)).notify(project)
             return null
           }
           val languageId = EduNames.JAVA

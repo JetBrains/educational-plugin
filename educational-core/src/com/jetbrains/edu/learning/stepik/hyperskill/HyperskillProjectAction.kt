@@ -1,6 +1,8 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.intellij.ide.BrowserUtil
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.application.Experiments
@@ -18,6 +20,7 @@ import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
+import javax.swing.event.HyperlinkEvent
 
 class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
 
@@ -75,8 +78,16 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
   }
 }
 
-private class HSHyperlinkListener(private val authorize: Boolean) : ActionListener {
+class HSHyperlinkListener(private val authorize: Boolean) : ActionListener, NotificationListener {
+  override fun hyperlinkUpdate(notification: Notification, event: HyperlinkEvent) {
+    authorizeOrBrowse()
+  }
+
   override fun actionPerformed(e: ActionEvent?) {
+    authorizeOrBrowse()
+  }
+
+  private fun authorizeOrBrowse() {
     if (authorize) {
       HyperskillConnector.doAuthorize()
     }
