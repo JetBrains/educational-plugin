@@ -1,12 +1,10 @@
 package com.jetbrains.edu.kotlin.checker
 
 import com.jetbrains.edu.kotlin.KtCourseBuilder
-import com.jetbrains.edu.learning.checker.CheckersTestBase
-import com.jetbrains.edu.learning.courseFormat.Course
+import com.jetbrains.edu.learning.EduCourseBuilder
+import com.jetbrains.edu.learning.checker.JdkCheckerTestBase
 import com.jetbrains.edu.learning.gradle.JdkProjectSettings
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 
-abstract class KtCheckersTestBase : CheckersTestBase() {
-  override fun getGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings> =
-    KtCourseBuilder().getCourseProjectGenerator(course)
+abstract class KtCheckersTestBase : JdkCheckerTestBase() {
+  override val courseBuilder: EduCourseBuilder<JdkProjectSettings> = KtCourseBuilder()
 }

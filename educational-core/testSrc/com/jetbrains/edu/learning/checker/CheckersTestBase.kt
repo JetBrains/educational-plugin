@@ -3,8 +3,6 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.Result
-import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorProviderManager
@@ -12,19 +10,12 @@ import com.intellij.openapi.fileEditor.impl.EditorHistoryManager
 import com.intellij.openapi.fileEditor.impl.FileEditorManagerImpl
 import com.intellij.openapi.fileEditor.impl.FileEditorProviderManagerImpl
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
-import com.intellij.openapi.roots.ui.configuration.JdkComboBox
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -33,16 +24,15 @@ import com.intellij.testFramework.*
 import com.intellij.ui.docking.DockContainer
 import com.intellij.ui.docking.DockManager
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.actions.CheckAction
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.ext.getVirtualFile
-import com.jetbrains.edu.learning.gradle.JdkProjectSettings
-import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.junit.Assert
 import org.junit.ComparisonFailure
 import java.io.File
 
-abstract class CheckersTestBase : UsefulTestCase() {
+abstract class CheckersTestBase<Settings> : UsefulTestCase() {
     private lateinit var myManager: FileEditorManagerImpl
     private lateinit var myOldManager: FileEditorManager
     private lateinit var myOldDockContainers: Set<DockContainer>
@@ -99,8 +89,8 @@ abstract class CheckersTestBase : UsefulTestCase() {
             get() = "\n" + causes.joinToString("\n") { it.message ?: "" }
     }
 
-    protected abstract fun getGenerator(course: Course): CourseProjectGenerator<JdkProjectSettings>
-
+    protected abstract val courseBuilder: EduCourseBuilder<Settings>
+    protected abstract val projectSettings: Settings
     protected abstract fun createCourse(): Course
 
     private fun projectName() = getTestName(true)
@@ -122,20 +112,11 @@ abstract class CheckersTestBase : UsefulTestCase() {
     private fun createEduProject() {
         myCourse = createCourse()
 
-        val jdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME)
-                ?: error("Gradle JDK should be configured in setUp()")
+        val settings = projectSettings
 
-        val sdksModel = ProjectSdksModel()
-        sdksModel.addSdk(jdk)
-
-        val settings = JdkProjectSettings(sdksModel, object : JdkComboBox.JdkComboBoxItem() {
-            override fun getJdk() = jdk
-            override fun getSdkName() = jdk.name
-        })
-
-        getGenerator(myCourse).doCreateCourseProject(myTestDir.absolutePath, settings)
-        myProject = ProjectManager.getInstance().openProjects.firstOrNull { it.name == UsefulTestCase.TEMP_DIR_MARKER + projectName() }
-                    ?: error("Cannot find project with name ${projectName()}")
+        val generator = courseBuilder.getCourseProjectGenerator(myCourse) ?: error("Failed to get `CourseProjectGenerator`")
+        myProject = generator.doCreateCourseProject(myTestDir.absolutePath, settings as Any)
+                    ?: error("Cannot create project with name ${projectName()}")
     }
 
     override fun setUp() {
@@ -148,18 +129,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
 
         myApplication = IdeaTestApplication.getInstance()
 
-        object : WriteAction<Any>() {
-            override fun run(result: Result<Any>) {
-                val oldJdk = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME)
-                if (oldJdk != null) {
-                    ProjectJdkTable.getInstance().removeJdk(oldJdk)
-                }
-                val jdkHomeDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(myJdkHome))!!
-                val jdk = SdkConfigurationUtil.setupSdk(arrayOfNulls(0), jdkHomeDir, JavaSdk.getInstance(), true, null, MY_TEST_JDK_NAME)
-                Assert.assertNotNull("Cannot create JDK for $myJdkHome", jdk)
-                ProjectJdkTable.getInstance().addJdk(jdk!!)
-            }
-        }.execute()
+        setUpEnvironment()
 
         myTestDir = File(FileUtil.getTempDirectory())
         myTestDir.mkdirs()
@@ -189,14 +159,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
             LightPlatformTestCase.doTearDown(myProject, myApplication)
             InjectedLanguageManagerImpl.checkInjectorsAreDisposed(myProject)
 
-            object : WriteAction<Any>() {
-                override fun run(result: Result<Any>) {
-                    val old = ProjectJdkTable.getInstance().findJdk(MY_TEST_JDK_NAME)
-                    if (old != null) {
-                        SdkConfigurationUtil.removeSdk(old)
-                    }
-                }
-            }.execute()
+            tearDownEnvironment()
 
             DockManager.getInstance(myProject).containers
                     .filterNot { myOldDockContainers.contains(it) }
@@ -214,4 +177,7 @@ abstract class CheckersTestBase : UsefulTestCase() {
             super.tearDown()
         }
     }
+
+    protected open fun setUpEnvironment() {}
+    protected open fun tearDownEnvironment() {}
 }
