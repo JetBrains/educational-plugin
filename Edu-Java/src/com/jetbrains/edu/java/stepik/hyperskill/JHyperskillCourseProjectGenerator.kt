@@ -13,8 +13,6 @@ import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 import com.jetbrains.edu.learning.stepik.hyperskill.*
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
-private const val PROJECT_PREFIX = "Project # "
-
 class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
                                         course: Course) : GradleCourseProjectGenerator(builder, course) {
 
@@ -59,8 +57,9 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
 
           lesson.taskList.forEachIndexed { index, task ->
             task.feedbackLink = feedbackLink(projectId, stages[index])
+            task.descriptionText = "<h2>Stage #${index + 1}: ${stages[index].title}<h2/> " + task.descriptionText
           }
-          lesson.name = hyperskillProject.title.removePrefix(PROJECT_PREFIX)
+          lesson.name = hyperskillProject.title
 
           myCourse.addLesson(lesson)
           return true
