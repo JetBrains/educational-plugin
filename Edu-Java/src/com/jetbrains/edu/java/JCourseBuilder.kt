@@ -1,8 +1,6 @@
 package com.jetbrains.edu.java
 
-import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
-import com.jetbrains.edu.learning.gradle.generation.GradleCourseProjectGenerator
 
 class JCourseBuilder : GradleCourseBuilderBase() {
 
@@ -11,9 +9,6 @@ class JCourseBuilder : GradleCourseBuilderBase() {
   override fun getTaskTemplateName(): String = JConfigurator.TASK_JAVA
   override fun getTestTemplateName(): String = JConfigurator.TEST_JAVA
   override fun getLanguageSettings() = JLanguageSettings()
-
-  override fun getCourseProjectGenerator(course: Course): GradleCourseProjectGenerator =
-    JCourseProjectGenerator(this, course)
 
   companion object {
     private const val JAVA_BUILD_GRADLE_TEMPLATE_NAME = "java-build.gradle"
