@@ -26,7 +26,7 @@ interface HyperskillService {
   ): Call<TokenInfo>
 
   @GET("api/users/{id}")
-  fun getUserInfo(@Path("id") userId: Int): Call<UsersData>
+  fun getUserInfo(@Path("id") userId: Int): Call<UsersList>
 
   @GET("api/stages")
   fun stages(@Query("project") projectId: Int): Call<StagesList>
@@ -45,7 +45,7 @@ interface HyperskillService {
 
 }
 
-class UsersData {
+class UsersList {
   lateinit var meta: Any
   lateinit var users: List<HyperskillUserInfo>
 }
