@@ -203,19 +203,6 @@ abstract class FeedbackLinkMixin {
   private var myLink: String? = null
 }
 
-@Suppress("UNUSED_PARAMETER", "unused") // used for json serialization
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder(IS_VISIBLE, TEXT)
-abstract class AdditionalFileMixin {
-  @JsonProperty(IS_VISIBLE)
-  var isVisible: Boolean = true
-
-  @JsonProperty(TEXT)
-  private lateinit var _text: String
-}
-
 class ProgrammingLanguageConverter : StdConverter<String, String>() {
   override fun convert(languageId: String): String = Language.findLanguageByID(languageId)!!.displayName
 }

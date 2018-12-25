@@ -181,7 +181,6 @@ class CourseArchiveCreator(
 
     private fun addCommonMixins(mapper: ObjectMapper) {
       mapper.addMixIn(TaskFile::class.java, TaskFileMixin::class.java)
-      mapper.addMixIn(AdditionalFile::class.java, AdditionalFileMixin::class.java)
       mapper.addMixIn(FeedbackLink::class.java, FeedbackLinkMixin::class.java)
       mapper.addMixIn(AnswerPlaceholder::class.java, AnswerPlaceholderMixin::class.java)
       mapper.addMixIn(AnswerPlaceholderDependency::class.java, AnswerPlaceholderDependencyMixin::class.java)
