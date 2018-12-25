@@ -10,10 +10,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import io.netty.channel.ChannelHandlerContext
-import io.netty.handler.codec.http.FullHttpRequest
-import io.netty.handler.codec.http.HttpMethod
-import io.netty.handler.codec.http.HttpResponseStatus
-import io.netty.handler.codec.http.QueryStringDecoder
+import io.netty.handler.codec.http.*
 import org.jetbrains.ide.RestService
 import org.jetbrains.io.send
 import java.io.IOException
@@ -100,5 +97,9 @@ class HyperskillRestService : OAuthRestService(HYPERSKILL) {
     private const val EDU_HYPERSKILL_SERVICE_NAME = "edu/hyperskill"
     private val OAUTH_CODE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME/oauth\\?code=(\\w+)")
     private val OPEN_COURSE_PATTERN = Pattern.compile("/api/$EDU_HYPERSKILL_SERVICE_NAME\\?stage_id=.+&project_id=.+")
+  }
+
+  override fun isAccessible(request: HttpRequest): Boolean {
+    return true
   }
 }
