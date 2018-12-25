@@ -88,7 +88,9 @@ class JHyperskillCourseProjectGenerator(builder: GradleCourseBuilderBase,
       val index = (myCourse as HyperskillCourse).stages.indexOfFirst { stage -> stage.id == stageId }
       if (myCourse.lessons.isNotEmpty()) {
         val taskList = myCourse.lessons[0].taskList
-        NavigationUtils.navigateToTask(project, taskList[index], taskList[0])
+        if (taskList.size > index) {
+          NavigationUtils.navigateToTask(project, taskList[index], taskList[0])
+        }
       }
     }
   }
