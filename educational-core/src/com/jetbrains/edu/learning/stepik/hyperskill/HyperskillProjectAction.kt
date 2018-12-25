@@ -9,14 +9,15 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.jetbrains.edu.learning.EduExperimentalFeatures
+import com.intellij.ui.components.labels.ActionLink
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import javax.swing.JComponent
 
 class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
 
@@ -64,10 +65,13 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
     builder.setClickHandler(HSHyperlinkListener(authorize), true)
     val balloon = builder.createBalloon()
 
-    // TODO: wrong balloon position calling action from File menu
     val component = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
-    if (component is JComponent) {
+    if (component is ActionLink) {
       balloon.showInCenterOf(component)
+    }
+    else {
+      val relativePoint = JBPopupFactory.getInstance().guessBestPopupLocation(e.dataContext)
+      balloon.show(relativePoint, Balloon.Position.above)
     }
   }
 }
