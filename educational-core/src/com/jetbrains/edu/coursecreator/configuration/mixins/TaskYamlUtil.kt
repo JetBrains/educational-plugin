@@ -15,20 +15,20 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonPropertyOrder("type", "task_files", "feedback_link")
+@JsonPropertyOrder("type", "files", "feedback_link")
 abstract class TaskYamlMixin {
   @JsonProperty("type")
   fun getTaskType(): String {
     throw NotImplementedInMixin()
   }
 
-  @JsonProperty("task_files")
+  @JsonProperty("files")
   @JsonSerialize(contentConverter = TaskFileConverter::class)
   open fun getTaskFileValues(): Collection<TaskFile> {
     throw NotImplementedInMixin()
   }
 
-  @JsonProperty("task_files")
+  @JsonProperty("files")
   open fun setTaskFileValues(taskFiles: List<TaskFile>) {
     throw NotImplementedInMixin()
   }

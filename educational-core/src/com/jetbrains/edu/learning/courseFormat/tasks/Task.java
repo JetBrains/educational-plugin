@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializer;
+import com.intellij.util.xmlb.annotations.OptionTag;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
@@ -43,7 +44,7 @@ public abstract class Task extends StudyItem {
   @SerializedName("stepic_id")
   @Expose private int myStepId;
 
-  @SerializedName("task_files")
+  @SerializedName("files")
   @Expose private Map<String, TaskFile> myTaskFiles = new LinkedHashMap<>();
 
   @SerializedName("description_text")
@@ -73,11 +74,13 @@ public abstract class Task extends StudyItem {
     }
   }
 
+  @OptionTag("files")
   public Map<String, TaskFile> getTaskFiles() {
     return myTaskFiles;
   }
 
   // Use carefully. taskFiles is supposed to be ordered so use LinkedHashMap
+  @OptionTag("files")
   public void setTaskFiles(Map<String, TaskFile> taskFiles) {
     this.myTaskFiles = taskFiles;
   }
