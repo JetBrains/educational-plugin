@@ -3,60 +3,58 @@ package com.jetbrains.edu.learning.checker
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 
 class CheckActionListener : CheckListener {
 
   override fun afterCheck(project: Project, task: Task, result: CheckResult) {
-    checkStatus.invoke(task, result)
-    if (expectedMessageForTask != null) {
-      val expectedMessage = expectedMessageForTask!!.invoke(task)
-      if (expectedMessage != null) {
-        Assert.assertEquals("Checking output for " + getTaskName(task) + " fails", expectedMessage, result.message)
-      }
-      else {
-        throw IllegalStateException(String.format("Unexpected task `%s`", task.name))
-      }
-
-    }
+    checkResultVerifier(task, result)
+    val messageProducer = expectedMessageProducer ?: return
+    val expectedMessage = messageProducer(task) ?: error("Unexpected task `${task.name}`")
+    assertEquals("Checking output for ${getTaskName(task)} fails", expectedMessage, result.message)
   }
 
   companion object {
-    private val SHOULD_FAIL = fun(task: Task, result: CheckResult): Unit {
+    private val SHOULD_FAIL: (Task, CheckResult) -> Unit = { task, result ->
       val taskName = getTaskName(task)
-      Assert.assertFalse("Check Task Action skipped for $taskName", result.status == CheckStatus.Unchecked)
-      Assert.assertFalse("Check Task Action passed for $taskName", result.status == CheckStatus.Solved)
-      println("Checking status for $taskName fails as expected")
-      return Unit
+      assertFalse("Check Task Action skipped for $taskName", result.status == CheckStatus.Unchecked)
+      assertFalse("Check Task Action passed for $taskName", result.status == CheckStatus.Solved)
+      println("Checking status for $taskName: fails as expected")
     }
 
-    private val SHOULD_PASS: Function2<Task, CheckResult, Unit> = fun(task: Task, result: CheckResult): Unit {
+    private val SHOULD_PASS: (Task, CheckResult) -> Unit = { task, result ->
       val taskName = getTaskName(task)
-      Assert.assertFalse("Check Task Action skipped for $taskName", result.status == CheckStatus.Unchecked)
-      Assert.assertFalse("Check Task Action failed for $taskName", result.status == CheckStatus.Failed)
-      println("Checking status for $taskName passed")
-      return Unit
+      assertFalse("Check Task Action skipped for $taskName", result.status == CheckStatus.Unchecked)
+      assertFalse("Check Task Action failed for $taskName", result.status == CheckStatus.Failed)
+      println("Checking status for $taskName: passes as expected")
     }
 
-    private fun getTaskName(task: Task): String {
-      return task.lesson.name + "/" + task.name
-    }
+    private fun getTaskName(task: Task): String = "${task.lesson.name}/${task.name}"
 
     // Those fields can be modified if some special checks are needed (return true if should run standard checks)
-    private var checkStatus = SHOULD_PASS
-    private var expectedMessageForTask: Function1<Task, String>? = null
+    private var checkResultVerifier = SHOULD_PASS
+    private var expectedMessageProducer: ((Task) -> String?)? = null
 
+    @JvmStatic
     fun reset() {
-      checkStatus = SHOULD_PASS
-      expectedMessageForTask = null
+      setCheckResultVerifier(SHOULD_PASS)
+      expectedMessageProducer = null
     }
 
+    @JvmStatic
     fun shouldFail() {
-      checkStatus = SHOULD_FAIL
+      setCheckResultVerifier(SHOULD_FAIL)
     }
 
-    fun expectedMessage(f: Function1<Task, String>) {
-      expectedMessageForTask = f
+    @JvmStatic
+    fun expectedMessage(producer: (Task) -> String?) {
+      expectedMessageProducer = producer
+    }
+
+    @JvmStatic
+    fun setCheckResultVerifier(verifier: (Task, CheckResult) -> Unit) {
+      checkResultVerifier = verifier
     }
   }
 }
