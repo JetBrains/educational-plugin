@@ -56,7 +56,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     val taskDir = task.getTaskDir(project) ?: error("Can't find task dir of `${task.name}` task")
 
     val selectedFiles = mutableListOf<VirtualFile>()
-    val affectedCourseFiles = mutableListOf<StudyFile>()
+    val affectedCourseFiles = mutableListOf<TaskFile>()
 
     for (path in paths) {
       val fullPath = if (pathPrefix.isEmpty()) path else "$pathPrefix/$path"
@@ -118,13 +118,13 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     action: CCChangeFileVisibility,
     oppositeAction: CCChangeFileVisibility,
     dataContext: DataContext,
-    affectedCourseFiles: List<StudyFile>,
+    affectedCourseFiles: List<TaskFile>,
     task: Task,
     shouldActionBeEnabled: Boolean = true,
     shouldOppositeActionBeEnabled: Boolean = false
   ) {
     val initialStates = affectedCourseFiles.associate { it to it.isVisible }
-    val initialPlaceholders = affectedCourseFiles.filterIsInstance<TaskFile>().associate { it to it.answerPlaceholders }
+    val initialPlaceholders = affectedCourseFiles.associate { it to it.answerPlaceholders }
     val stepikInitialStatus = task.stepikChangeStatus
 
     val oppositeActionPresentation = testAction(dataContext, oppositeAction, false)
@@ -135,7 +135,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
     if (shouldActionBeEnabled) {
       for (visibleFile in affectedCourseFiles) {
         assertEquals(action.requiredVisibility, visibleFile.isVisible)
-        if (!action.requiredVisibility && visibleFile is TaskFile) {
+        if (!action.requiredVisibility) {
           check(visibleFile.answerPlaceholders.isEmpty()) {
             "Task file `${visibleFile.name}` shouldn't contain placeholders because it's invisible"
           }
@@ -145,9 +145,7 @@ class CCChangeFileVisibilityTest : EduActionTestCase() {
       UndoManager.getInstance(project).undo(null)
       for (visibleFile in affectedCourseFiles) {
         assertEquals(initialStates[visibleFile], visibleFile.isVisible)
-        if (visibleFile is TaskFile) {
-          assertEquals(initialPlaceholders[visibleFile], visibleFile.answerPlaceholders)
-        }
+        assertEquals(initialPlaceholders[visibleFile], visibleFile.answerPlaceholders)
       }
       assertEquals(stepikInitialStatus, task.stepikChangeStatus)
     }

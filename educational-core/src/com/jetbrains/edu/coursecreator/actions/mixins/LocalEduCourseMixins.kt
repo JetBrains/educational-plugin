@@ -136,10 +136,10 @@ abstract class TaskFileMixin {
   private lateinit var myAnswerPlaceholders: List<AnswerPlaceholder>
 
   @JsonProperty(IS_VISIBLE)
-  var isVisible: Boolean = true
+  var myVisible: Boolean = true
 
   @JsonProperty(TEXT)
-  private lateinit var _text: String
+  private lateinit var myText: String
 }
 
 @Suppress("UNUSED_PARAMETER", "unused") // used for json serialization

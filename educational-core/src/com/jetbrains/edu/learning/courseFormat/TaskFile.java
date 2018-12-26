@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.courseFormat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import com.jetbrains.edu.coursecreator.stepik.StepikChangeRetriever;
 import com.jetbrains.edu.learning.EduUtils;
@@ -19,13 +20,21 @@ import java.util.List;
  * Update {@link StepikChangeRetriever#isEqualTo(TaskFile, TaskFile)} if you added new property that has to be compared
  */
 
-public class TaskFile extends StudyFile {
+public class TaskFile {
   @Expose @SerializedName("name") private String myName;
   private boolean myUserCreated = false;
   private boolean myTrackChanges = true;
   private boolean myTrackLengths = true;
   private boolean myHighlightErrors = false;
   @Expose @SerializedName("placeholders") private List<AnswerPlaceholder> myAnswerPlaceholders = new ArrayList<>();
+
+  @Expose
+  @SerializedName("is_visible")
+  private boolean myVisible = true;
+
+  @Expose
+  @SerializedName("text")
+  private String myText = "";
 
   @Transient private Task myTask;
 
@@ -139,6 +148,23 @@ public class TaskFile extends StudyFile {
 
   public void setName(String name) {
     myName = name;
+  }
+
+  public boolean isVisible() {
+    return myVisible;
+  }
+
+  public void setVisible(boolean visible) {
+    myVisible = visible;
+  }
+
+  @NotNull
+  public String getText() {
+    return myText;
+  }
+
+  public void setText(@Nullable String text) {
+    myText = StringUtil.notNullize(text);
   }
 
   public void sortAnswerPlaceholders() {
