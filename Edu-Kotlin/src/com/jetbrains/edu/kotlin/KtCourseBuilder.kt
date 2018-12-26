@@ -16,6 +16,8 @@ open class KtCourseBuilder : GradleCourseBuilderBase() {
     )
   }
 
+  override fun getLanguageSettings() = KtLanguageSettings()
+
   override fun getTaskTemplateName(): String = KtConfigurator.TASK_KT
   override fun getTestTemplateName(): String = KtConfigurator.TESTS_KT
 
