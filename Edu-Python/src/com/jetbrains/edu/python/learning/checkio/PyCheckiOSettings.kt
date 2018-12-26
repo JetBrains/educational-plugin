@@ -19,18 +19,11 @@ class PyCheckiOSettings : PersistentStateComponent<Element> {
   var account: CheckiOAccount? = null
 
   override fun getState(): Element? {
-    val mainElement = Element(serviceName)
-    XmlSerializer.serializeInto(this, mainElement)
-    val userElement = account?.serialize() ?: return null
-    mainElement.addContent(userElement)
-    return mainElement
+    return account?.serializeIntoService(serviceName)
   }
 
   override fun loadState(settings: Element) {
-    XmlSerializer.deserializeInto(this, settings)
-    val accountClass = CheckiOAccount::class.java
-    val user = settings.getChild(accountClass.simpleName)
-    account = deserializeAccount(user, accountClass, CheckiOUserInfo::class.java)
+    account = CheckiOAccount.fromElement(settings)
   }
 
   companion object {
