@@ -1,5 +1,5 @@
 diff --git a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
-index b008fcf..38e0487 100644
+index b008fcf9e..38e0487f4 100644
 --- a/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
 +++ b/Edu-Android/src/com/jetbrains/edu/android/AndroidNewTaskDialog.kt
 @@ -44,8 +44,7 @@ class AndroidNewTaskDialog(
@@ -13,7 +13,7 @@ index b008fcf..38e0487 100644
        compileSdkVersion = maxOf(maxSdkVersion, compileSdkVersion)
        comboBox.init(FormFactor.MOBILE, items)
 diff --git a/Edu-Java/resources/META-INF/Edu-Java.xml b/Edu-Java/resources/META-INF/Edu-Java.xml
-index 4aedd4e..e230074 100644
+index 4aedd4ea8..e23007420 100644
 --- a/Edu-Java/resources/META-INF/Edu-Java.xml
 +++ b/Edu-Java/resources/META-INF/Edu-Java.xml
 @@ -6,6 +6,7 @@
@@ -26,7 +26,7 @@ index 4aedd4e..e230074 100644
    <extensions defaultExtensionNs="com.intellij">
 diff --git a/Edu-Java/src/com/jetbrains/edu/java/JLanguageDecorator.kt b/Edu-Java/src/com/jetbrains/edu/java/JLanguageDecorator.kt
 new file mode 100644
-index 0000000..29118be
+index 000000000..29118bed4
 --- /dev/null
 +++ b/Edu-Java/src/com/jetbrains/edu/java/JLanguageDecorator.kt
 @@ -0,0 +1,8 @@
@@ -39,7 +39,7 @@ index 0000000..29118be
 +  override fun getDefaultHighlightingMode(): String = "text/x-java"
 +}
 diff --git a/Edu-Kotlin/resources/META-INF/Edu-Kotlin.xml b/Edu-Kotlin/resources/META-INF/Edu-Kotlin.xml
-index a9e2bf8..591a12f 100644
+index a9e2bf88d..591a12ff1 100644
 --- a/Edu-Kotlin/resources/META-INF/Edu-Kotlin.xml
 +++ b/Edu-Kotlin/resources/META-INF/Edu-Kotlin.xml
 @@ -15,6 +15,7 @@
@@ -52,7 +52,7 @@ index a9e2bf8..591a12f 100644
      <configurator implementationClass="com.jetbrains.edu.kotlin.coursera.CourseraKtConfigurator" language="kotlin" courseType="Coursera" />
 diff --git a/Edu-Kotlin/src/com/jetbrains/edu/kotlin/KtLanguageDecorator.kt b/Edu-Kotlin/src/com/jetbrains/edu/kotlin/KtLanguageDecorator.kt
 new file mode 100644
-index 0000000..9a842b3
+index 000000000..9a842b3a1
 --- /dev/null
 +++ b/Edu-Kotlin/src/com/jetbrains/edu/kotlin/KtLanguageDecorator.kt
 @@ -0,0 +1,8 @@
@@ -65,7 +65,7 @@ index 0000000..9a842b3
 +  override fun getDefaultHighlightingMode(): String = "text/x-java"
 +}
 diff --git a/Edu-Python/resources/META-INF/Edu-Python.xml b/Edu-Python/resources/META-INF/Edu-Python.xml
-index aad1c93..4e8be37 100644
+index aad1c93ca..4e8be373e 100644
 --- a/Edu-Python/resources/META-INF/Edu-Python.xml
 +++ b/Edu-Python/resources/META-INF/Edu-Python.xml
 @@ -22,6 +22,7 @@
@@ -78,7 +78,7 @@ index aad1c93..4e8be37 100644
    <actions>
 diff --git a/Edu-Python/src/com/jetbrains/edu/python/learning/PyLanguageDecorator.kt b/Edu-Python/src/com/jetbrains/edu/python/learning/PyLanguageDecorator.kt
 new file mode 100644
-index 0000000..2dcbbf2
+index 000000000..2dcbbf263
 --- /dev/null
 +++ b/Edu-Python/src/com/jetbrains/edu/python/learning/PyLanguageDecorator.kt
 @@ -0,0 +1,8 @@
@@ -91,7 +91,7 @@ index 0000000..2dcbbf2
 +  override fun getDefaultHighlightingMode(): String = "python"
 +}
 diff --git a/Edu-Scala/resources/META-INF/Edu-Scala.xml b/Edu-Scala/resources/META-INF/Edu-Scala.xml
-index 815bd92..a1fdadc 100644
+index 815bd924d..a1fdadcf2 100644
 --- a/Edu-Scala/resources/META-INF/Edu-Scala.xml
 +++ b/Edu-Scala/resources/META-INF/Edu-Scala.xml
 @@ -5,6 +5,7 @@
@@ -104,7 +104,7 @@ index 815bd92..a1fdadc 100644
  </idea-plugin>
 diff --git a/Edu-Scala/src/com/jetbrains/edu/scala/ScalaLanguageDecorator.kt b/Edu-Scala/src/com/jetbrains/edu/scala/ScalaLanguageDecorator.kt
 new file mode 100644
-index 0000000..ddcf558
+index 000000000..ddcf55829
 --- /dev/null
 +++ b/Edu-Scala/src/com/jetbrains/edu/scala/ScalaLanguageDecorator.kt
 @@ -0,0 +1,8 @@
@@ -117,7 +117,7 @@ index 0000000..ddcf558
 +  override fun getDefaultHighlightingMode(): String = "text/x-scala"
 +}
 diff --git a/build.gradle b/build.gradle
-index 3d9c578..9bc2606 100644
+index 3d9c57869..9bc26065d 100644
 --- a/build.gradle
 +++ b/build.gradle
 @@ -205,7 +205,7 @@ intellij {
@@ -161,7 +161,7 @@ index 3d9c578..9bc2606 100644
  
  idea {
 diff --git a/educational-core/resources/style/template.html.ft b/educational-core/resources/style/template.html.ft
-index dc5b095..2a6dfa3 100644
+index dc5b0950f..2a6dfa3e5 100644
 --- a/educational-core/resources/style/template.html.ft
 +++ b/educational-core/resources/style/template.html.ft
 @@ -7,6 +7,12 @@
@@ -186,7 +186,7 @@ index dc5b095..2a6dfa3 100644
  </html>
 \ No newline at end of file
 diff --git a/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java b/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java
-index df00d84..2d85601 100644
+index df00d84b5..2d8560113 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/EduLanguageDecorator.java
 @@ -2,6 +2,7 @@ package com.jetbrains.edu.learning;
@@ -197,10 +197,11 @@ index df00d84..2d85601 100644
  import org.jetbrains.annotations.Nullable;
  
  public interface EduLanguageDecorator {
-@@ -10,6 +11,27 @@ public interface EduLanguageDecorator {
+@@ -9,6 +10,27 @@ public interface EduLanguageDecorator {
+   String EP_NAME = "Educational.languageDecorator";
    LanguageExtension<EduLanguageDecorator> INSTANCE = new LanguageExtension<>(EP_NAME);
  
-   /**
++  /**
 +   * Used for code highlighting in Task Description tool window.
 +   * Scripts for different languages can be found <a href="https://codemirror.net">here</a>.
 +   *
@@ -221,12 +222,11 @@ index df00d84..2d85601 100644
 +    return "";
 +  }
 +
-+  /**
+   /**
     * Gets tag color for decorator language.
     *
-    * If it returns null then color for language will be taken
 diff --git a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java
-index 063994f..cc777f4 100644
+index 87c3bee83..46bd1e510 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java
 @@ -86,7 +86,7 @@ public abstract class TaskDescriptionToolWindow {
@@ -239,10 +239,10 @@ index 063994f..cc777f4 100644
      }
      return EMPTY_TASK_TEXT;
 diff --git a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt
-index c1b18c0..9bf7047 100644
+index 087860f35..e5cf57bda 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt
-@@ -1,25 +1,37 @@
+@@ -1,18 +1,31 @@
  package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
  
  import com.intellij.openapi.project.Project
@@ -267,23 +267,14 @@ index c1b18c0..9bf7047 100644
 +    "highlight_code" to highlightScript(project),
      "base_css" to loadText("/style/browser.css"),
 +    resourcePair("codemirror", "/code-mirror/codemirror.js"),
-     resourcePair("jquery", ("/style/hint/jquery-1.9.1.js")),
 +    resourcePair("runmode", "/code-mirror/runmode.js"),
 +    resourcePair("colorize", "/code-mirror/colorize.js"),
 +    resourcePair("javascript", "/code-mirror/javascript.js"),
-     resourcePair("hint_base", "/style/hint/base.css"),
--    resourcePair("hint_laf_specific",  "/style/hint/${resourceFileName()}.css"),
-+    resourcePair("hint_laf_specific", "/style/hint/${resourceFileName()}.css"),
 +    resourcePair("css_codemirror", "/code-mirror/${resourceFileName()}.css"),
-     resourcePair("toggle_hint_script", "/style/hint/toggleHint.js"),
      resourcePair("mathjax_script", "/style/mathjaxConfigure.js"),
--    resourcePair("stepik_link", "/style/stepikLink.css")
--  )
-+    resourcePair("stepik_link", "/style/stepikLink.css"))
- 
-   private fun resourcePair(name: String, path: String) = name to resourceUrl(path)
- 
-@@ -54,4 +66,9 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
+     resourcePair("stepik_link", "/style/stepikLink.css"),
+     *panelSpecificHintFiles()
+@@ -65,4 +78,9 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
        }
      }.toString()
    }
@@ -295,7 +286,7 @@ index c1b18c0..9bf7047 100644
  }
 \ No newline at end of file
 diff --git a/gradle.properties b/gradle.properties
-index b934980..34e59d9 100644
+index b93498065..34e59d9fc 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -1,4 +1,4 @@
@@ -305,7 +296,7 @@ index b934980..34e59d9 100644
  stepikTestClientId=
  stepikTestClientSecret=
 diff --git a/resources/META-INF/plugin.xml b/resources/META-INF/plugin.xml
-index 96161c9..2ccd4c1 100644
+index 96161c9b2..2ccd4c108 100644
 --- a/resources/META-INF/plugin.xml
 +++ b/resources/META-INF/plugin.xml
 @@ -8,6 +8,7 @@
@@ -317,7 +308,7 @@ index 96161c9..2ccd4c1 100644
      <xi:include href="/META-INF/educational-core.xml" xpointer="xpointer(/idea-plugin/*)"/>
      <depends optional="true" config-file="Edu-Scala.xml">org.intellij.scala</depends>
 diff --git a/settings.gradle b/settings.gradle
-index 5c663d2..b084fa1 100644
+index 5c663d28a..b084fa186 100644
 --- a/settings.gradle
 +++ b/settings.gradle
 @@ -1,2 +1,2 @@
