@@ -207,7 +207,6 @@ index df00d84b5..2d8560113 100644
    /**
     * Gets tag color for decorator language.
     *
-    * If it returns null then color for language will be taken
 diff --git a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/EduCodeHighlighter.kt b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/EduCodeHighlighter.kt
 deleted file mode 100644
 index f55740d1a..000000000
@@ -273,7 +272,7 @@ index f55740d1a..000000000
 -  }
 -}
 diff --git a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java
-index 063994fce..cc777f480 100644
+index 87c3bee83..46bd1e510 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java
 +++ b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/TaskDescriptionToolWindow.java
 @@ -86,7 +86,7 @@ public abstract class TaskDescriptionToolWindow {
@@ -286,10 +285,10 @@ index 063994fce..cc777f480 100644
      }
      return EMPTY_TASK_TEXT;
 diff --git a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt
-index c1b18c035..67d35fa99 100644
+index 087860f35..e5cf57bda 100644
 --- a/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt
 +++ b/educational-core/src/com/jetbrains/edu/learning/ui/taskDescription/styleManagers/StyleResourcesManager.kt
-@@ -1,21 +1,34 @@
+@@ -1,18 +1,31 @@
  package com.jetbrains.edu.learning.ui.taskDescription.styleManagers
 
  import com.intellij.openapi.project.Project
@@ -314,17 +313,14 @@ index c1b18c035..67d35fa99 100644
 +    "highlight_code" to highlightScript(project),
      "base_css" to loadText("/style/browser.css"),
 +    resourcePair("codemirror", "/code-mirror/codemirror.js"),
-     resourcePair("jquery", ("/style/hint/jquery-1.9.1.js")),
 +    resourcePair("runmode", "/code-mirror/runmode.js"),
 +    resourcePair("colorize", "/code-mirror/colorize.js"),
 +    resourcePair("javascript", "/code-mirror/javascript.js"),
-     resourcePair("hint_base", "/style/hint/base.css"),
-     resourcePair("hint_laf_specific",  "/style/hint/${resourceFileName()}.css"),
 +    resourcePair("css_codemirror", "/code-mirror/${resourceFileName()}.css"),
-     resourcePair("toggle_hint_script", "/style/hint/toggleHint.js"),
      resourcePair("mathjax_script", "/style/mathjaxConfigure.js"),
-     resourcePair("stepik_link", "/style/stepikLink.css")
-@@ -54,4 +67,9 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
+     resourcePair("stepik_link", "/style/stepikLink.css"),
+     *panelSpecificHintFiles()
+@@ -65,4 +78,9 @@ internal class StyleResourcesManager(project: Project, taskText: String) {
        }
      }.toString()
    }
@@ -336,12 +332,12 @@ index c1b18c035..67d35fa99 100644
  }
 \ No newline at end of file
 diff --git a/gradle.properties b/gradle.properties
-index 6a37f6f3a..fa7a47144 100644
+index b93498065..3526764d9 100644
 --- a/gradle.properties
 +++ b/gradle.properties
 @@ -1,4 +1,4 @@
 -environmentName=183
 +environmentName=182
- 
- # needed for twitting functionality available currently only for kotlin koans
- consumerKey=
+
+ stepikTestClientId=
+ stepikTestClientSecret=
