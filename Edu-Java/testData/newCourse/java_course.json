@@ -7,7 +7,10 @@
         {
           "name": "task1",
           "stepic_id": 0,
-          "task_files": {
+          "description_text": "Write task description here using markdown or html",
+          "description_format": "html",
+          "task_type": "edu",
+          "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
@@ -19,15 +22,15 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "description_text": "Write task description here using markdown or html",
-          "description_format": "html",
-          "task_type": "edu"
+          }
         },
         {
           "name": "task2",
           "stepic_id": 0,
-          "task_files": {
+          "description_text": "Write task description here using markdown or html",
+          "description_format": "html",
+          "task_type": "edu",
+          "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
@@ -39,10 +42,7 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "description_text": "Write task description here using markdown or html",
-          "description_format": "html",
-          "task_type": "edu"
+          }
         }
       ]
     },
@@ -53,7 +53,10 @@
         {
           "name": "task1",
           "stepic_id": 0,
-          "task_files": {
+          "description_text": "Write task description here using markdown or html",
+          "description_format": "html",
+          "task_type": "edu",
+          "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
@@ -65,10 +68,7 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "description_text": "Write task description here using markdown or html",
-          "description_format": "html",
-          "task_type": "edu"
+          }
         }
       ]
     }

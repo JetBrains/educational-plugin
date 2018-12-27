@@ -136,6 +136,7 @@ public class SerializationUtils {
     public static final String USE_JAVA_FX = "shouldUseJavaFx";
     public static final String STEPIK_USER = "StepikUser";
     public static final String COURSE_TYPE = "courseType";
+    public static final String FILES = "files";
 
     private Xml() {
     }

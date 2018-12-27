@@ -76,7 +76,7 @@ class YamlDeserializationTest: EduTestCase() {
   fun `test output task`() {
     val yamlContent = """
     |type: output
-    |task_files:
+    |files:
     |- name: Test.java
     |""".trimMargin("|")
     val task = YamlFormatSynchronizer.deserializeTask(yamlContent)
@@ -87,7 +87,7 @@ class YamlDeserializationTest: EduTestCase() {
   fun `test edu task`() {
     val yamlContent = """
     |type: edu
-    |task_files:
+    |files:
     |- name: Test.java
     |  placeholders:
     |  - offset: 0
@@ -111,7 +111,7 @@ class YamlDeserializationTest: EduTestCase() {
   fun `test edu task without dependency`() {
     val yamlContent = """
     |type: edu
-    |task_files:
+    |files:
     |- name: Test.java
     |  placeholders:
     |  - offset: 0
@@ -129,7 +129,7 @@ class YamlDeserializationTest: EduTestCase() {
     val yamlContent = """
     |type: edu
     |feedback_link: http://example.com
-    |task_files:
+    |files:
     |- name: Test.java
     |""".trimMargin("|")
     val task = YamlFormatSynchronizer.deserializeTask(yamlContent)

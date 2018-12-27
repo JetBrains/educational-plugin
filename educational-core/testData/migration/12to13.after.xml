@@ -51,7 +51,7 @@
                     <option name="stepId" value="0" />
                     <option name="stepikChangeStatus" value="Up to date" />
                     <option name="updateDate" value="0" />
-                    <option name="taskFiles">
+                    <option name="files">
                       <map>
                         <entry key="additional_file.txt">
                           <value>

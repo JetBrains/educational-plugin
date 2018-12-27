@@ -27,7 +27,7 @@ class LocalSourceMigrationTest : LightPlatformCodeInsightFixtureTestCase() {
     val jsonBefore = parser.parse(before).asJsonObject
     val jsonAfter = SerializationUtils.Json.CourseAdapter.migrate(jsonBefore, maxVersion)
 
-    val gson = GsonBuilder().setPrettyPrinting().create()
+    val gson = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
     val afterActual = gson.toJson(jsonAfter)
     assertEquals(afterExpected, afterActual)
   }

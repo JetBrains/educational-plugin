@@ -13,14 +13,14 @@
             {
               "name": "task1",
               "stepic_id": 0,
-              "task_files": {
+              "task_type": "edu",
+              "files": {
                 "tmp.py": {
                   "name": "tmp.py",
                   "text": "",
                   "placeholders": []
                 }
-              },
-              "task_type": "edu"
+              }
             }
           ]
         }
@@ -34,14 +34,14 @@
         {
           "name": "task1",
           "stepic_id": 0,
-          "task_files": {
+          "task_type": "edu",
+          "files": {
             "tmp2.py": {
               "name": "tmp2.py",
               "text": "",
               "placeholders": []
             }
-          },
-          "task_type": "edu"
+          }
         }
       ],
       "type": "lesson"

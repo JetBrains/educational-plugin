@@ -23,7 +23,6 @@ class To13VersionXmlConverter : BaseXmlConverter() {
     for (filesGroupName in listOf(TASK_FILES, ADDITIONAL_FILES, TEST_FILES)) {
       task.removeContent(getChildWithName(task, filesGroupName, true))
     }
-    // TODO: use other name for this map
-    addChildMap(task, TASK_FILES, taskFiles)
+    addChildMap(task, FILES, taskFiles)
   }
 }

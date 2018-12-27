@@ -14,7 +14,7 @@ class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
 
     @JvmStatic
     fun convertTaskObject(taskObject: JsonObject) {
-      val files = taskObject.getAsJsonObject(TASK_FILES)
+      val files = taskObject.remove(TASK_FILES)?.asJsonObject ?: JsonObject()
       val tests = taskObject.remove(TEST_FILES)?.asJsonObject
       for ((path, testText) in tests?.entrySet().orEmpty()) {
         if (files.has(path)) continue
@@ -33,6 +33,7 @@ class To9VersionLocalCourseConverter : JsonLocalCourseConverterBase() {
         fileObject.addProperty(NAME, path)
         files.add(path, fileObject)
       }
+      taskObject.add(FILES, files)
     }
   }
 }

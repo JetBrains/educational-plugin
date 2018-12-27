@@ -12,14 +12,14 @@
           "description_text": "First task description",
           "description_format": "html",
           "stepic_id": 0,
-          "task_files": {
+          "task_type": "edu",
+          "files": {
             "tmp.py": {
               "name": "tmp.py",
               "text": "",
               "placeholders": []
             }
-          },
-          "task_type": "edu"
+          }
         }
       ],
       "type": "framework"

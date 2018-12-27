@@ -82,7 +82,7 @@ class YamlSerializationTest : EduTestCase() {
     }.findTask("lesson1", "task1")
     doTest(task, """
     |type: output
-    |task_files:
+    |files:
     |- name: Test.java
     |""".trimMargin("|"))
   }

@@ -12,7 +12,11 @@
           "name": "task1",
           "stepic_id": 1,
           "update_date": "Apr 17, 2018 3:09:23 PM",
-          "task_files": {
+          "task_texts": {
+            "task": "Write task description here using markdown or html"
+          },
+          "task_type": "edu",
+          "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
@@ -24,11 +28,7 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "task_texts": {
-            "task": "Write task description here using markdown or html"
-          },
-          "task_type": "edu"
+          }
         }
       ]
     },
@@ -42,7 +42,11 @@
           "name": "task1",
           "update_date": "Apr 18, 2018 3:09:23 PM",
           "stepic_id": 1,
-          "task_files": {
+          "task_texts": {
+            "task": "Write task description here using markdown or html"
+          },
+          "task_type": "edu",
+          "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "class Task {\n  //put your task here\n}",
@@ -54,11 +58,7 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "task_texts": {
-            "task": "Write task description here using markdown or html"
-          },
-          "task_type": "edu"
+          }
         }
       ]
     }

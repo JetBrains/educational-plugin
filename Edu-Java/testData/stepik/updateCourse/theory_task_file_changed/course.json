@@ -11,7 +11,11 @@
           "name": "Theory",
           "stepic_id": 2,
           "update_date": "Apr 17, 2018 3:09:23 PM",
-          "task_files": {
+          "task_texts": {
+            "task": "This is theory"
+          },
+          "task_type": "theory",
+          "files": {
             "src/Task.java": {
               "name": "src/Task.java",
               "text": "class Task {\n  // put your task here\n}",
@@ -23,11 +27,7 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "task_texts": {
-            "task": "This is theory"
-          },
-          "task_type": "theory"
+          }
         }
       ]
     }

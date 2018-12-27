@@ -7,7 +7,10 @@
         {
           "name": "Hello, world!",
           "stepic_id": 0,
-          "task_files": {
+          "description_text": "<h2>Simple Functions</h2>\n<p>Take a look at <a href=\"http://kotlinlang.org/docs/reference/basic-syntax.html#defining-functions\">function syntax</a> and make the function <code>start</code> return the string <code>&quot;OK&quot;</code>.</p>\n<p>In the tasks the function <code>TODO()</code> is used that throws an exception. Your job during the koans will be to replace this function invocation with a meaningful code according to the problem.</p>",
+          "description_format": "html",
+          "task_type": "edu",
+          "files": {
             "src/Task.kt": {
               "name": "src/Task.kt",
               "text": "fun start(): String = TODO()\n",
@@ -29,15 +32,15 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "description_text": "<h2>Simple Functions</h2>\n<p>Take a look at <a href=\"http://kotlinlang.org/docs/reference/basic-syntax.html#defining-functions\">function syntax</a> and make the function <code>start</code> return the string <code>&quot;OK&quot;</code>.</p>\n<p>In the tasks the function <code>TODO()</code> is used that throws an exception. Your job during the koans will be to replace this function invocation with a meaningful code according to the problem.</p>",
-          "description_format": "html",
-          "task_type": "edu"
+          }
         },
         {
           "name": "Java to Kotlin conversion",
           "stepic_id": 0,
-          "task_files": {
+          "description_text": "<h2>Java to Kotlin conversion</h2>\n<p>We have a handy tool for Java developers: Java to Kotlin converter. To become familiar with it, please convert the java function <code>toJSON</code> in the file <code>JavaCode.java</code>. You can just copy-paste the code to Kotlin file and agree to automatically convert it to Kotlin.</p>",
+          "description_format": "html",
+          "task_type": "edu",
+          "files": {
             "src/JavaCode.java": {
               "name": "src/JavaCode.java",
               "text": "import java.util.Collection;\nimport java.util.Iterator;\n\npublic class JavaCode {\n    public String toJSON(Collection<Integer> collection) {\n        StringBuilder sb = new StringBuilder();\n        sb.append(\"[\");\n        Iterator<Integer> iterator = collection.iterator();\n        while (iterator.hasNext()) {\n            Integer element = iterator.next();\n            sb.append(element);\n            if (iterator.hasNext()) {\n                sb.append(\", \");\n            }\n        }\n        sb.append(\"]\");\n        return sb.toString();\n    }\n}",
@@ -64,10 +67,7 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "description_text": "<h2>Java to Kotlin conversion</h2>\n<p>We have a handy tool for Java developers: Java to Kotlin converter. To become familiar with it, please convert the java function <code>toJSON</code> in the file <code>JavaCode.java</code>. You can just copy-paste the code to Kotlin file and agree to automatically convert it to Kotlin.</p>",
-          "description_format": "html",
-          "task_type": "edu"
+          }
         }
       ]
     },
@@ -78,7 +78,10 @@
         {
           "name": "Comparison",
           "stepic_id": 0,
-          "task_files": {
+          "description_text": "<h2>Comparison</h2>\n<p>Read about <a href=\"http://kotlinlang.org/docs/reference/operator-overloading.html\">operator overloading</a> to learn how different conventions for operations like <code>==</code>, <code>&lt;</code>, <code>+</code> work in Kotlin. Add the function <code>compareTo</code> to the class MyDate to make it comparable. After that the code below <code>date1 &lt; date2</code> will start to compile.</p>\n<p>In Kotlin when you override a member, the modifier <a href=\"http://kotlinlang.org/docs/reference/classes.html#overriding-members\"><code>override</code></a> is mandatory.</p>",
+          "description_format": "html",
+          "task_type": "edu",
+          "files": {
             "src/Task.kt": {
               "name": "src/Task.kt",
               "text": "data class MyDate(val year: Int, val month: Int, val dayOfMonth: Int) : Comparable<MyDate> {\n    /* TODO */\n}\n\nfun compare(date1: MyDate, date2: MyDate) = date1 < date2\n",
@@ -100,10 +103,7 @@
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "description_text": "<h2>Comparison</h2>\n<p>Read about <a href=\"http://kotlinlang.org/docs/reference/operator-overloading.html\">operator overloading</a> to learn how different conventions for operations like <code>==</code>, <code>&lt;</code>, <code>+</code> work in Kotlin. Add the function <code>compareTo</code> to the class MyDate to make it comparable. After that the code below <code>date1 &lt; date2</code> will start to compile.</p>\n<p>In Kotlin when you override a member, the modifier <a href=\"http://kotlinlang.org/docs/reference/classes.html#overriding-members\"><code>override</code></a> is mandatory.</p>",
-          "description_format": "html",
-          "task_type": "edu"
+          }
         }
       ]
     },
@@ -114,15 +114,15 @@
         {
           "name": "PyCharm additional materials",
           "stepic_id": 0,
-          "task_files": {
+          "task_type": "edu",
+          "files": {
             "util/src/koansTestUtil.kt": {
               "name": "util/src/koansTestUtil.kt",
               "text": "package koans.util\n\nfun String.toMessage() = \"The function '$this' is implemented incorrectly\"\n\nfun String.toMessageInEquals() = toMessage().inEquals()\n\nfun String.inEquals() = this + \":\" + if (mode == Mode.WEB_DEMO) \" \" else \"<br><br>\"\n\nprivate enum class Mode { WEB_DEMO, EDUCATIONAL_PLUGIN }\nprivate val mode = Mode.EDUCATIONAL_PLUGIN\n",
               "placeholders": [],
               "is_visible": false
             }
-          },
-          "task_type": "edu"
+          }
         }
       ]
     }
