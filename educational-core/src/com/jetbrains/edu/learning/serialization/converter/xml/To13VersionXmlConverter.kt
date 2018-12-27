@@ -11,10 +11,12 @@ class To13VersionXmlConverter : BaseXmlConverter() {
     for ((path, additionalFile) in getChildMap<String, Element>(task, ADDITIONAL_FILES, true)) {
       val file = Element(TASK_FILE)
       file.addContent(additionalFile.cloneContent())
+      addChildWithName(file, NAME, path)
       taskFiles[path] = file
     }
     for ((path, text) in getChildMap<String, String>(task, TEST_FILES, true)) {
       val file = Element(TASK_FILE)
+      addChildWithName(file, NAME, path)
       addChildWithName(file, TEXT, text)
       addChildWithName(file, VISIBLE, false)
       taskFiles[path] = file

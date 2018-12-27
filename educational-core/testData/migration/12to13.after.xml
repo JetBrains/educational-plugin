@@ -58,6 +58,7 @@
                             <TaskFile>
                               <option name="text" value="" />
                               <option name="visible" value="true" />
+                              <option name="name" value="additional_file.txt" />
                             </TaskFile>
                           </value>
                         </entry>
@@ -80,6 +81,7 @@
                         <entry key="Tests.kt">
                           <value>
                             <TaskFile>
+                              <option name="name" value="Tests.kt" />
                               <option name="text" value="import org.junit.Assert&#10;import org.junit.Test&#10;&#10;class Test {&#10;    @Test fun testSolution() {&#10;        //TODO: implement your test here&#10;        Assert.assertTrue(&quot;Tests not implemented for the task&quot;, false)&#10;    }&#10;}" />
                               <option name="visible" value="false" />
                             </TaskFile>
