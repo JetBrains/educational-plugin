@@ -9,10 +9,8 @@ import com.android.tools.idea.gradle.project.sync.GradleSyncListener
 import com.android.tools.idea.projectsystem.GoogleMavenArtifactId
 import com.android.tools.idea.sdk.IdeSdks
 import com.android.tools.idea.templates.RepositoryUrlManager
-import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.ide.projectView.ProjectView
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -20,6 +18,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
+import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -27,7 +26,6 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.gradle.GradleConstants.BUILD_GRADLE
 import com.jetbrains.edu.learning.gradle.GradleCourseBuilderBase
@@ -121,8 +119,6 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
     val MIN_ANDROID_SDK: Key<Int> = Key("MIN_ANDROID_SDK")
     val COMPILE_ANDROID_SDK: Key<Int> = Key("COMPILE_ANDROID_SDK")
 
-    private val LOG: Logger = Logger.getInstance(AndroidCourseBuilder::class.java)
-
     // TODO: reuse AS project template to create all default files
     private fun defaultAndroidCourseFiles(packageName: String): List<TemplateFileInfo> {
       val packagePath = packageName.replace('.', VfsUtilCore.VFS_SEPARATOR_CHAR)
@@ -154,20 +150,5 @@ class AndroidCourseBuilder : GradleCourseBuilderBase() {
       sdkLocation,
       FileOpUtils.create()
     ) ?: defaultVersion
-  }
-
-  private data class TemplateFileInfo(val templateName: String, val path: String, val isVisible: Boolean)
-
-  private fun TemplateFileInfo.toTaskFile(params: Map<String, String>): TaskFile? {
-    val template = FileTemplateManager.getDefaultInstance().findInternalTemplate(templateName)
-    if (template == null) {
-      LOG.warn("Failed to obtain internal template: `$templateName`")
-      return null
-    }
-    val taskFile = TaskFile()
-    taskFile.name = path
-    taskFile.setText(template.getText(params))
-    taskFile.isVisible = isVisible
-    return taskFile
   }
 }

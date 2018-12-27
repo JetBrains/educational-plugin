@@ -1,12 +1,12 @@
 package com.jetbrains.edu.rust
 
-import com.intellij.ide.fileTemplates.FileTemplateManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.exists
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
+import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.EduCourseBuilder
@@ -14,7 +14,6 @@ import com.jetbrains.edu.learning.LanguageSettings
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.Lesson
-import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator
 import org.rust.cargo.CargoConstants
@@ -80,18 +79,18 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
 
     override fun initNewTask(lesson: Lesson, task: Task, info: NewStudyItemInfo) {
         if (task.taskFiles.isNotEmpty()) return
-        val templateManager = FileTemplateManager.getDefaultInstance()
-        val libRs = TaskFile("src/$LIB_RS", templateManager.getInternalTemplate(LIB_RS).text)
-        task.addTaskFile(libRs)
-        val mainRs = TaskFile("src/$MAIN_RS", templateManager.getInternalTemplate(MAIN_RS).text)
-        task.addTaskFile(mainRs)
-        val testText = templateManager.getInternalTemplate(TESTS_RS).text
-        task.addTestsTexts("tests/$TESTS_RS", testText)
-        val packageName = info.name.toPackageName()
-        val additionalText = templateManager.getInternalTemplate(CargoConstants.MANIFEST_FILE)
-            .getText(mapOf("PACKAGE_NAME" to packageName))
-        task.addAdditionalFile(CargoConstants.MANIFEST_FILE, additionalText)
+        for (templateInfo in defaultTaskFiles()) {
+            val taskFile = templateInfo.toTaskFile() ?: continue
+            task.addTaskFile(taskFile)
+        }
     }
+
+    private fun defaultTaskFiles(): List<TemplateFileInfo> = listOf(
+      TemplateFileInfo(LIB_RS, "src/$LIB_RS", true),
+      TemplateFileInfo(MAIN_RS, "src/$MAIN_RS", true),
+      TemplateFileInfo(TESTS_RS, "tests/$TESTS_RS", false),
+      TemplateFileInfo(CargoConstants.MANIFEST_FILE, CargoConstants.MANIFEST_FILE, true)
+    )
 
     companion object {
         private const val LIB_RS = RsConstants.LIB_RS_FILE

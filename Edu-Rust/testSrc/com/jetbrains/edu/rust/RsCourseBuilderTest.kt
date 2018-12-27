@@ -32,8 +32,8 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
       lesson {
         eduTask {
           taskFile("src/main.rs")
-          testFile("tests/tests.rs")
-          additionalFile("Cargo.toml")
+          taskFile("tests/tests.rs")
+          taskFile("Cargo.toml")
         }
       }
     }
