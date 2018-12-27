@@ -14,7 +14,7 @@ import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOMission
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOStation
-import com.jetbrains.edu.learning.checkio.notifications.infos.CheckiOStationsUnlockedNotification
+import com.jetbrains.edu.learning.checkio.notifications.CheckiONotification
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import java.io.IOException
 
@@ -27,8 +27,11 @@ class CheckiOCourseUpdater(
   @Throws(Exception::class)
   fun doUpdate() {
     val stationsFromServer = contentGenerator.stationsFromServer
-    val newStations = updateStations(stationsFromServer)
-    showNotification(newStations)
+    val newStations = mutableSetOf<CheckiOStation>()
+    val stationsWithNewMissions = mutableSetOf<CheckiOStation>()
+    updateStations(stationsFromServer, newStations, stationsWithNewMissions)
+    showNewContentUnlockedNotification(newStations, "New stations unlocked")
+    showNewContentUnlockedNotification(stationsWithNewMissions, "New missions unlocked in")
 
     runInEdt {
       synchronize()
@@ -36,21 +39,21 @@ class CheckiOCourseUpdater(
     }
   }
 
-  private fun showNotification(newStations: List<CheckiOStation>) {
-    if (newStations.isNotEmpty()) {
-      Notifications.Bus.notify(CheckiOStationsUnlockedNotification(newStations))
+  private fun showNewContentUnlockedNotification(stations: Collection<CheckiOStation>, title: String) {
+    if (stations.isNotEmpty()) {
+      Notifications.Bus.notify(CheckiONotification.Info(title, "", stations.joinToString("\n") { it.name }, null))
     }
   }
 
-  private fun updateStations(stationsFromServer: List<CheckiOStation>): List<CheckiOStation> {
-    val (existingStations, newStations) = stationsFromServer.partition(course.stations::contains)
-
-    updateExistingStations(existingStations)
+  private fun updateStations(stationsFromServer: List<CheckiOStation>,
+                             newStations: MutableSet<CheckiOStation>,
+                             stationsWithNewMissions: MutableSet<CheckiOStation>) {
+    val (existingStations, stationsToCreate) = stationsFromServer.partition(course.stations::contains)
+    updateExistingStations(existingStations, stationsWithNewMissions)
     course.items = stationsFromServer
     course.init(null, null, false)
-    createNewStations(newStations)
-
-    return newStations
+    createNewStations(stationsToCreate)
+    newStations.addAll(stationsToCreate)
   }
 
   private fun createNewStations(newStations: List<CheckiOStation>) {
@@ -64,20 +67,42 @@ class CheckiOCourseUpdater(
     }
   }
 
-  private fun updateExistingStations(stationsToUpdate: List<CheckiOStation>) {
+  private fun updateExistingStations(stationsToUpdate: List<CheckiOStation>, stationsWithNewMissions: MutableSet<CheckiOStation>) {
     val stationById = course.stations.associateBy { it.id }
     stationsToUpdate.forEach {
-      updateStation(it, stationById[it.id])
+      it.course = course
+      updateStation(it, stationById[it.id], stationsWithNewMissions)
     }
   }
 
-  private fun updateStation(newStation: CheckiOStation, oldStation: CheckiOStation?) {
+  private fun updateStation(newStation: CheckiOStation, oldStation: CheckiOStation?, stationsWithNewMissions: MutableSet<CheckiOStation>) {
     if (oldStation == null) {
       return LOG.error("Corresponding local station is not found for station from server [${newStation.id}; ${newStation.name}]")
     }
 
-    newStation.missions.forEach {
-      updateMission(it, oldStation.getMission(it.stepId))
+    for (newMission in newStation.missions) {
+      val oldMission = oldStation.getMission(newMission.stepId)
+      if (oldMission != null) {
+        updateMission(newMission, oldMission)
+      }
+      else {
+        createNewMission(oldStation, newStation, newMission, stationsWithNewMissions)
+      }
+    }
+  }
+
+  private fun createNewMission(oldStation: CheckiOStation,
+                               newStation: CheckiOStation,
+                               newMission: CheckiOMission,
+                               stationsWithNewMissions: MutableSet<CheckiOStation>) {
+    val lessonDir = oldStation.getLessonDir(project) ?: error("Failed to find station dir: ${oldStation.name}")
+    try {
+      newMission.lesson = newStation
+      GeneratorUtils.createTask(newMission, lessonDir)
+      stationsWithNewMissions.add(newStation)
+    }
+    catch (e: IOException) {
+      LOG.error("IO error occurred creating mission [${newMission.id}; ${newMission.name}]", e)
     }
   }
 
