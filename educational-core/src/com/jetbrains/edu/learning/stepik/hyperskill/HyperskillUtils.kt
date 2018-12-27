@@ -16,5 +16,6 @@ fun openSelectedStage(course: Course, project: Project) {
         NavigationUtils.navigateToTask(project, taskList[index], taskList[0])
       }
     }
+    PropertiesComponent.getInstance().setValue(HYPERSKILL_STAGE, 0, 0)
   }
 }
