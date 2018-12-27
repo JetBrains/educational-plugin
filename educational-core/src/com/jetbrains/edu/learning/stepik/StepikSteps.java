@@ -3,21 +3,24 @@ package com.jetbrains.edu.learning.stepik;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.EduVersions;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.DescriptionFormat;
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
+import com.jetbrains.edu.learning.courseFormat.FrameworkLesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class StepikSteps {
-  private static final Logger LOG = Logger.getInstance(StepikSteps.class);
 
   public static class StepsList {
     public List<StepSource> steps;
@@ -43,7 +46,6 @@ public class StepikSteps {
     @Expose public String taskType;
     @SerializedName("lesson_type")
     @Expose public String lessonType;
-    @Expose public List<FileWrapper> test;
     @Expose public String title;
     @SerializedName(SerializationUtils.Json.DESCRIPTION_TEXT)
     @Expose public String descriptionText;
@@ -55,8 +57,6 @@ public class StepikSteps {
     public FeedbackLink myFeedbackLink = new FeedbackLink();
     @Expose public List<TaskFile> files;
     @Expose public List<List<String>> samples;
-    @SerializedName("additional_files")
-    @Expose public Map<String, AdditionalFile> additionalFiles;
     @Expose public Integer executionMemoryLimit;
     @Expose public Integer executionTimeLimit;
     @Expose public Map<String, String> codeTemplates;
@@ -69,9 +69,7 @@ public class StepikSteps {
       source.descriptionText = task.getDescriptionText();
       source.descriptionFormat = task.getDescriptionFormat();
 
-      setTests(project, task, source);
       setTaskFiles(project, task, source);
-      setAdditionalFiles(project, task, source);
 
       source.taskType = task.getTaskType();
       source.lessonType = task.getLesson() instanceof FrameworkLesson ? "framework" : null;
@@ -99,39 +97,6 @@ public class StepikSteps {
         }
       }
     }
-
-    private static void setTests(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
-      source.test = new ArrayList<>();
-      if (task.getLesson().isAdditional()) {
-        return;
-      }
-
-      final VirtualFile taskDir = task.getTaskDir(project);
-      if (taskDir == null) {
-        LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
-      } else {
-        CCUtils.loadTestTextsToTask(task, taskDir);
-      }
-
-      for (Map.Entry<String, String> entry : task.getTestsText().entrySet()) {
-        source.test.add(new FileWrapper(entry.getKey(), entry.getValue()));
-      }
-    }
-  }
-
-  private static void setAdditionalFiles(@NotNull Project project, @NotNull Task task, @NotNull StepOptions source) {
-    // We don't need to load text for files from additional materials lesson
-    // because they are already loaded by `CCUtils#createAdditionalLesson`
-    if (!task.getLesson().isAdditional()) {
-      final VirtualFile taskDir = task.getTaskDir(project);
-      if (taskDir == null) {
-        LOG.warn(String.format("Can't find task dir for `%s` task", task.getName()));
-      } else {
-        CCUtils.loadAdditionalFileTextsToTask(task, taskDir);
-      }
-    }
-
-    source.additionalFiles = new HashMap<>(task.getAdditionalFiles());
   }
 
   public static class StepSourceWrapper {

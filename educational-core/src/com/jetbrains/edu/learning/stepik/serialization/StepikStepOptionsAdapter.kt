@@ -6,16 +6,15 @@ import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.serialization.SerializationUtils.Json.FORMAT_VERSION
 import com.jetbrains.edu.learning.serialization.converter.json.*
 import com.jetbrains.edu.learning.stepik.StepikSteps
-import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.lang.reflect.Type
 
 class StepikStepOptionsAdapter(val language: String?) : JsonDeserializer<StepikSteps.StepOptions> {
 
   @Throws(JsonParseException::class)
-  override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): StepikWrappers.StepOptions {
+  override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): StepikSteps.StepOptions {
     val stepOptionsJson = migrate(json.asJsonObject, JSON_FORMAT_VERSION, language)
     return GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create()
-      .fromJson(stepOptionsJson, StepikWrappers.StepOptions::class.java)
+      .fromJson(stepOptionsJson, StepikSteps.StepOptions::class.java)
   }
 
   companion object {
