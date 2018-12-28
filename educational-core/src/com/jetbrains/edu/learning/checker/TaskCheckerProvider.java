@@ -30,7 +30,7 @@ public interface TaskCheckerProvider {
     }
 
     @NotNull
-    default TaskChecker getIdeTaskChecker(@NotNull IdeTask task, @NotNull Project project) {
+    default TaskChecker<IdeTask> getIdeTaskChecker(@NotNull IdeTask task, @NotNull Project project) {
         return new IdeTaskChecker(task, project);
     }
 

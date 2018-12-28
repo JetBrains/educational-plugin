@@ -33,7 +33,7 @@ class GradleOutputTaskChecker(
       return FAILED_TO_CHECK
     }
 
-    val expectedOutput = VfsUtil.loadText(outputFile).postProcessOutput()
+    val expectedOutput = CheckUtils.postProcessOutput(VfsUtil.loadText(outputFile))
     if (expectedOutput != output) {
       return CheckResult(CheckStatus.Failed, "Expected output:\n<$expectedOutput>\nActual output:\n<$output>")
     }

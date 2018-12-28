@@ -21,6 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.editor.EduSingleFileEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import kotlin.collections.CollectionsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -108,5 +109,9 @@ public class CheckUtils {
       if (processOutput.getStderr().contains(error)) return true;
     }
     return false;
+  }
+
+  public static String postProcessOutput(@NotNull String output) {
+    return StringsKt.removeSuffix(output.replace(System.getProperty("line.separator"), "\n"), "\n");
   }
 }

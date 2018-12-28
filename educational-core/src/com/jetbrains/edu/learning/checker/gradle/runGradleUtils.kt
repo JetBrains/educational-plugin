@@ -130,12 +130,10 @@ class GradleCommandLine private constructor(
 }
 
 class GradleOutput(val isSuccess: Boolean, _messages: List<String>) {
-  val messages = _messages.map { it.postProcessOutput() }
+  val messages = _messages.map { CheckUtils.postProcessOutput(it) }
 
   val firstMessage: String get() = messages.firstOrNull { it.isNotBlank() } ?: "<no output>"
 }
-
-fun String.postProcessOutput(): String = replace(System.getProperty("line.separator"), "\n").removeSuffix("\n")
 
 /**
  * Run gradle 'run' task.
