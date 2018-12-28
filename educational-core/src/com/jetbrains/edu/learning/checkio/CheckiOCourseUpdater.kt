@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.EduUtils.INDEX_COMPARATOR
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.actions.RevertTaskAction
 import com.jetbrains.edu.learning.checkio.courseFormat.CheckiOCourse
@@ -80,15 +81,22 @@ class CheckiOCourseUpdater(
       return LOG.error("Corresponding local station is not found for station from server [${newStation.id}; ${newStation.name}]")
     }
 
+    var nextNewMissionIndex = oldStation.missions.size + 1
+
     for (newMission in newStation.missions) {
       val oldMission = oldStation.getMission(newMission.stepId)
       if (oldMission != null) {
         updateMission(newMission, oldMission)
+        newMission.index = oldMission.index
       }
       else {
         createNewMission(oldStation, newStation, newMission, stationsWithNewMissions)
+        newMission.index = nextNewMissionIndex
+        nextNewMissionIndex++
       }
     }
+
+    newStation.getTaskList().sortWith(INDEX_COMPARATOR)
   }
 
   private fun createNewMission(oldStation: CheckiOStation,
