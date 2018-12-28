@@ -5,7 +5,8 @@ import com.jetbrains.edu.learning.checker.CheckUtils
 import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.Course
-import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.containsString
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Assert.assertThat
 import org.rust.lang.RsLanguage
 
@@ -14,7 +15,7 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
   override fun createCourse(): Course {
     return course(language = RsLanguage) {
       lesson {
-        eduTask("CompilationFailed") {
+        eduTask("EduCompilationFailed") {
           taskFile("Cargo.toml", """
             [package]
             name = "task"
@@ -35,7 +36,7 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
               }
           """)
         }
-        eduTask("TestsFailed") {
+        eduTask("EduTestsFailed") {
           taskFile("Cargo.toml", """
             [package]
             name = "task"
@@ -56,6 +57,38 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
               }
           """)
         }
+        outputTask("OutputCompilationFailed") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/main.rs", """
+              fn main() {
+                  println("Hello, World");
+              }
+          """)
+          taskFile("tests/output.txt") {
+            withText("Hello, World!\n")
+          }
+        }
+        outputTask("OutputTestsFailed") {
+          taskFile("Cargo.toml", """
+            [package]
+            name = "task"
+            version = "0.1.0"
+            edition = "2018"
+          """)
+          rustTaskFile("src/main.rs", """
+              fn main() {
+                  println!("Hello, World");
+              }
+          """)
+          taskFile("tests/output.txt") {
+            withText("Hello, World!\n")
+          }
+        }
       }
     }
   }
@@ -64,11 +97,13 @@ class RsCheckErrorsTest : RsCheckersTestBase() {
     CheckActionListener.setCheckResultVerifier { task, checkResult ->
       assertEquals(CheckStatus.Failed, checkResult.status)
       val messageMatcher = when (task.name) {
-        "CompilationFailed" -> CoreMatchers.equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE)
-        "TestsFailed" -> CoreMatchers.containsString("assertion failed")
+        "EduCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE)
+        "EduTestsFailed" -> containsString("assertion failed")
+        "OutputCompilationFailed" -> equalTo(CheckUtils.COMPILATION_FAILED_MESSAGE)
+        "OutputTestsFailed" -> equalTo("Expected output:\n<Hello, World!\n>\nActual output:\n<Hello, World\n>")
         else -> error("Unexpected task name: ${task.name}")
       }
-      assertThat(checkResult.message, messageMatcher)
+      assertThat("Checker output for ${task.name} doesn't match", checkResult.message, messageMatcher)
     }
     doTest()
   }
