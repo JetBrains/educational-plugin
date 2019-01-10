@@ -1,12 +1,18 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduTestCase;
-import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
+import com.jetbrains.edu.learning.courseFormat.FeedbackLink;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
@@ -23,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.jetbrains.edu.learning.EduNames.TASK;
-import static com.jetbrains.edu.learning.serialization.SerializationUtils.Xml.EDU_TASK;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.EDU_TASK;
+import static com.jetbrains.edu.learning.serialization.SerializationUtils.Json.TASK;
 import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 
 public class StepikFormatTest extends EduTestCase {
