@@ -25,19 +25,19 @@ interface HyperskillService {
     @Query("refresh_token") refreshToken: String
   ): Call<TokenInfo>
 
-  @GET("api/users/{id}")
+  @GET("api/users/{id}/")
   fun getUserInfo(@Path("id") userId: Int): Call<UsersList>
 
-  @GET("api/stages")
+  @GET("api/stages/")
   fun stages(@Query("project") projectId: Int): Call<StagesList>
 
-  @GET("api/topics")
+  @GET("api/topics/")
   fun topics(@Query("stage") stageId: Int): Call<TopicsList>
 
-  @GET("api/steps")
+  @GET("api/steps/")
   fun steps(@Query("lesson") lessonId: Int): Call<StepikSteps.StepsList>
 
-  @POST("api/attempts")
+  @POST("api/attempts/")
   fun attempt(@Query("step") stepId: Int): Call<AttemptsList>
 
   @POST("api/submissions/")
