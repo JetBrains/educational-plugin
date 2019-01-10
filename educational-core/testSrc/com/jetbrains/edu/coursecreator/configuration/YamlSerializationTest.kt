@@ -22,7 +22,7 @@ class YamlSerializationTest : EduTestCase() {
     }.findTask("lesson1", "task1")
     doTest(task, """
     |type: edu
-    |task_files:
+    |files:
     |- name: Test.java
     |  placeholders:
     |  - offset: 0
@@ -56,7 +56,7 @@ class YamlSerializationTest : EduTestCase() {
     }.findTask("lesson2", "task1")
     doTest(task, """
     |type: edu
-    |task_files:
+    |files:
     |- name: Test.java
     |  placeholders:
     |  - offset: 0

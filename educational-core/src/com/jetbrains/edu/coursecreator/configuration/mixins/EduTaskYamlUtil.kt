@@ -11,7 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
                 isGetterVisibility = JsonAutoDetect.Visibility.NONE,
                 fieldVisibility = JsonAutoDetect.Visibility.NONE)
 class EduTaskYamlMixin : TaskYamlMixin() {
-  @JsonProperty("task_files")
+  @JsonProperty("files")
   @JsonSerialize(contentConverter = Converter.None::class)
   override fun getTaskFileValues(): Collection<TaskFile> {
     throw NotImplementedInMixin()
