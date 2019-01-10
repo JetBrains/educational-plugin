@@ -126,7 +126,6 @@ object YamlFormatSynchronizer {
     return COURSE_CONFIG == name || LESSON_CONFIG == name || TASK_CONFIG == name || SECTION_CONFIG == name
   }
 
-  @VisibleForTesting
   fun deserializeTask(taskYaml: String): Task {
     val treeNode = MAPPER.readTree(taskYaml)
     val type = treeNode.get("type")?.asText()
@@ -144,7 +143,6 @@ object YamlFormatSynchronizer {
     return MAPPER.treeToValue(treeNode, clazz)
   }
 
-  @VisibleForTesting
   fun deserializeLesson(lessonYaml: String): Lesson {
     val treeNode = MAPPER.readTree(lessonYaml)
     val type = treeNode.get("type")?.asText()
