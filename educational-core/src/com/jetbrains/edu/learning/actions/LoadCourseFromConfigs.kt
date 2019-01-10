@@ -36,14 +36,11 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
       val itemDir = courseDir.findChild(it.name) ?: throwNoMatchingDirError(it)
       val sectionConfig = itemDir.findChild(YamlFormatSettings.SECTION_CONFIG)
       if (sectionConfig != null) {
-        //load section
-        val section = loadStudyItem(sectionConfig, Section::class.java)
-        return@map section
+        return@map loadSectionFromConfig(sectionConfig, course, it, itemDir, project)
       }
       else {
         val lessonConfig = itemDir.findChild(YamlFormatSettings.LESSON_CONFIG) ?: throwNoConfigFileError(it)
-        val lesson = loadLessonFromConfig(lessonConfig, project, course, it.name)
-        return@map lesson
+        return@map loadLessonFromConfig(lessonConfig, project, course, null, it.name)
       }
     }
 
@@ -69,6 +66,27 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     }
   }
 
+  private fun loadSectionFromConfig(sectionConfig: VirtualFile,
+                                    course: Course,
+                                    it: StudyItem,
+                                    itemDir: VirtualFile,
+                                    project: Project): Section {
+    val section = loadStudyItem(sectionConfig, Section::class.java)
+    section.course = course
+    section.name = it.name
+    val lessons = section.items.map {
+      val lessonDir = itemDir.findChild(it.name) ?: throwNoMatchingDirError(section)
+      val lessonConfig = lessonDir.findChild(YamlFormatSettings.LESSON_CONFIG) ?: throwNoConfigFileError(it)
+      val lesson = loadLessonFromConfig(lessonConfig, project, course, section, it.name)
+      lesson
+    }
+    for ((i, item) in lessons.withIndex()) {
+      item.index = i + 1
+    }
+    section.items = lessons
+    return section
+  }
+
   private fun throwNoMatchingDirError(it: StudyItem): Nothing {
     error("Failed to find matching dir for ${it.name}")
   }
@@ -80,10 +98,12 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
   private fun loadLessonFromConfig(configFile: VirtualFile,
                                    project: Project,
                                    course: Course,
+                                   section: Section?,
                                    name: String): Lesson {
     val lesson = deserializeLesson(VfsUtil.loadText(configFile))
     lesson.name = name
     lesson.course = course
+    lesson.section = section
     val tasks = lesson.taskList.map {
       val taskDir = configFile.parent.findChild(it.name) ?: throwNoMatchingDirError(it)
       val taskConfig = taskDir.findChild(YamlFormatSettings.TASK_CONFIG) ?: throwNoConfigFileError(it)
@@ -103,7 +123,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
   }
 
   private fun findTaskDescriptionFile(task: Task, project: Project): VirtualFile {
-    val taskDir = task.getTaskDir(project) ?: error("No task dir for task ${task.name}")
+    val taskDir = task.getTaskDir(project) ?: throwNoMatchingDirError(task)
     val htmlFile = taskDir.findChild(EduNames.TASK_HTML)
     if (htmlFile != null) {
       return htmlFile
