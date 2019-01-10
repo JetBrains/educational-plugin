@@ -1,6 +1,9 @@
 package com.jetbrains.edu.learning.actions
 
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
@@ -26,6 +29,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     val project = e.project ?: return
     val projectDir = project.guessProjectDir() ?: return
     val courseConfig = projectDir.findChild(YamlFormatSettings.COURSE_CONFIG) ?: return
+    ApplicationManager.getApplication().invokeAndWait { FileDocumentManager.getInstance().saveAllDocuments() }
     val course = loadStudyItem(courseConfig, Course::class.java)
     val courseDir = course.getDir(project)
     val items = course.items.map {
@@ -58,6 +62,11 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     }
     project.getComponent(EduProjectComponent::class.java).projectOpened()
     project.getComponent(CCProjectComponent::class.java).projectOpened()
+    val openFiles = FileEditorManager.getInstance(project).openFiles
+    for (file in openFiles) {
+      FileEditorManager.getInstance(project).closeFile(file)
+      FileEditorManager.getInstance(project).openFile(file, true)
+    }
   }
 
   private fun throwNoMatchingDirError(it: StudyItem): Nothing {
@@ -93,7 +102,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
     return lesson
   }
 
-  private fun findTaskDescriptionFile(task: Task, project: Project) : VirtualFile {
+  private fun findTaskDescriptionFile(task: Task, project: Project): VirtualFile {
     val taskDir = task.getTaskDir(project) ?: error("No task dir for task ${task.name}")
     val htmlFile = taskDir.findChild(EduNames.TASK_HTML)
     if (htmlFile != null) {
