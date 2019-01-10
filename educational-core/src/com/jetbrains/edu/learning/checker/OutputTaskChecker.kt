@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -45,18 +46,20 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
       }
     })
     try {
-      runner?.execute(env) {
-        it.processHandler?.addProcessListener(object : ProcessAdapter() {
-          override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-            if (outputType == ProcessOutputTypes.STDOUT) {
-              output.add(event.text)
+      runInEdt {
+        runner?.execute(env) { descriptor ->
+          descriptor.processHandler?.addProcessListener(object : ProcessAdapter() {
+            override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+              if (outputType == ProcessOutputTypes.STDOUT) {
+                output.add(event.text)
+              }
             }
-          }
 
-          override fun processTerminated(event: ProcessEvent) {
-            latch.countDown()
-          }
-        })
+            override fun processTerminated(event: ProcessEvent) {
+              latch.countDown()
+            }
+          })
+        }
       }
 
       latch.await()
