@@ -44,37 +44,43 @@ open class OutputTaskChecker(task: OutputTask, project: Project) : TaskChecker<O
         }
       }
     })
-    runner?.execute(env) {
-      it.processHandler?.addProcessListener(object : ProcessAdapter() {
-        override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-          if (outputType == ProcessOutputTypes.STDOUT) {
-            output.add(event.text)
+    try {
+      runner?.execute(env) {
+        it.processHandler?.addProcessListener(object : ProcessAdapter() {
+          override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+            if (outputType == ProcessOutputTypes.STDOUT) {
+              output.add(event.text)
+            }
           }
-        }
 
-        override fun processTerminated(event: ProcessEvent) {
-          latch.countDown()
-        }
-      })
-    }
+          override fun processTerminated(event: ProcessEvent) {
+            latch.countDown()
+          }
+        })
+      }
 
-    latch.await()
-    connection.disconnect()
-    if (processNotStarted) {
-      return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
-    }
+      latch.await()
+      connection.disconnect()
+      if (processNotStarted) {
+        return CheckResult(CheckStatus.Unchecked, NOT_RUNNABLE_MESSAGE)
+      }
 
-    val outputPatternFile = task.getTaskDir(project)?.findChild(OUTPUT_PATTERN_NAME)
-            ?: return CheckResult.FAILED_TO_CHECK
-    val expectedOutput = VfsUtil.loadText(outputPatternFile)
-    var outputString = output.joinToString("")
-    if (outputString.isEmpty()) {
-      outputString = "<no output>"
+      val outputPatternFile = task.getTaskDir(project)?.findChild(OUTPUT_PATTERN_NAME)
+                              ?: return CheckResult.FAILED_TO_CHECK
+      val expectedOutput = VfsUtil.loadText(outputPatternFile)
+      var outputString = output.joinToString("")
+      if (outputString.isEmpty()) {
+        outputString = "<no output>"
+      }
+      if (expectedOutput.dropLastLineBreak() == outputString.dropLastLineBreak()) {
+        return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
+      }
+      return CheckResult(CheckStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
     }
-    if (expectedOutput.dropLastLineBreak() == outputString.dropLastLineBreak()) {
-      return CheckResult(CheckStatus.Solved, TestsOutputParser.CONGRATULATIONS)
+    catch (e: Exception) {
+      LOG.error(e)
+      return CheckResult.FAILED_TO_CHECK
     }
-    return CheckResult(CheckStatus.Failed, "Expected output:\n$expectedOutput \nActual output:\n$outputString")
   }
 
   private fun String.dropLastLineBreak() : String = if (this.endsWith('\n')) this.dropLast(1) else this
