@@ -1,11 +1,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.application.ApplicationManager
@@ -14,12 +10,14 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikSteps
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
+import com.jetbrains.edu.learning.stepik.hyperskill.serialization.JacksonStepOptionsDeserializer
+import com.jetbrains.edu.learning.stepik.hyperskill.serialization.JacksonTaskFileDeserializer
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
@@ -41,7 +39,8 @@ object HyperskillConnector {
 
   init {
     val module = SimpleModule()
-    module.addDeserializer(StepikSteps.FileWrapper::class.java, FileWrapperDeserializer())
+    module.addDeserializer(StepikSteps.StepOptions::class.java, JacksonStepOptionsDeserializer())
+    module.addDeserializer(TaskFile::class.java, JacksonTaskFileDeserializer())
     val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     objectMapper.registerModule(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
@@ -191,15 +190,5 @@ object HyperskillConnector {
 
   private interface HyperskillLoggedIn {
     fun userLoggedIn()
-  }
-}
-
-class FileWrapperDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StepikSteps.FileWrapper>(vc) {
-
-  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): StepikSteps.FileWrapper {
-    val node: JsonNode = jp.codec.readTree(jp)
-    val name = node.get("name").asText()
-    val text = StringUtil.convertLineSeparators(node.get("text").asText())
-    return StepikSteps.FileWrapper(name, text)
   }
 }

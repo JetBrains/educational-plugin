@@ -131,17 +131,4 @@ public class StepikSteps {
       }
     }
   }
-
-  public static class FileWrapper {
-    @Expose public String name;
-    @Expose public String text;
-
-    @SuppressWarnings("unused")
-    public FileWrapper() { }
-
-    public FileWrapper(String name, String text) {
-      this.name = name;
-      this.text = text;
-    }
-  }
 }
