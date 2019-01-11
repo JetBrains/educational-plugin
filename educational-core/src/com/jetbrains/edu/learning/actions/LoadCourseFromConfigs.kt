@@ -7,6 +7,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
@@ -66,6 +67,7 @@ class LoadCourseFromConfigs : DumbAwareAction("Load course from configs") {
       FileEditorManager.getInstance(project).closeFile(file)
       FileEditorManager.getInstance(project).openFile(file, true)
     }
+    Messages.showInfoMessage("Course has been loaded successfully", "Course Loaded")
   }
 
   private fun loadSectionFromConfig(sectionConfig: VirtualFile,
