@@ -2,6 +2,7 @@ package com.jetbrains.edu.learning.checker
 
 import com.intellij.execution.ProgramRunnerUtil
 import com.intellij.execution.executors.DefaultRunExecutor
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.StudyTaskManager
@@ -19,7 +20,9 @@ open class TheoryTaskChecker(task: TheoryTask, project: Project) : TaskChecker<T
     }
 
     StudyTaskManager.getInstance(project).course?.let {
-      ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
+      runInEdt {
+        ProgramRunnerUtil.executeConfiguration(configuration, DefaultRunExecutor.getRunExecutorInstance())
+      }
     }
     return CheckResult(CheckStatus.Solved, "")
   }
