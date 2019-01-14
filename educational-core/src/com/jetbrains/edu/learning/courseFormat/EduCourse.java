@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.EduVersions;
+import com.jetbrains.edu.learning.configuration.EduConfiguratorManager;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,24 +15,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class EduCourse extends Course {
-
   private static final Logger LOG = Logger.getInstance(Course.class);
-
   private static List<String> ourSupportedLanguages;
 
+  // Fields from stepik:
+  @SerializedName("is_idea_compatible") private boolean isCompatible = true;
   //course type in format "pycharm<version> <language>"
   @SerializedName("course_format") private String myType =
     String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
-  @SerializedName("is_idea_compatible") private boolean isCompatible = true;
-
   // in CC mode is used to store top-level lessons section id
   @SerializedName("sections") List<Integer> sectionIds = new ArrayList<>();
   List<Integer> instructors = new ArrayList<>();
   @Expose private int id;
   @Expose @SerializedName("update_date") private Date myUpdateDate = new Date(0);
   @Expose @SerializedName("is_public") boolean isPublic;
-  @Expose private boolean myLoadSolutions = true; // disabled for reset courses
 
+  // Not published to stepik:
+  @Expose private boolean myLoadSolutions = true; // disabled for reset courses
   @SerializedName("additional_materials_update_date") private Date myAdditionalMaterialsUpdateDate = new Date(0);
 
   public String getType() {
@@ -185,5 +184,17 @@ public class EduCourse extends Course {
 
   public boolean isRemote() {
     return id != 0;
+  }
+
+  public void convertToLocal() {
+    isPublic = false;
+    isCompatible = true;
+    id = 0;
+    myUpdateDate = new Date(0);
+    sectionIds = new ArrayList<>();
+    instructors = new ArrayList<>();
+    myType = String.format("%s%d %s", StepikNames.PYCHARM_PREFIX, EduVersions.JSON_FORMAT_VERSION, getLanguage());
+    myLoadSolutions = true;
+    myAdditionalMaterialsUpdateDate = new Date(0);
   }
 }

@@ -97,7 +97,6 @@ public class CCPushCourse extends DumbAwareAction {
       new StepikCourseUploader(project, (EduCourse)course).updateCourse();
     }
     else {
-
       postCourse(project, course);
     }
     return false;

@@ -17,7 +17,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.EduNames;
 import com.jetbrains.edu.learning.EduSettings;
@@ -334,7 +333,7 @@ public class CCStepikConnector {
 
   private static boolean checkIfAuthorized(@NotNull Project project, @NotNull String failedActionName) {
     if (!EduSettings.isLoggedIn()) {
-      showStepikNotification(project, NotificationType.ERROR, failedActionName);
+      showStepikNotification(project, failedActionName);
       return false;
     }
     return true;
@@ -521,11 +520,12 @@ public class CCStepikConnector {
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) return false;
 
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES
-                                        + String.valueOf(task.getStepId()));
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES + task.getStepId());
     final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
 
-    final EduConfigurator configurator = CourseExt.getConfigurator(lesson.getCourse());
+    final Course course = lesson.getCourse();
+    assert course instanceof EduCourse;
+    final EduConfigurator configurator = CourseExt.getConfigurator(course);
     if (configurator == null) return false;
     final String[] requestBody = new String[1];
     ApplicationManager.getApplication().invokeAndWait(() -> {
@@ -548,6 +548,9 @@ public class CCStepikConnector {
         case HttpStatus.SC_NOT_FOUND:
           // TODO: support case when lesson was removed from Stepik too
           return postTask(project, task, task.getLesson().getId());
+        case HttpStatus.SC_FORBIDDEN:
+          showNoRightsToUpdateNotification(project, (EduCourse)course);
+          return false;
         default:
           final String message = "Failed to update task ";
           LOG.error(message + responseString);
@@ -574,7 +577,7 @@ public class CCStepikConnector {
       LOG.warn("Failed to get current course info");
     }
 
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.COURSES + "/" + String.valueOf(course.getId()));
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.COURSES + "/" + course.getId());
     String requestBody = new Gson().toJson(new StepikWrappers.CourseWrapper(course));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
     try {
@@ -660,7 +663,7 @@ public class CCStepikConnector {
                                         boolean showNotification, int sectionId) {
     if (!checkIfAuthorized(project, "update lesson")) return null;
 
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + String.valueOf(lesson.getId()));
+    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.LESSONS + lesson.getId());
 
     String requestBody = new Gson().toJson(new StepikWrappers.LessonWrapper(lesson));
     request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
@@ -763,11 +766,8 @@ public class CCStepikConnector {
       @Override
       protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
         notification.expire();
-        Course nonRemoteCourse =
-          XmlSerializer.deserialize(XmlSerializer.serialize(course), Course.class);
-        nonRemoteCourse.init(null, null, true);
-        StudyTaskManager.getInstance(project).setCourse(nonRemoteCourse);
-        postCourseWithProgress(project, nonRemoteCourse);
+        course.convertToLocal();
+        postCourseWithProgress(project, course);
       }
     };
   }
@@ -786,20 +786,20 @@ public class CCStepikConnector {
   public static AnAction openOnStepikAction(@NotNull String url) {
     return new AnAction("Open on Stepik") {
       @Override
-      public void actionPerformed(AnActionEvent e) {
+      public void actionPerformed(@NotNull AnActionEvent e) {
         BrowserUtil.browse(StepikNames.STEPIK_URL + url);
       }
     };
   }
 
   private static void showStepikNotification(@NotNull Project project,
-                                             @NotNull NotificationType notificationType, @NotNull String failedActionName) {
+                                             @NotNull String failedActionName) {
     String text = "Log in to Stepik to " + failedActionName;
-    Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, notificationType);
+    Notification notification = new Notification("Stepik", "Failed to " + failedActionName, text, NotificationType.ERROR);
     notification.addAction(new DumbAwareAction("Log in") {
 
       @Override
-      public void actionPerformed(AnActionEvent e) {
+      public void actionPerformed(@NotNull AnActionEvent e) {
         StepikConnector.doAuthorize(() -> showOAuthDialog());
         notification.expire();
       }
@@ -808,11 +808,11 @@ public class CCStepikConnector {
     notification.notify(project);
   }
 
-  public static int postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
+  public static void postLesson(@NotNull final Project project, @NotNull final Lesson lesson, int position, int sectionId) {
     Lesson postedLesson = postLessonInfo(project, lesson, sectionId, position);
 
     if (postedLesson == null) {
-      return -1;
+      return;
     }
     lesson.setId(postedLesson.getId());
     lesson.unitId = postedLesson.unitId;
@@ -823,8 +823,6 @@ public class CCStepikConnector {
       }
       postTask(project, task, postedLesson.getId());
     }
-
-    return postedLesson.getId();
   }
 
   public static Lesson postLessonInfo(@NotNull Project project, @NotNull Lesson lesson, int sectionId, int position) {
