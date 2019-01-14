@@ -22,6 +22,7 @@ import icons.EducationalCoreIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class SyncCourseAction extends DumbAwareAction {
 
   public SyncCourseAction() {
@@ -29,7 +30,7 @@ public class SyncCourseAction extends DumbAwareAction {
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     if (project != null) {
       doUpdate(project);
@@ -84,7 +85,7 @@ public class SyncCourseAction extends DumbAwareAction {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     boolean visible = isAvailable(e.getProject());
     Presentation presentation = e.getPresentation();
     presentation.setEnabledAndVisible(visible);
