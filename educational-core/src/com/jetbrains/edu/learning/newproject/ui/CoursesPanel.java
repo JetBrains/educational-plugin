@@ -286,10 +286,6 @@ public class CoursesPanel extends JPanel {
     return myCoursesList.getSelectedValue();
   }
 
-  public void setSelectedCourse(Course course) {
-    myCoursesList.setSelectedValue(course, true);
-  }
-
   private void createUIComponents() {
     myCoursePanel = new CoursePanel(false, true);
     mySearchField = new FilterComponent("Edu.NewCourse", 5, true) {
@@ -395,7 +391,7 @@ public class CoursesPanel extends JPanel {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       String localCourseOption = "Import local course";
       String stepikCourseOption = "Import Stepik course";
 

@@ -9,9 +9,11 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.StepikNames
 
 class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
 
@@ -60,7 +62,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
       return null
     }
     val language = chooseLanguageIfNeeded(languages, course) ?: return null
-    course.type = "pycharm2 " + language.id
+    course.type = String.format("%s%s %s", StepikNames.PYCHARM_PREFIX, JSON_FORMAT_VERSION, language.id)
     course.language = language.id
     return course
   }
