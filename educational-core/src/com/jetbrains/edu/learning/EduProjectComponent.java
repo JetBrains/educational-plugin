@@ -18,15 +18,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.learning.configuration.EduConfigurator;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
@@ -37,7 +34,6 @@ import com.jetbrains.edu.learning.handlers.UserCreatedFileListener;
 import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import com.jetbrains.edu.learning.projectView.CourseViewPane;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.*;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +44,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.jetbrains.edu.learning.EduUtils.*;
 import static com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_UNIX;
-import static com.jetbrains.edu.learning.stepik.StepikNames.STEP_ID;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class EduProjectComponent implements ProjectComponent {
@@ -63,13 +58,10 @@ public class EduProjectComponent implements ProjectComponent {
 
   @Override
   public void projectOpened() {
-    if (myProject.isDisposed()) {
+    if (myProject.isDisposed() || !isStudyProject(myProject)) {
       return;
     }
 
-    if (!isStudyProject(myProject)) {
-      return;
-    }
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       ToolWindowManager.getInstance(myProject).invokeLater(() -> selectProjectView());
     }
@@ -81,15 +73,6 @@ public class EduProjectComponent implements ProjectComponent {
           return;
         }
 
-        if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
-          StepikConnector.updateCourseIfNeeded(myProject, (EduCourse)course);
-        }
-
-        final StepikUser currentUser = EduSettings.getInstance().getUser();
-        if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo) && !CCUtils.isCourseCreator(myProject)) {
-          loadSolutionsFromStepik(course);
-        }
-
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(myProject);
         if (CCUtils.isCourseCreator(myProject) && !propertiesComponent.getBoolean(HINTS_IN_DESCRIPTION_PROPERTY)) {
           moveHintsToTaskDescription(course);
@@ -99,9 +82,6 @@ public class EduProjectComponent implements ProjectComponent {
         if (EduGradleUtils.isConfiguredWithGradle(myProject)) {
           setupGradleProject(course);
         }
-
-        addStepikWidget();
-        selectStep(course);
 
         ApplicationManager.getApplication().invokeLater(
           () -> ApplicationManager.getApplication().runWriteAction(() -> EduUsagesCollector.projectTypeOpened(course.getCourseMode())));
@@ -178,21 +158,6 @@ public class EduProjectComponent implements ProjectComponent {
     }
   }
 
-  private void loadSolutionsFromStepik(@NotNull Course course) {
-    if (course instanceof EduCourse && ((EduCourse)course).isRemote() && ((EduCourse)course).isLoadSolutions()) {
-      if (PropertiesComponent.getInstance(myProject).getBoolean(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY)) {
-        PropertiesComponent.getInstance(myProject).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, false);
-        return;
-      }
-      try {
-        StepikSolutionsLoader.getInstance(myProject).loadSolutionsInBackground();
-      }
-      catch (Exception e) {
-        LOG.warn(e.getMessage());
-      }
-    }
-  }
-
   @VisibleForTesting
   public void moveHintsToTaskDescription(@NotNull Course course) {
     AtomicBoolean hasPlaceholderHints = new AtomicBoolean(false);
@@ -230,22 +195,6 @@ public class EduProjectComponent implements ProjectComponent {
     if (hasPlaceholderHints.get()) {
       EduUsagesCollector.projectWithPlaceholderHintsAll();
       EduUsagesCollector.projectWithPlaceholderHints(course.getId());
-    }
-  }
-
-  private void addStepikWidget() {
-    StepikUserWidget widget = getVisibleWidget(myProject);
-    StatusBar statusBar = WindowManager.getInstance().getStatusBar(myProject);
-    if (widget != null) {
-      statusBar.removeWidget(StepikUserWidget.ID);
-    }
-    statusBar.addWidget(new StepikUserWidget(myProject), "before Position");
-  }
-
-  private void selectStep(@NotNull Course course) {
-    int stepId = PropertiesComponent.getInstance().getInt(STEP_ID, 0);
-    if (stepId != 0) {
-      navigateToStep(myProject, course, stepId);
     }
   }
 
