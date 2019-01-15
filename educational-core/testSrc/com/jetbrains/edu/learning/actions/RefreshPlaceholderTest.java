@@ -4,12 +4,12 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage;
 import com.intellij.testFramework.TestActionEvent;
 import com.jetbrains.edu.learning.EduTestCase;
 import com.jetbrains.edu.learning.StudyTaskManager;
-import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.EduCourse;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
+import com.jetbrains.edu.learning.courseFormat.*;
+import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.List;
 
 public class RefreshPlaceholderTest extends EduTestCase {
 
@@ -48,6 +48,28 @@ public class RefreshPlaceholderTest extends EduTestCase {
     assertEquals("Look! There is test placeholder.\n" +
             "Look! There is second placeholder.",
         myFixture.getDocument(myFixture.getFile()).getText());
+  }
+
+  public void testRefreshSecondPlaceholderStartOffset() {
+    configureByTaskFile(1, 3, "taskFile3.txt");
+    myFixture.getEditor().getCaretModel().moveToOffset(16);
+
+    myFixture.type("test test");
+    myFixture.getEditor().getCaretModel().moveToOffset(56);
+    myFixture.type("test");
+    myFixture.testAction(new RefreshAnswerPlaceholder());
+
+    assertEquals("Look! There is test test placeholder.\n" +
+            "Look! There is second placeholder.",
+        myFixture.getDocument(myFixture.getFile()).getText());
+    final Course course = StudyTaskManager.getInstance(getProject()).getCourse();
+    final Lesson lesson = course.getLesson("lesson1");
+    final Task task = lesson.getTask("task3");
+    final TaskFile taskFile = task.getTaskFile("taskFile3.txt");
+    final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
+    assertEquals(2, placeholders.size());
+    final AnswerPlaceholder secondPlaceholder = placeholders.get(1);
+    assertEquals(53, secondPlaceholder.getOffset());
   }
 
   public void testFirstRefreshPlaceholder() {

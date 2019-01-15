@@ -136,8 +136,10 @@ public class AnswerPlaceholder {
   /**
    * Returns window to its initial state
    */
-  public void reset() {
-    myOffset = myInitialState.getOffset();
+  public void reset(boolean revertStartOffset) {
+    if (revertStartOffset) {
+      myOffset = myInitialState.getOffset();
+    }
     myLength = myInitialState.getLength();
     myStatus = CheckStatus.Unchecked;
     myIsInitializedFromDependency = false;

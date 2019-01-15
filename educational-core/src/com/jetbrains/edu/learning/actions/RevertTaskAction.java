@@ -83,7 +83,7 @@ public class RevertTaskAction extends DumbAwareAction implements RightAlignedToo
 
   static void resetAnswerPlaceholders(@NotNull TaskFile selectedTaskFile) {
     for (AnswerPlaceholder answerPlaceholder : selectedTaskFile.getAnswerPlaceholders()) {
-      answerPlaceholder.reset();
+      answerPlaceholder.reset(true);
     }
   }
 
