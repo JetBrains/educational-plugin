@@ -111,12 +111,6 @@ public abstract class Course extends ItemContainer {
       filter(item -> item.getName().equals(name)).findFirst().orElse(null);
   }
 
-  @Nullable
-  public Lesson getLesson(int lessonId) {
-    return (Lesson)items.stream().filter(Lesson.class::isInstance).
-      filter(item -> item.getId() == lessonId).findFirst().orElse(null);
-  }
-
   @NotNull
   public List<StepikUserInfo> getAuthors() {
     return authors;
