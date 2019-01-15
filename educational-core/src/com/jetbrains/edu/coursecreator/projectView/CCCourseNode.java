@@ -37,7 +37,7 @@ public class CCCourseNode extends CourseNode {
 
   @Nullable
   @Override
-  public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
+  public AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode childNode) {
     final AbstractTreeNode node = super.modifyChildNode(childNode);
     if (node != null) return node;
     if (childNode instanceof PsiFileNode) {

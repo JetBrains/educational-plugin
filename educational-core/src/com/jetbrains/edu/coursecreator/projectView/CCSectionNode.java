@@ -23,8 +23,9 @@ public class CCSectionNode extends SectionNode {
     return new CCLessonNode(myProject, directory, getSettings(), lesson);
   }
 
+  @Nullable
   @Override
-  protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
+  protected AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode child) {
     AbstractTreeNode node = super.modifyChildNode(child);
     if (node != null) {
       return node;

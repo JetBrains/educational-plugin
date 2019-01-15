@@ -53,7 +53,7 @@ public class TaskNode extends EduNode {
 
   @Override
   @Nullable
-  public AbstractTreeNode modifyChildNode(AbstractTreeNode childNode) {
+  public AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode childNode) {
     return CourseViewUtils.modifyTaskChildNode(myProject, childNode, myTask, this::createChildDirectoryNode);
   }
 

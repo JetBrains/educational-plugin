@@ -57,7 +57,8 @@ public abstract class EduNode extends PsiDirectoryNode {
     return result;
   }
 
-  protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
+  @Nullable
+  protected AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode child) {
     return child;
   }
 }

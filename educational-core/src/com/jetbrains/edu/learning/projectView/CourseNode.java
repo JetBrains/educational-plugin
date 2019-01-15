@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.Section;
 import icons.EducationalCoreIcons;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CourseNode extends EduNode {
   protected final Course myCourse;
@@ -36,8 +37,9 @@ public class CourseNode extends EduNode {
     data.addText("  " + tasksSolved.toString() + "/" + tasksTotal.toString(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
   }
 
+  @Nullable
   @Override
-  protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
+  protected AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode child) {
     Object value = child.getValue();
     if (value instanceof PsiDirectory) {
       PsiDirectory directory = (PsiDirectory)value;

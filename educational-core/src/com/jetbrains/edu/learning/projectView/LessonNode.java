@@ -45,7 +45,7 @@ public class LessonNode extends EduNode {
 
   @Nullable
   @Override
-  protected AbstractTreeNode modifyChildNode(AbstractTreeNode child) {
+  protected AbstractTreeNode modifyChildNode(@NotNull AbstractTreeNode child) {
     Object value = child.getValue();
     if (value instanceof PsiDirectory) {
       PsiDirectory directory = (PsiDirectory)value;
