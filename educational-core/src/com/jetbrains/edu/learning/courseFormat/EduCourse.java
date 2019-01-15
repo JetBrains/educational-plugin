@@ -12,11 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EduCourse extends Course {
   private static final Logger LOG = Logger.getInstance(Course.class);
-  private static List<String> ourSupportedLanguages;
 
   // Fields from stepik:
   @SerializedName("is_idea_compatible") private boolean isCompatible = true;
@@ -140,22 +138,8 @@ public class EduCourse extends Course {
   }
 
   @NotNull
-  private static List<String> getSupportedLanguages() {
-    if (ourSupportedLanguages == null) {
-      final List<String> supportedLanguages = EduConfiguratorManager.allExtensions()
-        .stream()
-        .map(it -> it.language)
-        .collect(Collectors.toList());
-      ourSupportedLanguages = supportedLanguages;
-      return supportedLanguages;
-    } else {
-      return ourSupportedLanguages;
-    }
-  }
-
-  @NotNull
   private static CourseCompatibility courseCompatibility(@NotNull EduCourse courseInfo) {
-    final List<String> supportedLanguages = getSupportedLanguages();
+    final List<String> supportedLanguages = EduConfiguratorManager.getSupportedLanguages();
 
     String courseType = courseInfo.getType();
     final List<String> typeLanguage = StringUtil.split(courseType, " ");

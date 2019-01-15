@@ -21,4 +21,11 @@ object EduConfiguratorManager {
     Extensions.getExtensions<EducationalExtensionPoint<EduConfigurator<out Any>>>(EduConfigurator.EP_NAME, null)
       .filter { it.instance.isEnabled }
 
+  /**
+   * Returns all languages with enabled [EduConfigurator]
+   */
+  @JvmStatic
+  val supportedLanguages: List<String> by lazy {
+    allExtensions().map{ it.language }.toList()
+  }
 }
