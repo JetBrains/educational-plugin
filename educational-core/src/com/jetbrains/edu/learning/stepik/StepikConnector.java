@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -105,8 +106,8 @@ public class StepikConnector {
   }
 
   public static void fillItems(@NotNull EduCourse remoteCourse) throws IOException {
-    String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
-    List<Section> allSections = getSections(sectionIds);
+    List<Integer> sectionIds = remoteCourse.getSectionIds();
+    List<Section> allSections = StepikNewConnector.INSTANCE.getSections(sectionIds);
 
     if (hasVisibleSections(allSections, remoteCourse.getName())) {
       remoteCourse.setSectionIds(Collections.emptyList());
@@ -210,12 +211,6 @@ public class StepikConnector {
     }
   }
 
-  public static List<Section> getSections(String[] sectionIds) throws IOException {
-    List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
-    return containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream())
-      .collect(Collectors.toList());
-  }
-
   @NotNull
   public static List<Unit> getUnits(String[] unitIds) throws IOException {
     List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitIds, UnitContainer.class);
@@ -232,14 +227,11 @@ public class StepikConnector {
   }
 
   public static List<Lesson> getLessons(EduCourse remoteCourse, int sectionId) throws IOException {
-    final SectionContainer sectionContainer = getFromStepik(StepikNames.SECTIONS + "/" + sectionId,
-            SectionContainer.class);
-    if (sectionContainer.sections.isEmpty()) {
+    final Section firstSection = StepikNewConnector.INSTANCE.getSection(sectionId);
+    if (firstSection == null) {
       return Collections.emptyList();
     }
-    Section firstSection = sectionContainer.sections.get(0);
     String[] unitIds = firstSection.units.stream().map(id -> String.valueOf(id)).toArray(String[]::new);
-
     return new ArrayList<>(getLessonsFromUnits(remoteCourse, unitIds, true));
   }
 

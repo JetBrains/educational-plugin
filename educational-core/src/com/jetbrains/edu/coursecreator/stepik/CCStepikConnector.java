@@ -261,17 +261,12 @@ public class CCStepikConnector {
       assert  course != null;
       EduCourse courseInfo = StepikNewConnector.INSTANCE.getCourseInfo(course.getId(), true);
       if (courseInfo != null) {
-        String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
-        try {
-          List<Section> sections = StepikConnector.getSections(sectionIds);
-          for (Section section : sections) {
-            if (section.getName().equals(courseInfo.getName())) {
-              return section.getId();
-            }
+        List<Integer> sectionIds = courseInfo.getSectionIds();
+        List<Section> sections = StepikNewConnector.INSTANCE.getSections(sectionIds);
+        for (Section section : sections) {
+          if (section.getName().equals(courseInfo.getName())) {
+            return section.getId();
           }
-        }
-        catch (IOException e) {
-          LOG.warn(e.getMessage());
         }
       }
       else {

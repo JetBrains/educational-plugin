@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
 import kotlin.collections.ArrayList
@@ -163,8 +164,8 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
   private fun processSectionChanges(lastUpdateDate: Date) {
     val pushCandidates = course.sections.filter { it.stepikChangeStatus != StepikChangeStatus.UP_TO_DATE }
-    val sectionsFromStepik = StepikConnector.getSections(
-      pushCandidates.map { it.id }.filter { it != 0 }.map { it.toString() }.toTypedArray())
+    val sectionsFromStepik = StepikNewConnector.getSections(
+      pushCandidates.map { it.id }.filter { it != 0 })
 
     val deleteCandidates = ArrayList<Int>()
     for ((section, sectionFromServer) in pushCandidates.zip(sectionsFromStepik)) {
@@ -293,7 +294,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     }
 
     val remoteSectionIds = courseInfo.sectionIds
-    val sections = StepikConnector.getSections(remoteSectionIds.map { it.toString() }.toTypedArray())
+    val sections = StepikNewConnector.getSections(remoteSectionIds)
     val localSectionIds = course.sections.map { it.id }
     for (section in sections) {
       if (section.name == StepikNames.PYCHARM_ADDITIONAL) {

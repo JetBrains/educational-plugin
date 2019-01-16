@@ -3,6 +3,7 @@
 package com.jetbrains.edu.learning.stepik.api
 
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import retrofit2.Call
 import retrofit2.http.*
@@ -29,6 +30,12 @@ interface StepikService {
 
   @GET("users")
   fun users(@Query("ids[]") vararg ids: Int): Call<StepikUserList>
+
+  @GET("sections")
+  fun sections(@Query("ids[]") vararg ids: Int): Call<SectionsList>
+
+  @GET("sections/{id}")
+  fun sections(@Path("id") sectionId: Int): Call<SectionsList>
 }
 
 class UsersList {
@@ -49,4 +56,8 @@ class CoursesList {
 
 class StepikUserList {
   lateinit var users: List<StepikUserInfo>
+}
+
+class SectionsList {
+  lateinit var sections: List<Section>
 }

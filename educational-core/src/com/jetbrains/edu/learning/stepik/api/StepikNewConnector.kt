@@ -12,6 +12,7 @@ import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepikConnector.IN_PROGRESS_COURSES
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
@@ -37,6 +38,7 @@ object StepikNewConnector {
     val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
+    objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
     objectMapper.registerModule(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }
@@ -183,7 +185,7 @@ object StepikNewConnector {
       LOG.warn("Cannot load course list " + e.message)
     }
 
-    StepikNewConnector.setAuthors(result)
+    setAuthors(result)
 
     LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms")
     return result
@@ -202,4 +204,16 @@ object StepikNewConnector {
     return result
   }
 
+  fun getSections(sectionIds: List<Int>): List<Section> {
+    val sectionIdsChunks = sectionIds.distinct().chunked(100)
+    val allSections = mutableListOf<Section>()
+    sectionIdsChunks
+      .mapNotNull { service.sections(*it.toIntArray()).execute().body()?.sections }
+      .forEach { allSections.addAll(it) }
+    return allSections
+  }
+
+  fun getSection(sectionIds: Int): Section? {
+    return service.sections(sectionIds).execute().body()?.sections?.firstOrNull()
+  }
 }
