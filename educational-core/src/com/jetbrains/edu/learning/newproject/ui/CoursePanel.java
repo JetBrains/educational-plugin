@@ -23,6 +23,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Tag;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.stepik.StepikUserInfo;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
 import com.jetbrains.edu.learning.stepik.course.StepikCourse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,9 +37,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.jetbrains.edu.learning.stepik.StepikConnector.FEATURED_COURSES;
-import static com.jetbrains.edu.learning.stepik.StepikConnector.IN_PROGRESS_COURSES;
 
 public class CoursePanel extends JPanel {
   private static final String ourNotVerifiedNote = "\n\nNote: We’re sorry, but this course feels a little incomplete. " +
@@ -189,7 +187,8 @@ public class CoursePanel extends JPanel {
 
   private static boolean needsVerification(@NotNull Course course) {
     return course instanceof EduCourse && ((EduCourse)course).isRemote() && ((EduCourse)course).isPublic() &&
-           !FEATURED_COURSES.contains(course.getId()) && !(course instanceof StepikCourse) && !IN_PROGRESS_COURSES.contains(course.getId());
+           !StepikUtils.getFeaturedCourses().contains(course.getId()) && !(course instanceof StepikCourse) &&
+           !StepikUtils.getInProgressCourses().contains(course.getId());
   }
 
   private void updateTags(@NotNull Course course) {

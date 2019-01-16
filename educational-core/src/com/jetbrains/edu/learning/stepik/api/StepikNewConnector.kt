@@ -13,11 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
 import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.stepik.StepikConnector.IN_PROGRESS_COURSES
-import com.jetbrains.edu.learning.stepik.StepikNames
-import com.jetbrains.edu.learning.stepik.StepikUser
-import com.jetbrains.edu.learning.stepik.StepikUserInfo
-import com.jetbrains.edu.learning.stepik.StepikUtils
+import com.jetbrains.edu.learning.stepik.*
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
@@ -143,7 +139,7 @@ object StepikNewConnector {
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean?): EduCourse? {
     val course = service.courses(courseId, isIdeaCompatible).execute().body()?.courses?.firstOrNull()
     if (course != null) {
-      StepikUtils.setCourseLanguage(course)
+      setCourseLanguage(course)
     }
     return course
   }
@@ -193,11 +189,11 @@ object StepikNewConnector {
 
   private fun getInProgressCourses(): List<EduCourse> {
     val result = ContainerUtil.newArrayList<EduCourse>()
-    for (courseId in IN_PROGRESS_COURSES) {
-      val info = getCourseInfo(courseId!!, false) ?: continue
+    for (courseId in inProgressCourses) {
+      val info = getCourseInfo(courseId, false) ?: continue
       val compatibility = info.compatibility
       if (compatibility === CourseCompatibility.UNSUPPORTED) continue
-      val visibility = CourseVisibility.InProgressVisibility(IN_PROGRESS_COURSES.indexOf(info.id))
+      val visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.id))
       info.visibility = visibility
       result.add(info)
     }

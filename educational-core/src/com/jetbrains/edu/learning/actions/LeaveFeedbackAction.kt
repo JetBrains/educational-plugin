@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.FeedbackLink
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikUtils.getStepikLink
+import com.jetbrains.edu.learning.stepik.getStepikLink
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import icons.EducationalCoreIcons
 

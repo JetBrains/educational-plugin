@@ -1,7 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
@@ -44,14 +43,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.BuiltInServerOptions;
 import org.jetbrains.ide.BuiltInServerManager;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -67,8 +61,6 @@ public class StepikConnector {
 
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
-  private static final String PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt";
-  private static final String IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/in_progress_courses.txt";
   public static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
   private static final int THREAD_NUMBER = Runtime.getRuntime().availableProcessors();
   private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER);
@@ -85,9 +77,6 @@ public class StepikConnector {
       return clazz == AttemptWrapper.Dataset.class;
     }
   };
-
-  public static final List<Integer> FEATURED_COURSES = getFeaturedCoursesIds();
-  public static final List<Integer> IN_PROGRESS_COURSES = getInProgressCoursesIds();
 
   private StepikConnector() {
   }
@@ -764,28 +753,5 @@ public class StepikConnector {
     else {
       LOG.warn("Got assignments of incorrect length: " + assignments.assignments.size());
     }
-  }
-
-  @NotNull
-  private static List<Integer> getFeaturedCoursesIds() {
-    return getCoursesIds(PROMOTED_COURSES_LINK);
-  }
-
-  private static List<Integer> getCoursesIds(@NotNull final String link) {
-    try {
-      final URL url = new URL(link);
-      URLConnection conn = url.openConnection();
-      try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
-        return reader.lines().map(s -> Integer.valueOf(s.split("#")[0].trim())).collect(Collectors.toList());
-      }
-    } catch (IOException e) {
-      LOG.warn("Failed to get courses from " + link);
-    }
-    return Lists.newArrayList();
-  }
-
-  @NotNull
-  private static List<Integer> getInProgressCoursesIds() {
-    return getCoursesIds(IN_PROGRESS_COURSES_LINK);
   }
 }

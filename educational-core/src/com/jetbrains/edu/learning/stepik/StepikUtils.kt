@@ -30,77 +30,93 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import java.net.URL
 
-object StepikUtils {
-  private val LOG = Logger.getInstance(StepikUtils::class.java)
+private const val PROMOTED_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/featured_courses.txt"
+private const val IN_PROGRESS_COURSES_LINK = "https://raw.githubusercontent.com/JetBrains/educational-plugin/master/in_progress_courses.txt"
 
-  @JvmStatic
-  fun setCourseLanguage(info: EduCourse) {
-    val courseType = info.type
-    val separatorIndex = courseType.indexOf(" ")
-    if (separatorIndex != -1) {
-      info.language = courseType.substring(separatorIndex + 1)
-    }
-    else {
-      LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
-                             info.name, courseType))
-    }
+private val LOG = Logger.getInstance(StepikConnector::class.java)
+
+val featuredCourses = getFeaturedCoursesIds()
+val inProgressCourses = getInProgressCoursesIds()
+
+fun setCourseLanguage(info: EduCourse) {
+  val courseType = info.type
+  val separatorIndex = courseType.indexOf(" ")
+  if (separatorIndex != -1) {
+    info.language = courseType.substring(separatorIndex + 1)
   }
-
-  @JvmStatic
-  fun setStatusRecursively(course: Course, status: StepikChangeStatus) {
-    course.visitLessons { lesson ->
-      setLessonStatus(lesson, status)
-      true
-    }
-    for (section in course.sections) {
-      section.stepikChangeStatus = status
-    }
-  }
-
-  private fun setLessonStatus(lesson: Lesson, status: StepikChangeStatus) {
-    lesson.stepikChangeStatus = status
-    for (task in lesson.taskList) {
-      task.stepikChangeStatus = status
-    }
-  }
-
-  @JvmStatic
-  fun getStepikLink(task: Task, lesson: Lesson): String {
-    return "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${task.index}"
-  }
-
-  @JvmStatic
-  fun updateCourseIfNeeded(project: Project, course: EduCourse) {
-    val id = course.id
-    if (id == 0 || !course.isStudy) {
-      return
-    }
-
-    ProgressManager.getInstance().run(
-      object : com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course") {
-        override fun run(indicator: ProgressIndicator) {
-          if (!course.isUpToDate()) {
-            showUpdateAvailableNotification(project, course)
-          }
-        }
-      })
-  }
-
-  private fun showUpdateAvailableNotification(project: Project, course: Course) {
-    val notification = Notification("Update.course", "Course Updates",
-                                    "Course is ready to <a href=\"update\">update</a>",
-                                    NotificationType.INFORMATION,
-                                    NotificationListener { _, _ ->
-                                      FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
-                                      ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                                        {
-                                          ProgressManager.getInstance().progressIndicator.isIndeterminate = true
-                                          StepikCourseUpdater(course as EduCourse, project).updateCourse()
-                                          course.setUpdated()
-                                        },
-                                        "Updating Course", true, project)
-                                    })
-    notification.notify(project)
+  else {
+    LOG.info(String.format("Language for course `%s` with `%s` type can't be set because it isn't \"pycharm\" course",
+                           info.name, courseType))
   }
 }
+
+fun setStatusRecursively(course: Course, status: StepikChangeStatus) {
+  course.visitLessons { lesson ->
+    setLessonStatus(lesson, status)
+    true
+  }
+  for (section in course.sections) {
+    section.stepikChangeStatus = status
+  }
+}
+
+private fun setLessonStatus(lesson: Lesson, status: StepikChangeStatus) {
+  lesson.stepikChangeStatus = status
+  for (task in lesson.taskList) {
+    task.stepikChangeStatus = status
+  }
+}
+
+fun getStepikLink(task: Task, lesson: Lesson): String {
+  return "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${task.index}"
+}
+
+fun updateCourseIfNeeded(project: Project, course: EduCourse) {
+  val id = course.id
+  if (id == 0 || !course.isStudy) {
+    return
+  }
+
+  ProgressManager.getInstance().run(
+    object : com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course") {
+      override fun run(indicator: ProgressIndicator) {
+        if (!course.isUpToDate()) {
+          showUpdateAvailableNotification(project, course)
+        }
+      }
+    })
+}
+
+private fun showUpdateAvailableNotification(project: Project, course: Course) {
+  val notification = Notification("Update.course", "Course Updates",
+                                  "Course is ready to <a href=\"update\">update</a>",
+                                  NotificationType.INFORMATION,
+                                  NotificationListener { _, _ ->
+                                    FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
+                                    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                                      {
+                                        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+                                        StepikCourseUpdater(course as EduCourse, project).updateCourse()
+                                        course.setUpdated()
+                                      },
+                                      "Updating Course", true, project)
+                                  })
+  notification.notify(project)
+}
+
+private fun getFeaturedCoursesIds(): List<Int> {
+  return getCoursesIds(PROMOTED_COURSES_LINK)
+}
+
+private fun getInProgressCoursesIds(): List<Int> {
+  return getCoursesIds(IN_PROGRESS_COURSES_LINK)
+}
+
+private fun getCoursesIds(link: String): List<Int> {
+  val url = URL(link)
+  val text = url.readText()
+  return text.lines().map { it.split("#")[0].trim().toInt() }
+}
+
