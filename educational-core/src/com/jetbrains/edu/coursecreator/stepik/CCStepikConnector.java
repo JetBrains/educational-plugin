@@ -64,6 +64,25 @@ public class CCStepikConnector {
   private CCStepikConnector() {
   }
 
+  public static int getTaskPosition(final int taskId) {
+    final String url = StepikNames.STEPS + taskId;
+    try {
+      StepikSteps.StepsList container = StepikAuthorizedClient.getFromStepik(url, StepikSteps.StepsList.class);
+      if (container == null) {
+        container = StepikClient.getFromStepik(url, StepikSteps.StepsList.class);
+      }
+      List<StepikSteps.StepSource> steps = container.steps;
+      if (!steps.isEmpty()) {
+        return steps.get(0).position;
+      }
+    }
+    catch (IOException e) {
+      LOG.warn("Could not retrieve task with id=" + taskId);
+    }
+
+    return -1;
+  }
+
   @Nullable
   public static EduCourse getCourseInfo(@NotNull String courseId) {
     return StepikNewConnector.INSTANCE.getCourseInfo(Integer.valueOf(courseId), null);
@@ -240,8 +259,7 @@ public class CCStepikConnector {
     else {
       Course course = StudyTaskManager.getInstance(project).getCourse();
       assert  course != null;
-      EduCourse courseInfo = StepikConnector
-        .getCourseInfo(course.getId(), true);
+      EduCourse courseInfo = StepikNewConnector.INSTANCE.getCourseInfo(course.getId(), true);
       if (courseInfo != null) {
         String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
         try {

@@ -14,6 +14,7 @@ import com.jetbrains.edu.learning.course
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 
 open class StepikIntegrationTest : StepikTestCase() {
 
@@ -326,7 +327,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   private fun getCourseFromStepik(courseId: Int): EduCourse =
-    StepikConnector.getCourseInfo(courseId, true) ?: error(
+    StepikNewConnector.getCourseInfo(courseId, true) ?: error(
       "Uploaded course `$courseId` not found among courses available to instructor")
 }
 

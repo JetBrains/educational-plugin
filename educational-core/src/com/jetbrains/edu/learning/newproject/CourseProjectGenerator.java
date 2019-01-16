@@ -203,7 +203,7 @@ public abstract class CourseProjectGenerator<S> {
   }
 
   private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
-    EduCourse courseFromStepik = StepikConnector.getCourseInfo(myCourse.getId(), ((EduCourse)myCourse).isCompatible());
+    EduCourse courseFromStepik = StepikNewConnector.INSTANCE.getCourseInfo(myCourse.getId(), ((EduCourse)myCourse).isCompatible());
     if (courseFromStepik != null) {
       StepikConnector.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);

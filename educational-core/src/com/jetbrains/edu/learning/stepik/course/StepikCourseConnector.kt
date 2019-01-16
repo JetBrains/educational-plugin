@@ -4,6 +4,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.stepik.StepikConnector.*
 import com.jetbrains.edu.learning.stepik.StepikLanguages
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getCourseInfo
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL

@@ -27,7 +27,6 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -90,30 +89,6 @@ public class StepikConnector {
   public static final List<Integer> IN_PROGRESS_COURSES = getInProgressCoursesIds();
 
   private StepikConnector() {
-  }
-
-  public static int getTaskPosition(final int taskId) {
-    final String url = StepikNames.STEPS + taskId;
-    try {
-      StepikSteps.StepsList container = StepikAuthorizedClient.getFromStepik(url, StepikSteps.StepsList.class);
-      if (container == null) {
-        container = StepikClient.getFromStepik(url, StepikSteps.StepsList.class);
-      }
-      List<StepikSteps.StepSource> steps = container.steps;
-      if (!steps.isEmpty()) {
-        return steps.get(0).position;
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Could not retrieve task with id=" + taskId);
-    }
-
-    return -1;
-  }
-
-  @Nullable
-  public static EduCourse getCourseInfo(int courseId, boolean isIdeaCompatible) {
-    return StepikNewConnector.INSTANCE.getCourseInfo(courseId, isIdeaCompatible);
   }
 
   public static boolean loadCourseStructure(@NotNull final EduCourse remoteCourse) {

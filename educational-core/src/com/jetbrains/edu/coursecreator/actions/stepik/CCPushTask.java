@@ -14,11 +14,10 @@ import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector;
 import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.Course;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
+import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import org.jetbrains.annotations.NotNull;
 
@@ -143,7 +142,7 @@ public class CCPushTask extends DumbAwareAction {
 
   private static void updateTask(Task task, Lesson lesson, Project project) {
     int position = stepikPosition(task, lesson);
-    int positionOnServer = StepikConnector.getTaskPosition(task.getId());
+    int positionOnServer = getTaskPosition(task.getId());
 
     boolean isPosted = updateTask(task, project, position);
     if (!isPosted) {
