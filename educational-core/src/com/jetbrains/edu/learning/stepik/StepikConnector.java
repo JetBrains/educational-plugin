@@ -120,27 +120,10 @@ public class StepikConnector {
     catch (Throwable e) {
       LOG.warn("Cannot load course list " + e.getMessage());
     }
-    setAuthors(result);
+    StepikNewConnector.INSTANCE.setAuthors(result);
 
     LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms");
     return result;
-  }
-
-  private static void setAuthors(List<EduCourse> result) {
-    final Set<Integer> allInstructors = result.stream().map(it -> it.getInstructors()).flatMap(List::stream).collect(Collectors.toSet());
-    final String[] instructorIds = allInstructors.stream().map(it -> String.valueOf(it)).toArray(String[]::new);
-    try {
-      final List<AuthorWrapper> authors = multipleRequestToStepik(StepikNames.USERS, instructorIds, AuthorWrapper.class);
-      final Map<Integer, StepikUserInfo> infoMap =
-        authors.stream().flatMap(it -> it.users.stream()).collect(Collectors.toMap(userInfo -> userInfo.getId(), userInfo -> userInfo));
-      for (EduCourse course : result) {
-        List<StepikUserInfo> courseAuthors = course.getInstructors().stream().map(infoMap::get).collect(Collectors.toList());
-        course.setAuthors(courseAuthors);
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Cannot load course list " + e.getMessage());
-    }
   }
 
   private static List<EduCourse> getInProgressCourses() {

@@ -136,4 +136,18 @@ object StepikNewConnector {
     }
     return course
   }
+
+  fun setAuthors(result: List<EduCourse>) {
+    val instructorIds = result.flatMap { it -> it.instructors }.distinct().chunked(100)
+    val allUsers = mutableListOf<StepikUserInfo>()
+    instructorIds
+      .mapNotNull { service.users(*it.toIntArray()).execute().body()?.users }
+      .forEach { allUsers.addAll(it) }
+
+    val usersById = allUsers.associateBy { it.id }
+    for (course in result) {
+      val authors = course.instructors.mapNotNull { usersById[it] }
+      course.authors = authors
+    }
+  }
 }

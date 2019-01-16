@@ -26,6 +26,9 @@ interface StepikService {
   @GET("courses/{id}")
   fun courses(@Path("id") courseId: Int,
               @Query("is_idea_compatible") isIdeaCompatible: Boolean?): Call<CoursesList>
+
+  @GET("users")
+  fun users(@Query("ids[]") vararg ids: Int): Call<StepikUserList>
 }
 
 class UsersList {
@@ -42,4 +45,8 @@ class EnrollmentData(courseId: Int) {
 class CoursesList {
   lateinit var meta: Map<Any, Any>
   lateinit var courses: MutableList<EduCourse>
+}
+
+class StepikUserList {
+  lateinit var users: List<StepikUserInfo>
 }
