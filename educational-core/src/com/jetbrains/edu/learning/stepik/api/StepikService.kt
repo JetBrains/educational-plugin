@@ -2,12 +2,10 @@
 
 package com.jetbrains.edu.learning.stepik.api
 
+import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface StepikService {
   @GET("stepics/1/")
@@ -18,6 +16,12 @@ interface StepikService {
 
   @GET("enrollments/{id}/")
   fun enrollments(@Path("id") courseId: Int): Call<Any>
+
+  @GET("courses")
+  fun courses(@Query("is_idea_compatible") isIdeaCompatible: Boolean,
+              @Query("is_public") isPublic: Boolean,
+              @Query("page") page: Int,
+              @Query("enrolled") enrolled: Boolean?): Call<CoursesList>
 }
 
 class UsersList {
@@ -29,4 +33,9 @@ class Enrollment(var course: String)
 
 class EnrollmentData(courseId: Int) {
   var enrollment: Enrollment = Enrollment(courseId.toString())
+}
+
+class CoursesList {
+  lateinit var meta: Map<Any, Any>
+  lateinit var courses: MutableList<EduCourse>
 }

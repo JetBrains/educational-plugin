@@ -22,7 +22,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Backgroundable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -32,9 +31,9 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -43,7 +42,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -105,8 +103,8 @@ public class StepikConnector {
     long startTime = System.currentTimeMillis();
     List<EduCourse> result = ContainerUtil.newArrayList();
     List<Callable<List<EduCourse>>> tasks = ContainerUtil.newArrayList();
-    tasks.add(() -> getCourseInfos(user, true));
-    tasks.add(() -> getCourseInfos(user, false));
+    tasks.add(() -> StepikNewConnector.INSTANCE.getCourseInfos(true));
+    tasks.add(() -> StepikNewConnector.INSTANCE.getCourseInfos(false));
     tasks.add(() -> getInProgressCourses(user));
 
     try {
@@ -126,34 +124,6 @@ public class StepikConnector {
 
     LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms");
     return result;
-  }
-
-  private static List<EduCourse> getCourseInfos(@Nullable StepikUser user, boolean isPublic) {
-    List<EduCourse> result = ContainerUtil.newArrayList();
-    try {
-      int pageNumber = 1;
-      final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-      while (addCourseInfos(user, result, getParameters(pageNumber, isPublic))) {
-        if (indicator != null && indicator.isCanceled()) {
-          break;
-        }
-        pageNumber += 1;
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Cannot load course list " + e.getMessage());
-    }
-    return result;
-  }
-
-  private static List<NameValuePair> getParameters(int pageNumber, boolean isPublic) {
-    final ArrayList<NameValuePair> parameters = ContainerUtil.newArrayList(new BasicNameValuePair("is_idea_compatible", "true"),
-                                                                      new BasicNameValuePair("is_public", String.valueOf(isPublic)),
-                                                                      new BasicNameValuePair("page", String.valueOf(pageNumber)));
-    if (!isPublic) {
-      parameters.add(new BasicNameValuePair("enrolled", "true"));
-    }
-    return parameters;
   }
 
   private static void setAuthors(List<EduCourse> result) {
@@ -261,21 +231,6 @@ public class StepikConnector {
     return coursesContainer;
   }
 
-  private static boolean addCourseInfos(@Nullable StepikUser user, List<EduCourse> result,
-                                        @NotNull List<NameValuePair> parameters) throws IOException {
-    final URI url;
-    try {
-      url = new URIBuilder(StepikNames.COURSES).addParameters(parameters).build();
-    }
-    catch (URISyntaxException e) {
-      LOG.error(e.getMessage());
-      return false;
-    }
-    final CoursesContainer coursesContainer = getCourseContainers(user, url.toString());
-    addAvailableCourses(result, coursesContainer);
-    return coursesContainer.meta.containsKey("has_next") && coursesContainer.meta.get("has_next") == Boolean.TRUE;
-  }
-
   @Nullable
   public static EduCourse getCourseInfo(@Nullable StepikUser user, int courseId, boolean isIdeaCompatible) {
     final URI url;
@@ -296,32 +251,6 @@ public class StepikConnector {
     } else {
       return null;
     }
-  }
-
-  private static void addAvailableCourses(List<EduCourse> result, CoursesContainer coursesContainer) {
-    final List<EduCourse> courses = coursesContainer.courses;
-    for (EduCourse info : courses) {
-      if (StringUtil.isEmptyOrSpaces(info.getType())) continue;
-
-      CourseCompatibility compatibility = info.getCompatibility();
-      if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
-
-      info.setVisibility(getVisibility(info));
-      result.add(info);
-    }
-  }
-
-  private static CourseVisibility getVisibility(@NotNull EduCourse course) {
-    if (!course.isPublic()) {
-      return CourseVisibility.PrivateVisibility.INSTANCE;
-    }
-    if (FEATURED_COURSES.contains(course.getId())) {
-      return new CourseVisibility.FeaturedVisibility(FEATURED_COURSES.indexOf(course.getId()));
-    }
-    if (FEATURED_COURSES.isEmpty()) {
-      return CourseVisibility.LocalVisibility.INSTANCE;
-    }
-    return CourseVisibility.PublicVisibility.INSTANCE;
   }
 
   public static boolean loadCourseStructure(@NotNull final EduCourse remoteCourse) {
