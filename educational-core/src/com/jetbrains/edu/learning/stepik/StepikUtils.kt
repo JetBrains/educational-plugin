@@ -17,7 +17,14 @@
 
 package com.jetbrains.edu.learning.stepik
 
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationListener
+import com.intellij.notification.NotificationType
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
@@ -63,4 +70,37 @@ object StepikUtils {
     return "${StepikNames.STEPIK_URL}/lesson/${lesson.id}/step/${task.index}"
   }
 
+  @JvmStatic
+  fun updateCourseIfNeeded(project: Project, course: EduCourse) {
+    val id = course.id
+    if (id == 0 || !course.isStudy) {
+      return
+    }
+
+    ProgressManager.getInstance().run(
+      object : com.intellij.openapi.progress.Task.Backgroundable(project, "Updating Course") {
+        override fun run(indicator: ProgressIndicator) {
+          if (!course.isUpToDate()) {
+            showUpdateAvailableNotification(project, course)
+          }
+        }
+      })
+  }
+
+  private fun showUpdateAvailableNotification(project: Project, course: Course) {
+    val notification = Notification("Update.course", "Course Updates",
+                                    "Course is ready to <a href=\"update\">update</a>",
+                                    NotificationType.INFORMATION,
+                                    NotificationListener { _, _ ->
+                                      FileEditorManagerEx.getInstanceEx(project).closeAllFiles()
+                                      ProgressManager.getInstance().runProcessWithProgressSynchronously(
+                                        {
+                                          ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+                                          StepikCourseUpdater(course as EduCourse, project).updateCourse()
+                                          course.setUpdated()
+                                        },
+                                        "Updating Course", true, project)
+                                    })
+    notification.notify(project)
+  }
 }

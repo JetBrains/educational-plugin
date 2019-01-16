@@ -6,8 +6,13 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.util.ConcurrencyUtil
+import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduSettings
+import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
+import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.stepik.StepikConnector.IN_PROGRESS_COURSES
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
@@ -17,10 +22,14 @@ import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object StepikNewConnector {
   private val LOG = Logger.getInstance(StepikNewConnector::class.java)
+  private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
+  private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
   private val converterFactory: JacksonConverterFactory
 
   init {
@@ -111,7 +120,7 @@ object StepikNewConnector {
     }
   }
 
-  fun getCourseInfos(isPublic: Boolean): List<EduCourse> {
+  private fun getCourseInfos(isPublic: Boolean): List<EduCourse> {
     val result = mutableListOf<EduCourse>()
     var currentPage = 1
     val enrolled = if (isPublic) null else true
@@ -137,7 +146,7 @@ object StepikNewConnector {
     return course
   }
 
-  fun setAuthors(result: List<EduCourse>) {
+  private fun setAuthors(result: List<EduCourse>) {
     val instructorIds = result.flatMap { it -> it.instructors }.distinct().chunked(100)
     val allUsers = mutableListOf<StepikUserInfo>()
     instructorIds
@@ -150,4 +159,47 @@ object StepikNewConnector {
       course.authors = authors
     }
   }
+
+  fun getCourseInfos(): List<EduCourse> {
+    LOG.info("Loading courses started...")
+    val startTime = System.currentTimeMillis()
+    val result = ContainerUtil.newArrayList<EduCourse>()
+    val tasks = ContainerUtil.newArrayList<Callable<List<EduCourse>>>()
+    tasks.add(Callable { getCourseInfos(true) })
+    tasks.add(Callable { getCourseInfos(false) })
+    tasks.add(Callable { getInProgressCourses() })
+
+    try {
+      for (future in ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
+        if (!future.isCancelled) {
+          val courses = future.get()
+          if (courses != null) {
+            result.addAll(courses)
+          }
+        }
+      }
+    }
+    catch (e: Throwable) {
+      LOG.warn("Cannot load course list " + e.message)
+    }
+
+    StepikNewConnector.setAuthors(result)
+
+    LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms")
+    return result
+  }
+
+  private fun getInProgressCourses(): List<EduCourse> {
+    val result = ContainerUtil.newArrayList<EduCourse>()
+    for (courseId in IN_PROGRESS_COURSES) {
+      val info = getCourseInfo(courseId!!, false) ?: continue
+      val compatibility = info.compatibility
+      if (compatibility === CourseCompatibility.UNSUPPORTED) continue
+      val visibility = CourseVisibility.InProgressVisibility(IN_PROGRESS_COURSES.indexOf(info.id))
+      info.visibility = visibility
+      result.add(info)
+    }
+    return result
+  }
+
 }

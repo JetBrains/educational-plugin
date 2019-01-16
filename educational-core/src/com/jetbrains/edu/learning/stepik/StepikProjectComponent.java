@@ -35,7 +35,7 @@ public class StepikProjectComponent implements ProjectComponent {
       () -> {
         Course course = StudyTaskManager.getInstance(myProject).getCourse();
         if (course instanceof EduCourse && ((EduCourse)course).isRemote()) {
-          StepikConnector.updateCourseIfNeeded(myProject, (EduCourse)course);
+          StepikUtils.updateCourseIfNeeded(myProject, (EduCourse)course);
 
           final StepikUser currentUser = EduSettings.getInstance().getUser();
           if (currentUser != null && !course.getAuthors().contains(currentUser.userInfo) && !CCUtils.isCourseCreator(myProject)) {

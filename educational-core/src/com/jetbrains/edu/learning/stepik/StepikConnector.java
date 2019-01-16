@@ -8,14 +8,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.Language;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -48,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.BuiltInServerOptions;
 import org.jetbrains.ide.BuiltInServerManager;
 
-import javax.swing.event.HyperlinkEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -95,88 +90,6 @@ public class StepikConnector {
   public static final List<Integer> IN_PROGRESS_COURSES = getInProgressCoursesIds();
 
   private StepikConnector() {
-  }
-
-  @NotNull
-  public static List<EduCourse> getCourseInfos() {
-    LOG.info("Loading courses started...");
-    long startTime = System.currentTimeMillis();
-    List<EduCourse> result = ContainerUtil.newArrayList();
-    List<Callable<List<EduCourse>>> tasks = ContainerUtil.newArrayList();
-    tasks.add(() -> StepikNewConnector.INSTANCE.getCourseInfos(true));
-    tasks.add(() -> StepikNewConnector.INSTANCE.getCourseInfos(false));
-    tasks.add(() -> getInProgressCourses());
-
-    try {
-      for (Future<List<EduCourse>> future : ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
-        if (!future.isCancelled()) {
-          List<EduCourse> courses = future.get();
-          if (courses != null) {
-            result.addAll(courses);
-          }
-        }
-      }
-    }
-    catch (Throwable e) {
-      LOG.warn("Cannot load course list " + e.getMessage());
-    }
-    StepikNewConnector.INSTANCE.setAuthors(result);
-
-    LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms");
-    return result;
-  }
-
-  private static List<EduCourse> getInProgressCourses() {
-    List<EduCourse> result = ContainerUtil.newArrayList();
-    for (Integer courseId : IN_PROGRESS_COURSES) {
-      final EduCourse info = getCourseInfo(courseId, false);
-      if (info == null) continue;
-      CourseCompatibility compatibility = info.getCompatibility();
-      if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
-      CourseVisibility visibility = new CourseVisibility.InProgressVisibility(IN_PROGRESS_COURSES.indexOf(info.getId()));
-      info.setVisibility(visibility);
-      result.add(info);
-    }
-    return result;
-  }
-
-  public static void updateCourseIfNeeded(@NotNull Project project, @NotNull EduCourse course) {
-    int id = course.getId();
-
-    if (id == 0) {
-      return;
-    }
-
-    if (!course.isStudy()) {
-      return;
-    }
-
-    ProgressManager.getInstance().runProcessWithProgressAsynchronously(new Backgroundable(project, "Updating Course") {
-      @Override
-      public void run(@NotNull ProgressIndicator indicator) {
-        if (!StepikUpdateDateExt.isUpToDate(course)) {
-          showUpdateAvailableNotification(project, course);
-        }
-      }
-    }, new EmptyProgressIndicator());
-  }
-
-  private static void showUpdateAvailableNotification(@NotNull Project project, @NotNull Course course) {
-    final Notification notification =
-      new Notification("Update.course", "Course Updates", "Course is ready to <a href=\"update\">update</a>", NotificationType.INFORMATION,
-                       new NotificationListener() {
-                         @Override
-                         public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                           FileEditorManagerEx.getInstanceEx(project).closeAllFiles();
-
-                           ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-                             ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-                             new StepikCourseUpdater((EduCourse)course, project).updateCourse();
-                             StepikUpdateDateExt.setUpdated((EduCourse)course);
-                           }, "Updating Course", true, project);
-                         }
-                       });
-    notification.notify(project);
   }
 
   public static int getTaskPosition(final int taskId) {

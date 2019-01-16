@@ -4,10 +4,11 @@ import com.jetbrains.edu.learning.CoursesProvider
 import com.jetbrains.edu.learning.checkIsBackgroundThread
 import com.jetbrains.edu.learning.courseFormat.Course
 import com.jetbrains.edu.learning.isUnitTestMode
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 
 class StepikCoursesProvider : CoursesProvider {
   override fun loadCourses(): List<Course> {
     checkIsBackgroundThread()
-    return if (isUnitTestMode) emptyList() else StepikConnector.getCourseInfos()
+    return if (isUnitTestMode) emptyList() else StepikNewConnector.getCourseInfos()
   }
 }
