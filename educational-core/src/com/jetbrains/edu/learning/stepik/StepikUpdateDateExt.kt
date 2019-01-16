@@ -4,9 +4,8 @@ package com.jetbrains.edu.learning.stepik
 
 import com.google.common.annotations.VisibleForTesting
 import com.intellij.util.Time
-import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.ext.hasTopLevelLessons
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -21,7 +20,7 @@ fun EduCourse.isUpToDate(): Boolean {
     return true
   }
 
-  val courseInfo = getCourseInfo(EduSettings.getInstance().user, id, isCompatible) ?: return true
+  val courseInfo = getCourseInfo(id, isCompatible) ?: return true
   return isUpToDate(courseInfo)
 }
 
@@ -92,7 +91,7 @@ private fun Task.isUpToDate(tasksFromServer: Task?): Boolean {
 }
 
 fun EduCourse.setUpdated() {
-  val courseInfo = getCourseInfo(EduSettings.getInstance().user, id, isCompatible) ?: return
+  val courseInfo = getCourseInfo(id, isCompatible) ?: return
   fillItems(courseInfo)
 
   updateDate = courseInfo.updateDate

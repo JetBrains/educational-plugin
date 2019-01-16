@@ -6,7 +6,6 @@ import com.intellij.openapi.fileTypes.PlainTextLanguage
 import com.intellij.openapi.vfs.VfsUtil
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector.postCourse
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.StudyTaskManager
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
@@ -76,7 +75,7 @@ class LoadSolutionsTest : StepikTestCase() {
 
     val course = StudyTaskManager.getInstance(project).course!! as EduCourse
     val task = firstTask(StudyTaskManager.getInstance(project).course)
-    val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as EduCourse
+    val remoteCourse = StepikConnector.getCourseInfo(course.id, true) as EduCourse
     StepikConnector.loadCourseStructure(remoteCourse)
 
     val tasksToUpdate = StepikSolutionsLoader.getInstance(project).tasksToUpdate(remoteCourse as Course)
@@ -106,7 +105,7 @@ class LoadSolutionsTest : StepikTestCase() {
   private fun firstTask(course: Course?) = course!!.lessons.first().taskList.first()
 
   private fun createCourseFromStepik(course: EduCourse): EduCourse? {
-    val remoteCourse = StepikConnector.getCourseInfo(EduSettings.getInstance().user, course.id, true) as EduCourse
+    val remoteCourse = StepikConnector.getCourseInfo(course.id, true) as EduCourse
     StepikConnector.loadCourseStructure(remoteCourse)
     remoteCourse.init(null, null, false)
     remoteCourse.language = PlainTextLanguage.INSTANCE.id

@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -65,16 +66,7 @@ public class CCStepikConnector {
 
   @Nullable
   public static EduCourse getCourseInfo(@NotNull String courseId) {
-    final String url = StepikNames.COURSES + "/" + courseId;
-    final StepikUser user = EduSettings.getInstance().getUser();
-    try {
-      final StepikWrappers.CoursesContainer coursesContainer = StepikConnector.getCourseContainers(user, url);
-      return coursesContainer == null ? null : coursesContainer.courses.get(0);
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-    return null;
+    return StepikNewConnector.INSTANCE.getCourseInfo(Integer.valueOf(courseId), null);
   }
 
   public static void postCourseWithProgress(@NotNull final Project project, @NotNull final Course course) {
@@ -249,7 +241,7 @@ public class CCStepikConnector {
       Course course = StudyTaskManager.getInstance(project).getCourse();
       assert  course != null;
       EduCourse courseInfo = StepikConnector
-        .getCourseInfo(EduSettings.getInstance().getUser(), course.getId(), true);
+        .getCourseInfo(course.getId(), true);
       if (courseInfo != null) {
         String[] sectionIds = courseInfo.getSectionIds().stream().map(s -> String.valueOf(s)).toArray(String[]::new);
         try {

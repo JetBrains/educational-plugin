@@ -4,7 +4,6 @@ import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.stepik.StepikConnector.*
 import com.jetbrains.edu.learning.stepik.StepikLanguages
-import com.jetbrains.edu.learning.stepik.StepikUser
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL
@@ -35,7 +34,7 @@ object StepikCourseConnector {
     return -1
   }
 
-  fun getCourseInfoByLink(user: StepikUser, link: String): StepikCourse? {
+  fun getCourseInfoByLink(link: String): StepikCourse? {
     val courseId: Int = try {
       Integer.parseInt(link)
     }
@@ -44,7 +43,7 @@ object StepikCourseConnector {
     }
 
     if (courseId != -1) {
-      val info = getCourseInfo(user, courseId, false)
+      val info = getCourseInfo(courseId, false)
       return stepikCourseFromRemote(info)
     }
     return null

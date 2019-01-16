@@ -15,7 +15,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.edu.coursecreator.CCStudyItemDeleteProvider
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.EduUtils.synchronize
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.configurator
@@ -406,7 +405,7 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
 
   private fun courseFromServer(currentCourse: EduCourse): EduCourse? {
     try {
-      val remoteCourse = getCourseInfo(EduSettings.getInstance().user, currentCourse.id, true)
+      val remoteCourse = getCourseInfo(currentCourse.id, true)
       if (remoteCourse != null && loadCourseStructure(remoteCourse)) {
         addTopLevelLessons(remoteCourse)
         return remoteCourse

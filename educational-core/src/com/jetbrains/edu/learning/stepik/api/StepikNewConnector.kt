@@ -12,7 +12,6 @@ import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.StepikUtils
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnectorUtils.getAvailableCourses
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
@@ -130,7 +129,7 @@ object StepikNewConnector {
     return result
   }
 
-  fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean): EduCourse? {
+  fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean?): EduCourse? {
     val course = service.courses(courseId, isIdeaCompatible).execute().body()?.courses?.firstOrNull()
     if (course != null) {
       StepikUtils.setCourseLanguage(course)

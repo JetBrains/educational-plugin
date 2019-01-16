@@ -49,8 +49,7 @@ class StartStepikCourseAction : DumbAwareAction("Start Stepik Course") {
       return null
     }
     val courseLink = dialog.courseLink()
-    val user = EduSettings.getInstance().user!!
-    val course = StepikCourseConnector.getCourseInfoByLink(user, courseLink)
+    val course = StepikCourseConnector.getCourseInfoByLink(courseLink)
     if (course == null) {
       showFailedToAddCourseNotification()
       return null

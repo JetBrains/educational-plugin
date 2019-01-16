@@ -326,7 +326,7 @@ open class StepikIntegrationTest : StepikTestCase() {
   }
 
   private fun getCourseFromStepik(courseId: Int): EduCourse =
-    StepikConnector.getCourseInfo(user, courseId, true) ?: error(
+    StepikConnector.getCourseInfo(courseId, true) ?: error(
       "Uploaded course `$courseId` not found among courses available to instructor")
 }
 

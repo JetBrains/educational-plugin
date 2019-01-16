@@ -98,14 +98,14 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<EduCourse> getCourseInfos(@Nullable StepikUser user) {
+  public static List<EduCourse> getCourseInfos() {
     LOG.info("Loading courses started...");
     long startTime = System.currentTimeMillis();
     List<EduCourse> result = ContainerUtil.newArrayList();
     List<Callable<List<EduCourse>>> tasks = ContainerUtil.newArrayList();
     tasks.add(() -> StepikNewConnector.INSTANCE.getCourseInfos(true));
     tasks.add(() -> StepikNewConnector.INSTANCE.getCourseInfos(false));
-    tasks.add(() -> getInProgressCourses(user));
+    tasks.add(() -> getInProgressCourses());
 
     try {
       for (Future<List<EduCourse>> future : ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
@@ -143,10 +143,10 @@ public class StepikConnector {
     }
   }
 
-  private static List<EduCourse> getInProgressCourses(@Nullable StepikUser user) {
+  private static List<EduCourse> getInProgressCourses() {
     List<EduCourse> result = ContainerUtil.newArrayList();
     for (Integer courseId : IN_PROGRESS_COURSES) {
-      final EduCourse info = getCourseInfo(user, courseId, false);
+      final EduCourse info = getCourseInfo(courseId, false);
       if (info == null) continue;
       CourseCompatibility compatibility = info.getCompatibility();
       if (compatibility == CourseCompatibility.UNSUPPORTED) continue;
@@ -215,24 +215,8 @@ public class StepikConnector {
     return -1;
   }
 
-  public static CoursesContainer getCourseContainers(@Nullable StepikUser user, @NotNull String url) throws IOException {
-    final CoursesContainer coursesContainer;
-    if (user != null) {
-      coursesContainer = StepikAuthorizedClient.getFromStepik(url, CoursesContainer.class, user);
-    }
-    else {
-      coursesContainer = StepikClient.getFromStepik(url, CoursesContainer.class);
-    }
-    if (coursesContainer != null) {
-      for (EduCourse info : coursesContainer.courses) {
-        StepikUtils.setCourseLanguage(info);
-      }
-    }
-    return coursesContainer;
-  }
-
   @Nullable
-  public static EduCourse getCourseInfo(@Nullable StepikUser user, int courseId, boolean isIdeaCompatible) {
+  public static EduCourse getCourseInfo(int courseId, boolean isIdeaCompatible) {
     return StepikNewConnector.INSTANCE.getCourseInfo(courseId, isIdeaCompatible);
   }
 
