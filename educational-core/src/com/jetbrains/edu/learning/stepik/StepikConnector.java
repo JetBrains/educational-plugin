@@ -37,7 +37,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
@@ -98,37 +97,6 @@ public class StepikConnector {
   public static final List<Integer> IN_PROGRESS_COURSES = getInProgressCoursesIds();
 
   private StepikConnector() {
-  }
-
-  public static void enrollToCourse(final int courseId, @Nullable final StepikUser user) {
-    if (user == null) return;
-    HttpPost post = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ENROLLMENTS);
-    try {
-      final EnrollmentWrapper enrollment = new EnrollmentWrapper(String.valueOf(courseId));
-      post.setEntity(new StringEntity(new GsonBuilder().create().toJson(enrollment)));
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient(user);
-      CloseableHttpResponse response = client.execute(post);
-      StatusLine line = response.getStatusLine();
-      line.getStatusCode();
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-  }
-
-  public static boolean isEnrolledToCourse(final int courseId, @Nullable final StepikUser user) {
-    if (user == null) return false;
-    HttpGet request = new HttpGet(StepikNames.STEPIK_API_URL + StepikNames.ENROLLMENTS + "/" + courseId);
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient(user);
-      CloseableHttpResponse response = client.execute(request);
-      StatusLine line = response.getStatusLine();
-      return line.getStatusCode() == HttpStatus.SC_OK;
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-    return false;
   }
 
   @NotNull

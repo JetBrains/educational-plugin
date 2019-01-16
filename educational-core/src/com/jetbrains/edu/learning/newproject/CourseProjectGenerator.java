@@ -46,6 +46,7 @@ import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +63,7 @@ public abstract class CourseProjectGenerator<S> {
 
   @NotNull protected final EduCourseBuilder<S> myCourseBuilder;
   @NotNull protected Course myCourse;
-  private boolean isEnrolled;
+  private boolean alreadyEnrolled;
 
   public CourseProjectGenerator(@NotNull EduCourseBuilder<S> builder, @NotNull final Course course) {
     myCourseBuilder = builder;
@@ -74,10 +75,15 @@ public abstract class CourseProjectGenerator<S> {
     final EduCourse remoteCourse = (EduCourse) this.myCourse;
     if (remoteCourse.getId() > 0) {
       return ProgressManager.getInstance().runProcessWithProgressSynchronously(() -> {
-        final StepikUser user = EduSettings.getInstance().getUser();
-        isEnrolled = StepikConnector.isEnrolledToCourse(remoteCourse.getId(), user);
         ProgressManager.getInstance().getProgressIndicator().setIndeterminate(true);
-        StepikConnector.enrollToCourse(remoteCourse.getId(), user);
+
+        final StepikUser user = EduSettings.getInstance().getUser();
+        if (user != null) {
+          alreadyEnrolled = StepikNewConnector.INSTANCE.isEnrolledToCourse(remoteCourse.getId(), user);
+          if (!alreadyEnrolled) {
+            StepikNewConnector.INSTANCE.enrollToCourse(remoteCourse.getId(), user);
+          }
+        }
         if (StepikConnector.loadCourseStructure(remoteCourse)) {
           myCourse = remoteCourse;
           return true;
@@ -214,7 +220,7 @@ public abstract class CourseProjectGenerator<S> {
   protected void loadSolutions(@NotNull Project project, @NotNull Course course) {
     if (course.isStudy() && course instanceof EduCourse && ((EduCourse)course).isRemote() && EduSettings.isLoggedIn()) {
       PropertiesComponent.getInstance(project).setValue(StepikNames.ARE_SOLUTIONS_UPDATED_PROPERTY, true, false);
-      if (isEnrolled) {
+      if (alreadyEnrolled) {
         StepikSolutionsLoader stepikSolutionsLoader = StepikSolutionsLoader.getInstance(project);
         stepikSolutionsLoader.loadSolutionsInBackground();
         EduUsagesCollector.progressOnGenerateCourse();

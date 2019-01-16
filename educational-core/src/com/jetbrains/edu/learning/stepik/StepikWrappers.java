@@ -298,22 +298,6 @@ public class StepikWrappers {
     }
   }
 
-  static class Enrollment {
-    String course;
-
-    public Enrollment(String courseId) {
-      course = courseId;
-    }
-  }
-
-  static class EnrollmentWrapper {
-    Enrollment enrollment;
-
-    public EnrollmentWrapper(@NotNull final String courseId) {
-      enrollment = new Enrollment(courseId);
-    }
-  }
-
   static class ProgressContainer {
     static class Progress {
       String id;
