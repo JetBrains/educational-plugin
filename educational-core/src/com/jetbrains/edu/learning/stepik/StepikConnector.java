@@ -925,12 +925,8 @@ public class StepikConnector {
   }
 
   private static String codeHandler(@NotNull String code, @NotNull String redirectUri) {
-    final StepikUser user = StepikAuthorizedClient.login(code, redirectUri);
-    if (user != null) {
-      EduSettings.getInstance().setUser(user);
-      return null;
-    }
-    return "Couldn't get user info";
+    final boolean success = StepikAuthorizedClient.login(code, redirectUri);
+    return success ? null : "Couldn't get user info";
   }
 
   public static void doAuthorize(@NotNull Runnable externalRedirectUrlHandler) {

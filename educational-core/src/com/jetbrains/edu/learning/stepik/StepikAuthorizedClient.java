@@ -8,6 +8,7 @@ import com.intellij.openapi.util.Key;
 import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.authUtils.TokenInfo;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.*;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -124,22 +125,18 @@ public class StepikAuthorizedClient {
     return new BasicHeader("Authorization", "Bearer " + accessToken);
   }
 
-  @Nullable
-  public static StepikUser login(@NotNull final String code, String redirectUrl) {
-    final List<NameValuePair> parameters = new ArrayList<>();
-    parameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
-    parameters.add(new BasicNameValuePair("code", code));
-    parameters.add(new BasicNameValuePair("redirect_uri", redirectUrl));
-    parameters.add(new BasicNameValuePair("client_id", StepikNames.CLIENT_ID));
-
-    TokenInfo tokenInfo = getTokens(parameters);
-    if (tokenInfo == null) {
-      return null;
+  public static boolean login(@NotNull final String code, String redirectUrl) {
+    final boolean success = StepikNewConnector.INSTANCE.login(code, redirectUrl);
+    if (!success) return false;
+    final StepikUser user = EduSettings.getInstance().getUser();
+    if (user == null) {
+      return false;
     }
-
-    return login(tokenInfo);
+    ourClient = createInitializedClient(user.getAccessToken());
+    return true;
   }
 
+  // TO BE REMOVED!
   public static StepikUser login(@NotNull TokenInfo tokenInfo) {
     final StepikUser user = new StepikUser(tokenInfo);
     ourClient = createInitializedClient(user.getAccessToken());

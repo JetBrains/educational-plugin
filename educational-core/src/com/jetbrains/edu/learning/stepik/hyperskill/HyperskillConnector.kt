@@ -96,10 +96,11 @@ object HyperskillConnector {
 
   fun login(code: String): Boolean {
     val tokenInfo = authorizationService.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").execute().body() ?: return false
-    HyperskillSettings.INSTANCE.account = HyperskillAccount()
-    HyperskillSettings.INSTANCE.account!!.tokenInfo = tokenInfo
+    val account = HyperskillAccount()
+    account.tokenInfo = tokenInfo
     val currentUser = getCurrentUser() ?: return false
-    HyperskillSettings.INSTANCE.account!!.userInfo = currentUser
+    account.userInfo = currentUser
+    HyperskillSettings.INSTANCE.account = account
     ApplicationManager.getApplication().messageBus.syncPublisher<HyperskillLoggedIn>(authorizationTopic).userLoggedIn()
     return true
   }

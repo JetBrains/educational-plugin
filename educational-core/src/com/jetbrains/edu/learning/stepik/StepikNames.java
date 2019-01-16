@@ -8,6 +8,7 @@ public class StepikNames {
   public static final String STEPIK_URL = ApplicationManager.getApplication().isUnitTestMode() ? "https://release.stepik.org" : "https://stepik.org" ;
   public static final String TOKEN_URL = STEPIK_URL + "/oauth2/token/";
   public static final String STEPIK_API_URL = STEPIK_URL + "/api";
+  public static final String STEPIK_API_URL_SLASH = STEPIK_API_URL + "/";
 
   public static final String CONTENT_TYPE_APP_JSON = "application/json";
   public static final String LESSONS = "/lessons/";
