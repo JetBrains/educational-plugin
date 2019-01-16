@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.intellij.openapi.application.ApplicationManager
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.EduSettings.SETTINGS_CHANGED
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
@@ -37,39 +35,41 @@ object StepikNewConnector {
       return retrofit.create(StepikOAuthService::class.java)
     }
 
-  private val service: StepikService
-    get() {
-      val account = EduSettings.getInstance().user
-      if (account != null && !account.tokenInfo.isUpToDate()) {
-        account.refreshTokens()
-      }
+  private fun service() : StepikService {
+    return service(EduSettings.getInstance().user)
+  }
 
-      val dispatcher = Dispatcher()
-      dispatcher.maxRequests = 10
-
-      val okHttpClient = OkHttpClient.Builder()
-        .readTimeout(60, TimeUnit.SECONDS)
-        .connectTimeout(60, TimeUnit.SECONDS)
-        .addInterceptor { chain ->
-          val tokenInfo = account?.tokenInfo
-          if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
-
-          val newRequest = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
-            .build()
-          chain.proceed(newRequest)
-        }
-        .dispatcher(dispatcher)
-        .build()
-
-      val retrofit = Retrofit.Builder()
-        .baseUrl(StepikNames.STEPIK_API_URL_SLASH)
-        .addConverterFactory(converterFactory)
-        .client(okHttpClient)
-        .build()
-
-      return retrofit.create(StepikService::class.java)
+  private fun service(account: StepikUser?) : StepikService {
+    if (account != null && !account.tokenInfo.isUpToDate()) {
+      account.refreshTokens()
     }
+
+    val dispatcher = Dispatcher()
+    dispatcher.maxRequests = 10
+
+    val okHttpClient = OkHttpClient.Builder()
+      .readTimeout(60, TimeUnit.SECONDS)
+      .connectTimeout(60, TimeUnit.SECONDS)
+      .addInterceptor { chain ->
+        val tokenInfo = account?.tokenInfo
+        if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
+
+        val newRequest = chain.request().newBuilder()
+          .addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
+          .build()
+        chain.proceed(newRequest)
+      }
+      .dispatcher(dispatcher)
+      .build()
+
+    val retrofit = Retrofit.Builder()
+      .baseUrl(StepikNames.STEPIK_API_URL_SLASH)
+      .addConverterFactory(converterFactory)
+      .client(okHttpClient)
+      .build()
+
+    return retrofit.create(StepikService::class.java)
+  }
 
   private fun StepikUser.refreshTokens() {
     val refreshToken = tokenInfo.refreshToken
@@ -83,14 +83,13 @@ object StepikNewConnector {
     val tokenInfo = authorizationService.getTokens(StepikNames.CLIENT_ID, redirectUri,
                                                    code, "authorization_code").execute().body() ?: return false
     val stepikUser = StepikUser(tokenInfo)
-    EduSettings.getInstance().user = stepikUser
-    val stepikUserInfo = getCurrentUserInfo() ?: return false
+    val stepikUserInfo = getCurrentUserInfo(stepikUser) ?: return false
     stepikUser.userInfo = stepikUserInfo
-    ApplicationManager.getApplication().messageBus.syncPublisher<EduSettings.StudySettingsListener>(SETTINGS_CHANGED).settingsChanged()
+    EduSettings.getInstance().user = stepikUser
     return true
   }
 
-  private fun getCurrentUserInfo(): StepikUserInfo? {
-    return service.getCurrentUser().execute().body()?.users?.firstOrNull() ?: return null
+  private fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
+    return service(stepikUser).getCurrentUser().execute().body()?.users?.firstOrNull() ?: return null
   }
 }
