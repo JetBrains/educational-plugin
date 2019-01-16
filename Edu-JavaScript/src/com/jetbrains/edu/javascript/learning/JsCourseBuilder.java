@@ -1,8 +1,5 @@
-package com.jetbrains.edu.javascript.learning.checkio;
+package com.jetbrains.edu.javascript.learning;
 
-import com.jetbrains.edu.javascript.learning.JsLanguageSettings;
-import com.jetbrains.edu.javascript.learning.JsNewProjectSettings;
-import com.jetbrains.edu.javascript.learning.checkio.newProject.JsCheckiOCourseProjectGenerator;
 import com.jetbrains.edu.learning.EduCourseBuilder;
 import com.jetbrains.edu.learning.LanguageSettings;
 import com.jetbrains.edu.learning.courseFormat.Course;
@@ -10,17 +7,17 @@ import com.jetbrains.edu.learning.newproject.CourseProjectGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JsCheckiOCourseBuilder implements EduCourseBuilder<JsNewProjectSettings> {
+public class JsCourseBuilder implements EduCourseBuilder<JsNewProjectSettings> {
   @Nullable
   @Override
   public String getTaskTemplateName() {
-    return "";
+    return "task.js";
   }
 
   @Nullable
   @Override
   public String getTestTemplateName() {
-    return "";
+    return "test.js";
   }
 
   @NotNull
@@ -32,6 +29,6 @@ public class JsCheckiOCourseBuilder implements EduCourseBuilder<JsNewProjectSett
   @Nullable
   @Override
   public CourseProjectGenerator<JsNewProjectSettings> getCourseProjectGenerator(@NotNull Course course) {
-    return new JsCheckiOCourseProjectGenerator(this, course);
+    return new JsCourseProjectGenerator(this, course);
   }
 }

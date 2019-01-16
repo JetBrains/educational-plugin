@@ -325,7 +325,7 @@ configure(project(':Edu-Android')) {
 }
 
 configure(project(':Edu-JavaScript')) {
-  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage"
+  intellij.plugins "NodeJS:$nodeJsPluginVersion", "JavaScriptLanguage", "CSS", "JavaScriptDebugger"
 }
 
 configure(project(':Edu-Rust')) {

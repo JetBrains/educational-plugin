@@ -4,4 +4,7 @@
   <depends>NodeJS</depends>
 
   <xi:include href="/META-INF/CheckiO-JavaScript.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <extensions defaultExtensionNs="Educational">
+    <configurator implementationClass="com.jetbrains.edu.javascript.learning.JsConfigurator" language="JavaScript"/>
+  </extensions>
 </idea-plugin>
