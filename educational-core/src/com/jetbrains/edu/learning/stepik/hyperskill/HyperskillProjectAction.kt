@@ -13,6 +13,7 @@ import com.intellij.openapi.ui.MessageType
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.ui.components.labels.ActionLink
+import com.jetbrains.edu.learning.EduExperimentalFeatures
 import com.jetbrains.edu.learning.EduNames
 import com.jetbrains.edu.learning.newproject.ui.JoinCourseDialog
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
@@ -30,7 +31,7 @@ class HyperskillProjectAction : DumbAwareAction("Start Hyperskill Project") {
     else {
       ProgressManager.getInstance().run(object : Task.Modal(null, "Loading Selected Project", false) {
         override fun run(indicator: ProgressIndicator) {
-          val currentUser = HyperskillConnector.getCurrentUser()
+          val currentUser = HyperskillConnector.getCurrentUser(account)
           if (currentUser != null) {
             account.userInfo = currentUser
           }

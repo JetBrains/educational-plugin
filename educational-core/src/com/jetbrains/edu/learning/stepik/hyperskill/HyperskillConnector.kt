@@ -57,37 +57,38 @@ object HyperskillConnector {
     }
 
   private val service: HyperskillService
-    get() {
-      val account = HyperskillSettings.INSTANCE.account
-      if (account != null && !account.tokenInfo.isUpToDate()) {
-        account.refreshTokens()
-      }
+    get() = service(HyperskillSettings.INSTANCE.account)
 
-      val dispatcher = Dispatcher()
-      dispatcher.maxRequests = 10
-
-      val okHttpClient = OkHttpClient.Builder()
-        .readTimeout(60, TimeUnit.SECONDS)
-        .connectTimeout(60, TimeUnit.SECONDS)
-        .addInterceptor { chain ->
-          val tokenInfo = account?.tokenInfo
-          if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
-
-          val newRequest = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
-            .build()
-          chain.proceed(newRequest)
-        }
-        .dispatcher(dispatcher)
-        .build()
-      val retrofit = Retrofit.Builder()
-        .baseUrl(HYPERSKILL_URL)
-        .addConverterFactory(converterFactory)
-        .client(okHttpClient)
-        .build()
-
-      return retrofit.create(HyperskillService::class.java)
+  private fun service(account: HyperskillAccount?) : HyperskillService {
+    if (account != null && !account.tokenInfo.isUpToDate()) {
+      account.refreshTokens()
     }
+
+    val dispatcher = Dispatcher()
+    dispatcher.maxRequests = 10
+
+    val okHttpClient = OkHttpClient.Builder()
+      .readTimeout(60, TimeUnit.SECONDS)
+      .connectTimeout(60, TimeUnit.SECONDS)
+      .addInterceptor { chain ->
+        val tokenInfo = account?.tokenInfo
+        if (tokenInfo == null) return@addInterceptor chain.proceed(chain.request())
+
+        val newRequest = chain.request().newBuilder()
+          .addHeader("Authorization", "Bearer ${tokenInfo.accessToken}")
+          .build()
+        chain.proceed(newRequest)
+      }
+      .dispatcher(dispatcher)
+      .build()
+    val retrofit = Retrofit.Builder()
+      .baseUrl(HYPERSKILL_URL)
+      .addConverterFactory(converterFactory)
+      .client(okHttpClient)
+      .build()
+
+    return retrofit.create(HyperskillService::class.java)
+  }
 
   fun doAuthorize(vararg postLoginActions: Runnable) {
     createAuthorizationListener(*postLoginActions)
@@ -98,7 +99,7 @@ object HyperskillConnector {
     val tokenInfo = authorizationService.getTokens(CLIENT_ID, REDIRECT_URI, code, "authorization_code").execute().body() ?: return false
     val account = HyperskillAccount()
     account.tokenInfo = tokenInfo
-    val currentUser = getCurrentUser() ?: return false
+    val currentUser = getCurrentUser(account) ?: return false
     account.userInfo = currentUser
     HyperskillSettings.INSTANCE.account = account
     ApplicationManager.getApplication().messageBus.syncPublisher<HyperskillLoggedIn>(authorizationTopic).userLoggedIn()
@@ -113,8 +114,8 @@ object HyperskillConnector {
     }
   }
 
-  fun getCurrentUser(): HyperskillUserInfo? {
-    return service.getUserInfo(0).execute().body()?.users?.firstOrNull() ?: return null
+  fun getCurrentUser(account: HyperskillAccount): HyperskillUserInfo? {
+    return service(account).getUserInfo(0).execute().body()?.users?.firstOrNull() ?: return null
   }
 
   fun getStages(projectId: Int): List<HyperskillStage>? {
