@@ -6,16 +6,13 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility
 import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.stepik.StepikConnector.FEATURED_COURSES
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.StepikUser
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.StepikUtils
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnectorUtils.getAvailableCourses
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
@@ -90,7 +87,7 @@ object StepikNewConnector {
   }
 
   private fun getCurrentUserInfo(stepikUser: StepikUser): StepikUserInfo? {
-    return service(stepikUser).getCurrentUser().execute().body()?.users?.firstOrNull() ?: return null
+    return service(stepikUser).getCurrentUser().execute().body()?.users?.firstOrNull()
   }
 
   fun login(code: String, redirectUri: String): Boolean {
@@ -125,33 +122,19 @@ object StepikNewConnector {
       val coursesList = service.courses(true, isPublic, currentPage, enrolled).execute().body()
       if (coursesList == null) break
 
-      for (info in coursesList.courses) {
-        StepikUtils.setCourseLanguage(info)
-      }
-      addAvailableCourses(result, coursesList)
+      val availableCourses = getAvailableCourses(coursesList)
+      result.addAll(availableCourses)
       currentPage += 1
       if (!coursesList.meta.containsKey("has_next") || coursesList.meta["has_next"] == false) break
     }
     return result
   }
 
-  private fun addAvailableCourses(result: MutableList<EduCourse>, coursesList: CoursesList) {
-    val courses = coursesList.courses
-    for (info in courses) {
-      if (StringUtil.isEmptyOrSpaces(info.type)) continue
-      if (info.compatibility === CourseCompatibility.UNSUPPORTED) continue
-      info.visibility = getVisibility(info)
-      result.add(info)
+  fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean): EduCourse? {
+    val course = service.courses(courseId, isIdeaCompatible).execute().body()?.courses?.firstOrNull()
+    if (course != null) {
+      StepikUtils.setCourseLanguage(course)
     }
+    return course
   }
-
-  private fun getVisibility(course: EduCourse): CourseVisibility {
-    return when {
-      !course.isPublic -> CourseVisibility.PrivateVisibility
-      FEATURED_COURSES.contains(course.id) -> CourseVisibility.FeaturedVisibility(FEATURED_COURSES.indexOf(course.id))
-      FEATURED_COURSES.isEmpty() -> CourseVisibility.LocalVisibility
-      else -> CourseVisibility.PublicVisibility
-    }
-  }
-
 }

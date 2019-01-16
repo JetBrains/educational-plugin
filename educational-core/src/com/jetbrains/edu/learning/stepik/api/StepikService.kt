@@ -22,6 +22,10 @@ interface StepikService {
               @Query("is_public") isPublic: Boolean,
               @Query("page") page: Int,
               @Query("enrolled") enrolled: Boolean?): Call<CoursesList>
+
+  @GET("courses/{id}")
+  fun courses(@Path("id") courseId: Int,
+              @Query("is_idea_compatible") isIdeaCompatible: Boolean?): Call<CoursesList>
 }
 
 class UsersList {

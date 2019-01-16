@@ -233,24 +233,7 @@ public class StepikConnector {
 
   @Nullable
   public static EduCourse getCourseInfo(@Nullable StepikUser user, int courseId, boolean isIdeaCompatible) {
-    final URI url;
-    final CoursesContainer coursesContainer;
-    try {
-      url = new URIBuilder(StepikNames.COURSES + "/" + courseId)
-        .addParameter("is_idea_compatible", String.valueOf(isIdeaCompatible))
-        .build();
-      coursesContainer = getCourseContainers(user, url.toString());
-    }
-    catch (URISyntaxException | IOException e) {
-      LOG.warn(e.getMessage());
-      return null;
-    }
-
-    if (coursesContainer != null && !coursesContainer.courses.isEmpty()) {
-      return coursesContainer.courses.get(0);
-    } else {
-      return null;
-    }
+    return StepikNewConnector.INSTANCE.getCourseInfo(courseId, isIdeaCompatible);
   }
 
   public static boolean loadCourseStructure(@NotNull final EduCourse remoteCourse) {
