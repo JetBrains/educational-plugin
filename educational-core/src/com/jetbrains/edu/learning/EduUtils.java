@@ -66,6 +66,7 @@ import com.jetbrains.edu.learning.stepik.StepikUser;
 import com.jetbrains.edu.learning.stepik.StepikUserWidget;
 import com.jetbrains.edu.learning.twitter.TwitterPluginConfigurator;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
+import kotlin.collections.CollectionsKt;
 import org.apache.commons.codec.binary.Base64;
 import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
@@ -622,10 +623,12 @@ public class EduUtils {
     }
   }
 
+  @Nullable
   private static VirtualFile getActiveVirtualFile(VirtualFile taskDir, Map<String, TaskFile> taskFiles) {
     VirtualFile activeVirtualFile = null;
     for (Map.Entry<String, TaskFile> entry : taskFiles.entrySet()) {
       final TaskFile taskFile = entry.getValue();
+      if (!taskFile.isVisible()) continue;
       taskDir.refresh(false, true);
       final VirtualFile virtualFile = findTaskFileInDir(taskFile, taskDir);
       if (virtualFile != null) {
@@ -635,7 +638,7 @@ public class EduUtils {
       }
     }
     if (activeVirtualFile == null) {
-      Map.Entry<String, TaskFile> first = getFirst(taskFiles.entrySet());
+      Map.Entry<String, TaskFile> first = getFirst(CollectionsKt.filter(taskFiles.entrySet(), (entry) -> entry.getValue().isVisible()));
       if (first != null) {
         return findTaskFileInDir(first.getValue(), taskDir);
       }
