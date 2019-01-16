@@ -36,10 +36,10 @@ class FrameworkLessonNode private constructor(
       lessonDirectory: PsiDirectory,
       viewSettings: ViewSettings,
       lesson: FrameworkLesson
-    ): FrameworkLessonNode {
+    ): FrameworkLessonNode? {
       val task = lesson.currentTask()
-      val taskBaseDirectory = lessonDirectory.findSubdirectory(EduNames.TASK) ?: error("")
-      val taskDirectory = CourseViewUtils.findTaskDirectory(project, taskBaseDirectory, task) ?: error("")
+      val taskBaseDirectory = lessonDirectory.findSubdirectory(EduNames.TASK) ?: return null
+      val taskDirectory = CourseViewUtils.findTaskDirectory(project, taskBaseDirectory, task) ?: return null
       return FrameworkLessonNode(project, taskDirectory, viewSettings, lesson)
     }
   }

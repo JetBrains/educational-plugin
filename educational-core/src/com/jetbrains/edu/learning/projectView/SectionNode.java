@@ -59,7 +59,7 @@ public class SectionNode extends EduNode {
     return null;
   }
 
-  @NotNull
+  @Nullable
   protected LessonNode createLessonNode(@NotNull PsiDirectory directory, @NotNull Lesson lesson) {
     if (lesson instanceof FrameworkLesson) {
       return FrameworkLessonNode.createFrameworkLessonNode(myProject, directory, getSettings(), (FrameworkLesson) lesson);
