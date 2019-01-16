@@ -25,9 +25,9 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
 
   protected fun findFile(path: String): VirtualFile = rootDir.findFileByRelativePath(path) ?: error("Can't find $path")
 
-  protected fun <Settings> createCourseStructure(builder: EduCourseBuilder<Settings>, course: Course, settings: Settings) {
-    val generator = builder.getCourseProjectGenerator(course) ?: error("given builder returns null as course project generator")
-    generator.doCreateCourseProject(rootDir.path, settings!!)
+  protected fun createCourseStructure(course: Course) {
+    val generator = courseBuilder.getCourseProjectGenerator(course) ?: error("given builder returns null as course project generator")
+    generator.doCreateCourseProject(rootDir.path, defaultSettings as Any)
 
     runInEdtAndWait {
       project = ProjectManager.getInstance().openProjects.firstOrNull() ?: error("Cannot find project")
@@ -36,7 +36,7 @@ abstract class CourseGenerationTestBase<Settings> : UsefulTestCase() {
 
   protected fun generateCourseStructure(pathToCourseJson: String, courseMode: CourseMode = CourseMode.STUDENT): Course {
     val course = createCourseFromJson(pathToCourseJson, courseMode)
-    createCourseStructure(courseBuilder, course, defaultSettings)
+    createCourseStructure(course)
     return course
   }
 

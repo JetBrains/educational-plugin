@@ -38,7 +38,7 @@ class PyCourseBuilderTest : CourseGenerationTestBase<PyNewProjectSettings>() {
 
   fun `test new course structure`() {
     val course = newCourse(PythonLanguage.INSTANCE)
-    createCourseStructure(courseBuilder, course, defaultSettings)
+    createCourseStructure(course)
 
     val expectedFileTree = fileTree {
       dir("lesson1") {

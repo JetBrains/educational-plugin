@@ -579,7 +579,7 @@ class StudentCourseUpdateTest : CourseGenerationTestBase<JdkProjectSettings>() {
   private fun doTest(expectedFileTree: FileTree, testPath: String) {
     val course = createRemoteCourseFromJson("$testPath/course.json", CourseMode.STUDENT)
     setTopLevelSection(course)
-    createCourseStructure(courseBuilder, course, defaultSettings)
+    createCourseStructure(course)
     val courseFromServer = createRemoteCourseFromJson("$testPath/updated_course.json", CourseMode.STUDENT)
     setTopLevelSection(courseFromServer)
 

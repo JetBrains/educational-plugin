@@ -48,7 +48,7 @@ class JCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
   fun `test new course structure`() {
     val course = newCourse(JavaLanguage.INSTANCE)
-    createCourseStructure(courseBuilder, course, defaultSettings)
+    createCourseStructure(course)
 
     val expectedFileTree = fileTree {
       dir("lesson1") {

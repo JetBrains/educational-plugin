@@ -54,7 +54,7 @@ class KtCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
   fun `test new course structure`() {
     val course = newCourse(KotlinLanguage.INSTANCE)
-    createCourseStructure(courseBuilder, course, defaultSettings)
+    createCourseStructure(course)
 
     val expectedFileTree = fileTree {
       dir("lesson1") {

@@ -41,7 +41,7 @@ class ScalaCourseBuilderTest : CourseGenerationTestBase<JdkProjectSettings>() {
 
   fun `test new course structure`() {
     val course = newCourse(ScalaLanguage.INSTANCE)
-    createCourseStructure(courseBuilder, course, defaultSettings)
+    createCourseStructure(course)
 
     val expectedFileTree = fileTree {
       dir("lesson1") {

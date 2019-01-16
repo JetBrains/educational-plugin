@@ -10,7 +10,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
 
   fun `test new educator course`() {
     val newCourse = newCourse(RsLanguage)
-    createCourseStructure(courseBuilder, newCourse, defaultSettings)
+    createCourseStructure(newCourse)
 
     fileTree {
       dir("lesson1/task1") {
@@ -37,7 +37,7 @@ class RsCourseBuilderTest : CourseGenerationTestBase<RsProjectSettings>() {
         }
       }
     }
-    createCourseStructure(courseBuilder, course, defaultSettings)
+    createCourseStructure(course)
 
     fileTree {
       dir("lesson1/task1") {

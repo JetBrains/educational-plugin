@@ -11,7 +11,7 @@ class AndroidCourseGeneratorTest : CourseGenerationTestBase<JdkProjectSettings>(
 
   fun `test new course structure`() {
     val course = newCourse(PlainTextLanguage.INSTANCE, courseType = EduNames.ANDROID)
-    createCourseStructure(courseBuilder, course, defaultSettings)
+    createCourseStructure(course)
 
     val expectedFileTree = fileTree {
       file("local.properties")
