@@ -3,10 +3,14 @@ package com.jetbrains.edu.coursecreator.actions
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.components.JBCheckBox
+import com.intellij.ui.layout.*
 import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.ext.addDefaultTaskDescription
@@ -15,6 +19,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.placeholderDependencies
 import com.jetbrains.edu.learning.courseFormat.ext.testDirs
 import com.jetbrains.edu.learning.courseFormat.tasks.EduTask
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
+import com.jetbrains.edu.learning.isUnitTestMode
 import icons.EducationalCoreIcons
 import java.io.IOException
 import java.util.*
@@ -61,6 +66,26 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
     }
   }
 
+  override fun showCreateStudyItemDialog(
+    project: Project,
+    course: Course,
+    model: NewStudyItemUiModel,
+    additionalPanels: List<AdditionalPanel>
+  ): NewStudyItemInfo? {
+    return if (model.parent is FrameworkLesson) {
+      val copyTestsPanel = CopyTestsCheckBoxPanel()
+      val panels = listOf(copyTestsPanel) + additionalPanels
+      super.showCreateStudyItemDialog(project, course, model, panels)?.apply {
+        // Don't override test values provided by mock UI
+        if (!isUnitTestMode) {
+          putUserData(COPY_TESTS_FROM_PREV_TASK, copyTestsPanel.needCopyTests)
+        }
+      }
+    } else {
+      super.showCreateStudyItemDialog(project, course, model, additionalPanels)
+    }
+  }
+
   override fun createAndInitItem(project: Project, course: Course, parentItem: StudyItem?, info: NewStudyItemInfo): Task? {
     if (parentItem !is Lesson) return null
     val newTask = EduTask(info.name)
@@ -81,11 +106,10 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
       val newTaskFiles = LinkedHashMap<String, TaskFile>()
       val testDirs = course.testDirs
       val defaultTestFileName = course.configurator?.testFileName ?: ""
+      val needCopyTests = info.getUserData(COPY_TESTS_FROM_PREV_TASK) ?: false
       for ((path, file) in prevTask.taskFiles) {
-        // We don't want to copy test files
-        if (testDirs.none { path.startsWith(it) } && path != defaultTestFileName) {
-          newTaskFiles[path] = file.copyForNewTask(prevTaskDir, newTask)
-        }
+        if (!needCopyTests && (testDirs.any { path.startsWith(it) } || path == defaultTestFileName)) continue
+        newTaskFiles[path] = file.copyForNewTask(prevTaskDir, newTask)
       }
       newTask.taskFiles = newTaskFiles
 
@@ -163,5 +187,18 @@ class CCCreateTask : CCCreateStudyItemActionBase<Task>(StudyItemType.TASK, Educa
 
   companion object {
     private val LOG: Logger = Logger.getInstance(CCCreateTask::class.java)
+
+    val COPY_TESTS_FROM_PREV_TASK: Key<Boolean> = Key.create("COPY_TESTS_FROM_PREV_TASK")
+  }
+}
+
+private class CopyTestsCheckBoxPanel : AdditionalPanel {
+
+  private val checkBox: JBCheckBox = JBCheckBox(null, false)
+
+  val needCopyTests: Boolean get() = checkBox.isSelected
+
+  override fun attach(builder: LayoutBuilder) {
+    builder.row("Copy tests:") { checkBox() }
   }
 }
