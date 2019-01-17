@@ -3,6 +3,7 @@ package com.jetbrains.edu.learning.stepik.api
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProgressManager
@@ -32,6 +33,9 @@ object StepikNewConnector {
     objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
     objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
     objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
+    objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
+    objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+    objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
     objectMapper.registerModule(module)
     converterFactory = JacksonConverterFactory.create(objectMapper)
   }

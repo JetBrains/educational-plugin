@@ -70,3 +70,28 @@ class StepikSectionMixin {
   @JsonProperty("update_date")
   lateinit var updateDate: Date
 }
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class StepikLessonMixin {
+  @JsonProperty("id")
+  var myId: Int = 0
+
+  @JsonProperty("steps")
+  lateinit var steps: MutableList<Int>
+
+  @JsonProperty("is_public")
+  var is_public: Boolean = false
+
+  lateinit var myUpdateDate: Date
+
+  @JsonProperty("title")
+  lateinit var name: String
+
+  @JsonProperty("unit_id")
+  var unitId: Int = 0
+}
