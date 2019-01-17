@@ -2,11 +2,11 @@ package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.stepik.StepikConnector.getStepSources
 import com.jetbrains.edu.learning.stepik.StepikLanguages
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getCourseInfo
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getStepSources
 import java.io.IOException
 import java.net.MalformedURLException
 import java.net.URL

@@ -20,11 +20,8 @@ import com.jetbrains.edu.learning.EduSettings;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
-import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -45,7 +42,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
@@ -53,8 +49,8 @@ import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 public class StepikConnector {
   private static final Logger LOG = Logger.getInstance(StepikConnector.class.getName());
 
-  private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
-  private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
+  public static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
+  public static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
 
   public static final Key<String> COURSE_LANGUAGE = Key.create("COURSE_LANGUAGE");
   private static final ExclusionStrategy ourExclusionStrategy = new ExclusionStrategy() {
@@ -72,15 +68,6 @@ public class StepikConnector {
   private StepikConnector() {
   }
 
-  @NotNull
-  public static List<Lesson> getLessons(List<Integer> unitIds) {
-    return StepikCourseLoader.INSTANCE.getLessonsFromUnitIds(unitIds);
-  }
-
-  public static List<StepikSteps.StepSource> getStepSources(List<Integer> stepIds, String language) {
-    return StepikNewConnector.INSTANCE.getStepSources(stepIds); // TODO: use language parameter
-  }
-
   private static <T> T getFromStepik(String link, final Class<T> container) throws IOException {
     return getFromStepik(link, container, null);
   }
@@ -92,59 +79,6 @@ public class StepikConnector {
       return StepikAuthorizedClient.getFromStepik(link, container, user, params);
     }
     return StepikClient.getFromStepik(link, container, params);
-  }
-
-  /**
-   * Parses solution from Stepik.
-   *
-   * In Stepik solution text placeholder text is wrapped in <placeholder> tags. Here we're trying to find corresponding
-   * placeholder for all taskFile placeholders.
-   *
-   * If we can't find at least one placeholder, we mark all placeholders as invalid. Invalid placeholder isn't showing
-   * and task file with such placeholders couldn't be checked.
-   *
-   * @param taskFile for which we're updating placeholders
-   * @param solutionFile from Stepik with text of last submission
-   * @return false if there're invalid placeholders
-   */
-  static boolean setPlaceholdersFromTags(@NotNull TaskFile taskFile, @NotNull SolutionFile solutionFile) {
-    int lastIndex = 0;
-    StringBuilder builder = new StringBuilder(solutionFile.text);
-    List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
-    boolean isPlaceholdersValid = true;
-    for (AnswerPlaceholder placeholder : placeholders) {
-      int start = builder.indexOf(OPEN_PLACEHOLDER_TAG, lastIndex);
-      int end = builder.indexOf(CLOSE_PLACEHOLDER_TAG, start);
-      if (start == -1 || end == -1) {
-        isPlaceholdersValid = false;
-        break;
-      }
-      placeholder.setOffset(start);
-      String placeholderText = builder.substring(start + OPEN_PLACEHOLDER_TAG.length(), end);
-      placeholder.setLength(placeholderText.length());
-      builder.delete(end, end + CLOSE_PLACEHOLDER_TAG.length());
-      builder.delete(start, start + OPEN_PLACEHOLDER_TAG.length());
-      lastIndex = start + placeholderText.length();
-    }
-
-    if (!isPlaceholdersValid) {
-      for (AnswerPlaceholder placeholder : placeholders) {
-        markInvalid(placeholder);
-      }
-    }
-
-    return isPlaceholdersValid;
-  }
-
-  private static void markInvalid(AnswerPlaceholder placeholder) {
-    placeholder.setLength(-1);
-    placeholder.setOffset(-1);
-  }
-
-  static String removeAllTags(@NotNull String text) {
-    String result = text.replaceAll(OPEN_PLACEHOLDER_TAG, "");
-    result = result.replaceAll(CLOSE_PLACEHOLDER_TAG, "");
-    return result;
   }
 
   public static void postSolution(@NotNull final Task task, boolean passed, @NotNull final Project project) {

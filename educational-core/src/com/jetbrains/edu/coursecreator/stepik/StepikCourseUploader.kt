@@ -9,7 +9,6 @@ import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
 import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
@@ -251,7 +250,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    val stepSources = StepikConnector.getStepSources(deleteCandidates, lesson.course.languageID)
+    val stepSources = StepikNewConnector.getStepSources(deleteCandidates, lesson.course.languageID)
     val tasksFromStep = StepikCourseLoader.getTasks(course.languageById, lesson, stepSources)
     tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.stepId })
   }

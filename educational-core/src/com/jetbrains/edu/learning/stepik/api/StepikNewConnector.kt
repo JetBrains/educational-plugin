@@ -184,7 +184,7 @@ object StepikNewConnector {
     return service.units(unitId).execute().body()?.units?.firstOrNull()
   }
 
-  fun getStepSources(stepIds: List<Int>): List<StepikSteps.StepSource> {
+  fun getStepSources(stepIds: List<Int>, language: String): List<StepikSteps.StepSource> {
     // TODO: use language parameter
     val stepsIdsChunks = stepIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val steps = mutableListOf<StepikSteps.StepSource>()

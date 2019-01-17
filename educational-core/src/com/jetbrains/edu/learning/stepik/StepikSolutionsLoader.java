@@ -45,8 +45,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikCheckerConnector.EDU_TOOLS_COMMENT;
-import static com.jetbrains.edu.learning.stepik.StepikConnector.removeAllTags;
-import static com.jetbrains.edu.learning.stepik.StepikConnector.setPlaceholdersFromTags;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.CLOSE_PLACEHOLDER_TAG;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.OPEN_PLACEHOLDER_TAG;
 
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
@@ -398,6 +398,59 @@ public class StepikSolutionsLoader implements Disposable {
     }
 
     return taskFileToText;
+  }
+
+  /**
+   * Parses solution from Stepik.
+   *
+   * In Stepik solution text placeholder text is wrapped in <placeholder> tags. Here we're trying to find corresponding
+   * placeholder for all taskFile placeholders.
+   *
+   * If we can't find at least one placeholder, we mark all placeholders as invalid. Invalid placeholder isn't showing
+   * and task file with such placeholders couldn't be checked.
+   *
+   * @param taskFile for which we're updating placeholders
+   * @param solutionFile from Stepik with text of last submission
+   * @return false if there're invalid placeholders
+   */
+  static boolean setPlaceholdersFromTags(@NotNull TaskFile taskFile, @NotNull StepikWrappers.SolutionFile solutionFile) {
+    int lastIndex = 0;
+    StringBuilder builder = new StringBuilder(solutionFile.text);
+    List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
+    boolean isPlaceholdersValid = true;
+    for (AnswerPlaceholder placeholder : placeholders) {
+      int start = builder.indexOf(OPEN_PLACEHOLDER_TAG, lastIndex);
+      int end = builder.indexOf(CLOSE_PLACEHOLDER_TAG, start);
+      if (start == -1 || end == -1) {
+        isPlaceholdersValid = false;
+        break;
+      }
+      placeholder.setOffset(start);
+      String placeholderText = builder.substring(start + OPEN_PLACEHOLDER_TAG.length(), end);
+      placeholder.setLength(placeholderText.length());
+      builder.delete(end, end + CLOSE_PLACEHOLDER_TAG.length());
+      builder.delete(start, start + OPEN_PLACEHOLDER_TAG.length());
+      lastIndex = start + placeholderText.length();
+    }
+
+    if (!isPlaceholdersValid) {
+      for (AnswerPlaceholder placeholder : placeholders) {
+        markInvalid(placeholder);
+      }
+    }
+
+    return isPlaceholdersValid;
+  }
+
+  private static void markInvalid(AnswerPlaceholder placeholder) {
+    placeholder.setLength(-1);
+    placeholder.setOffset(-1);
+  }
+
+  static String removeAllTags(@NotNull String text) {
+    String result = text.replaceAll(OPEN_PLACEHOLDER_TAG, "");
+    result = result.replaceAll(CLOSE_PLACEHOLDER_TAG, "");
+    return result;
   }
 
   private static String removeEduPrefix(@NotNull Task task, String solution) {
