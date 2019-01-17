@@ -2,7 +2,9 @@ package com.jetbrains.edu.learning.configuration;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
@@ -13,6 +15,7 @@ import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.checker.TaskCheckerProvider;
 import com.jetbrains.edu.learning.checker.TheoryTaskChecker;
 import com.jetbrains.edu.learning.courseFormat.Course;
+import com.jetbrains.edu.learning.courseFormat.ext.TaskExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.newproject.ui.CoursesPanel;
 import kotlin.Pair;
@@ -75,7 +78,17 @@ public interface EduConfigurator<Settings> {
    * @return true for all the test files
    */
   default boolean isTestFile(@NotNull Project project, @NotNull VirtualFile file) {
-    return false;
+    if (file.isDirectory()) return false;
+    Task task = EduUtils.getTaskForFile(project, file);
+    if (task == null) {
+      return false;
+    }
+
+    VirtualFile taskDir = task.getTaskDir(project);
+    if (taskDir == null) {
+      return false;
+    }
+    return ContainerUtil.find(TaskExt.findTestDirs(task, taskDir), testDir -> VfsUtilCore.isAncestor(testDir, file, true)) != null;
   }
 
   /**

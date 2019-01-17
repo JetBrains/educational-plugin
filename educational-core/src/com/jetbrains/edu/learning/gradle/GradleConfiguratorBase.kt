@@ -3,14 +3,11 @@ package com.jetbrains.edu.learning.gradle
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduNames
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.configuration.EduConfigurator
-import com.jetbrains.edu.learning.courseFormat.ext.findTestDirs
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_PROPERTIES
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_JAR
 import com.jetbrains.edu.learning.gradle.GradleConstants.GRADLE_WRAPPER_PROPERTIES
@@ -47,13 +44,6 @@ abstract class GradleConfiguratorBase : EduConfigurator<JdkProjectSettings> {
 
   override fun getSourceDir(): String = EduNames.SRC
   override fun getTestDirs(): List<String> = listOf(EduNames.TEST)
-
-  override fun isTestFile(project: Project, file: VirtualFile): Boolean {
-    if (file.isDirectory) return false
-    val task = EduUtils.getTaskForFile(project, file) ?: return false
-    val taskDir = task.getTaskDir(project) ?: return false
-    return task.findTestDirs(taskDir).any { testDir -> VfsUtil.isAncestor(testDir, file, true) }
-  }
 
   override fun pluginRequirements(): List<String> = listOf("org.jetbrains.plugins.gradle", "JUnit")
 
