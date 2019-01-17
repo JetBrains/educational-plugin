@@ -9,10 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.util.ConcurrencyUtil
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduSettings
-import com.jetbrains.edu.learning.courseFormat.CourseCompatibility
-import com.jetbrains.edu.learning.courseFormat.CourseVisibility
-import com.jetbrains.edu.learning.courseFormat.EduCourse
-import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.stepik.*
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
@@ -209,8 +206,30 @@ object StepikNewConnector {
     return allSections
   }
 
-  fun getSection(sectionIds: Int): Section? {
-    return service.sections(sectionIds).execute().body()?.sections?.firstOrNull()
+  fun getSection(sectionId: Int): Section? {
+    return service.sections(sectionId).execute().body()?.sections?.firstOrNull()
+  }
+
+  fun getLesson(lessonId: Int): Lesson? {
+    return service.lessons(lessonId).execute().body()?.lessons?.firstOrNull()
+  }
+
+  fun getLessons(lessonIds: List<Int>): List<Lesson> {
+    val lessonsIdsChunks = lessonIds.distinct().chunked(100)
+    val allLessons = mutableListOf<Lesson>()
+    lessonsIdsChunks
+      .mapNotNull { service.lessons(*it.toIntArray()).execute().body()?.lessons }
+      .forEach { allLessons.addAll(it) }
+    return allLessons
+  }
+
+  fun getUnits(unitIds: List<Int>): List<StepikWrappers.Unit> {
+    val unitsIdsChunks = unitIds.distinct().chunked(100)
+    val allUnits = mutableListOf<StepikWrappers.Unit>()
+    unitsIdsChunks
+      .mapNotNull { service.units(*it.toIntArray()).execute().body()?.units }
+      .forEach { allUnits.addAll(it) }
+    return allUnits
   }
 
   fun getUnitsIds(remoteCourse: EduCourse): List<Int> {

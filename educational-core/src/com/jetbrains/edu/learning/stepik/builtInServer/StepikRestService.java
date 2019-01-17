@@ -139,7 +139,10 @@ public class StepikRestService extends OAuthRestService {
       if (courseId == 0) {
         return log("Unrecognized the course id");
       }
-      Lesson lesson = StepikConnector.getLesson(lessonId);
+      Lesson lesson = StepikNewConnector.INSTANCE.getLesson(lessonId);
+      if (lesson == null) {
+        return log("No lesson found with id " + lessonId);
+      }
       List<Integer> stepIds = lesson.steps;
 
       if (stepIds.isEmpty()) {

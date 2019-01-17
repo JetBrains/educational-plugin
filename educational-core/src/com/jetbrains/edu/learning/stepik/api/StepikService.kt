@@ -3,8 +3,10 @@
 package com.jetbrains.edu.learning.stepik.api
 
 import com.jetbrains.edu.learning.courseFormat.EduCourse
+import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
+import com.jetbrains.edu.learning.stepik.StepikWrappers
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -29,13 +31,22 @@ interface StepikService {
               @Query("is_idea_compatible") isIdeaCompatible: Boolean?): Call<CoursesList>
 
   @GET("users")
-  fun users(@Query("ids[]") vararg ids: Int): Call<StepikUserList>
+  fun users(@Query("ids[]") vararg ids: Int): Call<UsersList>
 
   @GET("sections")
   fun sections(@Query("ids[]") vararg ids: Int): Call<SectionsList>
 
   @GET("sections/{id}")
   fun sections(@Path("id") sectionId: Int): Call<SectionsList>
+
+  @GET("lessons/{id}")
+  fun lessons(@Path("id") lessonId: Int): Call<LessonsList>
+
+  @GET("lessons")
+  fun lessons(@Query("ids[]") vararg ids: Int): Call<LessonsList>
+
+  @GET("units")
+  fun units(@Query("ids[]") vararg ids: Int): Call<UnitsList>
 }
 
 class UsersList {
@@ -54,10 +65,14 @@ class CoursesList {
   lateinit var courses: MutableList<EduCourse>
 }
 
-class StepikUserList {
-  lateinit var users: List<StepikUserInfo>
-}
-
 class SectionsList {
   lateinit var sections: List<Section>
+}
+
+class LessonsList {
+  lateinit var lessons: List<Lesson>
+}
+
+class UnitsList {
+  lateinit var units: List<StepikWrappers.Unit>
 }

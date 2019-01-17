@@ -246,10 +246,8 @@ public class StepikConnector {
     final String[] unitStrings = unitIds.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
     List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitStrings, UnitContainer.class);
     Stream<Unit> allUnits = unitContainers.stream().flatMap(container -> container.units.stream());
-    String[] lessonIds = allUnits.map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
-
-    List<LessonContainer> lessonContainers = multipleRequestToStepik(StepikNames.LESSONS, lessonIds, LessonContainer.class);
-    List<Lesson> lessons = lessonContainers.stream().flatMap(lessonContainer -> lessonContainer.lessons.stream()).collect(Collectors.toList());
+    List<Integer> lessonIds = allUnits.map(unit -> unit.lesson).collect(Collectors.toList());
+    List<Lesson> lessons = StepikNewConnector.INSTANCE.getLessons(lessonIds);
     List<Unit> units = unitContainers.stream().flatMap(container -> container.units.stream()).collect(Collectors.toList());
 
     for (int i = 0; i < lessons.size(); i++) {
@@ -655,20 +653,6 @@ public class StepikConnector {
       LOG.warn("Failed getting unit: " + unitId);
     }
     return new Unit();
-  }
-
-  public static Lesson getLesson(int lessonId) {
-    try {
-      List<Lesson> lessons =
-        getFromStepik(StepikNames.LESSONS + "/" + lessonId, LessonContainer.class).lessons;
-      if (!lessons.isEmpty()) {
-        return lessons.get(0);
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Failed getting section: " + lessonId);
-    }
-    return new Lesson();
   }
 
   public static void postTheory(Task task, final Project project) {

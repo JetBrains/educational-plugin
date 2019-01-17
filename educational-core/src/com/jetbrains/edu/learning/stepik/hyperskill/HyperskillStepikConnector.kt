@@ -5,11 +5,13 @@ import com.intellij.openapi.progress.ProgressManager
 import com.jetbrains.edu.learning.courseFormat.FrameworkLesson
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 
 fun getLesson(course: HyperskillCourse, lessonId: Int, language: Language): Lesson? {
   val progressIndicator = ProgressManager.getInstance().progressIndicator
-  var lesson = StepikConnector.getLesson(lessonId)
+  var lesson = StepikNewConnector.getLesson(lessonId)
+  if (lesson == null) return null
   lesson.course = course
   progressIndicator?.checkCanceled()
   progressIndicator?.text2 = "Loading project steps"
