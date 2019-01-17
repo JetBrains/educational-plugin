@@ -37,6 +37,7 @@ object StepikNewConnector {
     objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
     objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
+    objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
     objectMapper.addMixIn(StepikSteps.StepOptions::class.java, StepOptionsMixin::class.java)
     objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
     objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)

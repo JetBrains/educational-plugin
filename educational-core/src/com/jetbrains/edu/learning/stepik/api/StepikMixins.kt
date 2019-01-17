@@ -218,3 +218,17 @@ class StepikAnswerPlaceholderDependencyMixin {
   @JsonProperty("is_visible")
   var isVisible = true
 }
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class StepikFeedbackLinkMixin {
+  @JsonProperty("link_type")
+  lateinit var myType: FeedbackLink.LinkType
+
+  @JsonProperty("link")
+  lateinit var myLink: String
+}
