@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
-import com.jetbrains.edu.learning.serialization.SerializationUtils
 import java.util.*
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
@@ -115,10 +114,10 @@ class StepOptionsMixin {
   @JsonProperty("title")
   lateinit var title: String
 
-  @JsonProperty(SerializationUtils.Json.DESCRIPTION_TEXT)
+  @JsonProperty("description_text")
   lateinit var descriptionText: String
 
-  @JsonProperty(SerializationUtils.Json.DESCRIPTION_FORMAT)
+  @JsonProperty("description_format")
   lateinit var descriptionFormat: DescriptionFormat
 
   @JsonProperty("feedback_link")
