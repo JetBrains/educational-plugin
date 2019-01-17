@@ -212,4 +212,9 @@ object StepikNewConnector {
   fun getSection(sectionIds: Int): Section? {
     return service.sections(sectionIds).execute().body()?.sections?.firstOrNull()
   }
+
+  fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
+    val sections = getSections(remoteCourse.sectionIds)
+    return sections.flatMap { section -> section.units }.distinct()
+  }
 }

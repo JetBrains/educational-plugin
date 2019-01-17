@@ -177,8 +177,8 @@ public class StepikConnector {
   @Nullable
   private static StudyItem loadItemTask(@NotNull EduCourse remoteCourse, Section section, int finalIndex)
     throws IOException {
-    final String[] unitIds = section.units.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
-    if (unitIds.length <= 0) {
+    final List<Integer> unitIds = section.units;
+    if (unitIds.size() <= 0) {
       return null;
     }
     final List<Lesson> lessonsFromUnits = getLessonsFromUnits(remoteCourse, unitIds, false);
@@ -207,8 +207,8 @@ public class StepikConnector {
   }
 
   private static List<Lesson> getLessons(EduCourse remoteCourse) throws IOException {
-    String[] unitIds = getUnitsIds(remoteCourse);
-    if (unitIds.length > 0) {
+    final List<Integer> unitIds = StepikNewConnector.INSTANCE.getUnitsIds(remoteCourse);
+    if (unitIds.size() > 0) {
       return getLessonsFromUnits(remoteCourse, unitIds, true);
     }
 
@@ -220,19 +220,7 @@ public class StepikConnector {
     if (firstSection == null) {
       return Collections.emptyList();
     }
-    String[] unitIds = firstSection.units.stream().map(id -> String.valueOf(id)).toArray(String[]::new);
-    return new ArrayList<>(getLessonsFromUnits(remoteCourse, unitIds, true));
-  }
-
-  public static String[] getUnitsIds(EduCourse remoteCourse) throws IOException {
-    String[] sectionIds = remoteCourse.getSectionIds().stream().map(section -> String.valueOf(section)).toArray(String[]::new);
-    List<SectionContainer> containers = multipleRequestToStepik(StepikNames.SECTIONS, sectionIds, SectionContainer.class);
-    Stream<Section> allSections = containers.stream().map(container -> container.sections).flatMap(sections -> sections.stream());
-    return allSections
-      .map(section -> section.units)
-      .flatMap(unitList -> unitList.stream())
-      .map(unit -> String.valueOf(unit))
-      .toArray(String[]::new);
+    return new ArrayList<>(getLessonsFromUnits(remoteCourse, firstSection.units, true));
   }
 
   private static boolean hasVisibleSections(@NotNull final List<Section> sections, String courseName) {
@@ -254,8 +242,9 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Lesson> getLessons(String[] unitIds) throws IOException {
-    List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitIds, UnitContainer.class);
+  public static List<Lesson> getLessons(List<Integer> unitIds) throws IOException {
+    final String[] unitStrings = unitIds.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
+    List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitStrings, UnitContainer.class);
     Stream<Unit> allUnits = unitContainers.stream().flatMap(container -> container.units.stream());
     String[] lessonIds = allUnits.map(unit -> String.valueOf(unit.lesson)).toArray(String[]::new);
 
@@ -294,7 +283,7 @@ public class StepikConnector {
   }
 
   @VisibleForTesting
-  public static List<Lesson> getLessonsFromUnits(EduCourse remoteCourse, String[] unitIds, boolean updateIndicator) throws IOException {
+  public static List<Lesson> getLessonsFromUnits(EduCourse remoteCourse, List<Integer> unitIds, boolean updateIndicator) throws IOException {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
     List<Lesson> lessonsFromUnits = getLessons(unitIds);
@@ -302,7 +291,7 @@ public class StepikConnector {
     final int lessonCount = lessonsFromUnits.size();
     for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
       Lesson lesson = lessonsFromUnits.get(lessonIndex);
-      lesson.unitId = Integer.parseInt(unitIds[lessonIndex]);
+      lesson.unitId = unitIds.get(lessonIndex);
       if (progressIndicator != null && updateIndicator) {
         final int readableIndex = lessonIndex + 1;
         progressIndicator.checkCanceled();
