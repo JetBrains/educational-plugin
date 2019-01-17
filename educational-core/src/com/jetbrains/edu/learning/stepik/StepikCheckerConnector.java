@@ -13,6 +13,7 @@ import com.jetbrains.edu.learning.courseFormat.CheckStatus;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
@@ -104,7 +105,11 @@ public class StepikCheckerConnector {
       if (result.getStatus() == CheckStatus.Failed) {
         try {
           createNewAttempt(task.getStepId());
-          StepikSteps.StepSource step = StepikConnector.getStep(task.getStepId());
+          StepikSteps.StepSource step = StepikNewConnector.INSTANCE.getStep(task.getStepId());
+          if (step == null) {
+            LOG.error("Failed to get step " + task.getStepId());
+            return result;
+          }
           Course course = task.getLesson().getCourse();
           StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), task.getName(),
                                                                 step, task.getStepId(), user.getId());

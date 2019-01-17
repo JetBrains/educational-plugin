@@ -5,6 +5,7 @@ package com.jetbrains.edu.learning.stepik.api
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
+import com.jetbrains.edu.learning.stepik.StepikSteps
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import retrofit2.Call
@@ -41,6 +42,9 @@ interface StepikService {
 
   @GET("units")
   fun units(@Query("ids[]") vararg ids: Int): Call<UnitsList>
+
+  @GET("steps")
+  fun steps(@Query("ids[]") vararg ids: Int): Call<StepsList>
 }
 
 class UsersList {
@@ -69,4 +73,8 @@ class LessonsList {
 
 class UnitsList {
   lateinit var units: List<StepikWrappers.Unit>
+}
+
+class StepsList {
+  lateinit var steps: List<StepikSteps.StepSource>
 }

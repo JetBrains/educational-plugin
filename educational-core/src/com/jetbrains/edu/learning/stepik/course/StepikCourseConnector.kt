@@ -30,9 +30,6 @@ object StepikCourseConnector {
     catch (e: MalformedURLException) {
       LOG.warn(e.message)
     }
-    catch (e: NumberFormatException) {
-      LOG.warn(e.message)
-    }
 
     return -1
   }
@@ -75,8 +72,7 @@ object StepikCourseConnector {
     val unitsIds = StepikNewConnector.getUnitsIds(remoteCourse)
     val lessons = getLessons(unitsIds)
     for (lesson in lessons) {
-      val stepIds = lesson.steps.map { stepId -> stepId.toString() }
-      val allStepSources = getStepSources(stepIds.toTypedArray(), remoteCourse.languageID)
+      val allStepSources = getStepSources(lesson.steps, remoteCourse.languageID)
 
       for (stepSource in allStepSources) {
         val step = stepSource.block

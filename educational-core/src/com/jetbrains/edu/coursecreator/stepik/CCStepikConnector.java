@@ -65,22 +65,8 @@ public class CCStepikConnector {
   }
 
   public static int getTaskPosition(final int taskId) {
-    final String url = StepikNames.STEPS + taskId;
-    try {
-      StepikSteps.StepsList container = StepikAuthorizedClient.getFromStepik(url, StepikSteps.StepsList.class);
-      if (container == null) {
-        container = StepikClient.getFromStepik(url, StepikSteps.StepsList.class);
-      }
-      List<StepikSteps.StepSource> steps = container.steps;
-      if (!steps.isEmpty()) {
-        return steps.get(0).position;
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Could not retrieve task with id=" + taskId);
-    }
-
-    return -1;
+    StepikSteps.StepSource step = StepikNewConnector.INSTANCE.getStep(taskId);
+    return step != null ? step.position : -1;
   }
 
   @Nullable

@@ -236,6 +236,19 @@ object StepikNewConnector {
     return service.units(unitId).execute().body()?.units?.firstOrNull()
   }
 
+  fun getStepSources(stepIds: List<Int>): List<StepikSteps.StepSource> {
+    val stepsIdsChunks = stepIds.distinct().chunked(100)
+    val steps = mutableListOf<StepikSteps.StepSource>()
+    stepsIdsChunks
+      .mapNotNull { service.steps(*it.toIntArray()).execute().body()?.steps }
+      .forEach { steps.addAll(it) }
+    return steps
+  }
+
+  fun getStep(stepId: Int): StepikSteps.StepSource? {
+    return service.steps(stepId).execute().body()?.steps?.firstOrNull()
+  }
+
   fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
     val sections = getSections(remoteCourse.sectionIds)
     return sections.flatMap { section -> section.units }.distinct()

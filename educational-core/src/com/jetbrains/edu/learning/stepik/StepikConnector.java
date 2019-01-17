@@ -286,8 +286,7 @@ public class StepikConnector {
         progressIndicator.setText("Loading lesson " + readableIndex + " from " + lessonCount);
         progressIndicator.setFraction((double)readableIndex / lessonCount);
       }
-      String[] stepIds = lesson.steps.stream().map(stepId -> String.valueOf(stepId)).toArray(String[]::new);
-      List<StepikSteps.StepSource> allStepSources = getStepSources(stepIds, remoteCourse.getLanguageID());
+      List<StepikSteps.StepSource> allStepSources = getStepSources(lesson.steps, remoteCourse.getLanguageID());
 
       if (!allStepSources.isEmpty()) {
         final StepikSteps.StepOptions options = allStepSources.get(0).block.options;
@@ -304,10 +303,11 @@ public class StepikConnector {
     return lessons;
   }
 
-  public static List<StepikSteps.StepSource> getStepSources(String[] stepIds, String language) throws IOException {
-    Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
-    List<StepikSteps.StepsList> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepikSteps.StepsList.class, params);
-    return stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
+  public static List<StepikSteps.StepSource> getStepSources(List<Integer> stepIds, String language) {
+    return StepikNewConnector.INSTANCE.getStepSources(stepIds); // TODO: use language parameter
+    //Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
+    //List<StepikSteps.StepsList> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepikSteps.StepsList.class, params);
+    //return stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
   }
 
   @NotNull
@@ -440,11 +440,6 @@ public class StepikConnector {
     }
 
     return taskFileToText;
-  }
-
-  public static StepikSteps.StepSource getStep(int step) throws IOException {
-    return getFromStepik(StepikNames.STEPS + step,
-                         StepikSteps.StepsList.class).steps.get(0);
   }
 
   @Nullable
