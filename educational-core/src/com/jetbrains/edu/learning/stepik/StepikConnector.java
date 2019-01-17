@@ -393,56 +393,6 @@ public class StepikConnector {
   }
 
   @Nullable
-  static Reply getLastSubmission(@NotNull String stepId, boolean isSolved, String language) throws IOException {
-    try {
-      URI url = new URIBuilder(StepikNames.SUBMISSIONS)
-        .addParameter("order", "desc")
-        .addParameter("page", "1")
-        .addParameter("status", isSolved ? "correct" : "wrong")
-        .addParameter("step", stepId).build();
-      Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
-      Submission[] submissions = getFromStepik(url.toString(), SubmissionsWrapper.class, params).submissions;
-      if (submissions.length > 0) {
-        return submissions[0].reply;
-      }
-    }
-    catch (URISyntaxException e) {
-      LOG.warn(e.getMessage());
-    }
-    return null;
-  }
-
-  @NotNull
-  static HashMap<String, String> getSolutionForStepikAssignment(@NotNull Task task, boolean isSolved) throws IOException {
-    HashMap<String, String> taskFileToText = new HashMap<>();
-    try {
-      URI url = new URIBuilder(StepikNames.SUBMISSIONS)
-        .addParameter("order", "desc")
-        .addParameter("page", "1")
-        .addParameter("status", isSolved ? "correct" : "wrong")
-        .addParameter("step", String.valueOf(task.getStepId())).build();
-      Submission[] submissions = getFromStepik(url.toString(), SubmissionsWrapper.class).submissions;
-      Language language = task.getLesson().getCourse().getLanguageById();
-      String stepikLanguage = StepikLanguages.langOfId(language.getID()).getLangName();
-      for (Submission submission : submissions) {
-        Reply reply = submission.reply;
-        if (stepikLanguage != null && stepikLanguage.equals(reply.language)) {
-          Collection<TaskFile> taskFiles = task.getTaskFiles().values();
-          assert taskFiles.size() == 1;
-          for (TaskFile taskFile : taskFiles) {
-            taskFileToText.put(taskFile.getName(), reply.code);
-          }
-        }
-      }
-    }
-    catch (URISyntaxException e) {
-      LOG.warn(e.getMessage());
-    }
-
-    return taskFileToText;
-  }
-
-  @Nullable
   public static Boolean[] taskStatuses(String[] progresses) {
     try {
       List<ProgressContainer> progressContainers = multipleRequestToStepik(StepikNames.PROGRESS, progresses, ProgressContainer.class);

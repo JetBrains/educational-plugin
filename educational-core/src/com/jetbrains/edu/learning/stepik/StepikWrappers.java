@@ -196,8 +196,8 @@ public class StepikWrappers {
 
     String score;
     List<SolutionFile> solution;
-    String language;
-    String code;
+    public String language;
+    public String code;
     String edu_task;
     public int version = EduVersions.JSON_FORMAT_VERSION;
 

@@ -45,6 +45,12 @@ interface StepikService {
 
   @GET("steps")
   fun steps(@Query("ids[]") vararg ids: Int): Call<StepsList>
+
+  @GET("submissions")
+  fun submissions(@Query("order") order: String="desc",
+                  @Query("page") page: Int=1,
+                  @Query("status") status: String,
+                  @Query("step") step: Int): Call<SubmissionsList>
 }
 
 class UsersList {
@@ -77,4 +83,8 @@ class UnitsList {
 
 class StepsList {
   lateinit var steps: List<StepikSteps.StepSource>
+}
+
+class SubmissionsList {
+  lateinit var submissions: List<StepikWrappers.Submission>
 }

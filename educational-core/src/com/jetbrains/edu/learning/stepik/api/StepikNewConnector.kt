@@ -11,12 +11,14 @@ import com.intellij.util.ConcurrencyUtil
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.*
 import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import org.apache.http.HttpStatus
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -262,4 +264,36 @@ object StepikNewConnector {
     val sections = getSections(remoteCourse.sectionIds)
     return sections.flatMap { section -> section.units }.distinct()
   }
+
+  private fun getSubmissions(isSolved: Boolean, stepId: Int) =
+    service.submissions(status = if (isSolved) "correct" else "wrong", step = stepId).execute().body()?.submissions
+
+  fun getLastSubmission(stepId: Int, isSolved: Boolean, language: String): StepikWrappers.Reply? {
+    // TODO: make use of language
+    val submissions = getSubmissions(isSolved, stepId)
+    return submissions?.firstOrNull()?.reply
+  }
+
+  fun getSolutionForStepikAssignment(task: Task, isSolved: Boolean): HashMap<String, String> {
+    val taskFileToText = HashMap<String, String>()
+    val submissions = getSubmissions(isSolved, task.stepId)
+    if (submissions == null) {
+      return taskFileToText
+    }
+    val courseLanguage = task.lesson.course.languageById
+    val stepikLanguage = StepikLanguages.langOfId(courseLanguage!!.id).langName
+    for (submission in submissions) {
+      val reply = submission.reply
+      if (stepikLanguage != null && stepikLanguage == reply.language) {
+        val taskFiles = task.taskFiles.values
+        assert(taskFiles.size == 1)
+        for (taskFile in taskFiles) {
+          taskFileToText[taskFile.name] = reply.code
+        }
+      }
+    }
+
+    return taskFileToText
+  }
+
 }

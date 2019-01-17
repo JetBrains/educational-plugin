@@ -28,6 +28,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask;
 import com.jetbrains.edu.learning.editor.EduEditor;
 import com.jetbrains.edu.learning.navigation.NavigationUtils;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionView;
 import com.jetbrains.edu.learning.update.UpdateNotification;
@@ -189,7 +190,7 @@ public class StepikSolutionsLoader implements Disposable {
     Stream<Lesson> allLessons = Stream.concat(lessonsFromSection, course.getLessons().stream());
     Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
-    String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + String.valueOf(task.getStepId())).toArray(String[]::new);
+    String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getStepId()).toArray(String[]::new);
     Boolean[] taskStatuses = taskStatuses(progresses);
     if (taskStatuses == null) return tasksToUpdate;
     for (int j = 0; j < allTasks.length; j++) {
@@ -256,23 +257,18 @@ public class StepikSolutionsLoader implements Disposable {
       return true;
     }
     else if (!isSolved) {
-      try {
-        if (task instanceof EduTask) {
-          String language = task.getCourse().getLanguageID();
-          StepikWrappers.Reply reply = getLastSubmission(String.valueOf(stepId), isSolved, language);
-          if (reply != null && !reply.solution.isEmpty()) {
-            return true;
-          }
-        }
-        else {
-          HashMap<String, String> solution = getSolutionForStepikAssignment(task, isSolved);
-          if (!solution.isEmpty()) {
-            return true;
-          }
+      if (task instanceof EduTask) {
+        String language = task.getCourse().getLanguageID();
+        StepikWrappers.Reply reply = StepikNewConnector.INSTANCE.getLastSubmission(stepId, isSolved, language);
+        if (reply != null && !reply.solution.isEmpty()) {
+          return true;
         }
       }
-      catch (IOException e) {
-        LOG.warn(e.getMessage());
+      else {
+        HashMap<String, String> solution = StepikNewConnector.INSTANCE.getSolutionForStepikAssignment(task, isSolved);
+        if (!solution.isEmpty()) {
+          return true;
+        }
       }
     }
 
@@ -283,20 +279,14 @@ public class StepikSolutionsLoader implements Disposable {
    * @return true if solutions for given task are incompatible with current plugin version, false otherwise
    */
   private static boolean loadSolution(@NotNull Project project, @NotNull Task task, boolean isSolved) {
-    try {
-      TaskSolutions taskSolutions = loadSolutionTexts(task, isSolved);
-      if (!taskSolutions.hasIncompatibleSolutions && !taskSolutions.solutions.isEmpty()) {
-        updateFiles(project, task, taskSolutions.solutions);
-      }
-      return taskSolutions.hasIncompatibleSolutions;
+    TaskSolutions taskSolutions = loadSolutionTexts(task, isSolved);
+    if (!taskSolutions.hasIncompatibleSolutions && !taskSolutions.solutions.isEmpty()) {
+      updateFiles(project, task, taskSolutions.solutions);
     }
-    catch (IOException e) {
-      LOG.warn("Failed to load task solutions", e);
-      return false;
-    }
+    return taskSolutions.hasIncompatibleSolutions;
   }
 
-  private static TaskSolutions loadSolutionTexts(@NotNull Task task, boolean isSolved) throws IOException {
+  private static TaskSolutions loadSolutionTexts(@NotNull Task task, boolean isSolved) {
     if (task.isToSubmitToStepik()) {
       return getEduTaskSolution(task, isSolved);
     }
@@ -305,8 +295,8 @@ public class StepikSolutionsLoader implements Disposable {
     }
   }
 
-  private static HashMap<String, String> getStepikTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
-    HashMap<String, String> solutions = getSolutionForStepikAssignment(task, isSolved);
+  private static HashMap<String, String> getStepikTaskSolution(@NotNull Task task, boolean isSolved) {
+    HashMap<String, String> solutions = StepikNewConnector.INSTANCE.getSolutionForStepikAssignment(task, isSolved);
     if (!solutions.isEmpty()) {
       for (Map.Entry<String, String> entry : solutions.entrySet()) {
         String solutionWithoutEduPrefix = removeEduPrefix(task, entry.getValue());
@@ -317,9 +307,9 @@ public class StepikSolutionsLoader implements Disposable {
     return solutions;
   }
 
-  private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) throws IOException {
+  private static TaskSolutions getEduTaskSolution(@NotNull Task task, boolean isSolved) {
     String language = task.getCourse().getLanguageID();
-    StepikWrappers.Reply reply = getLastSubmission(String.valueOf(task.getStepId()), isSolved, language);
+    StepikWrappers.Reply reply = StepikNewConnector.INSTANCE.getLastSubmission(task.getStepId(), isSolved, language);
     if (reply == null || reply.solution == null || reply.solution.isEmpty()) {
       // https://youtrack.jetbrains.com/issue/EDU-1449
       if (reply != null && reply.solution == null) {
