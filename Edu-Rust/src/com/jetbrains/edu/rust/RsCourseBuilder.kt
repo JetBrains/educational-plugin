@@ -7,7 +7,7 @@ import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.StudyItemType
 import com.jetbrains.edu.coursecreator.actions.TemplateFileInfo
-import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.showNewStudyItemDialog
 import com.jetbrains.edu.learning.EduCourseBuilder
 import com.jetbrains.edu.learning.LanguageSettings
@@ -69,11 +69,11 @@ class RsCourseBuilder : EduCourseBuilder<RsProjectSettings> {
         cargoProjects.refreshAllProjects()
     }
 
-    override fun showNewStudyItemUi(project: Project, model: NewStudyItemUiModel, positionPanel: CCItemPositionPanel?): NewStudyItemInfo? {
+    override fun showNewStudyItemUi(project: Project, model: NewStudyItemUiModel, additionalPanels: List<AdditionalPanel>): NewStudyItemInfo? {
         return if (model.itemType != StudyItemType.TASK) {
-            super.showNewStudyItemUi(project, model, positionPanel)
+            super.showNewStudyItemUi(project, model, additionalPanels)
         } else {
-            showNewStudyItemDialog(project, model, positionPanel, ::RsNewTaskDialog)
+            showNewStudyItemDialog(project, model, additionalPanels, ::RsNewTaskDialog)
         }
     }
 

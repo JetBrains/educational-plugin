@@ -14,15 +14,15 @@ private var MOCK: NewStudyItemUi? = null
 fun showNewStudyItemDialog(
   project: Project,
   model: NewStudyItemUiModel,
-  positionPanel: CCItemPositionPanel?,
-  dialogGenerator: (Project, NewStudyItemUiModel, CCItemPositionPanel?) -> CCCreateStudyItemDialogBase = ::CCCreateStudyItemDialog
+  additionalPanels: List<AdditionalPanel>,
+  dialogGenerator: (Project, NewStudyItemUiModel, List<AdditionalPanel>) -> CCCreateStudyItemDialogBase = ::CCCreateStudyItemDialog
 ): NewStudyItemInfo? {
   val ui = if (isUnitTestMode) {
     MOCK ?: error("You should set mock ui via `withMockCreateStudyItemUi`")
   } else {
     NewStudyItemDialogUi(dialogGenerator)
   }
-  return ui.showDialog(project, model, positionPanel)
+  return ui.showDialog(project, model, additionalPanels)
 }
 
 @TestOnly
@@ -36,15 +36,15 @@ fun withMockCreateStudyItemUi(mockUi: NewStudyItemUi, action: () -> Unit) {
 }
 
 interface NewStudyItemUi {
-  fun showDialog(project: Project, model: NewStudyItemUiModel, positionPanel: CCItemPositionPanel?): NewStudyItemInfo?
+  fun showDialog(project: Project, model: NewStudyItemUiModel, additionalPanels: List<AdditionalPanel>): NewStudyItemInfo?
 }
 
 class NewStudyItemDialogUi(
-  private val dialogGenerator: (Project, NewStudyItemUiModel, CCItemPositionPanel?) -> CCCreateStudyItemDialogBase
+  private val dialogGenerator: (Project, NewStudyItemUiModel, List<AdditionalPanel>) -> CCCreateStudyItemDialogBase
 ) : NewStudyItemUi {
   override fun showDialog(
     project: Project,
     model: NewStudyItemUiModel,
-    positionPanel: CCItemPositionPanel?
-  ): NewStudyItemInfo? = dialogGenerator(project, model, positionPanel).showAndGetResult()
+    additionalPanels: List<AdditionalPanel>
+  ): NewStudyItemInfo? = dialogGenerator(project, model, additionalPanels).showAndGetResult()
 }

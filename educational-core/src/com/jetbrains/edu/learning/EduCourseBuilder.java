@@ -10,7 +10,7 @@ import com.jetbrains.edu.coursecreator.actions.CCCreateLesson;
 import com.jetbrains.edu.coursecreator.actions.CCCreateTask;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo;
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel;
-import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel;
 import com.jetbrains.edu.coursecreator.ui.NewStudyItemUiUtils;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
@@ -38,17 +38,17 @@ public interface EduCourseBuilder<Settings> {
    * Shows UI for new study item creation
    *
    * @param model some parameters for UI extracted from context where creating action was called
-   * @param positionPanel additional panel to allow user to choose where new item should be located
-   *                      if creating action was called with sibling item context.
-   *                      {@code null} if the corresponding action was called with parent item context.
+   * @param additionalPanels additional ui elements which should be shown while new study item creation
+   *
+   * @see com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
    *
    * @return properties for study item creation
    */
   @Nullable
   default NewStudyItemInfo showNewStudyItemUi(@NotNull Project project,
                                               @NotNull NewStudyItemUiModel model,
-                                              @Nullable CCItemPositionPanel positionPanel) {
-    return NewStudyItemUiUtils.showNewStudyItemDialog(project, model, positionPanel);
+                                              @NotNull List<AdditionalPanel> additionalPanels) {
+    return NewStudyItemUiUtils.showNewStudyItemDialog(project, model, additionalPanels);
   }
 
   /**

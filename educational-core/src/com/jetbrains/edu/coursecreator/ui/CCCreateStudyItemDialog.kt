@@ -13,11 +13,13 @@ import javax.swing.JComponent
 abstract class CCCreateStudyItemDialogBase(
   project: Project,
   protected val model: NewStudyItemUiModel,
-  protected val positionPanel: CCItemPositionPanel?
+  protected val additionalPanels: List<AdditionalPanel>
 ) : CCDialogWrapperBase(project) {
 
   private val nameField: JBTextField = JBTextField(model.suggestedName, 30)
   private val validator: InputValidatorEx = CCUtils.PathInputValidator(model.parentDir)
+
+  protected val positionPanel: CCItemPositionPanel? = additionalPanels.find { it is CCItemPositionPanel } as? CCItemPositionPanel
 
   init {
     title = "Create New ${StringUtil.toTitleCase(model.itemType.presentableName)}"
@@ -36,7 +38,7 @@ abstract class CCCreateStudyItemDialogBase(
     return panel {
       row("Name:") { nameField() }
       createAdditionalFields(this)
-      positionPanel?.attach(this)
+      additionalPanels.forEach { it.attach(this) }
     }
   }
 
@@ -52,7 +54,7 @@ abstract class CCCreateStudyItemDialogBase(
 class CCCreateStudyItemDialog(
   project: Project,
   model: NewStudyItemUiModel,
-  positionPanel: CCItemPositionPanel?
-) : CCCreateStudyItemDialogBase(project, model, positionPanel) {
+  additionalPanels: List<AdditionalPanel>
+) : CCCreateStudyItemDialogBase(project, model, additionalPanels) {
   init { init() }
 }

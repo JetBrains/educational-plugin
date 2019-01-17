@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 import com.jetbrains.edu.coursecreator.CCUtils;
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer;
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel;
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel;
 import com.jetbrains.edu.learning.EduUtils;
 import com.jetbrains.edu.learning.StudyTaskManager;
@@ -25,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extends DumbAwareAction {
   protected static final Logger LOG = Logger.getInstance(CCCreateStudyItemActionBase.class);
@@ -138,23 +141,25 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
                          @NotNull final Project project,
                          @NotNull final Course course,
                          @Nullable StudyItem parentItem) {
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
-    if (configurator == null) return null;
-
-    NewStudyItemInfo info;
+    int index;
+    String suggestedName;
+    List<AdditionalPanel> additionalPanels = new ArrayList<>();
     if (isAddedAsLast(sourceDirectory, project, course)) {
-      int itemIndex = getSiblingsSize(course, parentItem) + 1;
-      String suggestedName = getItemType().getPresentableName() + itemIndex;
-      NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, sourceDirectory, getItemType(), suggestedName, itemIndex);
-      info = configurator.getCourseBuilder()
-        .showNewStudyItemUi(project, model, null);
+      index = getSiblingsSize(course, parentItem) + 1;
+      suggestedName = getItemType().getPresentableName() + index;
     } else {
       StudyItem thresholdItem = getThresholdItem(course, sourceDirectory);
       if (thresholdItem == null) {
         return null;
       }
-      info = showCreateStudyItemDialogWithPosition(project, parentItem, sourceDirectory, thresholdItem);
+
+      index = thresholdItem.getIndex();
+      String itemName = getItemType().getPresentableName();
+      suggestedName = itemName + (index + 1);
+      additionalPanels.add(new CCItemPositionPanel(thresholdItem.getName()));
     }
+    NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, sourceDirectory, getItemType(), suggestedName, index);
+    NewStudyItemInfo info = showCreateStudyItemDialog(project, course, model, additionalPanels);
     if (info == null) {
       return null;
     }
@@ -162,22 +167,15 @@ public abstract class CCCreateStudyItemActionBase<Item extends StudyItem> extend
   }
 
   @Nullable
-  protected NewStudyItemInfo showCreateStudyItemDialogWithPosition(@NotNull Project project,
-                                                                   @Nullable StudyItem parentItem,
-                                                                   @NotNull VirtualFile sourceDirectory,
-                                                                   @NotNull StudyItem thresholdItem) {
-    EduConfigurator<?> configurator = CourseExt.getConfigurator(thresholdItem.getCourse());
+  protected NewStudyItemInfo showCreateStudyItemDialog(@NotNull Project project,
+                                                       @NotNull Course course,
+                                                       @NotNull NewStudyItemUiModel model,
+                                                       @NotNull List<AdditionalPanel> additionalPanels) {
+    EduConfigurator<?> configurator = CourseExt.getConfigurator(course);
     if (configurator == null) {
       return null;
     }
-
-    final int index = thresholdItem.getIndex();
-    String itemName = getItemType().getPresentableName();
-    String suggestedName = itemName + (index + 1);
-    NewStudyItemUiModel model = new NewStudyItemUiModel(parentItem, sourceDirectory, getItemType(), suggestedName, index);
-    CCItemPositionPanel positionPanel = new CCItemPositionPanel(thresholdItem.getName());
-    return configurator.getCourseBuilder()
-      .showNewStudyItemUi(project, model, positionPanel);
+    return configurator.getCourseBuilder().showNewStudyItemUi(project, model, additionalPanels);
   }
 
   protected abstract int getSiblingsSize(@NotNull final Course course, @Nullable final StudyItem parentItem);

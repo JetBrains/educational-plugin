@@ -9,6 +9,7 @@ import com.intellij.ui.components.JBTextField
 import com.intellij.ui.layout.*
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemInfo
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
 import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import org.jetbrains.android.util.AndroidUtils
@@ -20,8 +21,8 @@ import javax.swing.ListCellRenderer
 class AndroidNewTaskDialog(
   project: Project,
   model: NewStudyItemUiModel,
-  positionPanel: CCItemPositionPanel?
-) : CCCreateStudyItemDialogBase(project, model, positionPanel) {
+  additionalPanels: List<AdditionalPanel>
+) : CCCreateStudyItemDialogBase(project, model, additionalPanels) {
 
   private val packageNameField: JBTextField = JBTextField().apply {
     val userName = System.getProperty("user.name")

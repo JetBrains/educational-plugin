@@ -2,15 +2,15 @@ package com.jetbrains.edu.rust
 
 import com.intellij.openapi.project.Project
 import com.jetbrains.edu.coursecreator.actions.NewStudyItemUiModel
+import com.jetbrains.edu.coursecreator.ui.AdditionalPanel
 import com.jetbrains.edu.coursecreator.ui.CCCreateStudyItemDialogBase
-import com.jetbrains.edu.coursecreator.ui.CCItemPositionPanel
 import org.rust.ide.newProject.RsPackageNameValidator
 
 class RsNewTaskDialog(
   project: Project,
   model: NewStudyItemUiModel,
-  positionPanel: CCItemPositionPanel?
-) : CCCreateStudyItemDialogBase(project, model, positionPanel) {
+  additionalPanels: List<AdditionalPanel>
+) : CCCreateStudyItemDialogBase(project, model, additionalPanels) {
 
   init { init() }
 
