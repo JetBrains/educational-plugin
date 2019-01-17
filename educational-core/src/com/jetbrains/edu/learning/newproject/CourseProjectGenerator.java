@@ -45,7 +45,11 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus;
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils;
 import com.jetbrains.edu.learning.statistics.EduUsagesCollector;
-import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.StepikNames;
+import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader;
+import com.jetbrains.edu.learning.stepik.StepikUser;
+import com.jetbrains.edu.learning.stepik.StepikUtils;
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,11 +88,9 @@ public abstract class CourseProjectGenerator<S> {
             StepikNewConnector.INSTANCE.enrollToCourse(remoteCourse.getId(), user);
           }
         }
-        if (StepikConnector.loadCourseStructure(remoteCourse)) {
-          myCourse = remoteCourse;
-          return true;
-        }
-        return false;
+        StepikCourseLoader.INSTANCE.loadCourseStructure(remoteCourse);
+        myCourse = remoteCourse;
+        return true;
       }, "Loading Course", true, null);
     }
     return true;
@@ -202,10 +204,10 @@ public abstract class CourseProjectGenerator<S> {
     }
   }
 
-  private void setStepikChangeStatuses(@NotNull Project project) throws IOException {
+  private void setStepikChangeStatuses(@NotNull Project project) {
     EduCourse courseFromStepik = StepikNewConnector.INSTANCE.getCourseInfo(myCourse.getId(), ((EduCourse)myCourse).isCompatible());
     if (courseFromStepik != null) {
-      StepikConnector.fillItems(courseFromStepik);
+      StepikCourseLoader.INSTANCE.fillItems(courseFromStepik);
       courseFromStepik.init(null, null, false);
       new StepikChangeRetriever(project, courseFromStepik).setStepikChangeStatuses();
     }

@@ -2,9 +2,9 @@ package com.jetbrains.edu.learning.stepik.course
 
 import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.edu.learning.stepik.StepikConnector.getLessons
 import com.jetbrains.edu.learning.stepik.StepikConnector.getStepSources
 import com.jetbrains.edu.learning.stepik.StepikLanguages
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getCourseInfo
 import java.io.IOException
@@ -69,8 +69,8 @@ object StepikCourseConnector {
   }
 
   private fun getFirstCodeTemplates(remoteCourse: StepikCourse): Map<String, String> {
-    val unitsIds = StepikNewConnector.getUnitsIds(remoteCourse)
-    val lessons = getLessons(unitsIds)
+    val unitsIds = StepikCourseLoader.getUnitsIds(remoteCourse)
+    val lessons = StepikNewConnector.getLessons(unitsIds)
     for (lesson in lessons) {
       val allStepSources = getStepSources(lesson.steps, remoteCourse.languageID)
 

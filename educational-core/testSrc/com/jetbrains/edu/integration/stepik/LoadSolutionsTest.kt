@@ -15,6 +15,7 @@ import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader
 import com.jetbrains.edu.learning.stepik.StepikSolutionsLoader.PROGRESS_ID_PREFIX
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 import java.util.concurrent.TimeUnit
 
@@ -77,7 +78,7 @@ class LoadSolutionsTest : StepikTestCase() {
     val course = StudyTaskManager.getInstance(project).course!! as EduCourse
     val task = firstTask(StudyTaskManager.getInstance(project).course)
     val remoteCourse = StepikNewConnector.getCourseInfo(course.id, true) as EduCourse
-    StepikConnector.loadCourseStructure(remoteCourse)
+    StepikCourseLoader.loadCourseStructure(remoteCourse)
 
     val tasksToUpdate = StepikSolutionsLoader.getInstance(project).tasksToUpdate(remoteCourse as Course)
     assertTrue(taskNumberMismatchMessage(1, tasksToUpdate!!.size), tasksToUpdate.size == 1)
@@ -107,7 +108,7 @@ class LoadSolutionsTest : StepikTestCase() {
 
   private fun createCourseFromStepik(course: EduCourse): EduCourse? {
     val remoteCourse = StepikNewConnector.getCourseInfo(course.id, true) as EduCourse
-    StepikConnector.loadCourseStructure(remoteCourse)
+    StepikCourseLoader.loadCourseStructure(remoteCourse)
     remoteCourse.init(null, null, false)
     remoteCourse.language = PlainTextLanguage.INSTANCE.id
     StudyTaskManager.getInstance(project).course = remoteCourse

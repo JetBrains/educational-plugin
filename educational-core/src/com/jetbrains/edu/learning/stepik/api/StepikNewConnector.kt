@@ -6,9 +6,6 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProgressManager
-import com.intellij.util.ConcurrencyUtil
-import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -19,15 +16,11 @@ import org.apache.http.HttpStatus
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import java.util.*
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object StepikNewConnector {
   private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
   private val LOG = Logger.getInstance(StepikNewConnector::class.java)
-  private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
-  private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
   private val converterFactory: JacksonConverterFactory
 
   init {
@@ -36,22 +29,22 @@ object StepikNewConnector {
 
   val objectMapper: ObjectMapper
     get() {
-    val module = SimpleModule()
-    val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
-    objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
-    objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
-    objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
-    objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
-    objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
-    objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
-    objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
-    objectMapper.addMixIn(StepikSteps.StepOptions::class.java, StepOptionsMixin::class.java)
-    objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
-    objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
-    objectMapper.registerModule(module)
-    return objectMapper
-  }
+      val module = SimpleModule()
+      val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
+      objectMapper.addMixIn(EduCourse::class.java, StepikEduCourseMixin::class.java)
+      objectMapper.addMixIn(Section::class.java, StepikSectionMixin::class.java)
+      objectMapper.addMixIn(Lesson::class.java, StepikLessonMixin::class.java)
+      objectMapper.addMixIn(TaskFile::class.java, StepikTaskFileMixin::class.java)
+      objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
+      objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
+      objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
+      objectMapper.addMixIn(StepikSteps.StepOptions::class.java, StepOptionsMixin::class.java)
+      objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
+      objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
+      objectMapper.registerModule(module)
+      return objectMapper
+    }
 
   private val authorizationService: StepikOAuthService
     get() {
@@ -132,23 +125,8 @@ object StepikNewConnector {
     }
   }
 
-  private fun getCourseInfos(isPublic: Boolean): List<EduCourse> {
-    val result = mutableListOf<EduCourse>()
-    var currentPage = 1
-    val enrolled = if (isPublic) null else true
-    val indicator = ProgressManager.getInstance().progressIndicator
-    while (true) {
-      if (indicator != null && indicator.isCanceled) break
-      val coursesList = service.courses(true, isPublic, currentPage, enrolled).execute().body()
-      if (coursesList == null) break
-
-      val availableCourses = getAvailableCourses(coursesList)
-      result.addAll(availableCourses)
-      currentPage += 1
-      if (!coursesList.meta.containsKey("has_next") || coursesList.meta["has_next"] == false) break
-    }
-    return result
-  }
+  fun getCourses(isPublic: Boolean, currentPage: Int, enrolled: Boolean?) =
+    service.courses(true, isPublic, currentPage, enrolled).execute().body()
 
   fun getCourseInfo(courseId: Int, isIdeaCompatible: Boolean?): EduCourse? {
     val course = service.courses(courseId, isIdeaCompatible).execute().body()?.courses?.firstOrNull()
@@ -158,60 +136,13 @@ object StepikNewConnector {
     return course
   }
 
-  private fun setAuthors(result: List<EduCourse>) {
+  fun getUsers(result: List<EduCourse>): MutableList<StepikUserInfo> {
     val instructorIds = result.flatMap { it -> it.instructors }.distinct().chunked(MAX_REQUEST_PARAMS)
     val allUsers = mutableListOf<StepikUserInfo>()
     instructorIds
       .mapNotNull { service.users(*it.toIntArray()).execute().body()?.users }
       .forEach { allUsers.addAll(it) }
-
-    val usersById = allUsers.associateBy { it.id }
-    for (course in result) {
-      val authors = course.instructors.mapNotNull { usersById[it] }
-      course.authors = authors
-    }
-  }
-
-  fun getCourseInfos(): List<EduCourse> {
-    LOG.info("Loading courses started...")
-    val startTime = System.currentTimeMillis()
-    val result = ContainerUtil.newArrayList<EduCourse>()
-    val tasks = ContainerUtil.newArrayList<Callable<List<EduCourse>>>()
-    tasks.add(Callable { getCourseInfos(true) })
-    tasks.add(Callable { getCourseInfos(false) })
-    tasks.add(Callable { getInProgressCourses() })
-
-    try {
-      for (future in ConcurrencyUtil.invokeAll(tasks, EXECUTOR_SERVICE)) {
-        if (!future.isCancelled) {
-          val courses = future.get()
-          if (courses != null) {
-            result.addAll(courses)
-          }
-        }
-      }
-    }
-    catch (e: Throwable) {
-      LOG.warn("Cannot load course list " + e.message)
-    }
-
-    setAuthors(result)
-
-    LOG.info("Loading courses finished...Took " + (System.currentTimeMillis() - startTime) + " ms")
-    return result
-  }
-
-  private fun getInProgressCourses(): List<EduCourse> {
-    val result = ContainerUtil.newArrayList<EduCourse>()
-    for (courseId in inProgressCourses) {
-      val info = getCourseInfo(courseId, false) ?: continue
-      val compatibility = info.compatibility
-      if (compatibility === CourseCompatibility.UNSUPPORTED) continue
-      val visibility = CourseVisibility.InProgressVisibility(inProgressCourses.indexOf(info.id))
-      info.visibility = visibility
-      result.add(info)
-    }
-    return result
+    return allUsers
   }
 
   fun getSections(sectionIds: List<Int>): List<Section> {
@@ -254,6 +185,7 @@ object StepikNewConnector {
   }
 
   fun getStepSources(stepIds: List<Int>): List<StepikSteps.StepSource> {
+    // TODO: use language parameter
     val stepsIdsChunks = stepIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val steps = mutableListOf<StepikSteps.StepSource>()
     stepsIdsChunks
@@ -264,11 +196,6 @@ object StepikNewConnector {
 
   fun getStep(stepId: Int): StepikSteps.StepSource? {
     return service.steps(stepId).execute().body()?.steps?.firstOrNull()
-  }
-
-  fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
-    val sections = getSections(remoteCourse.sectionIds)
-    return sections.flatMap { section -> section.units }.distinct()
   }
 
   private fun getSubmissions(isSolved: Boolean, stepId: Int) =
@@ -312,29 +239,4 @@ object StepikNewConnector {
     val progressesMap = progresses.associate { it.id to it.isPassed }
     return ids.mapNotNull { progressesMap[it] }
   }
-
-  fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
-    val units = getUnits(unitIds)
-    val lessonIds = units.map { unit -> unit.lesson }
-    val lessons = StepikNewConnector.getLessons(lessonIds)
-
-    for ((i, lesson) in lessons.withIndex()) {
-      val unit = units[i]
-      if (!lesson.updateDate.isSignificantlyAfter(unit.updateDate)) {
-        lesson.updateDate = unit.updateDate
-      }
-    }
-
-    return sortLessonsByUnits(units, lessons)
-  }
-
-  /**
-   * Stepik sorts result of multiple requests by id, but in some cases unit-wise and lessonId-wise order differ.
-   * So we need to sort lesson by units to keep correct course structure
-   */
-  private fun sortLessonsByUnits(units: List<StepikWrappers.Unit>, lessons: List<Lesson>): List<Lesson> {
-    val idToLesson = lessons.associateBy { it.id }
-    return units.sortedBy { unit -> unit.section }.mapNotNull { idToLesson[it.lesson] }
-  }
-
 }

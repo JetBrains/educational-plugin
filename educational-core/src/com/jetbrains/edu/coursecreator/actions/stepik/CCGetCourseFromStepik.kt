@@ -10,7 +10,7 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.ui.Messages
 import com.jetbrains.edu.coursecreator.stepik.CCStepikConnector
 import com.jetbrains.edu.coursecreator.ui.CCNewCourseDialog
-import com.jetbrains.edu.learning.stepik.StepikConnector
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 
 @Suppress("ComponentNotRegistered") // registered in educational-core.xml
 class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Course From Stepik", null) {
@@ -34,10 +34,7 @@ class CCGetCourseFromStepik : DumbAwareAction("Get Course From Stepik", "Get Cou
       return
     }
 
-    if (!StepikConnector.loadCourseStructure(info)) {
-      showError(courseId)
-      return
-    }
+    StepikCourseLoader.loadCourseStructure(info)
     runInEdt {
       CCNewCourseDialog("Get Course From Stepik", "Create", info).show()
     }

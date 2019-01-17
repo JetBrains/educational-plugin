@@ -21,7 +21,7 @@ import com.jetbrains.edu.learning.courseFormat.ext.configurator
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.courseFormat.tasks.TheoryTask
 import com.jetbrains.edu.learning.courseGeneration.GeneratorUtils
-import com.jetbrains.edu.learning.stepik.StepikConnector.loadCourseStructure
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader.loadCourseStructure
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.getCourseInfo
 import java.io.IOException
 import java.net.URISyntaxException
@@ -406,7 +406,8 @@ class StepikCourseUpdater(val course: EduCourse, val project: Project) {
   private fun courseFromServer(currentCourse: EduCourse): EduCourse? {
     try {
       val remoteCourse = getCourseInfo(currentCourse.id, true)
-      if (remoteCourse != null && loadCourseStructure(remoteCourse)) {
+      if (remoteCourse != null) {
+        loadCourseStructure(remoteCourse)
         addTopLevelLessons(remoteCourse)
         return remoteCourse
       }

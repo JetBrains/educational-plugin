@@ -29,6 +29,7 @@ import com.jetbrains.edu.learning.courseFormat.tasks.CodeTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.serialization.SerializationUtils;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -614,7 +615,7 @@ public class CCStepikConnector {
         section.setPosition(sectionIds.size());
         section.setId(sectionId);
         updateSectionInfo(project, section);
-        final List<Lesson> lessons = StepikConnector.getLessons(courseInfo, sectionId);
+        final List<Lesson> lessons = StepikCourseLoader.INSTANCE.getLessons(courseInfo, sectionId);
         lessons.stream()
           .filter(Lesson::isAdditional)
           .findFirst()

@@ -11,6 +11,7 @@ import com.jetbrains.edu.learning.courseFormat.StepikChangeStatus
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
 import com.jetbrains.edu.learning.stepik.StepikConnector
 import com.jetbrains.edu.learning.stepik.StepikNames
+import com.jetbrains.edu.learning.stepik.api.StepikCourseLoader
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector
 import com.jetbrains.edu.learning.stepik.setUpdated
 import java.util.*
@@ -208,7 +209,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
   private fun processLessonChanges(lastUpdateDate: Date) {
     val pushCandidates = course.allLessons().filter { it.stepikChangeStatus != StepikChangeStatus.UP_TO_DATE }
-    val lessonsFromStepik = StepikConnector.getLessonsFromUnits(course, pushCandidates.map { it.unitId }, false)
+    val lessonsFromStepik = StepikCourseLoader.getLessonsFromUnits(course, pushCandidates.map { it.unitId }, false)
 
     val deleteCandidates = ArrayList<Int>()
     val allSteps = course.allLessons().flatMap { it.taskList }.map { it.stepId }
@@ -251,7 +252,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
     }
 
     val stepSources = StepikConnector.getStepSources(deleteCandidates, lesson.course.languageID)
-    val tasksFromStep = StepikConnector.getTasks(course.languageById, lesson, stepSources)
+    val tasksFromStep = StepikCourseLoader.getTasks(course.languageById, lesson, stepSources)
     tasksToDelete.addAll(tasksFromStep.filter { it.updateDate <= lastUpdateDate }.map { it.stepId })
   }
 
@@ -270,7 +271,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
 
       val section = StepikNewConnector.getSection(courseInfo.sectionIds[0])
       if (section != null) {
-        val lessonsFromSection = StepikConnector.getLessonsFromUnits(courseInfo, section.units, false)
+        val lessonsFromSection = StepikCourseLoader.getLessonsFromUnits(courseInfo, section.units, false)
         val topLevelLessonsIds = course.lessons.map { it.id }
         for (lesson in lessonsFromSection) {
           if (lesson.id !in topLevelLessonsIds) {
