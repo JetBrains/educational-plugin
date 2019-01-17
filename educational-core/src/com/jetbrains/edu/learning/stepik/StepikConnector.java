@@ -22,6 +22,7 @@ import com.jetbrains.edu.learning.authUtils.CustomAuthorizationServer;
 import com.jetbrains.edu.learning.courseFormat.AnswerPlaceholder;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -61,7 +62,7 @@ public class StepikConnector {
 
     @Override
     public boolean shouldSkipClass(Class<?> clazz) {
-      return clazz == AttemptWrapper.Dataset.class;
+      return clazz == Dataset.class;
     }
   };
 
@@ -87,10 +88,10 @@ public class StepikConnector {
     }
 
     try {
-      final String response = postAttempt(task.getStepId());
+      final String response = StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
       if (response.isEmpty()) return;
       final Gson gson = new GsonBuilder().addDeserializationExclusionStrategy(ourExclusionStrategy).create();
-      final AttemptWrapper.Attempt attempt = gson.fromJson(response, AttemptContainer.class).attempts.get(0);
+      final Attempt attempt = gson.fromJson(response, AttemptContainer.class).attempts.get(0);
       final ArrayList<SolutionFile> files = new ArrayList<>();
       final VirtualFile taskDir = task.getTaskDir(project);
       if (taskDir == null) {
@@ -126,26 +127,7 @@ public class StepikConnector {
     }
   }
 
-  static String postAttempt(int id) throws IOException {
-    final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-    if (client == null || !EduSettings.isLoggedIn()) return "";
-    final HttpPost attemptRequest = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.ATTEMPTS);
-    String attemptRequestBody = new Gson().toJson(new AttemptWrapper(id));
-    attemptRequest.setEntity(new StringEntity(attemptRequestBody, ContentType.APPLICATION_JSON));
-
-    final CloseableHttpResponse attemptResponse = client.execute(attemptRequest);
-    final HttpEntity responseEntity = attemptResponse.getEntity();
-    final String attemptResponseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-    final StatusLine statusLine = attemptResponse.getStatusLine();
-    EntityUtils.consume(responseEntity);
-    if (statusLine.getStatusCode() != HttpStatus.SC_CREATED) {
-      LOG.warn("Failed to make attempt " + attemptResponseString);
-      return "";
-    }
-    return attemptResponseString;
-  }
-
-  private static void postSubmission(boolean passed, AttemptWrapper.Attempt attempt,
+  private static void postSubmission(boolean passed, Attempt attempt,
                                      ArrayList<SolutionFile> files, Task task) throws IOException {
     final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SUBMISSIONS);
     String requestBody = new Gson().toJson(new SubmissionWrapper(attempt.id, passed ? "1" : "0", files, task));

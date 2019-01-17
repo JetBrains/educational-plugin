@@ -165,9 +165,9 @@ public class StepikTaskBuilder {
     task.setDescriptionText(myStep.text);
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      final StepikWrappers.AttemptWrapper.Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
+      final StepikWrappers.Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
       if (attempt != null) {
-        final StepikWrappers.AttemptWrapper.Dataset dataset = attempt.dataset;
+        final StepikWrappers.Dataset dataset = attempt.dataset;
         if (dataset != null) {
           task.setChoiceVariants(dataset.options);
           task.setMultipleChoice(dataset.is_multiple_choice);

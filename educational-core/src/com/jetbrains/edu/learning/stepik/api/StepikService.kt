@@ -8,6 +8,7 @@ import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.stepik.StepikSteps
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -54,6 +55,9 @@ interface StepikService {
                   @Query("page") page: Int=1,
                   @Query("status") status: String,
                   @Query("step") step: Int): Call<SubmissionsList>
+
+  @POST("attempts")
+  fun attempts(@Body attemptData: AttemptData): Call<ResponseBody>
 }
 
 class UsersList {
@@ -99,4 +103,13 @@ class ProgressesList {
 class Progress {
   lateinit var id: String
   var isPassed: Boolean = false
+}
+
+@Suppress("ConvertSecondaryConstructorToPrimary")
+class AttemptData {
+  var attempt: StepikWrappers.Attempt? = null
+
+  constructor(step: Int) {
+    attempt = StepikWrappers.Attempt(step)
+  }
 }

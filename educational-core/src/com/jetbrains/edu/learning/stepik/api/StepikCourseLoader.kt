@@ -203,7 +203,7 @@ object StepikCourseLoader {
         progressIndicator.text = "Loading lesson $readableIndex from $lessonCount"
         progressIndicator.fraction = readableIndex.toDouble() / lessonCount
       }
-      val allStepSources = getStepSources(lesson.steps)
+      val allStepSources = getStepSources(lesson.steps, remoteCourse.languageID)
 
       if (!allStepSources.isEmpty()) {
         val options = allStepSources[0].block.options

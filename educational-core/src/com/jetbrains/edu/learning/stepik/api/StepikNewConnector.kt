@@ -40,6 +40,7 @@ object StepikNewConnector {
       objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
       objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
       objectMapper.addMixIn(StepikSteps.StepOptions::class.java, StepOptionsMixin::class.java)
+      objectMapper.addMixIn(StepikWrappers.Attempt::class.java, AttemptMixin::class.java)
       objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
       objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
       objectMapper.registerModule(module)
@@ -238,5 +239,15 @@ object StepikNewConnector {
 
     val progressesMap = progresses.associate { it.id to it.isPassed }
     return ids.mapNotNull { progressesMap[it] }
+  }
+
+  fun postAttempt(id: Int): String {
+    val response = service.attempts(AttemptData(id)).execute()
+    val attemptResponseString = response.body()?.string() ?: ""
+    if (response.code() != HttpStatus.SC_CREATED) {
+      LOG.warn("Failed to make attempt $attemptResponseString")
+      return ""
+    }
+    return attemptResponseString
   }
 }

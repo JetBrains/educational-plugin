@@ -45,11 +45,11 @@ public class StepikCheckerConnector {
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
   @Nullable
-  public static StepikWrappers.AttemptWrapper.Attempt getAttemptForStep(int stepId, int userId) {
+  public static StepikWrappers.Attempt getAttemptForStep(int stepId, int userId) {
     try {
-      final List<StepikWrappers.AttemptWrapper.Attempt> attempts = getAttempts(stepId, userId);
+      final List<StepikWrappers.Attempt> attempts = getAttempts(stepId, userId);
       if (attempts != null && attempts.size() > 0) {
-        final StepikWrappers.AttemptWrapper.Attempt attempt = attempts.get(0);
+        final StepikWrappers.Attempt attempt = attempts.get(0);
         return attempt.isActive() ? attempt : createNewAttempt(stepId);
       }
       else {
@@ -62,14 +62,14 @@ public class StepikCheckerConnector {
     return null;
   }
 
-  private static StepikWrappers.AttemptWrapper.Attempt createNewAttempt(int id) throws IOException {
-    final String response = StepikConnector.postAttempt(id);
+  private static StepikWrappers.Attempt createNewAttempt(int id) {
+    final String response = StepikNewConnector.INSTANCE.postAttempt(id);
     final StepikWrappers.AttemptContainer attempt = new Gson().fromJson(response, StepikWrappers.AttemptContainer.class);
     return attempt.attempts.get(0);
   }
 
   @Nullable
-  private static List<StepikWrappers.AttemptWrapper.Attempt> getAttempts(int stepId, int userId)
+  private static List<StepikWrappers.Attempt> getAttempts(int stepId, int userId)
     throws URISyntaxException, IOException {
     final URI attemptUrl = new URIBuilder(StepikNames.ATTEMPTS)
       .addParameter("step", String.valueOf(stepId))
@@ -91,7 +91,7 @@ public class StepikCheckerConnector {
 
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
-    final StepikWrappers.AttemptWrapper.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
+    final StepikWrappers.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
 
     if (attempt != null) {
       final int attemptId = attempt.id;
@@ -103,25 +103,20 @@ public class StepikCheckerConnector {
                                                                                                         createChoiceTaskAnswerArray(task));
       final CheckResult result = doCheck(wrapper, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
-        try {
-          createNewAttempt(task.getStepId());
-          StepikSteps.StepSource step = StepikNewConnector.INSTANCE.getStep(task.getStepId());
-          if (step == null) {
-            LOG.error("Failed to get step " + task.getStepId());
-            return result;
-          }
-          Course course = task.getLesson().getCourse();
-          StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), task.getName(),
-                                                                step, task.getStepId(), user.getId());
-          final Task updatedTask = taskBuilder.createTask(step.block.name);
-          if (updatedTask instanceof ChoiceTask) {
-            final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();
-            task.setChoiceVariants(variants);
-            task.setSelectedVariants(new ArrayList<>());
-          }
+        createNewAttempt(task.getStepId());
+        StepikSteps.StepSource step = StepikNewConnector.INSTANCE.getStep(task.getStepId());
+        if (step == null) {
+          LOG.error("Failed to get step " + task.getStepId());
+          return result;
         }
-        catch (IOException e) {
-          LOG.warn(e.getMessage());
+        Course course = task.getLesson().getCourse();
+        StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), task.getName(),
+                                                              step, task.getStepId(), user.getId());
+        final Task updatedTask = taskBuilder.createTask(step.block.name);
+        if (updatedTask instanceof ChoiceTask) {
+          final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();
+          task.setChoiceVariants(variants);
+          task.setSelectedVariants(new ArrayList<>());
         }
       }
       return result;
@@ -265,22 +260,22 @@ public class StepikCheckerConnector {
     EntityUtils.consume(entity);
     if (statusCode == HttpStatus.SC_CREATED) {
       final StepikWrappers.AttemptContainer container =
-        new GsonBuilder().registerTypeAdapter(StepikWrappers.AttemptWrapper.Dataset.class, new DatasetAdapter())
+        new GsonBuilder().registerTypeAdapter(StepikWrappers.Dataset.class, new DatasetAdapter())
           .create().fromJson(entityString, StepikWrappers.AttemptContainer.class);
       return (container.attempts != null && !container.attempts.isEmpty()) ? container.attempts.get(0).id : -1;
     }
     return -1;
   }
 
-  public static class DatasetAdapter implements JsonDeserializer<StepikWrappers.AttemptWrapper.Dataset> {
+  public static class DatasetAdapter implements JsonDeserializer<StepikWrappers.Dataset> {
     @Override
-    public StepikWrappers.AttemptWrapper.Dataset deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+    public StepikWrappers.Dataset deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
       throws JsonParseException {
       Gson gson = new Gson();
       if (json instanceof JsonPrimitive) {
         return null;
       }
-      return gson.fromJson(json, StepikWrappers.AttemptWrapper.Dataset.class);
+      return gson.fromJson(json, StepikWrappers.Dataset.class);
     }
   }
 }

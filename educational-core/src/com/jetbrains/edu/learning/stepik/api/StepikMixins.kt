@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.stepik.StepikWrappers
 import java.util.*
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
@@ -230,4 +231,27 @@ class StepikFeedbackLinkMixin {
 
   @JsonProperty("link")
   lateinit var myLink: String
+}
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class AttemptMixin {
+  @JsonProperty("step")
+  var step: Int = 0
+
+  @JsonProperty("dataset")
+  var dataset: StepikWrappers.Dataset? = null
+
+  @JsonProperty("status")
+  var status: String? = null
+
+  @JsonProperty("user")
+  var user: String? = null
+
+  @JsonProperty("id")
+  var id: Int? = null
 }
