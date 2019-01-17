@@ -232,6 +232,10 @@ object StepikNewConnector {
     return allUnits
   }
 
+  fun getUnit(unitId: Int): StepikWrappers.Unit? {
+    return service.units(unitId).execute().body()?.units?.firstOrNull()
+  }
+
   fun getUnitsIds(remoteCourse: EduCourse): List<Int> {
     val sections = getSections(remoteCourse.sectionIds)
     return sections.flatMap { section -> section.units }.distinct()

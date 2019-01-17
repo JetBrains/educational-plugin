@@ -52,7 +52,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikWrappers.*;
 
@@ -200,12 +199,6 @@ public class StepikConnector {
     }
   }
 
-  @NotNull
-  public static List<Unit> getUnits(String[] unitIds) throws IOException {
-    List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitIds, UnitContainer.class);
-    return unitContainers.stream().flatMap(container -> container.units.stream()).collect(Collectors.toList());
-  }
-
   private static List<Lesson> getLessons(EduCourse remoteCourse) throws IOException {
     final List<Integer> unitIds = StepikNewConnector.INSTANCE.getUnitsIds(remoteCourse);
     if (unitIds.size() > 0) {
@@ -242,23 +235,20 @@ public class StepikConnector {
   }
 
   @NotNull
-  public static List<Lesson> getLessons(List<Integer> unitIds) throws IOException {
-    final String[] unitStrings = unitIds.stream().map(unit -> String.valueOf(unit)).toArray(String[]::new);
-    List<UnitContainer> unitContainers = multipleRequestToStepik(StepikNames.UNITS, unitStrings, UnitContainer.class);
-    Stream<Unit> allUnits = unitContainers.stream().flatMap(container -> container.units.stream());
-    List<Integer> lessonIds = allUnits.map(unit -> unit.lesson).collect(Collectors.toList());
+  public static List<Lesson> getLessons(List<Integer> unitIds) {
+    List<Unit> allUnits = StepikNewConnector.INSTANCE.getUnits(unitIds);
+    List<Integer> lessonIds = allUnits.stream().map(unit -> unit.lesson).collect(Collectors.toList());
     List<Lesson> lessons = StepikNewConnector.INSTANCE.getLessons(lessonIds);
-    List<Unit> units = unitContainers.stream().flatMap(container -> container.units.stream()).collect(Collectors.toList());
 
     for (int i = 0; i < lessons.size(); i++) {
       Lesson lesson = lessons.get(i);
-      Unit unit = units.get(i);
+      Unit unit = allUnits.get(i);
       if (!StepikUpdateDateExt.isSignificantlyAfter(lesson.getUpdateDate(), unit.getUpdateDate())) {
         lesson.setUpdateDate(unit.getUpdateDate());
       }
     }
 
-    return sortLessonsByUnits(units, lessons);
+    return sortLessonsByUnits(allUnits, lessons);
   }
 
   /**
@@ -639,20 +629,6 @@ public class StepikConnector {
     if (!redirectUrl.startsWith("http://localhost")) {
       externalRedirectUrlHandler.run();
     }
-  }
-
-  public static Unit getUnit(int unitId) {
-    try {
-      List<Unit> units =
-        getFromStepik(StepikNames.UNITS + "/" + unitId, UnitContainer.class).units;
-      if (!units.isEmpty()) {
-        return units.get(0);
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Failed getting unit: " + unitId);
-    }
-    return new Unit();
   }
 
   public static void postTheory(Task task, final Project project) {

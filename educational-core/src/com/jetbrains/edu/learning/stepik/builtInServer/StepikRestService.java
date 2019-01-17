@@ -126,7 +126,11 @@ public class StepikRestService extends OAuthRestService {
         return log("Unrecognized the Unit id");
       }
 
-      StepikWrappers.Unit unit = StepikConnector.getUnit(unitId);
+      StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.getUnit(unitId);
+      if (unit == null) {
+        return log("No section found with id " + unitId);
+      }
+
       if (unit.getId() == 0) {
         return log("Unrecognized the Unit id");
       }

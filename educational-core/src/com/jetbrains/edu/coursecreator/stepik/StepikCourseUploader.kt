@@ -188,8 +188,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    lessonsToDelete.addAll(StepikConnector.getUnits(
-      deleteCandidates.map { it.toString() }.toTypedArray()).filter { it.updateDate <= lastUpdateDate }.map { it.id })
+    lessonsToDelete.addAll(StepikNewConnector.getUnits(deleteCandidates).filter { it.updateDate <= lastUpdateDate }.map { it.id })
   }
 
   private fun processSectionContentChanged(section: Section,
@@ -233,8 +232,7 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       }
     }
 
-    lessonsToDelete.addAll(StepikConnector.getUnits(
-      deleteCandidates.map { it.toString() }.toTypedArray()).filter { it.updateDate <= lastUpdateDate }.map { it.id })
+    lessonsToDelete.addAll(StepikNewConnector.getUnits(deleteCandidates).filter { it.updateDate <= lastUpdateDate }.map { it.id })
   }
 
   private fun processLessonContentChanged(lesson: Lesson,

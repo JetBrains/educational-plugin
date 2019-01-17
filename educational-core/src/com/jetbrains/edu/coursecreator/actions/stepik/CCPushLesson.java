@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task.Modal;
@@ -18,9 +19,9 @@ import com.jetbrains.edu.learning.StudyTaskManager;
 import com.jetbrains.edu.learning.courseFormat.*;
 import com.jetbrains.edu.learning.courseFormat.ext.CourseExt;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
-import com.jetbrains.edu.learning.stepik.StepikConnector;
 import com.jetbrains.edu.learning.stepik.StepikNames;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import com.twelvemonkeys.lang.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,6 +30,8 @@ import java.util.List;
 
 @SuppressWarnings("ComponentNotRegistered") // educational-core.xml
 public class CCPushLesson extends DumbAwareAction {
+  private static final Logger LOG = Logger.getInstance(CCPushLesson.class);
+
   public CCPushLesson() {
     super("Update Lesson on Stepik", "Update Lesson on Stepik", null);
   }
@@ -134,8 +137,11 @@ public class CCPushLesson extends DumbAwareAction {
   // public for tests
   public static void doPush(Lesson lesson, Project project, Course course) {
     if (lesson.getId() > 0) {
-      StepikWrappers.Unit unit = StepikConnector.getUnit(lesson.unitId);
-
+      StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.getUnit(lesson.unitId);
+      if (unit == null) {
+        LOG.error("Failed to get unit for unit id " + lesson.unitId);
+        return;
+      }
       int sectionId;
       if (lesson.getSection() != null) {
         sectionId = lesson.getSection().getId();

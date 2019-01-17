@@ -253,8 +253,8 @@ public class CCStepikConnector {
 
   public static int findTopLevelLessonsSection(@NotNull Project project, @Nullable Lesson topLevelLesson) {
     if (topLevelLesson != null) {
-      StepikWrappers.Unit unit = StepikConnector.getUnit(topLevelLesson.unitId);
-      return unit.getSection();
+      StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.getUnit(topLevelLesson.unitId);
+      return unit != null ? unit.getSection() : -1;
     }
     else {
       Course course = StudyTaskManager.getInstance(project).getCourse();

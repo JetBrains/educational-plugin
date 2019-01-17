@@ -36,12 +36,6 @@ interface StepikService {
   @GET("sections")
   fun sections(@Query("ids[]") vararg ids: Int): Call<SectionsList>
 
-  @GET("sections/{id}")
-  fun sections(@Path("id") sectionId: Int): Call<SectionsList>
-
-  @GET("lessons/{id}")
-  fun lessons(@Path("id") lessonId: Int): Call<LessonsList>
-
   @GET("lessons")
   fun lessons(@Query("ids[]") vararg ids: Int): Call<LessonsList>
 
