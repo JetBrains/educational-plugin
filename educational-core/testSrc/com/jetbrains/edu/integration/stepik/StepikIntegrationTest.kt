@@ -263,8 +263,7 @@ open class StepikIntegrationTest : StepikTestCase() {
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
     val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
-    val unitIds = section.units.map { unit -> unit.toString() }
-    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
+    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, section.units, false)
 
     val taskFromStepik = lessonsFromUnits[0].getTask("task1") ?: error("Can't find `task1`")
     assertEquals(taskText, taskFromStepik.getTaskFile("src/Task.kt")?.text)
@@ -311,8 +310,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
     assertEquals("Section name mismatch", localCourse.name, section.name)
 
-    val unitIds = section.units.map { unit -> unit.toString() }
-    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
+    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, section.units, false)
 
     assertEquals("Lessons number mismatch", localCourse.lessons.size, lessonsFromUnits.size)
     localCourse.lessons.forEachIndexed { index, lesson ->

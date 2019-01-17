@@ -46,7 +46,10 @@ import org.jetbrains.ide.BuiltInServerManager;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,7 +63,6 @@ public class StepikConnector {
 
   private static final String OPEN_PLACEHOLDER_TAG = "<placeholder>";
   private static final String CLOSE_PLACEHOLDER_TAG = "</placeholder>";
-  public static final int MAX_REQUEST_PARAMS = 100; // restriction of Stepik API for multiple requests
   private static final int THREAD_NUMBER = Runtime.getRuntime().availableProcessors();
   private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER);
 
@@ -83,17 +85,11 @@ public class StepikConnector {
   public static boolean loadCourseStructure(@NotNull final EduCourse remoteCourse) {
     final List<StudyItem> items = remoteCourse.getItems();
     if (!items.isEmpty()) return true;
-    try {
-      fillItems(remoteCourse);
-      return true;
-    }
-    catch (IOException e) {
-      LOG.error(e);
-      return false;
-    }
+    fillItems(remoteCourse);
+    return true;
   }
 
-  public static void fillItems(@NotNull EduCourse remoteCourse) throws IOException {
+  public static void fillItems(@NotNull EduCourse remoteCourse) {
     List<Integer> sectionIds = remoteCourse.getSectionIds();
     List<Section> allSections = StepikNewConnector.INSTANCE.getSections(sectionIds);
 
@@ -161,8 +157,7 @@ public class StepikConnector {
     return itemsWithTopLevelLessons;
   }
 
-  private static void addTopLevelLessons(@NotNull EduCourse remoteCourse, List<Section> allSections)
-    throws IOException {
+  private static void addTopLevelLessons(@NotNull EduCourse remoteCourse, List<Section> allSections) {
     final String[] unitIds = allSections.stream().map(section -> section.units).flatMap(unitList -> unitList.stream())
       .map(unit -> String.valueOf(unit)).toArray(String[]::new);
     if (unitIds.length > 0) {
@@ -174,8 +169,7 @@ public class StepikConnector {
   }
 
   @Nullable
-  private static StudyItem loadItemTask(@NotNull EduCourse remoteCourse, Section section, int finalIndex)
-    throws IOException {
+  private static StudyItem loadItemTask(@NotNull EduCourse remoteCourse, Section section, int finalIndex) {
     final List<Integer> unitIds = section.units;
     if (unitIds.size() <= 0) {
       return null;
@@ -199,7 +193,7 @@ public class StepikConnector {
     }
   }
 
-  private static List<Lesson> getLessons(EduCourse remoteCourse) throws IOException {
+  private static List<Lesson> getLessons(EduCourse remoteCourse) {
     final List<Integer> unitIds = StepikNewConnector.INSTANCE.getUnitsIds(remoteCourse);
     if (unitIds.size() > 0) {
       return getLessonsFromUnits(remoteCourse, unitIds, true);
@@ -208,7 +202,7 @@ public class StepikConnector {
     return Collections.emptyList();
   }
 
-  public static List<Lesson> getLessons(EduCourse remoteCourse, int sectionId) throws IOException {
+  public static List<Lesson> getLessons(EduCourse remoteCourse, int sectionId) {
     final Section firstSection = StepikNewConnector.INSTANCE.getSection(sectionId);
     if (firstSection == null) {
       return Collections.emptyList();
@@ -236,45 +230,14 @@ public class StepikConnector {
 
   @NotNull
   public static List<Lesson> getLessons(List<Integer> unitIds) {
-    List<Unit> allUnits = StepikNewConnector.INSTANCE.getUnits(unitIds);
-    List<Integer> lessonIds = allUnits.stream().map(unit -> unit.lesson).collect(Collectors.toList());
-    List<Lesson> lessons = StepikNewConnector.INSTANCE.getLessons(lessonIds);
-
-    for (int i = 0; i < lessons.size(); i++) {
-      Lesson lesson = lessons.get(i);
-      Unit unit = allUnits.get(i);
-      if (!StepikUpdateDateExt.isSignificantlyAfter(lesson.getUpdateDate(), unit.getUpdateDate())) {
-        lesson.setUpdateDate(unit.getUpdateDate());
-      }
-    }
-
-    return sortLessonsByUnits(allUnits, lessons);
-  }
-
-  /**
-   * Stepik sorts result of multiple requests by id, but in some cases unit-wise and lessonId-wise order differ.
-   * So we need to sort lesson by units to keep correct course structure
-   */
-  @NotNull
-  private static List<Lesson> sortLessonsByUnits(List<Unit> units, List<Lesson> lessons) {
-    HashMap<Integer, Lesson> idToLesson = new HashMap<>();
-    units.sort(Comparator.comparingInt(unit -> unit.section));
-    for (Lesson lesson : lessons) {
-      idToLesson.put(lesson.getId(), lesson);
-    }
-    List<Lesson> sorted = new ArrayList<>();
-    for (Unit unit : units) {
-      int lessonId = unit.lesson;
-      sorted.add(idToLesson.get(lessonId));
-    }
-    return sorted;
+    return StepikNewConnector.INSTANCE.getLessonsFromUnitIds(unitIds);
   }
 
   @VisibleForTesting
-  public static List<Lesson> getLessonsFromUnits(EduCourse remoteCourse, List<Integer> unitIds, boolean updateIndicator) throws IOException {
+  public static List<Lesson> getLessonsFromUnits(EduCourse remoteCourse, List<Integer> unitIds, boolean updateIndicator) {
     final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
     final List<Lesson> lessons = new ArrayList<>();
-    List<Lesson> lessonsFromUnits = getLessons(unitIds);
+    List<Lesson> lessonsFromUnits = StepikNewConnector.INSTANCE.getLessonsFromUnitIds(unitIds);
 
     final int lessonCount = lessonsFromUnits.size();
     for (int lessonIndex = 0; lessonIndex < lessonCount; lessonIndex++) {
@@ -305,9 +268,6 @@ public class StepikConnector {
 
   public static List<StepikSteps.StepSource> getStepSources(List<Integer> stepIds, String language) {
     return StepikNewConnector.INSTANCE.getStepSources(stepIds); // TODO: use language parameter
-    //Map<Key, Object> params = Collections.singletonMap(COURSE_LANGUAGE, language);
-    //List<StepikSteps.StepsList> stepContainers = multipleRequestToStepik(StepikNames.STEPS, stepIds, StepikSteps.StepsList.class, params);
-    //return stepContainers.stream().flatMap(stepContainer -> stepContainer.steps.stream()).collect(Collectors.toList());
   }
 
   @NotNull
@@ -389,55 +349,6 @@ public class StepikConnector {
   static String removeAllTags(@NotNull String text) {
     String result = text.replaceAll(OPEN_PLACEHOLDER_TAG, "");
     result = result.replaceAll(CLOSE_PLACEHOLDER_TAG, "");
-    return result;
-  }
-
-  @Nullable
-  public static Boolean[] taskStatuses(String[] progresses) {
-    try {
-      List<ProgressContainer> progressContainers = multipleRequestToStepik(StepikNames.PROGRESS, progresses, ProgressContainer.class);
-      Map<String, Boolean> progressMap = progressContainers.stream()
-        .flatMap(progressContainer -> progressContainer.progresses.stream())
-        .collect(Collectors.toMap(p -> p.id, p -> p.isPassed));
-      return Arrays.stream(progresses)
-        .map(progressMap::get)
-        .toArray(Boolean[]::new);
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-
-    return null;
-  }
-
-  public static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids, final Class<T> container) throws IOException {
-    return multipleRequestToStepik(apiUrl, ids, container, null);
-  }
-
-  private static <T> List<T> multipleRequestToStepik(String apiUrl, String[] ids,
-                                                     final Class<T> container,
-                                                     @Nullable Map<Key, Object> params) throws IOException {
-    List<T> result = new ArrayList<>();
-
-    int length = ids.length;
-    for (int i = 0; i < length ; i += MAX_REQUEST_PARAMS) {
-      String link;
-      try {
-        URIBuilder builder = new URIBuilder(apiUrl);
-        List<String> sublist = Arrays.asList(ids).subList(i, Math.min(i + MAX_REQUEST_PARAMS, length));
-        for (String id : sublist) {
-          builder.addParameter("ids[]", id);
-        }
-        link = builder.build().toString();
-
-      }
-      catch (URISyntaxException e) {
-        LOG.error(e.getMessage());
-        continue;
-      }
-      result.add(getFromStepik(link, container, params));
-    }
-
     return result;
   }
 

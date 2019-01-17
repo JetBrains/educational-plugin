@@ -74,7 +74,7 @@ public class StepikWrappers {
   public static class Unit {
     int id;
     int section;
-    int lesson;
+    public int lesson;
     int position;
     @SerializedName("update_date") Date updateDate;
     List<Integer> assignments;
@@ -165,6 +165,8 @@ public class StepikWrappers {
     public String name;
     public String text;
 
+    public SolutionFile() {}
+
     public SolutionFile(String name, String text) {
       this.name = name;
       this.text = text;
@@ -173,10 +175,6 @@ public class StepikWrappers {
 
   static class AuthorWrapper {
     List<StepikUserInfo> users;
-  }
-
-  static class SubmissionsWrapper {
-    Submission[] submissions;
   }
 
   static class SubmissionWrapper {
@@ -193,13 +191,14 @@ public class StepikWrappers {
   }
 
   public static class Reply {
-
-    String score;
-    List<SolutionFile> solution;
+    public String score;
+    public List<SolutionFile> solution;
     public String language;
     public String code;
-    String edu_task;
+    public String edu_task;
     public int version = EduVersions.JSON_FORMAT_VERSION;
+
+    public Reply() {}
 
     public Reply(List<SolutionFile> files, String score, String serializedTask) {
       this.score = score;
@@ -209,8 +208,10 @@ public class StepikWrappers {
   }
 
   public static class Submission {
-    int attempt;
-    public final Reply reply;
+    public int attempt;
+    public Reply reply;
+
+    public Submission() {}
 
     public Submission(String score, int attemptId, ArrayList<SolutionFile> files, String serializedTask) {
       reply = new Reply(files, score, serializedTask);

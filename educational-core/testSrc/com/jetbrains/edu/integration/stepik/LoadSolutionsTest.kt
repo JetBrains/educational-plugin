@@ -37,7 +37,7 @@ class LoadSolutionsTest : StepikTestCase() {
     solveFirstTask()
 
     val task = firstTask(StudyTaskManager.getInstance(project).course)
-    val progresses = Array(1) { PROGRESS_ID_PREFIX + task.stepId.toString() }
+    val progresses = listOf(PROGRESS_ID_PREFIX + task.stepId.toString() )
 
     var isSolved = false
 
@@ -46,7 +46,7 @@ class LoadSolutionsTest : StepikTestCase() {
     val waitTime: Long = 10000
     val endTime = startTime + waitTime
     while (System.currentTimeMillis() < endTime) {
-      val taskStatuses = StepikConnector.taskStatuses(progresses)
+      val taskStatuses = StepikNewConnector.taskStatuses(progresses)
       assertTrue(taskNumberMismatchMessage(1, taskStatuses!!.size), taskStatuses.size == 1)
 
       if (taskStatuses.firstOrNull() == true) {

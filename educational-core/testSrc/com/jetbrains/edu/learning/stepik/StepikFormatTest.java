@@ -1,5 +1,6 @@
 package com.jetbrains.edu.learning.stepik;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -15,6 +16,8 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
+import com.jetbrains.edu.learning.stepik.api.SubmissionsList;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
@@ -297,13 +300,13 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testLastSubmission() throws IOException {
-    Gson gson = getGson();
     String jsonText = loadJsonText();
-    StepikWrappers.SubmissionsWrapper submissionsWrapper = gson.fromJson(jsonText, StepikWrappers.SubmissionsWrapper.class);
-    assertNotNull(submissionsWrapper);
-    assertNotNull(submissionsWrapper.submissions);
-    assertEquals(20, submissionsWrapper.submissions.length);
-    final StepikWrappers.Reply reply = submissionsWrapper.submissions[0].reply;
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final SubmissionsList submissionsList = mapper.readValue(jsonText, SubmissionsList.class);
+    assertNotNull(submissionsList);
+    assertNotNull(submissionsList.submissions);
+    assertEquals(20, submissionsList.submissions.size());
+    final StepikWrappers.Reply reply = submissionsList.submissions.get(0).reply;
     assertNotNull(reply);
     List<StepikWrappers.SolutionFile> solutionFiles = reply.solution;
     assertEquals(1, solutionFiles.size());

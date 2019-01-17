@@ -45,7 +45,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.jetbrains.edu.learning.stepik.StepikCheckerConnector.EDU_TOOLS_COMMENT;
-import static com.jetbrains.edu.learning.stepik.StepikConnector.*;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.removeAllTags;
+import static com.jetbrains.edu.learning.stepik.StepikConnector.setPlaceholdersFromTags;
 
 public class StepikSolutionsLoader implements Disposable {
   public static final String PROGRESS_ID_PREFIX = "77-";
@@ -190,11 +191,11 @@ public class StepikSolutionsLoader implements Disposable {
     Stream<Lesson> allLessons = Stream.concat(lessonsFromSection, course.getLessons().stream());
     Task[] allTasks = allLessons.flatMap(lesson -> lesson.getTaskList().stream()).toArray(Task[]::new);
 
-    String[] progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getStepId()).toArray(String[]::new);
-    Boolean[] taskStatuses = taskStatuses(progresses);
+    List<String> progresses = Arrays.stream(allTasks).map(task -> PROGRESS_ID_PREFIX + task.getStepId()).collect(Collectors.toList());
+    List<Boolean> taskStatuses = StepikNewConnector.INSTANCE.taskStatuses(progresses);
     if (taskStatuses == null) return tasksToUpdate;
     for (int j = 0; j < allTasks.length; j++) {
-      Boolean isSolved = taskStatuses[j];
+      Boolean isSolved = taskStatuses.get(j);
       Task task = allTasks[j];
       boolean toUpdate = false;
       if (isSolved != null && !(task instanceof TheoryTask)) {
@@ -260,7 +261,7 @@ public class StepikSolutionsLoader implements Disposable {
       if (task instanceof EduTask) {
         String language = task.getCourse().getLanguageID();
         StepikWrappers.Reply reply = StepikNewConnector.INSTANCE.getLastSubmission(stepId, isSolved, language);
-        if (reply != null && !reply.solution.isEmpty()) {
+        if (reply != null && reply.solution != null && !reply.solution.isEmpty()) {
           return true;
         }
       }

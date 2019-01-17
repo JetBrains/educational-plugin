@@ -378,8 +378,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     TestCase.assertTrue("Section name mismatch. Expected: ${localCourse.name}.\n Actual: ${section.name}",
                         section.name == localCourse.name)
 
-    val unitIds = section.units.map { unit -> unit.toString() }
-    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
+    val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, section.units, false)
 
     TestCase.assertTrue("Lessons number mismatch. Expected: ${localCourse.lessons.size}. Actual: ${lessonsFromUnits.size}",
                         lessonsFromUnits.size == localCourse.lessons.size)

@@ -46,6 +46,9 @@ interface StepikService {
   @GET("steps")
   fun steps(@Query("ids[]") vararg ids: Int): Call<StepsList>
 
+  @GET("progresses")
+  fun progresses(@Query("ids[]") vararg ids: String): Call<ProgressesList>
+
   @GET("submissions")
   fun submissions(@Query("order") order: String="desc",
                   @Query("page") page: Int=1,
@@ -87,4 +90,13 @@ class StepsList {
 
 class SubmissionsList {
   lateinit var submissions: List<StepikWrappers.Submission>
+}
+
+class ProgressesList {
+  lateinit var progresses: List<Progress>
+}
+
+class Progress {
+  lateinit var id: String
+  var isPassed: Boolean = false
 }

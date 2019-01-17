@@ -24,12 +24,18 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object StepikNewConnector {
+  private const val MAX_REQUEST_PARAMS = 100 // restriction of Stepik API for multiple requests
   private val LOG = Logger.getInstance(StepikNewConnector::class.java)
   private val THREAD_NUMBER = Runtime.getRuntime().availableProcessors()
   private val EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREAD_NUMBER)
   private val converterFactory: JacksonConverterFactory
 
   init {
+    converterFactory = JacksonConverterFactory.create(objectMapper)
+  }
+
+  val objectMapper: ObjectMapper
+    get() {
     val module = SimpleModule()
     val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     objectMapper.propertyNamingStrategy = PropertyNamingStrategy.SNAKE_CASE
@@ -44,7 +50,7 @@ object StepikNewConnector {
     objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
     objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
     objectMapper.registerModule(module)
-    converterFactory = JacksonConverterFactory.create(objectMapper)
+    return objectMapper
   }
 
   private val authorizationService: StepikOAuthService
@@ -153,7 +159,7 @@ object StepikNewConnector {
   }
 
   private fun setAuthors(result: List<EduCourse>) {
-    val instructorIds = result.flatMap { it -> it.instructors }.distinct().chunked(100)
+    val instructorIds = result.flatMap { it -> it.instructors }.distinct().chunked(MAX_REQUEST_PARAMS)
     val allUsers = mutableListOf<StepikUserInfo>()
     instructorIds
       .mapNotNull { service.users(*it.toIntArray()).execute().body()?.users }
@@ -209,7 +215,7 @@ object StepikNewConnector {
   }
 
   fun getSections(sectionIds: List<Int>): List<Section> {
-    val sectionIdsChunks = sectionIds.distinct().chunked(100)
+    val sectionIdsChunks = sectionIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val allSections = mutableListOf<Section>()
     sectionIdsChunks
       .mapNotNull { service.sections(*it.toIntArray()).execute().body()?.sections }
@@ -226,7 +232,7 @@ object StepikNewConnector {
   }
 
   fun getLessons(lessonIds: List<Int>): List<Lesson> {
-    val lessonsIdsChunks = lessonIds.distinct().chunked(100)
+    val lessonsIdsChunks = lessonIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val allLessons = mutableListOf<Lesson>()
     lessonsIdsChunks
       .mapNotNull { service.lessons(*it.toIntArray()).execute().body()?.lessons }
@@ -235,7 +241,7 @@ object StepikNewConnector {
   }
 
   fun getUnits(unitIds: List<Int>): List<StepikWrappers.Unit> {
-    val unitsIdsChunks = unitIds.distinct().chunked(100)
+    val unitsIdsChunks = unitIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val allUnits = mutableListOf<StepikWrappers.Unit>()
     unitsIdsChunks
       .mapNotNull { service.units(*it.toIntArray()).execute().body()?.units }
@@ -248,7 +254,7 @@ object StepikNewConnector {
   }
 
   fun getStepSources(stepIds: List<Int>): List<StepikSteps.StepSource> {
-    val stepsIdsChunks = stepIds.distinct().chunked(100)
+    val stepsIdsChunks = stepIds.distinct().chunked(MAX_REQUEST_PARAMS)
     val steps = mutableListOf<StepikSteps.StepSource>()
     stepsIdsChunks
       .mapNotNull { service.steps(*it.toIntArray()).execute().body()?.steps }
@@ -294,6 +300,41 @@ object StepikNewConnector {
     }
 
     return taskFileToText
+  }
+
+  fun taskStatuses(ids: List<String>): List<Boolean>? {
+    val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
+    val progresses = mutableListOf<Progress>()
+    idsChunks
+      .mapNotNull { service.progresses(*it.toTypedArray()).execute().body()?.progresses }
+      .forEach { progresses.addAll(it) }
+
+    val progressesMap = progresses.associate { it.id to it.isPassed }
+    return ids.mapNotNull { progressesMap[it] }
+  }
+
+  fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
+    val units = getUnits(unitIds)
+    val lessonIds = units.map { unit -> unit.lesson }
+    val lessons = StepikNewConnector.getLessons(lessonIds)
+
+    for ((i, lesson) in lessons.withIndex()) {
+      val unit = units[i]
+      if (!lesson.updateDate.isSignificantlyAfter(unit.updateDate)) {
+        lesson.updateDate = unit.updateDate
+      }
+    }
+
+    return sortLessonsByUnits(units, lessons)
+  }
+
+  /**
+   * Stepik sorts result of multiple requests by id, but in some cases unit-wise and lessonId-wise order differ.
+   * So we need to sort lesson by units to keep correct course structure
+   */
+  private fun sortLessonsByUnits(units: List<StepikWrappers.Unit>, lessons: List<Lesson>): List<Lesson> {
+    val idToLesson = lessons.associateBy { it.id }
+    return units.sortedBy { unit -> unit.section }.mapNotNull { idToLesson[it.lesson] }
   }
 
 }
