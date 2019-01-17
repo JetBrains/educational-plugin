@@ -8,6 +8,7 @@ import com.intellij.util.Function
 import com.jetbrains.edu.coursecreator.CCUtils
 import com.jetbrains.edu.coursecreator.configuration.YamlFormatSynchronizer
 import com.jetbrains.edu.coursecreator.stepik.StepikCourseChangeHandler
+import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileInfo
 import com.jetbrains.edu.learning.PlaceholderPainter
 import com.jetbrains.edu.learning.courseFormat.TaskFile
@@ -68,13 +69,13 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
           if (!file.isDirectory) {
             val relativePath = VfsUtil.findRelativePath(movedFile, file, VfsUtilCore.VFS_SEPARATOR_CHAR)
             val newFileInfo = fileInfo.copy(pathInTask = "${fileInfo.pathInTask}${VfsUtilCore.VFS_SEPARATOR_CHAR}$relativePath")
-            fileInTaskCreated(newFileInfo)
+            fileInTaskCreated(newFileInfo, file)
           }
           return true
         }
       })
     } else {
-      fileInTaskCreated(fileInfo)
+      fileInTaskCreated(fileInfo, movedFile)
     }
   }
 
@@ -115,10 +116,17 @@ class CCVirtualFileListener(project: Project) : EduVirtualFileListener(project) 
     YamlFormatSynchronizer.saveItem(task)
   }
 
-  override fun fileInTaskCreated(fileInfo: FileInfo.FileInTask) {
-    super.fileInTaskCreated(fileInfo)
+  override fun fileInTaskCreated(fileInfo: FileInfo.FileInTask, createFile: VirtualFile) {
+    super.fileInTaskCreated(fileInfo, createFile)
     YamlFormatSynchronizer.saveItem(fileInfo.task)
     StepikCourseChangeHandler.changed(fileInfo.task)
+  }
+
+  override fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {
+    super.taskFileCreated(taskFile, file)
+    if (EduUtils.isTestsFile(project, file)) {
+      taskFile.isVisible = false
+    }
   }
 
   override fun fileDeleted(event: VirtualFileEvent) {

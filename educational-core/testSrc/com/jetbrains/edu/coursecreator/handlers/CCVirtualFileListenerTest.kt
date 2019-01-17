@@ -139,7 +139,9 @@ class CCVirtualFileListenerTest : EduTestCase() {
 
   fun `test add test file`() {
     doAddFileTest("test/${FakeGradleConfigurator.TEST_FILE_NAME}") { task ->
-      listOf("test/${FakeGradleConfigurator.TEST_FILE_NAME}" `in` task)
+      listOf(("test/${FakeGradleConfigurator.TEST_FILE_NAME}" `in` task).withAdditionalCheck {
+        check(!it.isVisible) { "Test file should be invisible by default" }
+      })
     }
   }
 
@@ -358,7 +360,9 @@ class CCVirtualFileListenerTest : EduTestCase() {
 
   fun `test move non course file as test file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1/test") { course ->
     val task = course.findTask("lesson1", "task1")
-    listOf("test/non_course_file1.txt" `in` task)
+    listOf(("test/non_course_file1.txt" `in` task).withAdditionalCheck {
+      check(!it.isVisible) { "Test file should be invisible by default" }
+    })
   }
 
   fun `test move non course file as additional file`() = doMoveTest("non_course_dir/non_course_file1.txt", "lesson1/task1") { course ->

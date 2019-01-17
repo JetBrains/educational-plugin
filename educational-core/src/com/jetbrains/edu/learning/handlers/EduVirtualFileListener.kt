@@ -1,10 +1,11 @@
 package com.jetbrains.edu.learning.handlers
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileEvent
 import com.intellij.openapi.vfs.VirtualFileListener
-import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.FileInfo
+import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.fileInfo
 
 abstract class EduVirtualFileListener(protected val project: Project) : VirtualFileListener {
@@ -12,7 +13,7 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
   override fun fileCreated(event: VirtualFileEvent) {
     if (event.file.isDirectory) return
     val fileInfo = event.file.fileInfo(project) as? FileInfo.FileInTask ?: return
-    fileInTaskCreated(fileInfo)
+    fileInTaskCreated(fileInfo, event.file)
   }
 
   /**
@@ -30,13 +31,13 @@ abstract class EduVirtualFileListener(protected val project: Project) : VirtualF
    * In such cases, these checks prevent replacing correct task file
    * with empty (without placeholders, hints, etc.) one.
    */
-  protected open fun fileInTaskCreated(fileInfo: FileInfo.FileInTask) {
+  protected open fun fileInTaskCreated(fileInfo: FileInfo.FileInTask, createFile: VirtualFile) {
     val (task, pathInTask) = fileInfo
     if (task.getTaskFile(pathInTask) == null) {
       val taskFile = task.addTaskFile(pathInTask)
-      if (EduUtils.isStudentProject(project)) {
-        taskFile.isUserCreated = true
-      }
+      taskFileCreated(taskFile, createFile)
     }
   }
+
+  protected open fun taskFileCreated(taskFile: TaskFile, file: VirtualFile) {}
 }
