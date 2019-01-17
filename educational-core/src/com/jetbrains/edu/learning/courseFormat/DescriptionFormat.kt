@@ -11,7 +11,7 @@ enum class DescriptionFormat(val descriptionFileName: String) {
   val fileExtension: String = FileUtilRt.getExtension(descriptionFileName)
 
   override fun toString(): String {
-    return name
+    return name.toLowerCase()
   }
 
 }

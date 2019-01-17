@@ -2,6 +2,9 @@ package com.jetbrains.edu.learning.stepik.api
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
+import com.jetbrains.edu.learning.courseFormat.*
+import com.jetbrains.edu.learning.serialization.SerializationUtils
 import java.util.*
 
 @Suppress("unused", "UNUSED_PARAMETER") // used for json serialization
@@ -94,4 +97,97 @@ class StepikLessonMixin {
 
   @JsonProperty("unit_id")
   var unitId: Int = 0
+}
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class StepOptionsMixin {
+  @JsonProperty("task_type")
+  lateinit var taskType: String
+
+  @JsonProperty("lesson_type")
+  lateinit var lessonType: String
+
+  @JsonProperty("title")
+  lateinit var title: String
+
+  @JsonProperty(SerializationUtils.Json.DESCRIPTION_TEXT)
+  lateinit var descriptionText: String
+
+  @JsonProperty(SerializationUtils.Json.DESCRIPTION_FORMAT)
+  lateinit var descriptionFormat: DescriptionFormat
+
+  @JsonProperty("feedback_link")
+  lateinit var myFeedbackLink: FeedbackLink
+
+  @JsonProperty("files")
+  lateinit var files: MutableList<TaskFile>
+
+  @JsonProperty("samples")
+  var samples: List<List<String>>? = null
+
+  @JsonProperty("execution_memory_limit")
+  var executionMemoryLimit: Int? = null
+
+  @JsonProperty("execution_time_limit")
+  var executionTimeLimit: Int? = null
+
+  @JsonProperty("code_templates")
+  var codeTemplates: Map<String, String>? = null
+
+  @JsonProperty("format_version")
+  var formatVersion: Int = JSON_FORMAT_VERSION
+}
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class StepikTaskFileMixin {
+  @JsonProperty("name")
+  lateinit var myName: String
+
+  @JsonProperty("placeholders")
+  lateinit var myAnswerPlaceholders: MutableList<AnswerPlaceholder>
+
+  @JsonProperty("is_visible")
+  var myVisible = true
+
+  @JsonProperty("text")
+  lateinit var myText : String
+}
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class StepikAnswerPlaceholderMixin {
+  @JsonProperty("offset")
+  var myOffset = -1
+
+  @JsonProperty("length")
+  private var myLength = -1
+
+  @JsonProperty("dependency")
+  lateinit var myPlaceholderDependency: AnswerPlaceholderDependency
+
+  @JsonProperty("hints")
+  lateinit var myHints: List<String>
+
+  @JsonProperty("possible_answer")
+  lateinit var myPossibleAnswer : String
+
+  @JsonProperty("placeholder_text")
+  lateinit var myPlaceholderText: String
+
+  @JsonProperty("selected")
+  private var mySelected = false
 }
