@@ -271,14 +271,18 @@ class StepikCourseUploader(val project: Project, val course: EduCourse) {
       lessonsToPush.addAll(course.lessons.filter { it.id == 0 })
       // process lessons moved to top-level
 
-      val section = StepikConnector.getSection(courseInfo.sectionIds[0])
-      val lessonsFromSection = StepikConnector.getLessonsFromUnits(courseInfo, section.units.map { it.toString() }.toTypedArray(), false)
-      val topLevelLessonsIds = course.lessons.map { it.id }
-      for (lesson in lessonsFromSection) {
-        if (lesson.id !in topLevelLessonsIds) {
-          val isMoved = lesson.id in allLessons
-          if (!isMoved && lesson.updateDate <= lastUpdateDate) {
-            lessonsToDelete.add(lesson.id)
+      val section = StepikNewConnector.getSection(courseInfo.sectionIds[0])
+      if (section != null) {
+        val lessonsFromSection = StepikConnector.getLessonsFromUnits(courseInfo,
+                                                                     section.units.map { it.toString() }.toTypedArray(),
+                                                                     false)
+        val topLevelLessonsIds = course.lessons.map { it.id }
+        for (lesson in lessonsFromSection) {
+          if (lesson.id !in topLevelLessonsIds) {
+            val isMoved = lesson.id in allLessons
+            if (!isMoved && lesson.updateDate <= lastUpdateDate) {
+              lessonsToDelete.add(lesson.id)
+            }
           }
         }
       }

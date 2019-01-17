@@ -623,8 +623,8 @@ public class CCStepikConnector {
 
     List<Integer> sectionIds = courseInfo.getSectionIds();
     for (Integer sectionId : sectionIds) {
-      final Section section = StepikConnector.getSection(sectionId);
-      if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
+      final Section section = StepikNewConnector.INSTANCE.getSection(sectionId);
+      if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
         section.setPosition(sectionIds.size());
         section.setId(sectionId);
         updateSectionInfo(project, section);
@@ -653,8 +653,8 @@ public class CCStepikConnector {
 
     List<Integer> sectionIds = courseInfo.getSectionIds();
     for (Integer sectionId : sectionIds) {
-      final Section section = StepikConnector.getSection(sectionId);
-      if (StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
+      final Section section = StepikNewConnector.INSTANCE.getSection(sectionId);
+      if (section != null && StepikNames.PYCHARM_ADDITIONAL.equals(section.getName())) {
         section.setPosition(sectionIds.size());
         updateSectionInfo(project, section);
       }

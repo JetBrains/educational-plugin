@@ -27,6 +27,7 @@ import com.jetbrains.edu.learning.authUtils.OAuthRestService;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.stepik.*;
+import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -130,7 +131,10 @@ public class StepikRestService extends OAuthRestService {
         return log("Unrecognized the Unit id");
       }
 
-      Section section = StepikConnector.getSection(unit.getSection());
+      Section section = StepikNewConnector.INSTANCE.getSection(unit.getSection());
+      if (section == null) {
+        return log("No section found with id " + unit.getSection());
+      }
       courseId = section.getCourseId();
       if (courseId == 0) {
         return log("Unrecognized the course id");

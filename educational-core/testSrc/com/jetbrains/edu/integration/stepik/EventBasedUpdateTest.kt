@@ -374,7 +374,7 @@ class EventBasedUpdateTest : StepikTestCase() {
     TestCase.assertTrue("Course with top-level lessons should have only one section, but has: ${localCourse.sectionIds.size}",
                         localCourse.sectionIds.size == 1)
     TestCase.assertTrue("Top-level lessons section id mismatch", localCourse.sectionIds[0] == (courseFromStepik as EduCourse).sectionIds[0])
-    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])
+    val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
     TestCase.assertTrue("Section name mismatch. Expected: ${localCourse.name}.\n Actual: ${section.name}",
                         section.name == localCourse.name)
 

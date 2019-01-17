@@ -668,21 +668,6 @@ public class StepikConnector {
     return new Unit();
   }
 
-  @NotNull
-  public static Section getSection(int sectionId) {
-    try {
-      List<Section> sections =
-        getFromStepik(StepikNames.SECTIONS + "/" + sectionId, SectionContainer.class).getSections();
-      if (!sections.isEmpty()) {
-        return sections.get(0);
-      }
-    }
-    catch (IOException e) {
-      LOG.warn("Failed getting section: " + sectionId);
-    }
-    return new Section();
-  }
-
   public static Lesson getLesson(int lessonId) {
     try {
       List<Lesson> lessons =

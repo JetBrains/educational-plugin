@@ -262,7 +262,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     CCPushCourse.doPush(project, localCourse)
 
     val courseFromStepik = getCourseFromStepik(StudyTaskManager.getInstance(project).course!!.id)
-    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])
+    val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
     val unitIds = section.units.map { unit -> unit.toString() }
     val lessonsFromUnits = StepikConnector.getLessonsFromUnits(courseFromStepik, unitIds.toTypedArray(), false)
 
@@ -308,7 +308,7 @@ open class StepikIntegrationTest : StepikTestCase() {
     assertEquals("Course with top-level lessons should have only one section", 1, localCourse.sectionIds.size)
 
     assertEquals("Top-level lessons section id mismatch", localCourse.sectionIds[0], courseFromStepik.sectionIds[0])
-    val section = StepikConnector.getSection(courseFromStepik.sectionIds[0])
+    val section = StepikNewConnector.getSection(courseFromStepik.sectionIds[0])!!
     assertEquals("Section name mismatch", localCourse.name, section.name)
 
     val unitIds = section.units.map { unit -> unit.toString() }
