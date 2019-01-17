@@ -191,3 +191,30 @@ class StepikAnswerPlaceholderMixin {
   @JsonProperty("selected")
   private var mySelected = false
 }
+
+@Suppress("unused", "UNUSED_PARAMETER", "PropertyName") // used for json serialization
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                fieldVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE,
+                creatorVisibility = JsonAutoDetect.Visibility.NONE)
+class StepikAnswerPlaceholderDependencyMixin {
+
+  @JsonProperty("section")
+  lateinit var sectionName: String
+
+  @JsonProperty("lesson")
+  lateinit var lessonName: String
+
+  @JsonProperty("task")
+  lateinit var taskName: String
+
+  @JsonProperty("file")
+  lateinit var fileName: String
+
+  @JsonProperty("placeholder")
+  var placeholderIndex: Int = 0
+
+  @JsonProperty("is_visible")
+  var isVisible = true
+}
