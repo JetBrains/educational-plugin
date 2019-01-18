@@ -227,6 +227,9 @@ object StepikNewConnector {
   fun getSubmissions(isSolved: Boolean, stepId: Int) =
     service.submissions(status = if (isSolved) "correct" else "wrong", step = stepId).execute().body()?.submissions
 
+  fun getSubmissions(attemptId: Int, userId: Int) =
+    service.submissions(attempt = attemptId, user = userId).execute().body()?.submissions
+
   fun getLastSubmission(stepId: Int, isSolved: Boolean, language: String): StepikWrappers.Reply? {
     // TODO: make use of language
     val submissions = getSubmissions(isSolved, stepId)
@@ -234,12 +237,18 @@ object StepikNewConnector {
   }
 
   fun postSubmission(passed: Boolean, attempt: StepikWrappers.Attempt,
-                             files: ArrayList<StepikWrappers.SolutionFile>, task: Task) {
-    val response = service.submissions(SubmissionData(attempt.id, if (passed) "1" else "0", files, task)).execute()
-    val responseString = response.body()?.string() ?: ""
+                             files: ArrayList<StepikWrappers.SolutionFile>, task: Task) : List<StepikWrappers.Submission>? {
+    return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
+  }
+
+  fun postSubmission(submissionData: SubmissionData) : List<StepikWrappers.Submission>? {
+    val response = service.submissions(submissionData).execute()
+    val submissions = response.body()?.submissions
     if (response.code() != HttpStatus.SC_CREATED) {
-      LOG.error("Failed to make submission $responseString")
+      LOG.error("Failed to make submission $submissions")
+      return null
     }
+    return submissions
   }
 
   fun getAttempts(stepId: Int, userId: Int): List<StepikWrappers.Attempt>? {

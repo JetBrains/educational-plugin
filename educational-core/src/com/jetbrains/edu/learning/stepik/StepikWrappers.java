@@ -164,6 +164,7 @@ public class StepikWrappers {
   }
 
   public static class Reply {
+    boolean[] choices;
     public String score;
     public List<SolutionFile> solution;
     public String language;
@@ -183,64 +184,15 @@ public class StepikWrappers {
   public static class Submission {
     public int attempt;
     public Reply reply;
+    public String id;
+    public String status;
+    public String hint;
 
     public Submission() {}
 
     public Submission(String score, int attemptId, ArrayList<SolutionFile> files, String serializedTask) {
       reply = new Reply(files, score, serializedTask);
       this.attempt = attemptId;
-    }
-  }
-
-  static class SubmissionToPostWrapper {
-    Submission submission;
-
-    public SubmissionToPostWrapper(@NotNull String attemptId, @NotNull String language, @NotNull String code) {
-      submission = new Submission(attemptId, new Submission.CodeReply(language, code));
-    }
-
-    public SubmissionToPostWrapper(@NotNull String attemptId, boolean[] choices) {
-      submission = new Submission(attemptId, new Submission.ChoiceReply(choices));
-    }
-
-    static class Submission {
-      String attempt;
-      Reply reply;
-
-      public Submission(String attempt, Reply reply) {
-        this.attempt = attempt;
-        this.reply = reply;
-      }
-
-      interface Reply {}
-
-      static class CodeReply implements Reply {
-        String language;
-        String code;
-
-        public CodeReply(String language, String code) {
-          this.language = language;
-          this.code = code;
-        }
-      }
-
-      static class ChoiceReply implements Reply {
-        boolean[] choices;
-
-        public ChoiceReply(boolean[] choices) {
-          this.choices = choices;
-        }
-      }
-    }
-  }
-
-  static class ResultSubmissionWrapper {
-    ResultSubmission[] submissions;
-
-    static class ResultSubmission {
-      int id;
-      String status;
-      String hint;
     }
   }
 

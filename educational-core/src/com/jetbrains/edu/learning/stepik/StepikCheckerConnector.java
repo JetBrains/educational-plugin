@@ -1,6 +1,5 @@
 package com.jetbrains.edu.learning.stepik;
 
-import com.google.gson.Gson;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageCommenters;
 import com.intellij.openapi.diagnostic.Logger;
@@ -14,23 +13,11 @@ import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.tasks.ChoiceTask;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
+import com.jetbrains.edu.learning.stepik.api.SubmissionData;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 public class StepikCheckerConnector {
   public static final String EDU_TOOLS_COMMENT = " Posted from EduTools plugin\n";
   private static final Logger LOG = Logger.getInstance(StepikCheckerConnector.class);
-  private static final int CONNECTION_TIMEOUT = 60 * 1000;
   // Stepik uses some code complexity measure, but we agreed that it's not obvious measure and should be improved
   private static final String CODE_COMPLEXITY_NOTE = "code complexity score";
 
@@ -54,15 +40,6 @@ public class StepikCheckerConnector {
     }
   }
 
-  private static void setTimeout(HttpRequestBase request) {
-    final RequestConfig requestConfig = RequestConfig.custom()
-      .setConnectionRequestTimeout(CONNECTION_TIMEOUT)
-      .setConnectTimeout(CONNECTION_TIMEOUT)
-      .setSocketTimeout(CONNECTION_TIMEOUT)
-      .build();
-    request.setConfig(requestConfig);
-  }
-
   public static CheckResult checkChoiceTask(@NotNull ChoiceTask task, @NotNull StepikUser user) {
     if (task.getSelectedVariants().isEmpty()) return new CheckResult(CheckStatus.Failed, "No variants selected");
     final StepikWrappers.Attempt attempt = getAttemptForStep(task.getStepId(), user.getId());
@@ -73,9 +50,9 @@ public class StepikCheckerConnector {
       final boolean isActiveAttempt = task.getSelectedVariants().stream()
         .allMatch(index -> attempt.dataset.options.get(index).equals(task.getChoiceVariants().get(index)));
       if (!isActiveAttempt) return new CheckResult(CheckStatus.Failed, "Your solution is out of date. Please try again");
-      final StepikWrappers.SubmissionToPostWrapper wrapper = new StepikWrappers.SubmissionToPostWrapper(String.valueOf(attemptId),
-                                                                                                        createChoiceTaskAnswerArray(task));
-      final CheckResult result = doCheck(wrapper, attemptId, user.getId());
+      final SubmissionData submissionData = createChoiceSubmissionData(task, attemptId);
+
+      final CheckResult result = doCheck(submissionData, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
         StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
         StepikSteps.StepSource step = StepikNewConnector.INSTANCE.getStep(task.getStepId());
@@ -99,6 +76,27 @@ public class StepikCheckerConnector {
     return CheckResult.FAILED_TO_CHECK;
   }
 
+  @NotNull
+  private static SubmissionData createChoiceSubmissionData(@NotNull ChoiceTask task, int attemptId) {
+    final SubmissionData submissionData = new SubmissionData();
+    submissionData.submission = new StepikWrappers.Submission();
+    submissionData.submission.attempt = attemptId;
+    submissionData.submission.reply = new StepikWrappers.Reply();
+    submissionData.submission.reply.choices = createChoiceTaskAnswerArray(task);
+    return submissionData;
+  }
+
+  @NotNull
+  private static SubmissionData createCodeSubmissionData(int attemptId, String language, String answer) {
+    final SubmissionData submissionData = new SubmissionData();
+    submissionData.submission = new StepikWrappers.Submission();
+    submissionData.submission.attempt = attemptId;
+    submissionData.submission.reply = new StepikWrappers.Reply();
+    submissionData.submission.reply.language = language;
+    submissionData.submission.reply.code = answer;
+    return submissionData;
+  }
+
   private static boolean[] createChoiceTaskAnswerArray(@NotNull ChoiceTask task) {
     final List<Integer> selectedVariants = task.getSelectedVariants();
     final boolean[] answer = new boolean[task.getChoiceVariants().size()];
@@ -119,9 +117,9 @@ public class StepikCheckerConnector {
         final String answer = commentPrefix + EDU_TOOLS_COMMENT + editor.getDocument().getText();
         String defaultLanguage = StepikLanguages.langOfId(courseLanguage.getID()).getLangName();
         assert defaultLanguage != null : ("Default Stepik language not found for: " + courseLanguage.getDisplayName());
-        final StepikWrappers.SubmissionToPostWrapper submissionToPost =
-          new StepikWrappers.SubmissionToPostWrapper(String.valueOf(attemptId), defaultLanguage, answer);
-        return doCheck(submissionToPost, attemptId, user.getId());
+
+        final SubmissionData submissionData = createCodeSubmissionData(attemptId, defaultLanguage, answer);
+        return doCheck(submissionData, attemptId, user.getId());
       }
     }
     else {
@@ -130,16 +128,16 @@ public class StepikCheckerConnector {
     return CheckResult.FAILED_TO_CHECK;
   }
 
-  private static CheckResult doCheck(@NotNull StepikWrappers.SubmissionToPostWrapper submission,
+  private static CheckResult doCheck(@NotNull SubmissionData submission,
                                      int attemptId, int userId) {
     final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
     if (client != null) {
-      StepikWrappers.ResultSubmissionWrapper wrapper = postResultsForCheck(client, submission);
-      if (wrapper != null) {
-        wrapper = getCheckResults(client, wrapper, attemptId, userId);
-        if (wrapper.submissions.length > 0) {
-          final String status = wrapper.submissions[0].status;
-          final String hint = wrapper.submissions[0].hint;
+      List<StepikWrappers.Submission> submissions = StepikNewConnector.INSTANCE.postSubmission(submission);
+      if (submissions != null) {
+        submissions = getCheckResults(submissions, attemptId, userId);
+        if (submissions.size() > 0) {
+          final String status = submissions.get(0).status;
+          final String hint = submissions.get(0).hint;
           final boolean isSolved = !status.equals("wrong");
           String message = hint;
           if (message.isEmpty() || message.contains(CODE_COMPLEXITY_NOTE)) {
@@ -148,7 +146,7 @@ public class StepikCheckerConnector {
           return new CheckResult(isSolved ? CheckStatus.Solved : CheckStatus.Failed, message);
         }
         else {
-          LOG.warn("Got a submission wrapper with incorrect submissions number: " + wrapper.submissions.length);
+          LOG.warn("Got a submission wrapper with incorrect submissions number: " + submissions.size());
         }
       }
       else {
@@ -159,57 +157,19 @@ public class StepikCheckerConnector {
     return CheckResult.FAILED_TO_CHECK;
   }
 
-  @Nullable
-  private static StepikWrappers.ResultSubmissionWrapper postResultsForCheck(@NotNull final CloseableHttpClient client,
-                                                                            @NotNull StepikWrappers.SubmissionToPostWrapper submissionToPostWrapper) {
-    final CloseableHttpResponse response;
+  private static List<StepikWrappers.Submission> getCheckResults(@NotNull List<StepikWrappers.Submission> submissions,
+                                                                 int attemptId,
+                                                                 int userId) {
     try {
-      final HttpPost httpPost = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SUBMISSIONS);
-      setTimeout(httpPost);
-      try {
-        httpPost.setEntity(new StringEntity(new Gson().toJson(submissionToPostWrapper)));
-      }
-      catch (UnsupportedEncodingException e) {
-        LOG.warn(e.getMessage());
-      }
-      response = client.execute(httpPost);
-      final HttpEntity entity = response.getEntity();
-      final String entityString = EntityUtils.toString(entity);
-      EntityUtils.consume(entity);
-      return new Gson().fromJson(entityString, StepikWrappers.ResultSubmissionWrapper.class);
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-    }
-    return null;
-  }
-
-  @NotNull
-  private static StepikWrappers.ResultSubmissionWrapper getCheckResults(@NotNull CloseableHttpClient client,
-                                                                        @NotNull StepikWrappers.ResultSubmissionWrapper wrapper,
-                                                                        int attemptId,
-                                                                        int userId) {
-    try {
-      while (wrapper.submissions.length == 1 && wrapper.submissions[0].status.equals("evaluation")) {
+      while (submissions != null && submissions.size() == 1 && submissions.get(0).status.equals("evaluation")) {
         TimeUnit.MILLISECONDS.sleep(500);
-        final URI submissionURI = new URIBuilder(StepikNames.STEPIK_API_URL + StepikNames.SUBMISSIONS)
-          .addParameter("attempt", String.valueOf(attemptId))
-          .addParameter("order", "desc")
-          .addParameter("user", String.valueOf(userId))
-          .build();
-        final HttpGet httpGet = new HttpGet(submissionURI);
-        setTimeout(httpGet);
-        final CloseableHttpResponse httpResponse = client.execute(httpGet);
-        final HttpEntity entity = httpResponse.getEntity();
-        final String entityString = EntityUtils.toString(entity);
-        EntityUtils.consume(entity);
-        wrapper = new Gson().fromJson(entityString, StepikWrappers.ResultSubmissionWrapper.class);
+        submissions = StepikNewConnector.INSTANCE.getSubmissions(attemptId, userId);
       }
     }
-    catch (InterruptedException | URISyntaxException | IOException e) {
+    catch (InterruptedException e) {
       LOG.warn(e.getMessage());
     }
-    return wrapper;
+    return submissions;
   }
 
   private static int getAttemptId(@NotNull Task task) {

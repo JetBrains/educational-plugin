@@ -63,8 +63,13 @@ interface StepikService {
                   @Query("status") status: String,
                   @Query("step") step: Int): Call<SubmissionsList>
 
+  @GET("submissions")
+  fun submissions(@Query("order") order: String="desc",
+                  @Query("attempt") attempt: Int=1,
+                  @Query("user") user: Int): Call<SubmissionsList>
+
   @POST("submissions")
-  fun submissions(@Body submissionData: SubmissionData): Call<ResponseBody>
+  fun submissions(@Body submissionData: SubmissionData): Call<SubmissionsList>
 
   @GET("attempts")
   fun attempts(@Query("step") stepId: Int, @Query("user") userId: Int): Call<AttemptsList>
@@ -116,10 +121,10 @@ class SubmissionsList {
   lateinit var submissions: List<StepikWrappers.Submission>
 }
 
-class SubmissionData(attemptId: Int, score: String, files: ArrayList<StepikWrappers.SolutionFile>, task: Task) {
-  var submission: StepikWrappers.Submission
+class SubmissionData() {
+  lateinit var submission: StepikWrappers.Submission
 
-  init {
+  constructor(attemptId: Int, score: String, files: ArrayList<StepikWrappers.SolutionFile>, task: Task) : this() {
     val serializedTask = GsonBuilder()   // TODO: use jackson
       .excludeFieldsWithoutExposeAnnotation()
       .registerTypeAdapter(Task::class.java, StepikSubmissionTaskAdapter())
