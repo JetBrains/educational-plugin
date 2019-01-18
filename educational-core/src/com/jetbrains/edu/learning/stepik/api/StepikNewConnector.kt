@@ -5,7 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.invokeAndWaitIfNeed
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.EduSettings
 import com.jetbrains.edu.learning.courseFormat.*
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
@@ -169,36 +173,36 @@ object StepikNewConnector {
     return submissions?.firstOrNull()?.reply
   }
 
-  fun postUnit(lessonId: Int, position: Int, sectionId: Int) : StepikWrappers.Unit? {
+  fun postUnit(lessonId: Int, position: Int, sectionId: Int): StepikWrappers.Unit? {
     return service.units(UnitData(lessonId, position, sectionId)).execute().body()?.units?.firstOrNull()
   }
 
-  fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int) : StepikWrappers.Unit? {
+  fun updateUnit(unitId: Int, lessonId: Int, position: Int, sectionId: Int): StepikWrappers.Unit? {
     return service.unit(unitId, UnitData(lessonId, position, sectionId, unitId)).execute().body()?.units?.firstOrNull()
   }
 
-  fun postSection(section: Section) : Section? {
+  fun postSection(section: Section): Section? {
     return service.sections(SectionData(section)).execute().body()?.sections?.firstOrNull()
   }
 
-  fun updateSection(section: Section) : Section? {
+  fun updateSection(section: Section): Section? {
     return service.sections(section.id, SectionData(section)).execute().body()?.sections?.firstOrNull()
   }
 
-  fun updateLesson(lesson: Lesson) : Lesson? {
+  fun updateLesson(lesson: Lesson): Lesson? {
     return service.lessons(lesson.id, LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
   }
 
-  fun postLesson(lesson: Lesson) : Lesson? {
+  fun postLesson(lesson: Lesson): Lesson? {
     return service.lessons(LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
   }
 
   fun postSubmission(passed: Boolean, attempt: StepikWrappers.Attempt,
-                             files: ArrayList<StepikWrappers.SolutionFile>, task: Task) : List<StepikWrappers.Submission>? {
+                     files: ArrayList<StepikWrappers.SolutionFile>, task: Task): List<StepikWrappers.Submission>? {
     return postSubmission(SubmissionData(attempt.id, if (passed) "1" else "0", files, task))
   }
 
-  fun postSubmission(submissionData: SubmissionData) : List<StepikWrappers.Submission>? {
+  fun postSubmission(submissionData: SubmissionData): List<StepikWrappers.Submission>? {
     val response = service.submissions(submissionData).execute()
     val submissions = response.body()?.submissions
     if (response.code() != HttpStatus.SC_CREATED) {
@@ -247,6 +251,17 @@ object StepikNewConnector {
   fun deleteTask(taskId: Int) {
     val response = service.deleteStepSource(taskId).execute()
     validateDeleteResponse(response.code(), taskId)
+  }
+
+  fun updateTask(project: Project, task: Task): Int {
+    ApplicationManager.getApplication().invokeAndWait {  }
+    var stepSourceData: StepSourceData? = null
+    invokeAndWaitIfNeed {
+      FileDocumentManager.getInstance().saveAllDocuments()
+       stepSourceData = StepSourceData(project, task, task.lesson.id)
+    }
+    val response = service.stepSource(task.stepId, stepSourceData!!).execute()
+    return response.code()
   }
 
   private fun validateDeleteResponse(responseCode: Int, id: Int) {

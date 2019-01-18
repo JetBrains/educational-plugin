@@ -90,7 +90,7 @@ abstract class StepikTestCase : EduTestCase() {
 
   private fun deleteLesson(lessonId: Int) {
     val deleteRequest = HttpDelete(
-      StepikNames.STEPIK_API_URL + StepikNames.LESSONS + lessonId)
+      StepikNames.STEPIK_API_URL + "/lessons/" + lessonId)
     deleteRequest.addHeader("Referer", "${StepikNames.STEPIK_URL}/edit-lesson/$lessonId/step/1")
     httpClient.execute(deleteRequest)
     println("Lesson $lessonId deleted")

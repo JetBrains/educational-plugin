@@ -412,53 +412,29 @@ public class CCStepikConnector {
 
   public static boolean updateTask(@NotNull final Project project, @NotNull final Task task) {
     if (!checkIfAuthorized(project, "update task")) return false;
-    final Lesson lesson = task.getLesson();
-    final int lessonId = lesson.getId();
-
     VirtualFile taskDir = task.getTaskDir(project);
     if (taskDir == null) return false;
-
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.STEP_SOURCES + task.getStepId());
-    final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
-
-    final Course course = lesson.getCourse();
+    final Course course = task.getLesson().getCourse();
     assert course instanceof EduCourse;
     final EduConfigurator configurator = CourseExt.getConfigurator(course);
     if (configurator == null) return false;
-    final String[] requestBody = new String[1];
-    ApplicationManager.getApplication().invokeAndWait(() -> {
-      FileDocumentManager.getInstance().saveAllDocuments();
-      requestBody[0] = gson.toJson(new StepikSteps.StepSourceWrapper(project, task, lessonId));
-    });
-    request.setEntity(new StringEntity(requestBody[0], ContentType.APPLICATION_JSON));
 
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return false;
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      EntityUtils.consume(responseEntity);
-      final StatusLine line = response.getStatusLine();
-      switch (line.getStatusCode()) {
-        case HttpStatus.SC_OK:
-          return true;
-        case HttpStatus.SC_NOT_FOUND:
-          // TODO: support case when lesson was removed from Stepik too
-          return postTask(project, task, task.getLesson().getId());
-        case HttpStatus.SC_FORBIDDEN:
-          showNoRightsToUpdateNotification(project, (EduCourse)course);
-          return false;
-        default:
-          final String message = "Failed to update task ";
-          LOG.error(message + responseString);
-          return false;
-      }
+    final int responseCode = StepikNewConnector.INSTANCE.updateTask(project, task);
+
+    switch (responseCode) {
+      case HttpStatus.SC_OK:
+        return true;
+      case HttpStatus.SC_NOT_FOUND:
+        // TODO: support case when lesson was removed from Stepik too
+        return postTask(project, task, task.getLesson().getId());
+      case HttpStatus.SC_FORBIDDEN:
+        showNoRightsToUpdateNotification(project, (EduCourse)course);
+        return false;
+      default:
+        final String message = "Failed to update task " + task.getStepId();
+        LOG.error(message);
+        return false;
     }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
-    }
-    return false;
   }
 
   public static boolean updateCourseInfo(@NotNull final Project project, @NotNull final EduCourse course) {

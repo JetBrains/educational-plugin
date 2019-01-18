@@ -3,6 +3,7 @@
 package com.jetbrains.edu.learning.stepik.api
 
 import com.google.gson.GsonBuilder
+import com.intellij.openapi.project.Project
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
@@ -106,6 +107,10 @@ class LessonData(lesson: Lesson) {
     this.lesson.steps = ArrayList()
     this.lesson.isPublic = true
   }
+}
+
+class StepSourceData(project: Project, task: Task, lessonId: Int) {
+  var stepSource: StepikSteps.StepSource = StepikSteps.StepSource(project, task, lessonId)
 }
 
 // Auxiliary:
