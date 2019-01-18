@@ -6,7 +6,6 @@ import com.jetbrains.edu.learning.EduVersions;
 import com.jetbrains.edu.learning.courseFormat.Course;
 import com.jetbrains.edu.learning.courseFormat.EduCourse;
 import com.jetbrains.edu.learning.courseFormat.Lesson;
-import com.jetbrains.edu.learning.courseFormat.Section;
 import com.jetbrains.edu.learning.courseFormat.tasks.Task;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,21 +51,6 @@ public class StepikWrappers {
 
   public static class LessonContainer {
     public List<Lesson> lessons;
-  }
-
-  public static class SectionWrapper {
-    Section section;
-
-    public void setSection(Section section) {
-      this.section = section;
-    }
-  }
-
-  public static class SectionContainer {
-    List<Section> sections;
-    public List<Section> getSections() {
-      return sections;
-    }
   }
 
   public static class Unit {

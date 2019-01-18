@@ -42,6 +42,12 @@ interface StepikService {
   @GET("sections")
   fun sections(@Query("ids[]") vararg ids: Int): Call<SectionsList>
 
+  @POST("sections")
+  fun sections(@Body sectionData: SectionData): Call<SectionsList>
+
+  @PUT("sections/{id}")
+  fun sections(@Path("id") sectionId: Int, @Body sectionData: SectionData): Call<SectionsList>
+
   @GET("lessons")
   fun lessons(@Query("ids[]") vararg ids: Int): Call<LessonsList>
 
@@ -175,7 +181,7 @@ class ViewData(assignment: Int, step: Int) {
   var view: View = View(assignment, step)
 }
 
-class View(internal var assignment: Int, internal var step: Int)
+class View(var assignment: Int, var step: Int)
 
 class UnitData(lessonId: Int, position: Int, sectionId: Int, unitId: Int? = null) {
   var unit: StepikWrappers.Unit = StepikWrappers.Unit()
@@ -187,3 +193,5 @@ class UnitData(lessonId: Int, position: Int, sectionId: Int, unitId: Int? = null
     unit.id = unitId
   }
 }
+
+class SectionData(var section: Section)

@@ -389,65 +389,25 @@ public class CCStepikConnector {
   }
 
   public static int postSectionInfo(@NotNull Project project, @NotNull Section section, int courseId) {
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS);
+    if (!checkIfAuthorized(project, "post section")) return -1;
+
     section.setCourseId(courseId);
-    final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
-    sectionContainer.setSection(section);
-    String requestBody = new Gson().toJson(sectionContainer);
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return -1;
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_CREATED) {
-        LOG.error(FAILED_TITLE + responseString);
-        final String detailString = getErrorDetail(responseString);
-
-        showErrorNotification(project, FAILED_TITLE, detailString);
-        return -1;
-      }
-      final Section postedSection = new Gson().fromJson(responseString, StepikWrappers.SectionContainer.class).getSections().get(0);
-      section.setId(postedSection.getId());
-      return postedSection.getId();
+    final Section postedSection = StepikNewConnector.INSTANCE.postSection(section);
+    if (postedSection == null) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to post section " + section.getId());
+      return -1;
     }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
-    }
-    return -1;
+    section.setId(postedSection.getId());
+    return postedSection.getId();
   }
 
   public static boolean updateSectionInfo(@NotNull Project project, @NotNull Section section) {
     Section sectionCopy = copySection(section);
-    final HttpPut request = new HttpPut(StepikNames.STEPIK_API_URL + StepikNames.SECTIONS + "/" + section.getId());
-    final StepikWrappers.SectionWrapper sectionContainer = new StepikWrappers.SectionWrapper();
-    sectionContainer.setSection(sectionCopy);
-    String requestBody = new Gson().toJson(sectionContainer);
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return false;
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_OK) {
-        LOG.error(FAILED_TITLE + responseString);
-        showErrorNotification(project, FAILED_TITLE, getErrorDetail(responseString));
-        return false;
-      }
-    }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
+    final Section updatedSection = StepikNewConnector.INSTANCE.updateSection(sectionCopy);
+    if (updatedSection == null) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to post section " + section.getId());
       return false;
     }
-
     return true;
   }
 

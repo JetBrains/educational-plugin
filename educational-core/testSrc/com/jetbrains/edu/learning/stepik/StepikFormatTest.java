@@ -135,12 +135,12 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testSections() throws IOException {
-    Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikWrappers.SectionContainer sectionContainer = gson.fromJson(jsonText, StepikWrappers.SectionContainer.class);
-    assertNotNull(sectionContainer);
-    assertEquals(1, sectionContainer.sections.size());
-    List<Integer> unitIds = sectionContainer.sections.get(0).units;
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final SectionsList sectionsList = mapper.readValue(jsonText, SectionsList.class);
+    assertNotNull(sectionsList);
+    assertEquals(1, sectionsList.sections.size());
+    List<Integer> unitIds = sectionsList.sections.get(0).units;
     assertEquals(10, unitIds.size());
   }
 
