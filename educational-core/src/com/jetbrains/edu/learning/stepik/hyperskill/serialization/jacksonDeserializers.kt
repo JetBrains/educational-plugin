@@ -13,14 +13,14 @@ import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.edu.learning.JSON_FORMAT_VERSION
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.serialization.SerializationUtils
-import com.jetbrains.edu.learning.stepik.StepikSteps
+import com.jetbrains.edu.learning.stepik.StepOptions
 
-class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StepikSteps.StepOptions>(vc) {
+class JacksonStepOptionsDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<StepOptions>(vc) {
 
-  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): StepikSteps.StepOptions {
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): StepOptions {
     val node: JsonNode = jp.codec.readTree(jp)
     migrate(node)
-    return objectMapper().treeToValue(node, StepikSteps.StepOptions::class.java)
+    return objectMapper().treeToValue(node, StepOptions::class.java)
   }
 
   private fun objectMapper(): ObjectMapper {

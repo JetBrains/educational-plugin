@@ -3,7 +3,7 @@
 package com.jetbrains.edu.learning.stepik.hyperskill
 
 import com.jetbrains.edu.learning.authUtils.TokenInfo
-import com.jetbrains.edu.learning.stepik.StepikSteps
+import com.jetbrains.edu.learning.stepik.api.StepsList
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -35,7 +35,7 @@ interface HyperskillService {
   fun topics(@Query("stage") stageId: Int): Call<TopicsList>
 
   @GET("api/steps/")
-  fun steps(@Query("lesson") lessonId: Int): Call<StepikSteps.StepsList>
+  fun steps(@Query("lesson") lessonId: Int): Call<StepsList>
 
   @POST("api/attempts")
   fun attempt(@Query("step") stepId: Int): Call<AttemptsList>

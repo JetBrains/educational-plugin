@@ -41,7 +41,6 @@ object StepikNewConnector {
       objectMapper.addMixIn(AnswerPlaceholder::class.java, StepikAnswerPlaceholderMixin::class.java)
       objectMapper.addMixIn(AnswerPlaceholderDependency::class.java, StepikAnswerPlaceholderDependencyMixin::class.java)
       objectMapper.addMixIn(FeedbackLink::class.java, StepikFeedbackLinkMixin::class.java)
-      objectMapper.addMixIn(StepikSteps.StepOptions::class.java, StepOptionsMixin::class.java)
       objectMapper.addMixIn(StepikWrappers.Attempt::class.java, AttemptMixin::class.java)
       objectMapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)
       objectMapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING)
@@ -155,7 +154,7 @@ object StepikNewConnector {
     return service.lessonUnit(lessonId).execute().body()?.units?.firstOrNull()
   }
 
-  fun getStep(stepId: Int): StepikSteps.StepSource? {
+  fun getStep(stepId: Int): StepSource? {
     return service.steps(stepId).execute().body()?.steps?.firstOrNull()
   }
 
@@ -195,7 +194,7 @@ object StepikNewConnector {
     return service.lessons(LessonData(lesson)).execute().body()?.lessons?.firstOrNull()
   }
 
-  fun postTask(project: Project, task: Task, lessonId: Int): StepikSteps.StepSource? {
+  fun postTask(project: Project, task: Task, lessonId: Int): StepSource? {
     var stepSourceData: StepSourceData? = null
     invokeAndWaitIfNeed {
       FileDocumentManager.getInstance().saveAllDocuments()

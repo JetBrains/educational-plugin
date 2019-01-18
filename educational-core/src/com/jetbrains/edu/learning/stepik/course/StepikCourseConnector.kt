@@ -77,7 +77,7 @@ object StepikCourseConnector {
       for (stepSource in allStepSources) {
         val step = stepSource.block
         if (step != null && step.name == "code" && step.options != null) {
-          val codeTemplates = step.options.codeTemplates
+          val codeTemplates = step.options!!.codeTemplates
           if (codeTemplates != null) {
             return codeTemplates
           }

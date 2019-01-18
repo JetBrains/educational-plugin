@@ -4,7 +4,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
-import com.jetbrains.edu.learning.stepik.StepikSteps
+import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector.service
@@ -59,10 +59,10 @@ object StepikMultipleRequestsConnector {
     return assignments
   }
 
-  fun getStepSources(stepIds: List<Int>, language: String): List<StepikSteps.StepSource> {
+  fun getStepSources(stepIds: List<Int>, language: String): List<StepSource> {
     // TODO: use language parameter
     val stepsIdsChunks = stepIds.distinct().chunked(MAX_REQUEST_PARAMS)
-    val steps = mutableListOf<StepikSteps.StepSource>()
+    val steps = mutableListOf<StepSource>()
     stepsIdsChunks
       .mapNotNull { service.steps(*it.toIntArray()).execute().body()?.steps }
       .forEach { steps.addAll(it) }

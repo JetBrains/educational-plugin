@@ -55,7 +55,7 @@ public class StepikCheckerConnector {
       final CheckResult result = doCheck(submissionData, attemptId, user.getId());
       if (result.getStatus() == CheckStatus.Failed) {
         StepikNewConnector.INSTANCE.postAttempt(task.getStepId());
-        StepikSteps.StepSource step = StepikNewConnector.INSTANCE.getStep(task.getStepId());
+        StepSource step = StepikNewConnector.INSTANCE.getStep(task.getStepId());
         if (step == null) {
           LOG.error("Failed to get step " + task.getStepId());
           return result;
@@ -63,7 +63,7 @@ public class StepikCheckerConnector {
         Course course = task.getLesson().getCourse();
         StepikTaskBuilder taskBuilder = new StepikTaskBuilder(course.getLanguageById(), task.getLesson(), task.getName(),
                                                               step, task.getStepId(), user.getId());
-        final Task updatedTask = taskBuilder.createTask(step.block.name);
+        final Task updatedTask = taskBuilder.createTask(step.getBlock().getName());
         if (updatedTask instanceof ChoiceTask) {
           final List<String> variants = ((ChoiceTask)updatedTask).getChoiceVariants();
           task.setChoiceVariants(variants);

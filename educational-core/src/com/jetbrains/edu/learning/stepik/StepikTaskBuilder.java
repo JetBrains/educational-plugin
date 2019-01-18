@@ -32,7 +32,7 @@ import static com.jetbrains.edu.learning.stepik.StepikNames.PYCHARM_PREFIX;
 public class StepikTaskBuilder {
   private static final String TASK_NAME = "task";
   private static final Logger LOG = Logger.getInstance(StepikTaskBuilder.class);
-  private final StepikSteps.StepSource myStepSource;
+  private final StepSource myStepSource;
   private int myStepId;
   private int myUserId;
   @NonNls private String myName;
@@ -40,7 +40,7 @@ public class StepikTaskBuilder {
   private final Lesson myLesson;
   @Nullable
   private final EduConfigurator<?> myConfigurator;
-  private StepikSteps.Step myStep;
+  private Step myStep;
   private final Map<String, Computable<Task>> stepikTaskTypes = ImmutableMap.<String, Computable<Task>>builder()
     .put("code", this::codeTask)
     .put("choice", this::choiceTask)
@@ -83,7 +83,7 @@ public class StepikTaskBuilder {
     .build();
   private static final String EMPTY_NAME = "";
 
-  public StepikTaskBuilder(@NotNull Language language, @NotNull Lesson lesson, @NotNull StepikSteps.StepSource stepSource,
+  public StepikTaskBuilder(@NotNull Language language, @NotNull Lesson lesson, @NotNull StepSource stepSource,
                            int stepId, int userId) {
     this(language, lesson, EMPTY_NAME, stepSource, stepId, userId);
   }
@@ -92,11 +92,11 @@ public class StepikTaskBuilder {
   public StepikTaskBuilder(@NotNull Language language,
                            @NotNull Lesson lesson,
                            @NotNull String name,
-                           @NotNull StepikSteps.StepSource stepSource,
+                           @NotNull StepSource stepSource,
                            int stepId, int userId) {
     myName = name;
     myStepSource = stepSource;
-    myStep = stepSource.block;
+    myStep = stepSource.getBlock();
     myStepId = stepId;
     myUserId = userId;
     myLanguage = language;
@@ -121,14 +121,14 @@ public class StepikTaskBuilder {
   private CodeTask codeTask() {
     CodeTask task = new CodeTask(myName);
     task.setStepId(myStepId);
-    task.setIndex(myStepSource.position);
-    task.setUpdateDate(myStepSource.update_date);
+    task.setIndex(myStepSource.getPosition());
+    task.setUpdateDate(myStepSource.getUpdate_date());
 
     task.setStatus(CheckStatus.Unchecked);
-    final StringBuilder taskDescription = new StringBuilder(myStep.text);
-    if (myStep.options.samples != null) {
+    final StringBuilder taskDescription = new StringBuilder(myStep.getText());
+    if (myStep.getOptions().getSamples() != null) {
       taskDescription.append("<br>");
-      for (List<String> sample : myStep.options.samples) {
+      for (List<String> sample : myStep.getOptions().getSamples()) {
         if (sample.size() == 2) {
           taskDescription.append("<b>Sample Input:</b><br>");
           taskDescription.append(StringUtil.replace(sample.get(0), "\n", "<br>"));
@@ -140,18 +140,18 @@ public class StepikTaskBuilder {
       }
     }
 
-    if (myStep.options.executionMemoryLimit != null && myStep.options.executionTimeLimit != null) {
-      taskDescription.append("<br>").append("<b>Memory limit</b>: ").append(myStep.options.executionMemoryLimit).append(" Mb")
+    if (myStep.getOptions().getExecutionMemoryLimit() != null && myStep.getOptions().getExecutionTimeLimit() != null) {
+      taskDescription.append("<br>").append("<b>Memory limit</b>: ").append(myStep.getOptions().getExecutionMemoryLimit()).append(" Mb")
         .append("<br>")
-        .append("<b>Time limit</b>: ").append(myStep.options.executionTimeLimit).append("s").append("<br><br>");
+        .append("<b>Time limit</b>: ").append(myStep.getOptions().getExecutionTimeLimit()).append("s").append("<br><br>");
     }
     task.setDescriptionText(taskDescription.toString());
 
-    if (myLanguage.isKindOf(EduNames.PYTHON) && myStep.options.samples != null) {
-      createTestFileFromSamples(task, myStep.options.samples);
+    if (myLanguage.isKindOf(EduNames.PYTHON) && myStep.getOptions().getSamples() != null) {
+      createTestFileFromSamples(task, myStep.getOptions().getSamples());
     }
 
-    final String templateForTask = getCodeTemplateForTask(myLanguage, myStep.options.codeTemplates);
+    final String templateForTask = getCodeTemplateForTask(myLanguage, myStep.getOptions().getCodeTemplates());
     createMockTaskFile(task, "write your answer here \n", templateForTask);
     return task;
   }
@@ -160,9 +160,9 @@ public class StepikTaskBuilder {
   private ChoiceTask choiceTask() {
     ChoiceTask task = new ChoiceTask(myName);
     task.setStepId(myStepId);
-    task.setIndex(myStepSource.position);
-    task.setUpdateDate(myStepSource.update_date);
-    task.setDescriptionText(myStep.text);
+    task.setIndex(myStepSource.getPosition());
+    task.setUpdateDate(myStepSource.getUpdate_date());
+    task.setDescriptionText(myStep.getText());
 
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       final StepikWrappers.Attempt attempt = StepikCheckerConnector.getAttemptForStep(myStepId, myUserId);
@@ -186,9 +186,9 @@ public class StepikTaskBuilder {
   private TheoryTask theoryTask() {
     TheoryTask task = new TheoryTask(myName);
     task.setStepId(myStepId);
-    task.setIndex(myStepSource.position);
-    task.setUpdateDate(myStepSource.update_date);
-    task.setDescriptionText(myStep.text);
+    task.setIndex(myStepSource.getPosition());
+    task.setUpdateDate(myStepSource.getUpdate_date());
+    task.setDescriptionText(myStep.getText());
 
     createMockTaskFile(task, "you can experiment here, it won’t be checked\n");
     return task;
@@ -198,8 +198,8 @@ public class StepikTaskBuilder {
   private Task unsupportedTask() {
     TheoryTask task = new TheoryTask(myName);
     task.setStepId(myStepId);
-    task.setIndex(myStepSource.position);
-    task.setUpdateDate(myStepSource.update_date);
+    task.setIndex(myStepSource.getPosition());
+    task.setUpdateDate(myStepSource.getUpdate_date());
     final String stepText = StringUtil.capitalize(myName.toLowerCase()) + " tasks are not supported yet. <br>" +
                             "View this step on <a href=\"" + StepikUtils.getStepikLink(task, myLesson) +"\">Stepik</a>.";
     task.setDescriptionText(stepText);
@@ -210,29 +210,29 @@ public class StepikTaskBuilder {
 
   @Nullable
   private Task pycharmTask() {
-    if (!myStep.name.startsWith(PYCHARM_PREFIX)) {
-      LOG.error("Got a block with non-pycharm prefix: " + myStep.name + " for step: " + myStepId);
+    if (!myStep.getName().startsWith(PYCHARM_PREFIX)) {
+      LOG.error("Got a block with non-pycharm prefix: " + myStep.getName() + " for step: " + myStepId);
       return null;
     }
     Task task = createPluginTask();
     task.setStepId(myStepId);
-    task.setUpdateDate(myStepSource.update_date);
-    StepikSteps.StepOptions stepOptions = myStep.options;
-    task.setName(stepOptions != null ? stepOptions.title : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
+    task.setUpdateDate(myStepSource.getUpdate_date());
+    StepOptions stepOptions = myStep.getOptions();
+    task.setName(stepOptions != null ? stepOptions.getTitle() : (PYCHARM_PREFIX + EduVersions.JSON_FORMAT_VERSION));
 
     if (stepOptions != null) {
-      if (stepOptions.descriptionText != null) {
-        task.setDescriptionText(stepOptions.descriptionText);
+      if (stepOptions.getDescriptionText() != null) {
+        task.setDescriptionText(stepOptions.getDescriptionText());
       } else {
-        task.setDescriptionText(myStep.text);
+        task.setDescriptionText(myStep.getText());
       }
-      if (stepOptions.descriptionFormat != null) {
-        task.setDescriptionFormat(stepOptions.descriptionFormat);
+      if (stepOptions.getDescriptionFormat() != null) {
+        task.setDescriptionFormat(stepOptions.getDescriptionFormat());
       }
 
-      task.setFeedbackLink(stepOptions.myFeedbackLink);
-      if (stepOptions.files != null) {
-        for (TaskFile taskFile : stepOptions.files) {
+      task.setFeedbackLink(stepOptions.getMyFeedbackLink());
+      if (stepOptions.getFiles() != null) {
+        for (TaskFile taskFile : stepOptions.getFiles()) {
           addPlaceholdersTexts(taskFile);
           task.addTaskFile(taskFile);
         }
@@ -243,7 +243,7 @@ public class StepikTaskBuilder {
 
   @NotNull
   private Task createPluginTask() {
-    String type = myStep.options.taskType;
+    String type = myStep.getOptions().getTaskType();
     if (type == null || !pluginTaskTypes.containsKey(type)) {
       return eduTask();
     }
@@ -279,7 +279,7 @@ public class StepikTaskBuilder {
   }
 
   private void createMockTaskFile(@NotNull Task task, @NotNull String comment, @Nullable String editorText) {
-    final List<TaskFile> taskFiles = myStep.options.files;
+    final List<TaskFile> taskFiles = myStep.getOptions().getFiles();
     if (taskFiles != null && !taskFiles.isEmpty()) return;
 
     String taskFilePath = getTaskFilePath(myLanguage);

@@ -9,7 +9,7 @@ import com.jetbrains.edu.learning.courseFormat.EduCourse
 import com.jetbrains.edu.learning.courseFormat.Lesson
 import com.jetbrains.edu.learning.courseFormat.Section
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikSteps
+import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.StepikUserInfo
 import com.jetbrains.edu.learning.stepik.StepikWrappers
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter
@@ -40,12 +40,12 @@ class UnitsList {
 }
 
 class StepsList {
-  lateinit var steps: List<StepikSteps.StepSource>
+  lateinit var steps: List<StepSource>
 }
 
 class StepSourcesList {
   @JsonProperty("step-sources")
-  lateinit var steps: List<StepikSteps.StepSource>
+  lateinit var steps: List<StepSource>
 }
 
 class SubmissionsList {
@@ -116,7 +116,7 @@ class LessonData(lesson: Lesson) {
 }
 
 class StepSourceData(project: Project, task: Task, lessonId: Int) {
-  var stepSource: StepikSteps.StepSource = StepikSteps.StepSource(project, task, lessonId)
+  var stepSource: StepSource = StepSource(project, task, lessonId)
 }
 
 // Auxiliary:

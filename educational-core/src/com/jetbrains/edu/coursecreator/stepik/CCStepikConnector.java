@@ -67,8 +67,8 @@ public class CCStepikConnector {
   }
 
   public static int getTaskPosition(final int taskId) {
-    StepikSteps.StepSource step = StepikNewConnector.INSTANCE.getStep(taskId);
-    return step != null ? step.position : -1;
+    StepSource step = StepikNewConnector.INSTANCE.getStep(taskId);
+    return step != null ? step.getPosition() : -1;
   }
 
   @Nullable
@@ -706,14 +706,14 @@ public class CCStepikConnector {
     if (!checkIfAuthorized(project, "postTask")) return false;
     if (task instanceof ChoiceTask || task instanceof CodeTask) return false;
 
-    final StepikSteps.StepSource stepSource = StepikNewConnector.INSTANCE.postTask(project, task, lessonId);
+    final StepSource stepSource = StepikNewConnector.INSTANCE.postTask(project, task, lessonId);
     if (stepSource == null) {
       final String message = FAILED_TITLE + "task in lesson " + lessonId;
       LOG.error(message);
       showErrorNotification(project, FAILED_TITLE, message);
       return false;
     }
-    task.setStepId(stepSource.id);
+    task.setStepId(stepSource.getId());
     return true;
   }
 

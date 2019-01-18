@@ -14,7 +14,8 @@ import com.jetbrains.edu.learning.EduUtils
 import com.jetbrains.edu.learning.courseFormat.CheckStatus
 import com.jetbrains.edu.learning.courseFormat.TaskFile
 import com.jetbrains.edu.learning.courseFormat.tasks.Task
-import com.jetbrains.edu.learning.stepik.StepikSteps
+import com.jetbrains.edu.learning.stepik.StepOptions
+import com.jetbrains.edu.learning.stepik.StepSource
 import com.jetbrains.edu.learning.stepik.hyperskill.courseFormat.HyperskillCourse
 import com.jetbrains.edu.learning.stepik.hyperskill.serialization.JacksonStepOptionsDeserializer
 import com.jetbrains.edu.learning.stepik.hyperskill.serialization.JacksonTaskFileDeserializer
@@ -39,7 +40,7 @@ object HyperskillConnector {
 
   init {
     val module = SimpleModule()
-    module.addDeserializer(StepikSteps.StepOptions::class.java, JacksonStepOptionsDeserializer())
+    module.addDeserializer(StepOptions::class.java, JacksonStepOptionsDeserializer())
     module.addDeserializer(TaskFile::class.java, JacksonTaskFileDeserializer())
     val objectMapper = ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     objectMapper.registerModule(module)
@@ -122,7 +123,7 @@ object HyperskillConnector {
     return service.stages(projectId).execute().body()?.stages
   }
 
-  fun getStepSources(lessonId: Int): List<StepikSteps.StepSource>? {
+  fun getStepSources(lessonId: Int): List<StepSource>? {
     return service.steps(lessonId).execute().body()?.steps
   }
 

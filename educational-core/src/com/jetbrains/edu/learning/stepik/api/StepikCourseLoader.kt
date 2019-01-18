@@ -204,7 +204,7 @@ object StepikCourseLoader {
       val allStepSources = StepikMultipleRequestsConnector.getStepSources(lesson.steps, remoteCourse.languageID)
 
       if (!allStepSources.isEmpty()) {
-        val options = allStepSources[0].block.options
+        val options = allStepSources[0].block!!.options
         if (options?.lessonType != null) {
           // TODO: find a better way to get framework lessons from stepik
           lesson = FrameworkLesson(lesson)
@@ -218,7 +218,7 @@ object StepikCourseLoader {
     return result
   }
 
-  fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
+  private fun getLessonsFromUnitIds(unitIds: List<Int>): List<Lesson> {
     val units = StepikMultipleRequestsConnector.getUnits(unitIds)
     val lessonIds = units.map { unit -> unit.lesson }
     val lessons = StepikMultipleRequestsConnector.getLessons(lessonIds)
@@ -242,13 +242,13 @@ object StepikCourseLoader {
     return units.sortedBy { unit -> unit.section }.mapNotNull { idToLesson[it.lesson] }
   }
 
-  fun getTasks(language: Language, lesson: Lesson, allStepSources: List<StepikSteps.StepSource>): List<Task> {
+  fun getTasks(language: Language, lesson: Lesson, allStepSources: List<StepSource>): List<Task> {
     val user = EduSettings.getInstance().user
     val tasks = ArrayList<Task>()
     for (step in allStepSources) {
       val builder = StepikTaskBuilder(language, lesson, step, step.id, user?.id ?: -1)
-      if (!builder.isSupported(step.block.name)) continue
-      val task = builder.createTask(step.block.name)
+      if (!builder.isSupported(step.block!!.name)) continue
+      val task = builder.createTask(step.block!!.name)
       if (task != null) {
         tasks.add(task)
       }

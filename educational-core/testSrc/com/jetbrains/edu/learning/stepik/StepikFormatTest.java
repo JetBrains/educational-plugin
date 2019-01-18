@@ -82,12 +82,12 @@ public class StepikFormatTest extends EduTestCase {
   public void testAdditionalMaterialsStep() throws IOException {
     String responseString = loadJsonText();
     for (String language : Arrays.asList(EduNames.KOTLIN, EduNames.PYTHON)) {
-      StepikSteps.StepSource step = StepikClient.deserializeStepikResponse(StepikSteps.StepsList.class,
+      StepikSteps.StepSource step = StepikClient.deserializeStepikResponse(StepsList.class,
                                                                               responseString,
                                                                               createParams(language)).steps.get(0);
       assertEquals(EduNames.ADDITIONAL_MATERIALS, step.block.options.title);
       assertEquals("task_file.py", step.block.options.files.get(0).getName());
-      assertEquals("test_helperq.py", step.block.options.files.get(1).getName());
+      assertEquals("test_helperq.py", step.block.getOptions().getFiles().get(1).getName());
     }
   }
 
@@ -171,7 +171,7 @@ public class StepikFormatTest extends EduTestCase {
   public void testStep() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikSteps.StepsList stepContainer = gson.fromJson(jsonText, StepikSteps.StepsList.class);
+    final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
     assertNotNull(stepContainer);
     final StepikSteps.StepSource step = stepContainer.steps.get(0);
     assertNotNull(step);
@@ -180,12 +180,12 @@ public class StepikFormatTest extends EduTestCase {
   public void testStepBlock() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikSteps.StepsList stepContainer = gson.fromJson(jsonText, StepikSteps.StepsList.class);
+    final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
     final StepikSteps.StepSource step = stepContainer.steps.get(0);
-    final StepikSteps.Step block = step.block;
+    final StepikSteps.Step block = step.getBlock();
     assertNotNull(block);
-    assertNotNull(block.options);
-    assertTrue(block.name.startsWith(PYCHARM_PREFIX));
+    assertNotNull(block.getOptions());
+    assertTrue(block.getName().startsWith(PYCHARM_PREFIX));
   }
 
   public void testStepBlockOptions() throws IOException {
@@ -196,14 +196,14 @@ public class StepikFormatTest extends EduTestCase {
   public void testUpdateDate() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikSteps.StepsList stepContainer = gson.fromJson(jsonText, StepikSteps.StepsList.class);
+    final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
     final StepikSteps.StepSource step = stepContainer.steps.get(0);
-    assertNotNull(step.update_date);
+    assertNotNull(step.getUpdate_date());
   }
 
   public void testOptionsTitle() throws IOException {
     final StepikSteps.StepOptions options = getStepOptions();
-    assertEquals("Our first program", options.title);
+    assertEquals("Our first program", options.getTitle());
   }
 
   public void testOptionsDescription() throws IOException {
@@ -217,18 +217,18 @@ public class StepikFormatTest extends EduTestCase {
         "Hint: To run a script сhoose 'Run &lt;name&gt;' on the context menu. <br>\n" +
         "For more information visit <a href=\"https://www.jetbrains.com/help/pycharm/running-and-rerunning-applications.html\">our help</a>.\n" +
         "\n" +
-        "<br>\n", options.descriptionText);
+        "<br>\n", options.getDescriptionText());
   }
 
   public void testOptionsFeedbackLinks() throws IOException {
     StepikSteps.StepOptions stepOptions = getStepOptions();
-    assertEquals(FeedbackLink.LinkType.CUSTOM, stepOptions.myFeedbackLink.getType());
+    assertEquals(FeedbackLink.LinkType.CUSTOM, stepOptions.getMyFeedbackLink().getType());
   }
 
   public void testOptionsFiles() throws IOException {
     final StepikSteps.StepOptions options = getStepOptions();
 
-    final List<TaskFile> files = options.files;
+    final List<TaskFile> files = options.getFiles();
     assertEquals(2, files.size());
     final TaskFile taskFile1 = files.get(0);
     assertEquals("hello_world.py", taskFile1.getName());
@@ -256,15 +256,15 @@ public class StepikFormatTest extends EduTestCase {
   private StepikSteps.StepOptions getStepOptions(@Nullable String language) throws IOException {
     Gson gson = getGson(createParams(language));
     String jsonText = loadJsonText();
-    final StepikSteps.StepsList stepContainer = gson.fromJson(jsonText, StepikSteps.StepsList.class);
+    final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
     final StepikSteps.StepSource step = stepContainer.steps.get(0);
-    final StepikSteps.Step block = step.block;
-    return block.options;
+    final StepikSteps.Step block = step.getBlock();
+    return block.getOptions();
   }
 
   public void testOptionsPlaceholder() throws IOException {
     final StepikSteps.StepOptions options = getStepOptions();
-    final List<TaskFile> files = options.files;
+    final List<TaskFile> files = options.getFiles();
     final TaskFile taskFile = files.get(0);
 
     final List<AnswerPlaceholder> placeholders = taskFile.getAnswerPlaceholders();
@@ -331,7 +331,7 @@ public class StepikFormatTest extends EduTestCase {
   public void testNonEduTasks() throws IOException {
     Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikSteps.StepsList stepContainer = gson.fromJson(jsonText, StepikSteps.StepsList.class);
+    final StepsList stepContainer = gson.fromJson(jsonText, StepsList.class);
     assertNotNull(stepContainer);
     assertNotNull(stepContainer.steps);
     assertEquals(3, stepContainer.steps.size());
