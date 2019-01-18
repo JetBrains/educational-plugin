@@ -16,9 +16,7 @@ import com.jetbrains.edu.learning.courseFormat.Lesson;
 import com.jetbrains.edu.learning.courseFormat.TaskFile;
 import com.jetbrains.edu.learning.serialization.converter.TaskRoots;
 import com.jetbrains.edu.learning.serialization.converter.TaskRootsKt;
-import com.jetbrains.edu.learning.stepik.api.AttemptsList;
-import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
-import com.jetbrains.edu.learning.stepik.api.SubmissionsList;
+import com.jetbrains.edu.learning.stepik.api.*;
 import com.jetbrains.edu.learning.stepik.serialization.StepikReplyAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikStepOptionsAdapter;
 import com.jetbrains.edu.learning.stepik.serialization.StepikSubmissionTaskAdapter;
@@ -115,23 +113,23 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testTokenUptoDate() throws IOException {
-    Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikWrappers.AuthorWrapper wrapper = gson.fromJson(jsonText, StepikWrappers.AuthorWrapper.class);
-    assertNotNull(wrapper);
-    assertFalse(wrapper.users.isEmpty());
-    StepikUserInfo user = wrapper.users.get(0);
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final UsersList usersList = mapper.readValue(jsonText, UsersList.class);
+    assertNotNull(usersList);
+    assertFalse(usersList.users.isEmpty());
+    StepikUserInfo user = usersList.users.get(0);
     assertNotNull(user);
     assertFalse(user.isGuest());
   }
 
   public void testCourseAuthor() throws IOException {
-    Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikWrappers.AuthorWrapper wrapper = gson.fromJson(jsonText, StepikWrappers.AuthorWrapper.class);
-    assertNotNull(wrapper);
-    assertFalse(wrapper.users.isEmpty());
-    StepikUserInfo user = wrapper.users.get(0);
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final UsersList usersList = mapper.readValue(jsonText, UsersList.class);
+    assertNotNull(usersList);
+    assertFalse(usersList.users.isEmpty());
+    StepikUserInfo user = usersList.users.get(0);
     assertNotNull(user);
     assertFalse(user.isGuest());
   }
@@ -147,12 +145,13 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testUnit() throws IOException {
-    Gson gson = getGson();
     String jsonText = loadJsonText();
-    final StepikWrappers.UnitContainer unit = gson.fromJson(jsonText, StepikWrappers.UnitContainer.class);
-    assertNotNull(unit);
-    assertEquals(1, unit.units.size());
-    final int lesson = unit.units.get(0).lesson;
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final UnitsList unitsList = mapper.readValue(jsonText, UnitsList.class);
+    assertNotNull(unitsList);
+    assertNotNull(unitsList);
+    assertEquals(1, unitsList.units.size());
+    final int lesson = unitsList.units.get(0).lesson;
     assertEquals(13416, lesson);
   }
 
@@ -275,13 +274,13 @@ public class StepikFormatTest extends EduTestCase {
   }
 
   public void testTaskStatuses() throws IOException {
-    Gson gson = getGson();
     String jsonText = loadJsonText();
-    StepikWrappers.ProgressContainer progressContainer = gson.fromJson(jsonText, StepikWrappers.ProgressContainer.class);
-    assertNotNull(progressContainer);
-    List<StepikWrappers.ProgressContainer.Progress> progressList = progressContainer.progresses;
+    final ObjectMapper mapper = StepikNewConnector.INSTANCE.getObjectMapper();
+    final ProgressesList progressesList = mapper.readValue(jsonText, ProgressesList.class);
+    assertNotNull(progressesList);
+    List<Progress> progressList = progressesList.progresses;
     assertNotNull(progressList);
-    final Boolean[] statuses = progressList.stream().map(progress -> progress.isPassed).toArray(Boolean[]::new);
+    final Boolean[] statuses = progressList.stream().map(progress -> progress.isPassed()).toArray(Boolean[]::new);
     assertNotNull(statuses);
     assertEquals(50, statuses.length);
   }

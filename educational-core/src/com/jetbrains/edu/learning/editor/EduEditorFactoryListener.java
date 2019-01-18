@@ -32,6 +32,7 @@ import com.jetbrains.edu.learning.navigation.NavigationUtils;
 import com.jetbrains.edu.learning.placeholderDependencies.PlaceholderDependencyManager;
 import com.jetbrains.edu.learning.statistics.EduLaunchesReporter;
 import com.jetbrains.edu.learning.stepik.StepikWrappers;
+import com.jetbrains.edu.learning.stepik.api.Assignment;
 import com.jetbrains.edu.learning.stepik.api.StepikNewConnector;
 import com.jetbrains.edu.learning.ui.taskDescription.TaskDescriptionToolWindowFactory;
 import org.jetbrains.annotations.NotNull;
@@ -136,12 +137,12 @@ public class EduEditorFactoryListener implements EditorFactoryListener {
       return;
     }
 
-    final List<StepikWrappers.Assignment> assignments = StepikNewConnector.INSTANCE.getAssignments(unit.assignments);
-    for (StepikWrappers.Assignment assignment : assignments) {
-      if (assignment.step != stepId) {
+    final List<Assignment> assignments = StepikNewConnector.INSTANCE.getAssignments(unit.assignments);
+    for (Assignment assignment : assignments) {
+      if (assignment.getStep() != stepId) {
         continue;
       }
-      StepikNewConnector.INSTANCE.postView(assignment.id, stepId);
+      StepikNewConnector.INSTANCE.postView(assignment.getId(), stepId);
     }
   }
 }

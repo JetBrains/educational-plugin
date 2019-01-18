@@ -371,42 +371,12 @@ public class CCStepikConnector {
   public static int postUnit(int lessonId, int position, int sectionId, @NotNull Project project) {
     if (!checkIfAuthorized(project, "postUnit")) return lessonId;
 
-    final HttpPost request = new HttpPost(StepikNames.STEPIK_API_URL + StepikNames.UNITS);
-    final StepikWrappers.UnitWrapper unitWrapper = new StepikWrappers.UnitWrapper();
-    final StepikWrappers.Unit unit = new StepikWrappers.Unit();
-    unit.setLesson(lessonId);
-    unit.setPosition(position);
-    unit.setSection(sectionId);
-    unitWrapper.setUnit(unit);
-
-    String requestBody = new Gson().toJson(unitWrapper);
-    request.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-
-    try {
-      final CloseableHttpClient client = StepikAuthorizedClient.getHttpClient();
-      if (client == null) return lessonId;
-      final CloseableHttpResponse response = client.execute(request);
-      final HttpEntity responseEntity = response.getEntity();
-      final String responseString = responseEntity != null ? EntityUtils.toString(responseEntity) : "";
-      final StatusLine line = response.getStatusLine();
-      EntityUtils.consume(responseEntity);
-      if (line.getStatusCode() != HttpStatus.SC_CREATED) {
-        LOG.error(FAILED_TITLE + responseString);
-        final String detailString = getErrorDetail(responseString);
-
-        showErrorNotification(project, FAILED_TITLE, detailString);
-      }
-      else {
-        StepikWrappers.UnitContainer unitContainer = new Gson().fromJson(responseString, StepikWrappers.UnitContainer.class);
-        if (!unitContainer.units.isEmpty()) {
-          return unitContainer.units.get(0).getId();
-        }
-      }
+    final StepikWrappers.Unit unit = StepikNewConnector.INSTANCE.postUnit(lessonId, position, sectionId);
+    if (unit == null) {
+      showErrorNotification(project, FAILED_TITLE, "Failed to post unit");
+      return -1;
     }
-    catch (IOException e) {
-      LOG.error(e.getMessage());
-    }
-    return -1;
+    return unit.id;
   }
 
   public static void updateUnit(int unitId, int lessonId, int position, int sectionId, @NotNull Project project) {
@@ -606,7 +576,7 @@ public class CCStepikConnector {
     }
   }
 
-  public static void updateAdditionalMaterials(@NotNull Project project, int courseId) throws IOException {
+  public static void updateAdditionalMaterials(@NotNull Project project, int courseId) {
     AtomicBoolean additionalMaterialsUpdated = new AtomicBoolean(false);
     EduCourse courseInfo = getCourseInfo(String.valueOf(courseId));
     assert courseInfo != null;

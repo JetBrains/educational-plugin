@@ -181,9 +181,9 @@ object StepikNewConnector {
     return allUnits
   }
 
-  fun getAssignments(ids: List<Int>): List<StepikWrappers.Assignment> {
+  fun getAssignments(ids: List<Int>): List<Assignment> {
     val idsChunks = ids.distinct().chunked(MAX_REQUEST_PARAMS)
-    val assignments = mutableListOf<StepikWrappers.Assignment>()
+    val assignments = mutableListOf<Assignment>()
     idsChunks
       .mapNotNull { service.assignments(*it.toIntArray()).execute().body()?.assignments }
       .forEach { assignments.addAll(it) }
@@ -234,6 +234,10 @@ object StepikNewConnector {
     // TODO: make use of language
     val submissions = getSubmissions(isSolved, stepId)
     return submissions?.firstOrNull()?.reply
+  }
+
+  fun postUnit(lessonId: Int, position: Int, sectionId: Int) : StepikWrappers.Unit? {
+    return service.units(UnitData(lessonId, position, sectionId)).execute().body()?.units?.firstOrNull()
   }
 
   fun postSubmission(passed: Boolean, attempt: StepikWrappers.Attempt,

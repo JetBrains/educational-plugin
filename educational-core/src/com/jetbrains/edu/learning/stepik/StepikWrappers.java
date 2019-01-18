@@ -114,10 +114,6 @@ public class StepikWrappers {
     }
   }
 
-  public static class UnitContainer {
-    public List<Unit> units;
-  }
-
   public static class UnitWrapper {
     Unit unit;
 
@@ -159,10 +155,6 @@ public class StepikWrappers {
     }
   }
 
-  static class AuthorWrapper {
-    List<StepikUserInfo> users;
-  }
-
   public static class Reply {
     boolean[] choices;
     public String score;
@@ -194,31 +186,6 @@ public class StepikWrappers {
       reply = new Reply(files, score, serializedTask);
       this.attempt = attemptId;
     }
-  }
-
-  public class Assignment {
-    public int id;
-    public int step;
-  }
-
-  public static class View {
-    int assignment;
-    int step;
-
-    public View(int assignment, int step) {
-      this.assignment = assignment;
-      this.step = step;
-    }
-  }
-
-  static class ProgressContainer {
-    static class Progress {
-      String id;
-      boolean isPassed;
-    }
-
-    List<Progress> progresses;
-
   }
 
   public static class TaskWrapper {
